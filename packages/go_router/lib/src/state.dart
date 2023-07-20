@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'misc/errors.dart';
@@ -181,6 +182,7 @@ class GoRouterState {
 ///
 /// Should not be used directly, consider using [GoRouterState.of] to access
 /// [GoRouterState] from the context.
+@internal
 class GoRouterStateRegistryScope
     extends InheritedNotifier<GoRouterStateRegistry> {
   /// Creates a GoRouterStateRegistryScope.
@@ -195,6 +197,7 @@ class GoRouterStateRegistryScope
 ///
 /// Should not be used directly, consider using [GoRouterState.of] to access
 /// [GoRouterState] from the context.
+@internal
 class GoRouterStateRegistry extends ChangeNotifier {
   /// creates a [GoRouterStateRegistry].
   GoRouterStateRegistry();

@@ -42,9 +42,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
-@interface AllNullableTypesWrapper ()
-+ (AllNullableTypesWrapper *)fromList:(NSArray *)list;
-+ (nullable AllNullableTypesWrapper *)nullableFromList:(NSArray *)list;
+@interface AllClassesWrapper ()
++ (AllClassesWrapper *)fromList:(NSArray *)list;
++ (nullable AllClassesWrapper *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -66,7 +66,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                         aList:(NSArray *)aList
                          aMap:(NSDictionary *)aMap
                        anEnum:(AnEnum)anEnum
-                      aString:(NSString *)aString {
+                      aString:(NSString *)aString
+                     anObject:(id)anObject {
   AllTypes *pigeonResult = [[AllTypes alloc] init];
   pigeonResult.aBool = aBool;
   pigeonResult.anInt = anInt;
@@ -80,6 +81,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aMap = aMap;
   pigeonResult.anEnum = anEnum;
   pigeonResult.aString = aString;
+  pigeonResult.anObject = anObject;
   return pigeonResult;
 }
 + (AllTypes *)fromList:(NSArray *)list {
@@ -107,6 +109,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.anEnum = [GetNullableObjectAtIndex(list, 10) integerValue];
   pigeonResult.aString = GetNullableObjectAtIndex(list, 11);
   NSAssert(pigeonResult.aString != nil, @"");
+  pigeonResult.anObject = GetNullableObjectAtIndex(list, 12);
+  NSAssert(pigeonResult.anObject != nil, @"");
   return pigeonResult;
 }
 + (nullable AllTypes *)nullableFromList:(NSArray *)list {
@@ -126,6 +130,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.aMap ?: [NSNull null]),
     @(self.anEnum),
     (self.aString ?: [NSNull null]),
+    (self.anObject ?: [NSNull null]),
   ];
 }
 @end
@@ -146,7 +151,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
                         aNullableEnum:(AnEnum)aNullableEnum
-                      aNullableString:(nullable NSString *)aNullableString {
+                      aNullableString:(nullable NSString *)aNullableString
+                      aNullableObject:(id)aNullableObject {
   AllNullableTypes *pigeonResult = [[AllNullableTypes alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
   pigeonResult.aNullableInt = aNullableInt;
@@ -163,6 +169,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableMapWithObject = nullableMapWithObject;
   pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = aNullableString;
+  pigeonResult.aNullableObject = aNullableObject;
   return pigeonResult;
 }
 + (AllNullableTypes *)fromList:(NSArray *)list {
@@ -182,6 +189,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
   pigeonResult.aNullableEnum = [GetNullableObjectAtIndex(list, 13) integerValue];
   pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
   return pigeonResult;
 }
 + (nullable AllNullableTypes *)nullableFromList:(NSArray *)list {
@@ -204,28 +212,34 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.nullableMapWithObject ?: [NSNull null]),
     @(self.aNullableEnum),
     (self.aNullableString ?: [NSNull null]),
+    (self.aNullableObject ?: [NSNull null]),
   ];
 }
 @end
 
-@implementation AllNullableTypesWrapper
-+ (instancetype)makeWithValues:(AllNullableTypes *)values {
-  AllNullableTypesWrapper *pigeonResult = [[AllNullableTypesWrapper alloc] init];
-  pigeonResult.values = values;
+@implementation AllClassesWrapper
++ (instancetype)makeWithAllNullableTypes:(AllNullableTypes *)allNullableTypes
+                                allTypes:(nullable AllTypes *)allTypes {
+  AllClassesWrapper *pigeonResult = [[AllClassesWrapper alloc] init];
+  pigeonResult.allNullableTypes = allNullableTypes;
+  pigeonResult.allTypes = allTypes;
   return pigeonResult;
 }
-+ (AllNullableTypesWrapper *)fromList:(NSArray *)list {
-  AllNullableTypesWrapper *pigeonResult = [[AllNullableTypesWrapper alloc] init];
-  pigeonResult.values = [AllNullableTypes nullableFromList:(GetNullableObjectAtIndex(list, 0))];
-  NSAssert(pigeonResult.values != nil, @"");
++ (AllClassesWrapper *)fromList:(NSArray *)list {
+  AllClassesWrapper *pigeonResult = [[AllClassesWrapper alloc] init];
+  pigeonResult.allNullableTypes =
+      [AllNullableTypes nullableFromList:(GetNullableObjectAtIndex(list, 0))];
+  NSAssert(pigeonResult.allNullableTypes != nil, @"");
+  pigeonResult.allTypes = [AllTypes nullableFromList:(GetNullableObjectAtIndex(list, 1))];
   return pigeonResult;
 }
-+ (nullable AllNullableTypesWrapper *)nullableFromList:(NSArray *)list {
-  return (list) ? [AllNullableTypesWrapper fromList:list] : nil;
++ (nullable AllClassesWrapper *)nullableFromList:(NSArray *)list {
+  return (list) ? [AllClassesWrapper fromList:list] : nil;
 }
 - (NSArray *)toList {
   return @[
-    (self.values ? [self.values toList] : [NSNull null]),
+    (self.allNullableTypes ? [self.allNullableTypes toList] : [NSNull null]),
+    (self.allTypes ? [self.allTypes toList] : [NSNull null]),
   ];
 }
 @end
@@ -257,9 +271,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
-      return [AllNullableTypes fromList:[self readValue]];
+      return [AllClassesWrapper fromList:[self readValue]];
     case 129:
-      return [AllNullableTypesWrapper fromList:[self readValue]];
+      return [AllNullableTypes fromList:[self readValue]];
     case 130:
       return [AllTypes fromList:[self readValue]];
     case 131:
@@ -274,10 +288,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 @implementation HostIntegrationCoreApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[AllNullableTypes class]]) {
+  if ([value isKindOfClass:[AllClassesWrapper class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypesWrapper class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[AllTypes class]]) {
@@ -587,6 +601,28 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed map to test nested class serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoClassWrapper"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(echoClassWrapper:error:)],
+          @"HostIntegrationCoreApi api (%@) doesn't respond to @selector(echoClassWrapper:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        AllClassesWrapper *arg_wrapper = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        AllClassesWrapper *output = [api echoClassWrapper:arg_wrapper error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// Returns the passed object, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
@@ -623,7 +659,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        AllNullableTypesWrapper *arg_wrapper = GetNullableObjectAtIndex(args, 0);
+        AllClassesWrapper *arg_wrapper = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         NSString *output = [api extractNestedNullableStringFrom:arg_wrapper error:&error];
         callback(wrapResult(output, error));
@@ -648,8 +684,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
         NSArray *args = message;
         NSString *arg_nullableString = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        AllNullableTypesWrapper *output =
-            [api createNestedObjectWithNullableString:arg_nullableString error:&error];
+        AllClassesWrapper *output = [api createNestedObjectWithNullableString:arg_nullableString
+                                                                        error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1797,9 +1833,9 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
-      return [AllNullableTypes fromList:[self readValue]];
+      return [AllClassesWrapper fromList:[self readValue]];
     case 129:
-      return [AllNullableTypesWrapper fromList:[self readValue]];
+      return [AllNullableTypes fromList:[self readValue]];
     case 130:
       return [AllTypes fromList:[self readValue]];
     case 131:
@@ -1814,10 +1850,10 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
 @end
 @implementation FlutterIntegrationCoreApiCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[AllNullableTypes class]]) {
+  if ([value isKindOfClass:[AllClassesWrapper class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypesWrapper class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[AllTypes class]]) {

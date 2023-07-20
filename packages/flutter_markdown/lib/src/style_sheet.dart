@@ -42,6 +42,7 @@ class MarkdownStyleSheet {
     this.tableColumnWidth,
     this.tableCellsPadding,
     this.tableCellsDecoration,
+    this.tableVerticalAlignment = TableCellVerticalAlignment.middle,
     this.blockquotePadding,
     this.blockquoteDecoration,
     this.codeblockPadding,
@@ -362,6 +363,7 @@ class MarkdownStyleSheet {
     TableColumnWidth? tableColumnWidth,
     EdgeInsets? tableCellsPadding,
     Decoration? tableCellsDecoration,
+    TableCellVerticalAlignment? tableVerticalAlignment,
     EdgeInsets? blockquotePadding,
     Decoration? blockquoteDecoration,
     EdgeInsets? codeblockPadding,
@@ -414,6 +416,8 @@ class MarkdownStyleSheet {
       tableColumnWidth: tableColumnWidth ?? this.tableColumnWidth,
       tableCellsPadding: tableCellsPadding ?? this.tableCellsPadding,
       tableCellsDecoration: tableCellsDecoration ?? this.tableCellsDecoration,
+      tableVerticalAlignment:
+          tableVerticalAlignment ?? this.tableVerticalAlignment,
       blockquotePadding: blockquotePadding ?? this.blockquotePadding,
       blockquoteDecoration: blockquoteDecoration ?? this.blockquoteDecoration,
       codeblockPadding: codeblockPadding ?? this.codeblockPadding,
@@ -475,6 +479,7 @@ class MarkdownStyleSheet {
       tableColumnWidth: other.tableColumnWidth,
       tableCellsPadding: other.tableCellsPadding,
       tableCellsDecoration: other.tableCellsDecoration,
+      tableVerticalAlignment: other.tableVerticalAlignment,
       blockquotePadding: other.blockquotePadding,
       blockquoteDecoration: other.blockquoteDecoration,
       codeblockPadding: other.codeblockPadding,
@@ -594,6 +599,9 @@ class MarkdownStyleSheet {
   /// The decoration to use for `th` and `td` elements.
   final Decoration? tableCellsDecoration;
 
+  /// The [TableCellVerticalAlignment] to use for `th` and `td` elements.
+  final TableCellVerticalAlignment tableVerticalAlignment;
+
   /// The padding to use for `blockquote` elements.
   final EdgeInsets? blockquotePadding;
 
@@ -692,6 +700,7 @@ class MarkdownStyleSheet {
         other.tableColumnWidth == tableColumnWidth &&
         other.tableCellsPadding == tableCellsPadding &&
         other.tableCellsDecoration == tableCellsDecoration &&
+        other.tableVerticalAlignment == tableVerticalAlignment &&
         other.blockquotePadding == blockquotePadding &&
         other.blockquoteDecoration == blockquoteDecoration &&
         other.codeblockPadding == codeblockPadding &&
@@ -748,6 +757,7 @@ class MarkdownStyleSheet {
       tableColumnWidth,
       tableCellsPadding,
       tableCellsDecoration,
+      tableVerticalAlignment,
       blockquotePadding,
       blockquoteDecoration,
       codeblockPadding,

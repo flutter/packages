@@ -22,7 +22,6 @@ import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
-import com.android.billingclient.api.BillingFlowParams.ProrationMode;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
 import com.android.billingclient.api.ConsumeResponseListener;
@@ -66,6 +65,14 @@ class MethodCallHandlerImpl
 
     private MethodNames() {}
   }
+
+  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
+  // ReplacementMode enum values.
+  // https://github.com/flutter/flutter/issues/128957.
+  @SuppressWarnings(value = "deprecation")
+  private static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
+      com.android.billingclient.api.BillingFlowParams.ProrationMode
+          .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
@@ -156,7 +163,7 @@ class MethodCallHandlerImpl
             (String) call.argument("purchaseToken"),
             call.hasArgument("prorationMode")
                 ? (int) call.argument("prorationMode")
-                : ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
+                : PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
             result);
         break;
       case MethodNames.QUERY_PURCHASES_ASYNC:
@@ -273,7 +280,7 @@ class MethodCallHandlerImpl
     }
 
     if (oldProduct == null
-        && prorationMode != ProrationMode.UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+        && prorationMode != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
       result.error(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
           "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
@@ -322,13 +329,22 @@ class MethodCallHandlerImpl
         BillingFlowParams.SubscriptionUpdateParams.newBuilder();
     if (oldProduct != null && !oldProduct.isEmpty() && purchaseToken != null) {
       subscriptionUpdateParamsBuilder.setOldPurchaseToken(purchaseToken);
-      // The proration mode value has to match one of the following declared in
-      // https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode
-      subscriptionUpdateParamsBuilder.setReplaceProrationMode(prorationMode);
+      // Set the prorationMode using a helper to minimize impact of deprecation warning suppression.
+      setReplaceProrationMode(subscriptionUpdateParamsBuilder, prorationMode);
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
     result.success(
         fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build())));
+  }
+
+  // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode.
+  // https://github.com/flutter/flutter/issues/128957.
+  @SuppressWarnings(value = "deprecation")
+  private void setReplaceProrationMode(
+      BillingFlowParams.SubscriptionUpdateParams.Builder builder, int prorationMode) {
+    // The proration mode value has to match one of the following declared in
+    // https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode
+    builder.setReplaceProrationMode(prorationMode);
   }
 
   private void consumeAsync(String purchaseToken, final MethodChannel.Result result) {

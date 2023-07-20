@@ -59,7 +59,11 @@ enum class AnEnum(val raw: Int) {
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
+/**
+ * A class containing all supported types.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
 data class AllTypes (
   val aBool: Boolean,
   val anInt: Long,
@@ -72,7 +76,8 @@ data class AllTypes (
   val aList: List<Any?>,
   val aMap: Map<Any, Any?>,
   val anEnum: AnEnum,
-  val aString: String
+  val aString: String,
+  val anObject: Any
 
 ) {
   companion object {
@@ -90,7 +95,8 @@ data class AllTypes (
       val aMap = list[9] as Map<Any, Any?>
       val anEnum = AnEnum.ofRaw(list[10] as Int)!!
       val aString = list[11] as String
-      return AllTypes(aBool, anInt, anInt64, aDouble, aByteArray, a4ByteArray, a8ByteArray, aFloatArray, aList, aMap, anEnum, aString)
+      val anObject = list[12] as Any
+      return AllTypes(aBool, anInt, anInt64, aDouble, aByteArray, a4ByteArray, a8ByteArray, aFloatArray, aList, aMap, anEnum, aString, anObject)
     }
   }
   fun toList(): List<Any?> {
@@ -107,11 +113,16 @@ data class AllTypes (
       aMap,
       anEnum.raw,
       aString,
+      anObject,
     )
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
+/**
+ * A class containing all supported nullable types.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
 data class AllNullableTypes (
   val aNullableBool: Boolean? = null,
   val aNullableInt: Long? = null,
@@ -127,7 +138,8 @@ data class AllNullableTypes (
   val nullableMapWithAnnotations: Map<String?, String?>? = null,
   val nullableMapWithObject: Map<String?, Any?>? = null,
   val aNullableEnum: AnEnum? = null,
-  val aNullableString: String? = null
+  val aNullableString: String? = null,
+  val aNullableObject: Any? = null
 
 ) {
   companion object {
@@ -150,7 +162,8 @@ data class AllNullableTypes (
         AnEnum.ofRaw(it)
       }
       val aNullableString = list[14] as String?
-      return AllNullableTypes(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableList, aNullableMap, nullableNestedList, nullableMapWithAnnotations, nullableMapWithObject, aNullableEnum, aNullableString)
+      val aNullableObject = list[15]
+      return AllNullableTypes(aNullableBool, aNullableInt, aNullableInt64, aNullableDouble, aNullableByteArray, aNullable4ByteArray, aNullable8ByteArray, aNullableFloatArray, aNullableList, aNullableMap, nullableNestedList, nullableMapWithAnnotations, nullableMapWithObject, aNullableEnum, aNullableString, aNullableObject)
     }
   }
   fun toList(): List<Any?> {
@@ -170,25 +183,39 @@ data class AllNullableTypes (
       nullableMapWithObject,
       aNullableEnum?.raw,
       aNullableString,
+      aNullableObject,
     )
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
-data class AllNullableTypesWrapper (
-  val values: AllNullableTypes
+/**
+ * A class for testing nested class handling.
+ *
+ * This is needed to test nested nullable and non-nullable classes,
+ * `AllNullableTypes` is non-nullable here as it is easier to instantiate
+ * than `AllTypes` when testing doesn't require both (ie. testing null classes).
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class AllClassesWrapper (
+  val allNullableTypes: AllNullableTypes,
+  val allTypes: AllTypes? = null
 
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): AllNullableTypesWrapper {
-      val values = AllNullableTypes.fromList(list[0] as List<Any?>)
-      return AllNullableTypesWrapper(values)
+    fun fromList(list: List<Any?>): AllClassesWrapper {
+      val allNullableTypes = AllNullableTypes.fromList(list[0] as List<Any?>)
+      val allTypes: AllTypes? = (list[1] as List<Any?>?)?.let {
+        AllTypes.fromList(it)
+      }
+      return AllClassesWrapper(allNullableTypes, allTypes)
     }
   }
   fun toList(): List<Any?> {
     return listOf<Any?>(
-      values.toList(),
+      allNullableTypes.toList(),
+      allTypes?.toList(),
     )
   }
 }
@@ -222,12 +249,12 @@ private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
     return when (type) {
       128.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypes.fromList(it)
+          AllClassesWrapper.fromList(it)
         }
       }
       129.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypesWrapper.fromList(it)
+          AllNullableTypes.fromList(it)
         }
       }
       130.toByte() -> {
@@ -245,11 +272,11 @@ private object HostIntegrationCoreApiCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is AllNullableTypes -> {
+      is AllClassesWrapper -> {
         stream.write(128)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypesWrapper -> {
+      is AllNullableTypes -> {
         stream.write(129)
         writeValue(stream, value.toList())
       }
@@ -302,18 +329,20 @@ interface HostIntegrationCoreApi {
   fun echoList(aList: List<Any?>): List<Any?>
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoMap(aMap: Map<String?, Any?>): Map<String?, Any?>
+  /** Returns the passed map to test nested class serialization and deserialization. */
+  fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
   /**
    * Returns the inner `aString` value from the wrapped object, to test
    * sending of nested objects.
    */
-  fun extractNestedNullableString(wrapper: AllNullableTypesWrapper): String?
+  fun extractNestedNullableString(wrapper: AllClassesWrapper): String?
   /**
    * Returns the inner `aString` value from the wrapped object, to test
    * sending of nested objects.
    */
-  fun createNestedNullableString(nullableString: String?): AllNullableTypesWrapper
+  fun createNestedNullableString(nullableString: String?): AllClassesWrapper
   /** Returns passed in arguments of multiple types. */
   fun sendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?): AllNullableTypes
   /** Returns passed in int. */
@@ -636,6 +665,24 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoClassWrapper", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val wrapperArg = args[0] as AllClassesWrapper
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoClassWrapper(wrapperArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -658,7 +705,7 @@ interface HostIntegrationCoreApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val wrapperArg = args[0] as AllNullableTypesWrapper
+            val wrapperArg = args[0] as AllClassesWrapper
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.extractNestedNullableString(wrapperArg))
@@ -1666,12 +1713,12 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
     return when (type) {
       128.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypes.fromList(it)
+          AllClassesWrapper.fromList(it)
         }
       }
       129.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypesWrapper.fromList(it)
+          AllNullableTypes.fromList(it)
         }
       }
       130.toByte() -> {
@@ -1689,11 +1736,11 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is AllNullableTypes -> {
+      is AllClassesWrapper -> {
         stream.write(128)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypesWrapper -> {
+      is AllNullableTypes -> {
         stream.write(129)
         writeValue(stream, value.toList())
       }

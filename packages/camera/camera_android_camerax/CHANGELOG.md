@@ -1,3 +1,20 @@
+## 0.5.0+11
+
+* Fixes issue with image data not being emitted after relistening to stream returned by `onStreamedFrameAvailable`.
+
+## 0.5.0+10
+
+* Implements off, auto, and always flash mode configurations for image capture.
+
+## 0.5.0+9
+
+* Marks all Dart-wrapped Android native classes as `@immutable`.
+* Updates `CONTRIBUTING.md` to note requirements of Dart-wrapped Android native classes.
+
+## 0.5.0+8
+
+* Fixes unawaited_futures violations.
+
 ## 0.5.0+7
 
 * Updates Guava version to 32.0.1.

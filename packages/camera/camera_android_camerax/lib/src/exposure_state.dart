@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
@@ -12,6 +13,7 @@ import 'java_object.dart';
 /// Represents exposure related information of a camera.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ExposureState.
+@immutable
 class ExposureState extends JavaObject {
   /// Constructs a [ExposureState] that is not automatically attached to a native object.
   ExposureState.detached(

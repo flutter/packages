@@ -518,7 +518,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   // workaround could interfere with exposing support for custom scripts from
   // applications.
   Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
-    _webView.configuration.userContentController.removeAllUserScripts();
+    unawaited(
+      _webView.configuration.userContentController.removeAllUserScripts(),
+    );
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -663,10 +665,13 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
 
 /// An implementation of [WebResourceError] with the WebKit API.
 class WebKitWebResourceError extends WebResourceError {
-  WebKitWebResourceError._(this._nsError, {required bool isForMainFrame})
-      : super(
+  WebKitWebResourceError._(
+    this._nsError, {
+    required bool isForMainFrame,
+    required super.url,
+  }) : super(
           errorCode: _nsError.code,
-          description: _nsError.localizedDescription,
+          description: _nsError.localizedDescription ?? '',
           errorType: _toWebResourceErrorType(_nsError.code),
           isForMainFrame: isForMainFrame,
         );
@@ -764,14 +769,24 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       didFailNavigation: (WKWebView webView, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(error, isForMainFrame: true),
+            WebKitWebResourceError._(
+              error,
+              isForMainFrame: true,
+              url: error.userInfo[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringError] as String?,
+            ),
           );
         }
       },
       didFailProvisionalNavigation: (WKWebView webView, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(error, isForMainFrame: true),
+            WebKitWebResourceError._(
+              error,
+              isForMainFrame: true,
+              url: error.userInfo[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringError] as String?,
+            ),
           );
         }
       },
@@ -783,9 +798,9 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 code: WKErrorCode.webContentProcessTerminated,
                 // Value from https://developer.apple.com/documentation/webkit/wkerrordomain?language=objc.
                 domain: 'WKErrorDomain',
-                localizedDescription: '',
               ),
               isForMainFrame: true,
+              url: null,
             ),
           );
         }

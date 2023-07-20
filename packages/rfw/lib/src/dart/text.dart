@@ -533,7 +533,7 @@ DynamicMap parseDataFile(String file) {
 /// event "..." { }
 /// ```
 ///
-/// Tthe string is the name of the event, and the arguments map is the data to
+/// The string is the name of the event, and the arguments map is the data to
 /// send with the event.
 ///
 /// For example, the event handler in the following sequence sends the event
@@ -738,13 +738,12 @@ enum _TokenizerMode {
   quoteEscapeUnicode2,
   quoteEscapeUnicode3,
   quoteEscapeUnicode4,
-  endQuote,
   doubleQuoteEscape,
   doubleQuoteEscapeUnicode1,
   doubleQuoteEscapeUnicode2,
   doubleQuoteEscapeUnicode3,
   doubleQuoteEscapeUnicode4,
-  endDoubleQuote,
+  endQuote,
   slash,
   comment,
 }
@@ -1821,36 +1820,6 @@ Iterable<_Token> _tokenize(String file) sync* {
         }
         break;
 
-      case _TokenizerMode.endQuote:
-        switch (current) {
-          case -1:
-            yield _EofToken(line, column);
-            return;
-          case 0x0A: // U+000A LINE FEED (LF)
-          case 0x20: // U+0020 SPACE character
-            mode = _TokenizerMode.main;
-            break;
-          case 0x28: // U+0028 LEFT PARENTHESIS character (()
-          case 0x29: // U+0029 RIGHT PARENTHESIS character ())
-          case 0x2C: // U+002C COMMA character (,)
-          case 0x3A: // U+003A COLON character (:)
-          case 0x3B: // U+003B SEMICOLON character (;)
-          case 0x3D: // U+003D EQUALS SIGN character (=)
-          case 0x5B: // U+005B LEFT SQUARE BRACKET character ([)
-          case 0x5D: // U+005D RIGHT SQUARE BRACKET character (])
-          case 0x7B: // U+007B LEFT CURLY BRACKET character ({)
-          case 0x7D: // U+007D RIGHT CURLY BRACKET character (})
-            yield _SymbolToken(current, line, column);
-            mode = _TokenizerMode.main;
-            break;
-          case 0x2E: // U+002E FULL STOP character (.)
-            mode = _TokenizerMode.dot1;
-            break;
-          default:
-            throw ParserException('Unexpected character ${_describeRune(current)} after end quote', line, column);
-        }
-        break;
-
       case _TokenizerMode.doubleQuote:
         switch (current) {
           case -1:
@@ -2048,7 +2017,7 @@ Iterable<_Token> _tokenize(String file) sync* {
         }
         break;
 
-      case _TokenizerMode.endDoubleQuote:
+      case _TokenizerMode.endQuote:
         switch (current) {
           case -1:
             yield _EofToken(line, column);
@@ -2074,7 +2043,7 @@ Iterable<_Token> _tokenize(String file) sync* {
             mode = _TokenizerMode.dot1;
             break;
           default:
-            throw ParserException('Unexpected character ${_describeRune(current)} after end doublequote', line, column);
+            throw ParserException('Unexpected character ${_describeRune(current)} after end quote', line, column);
         }
         break;
 

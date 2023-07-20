@@ -19,12 +19,6 @@ dart run script/tool/bin/flutter_plugin_tools.dart <args>
 
 Many commands require the Flutter-bundled version of Dart to be the first `dart` in the path.
 
-### Extra Setup
-
-When updating sample code excerpts (`update-excerpts`) for the README.md files,
-there is some [extra setup for
-submodules](#update-readmemd-from-example-sources) that is necessary.
-
 ## Commands
 
 Run with `--help` for a full list of commands and arguments, but the
@@ -94,13 +88,15 @@ dart run script/tool/bin/flutter_plugin_tools.dart native-test --windows --packa
 
 ### Update README.md from Example Sources
 
-`update-excerpts` requires sources that are in a submodule. If you didn't clone
-with submodules, you will need to `git submodule update --init --recursive`
-before running this command.
-
 ```sh
+# Update all .md files for all packages:
+dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts
+
+# Update the .md files only for one package:
 dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts --packages package_name
 ```
+
+_See also: https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#readme-code_
 
 ### Update CHANGELOG and Version
 
@@ -178,13 +174,3 @@ _everything_, including untracked or uncommitted files in version control.
 `publish` will first check the status of the local
 directory and refuse to publish if there are any mismatched files with version
 control present.
-
-## Updating the Tool
-
-For flutter/packages, just changing the source here is all that's needed.
-
-For changes that are relevant to flutter/packages, you will also need to:
-- Update the tool's pubspec.yaml and CHANGELOG
-- Publish the tool
-- Update the pinned version in
-  [flutter/packages](https://github.com/flutter/packages/blob/main/.cirrus.yml)

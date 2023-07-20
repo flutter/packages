@@ -1,3 +1,11 @@
+## 1.0.0
+
+* Removes the deprecated `getSavePath` in favor of `getSaveLocation`.
+
+## 0.9.5
+
+* Adds an endorsed Android implementation.
+
 ## 0.9.4
 
 * Adds `getSaveLocation` and deprecates `getSavePath`.

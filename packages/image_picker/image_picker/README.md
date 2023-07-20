@@ -1,5 +1,5 @@
 # Image Picker plugin for Flutter
-<?code-excerpt path-base="excerpts/packages/image_picker_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/image_picker.svg)](https://pub.dev/packages/image_picker)
 
@@ -122,7 +122,7 @@ implementations allow delegating to a camera handler by setting a
 `cameraDelegate` before using `image_picker`, such as in `main()`:
 
 <?code-excerpt "readme_excerpts.dart (CameraDelegate)"?>
-``` dart
+```dart
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 // ···
 class MyCameraDelegate extends ImagePickerCameraDelegate {
@@ -167,7 +167,7 @@ add a filesystem access
 ### Example
 
 <?code-excerpt "readme_excerpts.dart (Pick)"?>
-``` dart
+```dart
 final ImagePicker picker = ImagePicker();
 // Pick an image.
 final XFile? image = await picker.pickImage(source: ImageSource.gallery);

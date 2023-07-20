@@ -6,8 +6,8 @@ package com.example.alternate_language_test_plugin;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.example.alternate_language_test_plugin.CoreTests.AllClassesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
-import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
@@ -99,17 +99,21 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
     return aMap;
   }
 
-  @Override
-  public @Nullable String extractNestedNullableString(@NonNull AllNullableTypesWrapper wrapper) {
-    return wrapper.getValues().getANullableString();
+  @NonNull
+  public AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper) {
+    return wrapper;
   }
 
   @Override
-  public @NonNull AllNullableTypesWrapper createNestedNullableString(
-      @Nullable String nullableString) {
+  public @Nullable String extractNestedNullableString(@NonNull AllClassesWrapper wrapper) {
+    return wrapper.getAllNullableTypes().getANullableString();
+  }
+
+  @Override
+  public @NonNull AllClassesWrapper createNestedNullableString(@Nullable String nullableString) {
     AllNullableTypes innerObject =
         new AllNullableTypes.Builder().setANullableString(nullableString).build();
-    return new AllNullableTypesWrapper.Builder().setValues(innerObject).build();
+    return new AllClassesWrapper.Builder().setAllNullableTypes(innerObject).build();
   }
 
   @Override

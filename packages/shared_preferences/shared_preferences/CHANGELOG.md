@@ -1,3 +1,11 @@
+## NEXT
+
+* Deletes deprecated splash screen meta-data element.
+
+## 2.2.0
+
+* Adds `allowList` option to setPrefix.
+
 ## 2.1.2
 
 * Fixes singleton initialization race condition introduced during NNBD

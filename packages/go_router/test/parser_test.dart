@@ -5,10 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/information_provider.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/parser.dart';
 
 RouteInformation createRouteInformation(String location, [Object? extra]) {
   return RouteInformation(

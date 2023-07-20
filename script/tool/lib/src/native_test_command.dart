@@ -4,14 +4,13 @@
 
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
-import 'package:platform/platform.dart';
 
 import 'common/cmake.dart';
 import 'common/core.dart';
 import 'common/gradle.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 import 'common/xcode.dart';
 
@@ -39,11 +38,10 @@ const String misconfiguredJavaIntegrationTestErrorExplanation =
 class NativeTestCommand extends PackageLoopingCommand {
   /// Creates an instance of the test command.
   NativeTestCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  })  : _xcode = Xcode(processRunner: processRunner, log: true),
-        super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) : _xcode = Xcode(processRunner: processRunner, log: true) {
     argParser.addOption(
       _iOSDestinationFlag,
       help: 'Specify the destination when running iOS tests.\n'
@@ -276,7 +274,6 @@ this command.
     bool ranUnitTests = false;
     bool ranAnyTests = false;
     bool failed = false;
-    bool hasMissingBuild = false;
     bool hasMisconfiguredIntegrationTest = false;
     // Iterate through all examples (in the rare case that there is more than
     // one example); running any tests found for each one. Requirements on what
@@ -311,12 +308,16 @@ this command.
         platform: platform,
       );
       if (!project.isConfigured()) {
-        printError('ERROR: Run "flutter build apk" on $exampleName, or run '
-            'this tool\'s "build-examples --apk" command, '
-            'before executing tests.');
-        failed = true;
-        hasMissingBuild = true;
-        continue;
+        final int exitCode = await processRunner.runAndStream(
+          flutterCommand,
+          <String>['build', 'apk', '--config-only'],
+          workingDir: example.directory,
+        );
+        if (exitCode != 0) {
+          printError('Unable to configure Gradle project.');
+          failed = true;
+          continue;
+        }
       }
 
       if (runUnitTests) {
@@ -379,10 +380,7 @@ this command.
     }
 
     if (failed) {
-      return _PlatformResult(RunState.failed,
-          error: hasMissingBuild
-              ? 'Examples must be built before testing.'
-              : null);
+      return _PlatformResult(RunState.failed);
     }
     if (hasMisconfiguredIntegrationTest) {
       return _PlatformResult(RunState.failed,
