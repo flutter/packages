@@ -18,7 +18,10 @@ dependencies:
     path: ../
   local_auth_android: ^1.0.0
   local_auth_foundation:
-    path: ../../local_auth_foundation
+    git:
+      url: https://github.com/YeungKC/packages
+      ref: 7ba9b32b9abdb4f5461c16354986418e83d81095
+      path: packages/local_auth/local_auth_foundation
 
 dev_dependencies:
   build_runner: ^2.1.10
