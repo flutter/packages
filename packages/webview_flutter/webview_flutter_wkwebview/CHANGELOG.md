@@ -1,3 +1,7 @@
+## 3.7.1
+
+* Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller changes.
+
 ## 3.7.0
 
 * Adds support for `WebResouceError.url`.
