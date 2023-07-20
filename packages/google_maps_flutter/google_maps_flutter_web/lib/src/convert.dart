@@ -70,7 +70,13 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
   if (configuration.webGestureHandling != null) {
     options.gestureHandling = configuration.webGestureHandling!.name;
+  } else if (configuration.scrollGesturesEnabled == false ||
+      configuration.zoomGesturesEnabled == false) {
+      // Old behavior
+      options.gestureHandling = 'none';
   } else {
+    options.gestureHandling = WebGestureHandling.auto.name;
+  }
     options.gestureHandling = WebGestureHandling.auto.name;
   }
 
