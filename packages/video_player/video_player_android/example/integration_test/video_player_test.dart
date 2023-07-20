@@ -79,6 +79,22 @@ void main() {
       expect(await controller.position, const Duration(seconds: 3));
     });
 
+    testWidgets('can clear cache', (WidgetTester tester) async {
+      await controller.initialize();
+
+      await controller.clearCache();
+    });
+
+    testWidgets('can check if caching is supported',
+        (WidgetTester tester) async {
+      await controller.initialize();
+
+      final bool? isSupported =
+          await controller.isCacheSupportedForNetworkMedia('www.video.mp4');
+
+      expect(isSupported, true);
+    });
+
     testWidgets('can be paused', (WidgetTester tester) async {
       await controller.initialize();
 

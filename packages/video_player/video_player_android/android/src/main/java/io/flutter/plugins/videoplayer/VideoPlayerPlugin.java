@@ -5,9 +5,13 @@
 package io.flutter.plugins.videoplayer;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.util.LongSparseArray;
+import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.exoplayer2.util.MimeTypes;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -154,6 +158,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               arg.getFormatHint(),
               httpHeaders,
               options);
+      boolean isSupported = isCacheSupported(Uri.parse(arg.getUri()));
+      if (isSupported) {
+        player.setMaxCacheSize(arg.getMaxCacheSize());
+        player.setMaxFileSize(arg.getMaxFileSize());
+      }
     }
     videoPlayers.put(handle.id(), player);
 
@@ -169,6 +178,10 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   public void setLooping(@NonNull LoopingMessage arg) {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     player.setLooping(arg.getIsLooping());
+  }
+
+  public void clearCache(@NonNull Messages.ClearCacheMessage msg) {
+    VideoCache.clearVideoCache(flutterState.applicationContext);
   }
 
   public void setVolume(@NonNull VolumeMessage arg) {
@@ -212,6 +225,13 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     options.mixWithOthers = arg.getMixWithOthers();
   }
 
+  @NonNull
+  public Messages.IsSupportedMessage isCacheSupportedForNetworkMedia(
+      @NonNull Messages.IsCacheSupportedMessage arg) {
+    boolean isSupported = isCacheSupported(Uri.parse(arg.getUrl()));
+    return new Messages.IsSupportedMessage.Builder().setIsSupported(isSupported).build();
+  }
+
   private interface KeyForAssetFn {
     String get(String asset);
   }
@@ -247,5 +267,20 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     void stopListening(BinaryMessenger messenger) {
       AndroidVideoPlayerApi.setup(messenger, null);
     }
+  }
+
+  private boolean isCacheSupported(@NonNull Uri uri) {
+    String mimeType = getMimeType(uri.toString());
+    return MimeTypes.VIDEO_MP4.equals(mimeType);
+  }
+
+  @Nullable
+  public static String getMimeType(@NonNull String url) {
+    String type = null;
+    String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+    if (extension != null) {
+      type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+    }
+    return type;
   }
 }

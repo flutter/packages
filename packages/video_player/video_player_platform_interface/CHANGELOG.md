@@ -2,6 +2,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Adds web options to customize control's list and displaying context menu.
+* Adds caching functionality for network video.
 
 ## 6.1.0
 

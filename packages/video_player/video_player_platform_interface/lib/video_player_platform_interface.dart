@@ -78,6 +78,17 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setVolume() has not been implemented.');
   }
 
+  /// Returns true if caching is supported for the mimetype of the network video url.
+  Future<bool> isCacheSupportedForNetworkMedia(String url) {
+    throw UnimplementedError(
+        'isCacheSupportedForNetworkMedia() has not been implemented.');
+  }
+
+  /// Clears the cached videos.
+  Future<void> clearCache(int textureId) {
+    throw UnimplementedError('clearCache() has not been implemented.');
+  }
+
   /// Sets the video position to a [Duration] from the start.
   Future<void> seekTo(int textureId, Duration position) {
     throw UnimplementedError('seekTo() has not been implemented.');
@@ -127,14 +138,16 @@ class DataSource {
   ///
   /// The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  DataSource({
-    required this.sourceType,
-    this.uri,
-    this.formatHint,
-    this.asset,
-    this.package,
-    this.httpHeaders = const <String, String>{},
-  });
+  DataSource(
+      {required this.sourceType,
+      this.uri,
+      this.formatHint,
+      this.asset,
+      this.package,
+      this.httpHeaders = const <String, String>{},
+      this.maxCacheSize,
+      this.maxFileSize,
+      this.enableCache = false});
 
   /// The way in which the video was originally loaded.
   ///
@@ -147,6 +160,24 @@ class DataSource {
   /// This will be in different formats depending on the [DataSourceType] of
   /// the original video.
   final String? uri;
+
+  /// The URI to the video file.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final int? maxCacheSize;
+
+  /// The URI to the video file.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final int? maxFileSize;
+
+  /// Enable cache for media.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final bool? enableCache;
 
   /// **Android only**. Will override the platform's generic file format
   /// detection with whatever is set here.
