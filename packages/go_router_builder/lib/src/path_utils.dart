@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'route.dart';
-
 final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 
 /// Converts a [pattern] such as `/user/:id` into [RegExp].
@@ -86,75 +84,4 @@ String patternToPath(String pattern, Map<String, String> pathParameters) {
     buffer.write(pattern.substring(start));
   }
   return buffer.toString();
-}
-
-/// Extracts arguments from the `match` and maps them by parameter name.
-///
-/// The [parameters] should originate from the call to [patternToRegExp] that
-/// creates the [RegExp].
-Map<String, String> extractPathParameters(
-    List<String> parameters, RegExpMatch match) {
-  return <String, String>{
-    for (int i = 0; i < parameters.length; ++i)
-      parameters[i]: match.namedGroup(parameters[i])!
-  };
-}
-
-/// Concatenates two paths.
-///
-/// e.g: pathA = /a, pathB = c/d,  concatenatePaths(pathA, pathB) = /a/c/d.
-String concatenatePaths(String parentPath, String childPath) {
-  // at the root, just return the path
-  if (parentPath.isEmpty) {
-    assert(childPath.startsWith('/'));
-    assert(childPath == '/' || !childPath.endsWith('/'));
-    return childPath;
-  }
-
-  // not at the root, so append the parent path
-  assert(childPath.isNotEmpty);
-  assert(!childPath.startsWith('/'));
-  assert(!childPath.endsWith('/'));
-  return '${parentPath == '/' ? '' : parentPath}/$childPath';
-}
-
-/// Normalizes the location string.
-String canonicalUri(String loc) {
-  String canon = Uri.parse(loc).toString();
-  canon = canon.endsWith('?') ? canon.substring(0, canon.length - 1) : canon;
-
-  // remove trailing slash except for when you shouldn't, e.g.
-  // /profile/ => /profile
-  // / => /
-  // /login?from=/ => login?from=/
-  canon = canon.endsWith('/') && canon != '/' && !canon.contains('?')
-      ? canon.substring(0, canon.length - 1)
-      : canon;
-
-  // /login/?from=/ => /login?from=/
-  // /?from=/ => /?from=/
-  canon = canon.replaceFirst('/?', '?', 1);
-
-  return canon;
-}
-
-/// Builds an absolute path for the provided route.
-String? fullPathForRoute(
-    RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
-  for (final RouteBase route in routes) {
-    final String fullPath = (route is GoRoute)
-        ? concatenatePaths(parentFullpath, route.path)
-        : parentFullpath;
-
-    if (route == targetRoute) {
-      return fullPath;
-    } else {
-      final String? subRoutePath =
-          fullPathForRoute(targetRoute, fullPath, route.routes);
-      if (subRoutePath != null) {
-        return subRoutePath;
-      }
-    }
-  }
-  return null;
 }
