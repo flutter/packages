@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart' show immutable;
 
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
@@ -36,6 +37,7 @@ class AspectRatio {
 /// used to select the best size for a particular image.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/AspectRatioStrategy.
+@immutable
 class AspectRatioStrategy extends JavaObject {
   /// Construct a [AspectRatioStrategy].
   AspectRatioStrategy({

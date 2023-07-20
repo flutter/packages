@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart' show immutable;
 
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
@@ -12,6 +13,7 @@ import 'java_object.dart';
 /// the best size.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy.
+@immutable
 class ResolutionStrategy extends JavaObject {
   /// Construct a [ResolutionStrategy].
   ResolutionStrategy({
