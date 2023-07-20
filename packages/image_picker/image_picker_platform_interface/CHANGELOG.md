@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Formally deprecates all methods that have been replaced with newer variants.
+
 ## 2.8.0
 
 * Adds `getMedia` method.

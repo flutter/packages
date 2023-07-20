@@ -1,6 +1,7 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
   - name: build examples
     script: script/tool_runner.sh
     args: ["build-examples", "--macos"]

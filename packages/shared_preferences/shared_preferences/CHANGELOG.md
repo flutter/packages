@@ -1,6 +1,7 @@
 ## NEXT
 
 * Fixed the example app to be debuggable on Android.
+* Deletes deprecated splash screen meta-data element.
 
 ## 2.2.0
 
