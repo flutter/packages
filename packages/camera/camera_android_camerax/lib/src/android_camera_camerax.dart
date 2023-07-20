@@ -310,8 +310,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     cameraEventStreamController.add(CameraInitializedEvent(
         cameraId,
-        previewResolutionInfo.width.toDouble(),
         previewResolutionInfo.height.toDouble(),
+        previewResolutionInfo.width.toDouble(),
         exposureMode,
         exposurePointSupported,
         focusMode,
