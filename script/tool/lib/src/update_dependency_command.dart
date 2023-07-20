@@ -11,6 +11,7 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';

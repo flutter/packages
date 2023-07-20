@@ -1,10 +1,12 @@
-## NEXT
+## 9.1.1
 
+- Fixes a link in error handling documentation.
+
+## 9.1.0
+
+- Adds the parentNavigatorKey parameter to ShellRouteData and StatefulShellRouteData.
 - Fixes a typo in docs for `StatefulShellRoute.indexedStack(...)`.
-
-## 9.0.4
-
-- Fixes link of Error Handling Documentation in comment.
+- Cleans some typos in the documentation and asserts.
 
 ## 9.0.3
 

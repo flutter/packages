@@ -11,10 +11,6 @@
 # which references this file from source, but out-of-repo.
 # Contact stuartmorgan or devoncarew for assistance if necessary.
 
-# Temporary opt-outs of unawaited_futures; see
-# https://github.com/flutter/flutter/issues/127323
-- webview_flutter/webview_flutter_android
-- webview_flutter/webview_flutter_wkwebview
 # Opts out of unawaited_futures, matching flutter/flutter's disabling due
 # to interactions with animation.
 - animations

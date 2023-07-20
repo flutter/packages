@@ -9,7 +9,9 @@ import 'dart:io';
 
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
-import 'package:process/process.dart';
+
+// From errno definitions.
+const int _noSuchFileError = 2;
 
 /// An override function used by the tests to override the environment variable
 /// lookups using [xdgEnvironmentOverride].
@@ -36,16 +38,44 @@ EnvironmentAccessor? _xdgEnvironmentOverride;
 EnvironmentAccessor _getenv = _productionGetEnv;
 String? _productionGetEnv(String value) => Platform.environment[value];
 
-/// A testing function that replaces the process manager used to run xdg-user-path
-/// with the one supplied.
+/// A wrapper around Process.runSync to allow injection of a fake in tests.
+@visibleForTesting
+abstract class XdgProcessRunner {
+  /// Runs the given command synchronously.
+  ProcessResult runSync(
+    String executable,
+    List<String> arguments, {
+    Encoding? stdoutEncoding = systemEncoding,
+    Encoding? stderrEncoding = systemEncoding,
+  });
+}
+
+class _DefaultProcessRunner implements XdgProcessRunner {
+  const _DefaultProcessRunner();
+
+  @override
+  ProcessResult runSync(String executable, List<String> arguments,
+      {Encoding? stdoutEncoding = systemEncoding,
+      Encoding? stderrEncoding = systemEncoding}) {
+    return Process.runSync(
+      executable,
+      arguments,
+      stdoutEncoding: stdoutEncoding,
+      stderrEncoding: stderrEncoding,
+    );
+  }
+}
+
+/// A testing function that replaces the process runner used to run
+/// xdg-user-path with the one supplied.
 ///
 /// Only available to tests.
 @visibleForTesting
-set xdgProcessManager(ProcessManager processManager) {
-  _processManager = processManager;
+set xdgProcessRunner(XdgProcessRunner processRunner) {
+  _processRunner = processRunner;
 }
 
-ProcessManager _processManager = const LocalProcessManager();
+XdgProcessRunner _processRunner = const _DefaultProcessRunner();
 
 List<Directory> _directoryListFromEnvironment(
     String envVar, List<Directory> fallback) {
@@ -152,13 +182,20 @@ Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR');
 ///
 /// If the `xdg-user-dir` executable is not present this returns null.
 Directory? getUserDirectory(String dirName) {
-  if (!_processManager.canRun('xdg-user-dir')) {
-    return null;
+  final ProcessResult result;
+  try {
+    result = _processRunner.runSync(
+      'xdg-user-dir',
+      <String>[dirName],
+      stdoutEncoding: utf8,
+    );
+  } on ProcessException catch (e) {
+    // Silently return null if it's missing, otherwise pass the exception up.
+    if (e.errorCode == _noSuchFileError) {
+      return null;
+    }
+    rethrow;
   }
-  final ProcessResult result = _processManager.runSync(
-    <String>['xdg-user-dir', dirName],
-    stdoutEncoding: utf8,
-  );
   final String path = (result.stdout as String).split('\n')[0];
   return Directory(path);
 }

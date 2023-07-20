@@ -33,13 +33,29 @@ void main() {
           webWildCards: <String>['image/*'],
         );
 
-        final XFile file =
+        final XFile? file =
             await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
 
-        expect(file.name, mockFile.name);
+        expect(file, isNotNull);
+        expect(file!.name, mockFile.name);
         expect(await file.length(), 4);
         expect(await file.readAsString(), '1001');
         expect(await file.lastModified(), isNotNull);
+      });
+
+      testWidgets('returns null when getFiles returns an empty list',
+          (WidgetTester _) async {
+        // Simulate returning an empty list of files from the DomHelper...
+        final MockDomHelper mockDomHelper = MockDomHelper(
+          files: <XFile>[],
+        );
+
+        final FileSelectorWeb plugin =
+            FileSelectorWeb(domHelper: mockDomHelper);
+
+        final XFile? file = await plugin.openFile();
+
+        expect(file, isNull);
       });
     });
 

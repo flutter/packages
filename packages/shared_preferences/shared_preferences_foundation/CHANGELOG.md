@@ -1,3 +1,7 @@
+## 2.3.2
+
+* Updates to the latest version of `pigeon`.
+
 ## 2.3.1
 
 * Fixes variable binding bug on older versions of Xcode.
