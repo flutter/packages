@@ -2,8 +2,8 @@
 
 This package provides a base class for platform interfaces of [federated flutter plugins](https://flutter.dev/go/federated-plugins).
 
-Platform implementations should extend their platform interface classes rather than implement it as
-newly added methods to platform interfaces are not considered as breaking changes. Extending a platform
+Platform implementations should `extends` their platform interface class rather than `implement`s it, as
+newly added methods to platform interfaces are not considered breaking changes. Extending a platform
 interface ensures that subclasses will get the default implementations from the base class, while
 platform implementations that `implements` their platform interface will be broken by newly added methods.
 
@@ -65,11 +65,12 @@ class SamplePluginPlatformMock extends Mock
 ## A note about `base`
 
 In Dart 3, [the `base` keyword](https://dart.dev/language/class-modifiers#base)
-was introduced to the language, which allows enforcing that implementations
-of an interface use `extends` rather than `implements`. The Flutter team is
+was introduced to the language, which enforces that subclasses use `extends`
+rather than `implements` at compile time. The Flutter team is
 [considering deprecating this package in favor of using
-`base`](https://github.com/flutter/flutter/issues/127396), but no decision has
-been made yet since it removes the ability to do mocking/faking as shown above.
+`base`](https://github.com/flutter/flutter/issues/127396) for platfom interfaces,
+but no decision has been made yet since it removes the ability to do mocking/faking
+as shown above.
 
 Plugin authors may want to consider using `base` instead of this package when
 creating new plugins.
