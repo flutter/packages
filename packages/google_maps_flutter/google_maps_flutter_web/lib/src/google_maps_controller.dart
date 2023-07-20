@@ -248,7 +248,7 @@ class GoogleMapController {
     _polygonsController!.bindToMap(_mapId, map);
     _polylinesController!.bindToMap(_mapId, map);
     _markersController!.bindToMap(_mapId, map);
-    _tileOverlaysController!.googleMap = map;
+    _tileOverlaysController!.bindToMap(_mapId, map);
 
     _controllersBoundToMap = true;
   }

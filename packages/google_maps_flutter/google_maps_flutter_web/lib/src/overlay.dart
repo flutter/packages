@@ -6,8 +6,21 @@ part of google_maps_flutter_web;
 
 /// This wraps a [TileOverlay] in a [gmaps.MapType].
 class TileOverlayController {
-  /// For consistency with Android, this is not configurable.
-  // TODO(AsturaPhoenix): Verify consistency with iOS.
+  /// Creates a `TileOverlayController` that wraps a [TileOverlay] object and its corresponding [gmaps.MapType].
+  TileOverlayController({
+    required TileOverlay tileOverlay,
+  }) {
+    update(tileOverlay);
+  }
+
+  /// The size in pixels of the (square) tiles passed to the Maps SDK.
+  ///
+  /// Even though the web supports any size, and rectangular tiles, for
+  /// for consistency with mobile, this is not configurable on the web.
+  /// (Both Android and iOS prefer square 256px tiles @ 1x DPI)
+  ///
+  /// For higher DPI screens, the Tile that is actually returned can be larger
+  /// than 256px square.
   static const int logicalTileSize = 256;
 
   /// Updates the [gmaps.MapType] and cached properties with an updated
@@ -19,8 +32,12 @@ class TileOverlayController {
       ..getTile = _getTile;
   }
 
+  /// Renders a Tile for gmaps; delegating to the configured [TileProvider].
   HtmlElement? _getTile(
-      gmaps.Point? tileCoord, num? zoom, Document? ownerDocument) {
+    gmaps.Point? tileCoord,
+    num? zoom,
+    Document? ownerDocument,
+  ) {
     if (_tileOverlay.tileProvider == null) {
       return null;
     }

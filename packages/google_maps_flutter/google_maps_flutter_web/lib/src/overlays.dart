@@ -5,15 +5,15 @@
 part of google_maps_flutter_web;
 
 /// This class manages all the [TileOverlayController]s associated to a [GoogleMapController].
-class TileOverlaysController {
-  /// The [gmaps.GMap] instance that this controller operates on.
-  late gmaps.GMap googleMap;
-
+class TileOverlaysController extends GeometryController {
   final Map<TileOverlayId, TileOverlayController> _tileOverlays =
       <TileOverlayId, TileOverlayController>{};
   final List<TileOverlayController> _visibleTileOverlays =
       <TileOverlayController>[];
 
+  // Inserts `tileOverlayController` into the list of visible overlays, and the current [googleMap].
+  //
+  // After insertion, the arrays stay sorted by ascending z-index.
   void _insertZSorted(TileOverlayController tileOverlayController) {
     final int index = _visibleTileOverlays.lowerBoundBy<num>(
         tileOverlayController,
@@ -23,8 +23,13 @@ class TileOverlaysController {
     _visibleTileOverlays.insert(index, tileOverlayController);
   }
 
-  void _removeZSorted(TileOverlayController tileOverlayController) {
+  // Removes `tileOverlayController` from the list of visible overlays.
+  void _remove(TileOverlayController tileOverlayController) {
     final int index = _visibleTileOverlays.indexOf(tileOverlayController);
+    if (index < 0) {
+      return;
+    }
+
     googleMap.overlayMapTypes!.removeAt(index);
     _visibleTileOverlays.removeAt(index);
   }
@@ -32,63 +37,64 @@ class TileOverlaysController {
   /// Adds new [TileOverlay]s to this controller.
   ///
   /// Wraps the [TileOverlay]s in corresponding [TileOverlayController]s.
-  void addTileOverlays(Set<TileOverlay> tileOverlays) {
-    for (final TileOverlay tileOverlay in tileOverlays) {
-      final TileOverlayController controller = TileOverlayController()
-        ..update(tileOverlay);
-      _tileOverlays[tileOverlay.tileOverlayId] = controller;
+  void addTileOverlays(Set<TileOverlay> tileOverlaysToAdd) {
+    tileOverlaysToAdd.forEach(_addTileOverlay);
+  }
 
-      if (tileOverlay.visible) {
-        _insertZSorted(controller);
-      }
+  void _addTileOverlay(TileOverlay tileOverlay) {
+    final TileOverlayController controller = TileOverlayController(
+      tileOverlay: tileOverlay,
+    );
+    _tileOverlays[tileOverlay.tileOverlayId] = controller;
+
+    if (tileOverlay.visible) {
+      _insertZSorted(controller);
     }
   }
 
   /// Updates [TileOverlay]s with new options.
   void changeTileOverlays(Set<TileOverlay> tileOverlays) {
-    for (final TileOverlay tileOverlay in tileOverlays) {
-      final TileOverlayController controller =
-          _tileOverlays[tileOverlay.tileOverlayId]!;
+    tileOverlays.forEach(_changeTileOverlay);
+  }
 
-      final bool wasVisible = controller.tileOverlay.visible;
-      final bool zIndexChanged =
-          tileOverlay.zIndex != controller.tileOverlay.zIndex;
-      if (wasVisible && !tileOverlay.visible || zIndexChanged) {
-        _removeZSorted(controller);
-      }
+  void _changeTileOverlay(TileOverlay tileOverlay) {
+    final TileOverlayController controller =
+        _tileOverlays[tileOverlay.tileOverlayId]!;
 
-      controller.update(tileOverlay);
+    final bool wasVisible = controller.tileOverlay.visible;
+    final bool isVisible = tileOverlay.visible;
+    final bool moved = tileOverlay.zIndex != controller.tileOverlay.zIndex;
 
-      if (tileOverlay.visible) {
-        if (!wasVisible || zIndexChanged) {
-          _insertZSorted(controller);
-        } else {
-          final int i = _visibleTileOverlays.indexOf(controller);
-          googleMap.overlayMapTypes!.setAt(i, controller.gmMapType);
-        }
-      }
+    controller.update(tileOverlay);
+
+    if (wasVisible || moved) {
+      _remove(controller);
+    }
+    if (isVisible || moved) {
+      _insertZSorted(controller);
     }
   }
 
   /// Removes the tile overlays associated with the given [TileOverlayId]s.
   void removeTileOverlays(Set<TileOverlayId> tileOverlayIds) {
-    for (final TileOverlayId id in tileOverlayIds) {
-      final TileOverlayController controller = _tileOverlays.remove(id)!;
-      if (controller.tileOverlay.visible) {
-        _removeZSorted(controller);
-      }
+    tileOverlayIds.forEach(_removeTileOverlay);
+  }
+
+  void _removeTileOverlay(TileOverlayId tileOverlayId) {
+    final TileOverlayController? controller =
+        _tileOverlays.remove(tileOverlayId);
+    if (controller != null) {
+      _remove(controller);
     }
   }
 
   /// Invalidates the tile overlay associated with the given [TileOverlayId].
   void clearTileCache(TileOverlayId tileOverlayId) {
     final TileOverlayController? controller = _tileOverlays[tileOverlayId];
-    if (controller == null || !controller.tileOverlay.visible) {
-      return;
+    if (controller != null && controller.tileOverlay.visible) {
+      final int i = _visibleTileOverlays.indexOf(controller);
+      // This causes the map to reload the overlay.
+      googleMap.overlayMapTypes!.setAt(i, controller.gmMapType);
     }
-
-    final int i = _visibleTileOverlays.indexOf(controller);
-    googleMap.overlayMapTypes!.setAt(i, controller.gmMapType);
-    // It's that simple; this causes the map to reload the overlay.
   }
 }

@@ -101,7 +101,7 @@ void main() {
       ]);
     });
 
-    testWidgets('removeTileOverlaysMarkers', (WidgetTester tester) async {
+    testWidgets('removeTileOverlays', (WidgetTester tester) async {
       controller.addTileOverlays(<TileOverlay>{...tileOverlays});
 
       controller.removeTileOverlays(<TileOverlayId>{

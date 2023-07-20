@@ -34,14 +34,11 @@ void main() {
 
   group('TileOverlayController', () {
     const TileOverlayId id = TileOverlayId('');
-    late TileOverlayController controller;
-
-    setUp(() {
-      controller = TileOverlayController();
-    });
 
     testWidgets('minimal initialization', (WidgetTester tester) async {
-      controller.update(const TileOverlay(tileOverlayId: id));
+      final TileOverlayController controller = TileOverlayController(
+        tileOverlay: const TileOverlay(tileOverlayId: id),
+      );
 
       final gmaps.Size size = controller.gmMapType.tileSize!;
       expect(size.width, TileOverlayController.logicalTileSize);
@@ -51,10 +48,12 @@ void main() {
     });
 
     testWidgets('produces image tiles', (WidgetTester tester) async {
-      controller.update(const TileOverlay(
-        tileOverlayId: id,
-        tileProvider: TestTileProvider(),
-      ));
+      final TileOverlayController controller = TileOverlayController(
+        tileOverlay: const TileOverlay(
+          tileOverlayId: id,
+          tileProvider: TestTileProvider(),
+        ),
+      );
 
       final html.ImageElement img =
           controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, html.document)!
@@ -63,15 +62,7 @@ void main() {
       expect(img.naturalHeight, 0);
       expect(img.hidden, true);
 
-      // `onLoad` is fired when `src` is set; then `decode` is fired once the
-      // image has been decoded. Some of our assertions test properties set in
-      // the overlay controller's `decode` handler. Those are guaranteed to run
-      // first since the overlay controller sets `src`, which precipitates
-      // `onLoad` here, synchronously before it initiates `decode`. Technically
-      // the `decode` call here could otherwise have a side effect of initiating
-      // the decoding, but that shouldn't affect correctness, though it may let
-      // a performance regression slip by should the impl let the browser
-      // attempt to paint a tile before it is decoded.
+      // Wait until the image is fully loaded and decoded before re-reading its attributes.
       await img.onLoad.first;
       await img.decode();
 
@@ -81,39 +72,47 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      controller.update(const TileOverlay(
-        tileOverlayId: id,
-        tileProvider: NoTileProvider(),
-      ));
-
+      final TileOverlayController controller = TileOverlayController(
+        tileOverlay: const TileOverlay(
+          tileOverlayId: id,
+          tileProvider: NoTileProvider(),
+        ),
+      );
       {
         final html.ImageElement img =
             controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, html.document)!
                 as html.ImageElement;
         await null; // let `getTile` `then` complete
-        expect(img.src, isEmpty);
+        expect(
+          img.src,
+          isEmpty,
+          reason: 'The NoTileProvider never updates the img src',
+        );
       }
 
       controller.update(const TileOverlay(
         tileOverlayId: id,
         tileProvider: TestTileProvider(),
       ));
-
       {
         final html.ImageElement img =
             controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, html.document)!
                 as html.ImageElement;
-        await null; // let `getTile` `then` complete
-        expect(img.src, isNotEmpty);
+        await img.onLoad.first;
+        expect(
+          img.src,
+          isNotEmpty,
+          reason: 'The img `src` should eventually become the Blob URL.',
+        );
       }
 
-      // Also make sure updating the tileProvider to null works.
       controller.update(const TileOverlay(tileOverlayId: id));
-
       {
         expect(
-            controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, html.document),
-            null);
+          controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, html.document),
+          null,
+          reason: 'Setting a null tileProvider should work.',
+        );
       }
     });
   });

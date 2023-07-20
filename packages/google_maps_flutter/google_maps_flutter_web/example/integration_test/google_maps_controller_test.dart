@@ -283,7 +283,7 @@ void main() {
         verify(markers.bindToMap(mapId, map));
         verify(polygons.bindToMap(mapId, map));
         verify(polylines.bindToMap(mapId, map));
-        verify(tileOverlays.googleMap = map);
+        verify(tileOverlays.bindToMap(mapId, map));
       });
 
       testWidgets('renders initial geometry', (WidgetTester tester) async {
