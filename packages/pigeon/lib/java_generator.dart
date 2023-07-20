@@ -92,7 +92,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeFilePrologue(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -103,7 +107,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeFileImports(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package};');
       indent.newln();
@@ -128,7 +136,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeOpenNamespace(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
     indent.writeln(
@@ -142,7 +154,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeEnum(
-      JavaOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Enum anEnum, {
+    required String packageName,
+  }) {
     String camelToSnake(String camelCase) {
       final RegExp regex = RegExp('([a-z])([A-Z]+)');
       return camelCase
@@ -176,7 +193,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeDataClass(
-      JavaOptions generatorOptions, Root root, Indent indent, Class klass) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass, {
+    required String packageName,
+  }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -207,10 +229,24 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       }
 
       _writeClassBuilder(generatorOptions, root, indent, klass);
-      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
-          customEnumNames);
-      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
-          customEnumNames);
+      writeClassEncode(
+        generatorOptions,
+        root,
+        indent,
+        klass,
+        customClassNames,
+        customEnumNames,
+        packageName: packageName,
+      );
+      writeClassDecode(
+        generatorOptions,
+        root,
+        indent,
+        klass,
+        customClassNames,
+        customEnumNames,
+        packageName: packageName,
+      );
     });
   }
 
@@ -291,8 +327,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String packageName,
+  }) {
     indent.newln();
     indent.writeln('@NonNull');
     indent.write('ArrayList<Object> toList() ');
@@ -329,8 +366,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String packageName,
+  }) {
     indent.newln();
     indent.write(
         'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
@@ -368,8 +406,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String packageName,
+  }) {
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
@@ -414,7 +453,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       });
 
       for (final Method func in api.methods) {
-        final String channelName = makeChannelName(api, func);
+        final String channelName = makeChannelName(api, func, packageName);
         final String returnType = func.returnType.isVoid
             ? 'Void'
             : _javaTypeForDartType(func.returnType);
@@ -479,14 +518,19 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   @override
-  void writeApis(JavaOptions generatorOptions, Root root, Indent indent) {
+  void writeApis(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
       _writeResultInterface(indent);
     }
-    super.writeApis(generatorOptions, root, indent);
+    super.writeApis(generatorOptions, root, indent, packageName: packageName);
   }
 
   /// Write the java code that represents a host [Api], [api].
@@ -497,7 +541,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// }
   @override
   void writeHostApi(
-      JavaOptions generatorOptions, Root root, Indent indent, Api api) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Api api, {
+    required String packageName,
+  }) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
@@ -532,7 +581,14 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           'static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) ');
       indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
-          _writeMethodSetup(generatorOptions, root, indent, api, method);
+          _writeMethodSetup(
+            generatorOptions,
+            root,
+            indent,
+            api,
+            method,
+            packageName: packageName,
+          );
         }
       });
     });
@@ -581,9 +637,15 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Write a static setup function in the interface.
   /// Example:
   ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
-  void _writeMethodSetup(JavaOptions generatorOptions, Root root, Indent indent,
-      Api api, final Method method) {
-    final String channelName = makeChannelName(api, method);
+  void _writeMethodSetup(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Api api,
+    final Method method, {
+    required String packageName,
+  }) {
+    final String channelName = makeChannelName(api, method, packageName);
     indent.write('');
     indent.addScoped('{', '}', () {
       String? taskQueue;
@@ -815,7 +877,11 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 
   @override
   void writeGeneralUtilities(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     indent.newln();
     _writeErrorClass(indent);
     indent.newln();
@@ -824,7 +890,11 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 
   @override
   void writeCloseNamespace(
-      JavaOptions generatorOptions, Root root, Indent indent) {
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     indent.dec();
     indent.addln('}');
   }

@@ -79,16 +79,28 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
 
   /// Generates C++ file of type specified in [generatorOptions]
   @override
-  void generate(OutputFileOptions<CppOptions> generatorOptions, Root root,
-      StringSink sink) {
+  void generate(
+    OutputFileOptions<CppOptions> generatorOptions,
+    Root root,
+    StringSink sink, {
+    required String packageName,
+  }) {
     assert(generatorOptions.fileType == FileType.header ||
         generatorOptions.fileType == FileType.source);
     if (generatorOptions.fileType == FileType.header) {
-      const CppHeaderGenerator()
-          .generate(generatorOptions.languageOptions, root, sink);
+      const CppHeaderGenerator().generate(
+        generatorOptions.languageOptions,
+        root,
+        sink,
+        packageName: packageName,
+      );
     } else if (generatorOptions.fileType == FileType.source) {
-      const CppSourceGenerator()
-          .generate(generatorOptions.languageOptions, root, sink);
+      const CppSourceGenerator().generate(
+        generatorOptions.languageOptions,
+        root,
+        sink,
+        packageName: packageName,
+      );
     }
   }
 }
@@ -100,7 +112,11 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeFilePrologue(
-      CppOptions generatorOptions, Root root, Indent indent) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -110,7 +126,12 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeFileImports(CppOptions generatorOptions, Root root, Indent indent) {
+  void writeFileImports(
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     final String guardName = _getGuardName(generatorOptions.headerIncludePath);
     indent.writeln('#ifndef $guardName');
     indent.writeln('#define $guardName');
@@ -143,7 +164,12 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeEnum(
-      CppOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Enum anEnum, {
+    required String packageName,
+  }) {
     indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -160,13 +186,22 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeGeneralUtilities(
-      CppOptions generatorOptions, Root root, Indent indent) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
   }
 
   @override
   void writeDataClass(
-      CppOptions generatorOptions, Root root, Indent indent, Class klass) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass, {
+    required String packageName,
+  }) {
     // When generating for a Pigeon unit test, add a test fixture friend class to
     // allow unit testing private methods, since testing serialization via public
     // methods is essentially an end-to-end test.
@@ -271,8 +306,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String packageName,
+  }) {
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
@@ -322,8 +358,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String packageName,
+  }) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
@@ -511,7 +548,11 @@ $friendLines
 
   @override
   void writeCloseNamespace(
-      CppOptions generatorOptions, Root root, Indent indent) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');
     }
@@ -527,7 +568,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeFilePrologue(
-      CppOptions generatorOptions, Root root, Indent indent) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -539,7 +584,12 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   }
 
   @override
-  void writeFileImports(CppOptions generatorOptions, Root root, Indent indent) {
+  void writeFileImports(
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     indent.writeln('#include "${generatorOptions.headerIncludePath}"');
     indent.newln();
     _writeSystemHeaderIncludeBlock(indent, <String>[
@@ -559,7 +609,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeOpenNamespace(
-      CppOptions generatorOptions, Root root, Indent indent) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     if (generatorOptions.namespace != null) {
       indent.writeln('namespace ${generatorOptions.namespace} {');
     }
@@ -567,7 +621,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeGeneralUtilities(
-      CppOptions generatorOptions, Root root, Indent indent) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     final List<String> usingDirectives = <String>[
       'flutter::BasicMessageChannel',
       'flutter::CustomEncodableValue',
@@ -584,7 +642,12 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeDataClass(
-      CppOptions generatorOptions, Root root, Indent indent, Class klass) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass, {
+    required String packageName,
+  }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -610,12 +673,26 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     }
 
     // Serialization.
-    writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
-        customEnumNames);
+    writeClassEncode(
+      generatorOptions,
+      root,
+      indent,
+      klass,
+      customClassNames,
+      customEnumNames,
+      packageName: packageName,
+    );
 
     // Deserialization.
-    writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
-        customEnumNames);
+    writeClassDecode(
+      generatorOptions,
+      root,
+      indent,
+      klass,
+      customClassNames,
+      customEnumNames,
+      packageName: packageName,
+    );
   }
 
   @override
@@ -625,8 +702,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String packageName,
+  }) {
     _writeFunctionDefinition(indent, 'ToEncodableList',
         scope: klass.name,
         returnType: 'EncodableList',
@@ -652,8 +730,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String packageName,
+  }) {
     // Returns the expression to convert the given EncodableValue to a field
     // value.
     String getValueExpression(NamedType field, String encodable) {
@@ -729,8 +808,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String packageName,
+  }) {
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
@@ -751,7 +831,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           'return flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());');
     });
     for (final Method func in api.methods) {
-      final String channelName = makeChannelName(api, func);
+      final String channelName = makeChannelName(api, func, packageName);
       final HostDatatype returnType = getHostDatatype(func.returnType,
           root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
 
@@ -820,7 +900,12 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeHostApi(
-      CppOptions generatorOptions, Root root, Indent indent, Api api) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Api api, {
+    required String packageName,
+  }) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
@@ -846,7 +931,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           '${api.name}* api'
         ], body: () {
       for (final Method method in api.methods) {
-        final String channelName = makeChannelName(api, method);
+        final String channelName = makeChannelName(api, method, packageName);
         indent.writeScoped('{', '}', () {
           indent.writeln(
               'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, '
@@ -1155,7 +1240,11 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
 
   @override
   void writeCloseNamespace(
-      CppOptions generatorOptions, Root root, Indent indent) {
+    CppOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String packageName,
+  }) {
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');
     }
