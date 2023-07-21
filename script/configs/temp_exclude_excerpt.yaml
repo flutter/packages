@@ -22,8 +22,6 @@
 - ios_platform_images
 - multicast_dns
 - palette_generator
-- pigeon
-- plugin_platform_interface
 - pointer_interceptor
 - quick_actions/quick_actions
 - webview_flutter_android
