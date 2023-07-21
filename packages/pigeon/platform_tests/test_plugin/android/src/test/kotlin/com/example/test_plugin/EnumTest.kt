@@ -20,7 +20,7 @@ internal class EnumTest: TestCase() {
         val binaryMessenger = mockk<BinaryMessenger>()
         val api = mockk<EnumApi2Host>()
 
-        val channelName = "dev.flutter.pigeon.EnumApi2Host.echo"
+        val channelName = "dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo"
         val input = DataWithEnum(EnumState.SUCCESS)
 
         val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
