@@ -1,5 +1,6 @@
-## NEXT
+## 0.9.13+3
 
+* Migrating styleFrom API to new version.
 * Fixes unawaited_futures violations.
 
 ## 0.9.13+2

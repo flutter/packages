@@ -1,3 +1,7 @@
+## 0.10.8+5
+
+* Migrating styleFrom API to new version.
+
 ## 0.10.8+4
 
 * Adjusts SDK checks for better testability.

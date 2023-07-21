@@ -1,3 +1,7 @@
+## NEXT
+
+* Migrating styleFrom API to new version.
+
 ## 0.9.3
 
 * Adds `getSaveLocation` and deprecates `getSavePath`.
