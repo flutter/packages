@@ -6,12 +6,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
 
+import 'package:yaml/yaml.dart' as yaml;
+
 import 'ast.dart';
 
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '10.1.3';
+const String pigeonVersion = '10.1.4';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -163,8 +165,8 @@ class Indent {
 }
 
 /// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func) {
-  return 'dev.flutter.pigeon.${api.name}.${func.name}';
+String makeChannelName(Api api, Method func, String dartPackageName) {
+  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
 }
 
 /// Represents the mapping of a Dart datatype to a Host datatype.
@@ -523,10 +525,53 @@ void addDocumentationComments(
   }
 }
 
-/// Returns an ordered list of fields to provide consistent serialisation order.
+/// Returns an ordered list of fields to provide consistent serialization order.
 Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
   // This returns the fields in the order they are declared in the pigeon file.
   return klass.fields;
+}
+
+/// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
+/// parent directory and returns its path.
+String? _findPubspecPath(String dartFilePath) {
+  try {
+    Directory dir = File(dartFilePath).parent;
+    String? pubspecPath;
+    while (pubspecPath == null) {
+      if (dir.existsSync()) {
+        final Iterable<String> pubspecPaths = dir
+            .listSync()
+            .map((FileSystemEntity e) => e.path)
+            .where((String path) => path.endsWith('pubspec.yaml'));
+        if (pubspecPaths.isNotEmpty) {
+          pubspecPath = pubspecPaths.first;
+        } else {
+          dir = dir.parent;
+        }
+      } else {
+        break;
+      }
+    }
+    return pubspecPath;
+  } catch (ex) {
+    return null;
+  }
+}
+
+/// Given the path of a Dart file, [mainDartFile], the name of the package will
+/// be deduced by locating and parsing its associated pubspec.yaml.
+String? deducePackageName(String mainDartFile) {
+  final String? pubspecPath = _findPubspecPath(mainDartFile);
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  try {
+    final String text = File(pubspecPath).readAsStringSync();
+    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'] as String?;
+  } catch (_) {
+    return null;
+  }
 }
 
 /// Enum to specify which file will be generated for multi-file generators

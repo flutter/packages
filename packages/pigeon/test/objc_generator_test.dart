@@ -8,6 +8,8 @@ import 'package:pigeon/objc_generator.dart';
 import 'package:pigeon/pigeon_lib.dart';
 import 'package:test/test.dart';
 
+const String DEFAULT_PACKAGE_NAME = 'test_package';
+
 void main() {
   test('gen one class header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
@@ -24,7 +26,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSString.*field1'));
@@ -45,7 +52,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -68,7 +80,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
     expect(code, contains('  Enum1One = 0,'));
@@ -92,7 +109,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(prefix: 'PREFIX'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
     expect(code, contains('  PREFIXEnum1One = 0,'));
@@ -134,7 +156,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
@@ -173,7 +200,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: options,
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('typedef NS_ENUM(NSUInteger, ACFoo)'));
       expect(code, contains(':(ACFoo)foo error:'));
@@ -185,7 +217,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: options,
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -254,7 +291,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
   });
@@ -292,7 +334,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
@@ -338,7 +385,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
@@ -392,7 +444,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@class FlutterStandardTypedData;'));
@@ -426,7 +483,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
     expect(code,
@@ -453,7 +515,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code,
         contains('@property(nonatomic, strong, nullable) Input * nested;'));
@@ -479,7 +546,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -504,7 +576,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface ABCFoobar'));
   });
@@ -524,7 +601,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@implementation ABCFoobar'));
   });
@@ -564,7 +646,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, matches('property.*ABCInput'));
     expect(code, matches('ABCNested.*doSomething.*ABCInput'));
@@ -606,7 +693,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
@@ -648,7 +740,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
     expect(
@@ -694,7 +791,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
@@ -731,7 +833,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('(void)doSomething:'));
   });
@@ -766,7 +873,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, matches('[.*doSomething:.*]'));
@@ -803,7 +915,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('completion:(void (^)(FlutterError *_Nullable))'));
   });
@@ -838,7 +955,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('completion:(void (^)(FlutterError *_Nullable))'));
     expect(code, contains('completion(nil)'));
@@ -868,7 +990,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, matches('ABCOutput.*doSomethingWithError:[(]FlutterError'));
   });
@@ -897,7 +1024,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, matches('output.*=.*api doSomethingWithError:&error'));
   });
@@ -926,7 +1058,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -958,7 +1095,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -982,7 +1124,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSArray.*field1'));
@@ -1003,7 +1150,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSDictionary.*field1'));
@@ -1030,7 +1182,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(
@@ -1065,7 +1222,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
   });
@@ -1106,7 +1268,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1151,7 +1318,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1184,7 +1356,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1210,7 +1387,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1255,7 +1437,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1299,7 +1486,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1325,7 +1517,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1358,7 +1555,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1382,7 +1584,12 @@ void main() {
           prefix: 'ABC',
           copyrightHeader: makeIterable('hello world')),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -1399,7 +1606,12 @@ void main() {
           prefix: 'ABC',
           copyrightHeader: makeIterable('hello world')),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -1431,7 +1643,12 @@ void main() {
       languageOptions:
           const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('NSArray<NSNumber *> * field1'));
   });
@@ -1467,7 +1684,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
@@ -1480,7 +1702,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -1520,7 +1747,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
@@ -1533,7 +1765,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
@@ -1576,7 +1813,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSArray<NSNumber *> *> *)arg'));
     }
@@ -1609,7 +1851,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code, contains('- (nullable NSArray<NSNumber *> *)doitWithError:'));
@@ -1623,7 +1870,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('NSArray<NSNumber *> *output ='));
     }
@@ -1656,7 +1908,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code, contains('doitWithCompletion:(void (^)(NSArray<NSNumber *> *'));
@@ -1670,7 +1927,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code, contains('doitWithCompletion:(void (^)(NSArray<NSNumber *> *'));
@@ -1705,7 +1967,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -1721,7 +1988,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
       expect(code,
@@ -1762,7 +2034,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -1778,7 +2055,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
       expect(code,
@@ -1817,7 +2099,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -1833,7 +2120,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -1883,7 +2175,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, divideRoot, sink);
+      generator.generate(
+        generatorOptions,
+        divideRoot,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
@@ -1896,7 +2193,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, divideRoot, sink);
+      generator.generate(
+        generatorOptions,
+        divideRoot,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
@@ -1913,7 +2215,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, divideRoot, sink);
+      generator.generate(
+        generatorOptions,
+        divideRoot,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*;'));
     }
@@ -1926,7 +2233,12 @@ void main() {
         languageOptions:
             const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
-      generator.generate(generatorOptions, divideRoot, sink);
+      generator.generate(
+        generatorOptions,
+        divideRoot,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*{'));
     }
@@ -1947,7 +2259,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@property(nonatomic, copy) NSString * field1'));
@@ -1976,7 +2293,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -2007,7 +2329,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, matches(r'doitWithCompletion.*NSNumber \*_Nullable'));
   });
@@ -2035,7 +2362,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, matches(r'nullable NSNumber.*doitWithError'));
   });
@@ -2068,7 +2400,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const ObjcOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
@@ -2080,7 +2417,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const ObjcOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code,
           contains('NSNumber *arg_foo = GetNullableObjectAtIndex(args, 0);'));
@@ -2115,7 +2457,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const ObjcOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
@@ -2127,7 +2474,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const ObjcOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
     }
@@ -2157,7 +2509,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -2247,7 +2604,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     for (final String comment in comments) {
       expect(code, contains('///$comment'));
@@ -2255,7 +2617,7 @@ void main() {
     expect(code, contains('/// ///'));
   });
 
-  test('doesnt create codecs if no custom datatypes', () {
+  test("doesn't create codecs if no custom datatypes", () {
     final Root root = Root(
       apis: <Api>[
         Api(
@@ -2288,7 +2650,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(contains(' : FlutterStandardReader')));
   });
@@ -2336,7 +2703,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const ObjcOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains(' : FlutterStandardReader'));
   });

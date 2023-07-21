@@ -103,6 +103,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
       suppressVersion: true,
+      dartPackageName: 'pigeon_integration_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -117,6 +118,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       suppressVersion: true,
+      dartPackageName: 'pigeon_integration_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -141,6 +143,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           ? null
           : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
       suppressVersion: true,
+      dartPackageName: 'pigeon_integration_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -158,6 +161,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           ? null
           : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
       suppressVersion: true,
+      dartPackageName: 'pigeon_integration_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -185,6 +189,7 @@ Future<int> runPigeon({
   bool suppressVersion = false,
   String copyrightHeader = './copyright_header.txt',
   String? basePath,
+  String? dartPackageName,
 }) async {
   // Temporarily suppress the version output via the global flag if requested.
   // This is done because having the version in all the generated test output
@@ -218,6 +223,7 @@ Future<int> runPigeon({
     swiftOut: swiftOut,
     swiftOptions: const SwiftOptions(),
     basePath: basePath,
+    dartPackageName: dartPackageName,
   ));
   includeVersionInGeneratedWarning = originalWarningSetting;
   return result;
