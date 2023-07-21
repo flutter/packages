@@ -4,6 +4,7 @@
 - Aligns Dart and Flutter SDK constraints.
 - Updates minimum Flutter version to 3.0.
 - Updates package description.
+- Update the Color class's official documentation URL 
 
 ## 1.1.1
 
