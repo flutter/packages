@@ -1,3 +1,6 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #import "CacheConfiguration.h"
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -22,9 +25,11 @@ static NSString *kURLKey = @"kURLKey";
 
 + (instancetype)configurationWithFilePath:(NSString *)filePath error:(NSError **)error {
   filePath = [self configurationFilePathForFilePath:filePath];
-    NSData *data = [NSData dataWithContentsOfFile:filePath];
-    CacheConfiguration *configuration = [NSKeyedUnarchiver unarchivedObjectOfClass:[CacheConfiguration class] fromData:data error:error];
-    
+  NSData *data = [NSData dataWithContentsOfFile:filePath];
+  CacheConfiguration *configuration =
+      [NSKeyedUnarchiver unarchivedObjectOfClass:[CacheConfiguration class]
+                                        fromData:data
+                                           error:error];
 
   if (!configuration) {
     configuration = [[CacheConfiguration alloc] init];
@@ -107,16 +112,18 @@ static NSString *kURLKey = @"kURLKey";
 
 - (void)archiveData {
   @synchronized(self.internalCacheFragments) {
-      NSError *error;
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self requiringSecureCoding:NO error:&error];
-      
-      if (error) {
-          NSLog(@"%@", error);
-      }
+    NSError *error;
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self
+                                         requiringSecureCoding:NO
+                                                         error:&error];
+
+    if (error) {
+      NSLog(@"%@", error);
+    }
     [data writeToFile:self.filePath options:NSDataWritingAtomic error:&error];
-      if (error) {
-          NSLog(@"%@", error);
-      }
+    if (error) {
+      NSLog(@"%@", error);
+    }
   }
 }
 
@@ -212,7 +219,8 @@ static NSString *kURLKey = @"kURLKey";
   NSUInteger fileSize = (NSUInteger)attributes.fileSize;
   NSRange range = NSMakeRange(0, fileSize);
 
-    CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath error:error];
+  CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath
+                                                                              error:error];
   configuration.url = url;
 
   ContentInfo *contentInfo = [ContentInfo new];

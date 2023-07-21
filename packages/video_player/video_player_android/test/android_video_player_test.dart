@@ -166,7 +166,7 @@ void main() {
     });
 
     test('can check is supported', () async {
-      final bool? isSupported =
+      final bool isSupported =
           await player.isCacheSupportedForNetworkMedia('www.video.mp4');
       expect(log.log.last, 'isCacheSupportedForNetworkMedia');
       expect(isSupported, true);

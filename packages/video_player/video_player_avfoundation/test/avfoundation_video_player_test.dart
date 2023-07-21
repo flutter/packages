@@ -139,7 +139,7 @@ void main() {
     });
 
     test('can cache .mp4', () async {
-      final bool? isSupported =
+      final bool isSupported =
           await player.isCacheSupportedForNetworkMedia('www.video.mp4');
       expect(log.log.last, 'isCacheSupportedForNetworkMedia');
       expect(isSupported, true);
@@ -224,7 +224,6 @@ void main() {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
-        enableCache: false,
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
       ));
       expect(log.log.last, 'create');
@@ -242,7 +241,6 @@ void main() {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
-        enableCache: false,
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
       ));
       expect(log.log.last, 'create');
@@ -260,7 +258,6 @@ void main() {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
-        enableCache: false,
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
       ));
       expect(log.log.last, 'create');

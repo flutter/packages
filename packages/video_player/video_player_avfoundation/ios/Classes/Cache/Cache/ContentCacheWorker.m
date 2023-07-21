@@ -1,3 +1,6 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #import "ContentCacheWorker.h"
 #import "CacheAction.h"
@@ -57,7 +60,8 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
       _readFileHandle = [NSFileHandle fileHandleForReadingFromURL:fileURL error:&error];
       if (!error) {
         _writeFileHandle = [NSFileHandle fileHandleForWritingToURL:fileURL error:&error];
-          _internalCacheConfiguration = [CacheConfiguration configurationWithFilePath:path error:&error];
+        _internalCacheConfiguration = [CacheConfiguration configurationWithFilePath:path
+                                                                              error:&error];
         _internalCacheConfiguration.url = url;
       }
     }
