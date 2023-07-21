@@ -49,7 +49,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      // Pump WebViewWidget with first controller;
+      // Pump WebViewWidget with first controller.
       final WebKitWebViewController controller1 =
           createTestWebViewController(testInstanceManager);
       final WebKitWebViewWidget webViewWidget = WebKitWebViewWidget(
@@ -68,7 +68,7 @@ void main() {
 
       expect(find.byKey(ObjectKey(webViewWidget.params)), findsOneWidget);
 
-      // Pump WebViewWidget with second controller;
+      // Pump WebViewWidget with second controller.
       final WebKitWebViewController controller2 =
           createTestWebViewController(testInstanceManager);
       final WebKitWebViewWidget webViewWidget2 = WebKitWebViewWidget(
