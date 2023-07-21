@@ -96,6 +96,17 @@ class ExposureCompensationRange {
   int maxCompensation;
 }
 
+// Video quality constraints that will be used by a QualitySelector to choose
+// an appropriate video resolution
+enum Quality {
+  SD, // 480p
+  HD, // 720p
+  FHD, // 1080p
+  UHD, // 2160p
+  lowest,
+  highest,
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -219,7 +230,8 @@ abstract class VideoCaptureFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestRecorderHostApi')
 abstract class RecorderHostApi {
-  void create(int identifier, int? aspectRatio, int? bitRate);
+  void create(
+      int identifier, int? aspectRatio, int? bitRate, int? qualitySelector);
 
   int getAspectRatio(int identifier);
 
