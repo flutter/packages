@@ -61,13 +61,6 @@ class GoRouterState {
   /// The parameters for this match, e.g. {'fid': 'f2'}
   final Map<String, String> pathParameters;
 
-  // /// The query parameters for the location, e.g. {'from': '/family/f2'}
-  // Map<String, String> get queryParameters => uri.queryParameters;
-  //
-  // /// The query parameters for the location,
-  // /// e.g. `{'q1': ['v1'], 'q2': ['v2', 'v3']}`
-  // Map<String, List<String>> get queryParametersAll => uri.queryParametersAll;
-
   /// An extra object to pass along with the navigation.
   final Object? extra;
 
