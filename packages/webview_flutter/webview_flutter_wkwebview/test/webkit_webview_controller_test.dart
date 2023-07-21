@@ -28,6 +28,7 @@ import 'webkit_webview_controller_test.mocks.dart';
   WKWebsiteDataStore,
   WKWebView,
   WKWebViewConfiguration,
+  WKScriptMessageHandler,
 ])
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,11 +49,15 @@ void main() {
         )? observeValue,
       })? createMockWebView,
       MockWKWebViewConfiguration? mockWebViewConfiguration,
+      MockWKScriptMessageHandler? mockWKScriptMessageHandler,
       InstanceManager? instanceManager,
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
       late final MockWKWebView nonNullMockWebView;
+
+      final MockWKScriptMessageHandler nonNullMockWKScriptMessageHandler =
+          mockWKScriptMessageHandler ?? MockWKScriptMessageHandler();
 
       final PlatformWebViewControllerCreationParams controllerCreationParams =
           WebKitWebViewControllerCreationParams(
@@ -97,6 +102,14 @@ void main() {
                   onCreateWebView: onCreateWebView,
                   requestMediaCapturePermission: requestMediaCapturePermission,
                 );
+          },
+          createScriptMessageHandler: ({
+            required void Function(
+              WKUserContentController userContentController,
+              WKScriptMessage scriptMessage,
+            ) didReceiveScriptMessage,
+          }) {
+            return nonNullMockWKScriptMessageHandler;
           },
         ),
         instanceManager: instanceManager,

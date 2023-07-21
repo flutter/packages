@@ -520,8 +520,10 @@ class WebKitWebViewController extends PlatformWebViewController {
   ) {
     _onConsoleLogCallback = onConsoleMessage;
 
-    final JavaScriptChannelParams channelParams = JavaScriptChannelParams(
+    final JavaScriptChannelParams channelParams = WebKitJavaScriptChannelParams(
         name: 'fltConsoleMessage',
+        webKitProxy:
+            (params as WebKitWebViewControllerCreationParams).webKitProxy,
         onMessageReceived: (JavaScriptMessage message) {
           if (_onConsoleLogCallback == null) {
             return;
