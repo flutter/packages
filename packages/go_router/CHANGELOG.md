@@ -1,3 +1,7 @@
+## 9.1.1
+
+- Fixes a link in error handling documentation.
+
 ## 9.1.0
 
 - Adds the parentNavigatorKey parameter to ShellRouteData and StatefulShellRouteData.
