@@ -1,7 +1,3 @@
-## 0.3.6+5
-
-* Migrating styleFrom API to new version.
-
 ## 0.3.6+4
 
 * Removes obsolete null checks on non-nullable values.

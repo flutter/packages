@@ -1,7 +1,3 @@
-## NEXT
-
-* Migrating styleFrom API to new version.
-
 ## 0.5.1+4
 
 * Updates references to the deprecated `macUTIs`.

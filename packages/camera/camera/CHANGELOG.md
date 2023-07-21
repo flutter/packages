@@ -1,7 +1,3 @@
-## 0.10.5+3
-
-* Migrating styleFrom API to new version.
-
 ## 0.10.5+2
 
 * Fixes unawaited_futures violations.

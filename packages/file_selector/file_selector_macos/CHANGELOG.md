@@ -1,7 +1,3 @@
-## NEXT
-
-* Migrating styleFrom API to new version.
-
 ## 0.9.3+1
 
 * Updates to the latest version of `pigeon`.

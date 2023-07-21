@@ -1,7 +1,3 @@
-## 0.5.0+12
-
-* Migrating styleFrom API to new version.
-
 ## 0.5.0+11
 
 * Fixes issue with image data not being emitted after relistening to stream returned by `onStreamedFrameAvailable`.
