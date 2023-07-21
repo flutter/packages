@@ -13,4 +13,5 @@ if [[ $LUCI_PR == "" ]]; then
 else
   # TODO(stuartmorgan): Migrate this check from Cirrus. See
   # https://github.com/flutter/flutter/issues/130076
+  :
 fi
