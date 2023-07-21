@@ -153,8 +153,17 @@ class GoRouterState {
   }
 
   @override
-  int get hashCode => Object.hash(uri, matchedLocation, name, path, fullPath,
-      pathParameters, extra, error, pageKey);
+  int get hashCode => Object.hash(
+    uri,
+    matchedLocation,
+    name,
+    path,
+    fullPath,
+    pathParameters,
+    extra,
+    error,
+    pageKey,
+  );
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.
