@@ -25,8 +25,7 @@ class _ValidatorGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {}
 
   @override
-  Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
-      sink;
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) => sink;
 
   @override
   List<Error> validate(PigeonOptions options, Root root) {

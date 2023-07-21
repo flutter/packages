@@ -379,7 +379,7 @@ Iterable<String> _lineReader(String path) sync* {
   }
 }
 
-Future<IOSink?> _openSink(String? output, {String basePath = ''}) async {
+IOSink? _openSink(String? output, {String basePath = ''}) {
   if (output == null) {
     return null;
   }
@@ -389,7 +389,7 @@ Future<IOSink?> _openSink(String? output, {String basePath = ''}) async {
     sink = stdout;
   } else {
     file = File(path.posix.join(basePath, output));
-    await file.create(recursive: true);
+    file.createSync(recursive: true);
     sink = file.openWrite();
   }
   return sink;
@@ -408,7 +408,7 @@ abstract class GeneratorAdapter {
   /// if the [GeneratorAdapter] should generate.
   ///
   /// If it returns `null`, the [GeneratorAdapter] will be skipped.
-  Future<IOSink?> shouldGenerate(PigeonOptions options, FileType fileType);
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType);
 
   /// Write the generated code described in [root] to [sink] using the [options].
   void generate(
@@ -452,7 +452,7 @@ class AstGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
       _openSink(options.astOut, basePath: options.basePath ?? '');
 
   @override
@@ -486,7 +486,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
       _openSink(options.dartOut, basePath: options.basePath ?? '');
 
   @override
@@ -526,7 +526,7 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async {
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) {
     if (options.dartTestOut != null) {
       return _openSink(options.dartTestOut, basePath: options.basePath ?? '');
     } else {
@@ -570,8 +570,7 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  Future<IOSink?> shouldGenerate(
-      PigeonOptions options, FileType fileType) async {
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
     if (fileType == FileType.source) {
       return _openSink(options.objcSourceOut, basePath: options.basePath ?? '');
     } else {
@@ -613,7 +612,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
       _openSink(options.javaOut, basePath: options.basePath ?? '');
 
   @override
@@ -648,7 +647,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
       _openSink(options.swiftOut, basePath: options.basePath ?? '');
 
   @override
@@ -687,8 +686,7 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  Future<IOSink?> shouldGenerate(
-      PigeonOptions options, FileType fileType) async {
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
     if (fileType == FileType.source) {
       return _openSink(options.cppSourceOut, basePath: options.basePath ?? '');
     } else {
@@ -730,7 +728,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  Future<IOSink?> shouldGenerate(PigeonOptions options, FileType _) async =>
+  IOSink? shouldGenerate(PigeonOptions options, FileType _) =>
       _openSink(options.kotlinOut, basePath: options.basePath ?? '');
 
   @override
@@ -1566,8 +1564,7 @@ ${_argParser.usage}''';
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
-      final IOSink? sink =
-          await adapter.shouldGenerate(options, FileType.source);
+      final IOSink? sink = adapter.shouldGenerate(options, FileType.source);
       if (sink != null) {
         final List<Error> adapterErrors =
             adapter.validate(options, parseResults.root);
@@ -1610,7 +1607,7 @@ ${_argParser.usage}''';
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
       for (final FileType fileType in adapter.fileTypeList) {
-        final IOSink? sink = await adapter.shouldGenerate(options, fileType);
+        final IOSink? sink = adapter.shouldGenerate(options, fileType);
         if (sink != null) {
           adapter.generate(sink, options, parseResults.root, fileType);
           await sink.flush();
