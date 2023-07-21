@@ -48,8 +48,8 @@ class OpenImagePage extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColors: Colors.blue,
-                foregroundColors: Colors.white,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
               child: const Text('Press to open an image file(png, jpg)'),
               onPressed: () => _openImageFile(context),
