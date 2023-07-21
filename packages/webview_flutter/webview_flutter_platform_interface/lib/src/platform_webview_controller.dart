@@ -7,7 +7,6 @@ import 'package:flutter/painting.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'platform_navigation_delegate.dart';
-import 'types/javascript_log_level.dart';
 import 'types/types.dart';
 import 'webview_platform.dart' show WebViewPlatform;
 
