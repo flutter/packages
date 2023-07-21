@@ -11,10 +11,10 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_to_regexp/path_to_regexp.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
+import 'path_utils.dart';
 import 'type_helpers.dart';
 
 /// Custom [Iterable] implementation with extra info.
@@ -79,12 +79,8 @@ class GoRouteConfig extends RouteBaseConfig {
   /// The name of the GoRoute to be created by this configuration.
   final String? name;
 
-  late final Set<String> _pathParams = Set<String>.unmodifiable(_parsedPath
-      .whereType<ParameterToken>()
-      .map((ParameterToken e) => e.name));
-
-  late final List<Token> _parsedPath =
-      List<Token>.unmodifiable(parse(_rawJoinedPath));
+  late final Set<String> _pathParams =
+      pathParametersFromPattern(_rawJoinedPath);
 
   String get _rawJoinedPath {
     final List<String> pathSegments = <String>[];
@@ -103,22 +99,18 @@ class GoRouteConfig extends RouteBaseConfig {
   // construct path bits using parent bits
   // if there are any queryParam objects, add in the `queryParam` bits
   String get _locationArgs {
-    final Iterable<String> pathItems = _parsedPath.map((Token e) {
-      if (e is ParameterToken) {
+    final Map<String, String> pathParameters = Map<String, String>.fromEntries(
+      _pathParams.map((String pathParameter) {
         // Enum types are encoded using a map, so we need a nullability check
         // here to ensure it matches Uri.encodeComponent nullability
-        final DartType? type = _field(e.name)?.returnType;
-        return '\${Uri.encodeComponent(${_encodeFor(e.name)}${type?.isEnum ?? false ? '!' : ''})}';
-      }
-      if (e is PathToken) {
-        return e.value;
-      }
-      throw UnsupportedError(
-        '$likelyIssueMessage '
-        'Token ($e) of type ${e.runtimeType} is not supported.',
-      );
-    });
-    return "'${pathItems.join()}'";
+        final DartType? type = _field(pathParameter)?.returnType;
+        final String value =
+            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${type?.isEnum ?? false ? '!' : ''})}';
+        return MapEntry<String, String>(pathParameter, value);
+      }),
+    );
+    final String location = patternToPath(_rawJoinedPath, pathParameters);
+    return "'$location'";
   }
 
   ParameterElement? get _extraParam => _ctor.parameters
