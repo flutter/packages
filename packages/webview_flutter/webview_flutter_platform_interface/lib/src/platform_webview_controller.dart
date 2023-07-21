@@ -265,7 +265,7 @@ abstract class PlatformWebViewController extends PlatformInterface {
   /// Sets a callback that notifies the host application of any log messages
   /// written to the JavaScript console.
   Future<void> setConsoleLogCallback(
-      void Function(JavaScriptLogLevel level, String message)?
+      void Function(JavaScriptLogLevel level, String message)
           onConsoleMessage) {
     throw UnimplementedError(
       'setConsoleLogCallback is not implemented on the current platform',

@@ -516,7 +516,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setConsoleLogCallback(
-    void Function(JavaScriptLogLevel type, String message)? onConsoleMessage,
+    void Function(JavaScriptLogLevel type, String message) onConsoleMessage,
   ) {
     _onConsoleLogCallback = onConsoleMessage;
 
