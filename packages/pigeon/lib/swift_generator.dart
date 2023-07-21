@@ -58,7 +58,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     SwiftOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
@@ -73,7 +73,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     SwiftOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.writeln('import Foundation');
     indent.format('''
@@ -92,7 +92,7 @@ import FlutterMacOS
     Root root,
     Indent indent,
     Enum anEnum, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.newln();
     addDocumentationComments(
@@ -114,7 +114,7 @@ import FlutterMacOS
     Root root,
     Indent indent,
     Class klass, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
@@ -143,7 +143,7 @@ import FlutterMacOS
         klass,
         customClassNames,
         customEnumNames,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
       writeClassEncode(
         generatorOptions,
@@ -152,7 +152,7 @@ import FlutterMacOS
         klass,
         customClassNames,
         customEnumNames,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
     });
   }
@@ -165,7 +165,7 @@ import FlutterMacOS
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.write('func toList() -> [Any?] ');
     indent.addScoped('{', '}', () {
@@ -200,7 +200,7 @@ import FlutterMacOS
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final String className = klass.name;
     indent.write('static func fromList(_ list: [Any?]) -> $className? ');
@@ -248,14 +248,15 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
-    super.writeApis(generatorOptions, root, indent, packageName: packageName);
+    super.writeApis(generatorOptions, root, indent,
+        dartPackageName: dartPackageName);
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -271,7 +272,7 @@ import FlutterMacOS
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
@@ -304,7 +305,7 @@ import FlutterMacOS
         final _SwiftFunctionComponents components =
             _SwiftFunctionComponents.fromMethod(func);
 
-        final String channelName = makeChannelName(api, func, packageName);
+        final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
             ? ''
             : _nullsafeSwiftTypeForDartType(func.returnType);
@@ -378,7 +379,7 @@ import FlutterMacOS
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.host);
 
@@ -453,7 +454,8 @@ import FlutterMacOS
           final _SwiftFunctionComponents components =
               _SwiftFunctionComponents.fromMethod(method);
 
-          final String channelName = makeChannelName(api, method, packageName);
+          final String channelName =
+              makeChannelName(api, method, dartPackageName);
           final String varChannelName = '${method.name}Channel';
           addDocumentationComments(
               indent, method.documentationComments, _docCommentSpec);
@@ -741,7 +743,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     SwiftOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     _writeWrapResult(indent);
     _writeWrapError(indent);

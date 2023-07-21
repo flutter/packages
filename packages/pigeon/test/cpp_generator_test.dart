@@ -55,7 +55,7 @@ void main() {
         languageOptions: const CppOptions(),
       );
       generator.generate(generatorOptions, root, sink,
-          packageName: DEFAULT_PACKAGE_NAME);
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));
@@ -71,7 +71,7 @@ void main() {
         languageOptions: const CppOptions(),
       );
       generator.generate(generatorOptions, root, sink,
-          packageName: DEFAULT_PACKAGE_NAME);
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(code, contains('Input::Input()'));
       expect(code, contains('Output::Output'));
@@ -127,7 +127,7 @@ void main() {
         languageOptions: const CppOptions(),
       );
       generator.generate(generatorOptions, root, sink,
-          packageName: DEFAULT_PACKAGE_NAME);
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       // Method name and argument names should be adjusted.
       expect(code, contains(' DoSomething(const Input& some_input)'));
@@ -149,7 +149,7 @@ void main() {
         languageOptions: const CppOptions(),
       );
       generator.generate(generatorOptions, root, sink,
-          packageName: DEFAULT_PACKAGE_NAME);
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(code, contains('encodable_some_input'));
       expect(code, contains('Output::output_field()'));
@@ -186,7 +186,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
 
@@ -234,7 +234,7 @@ void main() {
         languageOptions: const CppOptions(),
       );
       generator.generate(generatorOptions, root, sink,
-          packageName: DEFAULT_PACKAGE_NAME);
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
 
       expect(
@@ -298,7 +298,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
@@ -316,7 +316,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
@@ -353,7 +353,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('''
@@ -379,7 +379,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('''
@@ -426,7 +426,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
@@ -444,7 +444,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
@@ -516,7 +516,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
 
@@ -568,7 +568,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
 
@@ -697,7 +697,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
 
@@ -740,7 +740,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
 
@@ -864,7 +864,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -980,7 +980,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
@@ -1073,7 +1073,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -1099,7 +1099,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       // Most types should just use get_if, since the parameter is a pointer,
@@ -1227,7 +1227,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -1253,7 +1253,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       // Most types should extract references. Since the type is non-nullable,
@@ -1379,7 +1379,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       // Nullable arguments should all be pointers. This will make them somewhat
@@ -1420,7 +1420,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       // All types pass nulls values when the pointer is null.
@@ -1537,7 +1537,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -1571,7 +1571,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       // Standard types are wrapped an EncodableValues.
@@ -1614,7 +1614,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     // A bare 'auto' here would create a copy, not a reference, which is
@@ -1735,7 +1735,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     for (final String comment in comments) {
@@ -1781,7 +1781,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
@@ -1834,7 +1834,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains(' : public flutter::StandardCodecSerializer'));
@@ -1914,7 +1914,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(contains('reply(wrap')));
@@ -1979,7 +1979,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     // Nothing should be captured by reference for async handlers, since their

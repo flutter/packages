@@ -30,7 +30,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -56,7 +56,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
@@ -84,7 +84,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
@@ -113,7 +113,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
@@ -160,7 +160,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
@@ -204,7 +204,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('typedef NS_ENUM(NSUInteger, ACFoo)'));
@@ -221,7 +221,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -295,7 +295,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
@@ -338,7 +338,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface Input'));
@@ -389,7 +389,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
@@ -448,7 +448,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -487,7 +487,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
@@ -519,7 +519,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code,
@@ -550,7 +550,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -580,7 +580,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface ABCFoobar'));
@@ -605,7 +605,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@implementation ABCFoobar'));
@@ -650,7 +650,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, matches('property.*ABCInput'));
@@ -697,7 +697,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('ABCInput fromList'));
@@ -744,7 +744,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
@@ -795,7 +795,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
@@ -837,7 +837,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('(void)doSomething:'));
@@ -877,7 +877,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
@@ -919,7 +919,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('completion:(void (^)(FlutterError *_Nullable))'));
@@ -959,7 +959,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('completion:(void (^)(FlutterError *_Nullable))'));
@@ -994,7 +994,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, matches('ABCOutput.*doSomethingWithError:[(]FlutterError'));
@@ -1028,7 +1028,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, matches('output.*=.*api doSomethingWithError:&error'));
@@ -1062,7 +1062,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1099,7 +1099,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1128,7 +1128,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -1154,7 +1154,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -1186,7 +1186,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -1226,7 +1226,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
@@ -1272,7 +1272,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1322,7 +1322,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1360,7 +1360,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1391,7 +1391,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1441,7 +1441,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1490,7 +1490,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1521,7 +1521,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1559,7 +1559,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1588,7 +1588,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
@@ -1610,7 +1610,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
@@ -1647,7 +1647,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('NSArray<NSNumber *> * field1'));
@@ -1688,7 +1688,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
@@ -1706,7 +1706,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -1751,7 +1751,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
@@ -1769,7 +1769,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
@@ -1817,7 +1817,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSArray<NSNumber *> *> *)arg'));
@@ -1855,7 +1855,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -1874,7 +1874,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('NSArray<NSNumber *> *output ='));
@@ -1912,7 +1912,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -1931,7 +1931,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -1971,7 +1971,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -1992,7 +1992,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
@@ -2038,7 +2038,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -2059,7 +2059,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
@@ -2103,7 +2103,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -2124,7 +2124,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(
@@ -2179,7 +2179,7 @@ void main() {
         generatorOptions,
         divideRoot,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
@@ -2197,7 +2197,7 @@ void main() {
         generatorOptions,
         divideRoot,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
@@ -2219,7 +2219,7 @@ void main() {
         generatorOptions,
         divideRoot,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*;'));
@@ -2237,7 +2237,7 @@ void main() {
         generatorOptions,
         divideRoot,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*{'));
@@ -2263,7 +2263,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@interface Foobar'));
@@ -2297,7 +2297,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -2333,7 +2333,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, matches(r'doitWithCompletion.*NSNumber \*_Nullable'));
@@ -2366,7 +2366,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, matches(r'nullable NSNumber.*doitWithError'));
@@ -2404,7 +2404,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
@@ -2421,7 +2421,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code,
@@ -2461,7 +2461,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
@@ -2478,7 +2478,7 @@ void main() {
         generatorOptions,
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
@@ -2513,7 +2513,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -2608,7 +2608,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     for (final String comment in comments) {
@@ -2654,7 +2654,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(contains(' : FlutterStandardReader')));
@@ -2707,7 +2707,7 @@ void main() {
       generatorOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains(' : FlutterStandardReader'));

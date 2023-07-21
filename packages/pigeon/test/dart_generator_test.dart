@@ -36,7 +36,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
@@ -62,7 +62,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('enum Foobar'));
@@ -111,7 +111,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
@@ -143,7 +143,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
@@ -176,7 +176,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
@@ -219,7 +219,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -267,7 +267,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -325,7 +325,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
@@ -365,7 +365,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Future<void> doSomething'));
@@ -404,7 +404,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     // The next line verifies that we're not setting a variable to the value of "doSomething", but
@@ -440,7 +440,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, matches('output.*=.*doSomething[(][)]'));
@@ -488,7 +488,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('enum1?.index,'));
@@ -521,7 +521,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('enum Foo {'));
@@ -570,7 +570,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('enum1.index,'));
@@ -603,7 +603,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
@@ -667,7 +667,7 @@ void main() {
       const DartOptions(),
       root,
       mainCodeSink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String mainCode = mainCodeSink.toString();
     expect(mainCode, isNot(contains(r"import 'fo\'o.dart';")));
@@ -685,7 +685,7 @@ void main() {
       ),
       root,
       testCodeSink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String testCode = testCodeSink.toString();
     expect(testCode, contains(r"import 'fo\'o.dart';"));
@@ -738,7 +738,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
@@ -788,7 +788,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(matches('=.s*doSomething')));
@@ -838,7 +838,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
@@ -872,7 +872,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
@@ -891,7 +891,7 @@ void main() {
       DartOptions(copyrightHeader: makeIterable('hello world')),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
@@ -922,7 +922,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
@@ -955,7 +955,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
@@ -990,7 +990,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
@@ -1024,7 +1024,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
@@ -1054,7 +1054,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
@@ -1095,7 +1095,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('List<int?> doit('));
@@ -1128,7 +1128,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
@@ -1159,7 +1159,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>?> doit()'));
@@ -1190,7 +1190,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
@@ -1219,7 +1219,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('int? doit();'));
@@ -1249,7 +1249,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit();'));
@@ -1278,7 +1278,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1313,7 +1313,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Future<void> doit(int? arg_foo) async {'));
@@ -1345,7 +1345,7 @@ void main() {
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('void doit(int? foo);'));
@@ -1371,7 +1371,7 @@ name: foobar
         ),
         root,
         sink,
-        packageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
       expect(code, contains("import 'package:test_package/foo/bar.dart';"));
@@ -1459,7 +1459,7 @@ name: foobar
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     for (final String comment in comments) {
@@ -1500,7 +1500,7 @@ name: foobar
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(contains('extends StandardMessageCodec')));
@@ -1549,7 +1549,7 @@ name: foobar
       const DartOptions(),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('extends StandardMessageCodec'));
@@ -1597,7 +1597,7 @@ name: foobar
       ),
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
 
     final String testCode = sink.toString();

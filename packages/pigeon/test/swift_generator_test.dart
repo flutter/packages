@@ -33,7 +33,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -62,7 +62,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('enum Foobar: Int'));
@@ -96,7 +96,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
@@ -145,7 +145,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('protocol Api'));
@@ -214,7 +214,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('var aBool: Bool? = nil'));
@@ -269,7 +269,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
@@ -310,7 +310,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(matches('.*doSomething(.*) ->')));
@@ -350,7 +350,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('completion: @escaping () -> Void'));
@@ -384,7 +384,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func doSomething() throws -> Output'));
@@ -419,7 +419,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code,
@@ -445,7 +445,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -470,7 +470,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -512,7 +512,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('struct Outer'));
@@ -566,7 +566,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('protocol Api'));
@@ -617,7 +617,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
@@ -655,7 +655,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('enum Enum1: Int'));
@@ -678,7 +678,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
@@ -710,7 +710,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -744,7 +744,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
@@ -780,7 +780,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func doit(arg: [Int64?]'));
@@ -815,7 +815,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func doit(arg argArg: [Int64?]'));
@@ -846,7 +846,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func doit() throws -> [Int64?]'));
@@ -879,7 +879,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -914,7 +914,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func add(x: Int64, y: Int64) throws -> Int64'));
@@ -957,7 +957,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
@@ -997,7 +997,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func doit() throws -> Int64?'));
@@ -1027,7 +1027,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1063,7 +1063,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1099,7 +1099,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1141,7 +1141,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('var input: String\n'));
@@ -1228,7 +1228,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     for (final String comment in comments) {
@@ -1270,7 +1270,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(contains(': FlutterStandardReader ')));
@@ -1319,7 +1319,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains(': FlutterStandardReader '));
@@ -1362,7 +1362,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func setValue(_ value: Int64, for key: String)'));
@@ -1398,7 +1398,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func removeValue(key: String)'));
@@ -1426,7 +1426,7 @@ void main() {
       swiftOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('func removeAll()'));

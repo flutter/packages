@@ -83,7 +83,7 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
     OutputFileOptions<CppOptions> generatorOptions,
     Root root,
     StringSink sink, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(generatorOptions.fileType == FileType.header ||
         generatorOptions.fileType == FileType.source);
@@ -92,14 +92,14 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
         generatorOptions.languageOptions,
         root,
         sink,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
     } else if (generatorOptions.fileType == FileType.source) {
       const CppSourceGenerator().generate(
         generatorOptions.languageOptions,
         root,
         sink,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
     }
   }
@@ -115,7 +115,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
@@ -130,7 +130,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final String guardName = _getGuardName(generatorOptions.headerIncludePath);
     indent.writeln('#ifndef $guardName');
@@ -168,7 +168,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Root root,
     Indent indent,
     Enum anEnum, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.newln();
     addDocumentationComments(
@@ -189,7 +189,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
   }
@@ -200,7 +200,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Root root,
     Indent indent,
     Class klass, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     // When generating for a Pigeon unit test, add a test fixture friend class to
     // allow unit testing private methods, since testing serialization via public
@@ -307,7 +307,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
@@ -359,7 +359,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
@@ -551,7 +551,7 @@ $friendLines
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');
@@ -571,7 +571,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
@@ -588,7 +588,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.writeln('#include "${generatorOptions.headerIncludePath}"');
     indent.newln();
@@ -612,7 +612,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.namespace != null) {
       indent.writeln('namespace ${generatorOptions.namespace} {');
@@ -624,7 +624,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final List<String> usingDirectives = <String>[
       'flutter::BasicMessageChannel',
@@ -646,7 +646,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Root root,
     Indent indent,
     Class klass, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
@@ -680,7 +680,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       klass,
       customClassNames,
       customEnumNames,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
 
     // Deserialization.
@@ -691,7 +691,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       klass,
       customClassNames,
       customEnumNames,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
   }
 
@@ -703,7 +703,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     _writeFunctionDefinition(indent, 'ToEncodableList',
         scope: klass.name,
@@ -731,7 +731,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     // Returns the expression to convert the given EncodableValue to a field
     // value.
@@ -809,7 +809,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
@@ -831,7 +831,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           'return flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());');
     });
     for (final Method func in api.methods) {
-      final String channelName = makeChannelName(api, func, packageName);
+      final String channelName = makeChannelName(api, func, dartPackageName);
       final HostDatatype returnType = getHostDatatype(func.returnType,
           root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
 
@@ -904,7 +904,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
@@ -931,7 +931,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           '${api.name}* api'
         ], body: () {
       for (final Method method in api.methods) {
-        final String channelName = makeChannelName(api, method, packageName);
+        final String channelName =
+            makeChannelName(api, method, dartPackageName);
         indent.writeScoped('{', '}', () {
           indent.writeln(
               'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger, '
@@ -1243,7 +1244,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
     CppOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.namespace != null) {
       indent.writeln('}  // namespace ${generatorOptions.namespace}');

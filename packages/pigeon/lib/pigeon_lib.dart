@@ -190,8 +190,8 @@ class PigeonOptions {
     this.astOut,
     this.debugGenerators,
     this.basePath,
-    String? packageName,
-  }) : _packageName = packageName;
+    String? dartPackageName,
+  }) : _dartPackageName = dartPackageName;
 
   /// Path to the file which will be processed.
   final String? input;
@@ -257,7 +257,7 @@ class PigeonOptions {
   final String? basePath;
 
   /// The name of the package the pigeon files will be used in.
-  final String? _packageName;
+  final String? _dartPackageName;
 
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
@@ -296,7 +296,7 @@ class PigeonOptions {
       astOut: map['astOut'] as String?,
       debugGenerators: map['debugGenerators'] as bool?,
       basePath: map['basePath'] as String?,
-      packageName: map['packageName'] as String?,
+      dartPackageName: map['dartPackageName'] as String?,
     );
   }
 
@@ -325,7 +325,7 @@ class PigeonOptions {
       if (oneLanguage != null) 'oneLanguage': oneLanguage!,
       if (debugGenerators != null) 'debugGenerators': debugGenerators!,
       if (basePath != null) 'basePath': basePath!,
-      if (_packageName != null) 'packageName': _packageName!,
+      if (_dartPackageName != null) 'dartPackageName': _dartPackageName!,
     };
     return result;
   }
@@ -338,12 +338,12 @@ class PigeonOptions {
 
   /// Returns provided or deduced package name, throws `Exception` if none found.
   String getPackageName() {
-    final String? name = _packageName ?? deducePackageName(dartOut ?? '');
+    final String? name = _dartPackageName ?? deducePackageName(dartOut ?? '');
     if (name == null) {
       throw Exception(
         'Unable to deduce package name, and no package name supplied.\n'
-        'Add a `packageName` property to your `PigeonOptions` config,\n'
-        'or add --packageName={name_of_package} to your command line pigeon call.',
+        'Add a `dartPackageName` property to your `PigeonOptions` config,\n'
+        'or add --dartPackageName={name_of_package} to your command line pigeon call.',
       );
     }
     return name;
@@ -479,7 +479,7 @@ class DartGeneratorAdapter implements GeneratorAdapter {
       dartOptionsWithHeader,
       root,
       sink,
-      packageName: options.getPackageName(),
+      dartPackageName: options.getPackageName(),
     );
   }
 
@@ -514,7 +514,7 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
       dartOptionsWithHeader,
       root,
       sink,
-      packageName: options.getPackageName(),
+      dartPackageName: options.getPackageName(),
     );
   }
 
@@ -558,7 +558,7 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
       outputFileOptions,
       root,
       sink,
-      packageName: options.getPackageName(),
+      dartPackageName: options.getPackageName(),
     );
   }
 
@@ -600,7 +600,7 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
       javaOptions,
       root,
       sink,
-      packageName: options.getPackageName(),
+      dartPackageName: options.getPackageName(),
     );
   }
 
@@ -635,7 +635,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       swiftOptions,
       root,
       sink,
-      packageName: options.getPackageName(),
+      dartPackageName: options.getPackageName(),
     );
   }
 
@@ -674,7 +674,7 @@ class CppGeneratorAdapter implements GeneratorAdapter {
       outputFileOptions,
       root,
       sink,
-      packageName: options.getPackageName(),
+      dartPackageName: options.getPackageName(),
     );
   }
 
@@ -716,7 +716,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
       kotlinOptions,
       root,
       sink,
-      packageName: options.getPackageName(),
+      dartPackageName: options.getPackageName(),
     );
   }
 
@@ -1481,7 +1481,7 @@ ${_argParser.usage}''';
       astOut: results['ast_out'] as String?,
       debugGenerators: results['debug_generators'] as bool?,
       basePath: results['base_path'] as String?,
-      packageName: results['package_name'] as String?,
+      dartPackageName: results['package_name'] as String?,
     );
     return opts;
   }

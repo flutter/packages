@@ -77,7 +77,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     DartOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
@@ -95,7 +95,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     DartOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.writeln("import 'dart:async';");
     indent.writeln(
@@ -113,7 +113,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Root root,
     Indent indent,
     Enum anEnum, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.newln();
     addDocumentationComments(
@@ -134,7 +134,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Root root,
     Indent indent,
     Class klass, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
@@ -164,7 +164,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         klass,
         customClassNames,
         customEnumNames,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
       indent.newln();
       writeClassDecode(
@@ -174,7 +174,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         klass,
         customClassNames,
         customEnumNames,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
     });
   }
@@ -197,7 +197,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.write('Object encode() ');
     indent.addScoped('{', '}', () {
@@ -231,7 +231,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     void writeValueDecode(NamedType field, int index) {
       final String resultAt = 'result[$index]';
@@ -311,7 +311,7 @@ $resultAt != null
     Api api, {
     String Function(Method)? channelNameFunc,
     bool isMockHandler = false,
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
     final List<String> customEnumNames =
@@ -359,7 +359,7 @@ $resultAt != null
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
             );
             final String channelName = channelNameFunc == null
-                ? makeChannelName(api, func, packageName)
+                ? makeChannelName(api, func, dartPackageName)
                 : channelNameFunc(func);
             indent.nest(2, () {
               indent.writeln("'$channelName', codec,");
@@ -479,7 +479,7 @@ $resultAt != null
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.host);
     String codecName = _standardMessageCodec;
@@ -536,7 +536,8 @@ final BinaryMessenger? _binaryMessenger;
           'Future<${_addGenericTypesNullable(func.returnType)}> ${func.name}($argSignature) async ',
         );
         indent.addScoped('{', '}', () {
-          final String channelName = makeChannelName(api, func, packageName);
+          final String channelName =
+              makeChannelName(api, func, dartPackageName);
           indent.writeln(
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
           indent.nest(2, () {
@@ -597,7 +598,7 @@ if (replyList == null) {
     DartOptions generatorOptions,
     Root root,
     StringSink sink, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final Indent indent = Indent(sink);
     final String sourceOutPath = generatorOptions.sourceOutPath ?? '';
@@ -619,7 +620,7 @@ if (replyList == null) {
     } else {
       final String path =
           relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
-      indent.writeln("import 'package:$packageName/$path';");
+      indent.writeln("import 'package:$dartPackageName/$path';");
     }
     for (final Api api in root.apis) {
       if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
@@ -636,9 +637,9 @@ if (replyList == null) {
           indent,
           mockApi,
           channelNameFunc: (Method func) =>
-              makeChannelName(api, func, packageName),
+              makeChannelName(api, func, dartPackageName),
           isMockHandler: true,
-          packageName: packageName,
+          dartPackageName: dartPackageName,
         );
       }
     }

@@ -17,7 +17,7 @@ abstract class Generator<T> {
     T generatorOptions,
     Root root,
     StringSink sink, {
-    required String packageName,
+    required String dartPackageName,
   });
 }
 
@@ -31,7 +31,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     StringSink sink, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final Indent indent = Indent(sink);
 
@@ -39,56 +39,56 @@ abstract class StructuredGenerator<T> extends Generator<T> {
       generatorOptions,
       root,
       indent,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
 
     writeFileImports(
       generatorOptions,
       root,
       indent,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
 
     writeOpenNamespace(
       generatorOptions,
       root,
       indent,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
 
     writeGeneralUtilities(
       generatorOptions,
       root,
       indent,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
 
     writeEnums(
       generatorOptions,
       root,
       indent,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
 
     writeDataClasses(
       generatorOptions,
       root,
       indent,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
 
     writeApis(
       generatorOptions,
       root,
       indent,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
 
     writeCloseNamespace(
       generatorOptions,
       root,
       indent,
-      packageName: packageName,
+      dartPackageName: dartPackageName,
     );
   }
 
@@ -97,7 +97,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   });
 
   /// Writes specified imports to [indent].
@@ -105,7 +105,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   });
 
   /// Writes code to [indent] that opens file namespace if needed.
@@ -115,7 +115,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {}
 
   /// Writes code to [indent] that closes file namespace if needed.
@@ -125,7 +125,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {}
 
   /// Writes any necessary helper utilities to [indent] if needed.
@@ -135,7 +135,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {}
 
   /// Writes all enums to [indent].
@@ -145,7 +145,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     for (final Enum anEnum in root.enums) {
       writeEnum(
@@ -153,7 +153,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
         root,
         indent,
         anEnum,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
     }
   }
@@ -164,7 +164,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Root root,
     Indent indent,
     Enum anEnum, {
-    required String packageName,
+    required String dartPackageName,
   }) {}
 
   /// Writes all data classes to [indent].
@@ -174,7 +174,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     for (final Class klass in root.classes) {
       writeDataClass(
@@ -182,7 +182,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
         root,
         indent,
         klass,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
     }
   }
@@ -193,7 +193,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Root root,
     Indent indent,
     Class klass, {
-    required String packageName,
+    required String dartPackageName,
   });
 
   /// Writes a single class encode method to [indent].
@@ -204,7 +204,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {}
 
   /// Writes a single class decode method to [indent].
@@ -215,7 +215,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {}
 
   /// Writes all apis to [indent].
@@ -225,7 +225,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     for (final Api api in root.apis) {
       if (api.location == ApiLocation.host) {
@@ -234,7 +234,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
           root,
           indent,
           api,
-          packageName: packageName,
+          dartPackageName: dartPackageName,
         );
       } else if (api.location == ApiLocation.flutter) {
         writeFlutterApi(
@@ -242,7 +242,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
           root,
           indent,
           api,
-          packageName: packageName,
+          dartPackageName: dartPackageName,
         );
       }
     }
@@ -254,7 +254,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   });
 
   /// Writes a single Host Api to [indent].
@@ -263,6 +263,6 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   });
 }

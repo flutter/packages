@@ -95,7 +95,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
@@ -110,7 +110,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.package != null) {
       indent.writeln('package ${generatorOptions.package};');
@@ -139,7 +139,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.writeln(
         '$_docCommentPrefix Generated class from Pigeon.$_docCommentSuffix');
@@ -158,7 +158,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Root root,
     Indent indent,
     Enum anEnum, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     String camelToSnake(String camelCase) {
       final RegExp regex = RegExp('([a-z])([A-Z]+)');
@@ -197,7 +197,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Root root,
     Indent indent,
     Class klass, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
@@ -236,7 +236,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         klass,
         customClassNames,
         customEnumNames,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
       writeClassDecode(
         generatorOptions,
@@ -245,7 +245,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         klass,
         customClassNames,
         customEnumNames,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
     });
   }
@@ -328,7 +328,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.newln();
     indent.writeln('@NonNull');
@@ -367,7 +367,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.newln();
     indent.write(
@@ -407,7 +407,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
@@ -453,7 +453,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       });
 
       for (final Method func in api.methods) {
-        final String channelName = makeChannelName(api, func, packageName);
+        final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
             ? 'Void'
             : _javaTypeForDartType(func.returnType);
@@ -522,7 +522,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
@@ -530,7 +530,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.newln();
       _writeResultInterface(indent);
     }
-    super.writeApis(generatorOptions, root, indent, packageName: packageName);
+    super.writeApis(generatorOptions, root, indent,
+        dartPackageName: dartPackageName);
   }
 
   /// Write the java code that represents a host [Api], [api].
@@ -545,7 +546,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
@@ -587,7 +588,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             indent,
             api,
             method,
-            packageName: packageName,
+            dartPackageName: dartPackageName,
           );
         }
       });
@@ -643,9 +644,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Indent indent,
     Api api,
     final Method method, {
-    required String packageName,
+    required String dartPackageName,
   }) {
-    final String channelName = makeChannelName(api, method, packageName);
+    final String channelName = makeChannelName(api, method, dartPackageName);
     indent.write('');
     indent.addScoped('{', '}', () {
       String? taskQueue;
@@ -880,7 +881,7 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     JavaOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.newln();
     _writeErrorClass(indent);
@@ -893,7 +894,7 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     JavaOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.dec();
     indent.addln('}');

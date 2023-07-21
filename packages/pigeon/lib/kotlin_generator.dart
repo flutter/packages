@@ -81,7 +81,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
@@ -95,7 +95,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.newln();
     if (generatorOptions.package != null) {
@@ -117,7 +117,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Root root,
     Indent indent,
     Enum anEnum, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.newln();
     addDocumentationComments(
@@ -152,7 +152,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Root root,
     Indent indent,
     Class klass, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
@@ -187,7 +187,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         klass,
         customClassNames,
         customEnumNames,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
       writeClassEncode(
         generatorOptions,
@@ -196,7 +196,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         klass,
         customClassNames,
         customEnumNames,
-        packageName: packageName,
+        dartPackageName: dartPackageName,
       );
     });
   }
@@ -209,7 +209,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     indent.write('fun toList(): List<Any?> ');
     indent.addScoped('{', '}', () {
@@ -243,7 +243,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Class klass,
     Set<String> customClassNames,
     Set<String> customEnumNames, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     final String className = klass.name;
 
@@ -331,14 +331,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
-    super.writeApis(generatorOptions, root, indent, packageName: packageName);
+    super.writeApis(generatorOptions, root, indent,
+        dartPackageName: dartPackageName);
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -352,7 +353,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
@@ -385,7 +386,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       });
 
       for (final Method func in api.methods) {
-        final String channelName = makeChannelName(api, func, packageName);
+        final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
             ? ''
             : _nullsafeKotlinTypeForDartType(func.returnType);
@@ -449,7 +450,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Root root,
     Indent indent,
     Api api, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.host);
 
@@ -530,7 +531,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               }
 
               final String channelName =
-                  makeChannelName(api, method, packageName);
+                  makeChannelName(api, method, dartPackageName);
 
               indent.write(
                   'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec');
@@ -716,7 +717,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent, {
-    required String packageName,
+    required String dartPackageName,
   }) {
     _writeWrapResult(indent);
     _writeWrapError(generatorOptions, indent);

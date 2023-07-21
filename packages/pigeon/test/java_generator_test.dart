@@ -34,7 +34,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
@@ -70,7 +70,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public enum Foobar'));
@@ -107,7 +107,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('package com.google.foobar;'));
@@ -156,7 +156,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
@@ -233,7 +233,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('private @Nullable Boolean aBool;'));
@@ -288,7 +288,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public static class Api'));
@@ -328,7 +328,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
@@ -368,7 +368,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Reply<Void>'));
@@ -402,7 +402,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Output doSomething()'));
@@ -436,7 +436,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('doSomething(@NonNull Reply<Output>'));
@@ -461,7 +461,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public static final class Foobar'));
@@ -486,7 +486,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public static final class Foobar'));
@@ -528,7 +528,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public class Messages'));
@@ -585,7 +585,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public interface Api'));
@@ -642,7 +642,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public static class Api'));
@@ -681,7 +681,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public enum Enum1'));
@@ -726,7 +726,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('public enum Foo'));
@@ -752,7 +752,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
@@ -784,7 +784,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
@@ -818,7 +818,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
@@ -854,7 +854,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('doit(@NonNull List<Long> arg'));
@@ -889,7 +889,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('doit(@NonNull List<Long> arg'));
@@ -920,7 +920,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('List<Long> doit('));
@@ -952,7 +952,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('doit(@NonNull Reply<List<Long>> callback)'));
@@ -981,7 +981,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('doit(@NonNull Reply<Long> callback)'));
@@ -1017,7 +1017,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Messages'));
@@ -1054,7 +1054,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('Object xArg = args.get(0)'));
@@ -1086,7 +1086,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class Messages'));
@@ -1124,7 +1124,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1156,7 +1156,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains(RegExp(r'@Nullable\s*Long doit\(\);')));
@@ -1186,7 +1186,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     // Java doesn't accept nullability annotations in type arguments.
@@ -1220,7 +1220,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('  void doit(@Nullable Long foo);'));
@@ -1253,7 +1253,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1290,7 +1290,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(
@@ -1321,7 +1321,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('@javax.annotation.Generated("dev.flutter.pigeon")'));
@@ -1344,7 +1344,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code,
@@ -1432,7 +1432,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     for (final String comment in comments) {
@@ -1478,7 +1478,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, isNot(contains(' extends StandardMessageCodec')));
@@ -1528,7 +1528,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains(' extends StandardMessageCodec'));
@@ -1549,7 +1549,7 @@ void main() {
       javaOptions,
       root,
       sink,
-      packageName: DEFAULT_PACKAGE_NAME,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, contains('class FlutterError'));
