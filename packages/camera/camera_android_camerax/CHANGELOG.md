@@ -1,3 +1,7 @@
+## 0.5.0+12
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.5.0+11
 
 * Fixes issue with image data not being emitted after relistening to stream returned by `onStreamedFrameAvailable`.

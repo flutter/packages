@@ -1,3 +1,7 @@
+## 0.10.8+5
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.10.8+4
 
 * Adjusts SDK checks for better testability.
