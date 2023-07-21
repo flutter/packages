@@ -1,0 +1,3 @@
+dependency_overrides:
+  webview_flutter_platform_interface:
+    path: ../webview_flutter_platform_interface

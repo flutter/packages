@@ -7,6 +7,7 @@ import 'package:flutter/painting.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'platform_navigation_delegate.dart';
+import 'types/javascript_log_level.dart';
 import 'types/types.dart';
 import 'webview_platform.dart' show WebViewPlatform;
 
@@ -259,6 +260,16 @@ abstract class PlatformWebViewController extends PlatformInterface {
   Future<void> setUserAgent(String? userAgent) {
     throw UnimplementedError(
         'setUserAgent is not implemented on the current platform');
+  }
+
+  /// Sets a callback that notifies the host application of any log messages
+  /// written to the JavaScript console.
+  Future<void> setConsoleLogCallback(
+      void Function(JavaScriptLogLevel level, String message)?
+          onConsoleMessage) {
+    throw UnimplementedError(
+      'setConsoleLogCallback is not implemented on the current platform',
+    );
   }
 
   /// Sets a callback that notifies the host application that web content is

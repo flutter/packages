@@ -74,6 +74,34 @@ const String kTransparentBackgroundPage = '''
 </html>
 ''';
 
+const String kLogExamplePage = '''
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Load file or HTML string example</title>
+</head>
+<body onload="console.log('Logging that the page is loading.')">
+
+<h1>Local demo page</h1>
+<p>
+  This page is used to test the forwarding of console logs to Dart.
+</p>
+
+<style>
+    .center { text-align: center; }
+    .right { text-align: right; }
+</style>
+
+<div class="row-fluid">
+    <div class="span4"><button onclick="console.error('This is an error message.')">Error</button></div>
+    <div class="span4 center"><button onclick="console.warn('This is a warning message.')">Warning</button></div>
+    <div class="span4 right"><button onclick="console.debug('This is a debug message.')">Debug</button></div>
+</div>
+
+</body>
+</html>
+''';
+
 class WebViewExample extends StatefulWidget {
   const WebViewExample({super.key, this.cookieManager});
 
@@ -202,6 +230,7 @@ enum MenuOptions {
   loadHtmlString,
   transparentBackground,
   setCookie,
+  logExample,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -262,6 +291,9 @@ class SampleMenu extends StatelessWidget {
           case MenuOptions.setCookie:
             _onSetCookie();
             break;
+          case MenuOptions.logExample:
+            _onLogExample();
+            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -317,6 +349,10 @@ class SampleMenu extends StatelessWidget {
           key: ValueKey<String>('ShowTransparentBackgroundExample'),
           value: MenuOptions.transparentBackground,
           child: Text('Transparent background example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.logExample,
+          child: Text('Log example'),
         ),
       ],
     );
@@ -465,6 +501,15 @@ class SampleMenu extends StatelessWidget {
     await indexFile.writeAsString(kLocalExamplePage);
 
     return indexFile.path;
+  }
+
+  Future<void> _onLogExample() {
+    webViewController
+        .setConsoleLogCallback((JavaScriptLogLevel level, String message) {
+      debugPrint('== JS == ${level.name}: $message');
+    });
+
+    return webViewController.loadHtmlString(kLogExamplePage);
   }
 }
 

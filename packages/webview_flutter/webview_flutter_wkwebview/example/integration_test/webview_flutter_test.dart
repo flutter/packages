@@ -1193,6 +1193,47 @@ Future<void> main() async {
       await expectLater(controller.currentUrl(), completion(primaryUrl));
     },
   );
+
+  group('Logging', () {
+    testWidgets('can receive console log messages',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+          </head>
+          <body onload="console.log('Test message')">
+            <p>Test page</p>
+          </body>
+          </html>
+         ''';
+
+      final Completer<String> logMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller
+          .setConsoleLogCallback((JavaScriptLogLevel level, String message) {
+        logMessageReceived.complete('${level.name}:$message');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(
+          logMessageReceived.future, completion('log:Test message'));
+    });
+  });
 }
 
 /// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.

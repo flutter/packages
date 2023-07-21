@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 export 'http_response_error.dart';
+export 'javascript_log_level.dart';
 export 'javascript_message.dart';
 export 'javascript_mode.dart';
 export 'load_request_params.dart';

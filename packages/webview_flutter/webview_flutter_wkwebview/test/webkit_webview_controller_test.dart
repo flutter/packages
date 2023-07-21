@@ -1163,6 +1163,65 @@ void main() {
       await controller.setInspectable(true);
       verify(mockWebView.setInspectable(true));
     });
+
+    test('setConsoleLogCallback', () async {
+      final MockWKUserContentController mockUserContentController =
+          MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller
+          .setConsoleLogCallback((JavaScriptLogLevel level, String message) {});
+
+      final List<dynamic> capturedScripts =
+          verify(mockUserContentController.addUserScript(captureAny))
+              .captured
+              .toList();
+      final WKUserScript messageHandlerScript =
+          capturedScripts[0] as WKUserScript;
+      final WKUserScript overrideConsoleScript =
+          capturedScripts[1] as WKUserScript;
+
+      expect(messageHandlerScript.isMainFrameOnly, isFalse);
+      expect(messageHandlerScript.injectionTime,
+          WKUserScriptInjectionTime.atDocumentStart);
+      expect(messageHandlerScript.source,
+          'window.fltConsoleMessage = webkit.messageHandlers.fltConsoleMessage;');
+
+      expect(overrideConsoleScript.isMainFrameOnly, isTrue);
+      expect(overrideConsoleScript.injectionTime,
+          WKUserScriptInjectionTime.atDocumentStart);
+      expect(overrideConsoleScript.source, '''
+function log(type, args) {
+  var message =  Object.values(args)
+      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v) : v.toString())
+      .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
+      .join(", ");
+
+  var log = {
+    level: type,
+    message: message
+  };
+
+  window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
+}
+
+let originalLog = console.log;
+let originalWarn = console.warn;
+let originalError = console.error;
+let originalDebug = console.debug;
+
+console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
+console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
+console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
+console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };
+
+window.addEventListener("error", function(e) {
+  log("error", e.message + " at " + e.filename + ":" + e.lineno + ":" + e.colno);
+});
+      ''');
+    });
   });
 
   group('WebKitJavaScriptChannelParams', () {

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -269,6 +270,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
+  void Function(JavaScriptLogLevel, String)? _onConsoleLogCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
@@ -510,6 +512,85 @@ class WebKitWebViewController extends PlatformWebViewController {
     );
     return _webView.configuration.userContentController
         .addUserScript(userScript);
+  }
+
+  @override
+  Future<void> setConsoleLogCallback(
+    void Function(JavaScriptLogLevel type, String message)? onConsoleMessage,
+  ) {
+    _onConsoleLogCallback = onConsoleMessage;
+
+    final JavaScriptChannelParams channelParams = JavaScriptChannelParams(
+        name: 'fltConsoleMessage',
+        onMessageReceived: (JavaScriptMessage message) {
+          if (_onConsoleLogCallback == null) {
+            return;
+          }
+
+          final Map<String, dynamic> consoleLog =
+              jsonDecode(message.message) as Map<String, dynamic>;
+          switch (consoleLog['level']) {
+            case 'error':
+              _onConsoleLogCallback!(
+                  JavaScriptLogLevel.error, consoleLog['message']! as String);
+              break;
+            case 'warning':
+              _onConsoleLogCallback!(
+                  JavaScriptLogLevel.warning, consoleLog['message']! as String);
+              break;
+            case 'default':
+              _onConsoleLogCallback!(
+                  JavaScriptLogLevel.debug, consoleLog['message']! as String);
+              break;
+            case 'log':
+            default:
+              _onConsoleLogCallback!(
+                  JavaScriptLogLevel.log, consoleLog['message']! as String);
+              break;
+          }
+        });
+
+    addJavaScriptChannel(channelParams);
+    return _injectConsoleOverride();
+  }
+
+  Future<void> _injectConsoleOverride() {
+    const WKUserScript overrideScript = WKUserScript(
+      '''
+function log(type, args) {
+  var message =  Object.values(args)
+      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v) : v.toString())
+      .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
+      .join(", ");
+
+  var log = {
+    level: type,
+    message: message
+  };
+
+  window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
+}
+
+let originalLog = console.log;
+let originalWarn = console.warn;
+let originalError = console.error;
+let originalDebug = console.debug;
+
+console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
+console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
+console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
+console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };
+
+window.addEventListener("error", function(e) {
+  log("error", e.message + " at " + e.filename + ":" + e.lineno + ":" + e.colno);
+});
+      ''',
+      WKUserScriptInjectionTime.atDocumentStart,
+      isMainFrameOnly: true,
+    );
+
+    return _webView.configuration.userContentController
+        .addUserScript(overrideScript);
   }
 
   // WKWebView does not support removing a single user script, so all user
