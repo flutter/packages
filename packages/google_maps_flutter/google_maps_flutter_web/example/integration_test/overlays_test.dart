@@ -68,6 +68,9 @@ void main() {
         tileProviders[1].getTile(any, any, any),
         tileProviders[2].getTile(any, any, any),
       ]);
+      verifyNoMoreInteractions(tileProviders[0]);
+      verifyNoMoreInteractions(tileProviders[1]);
+      verifyNoMoreInteractions(tileProviders[2]);
     });
 
     testWidgets('changeTileOverlays', (WidgetTester tester) async {
@@ -87,6 +90,8 @@ void main() {
         tileProviders[1].getTile(any, any, any),
       ]);
       verifyZeroInteractions(tileProviders[0]);
+      verifyNoMoreInteractions(tileProviders[1]);
+      verifyNoMoreInteractions(tileProviders[2]);
 
       // Re-enable overlay 0.
       controller.changeTileOverlays(
@@ -99,6 +104,22 @@ void main() {
         tileProviders[0].getTile(any, any, any),
         tileProviders[1].getTile(any, any, any),
       ]);
+      verifyNoMoreInteractions(tileProviders[0]);
+      verifyNoMoreInteractions(tileProviders[1]);
+      verifyNoMoreInteractions(tileProviders[2]);
+    });
+
+    testWidgets(
+        'updating the z index of a hidden layer does not make it visible',
+        (WidgetTester tester) async {
+      controller.addTileOverlays(<TileOverlay>{...tileOverlays});
+
+      controller.changeTileOverlays(<TileOverlay>{
+        tileOverlays[0].copyWith(zIndexParam: -1, visibleParam: false),
+      });
+
+      probeTiles();
+      verifyZeroInteractions(tileProviders[0]);
     });
 
     testWidgets('removeTileOverlays', (WidgetTester tester) async {

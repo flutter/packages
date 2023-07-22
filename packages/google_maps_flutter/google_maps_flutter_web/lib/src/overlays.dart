@@ -63,14 +63,13 @@ class TileOverlaysController extends GeometryController {
 
     final bool wasVisible = controller.tileOverlay.visible;
     final bool isVisible = tileOverlay.visible;
-    final bool moved = tileOverlay.zIndex != controller.tileOverlay.zIndex;
 
     controller.update(tileOverlay);
 
-    if (wasVisible || moved) {
+    if (wasVisible) {
       _remove(controller);
     }
-    if (isVisible || moved) {
+    if (isVisible) {
       _insertZSorted(controller);
     }
   }
