@@ -383,6 +383,7 @@ void main() {
               mapConfiguration: const MapConfiguration(
             mapType: MapType.satellite,
             zoomControlsEnabled: true,
+            fortyFiveDegreeImageryEnabled: false,
           ));
           controller.debugSetOverrides(
               createMap: (_, gmaps.MapOptions options) {
@@ -398,13 +399,16 @@ void main() {
           expect(capturedOptions!.gestureHandling, 'auto',
               reason:
                   'by default the map handles zoom/pan gestures internally');
+          expect(capturedOptions!.rotateControl, false);
+          expect(capturedOptions!.tilt, 0);
         });
 
-        testWidgets('disables gestureHandling with scrollGesturesEnabled false',
+        testWidgets('translates fortyFiveDegreeImageryEnabled option',
             (WidgetTester tester) async {
           controller = createController(
               mapConfiguration: const MapConfiguration(
             scrollGesturesEnabled: false,
+            fortyFiveDegreeImageryEnabled: true,
           ));
           controller.debugSetOverrides(
               createMap: (_, gmaps.MapOptions options) {
@@ -415,16 +419,16 @@ void main() {
           controller.init();
 
           expect(capturedOptions, isNotNull);
-          expect(capturedOptions!.gestureHandling, 'none',
-              reason:
-                  'disabling scroll gestures disables all gesture handling');
+          expect(capturedOptions!.rotateControl, true);
+          expect(capturedOptions!.tilt, isNull);
         });
 
-        testWidgets('disables gestureHandling with zoomGesturesEnabled false',
+        testWidgets('translates webGestureHandling option',
             (WidgetTester tester) async {
           controller = createController(
               mapConfiguration: const MapConfiguration(
             zoomGesturesEnabled: false,
+            webGestureHandling: WebGestureHandling.greedy,
           ));
           controller.debugSetOverrides(
               createMap: (_, gmaps.MapOptions options) {
@@ -435,9 +439,7 @@ void main() {
           controller.init();
 
           expect(capturedOptions, isNotNull);
-          expect(capturedOptions!.gestureHandling, 'none',
-              reason:
-                  'disabling scroll gestures disables all gesture handling');
+          expect(capturedOptions!.gestureHandling, 'greedy');
         });
 
         testWidgets('sets initial position when passed',

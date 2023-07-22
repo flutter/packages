@@ -30,6 +30,30 @@ class _ShellRouteDataBuilder extends ShellRouteData {
       );
 }
 
+class _ShellRouteDataWithKey extends ShellRouteData {
+  const _ShellRouteDataWithKey(this.key);
+
+  final Key key;
+
+  @override
+  Widget builder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) =>
+      SizedBox(
+        key: key,
+        child: navigator,
+      );
+}
+
+class _GoRouteDataBuildWithKey extends GoRouteData {
+  const _GoRouteDataBuildWithKey(this.key);
+  final Key key;
+  @override
+  Widget build(BuildContext context, GoRouterState state) => SizedBox(key: key);
+}
+
 final GoRoute _goRouteDataBuild = GoRouteData.$route(
   path: '/build',
   factory: (GoRouterState state) => const _GoRouteDataBuild(),
@@ -212,6 +236,63 @@ void main() {
     );
 
     testWidgets(
+      'It should build the page from the overridden build method',
+      (WidgetTester tester) async {
+        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>();
+        final GlobalKey<NavigatorState> inner = GlobalKey<NavigatorState>();
+        final GoRouter goRouter = GoRouter(
+          navigatorKey: root,
+          initialLocation: '/child/test',
+          routes: <RouteBase>[
+            ShellRouteData.$route(
+              factory: (GoRouterState state) =>
+                  const _ShellRouteDataWithKey(Key('under-shell')),
+              routes: <RouteBase>[
+                GoRouteData.$route(
+                    path: '/child',
+                    factory: (GoRouterState state) =>
+                        const _GoRouteDataBuildWithKey(Key('under')),
+                    routes: <RouteBase>[
+                      ShellRouteData.$route(
+                        factory: (GoRouterState state) =>
+                            const _ShellRouteDataWithKey(Key('above-shell')),
+                        navigatorKey: inner,
+                        parentNavigatorKey: root,
+                        routes: <RouteBase>[
+                          GoRouteData.$route(
+                            parentNavigatorKey: inner,
+                            path: 'test',
+                            factory: (GoRouterState state) =>
+                                const _GoRouteDataBuildWithKey(Key('above')),
+                          ),
+                        ],
+                      ),
+                    ]),
+              ],
+            ),
+          ],
+        );
+        await tester.pumpWidget(MaterialApp.router(
+          routerConfig: goRouter,
+        ));
+        expect(find.byKey(const Key('under-shell')), findsNothing);
+        expect(find.byKey(const Key('under')), findsNothing);
+
+        expect(find.byKey(const Key('above-shell')), findsOneWidget);
+        expect(find.byKey(const Key('above')), findsOneWidget);
+
+        goRouter.pop();
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(const Key('under-shell')), findsOneWidget);
+        expect(find.byKey(const Key('under')), findsOneWidget);
+
+        expect(find.byKey(const Key('above-shell')), findsNothing);
+        expect(find.byKey(const Key('above')), findsNothing);
+      },
+    );
+
+    testWidgets(
       'It should build the page from the overridden buildPage method',
       (WidgetTester tester) async {
         final GoRouter goRouter = GoRouter(
@@ -257,6 +338,26 @@ void main() {
         expect(find.byKey(const Key('page-builder')), findsOneWidget);
       },
     );
+
+    test('Can assign parent navigator key', () {
+      final GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
+      final StatefulShellRoute route = StatefulShellRouteData.$route(
+        parentNavigatorKey: key,
+        factory: (GoRouterState state) =>
+            const _StatefulShellRouteDataPageBuilder(),
+        branches: <StatefulShellBranch>[
+          StatefulShellBranchData.$branch(
+            routes: <RouteBase>[
+              GoRouteData.$route(
+                path: '/child',
+                factory: (GoRouterState state) => const _GoRouteDataBuild(),
+              ),
+            ],
+          ),
+        ],
+      );
+      expect(route.parentNavigatorKey, key);
+    });
   });
 
   testWidgets(

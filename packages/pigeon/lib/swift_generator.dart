@@ -55,7 +55,11 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
 
   @override
   void writeFilePrologue(
-      SwiftOptions generatorOptions, Root root, Indent indent) {
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -66,7 +70,11 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
 
   @override
   void writeFileImports(
-      SwiftOptions generatorOptions, Root root, Indent indent) {
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.writeln('import Foundation');
     indent.format('''
 #if os(iOS)
@@ -80,7 +88,12 @@ import FlutterMacOS
 
   @override
   void writeEnum(
-      SwiftOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Enum anEnum, {
+    required String dartPackageName,
+  }) {
     indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -97,7 +110,12 @@ import FlutterMacOS
 
   @override
   void writeDataClass(
-      SwiftOptions generatorOptions, Root root, Indent indent, Class klass) {
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass, {
+    required String dartPackageName,
+  }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -118,10 +136,24 @@ import FlutterMacOS
       });
 
       indent.newln();
-      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
-          customEnumNames);
-      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
-          customEnumNames);
+      writeClassDecode(
+        generatorOptions,
+        root,
+        indent,
+        klass,
+        customClassNames,
+        customEnumNames,
+        dartPackageName: dartPackageName,
+      );
+      writeClassEncode(
+        generatorOptions,
+        root,
+        indent,
+        klass,
+        customClassNames,
+        customEnumNames,
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
@@ -132,8 +164,9 @@ import FlutterMacOS
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String dartPackageName,
+  }) {
     indent.write('func toList() -> [Any?] ');
     indent.addScoped('{', '}', () {
       indent.write('return ');
@@ -166,8 +199,9 @@ import FlutterMacOS
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String dartPackageName,
+  }) {
     final String className = klass.name;
     indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
@@ -213,14 +247,16 @@ import FlutterMacOS
   void writeApis(
     SwiftOptions generatorOptions,
     Root root,
-    Indent indent,
-  ) {
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
-    super.writeApis(generatorOptions, root, indent);
+    super.writeApis(generatorOptions, root, indent,
+        dartPackageName: dartPackageName);
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -235,8 +271,9 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String dartPackageName,
+  }) {
     assert(api.location == ApiLocation.flutter);
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
     if (isCustomCodec) {
@@ -268,7 +305,7 @@ import FlutterMacOS
         final _SwiftFunctionComponents components =
             _SwiftFunctionComponents.fromMethod(func);
 
-        final String channelName = makeChannelName(api, func);
+        final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
             ? ''
             : _nullsafeSwiftTypeForDartType(func.returnType);
@@ -341,8 +378,9 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String dartPackageName,
+  }) {
     assert(api.location == ApiLocation.host);
 
     final String apiName = api.name;
@@ -416,7 +454,8 @@ import FlutterMacOS
           final _SwiftFunctionComponents components =
               _SwiftFunctionComponents.fromMethod(method);
 
-          final String channelName = makeChannelName(api, method);
+          final String channelName =
+              makeChannelName(api, method, dartPackageName);
           final String varChannelName = '${method.name}Channel';
           addDocumentationComments(
               indent, method.documentationComments, _docCommentSpec);
@@ -499,7 +538,7 @@ import FlutterMacOS
     });
   }
 
-  /// Writes the codec classwill be used for encoding messages for the [api].
+  /// Writes the codec class will be used for encoding messages for the [api].
   /// Example:
   /// private class FooHostApiCodecReader: FlutterStandardReader {...}
   /// private class FooHostApiCodecWriter: FlutterStandardWriter {...}
@@ -701,7 +740,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
   @override
   void writeGeneralUtilities(
-      SwiftOptions generatorOptions, Root root, Indent indent) {
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     _writeWrapResult(indent);
     _writeWrapError(indent);
     _writeNilOrValue(indent);

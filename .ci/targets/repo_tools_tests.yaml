@@ -1,5 +1,6 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
   - name: tool unit tests
     script: .ci/scripts/plugin_tools_tests.sh
