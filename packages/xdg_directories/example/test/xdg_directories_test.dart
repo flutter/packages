@@ -1,6 +1,5 @@
+import 'dart:io' show Directory, Platform;
 import 'package:flutter_test/flutter_test.dart';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:integration_test/integration_test.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 
@@ -8,22 +7,69 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('XDG Directories', (WidgetTester _) async {
-    expect(getUserDirectoryNames(), Set<String>, reason: '');
-
-    // Generally all devices should have some default browser.
-    expect(await canLaunchUrl(Uri(scheme: 'http', host: 'flutter.dev')), true);
-    expect(await canLaunchUrl(Uri(scheme: 'https', host: 'flutter.dev')), true);
-
-    // SMS handling is available by default on most platforms.
-    if (kIsWeb || !(Platform.isLinux || Platform.isWindows)) {
-      expect(await canLaunchUrl(Uri(scheme: 'sms', path: '5555555555')), true);
+    if (!Platform.isLinux) {
+      throw Exception('This test is only valid on Linux');
     }
 
-    // Sanity-check legacy API.
-    // ignore: deprecated_member_use
-    expect(await canLaunch('randomstring'), false);
-    // Generally all devices should have some default browser.
-    // ignore: deprecated_member_use
-    expect(await canLaunch('https://flutter.dev'), true);
+    // Check that the XDG directories are valid.
+    expect(getUserDirectoryNames(), Set<String>,
+        reason: 'getUserDirectoryNames() should return a Set<String>');
+
+    expect(
+      getUserDirectoryNames().length,
+      isNot(0),
+      reason: 'getUserDirectoryNames() should return a non-empty Set<String>',
+    );
+
+    final Set<String> userDirectoryNames = getUserDirectoryNames();
+
+    expect(
+      getUserDirectory(userDirectoryNames.first),
+      Directory,
+      reason: 'getUserDirectory() should return a Directory',
+    );
+
+    expect(
+      getUserDirectory('randomString'),
+      null,
+      reason:
+          'getUserDirectory() should return null if the directory does not exist',
+    );
+
+    expect(
+      dataHome,
+      Directory,
+      reason: 'dataHome should return a Directory',
+    );
+
+    expect(
+      configHome,
+      Directory,
+      reason: 'configHome should return a Directory',
+    );
+
+    expect(
+      cacheHome,
+      Directory,
+      reason: 'cacheHome should return a Directory',
+    );
+
+    expect(
+      runtimeDir,
+      Directory,
+      reason: 'runtimeDir should return a Directory',
+    );
+
+    expect(
+      dataDirs,
+      List<Directory>,
+      reason: 'dataDirs should return a List<Directory>',
+    );
+
+    expect(
+      configDirs,
+      List<Directory>,
+      reason: 'configDirs should return a List<Directory>',
+    );
   });
 }
