@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:xdg_directories/xdg_directories.dart';
 import 'widgets/directory_display.dart';
