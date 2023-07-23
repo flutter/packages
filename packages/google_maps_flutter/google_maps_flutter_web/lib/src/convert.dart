@@ -74,11 +74,9 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.rotateControl = configuration.fortyFiveDegreeImageryEnabled;
   }
 
-  // These don't have any configuration entries, but they seem to be off in the
-  // native maps.
-  options.mapTypeControl = false;
-  options.fullscreenControl = false;
-  options.streetViewControl = false;
+  options.mapTypeControl = configuration.mapTypeControl ?? false;
+  options.fullscreenControl = configuration.fullscreenControl ?? false;
+  options.streetViewControl = configuration.streetViewControl ?? false;
 
   options.styles = styles;
 

@@ -403,6 +403,30 @@ void main() {
           expect(capturedOptions!.tilt, 0);
         });
 
+        testWidgets(
+            'translates mapTypeControl, fullscreenControl, streetViewControl configurations',
+            (WidgetTester tester) async {
+          controller = createController(
+              mapConfiguration: const MapConfiguration(
+            mapTypeControl: true,
+            fullscreenControl: true,
+            streetViewControl: true,
+          ));
+
+          controller.debugSetOverrides(
+              createMap: (_, gmaps.MapOptions options) {
+            capturedOptions = options;
+            return map;
+          });
+
+          controller.init();
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedOptions!.mapTypeControl, true);
+          expect(capturedOptions!.fullscreenControl, true);
+          expect(capturedOptions!.streetViewControl, true);
+        });
+
         testWidgets('translates fortyFiveDegreeImageryEnabled option',
             (WidgetTester tester) async {
           controller = createController(
