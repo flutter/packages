@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Adds `mapType`, `fullscreen` and `streetview` controls to google maps configuration.
+
 ## 2.4.0
 
 * Adds options for gesture handling and tilt controls on web.
