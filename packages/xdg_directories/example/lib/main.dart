@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:xdg_directories/xdg_directories.dart';
-import 'widgets/DirectoryDisplay.dart';
+import 'widgets/directory_display.dart';
 
 void main() {
   runApp(const MyApp());
@@ -99,85 +101,31 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(
               height: 50,
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 10, bottom: 5),
-              child: Text(
-                'Config directories:',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: configDirs.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  directoryTextWidget(
-                configDirs[index].path,
-              ),
+            DirectoryDisplay.listOfValues(
+              title: 'Config directories:',
+              values: configDirs.map((Directory d) => d.path).toList(),
             ),
             const SizedBox(
               height: 50,
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 10, bottom: 5),
-              child: Text(
-                'Data directories:',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: dataDirs.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  DirectoryDisplay(
-                title: 'Selected directory:',
-                value: userDirectory,
-              ),
-              directoryTextWidget(
-                dataDirs[index].path,
-              ),
+            DirectoryDisplay.listOfValues(
+              title: 'Data directories:',
+              values: dataDirs.map((Directory d) => d.path).toList(),
             ),
             const SizedBox(
               height: 50,
             ),
             DirectoryDisplay(
-              title: 'Selected directory:',
-              value: userDirectory,
+              title: 'Config home:',
+              value: configHome.path,
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 10, bottom: 5),
-              child: Text(
-                'Config home:',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            directoryTextWidget(configHome.path),
             const SizedBox(
               height: 50,
             ),
             DirectoryDisplay(
-              title: 'Selected directory:',
-              value: userDirectory,
+              title: 'Data home:',
+              value: dataHome.path,
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 10, bottom: 5),
-              child: Text(
-                'Data home:',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            directoryTextWidget(dataHome.path),
             const SizedBox(
               height: 100,
             ),
