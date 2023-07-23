@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:xdg_directories/xdg_directories.dart';
+import 'widgets/DirectoryDisplay.dart';
 
 void main() {
   runApp(const MyApp());
@@ -77,83 +78,23 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(
               height: 20,
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 10, bottom: 5),
-              child: Text(
-                'Selected directory:',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 5,
-              ),
-              color: Colors.black38,
-              child: Text(
-                userDirectory,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
+            DirectoryDisplay(
+              title: 'Selected directory:',
+              value: userDirectory,
             ),
             const SizedBox(
               height: 50,
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 10, bottom: 5),
-              child: Text(
-                'Runtime directory:',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 5,
-              ),
-              color: Colors.black38,
-              child: Text(
-                runtimeDir?.path ?? '',
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
+            DirectoryDisplay(
+              title: 'Runtime directory:',
+              value: runtimeDir?.path,
             ),
             const SizedBox(
               height: 50,
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 10, bottom: 5),
-              child: Text(
-                'Cache home:',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 5,
-              ),
-              color: Colors.black38,
-              child: Text(
-                cacheHome.path,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
+            DirectoryDisplay(
+              title: 'Cache home:',
+              value: cacheHome.path,
             ),
             const SizedBox(
               height: 50,
@@ -171,19 +112,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ListView.builder(
               shrinkWrap: true,
               itemCount: configDirs.length,
-              itemBuilder: (BuildContext context, int index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 5,
-                ),
-                color: Colors.black38,
-                child: Text(
-                  configDirs[index].path,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
+              itemBuilder: (BuildContext context, int index) =>
+                  directoryTextWidget(
+                configDirs[index].path,
               ),
             ),
             const SizedBox(
@@ -202,23 +133,21 @@ class _MyHomePageState extends State<MyHomePage> {
             ListView.builder(
               shrinkWrap: true,
               itemCount: dataDirs.length,
-              itemBuilder: (BuildContext context, int index) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 5,
-                ),
-                color: Colors.black38,
-                child: Text(
-                  dataDirs[index].path,
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
+              itemBuilder: (BuildContext context, int index) =>
+                  DirectoryDisplay(
+                title: 'Selected directory:',
+                value: userDirectory,
+              ),
+              directoryTextWidget(
+                dataDirs[index].path,
               ),
             ),
             const SizedBox(
               height: 50,
+            ),
+            DirectoryDisplay(
+              title: 'Selected directory:',
+              value: userDirectory,
             ),
             const Padding(
               padding: EdgeInsets.only(left: 10, bottom: 5),
@@ -230,22 +159,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 5,
-              ),
-              color: Colors.black38,
-              child: Text(
-                configHome.path,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            directoryTextWidget(configHome.path),
             const SizedBox(
               height: 50,
+            ),
+            DirectoryDisplay(
+              title: 'Selected directory:',
+              value: userDirectory,
             ),
             const Padding(
               padding: EdgeInsets.only(left: 10, bottom: 5),
@@ -257,20 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 5,
-              ),
-              color: Colors.black38,
-              child: Text(
-                dataHome.path,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            directoryTextWidget(dataHome.path),
             const SizedBox(
               height: 100,
             ),
