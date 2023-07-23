@@ -35,6 +35,9 @@ class MapConfiguration {
     this.indoorViewEnabled,
     this.trafficEnabled,
     this.buildingsEnabled,
+    this.mapTypeControl,
+    this.fullscreenControl,
+    this.streetViewControl,
     this.cloudMapId,
   });
 
@@ -107,6 +110,16 @@ class MapConfiguration {
   /// True if 3D building display should be enabled.
   final bool? buildingsEnabled;
 
+  /// True if the control to toggle between map types should be displayed.
+  final bool? mapTypeControl;
+
+  /// True if the control to open the map on full screen should be displayed.
+  final bool? fullscreenControl;
+
+  /// True if the Pegman control, that lets the user to activate the street
+  /// view panorama, should be displayed.
+  final bool? streetViewControl;
+
   /// Identifier that's associated with a specific cloud-based map style.
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
@@ -173,6 +186,14 @@ class MapConfiguration {
           trafficEnabled != other.trafficEnabled ? trafficEnabled : null,
       buildingsEnabled:
           buildingsEnabled != other.buildingsEnabled ? buildingsEnabled : null,
+      mapTypeControl:
+          mapTypeControl != other.mapTypeControl ? mapTypeControl : null,
+      fullscreenControl: fullscreenControl != other.fullscreenControl
+          ? fullscreenControl
+          : null,
+      streetViewControl: streetViewControl != other.streetViewControl
+          ? streetViewControl
+          : null,
       cloudMapId: cloudMapId != other.cloudMapId ? cloudMapId : null,
     );
   }
@@ -205,6 +226,9 @@ class MapConfiguration {
       indoorViewEnabled: diff.indoorViewEnabled ?? indoorViewEnabled,
       trafficEnabled: diff.trafficEnabled ?? trafficEnabled,
       buildingsEnabled: diff.buildingsEnabled ?? buildingsEnabled,
+      mapTypeControl: diff.mapTypeControl ?? mapTypeControl,
+      fullscreenControl: diff.fullscreenControl ?? fullscreenControl,
+      streetViewControl: diff.streetViewControl ?? streetViewControl,
       cloudMapId: diff.cloudMapId ?? cloudMapId,
     );
   }
@@ -231,6 +255,9 @@ class MapConfiguration {
       indoorViewEnabled == null &&
       trafficEnabled == null &&
       buildingsEnabled == null &&
+      mapTypeControl == null &&
+      fullscreenControl == null &&
+      streetViewControl == null &&
       cloudMapId == null;
 
   @override
@@ -262,6 +289,9 @@ class MapConfiguration {
         indoorViewEnabled == other.indoorViewEnabled &&
         trafficEnabled == other.trafficEnabled &&
         buildingsEnabled == other.buildingsEnabled &&
+        mapTypeControl == other.mapTypeControl &&
+        fullscreenControl == other.fullscreenControl &&
+        streetViewControl == other.streetViewControl &&
         cloudMapId == other.cloudMapId;
   }
 
@@ -287,6 +317,9 @@ class MapConfiguration {
         indoorViewEnabled,
         trafficEnabled,
         buildingsEnabled,
+        mapTypeControl,
+        fullscreenControl,
+        streetViewControl,
         cloudMapId,
       ]);
 }

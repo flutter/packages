@@ -33,6 +33,9 @@ void main() {
       indoorViewEnabled: false,
       trafficEnabled: false,
       buildingsEnabled: false,
+      mapTypeControl: false,
+      fullscreenControl: false,
+      streetViewControl: false,
     );
 
     test('only include changed fields', () async {
@@ -393,6 +396,54 @@ void main() {
       expect(empty.hashCode, isNot(diff.hashCode));
     });
 
+    test('handle mapTypeControl', () async {
+      const MapConfiguration diff = MapConfiguration(mapTypeControl: true);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.mapTypeControl, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle fullscreenControl', () async {
+      const MapConfiguration diff = MapConfiguration(fullscreenControl: true);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.fullscreenControl, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle streetViewControl', () async {
+      const MapConfiguration diff = MapConfiguration(streetViewControl: true);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.streetViewControl, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
     test('handle cloudMapId', () async {
       const MapConfiguration diff = MapConfiguration(cloudMapId: _kCloudMapId);
 
@@ -532,6 +583,24 @@ void main() {
 
     test('is false with buildingsEnabled', () async {
       const MapConfiguration diff = MapConfiguration(buildingsEnabled: true);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with mapTypeControl', () async {
+      const MapConfiguration diff = MapConfiguration(mapTypeControl: true);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with fullscreenControl', () async {
+      const MapConfiguration diff = MapConfiguration(fullscreenControl: true);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with streetViewControl', () async {
+      const MapConfiguration diff = MapConfiguration(streetViewControl: true);
 
       expect(diff.isEmpty, false);
     });
