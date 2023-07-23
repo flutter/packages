@@ -33,6 +33,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String userDirectory = '';
+
   @override
   Widget build(BuildContext context) {
     final Set<String> userDirectoryNames = getUserDirectoryNames();
@@ -45,20 +47,12 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            TextButton(
-              onPressed: () => print(getUserDirectoryNames()),
-              child: const Text(
-                'Get User Directory',
-                style: TextStyle(
-                  color: Colors.black,
-                ),
-              ),
-            ),
             const Padding(
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.all(10.0),
               child: Text(
-                'User Directory Names:',
+                'Select a user directory name:',
                 style: TextStyle(
+                  color: Colors.black87,
                   fontSize: 25,
                 ),
                 textAlign: TextAlign.start,
@@ -70,6 +64,41 @@ class _MyHomePageState extends State<MyHomePage> {
               itemBuilder: (BuildContext context, int index) => ListTile(
                 title: Text(userDirectoryNames.elementAt(index)),
                 visualDensity: VisualDensity.standard,
+                onTap: () => setState(
+                  () {
+                    userDirectory =
+                        getUserDirectory(userDirectoryNames.elementAt(index))
+                                ?.path ??
+                            '';
+                  },
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 10, bottom: 5),
+              child: Text(
+                'User directory:',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 5,
+              ),
+              color: Colors.black38,
+              child: Text(
+                userDirectory,
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
