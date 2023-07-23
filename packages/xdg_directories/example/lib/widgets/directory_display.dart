@@ -7,7 +7,8 @@ class DirectoryDisplay extends StatelessWidget {
     super.key,
     this.title = '',
     String? value,
-  }) : child = value;
+  })  : assert(value != null),
+        child = value;
 
   /// List of Directories display
   DirectoryDisplay.listOfValues({

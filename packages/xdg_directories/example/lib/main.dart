@@ -88,29 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 50,
             ),
             DirectoryDisplay(
-              title: 'Runtime directory:',
-              value: runtimeDir?.path,
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            DirectoryDisplay(
-              title: 'Cache home:',
-              value: cacheHome.path,
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            DirectoryDisplay.listOfValues(
-              title: 'Config directories:',
-              values: configDirs.map((Directory d) => d.path).toList(),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            DirectoryDisplay.listOfValues(
-              title: 'Data directories:',
-              values: dataDirs.map((Directory d) => d.path).toList(),
+              title: 'Data home:',
+              value: dataHome.path,
             ),
             const SizedBox(
               height: 50,
@@ -122,9 +101,30 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(
               height: 50,
             ),
+            DirectoryDisplay.listOfValues(
+              title: 'Data directories:',
+              values: dataDirs.map((Directory d) => d.path).toList(),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            DirectoryDisplay.listOfValues(
+              title: 'Config directories:',
+              values: configDirs.map((Directory d) => d.path).toList(),
+            ),
+            const SizedBox(
+              height: 50,
+            ),
             DirectoryDisplay(
-              title: 'Data home:',
-              value: dataHome.path,
+              title: 'Cache home:',
+              value: cacheHome.path,
+            ),
+            const SizedBox(
+              height: 50,
+            ),
+            DirectoryDisplay(
+              title: 'Runtime directory:',
+              value: runtimeDir?.path,
             ),
             const SizedBox(
               height: 100,
