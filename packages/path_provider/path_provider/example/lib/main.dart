@@ -218,15 +218,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed: Platform.isLinux ||
-                            Platform.isMacOS ||
-                            Platform.isWindows
-                        ? _requestAppCacheDirectory
-                        : null,
-                    child: Text(
-                      Platform.isAndroid
-                          ? 'Application Cache Directory unavailable'
-                          : 'Get Application Cache Directory',
+                    onPressed: _requestAppCacheDirectory,
+                    child: const Text(
+                      'Get Application Cache Directory',
                     ),
                   ),
                 ),
