@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Adds caching functionality for network video.
+
 ## 2.4.9
 
 * Fixes the iOS crash when using multiple players on the same screen.

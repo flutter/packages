@@ -1,4 +1,4 @@
-## NEXT
+## 2.5.0
 
 * Adds caching functionality for network video.
 
