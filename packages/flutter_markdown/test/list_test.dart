@@ -202,7 +202,8 @@ void defineTests() {
           ),
         );
 
-        final double screenWidth = tester.allElements.first.size!.width;
+        final double screenWidth =
+            find.byType(Column).evaluate().first.size!.width;
         final double markdownBodyWidth =
             find.byType(MarkdownBody).evaluate().single.size!.width;
 
@@ -225,7 +226,8 @@ void defineTests() {
           ),
         );
 
-        final double screenWidth = tester.allElements.first.size!.width;
+        final double screenWidth =
+            find.byType(Column).evaluate().first.size!.width;
         final double markdownBodyWidth =
             find.byType(MarkdownBody).evaluate().single.size!.width;
 
