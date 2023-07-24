@@ -37,6 +37,67 @@ void main() {
       runner.addCommand(command);
     });
 
+    group('dart', () {
+      test('runs pub get', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+            'plugin1', packagesDir, platformSupport: <String, PlatformDetails>{
+          platformIOS: const PlatformDetails(PlatformSupport.inline)
+        });
+
+        final Directory iOSDir =
+            plugin.getExamples().first.platformDirectory(FlutterPlatform.ios);
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['fetch-deps']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+          ]),
+        );
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
+
+      test('fails if pub get fails', () async {
+        createFakePlugin('plugin1', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        processRunner
+                .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1)),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps'], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains('Failed to "pub get"'),
+              ],
+            ));
+      });
+    });
+
     group('android', () {
       test('runs pub get before gradlew dependencies', () async {
         final RepositoryPackage plugin =
@@ -77,6 +138,7 @@ void main() {
               contains('No issues found!'),
             ]));
       });
+
       test('runs gradlew dependencies', () async {
         final RepositoryPackage plugin =
             createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
