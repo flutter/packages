@@ -6,7 +6,6 @@ package io.flutter.plugins.camera.features.exposurepoint;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,7 +27,6 @@ import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationMan
 import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -310,7 +308,8 @@ public class ExposurePointFeatureTest {
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
     exposurePointFeature.setValue(new Point(null, 0d));
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
-    verify(mockCaptureRequestBuilder, times(3)).set(any(), any());
+
+    verify(mockCaptureRequestBuilder, times(3)).set(any(), eq(exposurePointFeature.defaultRegions));
   }
 
   @Test
@@ -327,11 +326,6 @@ public class ExposurePointFeatureTest {
 
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
 
-    ArgumentCaptor<MeteringRectangle[]> meteringRectangleCaptor =
-        ArgumentCaptor.forClass(MeteringRectangle[].class);
-
-    verify(mockCaptureRequestBuilder, times(1))
-        .set(eq(CaptureRequest.CONTROL_AE_REGIONS), meteringRectangleCaptor.capture());
-    
+    verify(mockCaptureRequestBuilder, times(1)).set(any(), eq(exposurePointFeature.defaultRegions));
   }
 }
