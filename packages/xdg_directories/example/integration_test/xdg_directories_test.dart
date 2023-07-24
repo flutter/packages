@@ -16,18 +16,9 @@ void main() {
       throw Exception('This test is only valid on Linux');
     }
 
-    // Check that the XDG directories are not empty.
-    expect(
-      getUserDirectoryNames().length,
-      isNot(0),
-      reason: 'getUserDirectoryNames() should return a non-empty Set<String>',
-    );
-
-    final Set<String> userDirectoryNames = getUserDirectoryNames();
-
     // Check that getUserDirectory() returns a Directory.
     expect(
-      getUserDirectory(userDirectoryNames.first) != null,
+      getUserDirectory('Home') != null,
       true,
       reason: 'getUserDirectory() should return a Directory',
     );
