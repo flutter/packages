@@ -113,7 +113,8 @@ class FetchDepsCommand extends PackageLoopingCommand {
   Future<PackageResult> _fetchAndroidDeps(RepositoryPackage package) async {
     if (!pluginSupportsPlatform(platformAndroid, package,
         requiredMode: PlatformSupport.inline)) {
-      return PackageResult.skip('no Android implementation');
+      return PackageResult.skip(
+          'Package does not have native Android dependencies.');
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
@@ -148,7 +149,8 @@ class FetchDepsCommand extends PackageLoopingCommand {
       RepositoryPackage package, final String platform) async {
     if (!pluginSupportsPlatform(platform, package,
         requiredMode: PlatformSupport.inline)) {
-      return PackageResult.skip('no $platform implementation');
+      return PackageResult.skip(
+          'Package does not have native $platform dependencies.');
     }
 
     // Running `pod install` requires `flutter pub get` or `flutter build` to
