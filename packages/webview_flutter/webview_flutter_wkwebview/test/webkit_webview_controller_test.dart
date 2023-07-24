@@ -1221,11 +1221,13 @@ function log(type, args) {
 }
 
 let originalLog = console.log;
+let originalInfo = console.info;
 let originalWarn = console.warn;
 let originalError = console.error;
 let originalDebug = console.debug;
 
 console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
+console.info = function() { log("info", arguments); originalInfo.apple(null, arguments) };
 console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
 console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
 console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };

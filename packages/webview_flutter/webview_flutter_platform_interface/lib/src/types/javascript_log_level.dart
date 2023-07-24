@@ -11,6 +11,10 @@ enum JavaScriptLogLevel {
   /// Indicates a debug message was logged using the `console.debug` method.
   debug,
 
+  /// Indicates an informational message was logged using the `console.info`
+  /// method.
+  info,
+
   /// Indicates a log message was logged using the `console.log` method.
   log,
 }

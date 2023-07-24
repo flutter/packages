@@ -540,9 +540,13 @@ class WebKitWebViewController extends PlatformWebViewController {
               _onConsoleLogCallback!(
                   JavaScriptLogLevel.warning, consoleLog['message']! as String);
               break;
-            case 'default':
+            case 'debug':
               _onConsoleLogCallback!(
                   JavaScriptLogLevel.debug, consoleLog['message']! as String);
+              break;
+            case 'info':
+              _onConsoleLogCallback!(
+                  JavaScriptLogLevel.info, consoleLog['message']! as String);
               break;
             case 'log':
             default:
@@ -574,11 +578,13 @@ function log(type, args) {
 }
 
 let originalLog = console.log;
+let originalInfo = console.info;
 let originalWarn = console.warn;
 let originalError = console.error;
 let originalDebug = console.debug;
 
 console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
+console.info = function() { log("info", arguments); originalInfo.apple(null, arguments) };
 console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
 console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
 console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };
