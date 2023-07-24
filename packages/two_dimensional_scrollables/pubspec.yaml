@@ -1,0 +1,18 @@
+name: two_dimensional_scrollables
+description: Widgets that scroll in two dimensions.
+version: 0.0.1
+repository: https://github.com/flutter/packages/tree/main/packages/two_dimensional_scrollables
+issue_tracker: https://github.com/flutter/flutter/labels/p%3A%20two_dimensional_scrollables
+
+environment:
+  sdk: '>=3.1.0-331.0.dev <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
