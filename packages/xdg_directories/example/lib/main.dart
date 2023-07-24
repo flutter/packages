@@ -35,11 +35,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String userDirectory = '';
+  final Set<String> userDirectoryNames = getUserDirectoryNames();
+  String selectedUserDirectory = '';
 
   @override
   Widget build(BuildContext context) {
-    final Set<String> userDirectoryNames = getUserDirectoryNames();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -68,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 visualDensity: VisualDensity.standard,
                 onTap: () => setState(
                   () {
-                    userDirectory =
+                    selectedUserDirectory =
                         getUserDirectory(userDirectoryNames.elementAt(index))
                                 ?.path ??
                             '';
@@ -81,48 +81,48 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             DirectoryDisplay(
               title: 'Selected directory:',
-              value: userDirectory,
+              value: selectedUserDirectory,
             ),
             const SizedBox(
               height: 50,
             ),
             DirectoryDisplay(
-              title: 'Data home:',
+              title: 'Data Home:',
               value: dataHome.path,
             ),
             const SizedBox(
               height: 50,
             ),
             DirectoryDisplay(
-              title: 'Config home:',
+              title: 'Config Home:',
               value: configHome.path,
             ),
             const SizedBox(
               height: 50,
             ),
             DirectoryDisplay.listOfValues(
-              title: 'Data directories:',
+              title: 'Data Directories:',
               values: dataDirs.map((Directory d) => d.path).toList(),
             ),
             const SizedBox(
               height: 50,
             ),
             DirectoryDisplay.listOfValues(
-              title: 'Config directories:',
+              title: 'Config Directories:',
               values: configDirs.map((Directory d) => d.path).toList(),
             ),
             const SizedBox(
               height: 50,
             ),
             DirectoryDisplay(
-              title: 'Cache home:',
+              title: 'Cache Home:',
               value: cacheHome.path,
             ),
             const SizedBox(
               height: 50,
             ),
             DirectoryDisplay(
-              title: 'Runtime directory:',
+              title: 'Runtime Directory:',
               value: runtimeDir?.path,
             ),
             const SizedBox(
