@@ -4,7 +4,7 @@
 
 This is a simple demo of the XDG directories.  It is a flutter app that
 uses the xdg_directories dependencie to read xdg directory names and display them in a
-list. It also has a button to create a simple text file in the xdg data directory.
+list.
 
 ## Run
 
