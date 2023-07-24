@@ -4,6 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
+import '../delegate.dart';
 import '../router.dart';
 
 /// Dart extension to add navigation function to a BuildContext object, e.g.
@@ -62,6 +63,10 @@ extension GoRouterHelper on BuildContext {
         queryParameters: queryParameters,
         extra: extra,
       );
+
+  /// Continue popping the top-most route until `predicate` returns true.
+  void popUntil(GoRouterStatePredicate predicate) =>
+      GoRouter.of(this).popUntil(predicate);
 
   /// Returns `true` if there is more than 1 page on the stack.
   bool canPop() => GoRouter.of(this).canPop();

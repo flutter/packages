@@ -468,6 +468,15 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     routerDelegate.pop<T>(result);
   }
 
+  /// Continue popping the top-most route until `predicate` returns true.
+  void popUntil(GoRouterStatePredicate predicate) {
+    assert(() {
+      log.info('popUntil ${routerDelegate.currentConfiguration.uri}');
+      return true;
+    }());
+    routerDelegate.popUntil(predicate);
+  }
+
   /// Refresh the route.
   void refresh() {
     assert(() {

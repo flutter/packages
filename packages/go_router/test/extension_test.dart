@@ -23,7 +23,8 @@ void main() {
           GoRoute(
               path: '/page-0/:tab',
               name: 'page-0',
-              builder: (_, __) => const SizedBox())
+              builder: (_, GoRouterState state) =>
+                  SizedBox(key: Key(state.pathParameters['tab']!)))
         ],
       );
       await tester.pumpWidget(MaterialApp.router(
@@ -41,6 +42,25 @@ void main() {
           .routerDelegate.currentConfiguration.last as ImperativeRouteMatch;
       expect(routeMatch.matches.uri.toString(),
           '/page-0/settings?search=notification');
+    });
+
+    testWidgets('Can call pop until', (WidgetTester tester) async {
+      final GoRouter router = await createGoRouter(tester);
+      router.push('/page-0/1');
+      await tester.pumpAndSettle();
+      router.push('/page-0/2');
+      await tester.pumpAndSettle();
+      router.push('/page-0/3');
+      await tester.pumpAndSettle();
+      final BuildContext context = tester.element(find.byKey(const Key('3')));
+
+      context.popUntil((GoRouterState state) => state.name == 'home');
+      await tester.pumpAndSettle();
+
+      final RouteMatchList routeMatchList =
+          router.routerDelegate.currentConfiguration;
+      expect(routeMatchList.matches.length, 1);
+      expect(routeMatchList.uri.toString(), '/');
     });
   });
 }

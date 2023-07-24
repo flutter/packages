@@ -164,6 +164,153 @@ void main() {
     });
   });
 
+  group('popUntil', () {
+    testWidgets('can use name as predicate', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (_, __) => const Text('home'),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'a',
+              builder: (_, __) => const Text('a'),
+              routes: <GoRoute>[
+                GoRoute(
+                  path: 'b',
+                  builder: (_, __) => const Text('b'),
+                )
+              ],
+            )
+          ],
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/a/b');
+      final GoRouterDelegate delegate = router.routerDelegate;
+      delegate.popUntil((GoRouterState state) => state.name == 'home');
+
+      expect(delegate.currentConfiguration.matches.length, 1);
+      expect(delegate.currentConfiguration.uri.toString(), '/');
+    });
+
+    testWidgets('can handle pageless route', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (_, __) => const Text('home'),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'a',
+              builder: (_, __) => const Text('a'),
+              routes: <GoRoute>[
+                GoRoute(
+                  path: 'b',
+                  builder: (BuildContext context, __) => ElevatedButton(
+                    onPressed: () => showDialog<void>(
+                      context: context,
+                      builder: (_) => const Text('a dialog'),
+                    ),
+                    child: const Text('show dialog'),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/a/b');
+      final GoRouterDelegate delegate = router.routerDelegate;
+
+      await tester.tap(find.text('show dialog'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('a dialog'), findsOneWidget);
+      delegate.popUntil((GoRouterState state) => state.name == 'home');
+
+      expect(delegate.currentConfiguration.matches.length, 1);
+      expect(delegate.currentConfiguration.uri.toString(), '/');
+    });
+
+    testWidgets('can handle pushed route', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (_, __) => const Text('home'),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'a',
+              name: 'a',
+              builder: (_, __) => const Text('a'),
+              routes: <GoRoute>[
+                GoRoute(
+                  path: 'b',
+                  name: 'b',
+                  builder: (_, __) => const Text('b'),
+                )
+              ],
+            )
+          ],
+        ),
+      ];
+      final GoRouter router = await createRouter(routes, tester);
+      final GoRouterDelegate delegate = router.routerDelegate;
+
+      router.pushNamed('a');
+      await tester.pumpAndSettle();
+      router.pushNamed('b');
+      await tester.pumpAndSettle();
+      router.pushNamed('a');
+      await tester.pumpAndSettle();
+      router.pushNamed('b');
+      await tester.pumpAndSettle();
+
+      expect(find.text('b'), findsOneWidget);
+      expect(
+          delegate.currentConfiguration.matches.length, 5); // home, a, b, a, b
+
+      delegate.popUntil((GoRouterState state) => state.name == 'a');
+      expect(delegate.currentConfiguration.matches.length, 4); // home, a, b, a
+
+      delegate.popUntil((GoRouterState state) => state.name == 'home');
+      expect(delegate.currentConfiguration.matches.length, 1); // home, a
+    });
+
+    testWidgets('can use uri', (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (_, __) => const Text('home'),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'a',
+              name: 'a',
+              builder: (_, __) => const Text('a'),
+              routes: <GoRoute>[
+                GoRoute(
+                  path: 'b',
+                  name: 'b',
+                  builder: (_, __) => const Text('b'),
+                )
+              ],
+            )
+          ],
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/a/b');
+      final GoRouterDelegate delegate = router.routerDelegate;
+      expect(delegate.currentConfiguration.matches.length, 3); // home, a, b
+
+      delegate.popUntil((GoRouterState state) => state.uri.toString() == '/');
+      expect(delegate.currentConfiguration.matches.length, 1); // home
+    });
+  });
+
   group('push', () {
     testWidgets(
       'It should return different pageKey when push is called',

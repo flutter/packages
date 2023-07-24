@@ -23,8 +23,7 @@ context.go(Uri(path: '/users/123', queryParameters: {'filter': 'abc'}).toString(
 ## Imperative navigation
 GoRouter can push a screen onto the Navigator's history
 stack using `context.push()`, and can pop the current screen via
-`context.pop()`. However, imperative navigation is known to cause issues with
-the browser history.
+`context.pop()`. In web, imperative navigation does not update the url bar.
 
 To learn more, see [issue
 #99112](https://github.com/flutter/flutter/issues/99112).

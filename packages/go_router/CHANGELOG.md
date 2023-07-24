@@ -1,3 +1,7 @@
+## 10.1.0
+
+- Adds popUntil to GoRouter and its extension.
+
 ## 10.0.0
 
 - **BREAKING CHANGE**:

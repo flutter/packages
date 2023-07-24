@@ -318,7 +318,6 @@ class RouteBuilder {
 
   /// Helper method that builds a [GoRouterState] object for the given [match]
   /// and [pathParameters].
-  @visibleForTesting
   GoRouterState buildState(RouteMatchList matchList, RouteMatch match) {
     final RouteBase route = match.route;
     String? name;

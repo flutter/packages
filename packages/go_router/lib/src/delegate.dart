@@ -12,6 +12,14 @@ import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
+import 'state.dart';
+
+/// Signature for the [GoRouter.popUntil] predicate argument.
+///
+/// The [GoRouterState] contains the state that builds the current GoRoute.
+///
+/// Returns true to stop the pop.
+typedef GoRouterStatePredicate = bool Function(GoRouterState state);
 
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
@@ -83,6 +91,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       }
     }
     throw GoError('There is nothing to pop');
+  }
+
+  /// Continue popping the top-most route until `predicate` returns true.
+  void popUntil(GoRouterStatePredicate predicate) {
+    while (!predicate(
+        builder.buildState(currentConfiguration, currentConfiguration.last))) {
+      pop();
+      assert(currentConfiguration.isNotEmpty, 'There is nothing to pop.');
+    }
   }
 
   void _debugAssertMatchListNotEmpty() {

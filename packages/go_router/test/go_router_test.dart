@@ -831,6 +831,40 @@ void main() {
     });
   });
 
+  testWidgets('can use popUntil', (WidgetTester tester) async {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        name: 'home',
+        builder: (_, __) => const Text('home'),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'a',
+            builder: (_, __) => const Text('a'),
+            routes: <GoRoute>[
+              GoRoute(
+                path: 'b',
+                builder: (_, __) => const Text('b'),
+              )
+            ],
+          )
+        ],
+      ),
+    ];
+    final GoRouter router = GoRouter(routes: routes, initialLocation: '/a/b');
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+      ),
+    );
+
+    expect(find.text('b'), findsOneWidget);
+    router.popUntil((GoRouterState state) => state.name == 'home');
+    await tester.pumpAndSettle();
+
+    expect(find.text('home'), findsOneWidget);
+  });
+
   testWidgets('does not crash when inherited widget changes',
       (WidgetTester tester) async {
     final ValueNotifier<String> notifier = ValueNotifier<String>('initial');

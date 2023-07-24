@@ -36,6 +36,11 @@ An example to demonstrate how to use handle a sign-in flow with a stream authent
 An example to demonstrate how to use a `StatefulShellRoute` to create stateful nested navigation, with a
 `BottomNavigationBar`.
 
+## [Pop Until](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/pop_until.dart)
+`flutter run lib/pop_until.dart`
+
+An example to demonstrate how to use popUntil.
+
 ## [Exception Handling](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/exception_handling.dart)
 `flutter run lib/exception_handling.dart`
 
