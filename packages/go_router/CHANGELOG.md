@@ -1,3 +1,14 @@
+## 10.0.0
+
+- **BREAKING CHANGE**:
+  - Replaces location, queryParameters, and queryParametersAll in GoRouterState with Uri.
+  - See [Migrating to 10.0.0](https://flutter.dev/go/go-router-v10-breaking-changes) or
+    run `dart fix --apply` to fix the breakages.
+
+## 9.1.1
+
+- Fixes a link in error handling documentation.
+
 ## 9.1.0
 
 - Adds the parentNavigatorKey parameter to ShellRouteData and StatefulShellRouteData.
