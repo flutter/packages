@@ -339,7 +339,7 @@ class RouteBuilder {
     }
     return GoRouterState(
       configuration,
-      location: effectiveMatchList.uri.toString(),
+      uri: effectiveMatchList.uri,
       matchedLocation: match.matchedLocation,
       name: name,
       path: path,
@@ -347,8 +347,6 @@ class RouteBuilder {
       pathParameters:
           Map<String, String>.from(effectiveMatchList.pathParameters),
       error: effectiveMatchList.error,
-      queryParameters: effectiveMatchList.uri.queryParameters,
-      queryParametersAll: effectiveMatchList.uri.queryParametersAll,
       extra: effectiveMatchList.extra,
       pageKey: match.pageKey,
     );
@@ -467,7 +465,7 @@ class RouteBuilder {
       name: state.name ?? state.path,
       arguments: <String, String>{
         ...state.pathParameters,
-        ...state.queryParameters
+        ...state.uri.queryParameters
       },
       restorationId: state.pageKey.value,
       child: child,
@@ -491,18 +489,15 @@ class RouteBuilder {
       );
 
   GoRouterState _buildErrorState(RouteMatchList matchList) {
-    final String location = matchList.uri.toString();
     assert(matchList.isError);
     return GoRouterState(
       configuration,
-      location: location,
+      uri: matchList.uri,
       matchedLocation: matchList.uri.path,
       fullPath: matchList.fullPath,
       pathParameters: matchList.pathParameters,
-      queryParameters: matchList.uri.queryParameters,
-      queryParametersAll: matchList.uri.queryParametersAll,
       error: matchList.error,
-      pageKey: ValueKey<String>('$location(error)'),
+      pageKey: ValueKey<String>('${matchList.uri}(error)'),
     );
   }
 

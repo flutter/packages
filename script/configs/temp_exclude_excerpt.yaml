@@ -12,11 +12,8 @@
 - extension_google_sign_in_as_googleapis_auth
 - flutter_image
 - flutter_markdown
-- go_router
 - go_router_builder
-- google_maps_flutter/google_maps_flutter
 - google_sign_in/google_sign_in
-- google_sign_in_web
 - image_picker_for_web
 - in_app_purchase/in_app_purchase
 - ios_platform_images
@@ -24,5 +21,3 @@
 - palette_generator
 - pointer_interceptor
 - quick_actions/quick_actions
-- webview_flutter_android
-- webview_flutter_web
