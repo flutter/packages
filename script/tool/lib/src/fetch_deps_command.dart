@@ -149,8 +149,9 @@ class FetchDepsCommand extends PackageLoopingCommand {
       RepositoryPackage package, final String platform) async {
     if (!pluginSupportsPlatform(platform, package,
         requiredMode: PlatformSupport.inline)) {
+      final String displayPlatform = platform.replaceFirst('os', 'OS');
       return PackageResult.skip(
-          'Package does not have native $platform dependencies.');
+          'Package does not have native $displayPlatform dependencies.');
     }
 
     // Running `pod install` requires `flutter pub get` or `flutter build` to
@@ -159,7 +160,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
     if (!getBoolArg(_dartFlag)) {
       final int exitCode = await processRunner.runAndStream(
         flutterCommand,
-        <String>[flutterCommand, 'pub', 'get'],
+        <String>['pub', 'get'],
         workingDir: package.directory,
       );
       if (exitCode != 0) {

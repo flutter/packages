@@ -36,6 +36,7 @@ void main() {
           CommandRunner<void>('fetch_deps_test', 'Test for $FetchDepsCommand');
       runner.addCommand(command);
     });
+
     group('android', () {
       test('runs pub get before gradlew dependencies', () async {
         final RepositoryPackage plugin =
@@ -253,41 +254,247 @@ void main() {
               ],
             ));
       });
+
+      test('skips non-Android plugins', () async {
+        createFakePlugin('plugin1', packagesDir);
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--android']);
+
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains(
+                    'SKIPPING: Package does not have native Android dependencies.')
+              ],
+            ));
+      });
+
+      test('skips non-inline plugins', () async {
+        createFakePlugin('plugin1', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformAndroid: const PlatformDetails(PlatformSupport.federated)
+            });
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--android']);
+
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains(
+                    'SKIPPING: Package does not have native Android dependencies.')
+              ],
+            ));
+      });
     });
 
-    test('skips non-Android plugins', () async {
-      createFakePlugin('plugin1', packagesDir);
+    group('ios', () {
+      test('runs pub get only once before pod install', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+            'plugin1', packagesDir, platformSupport: <String, PlatformDetails>{
+          platformIOS: const PlatformDetails(PlatformSupport.inline)
+        });
 
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['fetch-deps', '--no-dart', '--android']);
+        final Directory iOSDir =
+            plugin.getExamples().first.platformDirectory(FlutterPlatform.ios);
 
-      expect(
-          output,
-          containsAllInOrder(
-            <Matcher>[
-              contains(
-                  'SKIPPING: Package does not have native Android dependencies.')
-            ],
-          ));
-    });
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['fetch-deps', '--ios']);
 
-    test('skips non-inline plugins', () async {
-      createFakePlugin('plugin1', packagesDir,
-          platformSupport: <String, PlatformDetails>{
-            platformAndroid: const PlatformDetails(PlatformSupport.federated)
-          });
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+            ProcessCall(
+              'pod',
+              const <String>['install'],
+              iOSDir.path,
+            ),
+          ]),
+        );
 
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['fetch-deps', '--no-dart', '--android']);
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
 
-      expect(
-          output,
-          containsAllInOrder(
-            <Matcher>[
-              contains(
-                  'SKIPPING: Package does not have native Android dependencies.')
-            ],
-          ));
+      test('runs on all examples', () async {
+        final List<String> examples = <String>['example1', 'example2'];
+        final RepositoryPackage plugin = createFakePlugin(
+            'plugin1', packagesDir,
+            examples: examples,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        final Iterable<Directory> exampleIOSDirs = plugin.getExamples().map(
+            (RepositoryPackage example) =>
+                example.platformDirectory(FlutterPlatform.ios));
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--ios']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+            for (final Directory directory in exampleIOSDirs)
+              ProcessCall(
+                'pod',
+                const <String>['install'],
+                directory.path,
+              ),
+          ]),
+        );
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
+
+      test('runs pub get if it was not already run', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+            'plugin1', packagesDir, platformSupport: <String, PlatformDetails>{
+          platformIOS: const PlatformDetails(PlatformSupport.inline)
+        });
+
+        final Directory iOSDir =
+            plugin.getExamples().first.platformDirectory(FlutterPlatform.ios);
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--ios']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+            ProcessCall(
+              'pod',
+              const <String>['install'],
+              iOSDir.path,
+            ),
+          ]),
+        );
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
+
+      test('fails if pre-pod pub get fails', () async {
+        createFakePlugin('plugin1', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        processRunner
+                .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1)),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--ios'],
+            errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains('Unable to configure project'),
+              ],
+            ));
+      });
+
+      test('fails if pod install fails', () async {
+        createFakePlugin('plugin1', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        processRunner.mockProcessesForExecutable['pod'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1)),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--ios'],
+            errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains('The following packages had errors:'),
+              ],
+            ));
+      });
+
+      test('skips non-iOS plugins', () async {
+        createFakePlugin('plugin1', packagesDir);
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--ios']);
+
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains(
+                    'SKIPPING: Package does not have native iOS dependencies.')
+              ],
+            ));
+      });
+
+      test('skips non-inline plugins', () async {
+        createFakePlugin('plugin1', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.federated)
+            });
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--ios']);
+
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains(
+                    'SKIPPING: Package does not have native iOS dependencies.')
+              ],
+            ));
+      });
     });
   });
 }
