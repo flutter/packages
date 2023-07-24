@@ -11,7 +11,7 @@ import '../ui_kit/ui_kit.dart';
 import 'web_kit_api_impls.dart';
 
 export 'web_kit_api_impls.dart'
-    show WKNavigationType, WKPermissionDecision, WKMediaCaptureType;
+    show WKNavigationType, WKPermissionDecision, WKMediaCaptureType, WKJavaScriptPanelType, WKJavaScriptPanelCompletionData;
 
 /// Times at which to inject script content into a webpage.
 ///
@@ -728,6 +728,7 @@ class WKUIDelegate extends NSObject {
   WKUIDelegate({
     this.onCreateWebView,
     this.requestMediaCapturePermission,
+    this.runJavaScriptPanel,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -749,6 +750,7 @@ class WKUIDelegate extends NSObject {
   WKUIDelegate.detached({
     this.onCreateWebView,
     this.requestMediaCapturePermission,
+    this.runJavaScriptPanel,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -780,11 +782,15 @@ class WKUIDelegate extends NSObject {
     WKMediaCaptureType type,
   )? requestMediaCapturePermission;
 
+  final Future<WKJavaScriptPanelCompletionData> Function(WKWebView webView, WKJavaScriptPanelType type,
+      String message, String? defaultText)? runJavaScriptPanel;
+
   @override
   WKUIDelegate copy() {
     return WKUIDelegate.detached(
       onCreateWebView: onCreateWebView,
       requestMediaCapturePermission: requestMediaCapturePermission,
+      runJavaScriptPanel: runJavaScriptPanel,
       observeValue: observeValue,
       binaryMessenger: _uiDelegateApi.binaryMessenger,
       instanceManager: _uiDelegateApi.instanceManager,

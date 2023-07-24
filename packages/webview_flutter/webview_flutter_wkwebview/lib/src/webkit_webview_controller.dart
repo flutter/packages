@@ -216,6 +216,37 @@ class WebKitWebViewController extends PlatformWebViewController {
           return decisionCompleter.future;
         }
       },
+      runJavaScriptPanel: (WKWebView webview, WKJavaScriptPanelType type,
+          String message, String? defaultText) async {
+        switch (type) {
+          case WKJavaScriptPanelType.alert:
+            final Future<void> Function(String)? callback =
+                _javaScriptAlertPanelCallback;
+            if (callback != null) {
+              await callback.call(message);
+              return WKJavaScriptPanelCompletionData();
+            }
+            break;
+          case WKJavaScriptPanelType.confirm:
+            final Future<bool> Function(String)? callback =
+                _javaScriptConfirmPanelCallback;
+            if (callback != null) {
+              final bool result = await callback.call(message);
+              return WKJavaScriptPanelCompletionData(isConfirmed: result);
+            }
+            break;
+          case WKJavaScriptPanelType.textInput:
+            final Future<String> Function(String, String?)? callback =
+                _javaScriptTextInputPanelCallback;
+            if (callback != null) {
+              final String result = await callback.call(message, defaultText);
+              return WKJavaScriptPanelCompletionData(inputMessage: result);
+            }
+
+            break;
+        }
+        return WKJavaScriptPanelCompletionData();
+      },
     );
 
     _webView.setUIDelegate(_uiDelegate);
@@ -270,6 +301,10 @@ class WebKitWebViewController extends PlatformWebViewController {
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
+  Future<void> Function(String message)? _javaScriptAlertPanelCallback;
+  Future<bool> Function(String message)? _javaScriptConfirmPanelCallback;
+  Future<String> Function(String message, String? defaultText)?
+      _javaScriptTextInputPanelCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
       params as WebKitWebViewControllerCreationParams;
@@ -545,6 +580,24 @@ class WebKitWebViewController extends PlatformWebViewController {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  Future<void> setJavaScriptAlertPanelCallback(
+      Future<void> Function(String message)
+          javaScriptAlertPanelCallback) async {
+    _javaScriptAlertPanelCallback = javaScriptAlertPanelCallback;
+  }
+
+  Future<void> setJavaScriptConfirmPanelCallback(
+      Future<bool> Function(String message)
+          javaScriptConfirmPanelCallback) async {
+    _javaScriptConfirmPanelCallback = javaScriptConfirmPanelCallback;
+  }
+
+  Future<void> setJavaScriptTextInputPanelCallback(
+      Future<String> Function(String message, String? defaultText)
+          javaScriptTextInputPanelCallback) async {
+    _javaScriptTextInputPanelCallback = javaScriptTextInputPanelCallback;
   }
 
   /// Whether to enable tools for debugging the current WKWebView content.

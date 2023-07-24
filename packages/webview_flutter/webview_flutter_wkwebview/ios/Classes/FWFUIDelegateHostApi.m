@@ -90,6 +90,27 @@
                                                             decision));
                                                   }];
 }
+
+- (void)runJavaScriptPanelWithMessage:(FWFUIDelegate *)instance
+                              webView:(WKWebView *)webView
+                                 type: (FWFWKJavaScriptPanelType) type
+                              message:(NSString *) message
+                          defaultText:(NSString *_Nullable) defaultText
+                           completion:(void(^)(FWFWKJavaScriptPanelCompletionData *))completion {
+    
+    [self runJavaScriptPanelForDelegateWithIdentifier:@([self identifierForDelegate:instance])
+                                    webViewIdentifier:@([self.instanceManager
+                                                         identifierWithStrongReferenceForInstance:webView])
+                                                 type:[FWFWKJavaScriptPanel makeWithType:type]
+                                              message:message
+                                          defaultText:defaultText
+                                           completion:^(FWFWKJavaScriptPanelCompletionData * _Nullable data, FlutterError * _Nullable error) {
+        completion(data);
+    }];
+}
+
+
+
 @end
 
 @implementation FWFUIDelegate
@@ -133,6 +154,40 @@
                                                     decisionHandler(decision);
                                                   }];
 }
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler {
+    [self.UIDelegateAPI runJavaScriptPanelWithMessage:self
+                                              webView:webView
+                                                 type:FWFWKJavaScriptPanelTypeAlert
+                                              message:message
+                                          defaultText:nil
+                                           completion:^(FWFWKJavaScriptPanelCompletionData * data) {
+        completionHandler();
+    }];
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(BOOL))completionHandler {
+    [self.UIDelegateAPI runJavaScriptPanelWithMessage:self
+                                              webView:webView
+                                                 type:FWFWKJavaScriptPanelTypeConfirm
+                                              message:message
+                                          defaultText:nil
+                                           completion:^(FWFWKJavaScriptPanelCompletionData * data) {
+        completionHandler(data.isConfirmed);
+    }];
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSString * _Nullable))completionHandler {
+    [self.UIDelegateAPI runJavaScriptPanelWithMessage:self
+                                              webView:webView
+                                                 type:FWFWKJavaScriptPanelTypeTextInput
+                                              message:prompt
+                                          defaultText:defaultText
+                                           completion:^(FWFWKJavaScriptPanelCompletionData *data) {
+        completionHandler(data.inputMessage);
+    }];
+}
+
 @end
 
 @interface FWFUIDelegateHostApiImpl ()

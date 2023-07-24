@@ -226,6 +226,28 @@ class WKPermissionDecisionData {
   late WKPermissionDecision value;
 }
 
+/// List of the type of System Popup called from JavaScript
+enum WKJavaScriptPanelType {
+  /// See https://developer.apple.com/documentation/webkit/wkuidelegate/1537406-webview
+  alert,
+  /// See https://developer.apple.com/documentation/webkit/wkuidelegate/1536489-webview
+  confirm,
+  /// See https://developer.apple.com/documentation/webkit/wkuidelegate/1538086-webview
+  textInput,
+}
+
+class WKJavaScriptPanel {
+  late WKJavaScriptPanelType type;
+}
+
+/// A data class to return the results of system popups called from Javascript.
+/// See with WKJavaScriptPanelType
+class WKJavaScriptPanelCompletionData {
+  late bool? isConfirmed;
+  late String? inputMessage;
+}
+
+
 /// List of the types of media devices that can capture audio, video, or both.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype?language=objc.
@@ -735,6 +757,19 @@ abstract class WKUIDelegateFlutterApi {
     WKFrameInfoData frame,
     WKMediaCaptureTypeData type,
   );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptPanel`.
+  @ObjCSelector(
+    'runJavaScriptPanelForDelegateWithIdentifier:webViewIdentifier:type:message:defaultText:',
+  )
+  @async
+  WKJavaScriptPanelCompletionData runJavaScriptPanel(
+      int identifier,
+      int webViewIdentifier,
+      WKJavaScriptPanel type,
+      String message,
+      String? defaultText,
+      );
 }
 
 /// Mirror of WKHttpCookieStore.
