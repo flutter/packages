@@ -1,9 +1,9 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:two_dimensional_scrollables/table_view.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 void main() {
   test('TableVicinity converts ChildVicinity', () {
@@ -13,5 +13,5 @@ void main() {
     expect(vicinity.toString(), '(row: 10, column: 5)');
   });
 
-  // TableViewCell tests for merged cells, follow up change.
+  // TODO(Piinks): TableViewCell tests for merged cells, follow up change.
 }

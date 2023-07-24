@@ -246,7 +246,7 @@ class TableViewport extends TwoDimensionalViewport {
       ..mainAxis = mainAxis
       ..cacheExtent = cacheExtent
       ..clipBehavior = clipBehavior
-      ..delegate = delegate;
+      ..delegate = delegate as TableCellDelegateMixin;
   }
 }
 
@@ -276,10 +276,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   TableCellDelegateMixin get delegate =>
       super.delegate as TableCellDelegateMixin;
   @override
-  set delegate(TwoDimensionalChildDelegate value) {
-    // TODO(Piinks): remove this assertion and add type safety to function
-    // signature once the covariant reaches stable.
-    assert(value is TableCellDelegateMixin);
+  set delegate(TableCellDelegateMixin value) {
     super.delegate = value;
   }
 
@@ -296,7 +293,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       return null;
     }
     return TableVicinity(
-        column: _firstNonPinnedColumn!, row: _firstNonPinnedRow!);
+      column: _firstNonPinnedColumn!,
+      row: _firstNonPinnedRow!,
+    );
   }
 
   TableVicinity? get _lastNonPinnedCell {
@@ -304,7 +303,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       return null;
     }
     return TableVicinity(
-        column: _lastNonPinnedColumn!, row: _lastNonPinnedRow!);
+      column: _lastNonPinnedColumn!,
+      row: _lastNonPinnedRow!,
+    );
   }
 
   int? get _lastPinnedRow =>
@@ -504,7 +505,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       maxVerticalScrollExtent = math.max(
         0.0,
         _rowMetrics[lastRow]!.trailingOffset -
-            viewportDimension.height + startOfPinnedRow,
+            viewportDimension.height +
+            startOfPinnedRow,
       );
     }
 
@@ -520,7 +522,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       maxHorizontalScrollExtent = math.max(
         0.0,
         _columnMetrics[lastColumn]!.trailingOffset -
-            viewportDimension.width + startOfPinnedColumn,
+            viewportDimension.width +
+            startOfPinnedColumn,
       );
     }
 
@@ -634,7 +637,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       );
     }
     if (_lastPinnedColumn != null && _firstNonPinnedRow != null) {
-      // Lay out cells of pinned columns - those that do not intersect with
+      // Layout cells of pinned columns - those that do not intersect with
       // pinned rows above
       assert(_lastNonPinnedRow != null);
       assert(offsetIntoRow != null);
@@ -645,7 +648,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       );
     }
     if (_firstNonPinnedCell != null) {
-      // Lay out all other cells.
+      // Layout all other cells.
       assert(_lastNonPinnedCell != null);
       assert(offsetIntoColumn != null);
       assert(offsetIntoRow != null);
@@ -736,6 +739,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         clipBehavior: clipBehavior,
         oldLayer: _clipCellsHandle.layer,
       );
+    } else {
+      _clipCellsHandle.layer = null;
     }
 
     if (_lastPinnedColumn != null && _firstNonPinnedRow != null) {

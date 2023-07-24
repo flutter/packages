@@ -1,15 +1,16 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:two_dimensional_scrollables/table_view.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
 const Widget cell = SizedBox.shrink();
@@ -44,8 +45,8 @@ final bool masterChannel = !Platform.environment.containsKey('CHANNEL') ||
     Platform.environment['CHANNEL'] == 'master';
 
 // TODO(Piinks): Remove once painting can be validated by mock_canvas in
-//  flutter_test
-// Contact Piinks if goldens need to be regenerated.
+//  flutter_test, and re-enable web tests in https://github.com/flutter/flutter/issues/132782
+// Regenerate goldens on a Mac computer by running `flutter test --update-goldens`
 final bool runGoldens = Platform.isMacOS && masterChannel;
 
 void main() {
@@ -64,8 +65,8 @@ void main() {
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.rowCount, 2);
       expect(delegate.columnCount, 3);
-      expect(delegate.columnBuilder(0), span);
-      expect(delegate.rowBuilder(0), span);
+      expect(delegate.buildColumn(0), span);
+      expect(delegate.buildRow(0), span);
       expect(
         delegate.builder(
           _NullBuildContext(),
@@ -209,8 +210,8 @@ void main() {
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.rowCount, 2);
       expect(delegate.columnCount, 3);
-      expect(delegate.columnBuilder(0), span);
-      expect(delegate.rowBuilder(0), span);
+      expect(delegate.buildColumn(0), span);
+      expect(delegate.buildRow(0), span);
       expect(delegate.children[0][0], cell);
     });
 
@@ -270,7 +271,7 @@ void main() {
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
-          childKeys[vicinity] = UniqueKey();
+          childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
           return SizedBox.square(key: childKeys[vicinity], dimension: 200);
         },
       );

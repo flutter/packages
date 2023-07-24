@@ -4,15 +4,17 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:two_dimensional_scrollables/table_view.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
+// Print statements are only for illustrative purposes, not recommended for
+// production applications.
 // ignore_for_file: avoid_print
 
 void main() {
   runApp(const TableExampleApp());
 }
 
-/// A sample application that utilizes the TableView API
+/// A sample application that utilizes the TableView API.
 class TableExampleApp extends StatelessWidget {
   /// Creates an instance of the TableView example app.
   const TableExampleApp({super.key});
@@ -39,14 +41,8 @@ class TableExample extends StatefulWidget {
 }
 
 class _TableExampleState extends State<TableExample> {
-  late final ScrollController _verticalController;
+  late final ScrollController _verticalController = ScrollController();
   int _rowCount = 20;
-
-  @override
-  void initState() {
-    super.initState();
-    _verticalController = ScrollController();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,17 +50,15 @@ class _TableExampleState extends State<TableExample> {
       appBar: AppBar(
         title: const Text('Table Example'),
       ),
-      body: Container(
+      body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50),
         child: TableView.builder(
           verticalDetails:
               ScrollableDetails.vertical(controller: _verticalController),
           cellBuilder: _buildCell,
           columnCount: 20,
-          // pinnedColumnCount: 1,
           columnBuilder: _buildColumnSpan,
           rowCount: _rowCount,
-          // pinnedRowCount: 1,
           rowBuilder: _buildRowSpan,
         ),
       ),

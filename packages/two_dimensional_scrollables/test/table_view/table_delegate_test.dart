@@ -1,10 +1,10 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:two_dimensional_scrollables/table_view.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(50));
 const Widget cell = SizedBox.shrink();

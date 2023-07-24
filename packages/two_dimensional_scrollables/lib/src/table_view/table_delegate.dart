@@ -1,4 +1,4 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,8 +11,8 @@ import 'table_span.dart';
 /// Signature for a function that creates a [TableSpan] for a given index of row
 /// or column in a [TableView].
 ///
-/// Used by the [TableCellDelegateMixin.columnBuilder] and
-/// [TableCellDelegateMixin.rowBuilder] to configure rows and columns in the
+/// Used by the [TableCellDelegateMixin.buildColumn] and
+/// [TableCellDelegateMixin.buildRow] to configure rows and columns in the
 /// [TableView].
 typedef TableSpanBuilder = TableSpan Function(int index);
 
@@ -31,14 +31,14 @@ typedef TableViewCellBuilder = Widget? Function(
 mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// The number of columns that the table has content for.
   ///
-  /// The [columnBuilder] will be called for indices smaller than the value
+  /// The [buildColumn] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
   /// particular column.
   // TODO(Piinks): land infinite separately, https://github.com/flutter/flutter/issues/131226
   // If null, the table will have an infinite number of columns.
   ///
   /// The value returned by this getter may be an estimate of the total
-  /// available columns, but [columnBuilder] must provide a valid
+  /// available columns, but [buildColumn] method must provide a valid
   /// [TableSpan] for all indices smaller than this integer.
   ///
   /// The integer returned by this getter must be larger than (or equal to) the
@@ -50,14 +50,14 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
 
   /// The number of rows that the table has content for.
   ///
-  /// The [rowBuilder] will be called for indices smaller than the value
+  /// The [buildRow] method will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
   /// particular row.
   // TODO(Piinks): land infinite separately, https://github.com/flutter/flutter/issues/131226
   // If null, the table will have an infinite number of rows.
   ///
   /// The value returned by this getter may be an estimate of the total
-  /// available rows, but [rowBuilder] must provide a valid
+  /// available rows, but [buildRow] method must provide a valid
   /// [TableSpan] for all indices smaller than this integer.
   ///
   /// The integer returned by this getter must be larger than (or equal to) the
@@ -73,7 +73,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// If scrolling is enabled, other columns will scroll underneath the pinned
   /// columns.
   ///
-  /// Just like for regular columns, [columnBuilder] will be consulted for
+  /// Just like for regular columns, [buildColumn] method will be consulted for
   /// additional information about the pinned column. The indices of pinned
   /// columns start at zero and go to `pinnedColumnCount - 1`.
   ///
@@ -90,7 +90,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// If scrolling is enabled, other rows will scroll underneath the pinned
   /// rows.
   ///
-  /// Just like for regular rows, [rowBuilder] will be consulted for
+  /// Just like for regular rows, [buildRow] will be consulted for
   /// additional information about the pinned row. The indices of pinned rows
   /// start at zero and go to `pinnedRowCount - 1`.
   ///
@@ -126,14 +126,16 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     int pinnedRowCount = 0,
     super.addRepaintBoundaries = false,
     required TableViewCellBuilder cellBuilder,
-    required this.columnBuilder,
-    required this.rowBuilder,
+    required TableSpanBuilder columnBuilder,
+    required TableSpanBuilder rowBuilder,
   })  : assert(pinnedColumnCount >= 0),
         assert(pinnedRowCount >= 0),
         assert(rowCount >= 0),
         assert(columnCount >= 0),
         assert(pinnedColumnCount <= columnCount),
         assert(pinnedRowCount <= rowCount),
+        _rowBuilder = rowBuilder,
+        _columnBuilder = columnBuilder,
         _pinnedColumnCount = pinnedColumnCount,
         _pinnedRowCount = pinnedRowCount,
         super(
@@ -148,7 +150,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   set columnCount(int value) {
     assert(pinnedColumnCount <= value);
     // TODO(Piinks): remove once this assertion is added in the super class
-    assert(value >= 0);
+    assert(value >= -1);
     maxXIndex = value - 1;
   }
 
@@ -156,9 +158,9 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
   /// [columnCount].
-  final TableSpanBuilder columnBuilder;
+  final TableSpanBuilder _columnBuilder;
   @override
-  TableSpan buildColumn(int index) => columnBuilder(index);
+  TableSpan buildColumn(int index) => _columnBuilder(index);
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;
@@ -178,7 +180,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   set rowCount(int value) {
     assert(pinnedRowCount <= value);
     // TODO(Piinks): remove once this assertion is added in the super class
-    assert(value >= 0);
+    assert(value >= -1);
     maxYIndex = value - 1;
   }
 
@@ -186,9 +188,9 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
   /// [rowCount].
-  final TableSpanBuilder rowBuilder;
+  final TableSpanBuilder _rowBuilder;
   @override
-  TableSpan buildRow(int index) => rowBuilder(index);
+  TableSpan buildRow(int index) => _rowBuilder(index);
 
   @override
   int get pinnedRowCount => _pinnedRowCount;
@@ -218,10 +220,12 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
     int pinnedRowCount = 0,
     super.addRepaintBoundaries,
     required List<List<Widget>> cells,
-    required this.columnBuilder,
-    required this.rowBuilder,
+    required TableSpanBuilder columnBuilder,
+    required TableSpanBuilder rowBuilder,
   })  : assert(pinnedColumnCount >= 0),
         assert(pinnedRowCount >= 0),
+        _columnBuilder = columnBuilder,
+        _rowBuilder = rowBuilder,
         _pinnedColumnCount = pinnedColumnCount,
         _pinnedRowCount = pinnedRowCount,
         super(children: cells) {
@@ -243,9 +247,9 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
   /// [columnCount].
-  final TableSpanBuilder columnBuilder;
+  final TableSpanBuilder _columnBuilder;
   @override
-  TableSpan buildColumn(int index) => columnBuilder(index);
+  TableSpan buildColumn(int index) => _columnBuilder(index);
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;
@@ -267,9 +271,9 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   ///
   /// The builder must return a valid [TableSpan] for all indices smaller than
   /// [rowCount].
-  final TableSpanBuilder rowBuilder;
+  final TableSpanBuilder _rowBuilder;
   @override
-  TableSpan buildRow(int index) => rowBuilder(index);
+  TableSpan buildRow(int index) => _rowBuilder(index);
 
   @override
   int get pinnedRowCount => _pinnedRowCount;
@@ -287,10 +291,10 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   @override
   bool shouldRebuild(covariant TableCellListDelegate oldDelegate) {
     return columnCount != oldDelegate.columnCount ||
-        columnBuilder != oldDelegate.columnBuilder ||
+        _columnBuilder != oldDelegate._columnBuilder ||
         pinnedColumnCount != oldDelegate.pinnedColumnCount ||
         rowCount != oldDelegate.rowCount ||
-        rowBuilder != oldDelegate.rowBuilder ||
+        _rowBuilder != oldDelegate._rowBuilder ||
         pinnedRowCount != oldDelegate.pinnedRowCount ||
         super.shouldRebuild(oldDelegate);
   }

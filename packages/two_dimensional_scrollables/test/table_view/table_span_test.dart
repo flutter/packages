@@ -1,23 +1,26 @@
-// Copyright 2014 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:two_dimensional_scrollables/table_view.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 void main() {
   group('TableSpanExtent', () {
     test('FixedTableSpanExtent', () {
       FixedTableSpanExtent extent = const FixedTableSpanExtent(150);
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 0, viewportExtent: 0)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
+        ),
         150,
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 100, viewportExtent: 1000)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(
+              precedingExtent: 100, viewportExtent: 1000),
+        ),
         150,
       );
       // asserts value is valid
@@ -38,13 +41,16 @@ void main() {
     test('FractionalTableSpanExtent', () {
       FractionalTableSpanExtent extent = const FractionalTableSpanExtent(0.5);
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 0, viewportExtent: 0)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
+        ),
         0.0,
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 100, viewportExtent: 1000)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(
+              precedingExtent: 100, viewportExtent: 1000),
+        ),
         500,
       );
       // asserts value is valid
@@ -65,13 +71,16 @@ void main() {
     test('RemainingTableSpanExtent', () {
       const RemainingTableSpanExtent extent = RemainingTableSpanExtent();
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 0, viewportExtent: 0)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
+        ),
         0.0,
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 100, viewportExtent: 1000)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(
+              precedingExtent: 100, viewportExtent: 1000),
+        ),
         900,
       );
     });
@@ -85,13 +94,16 @@ void main() {
         },
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 0, viewportExtent: 0)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
+        ),
         100,
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 100, viewportExtent: 1000)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(
+              precedingExtent: 100, viewportExtent: 1000),
+        ),
         1000,
       );
     });
@@ -102,13 +114,16 @@ void main() {
         RemainingTableSpanExtent(),
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 0, viewportExtent: 0)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
+        ),
         100,
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 100, viewportExtent: 1000)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(
+              precedingExtent: 100, viewportExtent: 1000),
+        ),
         900,
       );
     });
@@ -119,13 +134,16 @@ void main() {
         RemainingTableSpanExtent(),
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 0, viewportExtent: 0)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
+        ),
         0,
       );
       expect(
-        extent.calculateExtent(const TableSpanExtentDelegate(
-            precedingExtent: 100, viewportExtent: 1000)),
+        extent.calculateExtent(
+          const TableSpanExtentDelegate(
+              precedingExtent: 100, viewportExtent: 1000),
+        ),
         100,
       );
     });

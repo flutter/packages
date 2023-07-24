@@ -23,6 +23,7 @@ children lazily in a `TwoDimensionalViewport`. This widget can
 ### Depend on it
 
 Run this command with Flutter:
+
 ```sh
 $ flutter pub add two_dimensional_scrollables
 ```
@@ -32,53 +33,19 @@ $ flutter pub add two_dimensional_scrollables
 Now in your Dart code, you can use:
 
 ```sh
-import 'package:two_dimensional_scrollables/table_view.dart';
+import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 ```
 
 ## Usage
 
 ### TableView
 
-This example shows a `TableView` of 100 cells, all sized 100 by 100 pixels
-with a few `TableSpanDecoration`s like background colors and borders. The
-`builder` constructor is called on demand for the cells that are visible in the
-TableView.
-
-```dart
-TableView _getTableView() {
-  return TableView.builder(
-    cellBuilder: (BuildContext context, TableVicinity vicinity) {
-      return Center(
-        child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
-      );
-    },
-    columnCount: 10,
-    columnBuilder: (int column) {
-      return TableSpan(
-        extent: FixedTableSpanExtent(100),
-        foregroundDecoration: TableSpanDecoration(
-          border: TableSpanBorder(
-            trailing: BorderSide(
-             color: Colors.black,
-             width: 2,
-             style: BorderStyle.solid,
-            ),
-          ),
-        ),
-      );
-    },
-    rowCount: 10,
-    rowBuilder: (int row) {
-      return TableSpan(
-        extent: FixedTableSpanExtent(100),
-        backgroundDecoration: TableSpanDecoration(
-          color: row.isEven? Colors.blueAccent[100] : Colors.white,
-        ),
-      );
-    },
-  );
-}
-```
+The code in `example/` shows a `TableView` of initially 400 cells, each varying
+in sizes with a few `TableSpanDecoration`s like background colors and borders.
+The `builder` constructor is called on demand for the cells that are visible in
+the TableView. Additional rows can be added on demand while the vertical
+position can jump between the first and last row using the buttons at the bottom
+of the screen.
 
 ## Changelog
 
