@@ -1,5 +1,0 @@
-dependency_overrides:
-  path_provider_platform_interface:
-    path: ../../path_provider_platform_interface
-  path_provider_android:
-    path: ../../path_provider_android
