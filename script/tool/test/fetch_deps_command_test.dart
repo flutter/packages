@@ -354,9 +354,11 @@ void main() {
     });
 
     group('ios', () {
-      test('runs pub get only once before pod install', () async {
-        final RepositoryPackage plugin = createFakePlugin(
-            'plugin1', packagesDir, platformSupport: <String, PlatformDetails>{
+      test('runs pub get before pod install', () async {
+        final RepositoryPackage plugin =
+            createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
+          'example/ios/Flutter/Generated.xcconfig',
+        ], platformSupport: <String, PlatformDetails>{
           platformIOS: const PlatformDetails(PlatformSupport.inline)
         });
 
@@ -395,6 +397,10 @@ void main() {
         final RepositoryPackage plugin = createFakePlugin(
             'plugin1', packagesDir,
             examples: examples,
+            extraFiles: <String>[
+              'example/example1/ios/Flutter/Generated.xcconfig',
+              'example/example2/ios/Flutter/Generated.xcconfig',
+            ],
             platformSupport: <String, PlatformDetails>{
               platformIOS: const PlatformDetails(PlatformSupport.inline)
             });
@@ -409,11 +415,6 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            ProcessCall(
-              'flutter',
-              const <String>['pub', 'get'],
-              plugin.directory.path,
-            ),
             for (final Directory directory in exampleIOSDirs)
               ProcessCall(
                 'pod',
@@ -431,14 +432,13 @@ void main() {
             ]));
       });
 
-      test('runs pub get if it was not already run', () async {
+      test('runs pub get if example is not configured', () async {
         final RepositoryPackage plugin = createFakePlugin(
             'plugin1', packagesDir, platformSupport: <String, PlatformDetails>{
           platformIOS: const PlatformDetails(PlatformSupport.inline)
         });
 
-        final Directory iOSDir =
-            plugin.getExamples().first.platformDirectory(FlutterPlatform.ios);
+        final RepositoryPackage example = plugin.getExamples().first;
 
         final List<String> output = await runCapturingPrint(
             runner, <String>['fetch-deps', '--no-dart', '--ios']);
@@ -449,12 +449,12 @@ void main() {
             ProcessCall(
               'flutter',
               const <String>['pub', 'get'],
-              plugin.directory.path,
+              example.directory.path,
             ),
             ProcessCall(
               'pod',
               const <String>['install'],
-              iOSDir.path,
+              example.platformDirectory(FlutterPlatform.ios).path,
             ),
           ]),
         );

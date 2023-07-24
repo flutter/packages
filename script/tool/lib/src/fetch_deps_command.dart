@@ -154,26 +154,33 @@ class FetchDepsCommand extends PackageLoopingCommand {
           'Package does not have native $displayPlatform dependencies.');
     }
 
-    // Running `pod install` requires `flutter pub get` or `flutter build` to
-    // have been run first to create the necessary native build files, so run
-    // pub get if it wasn't already run above.
-    if (!getBoolArg(_dartFlag)) {
-      final int exitCode = await processRunner.runAndStream(
-        flutterCommand,
-        <String>['pub', 'get'],
-        workingDir: package.directory,
-      );
-      if (exitCode != 0) {
-        printError('Unable to prepare native project files.');
-        return PackageResult.fail(<String>['Unable to configure project.']);
-      }
-    }
-
     for (final RepositoryPackage example in package.getExamples()) {
       final Directory platformDir = example.platformDirectory(
           platform == platformMacOS
               ? FlutterPlatform.macos
               : FlutterPlatform.ios);
+
+      final File generatedXCConfig = platform == platformMacOS
+          ? platformDir
+              .childDirectory('Flutter')
+              .childDirectory('ephemeral')
+              .childFile('Flutter-Generated.xcconfig')
+          : platformDir
+              .childDirectory('Flutter')
+              .childFile('Generated.xcconfig');
+      // Running `pod install` requires `flutter pub get` or `flutter build` to
+      // have been run at some point to create the necessary native build files.
+      if (!generatedXCConfig.existsSync()) {
+        final int exitCode = await processRunner.runAndStream(
+          flutterCommand,
+          <String>['pub', 'get'],
+          workingDir: example.directory,
+        );
+        if (exitCode != 0) {
+          printError('Unable to prepare native project files.');
+          return PackageResult.fail(<String>['Unable to configure project.']);
+        }
+      }
 
       final int exitCode = await processRunner.runAndStream(
         'pod',
