@@ -1,3 +1,6 @@
+## 1.0.2
+* Adds example app to demonstrate how to use the package.
+
 ## 1.0.1
 
 * Removes `process` dependency.
