@@ -68,7 +68,7 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
 
   @Override
   public @Nullable String getApplicationCachePath() {
-    return getPathProviderApplicationCacheDirectory();
+    return context.getCacheDir().getPath();
   }
 
   @Override
@@ -88,10 +88,6 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
   }
 
   private String getPathProviderTemporaryDirectory() {
-    return context.getCacheDir().getPath();
-  }
-
-  private String getPathProviderApplicationCacheDirectory() {
     return context.getCacheDir().getPath();
   }
 
