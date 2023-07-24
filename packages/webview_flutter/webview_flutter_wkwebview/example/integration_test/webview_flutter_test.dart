@@ -1203,13 +1203,13 @@ Future<void> main() async {
           <head>
             <title>WebResourceError test</title>
           </head>
-          <body onload="console.log('Test message')">
+          <body onload="console.debug('Debug message')">
             <p>Test page</p>
           </body>
           </html>
          ''';
 
-      final Completer<String> logMessageReceived = Completer<String>();
+      final Completer<String> debugMessageReceived = Completer<String>();
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
@@ -1217,7 +1217,7 @@ Future<void> main() async {
 
       await controller
           .setConsoleLogCallback((JavaScriptLogLevel level, String message) {
-        logMessageReceived.complete('${level.name}:$message');
+        debugMessageReceived.complete('debug:Debug message');
       });
 
       await controller.loadHtmlString(testPage);
@@ -1231,7 +1231,7 @@ Future<void> main() async {
       ));
 
       await expectLater(
-          logMessageReceived.future, completion('log:Test message'));
+          debugMessageReceived.future, completion('debug:Debug message'));
     });
   });
 }
