@@ -359,7 +359,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   // Will iterate through all columns and rows to define the layout pattern of
   // the cells of the table.
   //
-  // TODO(Piinks): Add back infinite separately for easier review, <ISSUE>
+  // TODO(Piinks): Add back infinite separately for easier review, https://github.com/flutter/flutter/issues/131226
   // Only relevant when the number of rows and columns is finite
   void _updateAllMetrics() {
     assert(needsDelegateRebuild || didResize);
@@ -507,7 +507,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   // Uses the cached metrics to update the currently visible cells
   //
-  // TODO(Piinks): Add back infinite separately for easier review, <ISSUE>
+  // TODO(Piinks): Add back infinite separately for easier review, https://github.com/flutter/flutter/issues/131226
   // Only relevant when the number of rows and columns is finite
   void _updateFirstAndLastVisibleCell() {
     _firstRegularColumn = null;
@@ -637,7 +637,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required Offset offset,
   }) {
     // TODO(Piinks): Assert here or somewhere else merged cells cannot span
-    // pinned and unpinned cells (for merged cell follow-up), <ISSUE>
+    // pinned and unpinned cells (for merged cell follow-up), https://github.com/flutter/flutter/issues/131224
     double yPaintOffset = -offset.dy;
     for (int row = start.row; row <= end.row; row += 1) {
       double xPaintOffset = -offset.dx;
@@ -646,7 +646,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         final double columnWidth = _columnMetrics[column]!.extent;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
-        // TODO(Piinks): Add back merged cells, <ISSUE>
+        // TODO(Piinks): Add back merged cells, https://github.com/flutter/flutter/issues/131224
 
         final RenderBox? cell = buildOrObtainChildFor(vicinity);
 

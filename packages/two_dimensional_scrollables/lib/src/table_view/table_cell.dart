@@ -12,7 +12,7 @@ import 'table.dart';
 /// This subclass translates the abstract [ChildVicinity.xIndex] and
 /// [ChildVicinity.yIndex] into terms of rows and columns for ease of use within
 /// the context of a [TableView].
-// TODO(Piinks): Add back merged cell docs here, <ISSUE>
+// TODO(Piinks): Add back merged cell docs here, https://github.com/flutter/flutter/issues/131224
 @immutable
 class TableVicinity extends ChildVicinity {
   /// Creates a reference to a child in a [TableView], with the [xIndex] and
@@ -37,13 +37,13 @@ class TableVicinity extends ChildVicinity {
 }
 
 /// Parent data structure used by [RenderTableViewport].
-// TODO(Piinks): Add back merged cells here, <ISSUE>
+// TODO(Piinks): Add back merged cells here, https://github.com/flutter/flutter/issues/131224
 class TableViewParentData extends TwoDimensionalViewportParentData {
   /// Converts the [ChildVicinity] to a [TableVicinity] for ease of use.
   TableVicinity get tableVicinity => vicinity as TableVicinity;
 }
 
-// TODO(Piinks): Add back merged cells here, <ISSUE>
+// TODO(Piinks): Add back merged cells here, https://github.com/flutter/flutter/issues/131224
 /// A widget that wraps each child of the [TableView], and relays information
 /// about the configuration of the cell to the [RenderTableViewport].
 class TableViewCell extends ParentDataWidget<TableViewParentData> {
@@ -56,7 +56,7 @@ class TableViewCell extends ParentDataWidget<TableViewParentData> {
   @override
   void applyParentData(RenderObject renderObject) {
     assert(renderObject.parentData is TableViewParentData);
-    // TODO(Piinks): Add back merged cells here, <ISSUE>
+    // TODO(Piinks): Add back merged cells here, https://github.com/flutter/flutter/issues/131224
   }
 
   @override

@@ -16,7 +16,7 @@ void main() {
 /// A sample application that utilizes the TableView API
 class TableExampleApp extends StatelessWidget {
   /// Crates an instance of teh TableView example app.
-  const TableExampleApp({ super.key, this.controller });
+  const TableExampleApp({super.key, this.controller});
 
   /// A scroll controller to pass to the TableView for testing purposes.
   final ScrollController? controller;
@@ -36,7 +36,7 @@ class TableExampleApp extends StatelessWidget {
 /// The class containing the TableView for the sample application.
 class TableExample extends StatefulWidget {
   /// Creates a screen that demonstrates the TableView widget.
-  const TableExample({ super.key, this.controller });
+  const TableExample({super.key, this.controller});
 
   /// A scroll controller to pass to the TableView for testing purposes.
   final ScrollController? controller;

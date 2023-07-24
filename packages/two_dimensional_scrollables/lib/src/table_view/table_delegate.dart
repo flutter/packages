@@ -32,7 +32,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// The [columnBuilder] will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
   /// particular column.
-  // TODO(Piinks): land infinite separately, <ISSUE>
+  // TODO(Piinks): land infinite separately, https://github.com/flutter/flutter/issues/131226
   // If null, the table will have an infinite number of columns.
   ///
   /// The value returned by this getter may be an estimate of the total
@@ -51,7 +51,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// The [rowBuilder] will be called for indices smaller than the value
   /// provided here to learn more about the extent and visual appearance of a
   /// particular row.
-  // TODO(Piinks): land infinite separately, <ISSUE>
+  // TODO(Piinks): land infinite separately, https://github.com/flutter/flutter/issues/131226
   // If null, the table will have an infinite number of rows.
   ///
   /// The value returned by this getter may be an estimate of the total
