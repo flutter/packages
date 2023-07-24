@@ -391,15 +391,18 @@ void main() {
   test('getUserAgent', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
+
+    const String userAgent = 'str';
+
     when(mockPlatformWebViewController.getUserAgent()).thenAnswer(
-      (_) => Future<String?>.value('str'),
+      (_) => Future<String?>.value(userAgent),
     );
 
     final WebViewController webViewController = WebViewController.fromPlatform(
       mockPlatformWebViewController,
     );
 
-    await expectLater(webViewController.getUserAgent(), completion('str'));
+    await expectLater(webViewController.getUserAgent(), completion(userAgent));
   });
 }
 

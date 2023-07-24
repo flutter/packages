@@ -560,7 +560,15 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<String?> getUserAgent() => _webView.getCustomUserAgent();
+  Future<String?> getUserAgent() async {
+    final String? customUserAgent = await _webView.getCustomUserAgent();
+    if (customUserAgent != null) {
+      return customUserAgent;
+    }
+
+    return (await _webView.evaluateJavaScript('navigator.userAgent;')
+        as String?)!;
+  }
 }
 
 /// An implementation of [JavaScriptChannelParams] with the WebKit api.

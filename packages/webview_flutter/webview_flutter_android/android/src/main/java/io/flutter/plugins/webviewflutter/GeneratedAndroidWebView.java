@@ -1607,7 +1607,7 @@ public class GeneratedAndroidWebView {
 
     void setTextZoom(@NonNull Long instanceId, @NonNull Long textZoom);
 
-    @Nullable
+    @NonNull
     String getUserAgentString(@NonNull Long instanceId);
 
     /** The codec used by WebSettingsHostApi. */

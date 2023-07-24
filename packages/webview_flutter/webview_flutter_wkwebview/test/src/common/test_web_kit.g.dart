@@ -1637,7 +1637,8 @@ abstract class TestWKWebViewHostApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.WKWebViewHostApi.getCustomUserAgent', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         _testBinaryMessengerBinding!.defaultBinaryMessenger
@@ -1647,11 +1648,11 @@ abstract class TestWKWebViewHostApi {
             .setMockDecodedMessageHandler<Object?>(channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.WKWebViewHostApi.getCustomUserAgent was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
-              'Argument for dev.flutter.pigeon.WKWebViewHostApi.getCustomUserAgent was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent was null, expected non-null int.');
           final String? output = api.getCustomUserAgent(arg_identifier!);
           return <Object?>[output];
         });

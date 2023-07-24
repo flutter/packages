@@ -289,8 +289,27 @@ Future<void> main() async {
       },
     ));
 
-    final String? customUserAgent2 = await controller.getUserAgent();
-    expect(customUserAgent2, 'Custom_User_Agent1');
+    final String? customUserAgent = await controller.getUserAgent();
+    expect(customUserAgent, 'Custom_User_Agent1');
+  });
+
+  testWidgets(
+      'getUserAgent returns a default value when custom value is not set',
+      (WidgetTester tester) async {
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    final String? userAgent = await controller.getUserAgent();
+    expect(userAgent, isNotNull);
   });
 
   group('Video playback policy', () {

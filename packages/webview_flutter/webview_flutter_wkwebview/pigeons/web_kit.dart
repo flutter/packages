@@ -688,7 +688,7 @@ abstract class WKWebViewHostApi {
   @ObjCSelector('setAllowsBackForwardForWebViewWithIdentifier:isAllowed:')
   void setAllowsBackForwardNavigationGestures(int identifier, bool allow);
 
-  @ObjCSelector('setUserAgentForWebViewWithIdentifier:userAgent:')
+  @ObjCSelector('setCustomUserAgentForWebViewWithIdentifier:userAgent:')
   void setCustomUserAgent(int identifier, String? userAgent);
 
   @ObjCSelector('evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:')
@@ -698,7 +698,7 @@ abstract class WKWebViewHostApi {
   @ObjCSelector('setInspectableForWebViewWithIdentifier:inspectable:')
   void setInspectable(int identifier, bool inspectable);
 
-  @ObjCSelector('userAgentForWebViewWithIdentifier:')
+  @ObjCSelector('customUserAgentForWebViewWithIdentifier:')
   String? getCustomUserAgent(int identifier);
 }
 

@@ -969,7 +969,7 @@ abstract class TestWebSettingsHostApi {
 
   void setTextZoom(int instanceId, int textZoom);
 
-  String? getUserAgentString(int instanceId);
+  String getUserAgentString(int instanceId);
 
   static void setup(TestWebSettingsHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1344,7 +1344,7 @@ abstract class TestWebSettingsHostApi {
           final int? arg_instanceId = (args[0] as int?);
           assert(arg_instanceId != null,
               'Argument for dev.flutter.pigeon.WebSettingsHostApi.getUserAgentString was null, expected non-null int.');
-          final String? output = api.getUserAgentString(arg_instanceId!);
+          final String output = api.getUserAgentString(arg_instanceId!);
           return <Object?>[output];
         });
       }

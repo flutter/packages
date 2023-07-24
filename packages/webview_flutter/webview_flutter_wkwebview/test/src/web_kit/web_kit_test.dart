@@ -842,10 +842,11 @@ void main() {
       });
 
       test('getCustomUserAgent', () {
+        const String userAgent = 'str';
         when(
           mockPlatformHostApi.getCustomUserAgent(webViewInstanceId),
-        ).thenReturn('str');
-        expect(webView.getCustomUserAgent(), completion('str'));
+        ).thenReturn(userAgent);
+        expect(webView.getCustomUserAgent(), completion(userAgent));
       });
 
       test('evaluateJavaScript', () {

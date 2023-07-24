@@ -120,8 +120,9 @@ public class WebSettingsTest {
   }
 
   @Test
-  public void getWebSettings() {
-    when(mockWebSettings.getUserAgentString()).thenReturn("str");
-    assertEquals(testHostApiImpl.getUserAgentString(0L), "str");
+  public void getUserAgentString() {
+    final String userAgent = "str";
+    when(mockWebSettings.getUserAgentString()).thenReturn(userAgent);
+    assertEquals(testHostApiImpl.getUserAgentString(0L), userAgent);
   }
 }

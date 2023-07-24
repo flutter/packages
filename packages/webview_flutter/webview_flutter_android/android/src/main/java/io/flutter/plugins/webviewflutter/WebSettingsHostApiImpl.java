@@ -133,7 +133,7 @@ public class WebSettingsHostApiImpl implements WebSettingsHostApi {
     webSettings.setTextZoom(textZoom.intValue());
   }
 
-  @Nullable
+  @NonNull
   @Override
   public String getUserAgentString(@NonNull Long instanceId) {
     final WebSettings webSettings = Objects.requireNonNull(instanceManager.getInstance(instanceId));

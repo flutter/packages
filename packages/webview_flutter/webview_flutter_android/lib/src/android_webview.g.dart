@@ -1403,7 +1403,7 @@ class WebSettingsHostApi {
     }
   }
 
-  Future<String?> getUserAgentString(int arg_instanceId) async {
+  Future<String> getUserAgentString(int arg_instanceId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.WebSettingsHostApi.getUserAgentString', codec,
         binaryMessenger: _binaryMessenger);
@@ -1420,8 +1420,13 @@ class WebSettingsHostApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
     } else {
-      return (replyList[0] as String?);
+      return (replyList[0] as String?)!;
     }
   }
 }

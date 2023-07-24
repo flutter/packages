@@ -830,10 +830,12 @@ void main() {
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
       );
 
+      const String userAgent = 'str';
+
       when(mockWebView.getCustomUserAgent()).thenAnswer(
-        (_) => Future<String?>.value('str'),
+        (_) => Future<String?>.value(userAgent),
       );
-      expect(controller.getUserAgent(), completion('str'));
+      expect(controller.getUserAgent(), completion(userAgent));
     });
 
     test('setPlatformNavigationDelegate', () {

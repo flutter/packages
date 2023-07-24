@@ -543,7 +543,7 @@ class WebSettingsHostApiImpl extends WebSettingsHostApi {
   }
 
   /// Helper method to convert instances ids to objects.
-  Future<String?> getUserAgentStringFromInstance(WebSettings instance) {
+  Future<String> getUserAgentStringFromInstance(WebSettings instance) {
     return getUserAgentString(instanceManager.getIdentifier(instance)!);
   }
 }

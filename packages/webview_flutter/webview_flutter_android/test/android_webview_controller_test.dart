@@ -1062,10 +1062,13 @@ void main() {
       final AndroidWebViewController controller = createControllerWithMocks(
         mockSettings: mockSettings,
       );
-      when(mockSettings.getUserAgentString())
-          .thenAnswer((_) => Future<String?>.value('str'));
 
-      expect(await controller.getUserAgent(), 'str');
+      const String userAgent = 'str';
+
+      when(mockSettings.getUserAgentString())
+          .thenAnswer((_) => Future<String>.value(userAgent));
+
+      expect(await controller.getUserAgent(), userAgent);
     });
   });
 

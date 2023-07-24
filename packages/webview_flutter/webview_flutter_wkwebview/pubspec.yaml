@@ -27,13 +27,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.1
-<<<<<<< HEAD
-  pigeon: ^9.2.4
+  pigeon: ^10.1.4
 
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
 # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
 dependency_overrides:
    {webview_flutter_platform_interface: {path: ../../webview_flutter/webview_flutter_platform_interface}}
-=======
-  pigeon: ^10.1.4
->>>>>>> e1ba65d7387129fe4cd2c55206eed98396765b72

@@ -695,7 +695,7 @@ class WebSettings extends JavaObject {
   }
 
   /// Gets the WebView's user-agent string.
-  Future<String?> getUserAgentString() {
+  Future<String> getUserAgentString() {
     return api.getUserAgentStringFromInstance(this);
   }
 

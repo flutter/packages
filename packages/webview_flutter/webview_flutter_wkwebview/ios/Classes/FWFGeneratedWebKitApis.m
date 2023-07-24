@@ -2466,19 +2466,19 @@ void FWFWKWebViewHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
         binaryMessenger:binaryMessenger
                   codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setUserAgentForWebViewWithIdentifier:
-                                                                             userAgent:error:)],
+      NSCAssert([api respondsToSelector:@selector
+                     (setCustomUserAgentForWebViewWithIdentifier:userAgent:error:)],
                 @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(setUserAgentForWebViewWithIdentifier:userAgent:error:)",
+                @"@selector(setCustomUserAgentForWebViewWithIdentifier:userAgent:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSNumber *arg_identifier = GetNullableObjectAtIndex(args, 0);
         NSString *arg_userAgent = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api setUserAgentForWebViewWithIdentifier:arg_identifier
-                                        userAgent:arg_userAgent
-                                            error:&error];
+        [api setCustomUserAgentForWebViewWithIdentifier:arg_identifier
+                                              userAgent:arg_userAgent
+                                                  error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -2541,19 +2541,21 @@ void FWFWKWebViewHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.WKWebViewHostApi.getCustomUserAgent"
+           initWithName:
+               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent"
         binaryMessenger:binaryMessenger
                   codec:FWFWKWebViewHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(userAgentForWebViewWithIdentifier:error:)],
+      NSCAssert([api respondsToSelector:@selector(customUserAgentForWebViewWithIdentifier:error:)],
                 @"FWFWKWebViewHostApi api (%@) doesn't respond to "
-                @"@selector(userAgentForWebViewWithIdentifier:error:)",
+                @"@selector(customUserAgentForWebViewWithIdentifier:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSNumber *arg_identifier = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        NSString *output = [api userAgentForWebViewWithIdentifier:arg_identifier error:&error];
+        NSString *output = [api customUserAgentForWebViewWithIdentifier:arg_identifier
+                                                                  error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

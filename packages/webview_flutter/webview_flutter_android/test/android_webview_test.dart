@@ -529,9 +529,10 @@ void main() {
       });
 
       test('getUserAgentString', () async {
+        const String userAgent = 'str';
         when(mockPlatformHostApi.getUserAgentString(webSettingsInstanceId))
-            .thenReturn('str');
-        expect(await webSettings.getUserAgentString(), 'str');
+            .thenReturn(userAgent);
+        expect(await webSettings.getUserAgentString(), userAgent);
       });
     });
 
