@@ -50,7 +50,4 @@ enum StorageDirectory {
 
   /// Holds user-created documents. See https://developer.android.com/reference/android/os/Environment.html#DIRECTORY_DOCUMENTS.
   documents,
-
-  /// Holds application cache files.
-  cache,
 }

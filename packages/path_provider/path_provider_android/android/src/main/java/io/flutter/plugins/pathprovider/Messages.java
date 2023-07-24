@@ -71,8 +71,7 @@ public class Messages {
     MOVIES(7),
     DOWNLOADS(8),
     DCIM(9),
-    DOCUMENTS(10),
-    CACHE(11);
+    DOCUMENTS(10);
 
     final int index;
 

@@ -25,7 +25,6 @@ enum StorageDirectory {
   downloads,
   dcim,
   documents,
-  cache,
 }
 
 @HostApi(dartHostTestHandler: 'TestPathProviderApi')

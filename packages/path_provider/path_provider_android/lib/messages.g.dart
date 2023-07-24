@@ -23,7 +23,6 @@ enum StorageDirectory {
   downloads,
   dcim,
   documents,
-  cache,
 }
 
 class PathProviderApi {

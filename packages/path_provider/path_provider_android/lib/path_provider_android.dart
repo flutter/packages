@@ -30,8 +30,6 @@ messages.StorageDirectory _convertStorageDirectory(
       return messages.StorageDirectory.dcim;
     case StorageDirectory.documents:
       return messages.StorageDirectory.documents;
-    case StorageDirectory.cache:
-      return messages.StorageDirectory.cache;
   }
 }
 
