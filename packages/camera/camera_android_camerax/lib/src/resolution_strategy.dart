@@ -15,9 +15,9 @@ import 'java_object.dart';
 /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy.
 @immutable
 class ResolutionStrategy extends JavaObject {
-  /// Construct a [ResolutionStrategy].
+  /// Constructs a [ResolutionStrategy].
   ResolutionStrategy({
-    this.boundSize,
+    required this.boundSize,
     this.fallbackRule,
     super.binaryMessenger,
     super.instanceManager,
@@ -26,10 +26,23 @@ class ResolutionStrategy extends JavaObject {
           binaryMessenger: binaryMessenger,
         ),
         super.detached() {
-    if (boundSize == null && fallbackRule != null) {
-      throw ArgumentError(
-          'fallbackRule cannot be specified with a null boundSize. If you wish to create the highest available resolution ResolutionStrategy, specify fallbackRule as null.');
-    }
+    _api.createFromInstances(this, boundSize, fallbackRule);
+  }
+
+  /// Constructs a [ResolutionStrategy] that represents the strategy that
+  /// chooses the highest available resolution.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy#HIGHEST_AVAILABLE_STRATEGY().
+  ResolutionStrategy.highestAvailableStrategy({
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _api = _ResolutionStrategyHostApiImpl(
+          instanceManager: instanceManager,
+          binaryMessenger: binaryMessenger,
+        ),
+        boundSize = null,
+        fallbackRule = null,
+        super.detached() {
     _api.createFromInstances(this, boundSize, fallbackRule);
   }
 
@@ -39,7 +52,7 @@ class ResolutionStrategy extends JavaObject {
   /// This should only be used outside of tests by subclasses created by this
   /// library or to create a copy for an [InstanceManager].
   ResolutionStrategy.detached({
-    this.boundSize,
+    required this.boundSize,
     this.fallbackRule,
     super.binaryMessenger,
     super.instanceManager,
@@ -47,12 +60,24 @@ class ResolutionStrategy extends JavaObject {
           instanceManager: instanceManager,
           binaryMessenger: binaryMessenger,
         ),
-        super.detached() {
-    if (boundSize == null && fallbackRule != null) {
-      throw ArgumentError(
-          'fallbackRule cannot be specified with a null boundSize. If you wish to create the highest available resolution ResolutionStrategy, specify fallbackRule as null.');
-    }
-  }
+        super.detached();
+
+  /// Instantiates a [ResolutionStrategy] that represents the strategy that
+  /// chooses the highest available resolution without creating and attaching to
+  /// an instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  ResolutionStrategy.detachedHighestAvailableStrategy({
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _api = _ResolutionStrategyHostApiImpl(
+          instanceManager: instanceManager,
+          binaryMessenger: binaryMessenger,
+        ),
+        boundSize = null,
+        fallbackRule = null,
+        super.detached();
 
   /// CameraX doesn't select an alternate size when the specified bound size is
   /// unavailable.
@@ -91,25 +116,8 @@ class ResolutionStrategy extends JavaObject {
   /// When the specified bound size is unavailable, CameraX falls back to the
   /// closest lower resolution size.
   ///
-  /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy#FALLBACK_RULE_CLOSEST_LOWER()
+  /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy#FALLBACK_RULE_CLOSEST_LOWER().
   static const int fallbackRuleClosestLower = 4;
-
-  /// Returns the resolution strategey that chooses the highest available
-  /// resolution.
-  ///
-  /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionStrategy#HIGHEST_AVAILABLE_STRATEGY().
-  static ResolutionStrategy getHighestAvailableStrategy({
-    BinaryMessenger? binaryMessenger,
-    InstanceManager? instanceManager,
-    bool detached = false,
-  }) {
-    if (detached) {
-      return ResolutionStrategy.detached(
-          binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    }
-    return ResolutionStrategy(
-        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-  }
 
   final _ResolutionStrategyHostApiImpl _api;
 

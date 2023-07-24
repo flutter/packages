@@ -16,6 +16,8 @@ import 'resolution_selector_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
 @GenerateMocks(<Type>[
+  AspectRatioStrategy,
+  ResolutionStrategy,
   TestResolutionSelectorHostApi,
   TestInstanceManagerHostApi,
 ])
@@ -26,6 +28,41 @@ void main() {
     tearDown(() {
       TestResolutionSelectorHostApi.setup(null);
       TestInstanceManagerHostApi.setup(null);
+    });
+
+    test(
+        'detached constructor does not make call to create expected AspectRatioStrategy instance',
+        () async {
+      final MockTestResolutionSelectorHostApi mockApi =
+          MockTestResolutionSelectorHostApi();
+      TestResolutionSelectorHostApi.setup(mockApi);
+      TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      const int preferredAspectRatio = 1;
+
+      const int fallbackRule = 1;
+
+      AspectRatioStrategy.detached(
+        preferredAspectRatio: preferredAspectRatio,
+        fallbackRule: fallbackRule,
+        instanceManager: instanceManager,
+      );
+
+      ResolutionSelector.detached(
+        resolutionStrategy: MockResolutionStrategy(),
+        aspectRatioStrategy: MockAspectRatioStrategy(),
+        instanceManager: instanceManager,
+      );
+
+      verifyNever(mockApi.create(
+        argThat(isA<int>()),
+        argThat(isA<int>()),
+        argThat(isA<int>()),
+      ));
     });
 
     test('HostApi create creates expected ResolutionSelector instance', () {

@@ -31,7 +31,7 @@ public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostAp
   }
 
   /**
-   * Constructs a {@link AspectRatioStrategyHostApiImpl}.
+   * Constructs an {@link AspectRatioStrategyHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */

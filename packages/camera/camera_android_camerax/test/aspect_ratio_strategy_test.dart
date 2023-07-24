@@ -25,6 +25,34 @@ void main() {
     });
 
     test(
+        'detached create does not make call to create expected AspectRatioStrategy instance',
+        () async {
+      final MockTestAspectRatioStrategyHostApi mockApi =
+          MockTestAspectRatioStrategyHostApi();
+      TestAspectRatioStrategyHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      const int preferredAspectRatio = 1;
+
+      const int fallbackRule = 1;
+
+      AspectRatioStrategy.detached(
+        preferredAspectRatio: preferredAspectRatio,
+        fallbackRule: fallbackRule,
+        instanceManager: instanceManager,
+      );
+
+      verifyNever(mockApi.create(
+        argThat(isA<int>()),
+        preferredAspectRatio,
+        fallbackRule,
+      ));
+    });
+
+    test(
         'HostApi create makes call to create expected AspectRatioStrategy instance',
         () {
       final MockTestAspectRatioStrategyHostApi mockApi =

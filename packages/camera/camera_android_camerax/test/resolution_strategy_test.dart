@@ -28,7 +28,7 @@ void main() {
     });
 
     test(
-        'ResolutionStrategy constructor detects valid boundSize and fallbackRule combinations',
+        'detached resolutionStrategy constructors do not make call to Host API create',
         () {
       final MockTestResolutionStrategyHostApi mockApi =
           MockTestResolutionStrategyHostApi();
@@ -39,41 +39,35 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      // Expect error if boundSize is null, but fallbackRule is not.
-      Size? boundSize;
-      int? fallbackRule = 5;
-      expect(
-          () => ResolutionStrategy(
-                boundSize: boundSize,
-                fallbackRule: fallbackRule,
-                instanceManager: instanceManager,
-              ),
-          throwsArgumentError);
+      const Size boundSize = Size(70, 20);
+      const int fallbackRule = 1;
 
-      // Expect no error if boundSize is non-null, but fallbackRule is not.
-      boundSize = const Size(3, 5);
-      fallbackRule = null;
-      expect(
-          () => ResolutionStrategy(
-                boundSize: boundSize,
-                fallbackRule: fallbackRule,
-                instanceManager: instanceManager,
-              ),
-          returnsNormally);
+      ResolutionStrategy.detached(
+        boundSize: boundSize,
+        fallbackRule: fallbackRule,
+        instanceManager: instanceManager,
+      );
 
-      // Expect no error if boundSize and fallbackRule are both null.
-      boundSize = null;
-      fallbackRule = null;
-      expect(
-          () => ResolutionStrategy(
-                boundSize: boundSize,
-                fallbackRule: fallbackRule,
-                instanceManager: instanceManager,
-              ),
-          returnsNormally);
+      verifyNever(mockApi.create(
+        argThat(isA<int>()),
+        argThat(isA<ResolutionInfo>()
+            .having((ResolutionInfo size) => size.width, 'width', 50)
+            .having((ResolutionInfo size) => size.height, 'height', 30)),
+        fallbackRule,
+      ));
+
+      ResolutionStrategy.detachedHighestAvailableStrategy(
+        instanceManager: instanceManager,
+      );
+
+      verifyNever(mockApi.create(
+        argThat(isA<int>()),
+        null,
+        null,
+      ));
     });
 
-    test('HostApi create creates expected ResolutionStrategy', () {
+    test('HostApi create creates expected ResolutionStrategies', () {
       final MockTestResolutionStrategyHostApi mockApi =
           MockTestResolutionStrategyHostApi();
       TestResolutionStrategyHostApi.setup(mockApi);
@@ -98,6 +92,17 @@ void main() {
             .having((ResolutionInfo size) => size.width, 'width', 50)
             .having((ResolutionInfo size) => size.height, 'height', 30)),
         fallbackRule,
+      ));
+
+      final ResolutionStrategy highestAvailableInstance =
+          ResolutionStrategy.highestAvailableStrategy(
+        instanceManager: instanceManager,
+      );
+
+      verify(mockApi.create(
+        instanceManager.getIdentifier(highestAvailableInstance),
+        null,
+        null,
       ));
     });
   });
