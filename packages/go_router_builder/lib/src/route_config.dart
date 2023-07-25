@@ -442,7 +442,7 @@ abstract class RouteBaseConfig {
     // ignore: deprecated_member_use
     final InterfaceElement classElement = typeParamType.element;
 
-    final RouteBaseConfig value;
+    RouteBaseConfig? value;
     switch (typeName) {
       case 'TypedShellRoute':
         value = ShellRouteConfig._(
@@ -486,7 +486,7 @@ abstract class RouteBaseConfig {
           ),
         );
         break;
-      default: //case 'TypedGoRoute':
+      case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
         if (pathValue.isNull) {
           throw InvalidGenerationSourceError(
@@ -507,7 +507,7 @@ abstract class RouteBaseConfig {
         );
     }
 
-    value._children.addAll(reader
+    value!._children.addAll(reader
         .read(_generateChildrenGetterName(typeName))
         .listValue
         .map<RouteBaseConfig>((DartObject e) => RouteBaseConfig._fromAnnotation(
