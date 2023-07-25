@@ -10,6 +10,7 @@ import 'package:path_provider_linux/path_provider_linux.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:shared_preferences_linux/shared_preferences_linux.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   late MemoryFileSystem fs;
@@ -98,6 +99,35 @@ void main() {
     expect(values, prefixTestValues);
   });
 
+  test('getAllWithParameters', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesLinux prefs = getPreferences();
+
+    final Map<String, Object> values = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(values, hasLength(5));
+    expect(values, prefixTestValues);
+  });
+
+  test('getAllWithParameters with allow list', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesLinux prefs = getPreferences();
+
+    final Map<String?, Object?> all = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.Bool'},
+        ),
+      ),
+    );
+    expect(all.length, 1);
+    expect(all['prefix.Bool'], prefixTestValues['prefix.Bool']);
+  });
+
   test('remove', () async {
     await writeTestFile('{"key1":"one","key2":2}');
     final SharedPreferencesLinux prefs = getPreferences();
@@ -153,6 +183,74 @@ void main() {
     final SharedPreferencesLinux prefs = getPreferences();
     await prefs.clearWithPrefix('');
     final Map<String, Object> noValues = await prefs.getAllWithPrefix('');
+    expect(noValues, hasLength(0));
+  });
+
+  test('clearWithParameters', () async {
+    await writeTestFile(json.encode(flutterTestValues));
+    final SharedPreferencesLinux prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    final Map<String, Object> noValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(noValues, hasLength(0));
+
+    final Map<String, Object> values = await prefs.getAll();
+    expect(values, hasLength(5));
+    expect(values, flutterTestValues);
+  });
+
+  test('clearWithParameters with allow list', () async {
+    await writeTestFile(json.encode(prefixTestValues));
+    final SharedPreferencesLinux prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.StringList'},
+        ),
+      ),
+    );
+    final Map<String, Object> someValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(someValues, hasLength(4));
+  });
+
+  test('getAllWithNoPrefix', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesLinux prefs = getPreferences();
+
+    final Map<String, Object> values = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(values, hasLength(15));
+    expect(values, allTestValues);
+  });
+
+  test('clearWithNoPrefix', () async {
+    await writeTestFile(json.encode(flutterTestValues));
+    final SharedPreferencesLinux prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    final Map<String, Object> noValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
     expect(noValues, hasLength(0));
   });
 }

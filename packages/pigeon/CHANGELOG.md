@@ -1,3 +1,20 @@
+## 10.1.4
+
+* Adds package name to method channel strings to avoid potential collisions between plugins.
+* Adds dartPackageName option to `pigeonOptions`.
+
+## 10.1.3
+
+* Adds generic `Object` field support to data classes.
+
+## 10.1.2
+
+* [swift] Fixes a crash when passing `null` for nested nullable classes. 
+
+## 10.1.1
+
+* Updates README to better reflect modern usage.
+
 ## 10.1.0
 
 * [objc] Adds macOS support to facilitate code sharing with existing iOS plugins.

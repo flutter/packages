@@ -6,35 +6,17 @@
 /// deep linking, data-driven routes and more.
 library go_router;
 
-export 'src/configuration.dart'
-    show
-        GoRoute,
-        GoRouterState,
-        RouteBase,
-        ShellRoute,
-        ShellNavigationContainerBuilder,
-        StatefulNavigationShell,
-        StatefulNavigationShellState,
-        StatefulShellBranch,
-        StatefulShellRoute;
+export 'src/builder.dart';
+export 'src/configuration.dart';
+export 'src/delegate.dart';
+export 'src/information_provider.dart';
+export 'src/match.dart' hide RouteMatchListCodec;
+export 'src/misc/errors.dart';
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
 export 'src/pages/custom_transition_page.dart';
-export 'src/route_data.dart'
-    show
-        RouteData,
-        GoRouteData,
-        ShellRouteData,
-        TypedRoute,
-        TypedGoRoute,
-        TypedShellRoute;
+export 'src/parser.dart';
+export 'src/route.dart';
+export 'src/route_data.dart' hide NoOpPage;
 export 'src/router.dart';
-export 'src/typedefs.dart'
-    show
-        GoRouterPageBuilder,
-        GoRouterRedirect,
-        GoRouterWidgetBuilder,
-        ShellRouteBuilder,
-        ShellRoutePageBuilder,
-        StatefulShellRouteBuilder,
-        StatefulShellRoutePageBuilder;
+export 'src/state.dart' hide GoRouterStateRegistry, GoRouterStateRegistryScope;

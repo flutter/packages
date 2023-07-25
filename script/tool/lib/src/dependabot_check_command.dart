@@ -2,21 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:yaml/yaml.dart';
 
-import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 
 /// A command to verify Dependabot configuration coverage of packages.
 class DependabotCheckCommand extends PackageLoopingCommand {
   /// Creates Dependabot check command instance.
-  DependabotCheckCommand(Directory packagesDir, {GitDir? gitDir})
-      : super(packagesDir, gitDir: gitDir) {
+  DependabotCheckCommand(super.packagesDir, {super.gitDir}) {
     argParser.addOption(_configPathFlag,
         help: 'Path to the Dependabot configuration file',
         defaultsTo: '.github/dependabot.yml');

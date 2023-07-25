@@ -13,8 +13,8 @@ import 'package:integration_test/integration_test.dart';
 
 const String expectedStringContents = 'Hello, world!';
 const String otherStringContents = 'Hello again, world!';
-final Uint8List bytes = utf8.encode(expectedStringContents) as Uint8List;
-final Uint8List otherBytes = utf8.encode(otherStringContents) as Uint8List;
+final Uint8List bytes = const Utf8Encoder().convert(expectedStringContents);
+final Uint8List otherBytes = const Utf8Encoder().convert(otherStringContents);
 final Map<String, dynamic> options = <String, dynamic>{
   'type': 'text/plain',
   'lastModified': DateTime.utc(2017, 12, 13).millisecondsSinceEpoch,

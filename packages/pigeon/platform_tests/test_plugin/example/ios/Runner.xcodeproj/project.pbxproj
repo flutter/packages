@@ -28,6 +28,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		E04641FA2A46270400661C9E /* NSNullFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04641F92A46270400661C9E /* NSNullFieldTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,6 +89,7 @@
 		9808B6775522250A40D7D452 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		BC37C4E8AE005B445F208C02 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF5B776B52F984FB430C15A3 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		E04641F92A46270400661C9E /* NSNullFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSNullFieldTests.swift; sourceTree = "<group>"; };
 		EB04430DB6D43CCC08FA526B /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -126,6 +128,7 @@
 				33A341C6291ECDFD00D34E0F /* NullableReturnsTests.swift */,
 				33A341C7291ECDFD00D34E0F /* PrimitiveTests.swift */,
 				33A341B7291ECCA100D34E0F /* RunnerTests.swift */,
+				E04641F92A46270400661C9E /* NSNullFieldTests.swift */,
 				33A341CA291ECDFD00D34E0F /* Utils.swift */,
 			);
 			path = RunnerTests;
@@ -413,6 +416,7 @@
 				33A341D5291ECDFD00D34E0F /* AsyncHandlersTest.swift in Sources */,
 				33A341CE291ECDFD00D34E0F /* EnumTests.swift in Sources */,
 				33A341CD291ECDFD00D34E0F /* ListTests.swift in Sources */,
+				E04641FA2A46270400661C9E /* NSNullFieldTests.swift in Sources */,
 				33A341D1291ECDFD00D34E0F /* MockBinaryMessenger.swift in Sources */,
 				33A341CF291ECDFD00D34E0F /* NonNullFieldsTest.swift in Sources */,
 				33A341CB291ECDFD00D34E0F /* MultipleArityTests.swift in Sources */,

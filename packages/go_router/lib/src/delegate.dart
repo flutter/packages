@@ -11,7 +11,7 @@ import 'builder.dart';
 import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
-import 'typedefs.dart';
+import 'route.dart';
 
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
@@ -131,9 +131,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// For use by the Router architecture as part of the RouterDelegate.
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
-    currentConfiguration = configuration;
+    if (currentConfiguration != configuration) {
+      currentConfiguration = configuration;
+      notifyListeners();
+    }
     assert(currentConfiguration.isNotEmpty || currentConfiguration.isError);
-    notifyListeners();
     // Use [SynchronousFuture] so that the initial url is processed
     // synchronously and remove unwanted initial animations on deep-linking
     return SynchronousFuture<void>(null);

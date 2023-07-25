@@ -1,7 +1,18 @@
 ## NEXT
 
-* Fixes stale ignore: prefer_const_constructors.
+* Adds more testing to restore coverage to 100%.
+* Removes some dead code.
+
+## 1.0.11
+
+* Adds more documentation in the README.md file!
+* Adds automated verification of the sample code in the README.
+
+## 1.0.10
+
+* Fixes stale ignore: `prefer_const_constructors`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Changes package internals to avoid explicit `as Uint8List` downcast.
 
 ## 1.0.9
 

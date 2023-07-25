@@ -121,14 +121,18 @@ class DefaultLinkDelegate extends StatelessWidget {
 
     // At this point, we know that the link is external. So we use the
     // `launchUrl` API to open the link.
-    if (await canLaunchUrl(url)) {
-      await launchUrl(
+    bool success;
+    try {
+      success = await launchUrl(
         url,
         mode: _useWebView
             ? LaunchMode.inAppWebView
             : LaunchMode.externalApplication,
       );
-    } else {
+    } on PlatformException {
+      success = false;
+    }
+    if (!success) {
       FlutterError.reportError(FlutterErrorDetails(
         exception: 'Could not launch link $url',
         stack: StackTrace.current,

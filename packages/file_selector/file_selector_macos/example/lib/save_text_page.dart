@@ -17,13 +17,11 @@ class SaveTextPage extends StatelessWidget {
 
   Future<void> _saveFile() async {
     final String fileName = _nameController.text;
-    // TODO(stuartmorgan): Update this to getSaveLocation in the next federated
-    // change PR.
-    // ignore: deprecated_member_use
-    final String? path = await FileSelectorPlatform.instance.getSavePath(
-      suggestedName: fileName,
+    final FileSaveLocation? result =
+        await FileSelectorPlatform.instance.getSaveLocation(
+      options: SaveDialogOptions(suggestedName: fileName),
     );
-    if (path == null) {
+    if (result == null) {
       // Operation was canceled by the user.
       return;
     }
@@ -32,7 +30,7 @@ class SaveTextPage extends StatelessWidget {
     const String fileMimeType = 'text/plain';
     final XFile textFile =
         XFile.fromData(fileData, mimeType: fileMimeType, name: fileName);
-    await textFile.saveTo(path);
+    await textFile.saveTo(result.path);
   }
 
   @override

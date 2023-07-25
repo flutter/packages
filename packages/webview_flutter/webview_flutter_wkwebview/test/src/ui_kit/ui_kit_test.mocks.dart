@@ -321,6 +321,21 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValue: _i4.Future<Object?>.value(),
       ) as _i4.Future<Object?>);
+  @override
+  void setInspectable(
+    int? identifier,
+    bool? inspectable,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setInspectable,
+          [
+            identifier,
+            inspectable,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestUIScrollViewHostApi].

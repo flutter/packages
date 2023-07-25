@@ -6,11 +6,11 @@ package io.flutter.plugins.camera.features.fpsrange;
 
 import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
-import android.os.Build;
 import android.util.Range;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugins.camera.CameraProperties;
+import io.flutter.plugins.camera.DeviceInfo;
 import io.flutter.plugins.camera.features.CameraFeature;
 
 /**
@@ -55,8 +55,9 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
   }
 
   private boolean isPixel4A() {
-    //Build.BRAND or Build.MODEL can be null.
-    return "google".equals(Build.BRAND) && "Pixel 4a".equals(Build.MODEL);
+    String brand = DeviceInfo.getBrand();
+    String model = DeviceInfo.getModel();
+    return brand != null && brand.equals("google") && model != null && model.equals("Pixel 4a");
   }
 
   @NonNull

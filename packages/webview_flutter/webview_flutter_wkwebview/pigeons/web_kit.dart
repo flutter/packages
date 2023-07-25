@@ -299,7 +299,7 @@ class WKFrameInfoData {
 class NSErrorData {
   late int code;
   late String domain;
-  late String localizedDescription;
+  late Map<String?, Object?>? userInfo;
 }
 
 /// Mirror of WKScriptMessage.
@@ -694,6 +694,9 @@ abstract class WKWebViewHostApi {
   @ObjCSelector('evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:')
   @async
   Object? evaluateJavaScript(int identifier, String javaScriptString);
+
+  @ObjCSelector('setInspectableForWebViewWithIdentifier:inspectable:')
+  void setInspectable(int identifier, bool inspectable);
 }
 
 /// Mirror of WKUIDelegate.

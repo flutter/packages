@@ -622,7 +622,7 @@ public class MainActivityTest {
         orderedEquals(<ProcessCall>[
           ProcessCall(
             'flutter',
-            'build apk'.split(' '),
+            'build apk --config-only'.split(' '),
             '/packages/plugin/example/android',
           ),
           ProcessCall(

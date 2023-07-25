@@ -1,0 +1,14 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+  - name: set default apps
+    script: .ci/scripts/set_default_linux_apps.sh
+  - name: build examples
+    script: script/tool_runner.sh
+    args: ["build-examples", "--linux"]
+  - name: native test
+    script: .ci/scripts/xvfb_tool_runner.sh
+    args: ["native-test", "--linux"]
+  - name: drive examples
+    script: .ci/scripts/xvfb_tool_runner.sh
+    args: ["drive-examples", "--linux", "--exclude=script/configs/exclude_integration_linux.yaml"]

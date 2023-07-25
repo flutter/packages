@@ -24,7 +24,7 @@ class PrimitiveTests: XCTestCase {
   func testIntPrimitiveHost() throws {
     let binaryMessenger = MockBinaryMessenger<Int32>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
-    let channelName = "dev.flutter.pigeon.PrimitiveHostApi.anInt"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let input = 1
@@ -58,7 +58,7 @@ class PrimitiveTests: XCTestCase {
   func testBoolPrimitiveHost() throws {
     let binaryMessenger = MockBinaryMessenger<Bool>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
-    let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aBool"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let input = true
@@ -92,7 +92,7 @@ class PrimitiveTests: XCTestCase {
   func testDoublePrimitiveHost() throws {
     let binaryMessenger = MockBinaryMessenger<Double>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
-    let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aDouble"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let input: Double = 1.0
@@ -127,7 +127,7 @@ class PrimitiveTests: XCTestCase {
   func testStringPrimitiveHost() throws {
     let binaryMessenger = MockBinaryMessenger<String>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
-    let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aString"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let input: String = "hello"
@@ -162,7 +162,7 @@ class PrimitiveTests: XCTestCase {
   func testListPrimitiveHost() throws {
     let binaryMessenger = MockBinaryMessenger<[Int]>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
-    let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aList"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let input: [Int] = [1, 2, 3]
@@ -197,7 +197,7 @@ class PrimitiveTests: XCTestCase {
   func testMapPrimitiveHost() throws {
     let binaryMessenger = MockBinaryMessenger<[String: Int]>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
-    let channelName = "dev.flutter.pigeon.PrimitiveHostApi.aMap"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let input: [String: Int] = ["hello": 1, "world": 2]

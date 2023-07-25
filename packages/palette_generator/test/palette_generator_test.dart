@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
 import 'dart:ui' as ui show Codec, FrameInfo, Image, instantiateImageCodec;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:palette_generator/palette_generator.dart';
-import 'package:path/path.dart' as path;
+
+import 'encoded_images.dart';
 
 /// An image provider implementation for testing that takes a pre-loaded image.
 /// This avoids handling asynchronous I/O in the test zone, which is
@@ -41,12 +41,7 @@ class FakeImageProvider extends ImageProvider<FakeImageProvider> {
   }
 }
 
-Future<FakeImageProvider> loadImage(String name) async {
-  File imagePath = File(path.joinAll(<String>['assets', name]));
-  if (path.split(Directory.current.absolute.path).last != 'test') {
-    imagePath = File(path.join('test', imagePath.path));
-  }
-  final Uint8List data = Uint8List.fromList(imagePath.readAsBytesSync());
+Future<FakeImageProvider> loadImage(Uint8List data) async {
   final ui.Codec codec = await ui.instantiateImageCodec(data);
   final ui.FrameInfo frameInfo = await codec.getNextFrame();
   return FakeImageProvider(frameInfo.image);
@@ -55,17 +50,12 @@ Future<FakeImageProvider> loadImage(String name) async {
 Future<void> main() async {
   // Load the images outside of the test zone so that IO doesn't get
   // complicated.
-  final List<String> imageNames = <String>[
-    'tall_blue',
-    'wide_red',
-    'dominant',
-    'landscape'
-  ];
-  final Map<String, FakeImageProvider> testImages =
-      <String, FakeImageProvider>{};
-  for (final String name in imageNames) {
-    testImages[name] = await loadImage('$name.png');
-  }
+  final Map<String, FakeImageProvider> testImages = <String, FakeImageProvider>{
+    'tall_blue': await loadImage(kImageDataTallBlue),
+    'wide_red': await loadImage(kImageDataWideRed),
+    'dominant': await loadImage(kImageDataDominant),
+    'landscape': await loadImage(kImageDataLandscape),
+  };
 
   testWidgets('Initialize the image cache', (WidgetTester tester) async {
     // We need to have a testWidgets test in order to initialize the image

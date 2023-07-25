@@ -1,8 +1,16 @@
-## 0.10.8+3
+## 0.10.8+5
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+ 
+## 0.10.8+4
+
+* Adjusts SDK checks for better testability.
+
+## 0.10.8+3
+
 * Fixes unawaited_futures violations.
 * Removes duplicate line in `MediaRecorderBuilder.java`.
+* Adds support for concurrently capturing images and image streaming/recording.
 
 ## 0.10.8+2
 

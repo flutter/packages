@@ -25,7 +25,7 @@ void main() {
       expect(shouldNotify, false);
     });
 
-    test('updates when goRouter changes', () {
+    test('does not update even when goRouter changes', () {
       final GoRouter oldGoRouter = GoRouter(
         routes: <GoRoute>[
           GoRoute(
@@ -46,7 +46,7 @@ void main() {
         oldGoRouter: oldGoRouter,
         newGoRouter: newGoRouter,
       );
-      expect(shouldNotify, true);
+      expect(shouldNotify, false);
     });
   });
 
