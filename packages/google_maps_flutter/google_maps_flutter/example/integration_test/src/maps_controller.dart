@@ -59,11 +59,11 @@ void runTests() {
       expect(
           coordinate.x,
           ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
-            .round());
+              .round());
       expect(
           coordinate.y,
           ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
-            .round());
+              .round());
     }
     await tester.binding.setSurfaceSize(null);
   },
