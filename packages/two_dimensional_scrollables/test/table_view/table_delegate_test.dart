@@ -91,10 +91,11 @@ void main() {
         ),
       );
       expect(delegate, isNull);
+      // TODO(Piinks): new assertions, pinned <= whole count
     });
 
     test('sets max x and y index of super class', () {
-      TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
+      final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
         cellBuilder: (_, __) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
@@ -117,9 +118,7 @@ void main() {
   });
 
   group('TableCellListDelegate', () {
-    test('asserts  valid counts for rows and columns', () {
-      // constructor
-    });
+    test('asserts  valid counts for rows and columns', () {});
 
     test('Asserts child lists lengths match', () {});
 

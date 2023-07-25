@@ -49,18 +49,6 @@ void main() {
       // asserts value is valid
       expect(
         () {
-          extent = FractionalTableSpanExtent(20);
-        },
-        throwsA(
-          isA<AssertionError>().having(
-            (AssertionError error) => error.toString(),
-            'description',
-            contains('fraction >= 0.0 && fraction <= 1.0'),
-          ),
-        ),
-      );
-      expect(
-        () {
           extent = FractionalTableSpanExtent(-20);
         },
         throwsA(

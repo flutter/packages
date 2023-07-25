@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:math' as math;
-
 import 'package:flutter/widgets.dart';
 
 import 'table.dart';
@@ -12,6 +10,10 @@ import 'table_span.dart';
 
 /// Signature for a function that creates a [TableSpan] for a given index of row
 /// or column in a [TableView].
+///
+/// Used by the [TableCellDelegateMixin.columnBuilder] and
+/// [TableCellDelegateMixin.rowBuilder] to configure rows and columns in the
+/// [TableView].
 typedef TableSpanBuilder = TableSpan Function(int index);
 
 /// Signature for a function that creates a [TableViewCell] for a given
@@ -107,7 +109,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// If the value returned by this builder for a particular index changes
   /// throughout the lifetime of the delegate object, [notifyListeners] must be
   /// called.
-  TableSpanBuilder get columnBuilder;
+  TableSpan buildColumn(int index); // Follow up with goderbauer
 
   /// Builds the [TableSpan] that describe the row at the provided index.
   ///
@@ -132,53 +134,46 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     int pinnedRowCount = 0,
     super.addRepaintBoundaries = false,
     required TableViewCellBuilder cellBuilder,
-    required TableSpanBuilder columnBuilder,
+    required this.columnBuilder,
     required TableSpanBuilder rowBuilder,
   })  : assert(pinnedColumnCount >= 0),
         assert(pinnedRowCount >= 0),
         assert(rowCount >= 0),
         assert(columnCount >= 0),
-        _columnCount = columnCount,
-        _columnBuilder = columnBuilder,
+        assert(pinnedColumnCount <= columnCount),
+        assert(pinnedRowCount <= rowCount),
         _pinnedColumnCount = pinnedColumnCount,
-        _rowCount = rowCount,
         _rowBuilder = rowBuilder,
         _pinnedRowCount = pinnedRowCount,
+        _cellBuilder = cellBuilder,
         super(
-          builder: (BuildContext context, ChildVicinity vicinity) =>
-              cellBuilder(context, vicinity as TableVicinity),
+          builder: _cellBuilder, // Follow up with goderbauer
           maxXIndex: columnCount - 1,
           maxYIndex: rowCount - 1,
         );
 
-  @override
-  int get columnCount => _columnCount;
-  int _columnCount;
-  set columnCount(int value) {
-    assert(value >= 0);
-    if (columnCount == value) {
-      return;
-    }
-    _columnCount = value;
-    notifyListeners();
-  }
+  final TableViewCellBuilder _cellBuilder;
 
   @override
-  TableSpanBuilder get columnBuilder => _columnBuilder;
-  TableSpanBuilder _columnBuilder;
-  set columnBuilder(TableSpanBuilder value) {
-    if (columnBuilder == value) {
-      return;
-    }
-    _columnBuilder = value;
-    notifyListeners();
+  int get columnCount => maxXIndex! + 1;
+  set columnCount(int value) {
+    assert(pinnedColumnCount <= value);
+    maxXIndex = value - 1; // Follow up with goderbauer
+    // Also, if so, add assert >= 0 in super class.
   }
+
+  /// some docs...
+  final TableSpanBuilder columnBuilder;
+  @override
+  TableSpan buildColumn(int index) =>
+      columnBuilder(index); // Follow up with goderbauer
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;
   int _pinnedColumnCount;
   set pinnedColumnCount(int value) {
     assert(value >= 0);
+    assert(value <= columnCount);
     if (pinnedColumnCount == value) {
       return;
     }
@@ -187,14 +182,14 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   }
 
   @override
-  int get rowCount => _rowCount;
-  int _rowCount;
+  int get rowCount => maxYIndex! + 1;
   set rowCount(int value) {
     assert(value >= 0);
+    assert(pinnedRowCount <= value);
     if (rowCount == value) {
       return;
     }
-    _rowCount = value;
+    maxYIndex = value - 1;
     notifyListeners();
   }
 
@@ -214,6 +209,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int _pinnedRowCount;
   set pinnedRowCount(int value) {
     assert(value >= 0);
+    assert(value <= rowCount);
     if (pinnedRowCount == value) {
       return;
     }
@@ -224,6 +220,10 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
 
 /// A delegate that supplies children for a [TableViewport] using an
 /// explicit two dimensional array.
+///
+/// The [children] are accessed for each [TableVicinity.row] and
+/// [TableVicinity.column] of the [TwoDimensionalViewport] as
+/// `children[vicinity.row][vicinity.column]`.
 class TableCellListDelegate extends TwoDimensionalChildListDelegate
     with TableCellDelegateMixin {
   /// Creates a delegate that supplies children for a [TableView].
@@ -232,34 +232,31 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
     int pinnedRowCount = 0,
     super.addRepaintBoundaries,
     required List<List<TableViewCell>> cells,
-    required TableSpanBuilder columnBuilder,
+    required this.columnBuilder,
     required TableSpanBuilder rowBuilder,
   })  : assert(pinnedColumnCount >= 0),
         assert(pinnedRowCount >= 0),
-        _columnBuilder = columnBuilder,
         _pinnedColumnCount = pinnedColumnCount,
         _rowBuilder = rowBuilder,
         _pinnedRowCount = pinnedRowCount,
         super(children: cells) {
     // Even if there are merged cells, they should be represented by the same
-    // child in each cell location. So all arrays of cells should have the same length.
+    // child in each cell location. So all arrays of cells should have the same
+    // length.
     assert(
-        children.map((List<Widget> array) => array.length).toSet().length == 1);
+      children.map((List<Widget> array) => array.length).toSet().length == 1,
+    );
+    assert(rowCount >= pinnedRowCount);
+    assert(columnCount >= pinnedColumnCount);
   }
 
   @override
-  int get columnCount => children[0].length;
+  int get columnCount => children.isEmpty ? 0 : children[0].length;
 
+  /// some docs
+  final TableSpanBuilder columnBuilder;
   @override
-  TableSpanBuilder get columnBuilder => _columnBuilder;
-  TableSpanBuilder _columnBuilder;
-  set columnBuilder(TableSpanBuilder value) {
-    if (columnBuilder == value) {
-      return;
-    }
-    _columnBuilder = value;
-    notifyListeners();
-  }
+  TableSpan buildColumn(int index) => columnBuilder(index);
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;

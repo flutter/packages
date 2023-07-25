@@ -1,14 +1,12 @@
 # Two Dimensional Scrollables
+
 A package that provides widgets that scroll in two dimensions, built on the
 two-dimensional foundation of the Flutter framework.
 
 ## Features
+
 This package provides support for a TableView widget that scrolls in both the
 vertical and horizontal axes.
-
-In the future, additional widgets from this package will include:
-* TreeView
-* TreeTableView
 
 ### TableView
 
@@ -28,6 +26,7 @@ Run this command with Flutter:
 ```sh
 $ flutter pub add two_dimensional_scrollables
 ```
+
 ### Import it
 
 Now in your Dart code, you can use:
@@ -35,6 +34,7 @@ Now in your Dart code, you can use:
 ```sh
 import 'package:two_dimensional_scrollables/table_view.dart';
 ```
+
 ## Usage
 
 ### TableView
@@ -81,11 +81,13 @@ TableView.builder(
 ```
 
 ## Changelog
+
 See the
 [Changelog](https://github.com/flutter/packages/blob/main/packages/two_dimensional_scrollables/CHANGELOG.md)
 for a list of new features and breaking changes.
 
 ## Roadmap
+
 See the [GitHub project](https://github.com/orgs/flutter/projects/32/) for a
 prioritized list of feature requests and known issues.
 

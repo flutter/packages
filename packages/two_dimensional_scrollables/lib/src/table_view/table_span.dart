@@ -95,10 +95,15 @@ class TableSpan {
   final TableSpanDecoration? foregroundDecoration;
 }
 
-/// Delegate passed to [TableSpanExtent.calculateExtent].
+/// Delegate passed to [TableSpanExtent.calculateExtent] from the
+/// [RenderTableViewport] during layout.
 ///
 /// Provides access to metrics from the [TableView] that a [TableSpanExtent] may
 /// need to calculate its extent.
+///
+/// Extents will not be computed for every frame unless the delegate has been
+/// updated. Otherwise, after the extents are computed during the first layout
+/// passed, they are cached and reused in subsequent frames.
 class TableSpanExtentDelegate {
   /// Creates a [TableSpanExtentDelegate].
   ///
@@ -159,13 +164,15 @@ class FixedTableSpanExtent extends TableSpanExtent {
 class FractionalTableSpanExtent extends TableSpanExtent {
   /// Creates a [FractionalTableSpanExtent].
   ///
-  /// The provided [fraction] value must be equal to or grater then zero.
+  /// The provided [fraction] value must be equal to or greater than zero.
   const FractionalTableSpanExtent(
     this.fraction,
-  ) : assert(fraction >= 0.0 && fraction <= 1.0);
+  ) : assert(fraction >= 0.0);
 
   /// The fraction of the [TableSpanExtentDelegate.viewportExtent] that the
   /// span should occupy.
+  ///
+  /// The provided [fraction] value must be equal to or greater than zero.
   final double fraction;
 
   @override
@@ -175,14 +182,15 @@ class FractionalTableSpanExtent extends TableSpanExtent {
 
 /// Specifies that the span should occupy the remaining space in the viewport.
 ///
-/// If the previous span can already fill out the viewport, this will evaluate
-/// the span's extent to zero. If the previous span cannot fill out the viewport,
-/// this span's extent will be whatever space is left to fill out the viewport.
+/// If the previous [TableSpan]s can already fill out the viewport, this will
+/// evaluate the span's extent to zero. If the previous spans cannot fill out the
+/// viewport, this span's extent will be whatever space is left to fill out the
+/// viewport.
 ///
 /// To avoid that the span's extent evaluates to zero, consider combining this
 /// extent with another extent. The following example will make sure that the
 /// span's extent is at least 200 pixels, but if there's more than that available
-/// in the viewport, it will fill all that space.:
+/// in the viewport, it will fill all that space:
 ///
 /// ```dart
 /// const MaxTableSpanExtent(FixedTableSpanExtent(200.0), RemainingTableSpanExtent());
@@ -265,6 +273,7 @@ class TableSpanDecoration {
   /// paint is called with the `rect` for the cell representing the pinned
   /// column and separately with a `rect` containing all the other unpinned
   /// cells.
+  // Follow up with goderbauer
   void paint(Canvas canvas, Rect rect, Axis axis) {
     if (color != null) {
       canvas.drawRect(
@@ -291,7 +300,7 @@ class TableSpanBorder {
   /// The border to draw on the trailing side of the span.
   ///
   /// The trailing side of a row is the bottom, the trailing side of a column
-  /// is its right side.
+  /// is its right side. // Follow up with goderbauer
   final BorderSide trailing;
 
   /// The border to draw on the leading side of the span.

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:two_dimensional_scrollables/table_view.dart';
 
 // ignore_for_file: avoid_print
-// ignore_for_file: only_throw_errors
 
 void main() {
   runApp(const TableExampleApp());
@@ -15,11 +14,8 @@ void main() {
 
 /// A sample application that utilizes the TableView API
 class TableExampleApp extends StatelessWidget {
-  /// Crates an instance of teh TableView example app.
-  const TableExampleApp({super.key, this.controller});
-
-  /// A scroll controller to pass to the TableView for testing purposes.
-  final ScrollController? controller;
+  /// Creates an instance of the TableView example app.
+  const TableExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +24,7 @@ class TableExampleApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: TableExample(controller: controller),
+      home: const TableExample(),
     );
   }
 }
@@ -36,24 +32,20 @@ class TableExampleApp extends StatelessWidget {
 /// The class containing the TableView for the sample application.
 class TableExample extends StatefulWidget {
   /// Creates a screen that demonstrates the TableView widget.
-  const TableExample({super.key, this.controller});
-
-  /// A scroll controller to pass to the TableView for testing purposes.
-  final ScrollController? controller;
+  const TableExample({super.key});
 
   @override
   State<TableExample> createState() => _TableExampleState();
 }
 
 class _TableExampleState extends State<TableExample> {
-  late final ScrollController _controller;
-  late int _rowCount;
+  late final ScrollController _verticalController;
+  int _rowCount = 20;
 
   @override
   void initState() {
-    _controller = widget.controller ?? ScrollController();
-    _rowCount = 20;
     super.initState();
+    _verticalController = ScrollController();
   }
 
   @override
@@ -65,7 +57,8 @@ class _TableExampleState extends State<TableExample> {
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 50),
         child: TableView.builder(
-          verticalDetails: ScrollableDetails.vertical(controller: _controller),
+          verticalDetails:
+              ScrollableDetails.vertical(controller: _verticalController),
           cellBuilder: _buildCell,
           columnCount: 20,
           columnBuilder: _buildColumnSpan,
@@ -76,13 +69,14 @@ class _TableExampleState extends State<TableExample> {
       persistentFooterButtons: <Widget>[
         TextButton(
           onPressed: () {
-            _controller.jumpTo(0);
+            _verticalController.jumpTo(0);
           },
           child: const Text('Jump to Top'),
         ),
         TextButton(
           onPressed: () {
-            _controller.jumpTo(_controller.position.maxScrollExtent);
+            _verticalController
+                .jumpTo(_verticalController.position.maxScrollExtent);
           },
           child: const Text('Jump to Bottom'),
         ),
@@ -100,9 +94,10 @@ class _TableExampleState extends State<TableExample> {
 
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
     return TableViewCell(
-        child: Center(
-      child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
-    ));
+      child: Center(
+        child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+      ),
+    );
   }
 
   TableSpan _buildColumnSpan(int index) {
@@ -153,7 +148,8 @@ class _TableExampleState extends State<TableExample> {
           onEnter: (_) => print('Entered column $index'),
         );
     }
-    throw 'unreachable';
+    throw AssertionError(
+        'This should be unreachable, as every index is accounted for in the switch clauses.');
   }
 
   TableSpan _buildRowSpan(int index) {
@@ -166,7 +162,6 @@ class _TableExampleState extends State<TableExample> {
       ),
     );
 
-    // return const FixedRawTableDimensionSpec(35);
     switch (index % 3) {
       case 0:
         return TableSpan(
@@ -193,6 +188,7 @@ class _TableExampleState extends State<TableExample> {
           extent: const FractionalTableSpanExtent(0.15),
         );
     }
-    throw 'unreachable';
+    throw AssertionError(
+        'This should be unreachable, as every index is accounted for in the switch clauses.');
   }
 }

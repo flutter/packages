@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// The TableView and associated widgets.
+/// The [TableView] and associated widgets.
 ///
 /// To use, import `package:two_dimensional_scrollables/table_view.dart`.
 library table_view;
