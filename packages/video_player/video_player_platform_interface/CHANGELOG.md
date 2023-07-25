@@ -1,6 +1,6 @@
 ## 6.3.0
 
-* Adds support for picture-in-picture on iOS.
+* Adds support for picture-in-picture.
 
 ## 6.2.0
 
