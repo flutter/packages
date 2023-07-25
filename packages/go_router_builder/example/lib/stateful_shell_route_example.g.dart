@@ -13,6 +13,8 @@ List<RouteBase> get $appRoutes => [
     ];
 
 RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
+      restorationScopeId: MyShellRouteData.$restorationScopeId,
+      navigatorContainerBuilder: MyShellRouteData.$navigatorContainerBuilder,
       factory: $MyShellRouteDataExtension._fromState,
       branches: [
         StatefulShellBranchData.$branch(
@@ -25,6 +27,7 @@ RouteBase get $myShellRouteData => StatefulShellRouteData.$route(
         ),
         StatefulShellBranchData.$branch(
           navigatorKey: BranchBData.$navigatorKey,
+          restorationScopeId: BranchBData.$restorationScopeId,
           routes: [
             GoRouteData.$route(
               path: '/detailsB',
