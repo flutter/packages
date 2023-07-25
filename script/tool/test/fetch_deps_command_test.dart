@@ -603,5 +603,225 @@ void main() {
             ));
       });
     });
+
+    group('macos', () {
+      test('runs pub get before pod install', () async {
+        final RepositoryPackage plugin =
+            createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
+          'example/macos/Flutter/ephemeral/Flutter-Generated.xcconfig',
+        ], platformSupport: <String, PlatformDetails>{
+          platformMacOS: const PlatformDetails(PlatformSupport.inline)
+        });
+
+        final Directory macOSDir =
+            plugin.getExamples().first.platformDirectory(FlutterPlatform.macos);
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['fetch-deps', '--macos']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            const ProcessCall(
+              'flutter',
+              <String>['precache', '--macos'],
+              null,
+            ),
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+            ProcessCall(
+              'pod',
+              const <String>['install'],
+              macOSDir.path,
+            ),
+          ]),
+        );
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
+
+      test('runs on all examples', () async {
+        final List<String> examples = <String>['example1', 'example2'];
+        final RepositoryPackage plugin = createFakePlugin(
+            'plugin1', packagesDir,
+            examples: examples,
+            extraFiles: <String>[
+              'example/example1/macos/Flutter/ephemeral/Flutter-Generated.xcconfig',
+              'example/example2/macos/Flutter/ephemeral/Flutter-Generated.xcconfig',
+            ],
+            platformSupport: <String, PlatformDetails>{
+              platformMacOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        final Iterable<Directory> examplemacOSDirs = plugin.getExamples().map(
+            (RepositoryPackage example) =>
+                example.platformDirectory(FlutterPlatform.macos));
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--macos']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            const ProcessCall(
+              'flutter',
+              <String>['precache', '--macos'],
+              null,
+            ),
+            for (final Directory directory in examplemacOSDirs)
+              ProcessCall(
+                'pod',
+                const <String>['install'],
+                directory.path,
+              ),
+          ]),
+        );
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
+
+      test('runs pub get if example is not configured', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+            'plugin1', packagesDir, platformSupport: <String, PlatformDetails>{
+          platformMacOS: const PlatformDetails(PlatformSupport.inline)
+        });
+
+        final RepositoryPackage example = plugin.getExamples().first;
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--macos']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            const ProcessCall(
+              'flutter',
+              <String>['precache', '--macos'],
+              null,
+            ),
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              example.directory.path,
+            ),
+            ProcessCall(
+              'pod',
+              const <String>['install'],
+              example.platformDirectory(FlutterPlatform.macos).path,
+            ),
+          ]),
+        );
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
+
+      test('fails if pre-pod pub get fails', () async {
+        createFakePlugin('plugin1', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformMacOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        processRunner
+                .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(), <String>['precache']),
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get']),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--macos'],
+            errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains('Unable to configure project'),
+              ],
+            ));
+      });
+
+      test('fails if pod install fails', () async {
+        createFakePlugin('plugin1', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformMacOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        processRunner.mockProcessesForExecutable['pod'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1)),
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--macos'],
+            errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains('The following packages had errors:'),
+              ],
+            ));
+      });
+
+      test('skips non-macOS plugins', () async {
+        createFakePlugin('plugin1', packagesDir);
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--macos']);
+
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains('Package does not have native macOS dependencies.')
+              ],
+            ));
+      });
+
+      test('skips non-inline plugins', () async {
+        createFakePlugin('plugin1', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformMacOS: const PlatformDetails(PlatformSupport.federated)
+            });
+
+        final List<String> output = await runCapturingPrint(
+            runner, <String>['fetch-deps', '--no-dart', '--macos']);
+
+        expect(
+            output,
+            containsAllInOrder(
+              <Matcher>[
+                contains('Package does not have native macOS dependencies.')
+              ],
+            ));
+      });
+    });
   });
 }
