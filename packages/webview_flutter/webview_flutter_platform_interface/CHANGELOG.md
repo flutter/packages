@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Adds support to retrieve the user agent. See `PlatformWebViewController.getUserAgent`.
+
 ## 2.4.0
 
 * Adds support to retrieve the url from a web resource loading error. See `WebResourceError.url`.
