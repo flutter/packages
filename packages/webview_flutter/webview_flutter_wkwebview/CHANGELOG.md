@@ -1,3 +1,8 @@
+## 3.7.3
+
+* Add webkit interface for showing javascript alert message
+
+
 ## 3.7.2
 
 * Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller changes.
