@@ -1,3 +1,7 @@
+## 3.7.2
+
+* Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller changes.
+
 ## 3.7.1
 
 * Updates pigeon version to `10.1.4`.
