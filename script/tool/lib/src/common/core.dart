@@ -37,6 +37,25 @@ const String kEnableExperiment = 'enable-experiment';
 // ignore: public_member_api_docs
 enum FlutterPlatform { android, ios, linux, macos, web, windows }
 
+const Map<String, FlutterPlatform> _platformByName = <String, FlutterPlatform>{
+  platformAndroid: FlutterPlatform.android,
+  platformIOS: FlutterPlatform.ios,
+  platformLinux: FlutterPlatform.linux,
+  platformMacOS: FlutterPlatform.macos,
+  platformWeb: FlutterPlatform.web,
+  platformWindows: FlutterPlatform.windows,
+};
+
+/// Maps from a platform name (e.g., flag or platform directory) to the
+/// corresponding platform enum.
+FlutterPlatform getPlatformByName(String name) {
+  final FlutterPlatform? platform = _platformByName[name];
+  if (platform == null) {
+    throw ArgumentError('Invalid platform: $name');
+  }
+  return platform;
+}
+
 // Flutter->Dart SDK version mapping. Any time a command fails to look up a
 // corresponding version, this map should be updated.
 final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{

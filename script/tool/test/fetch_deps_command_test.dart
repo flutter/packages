@@ -44,9 +44,6 @@ void main() {
           platformIOS: const PlatformDetails(PlatformSupport.inline)
         });
 
-        final Directory iOSDir =
-            plugin.getExamples().first.platformDirectory(FlutterPlatform.ios);
-
         final List<String> output =
             await runCapturingPrint(runner, <String>['fetch-deps']);
 
@@ -95,6 +92,42 @@ void main() {
                 contains('Failed to "pub get"'),
               ],
             ));
+      });
+
+      test('skips unsupported packages when any platforms are passed',
+          () async {
+        final RepositoryPackage packageWithBoth = createFakePackage(
+            'supports_both', packagesDir, extraFiles: <String>[
+          'example/linux/placeholder',
+          'example/windows/placeholder'
+        ]);
+        final RepositoryPackage packageWithOne = createFakePackage(
+            'supports_one', packagesDir,
+            extraFiles: <String>['example/linux/placeholder']);
+        createFakePackage('supports_neither', packagesDir);
+
+        await runCapturingPrint(runner, <String>[
+          'fetch-deps',
+          '--linux',
+          '--windows',
+          '--supporting-target-platforms-only'
+        ]);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'dart',
+              const <String>['pub', 'get'],
+              packageWithBoth.path,
+            ),
+            ProcessCall(
+              'dart',
+              const <String>['pub', 'get'],
+              packageWithOne.path,
+            ),
+          ]),
+        );
       });
     });
 
@@ -327,8 +360,7 @@ void main() {
             output,
             containsAllInOrder(
               <Matcher>[
-                contains(
-                    'SKIPPING: Package does not have native Android dependencies.')
+                contains('Package does not have native Android dependencies.')
               ],
             ));
       });
@@ -346,8 +378,7 @@ void main() {
             output,
             containsAllInOrder(
               <Matcher>[
-                contains(
-                    'SKIPPING: Package does not have native Android dependencies.')
+                contains('Package does not have native Android dependencies.')
               ],
             ));
       });
@@ -533,8 +564,7 @@ void main() {
             output,
             containsAllInOrder(
               <Matcher>[
-                contains(
-                    'SKIPPING: Package does not have native iOS dependencies.')
+                contains('Package does not have native iOS dependencies.')
               ],
             ));
       });
@@ -552,8 +582,7 @@ void main() {
             output,
             containsAllInOrder(
               <Matcher>[
-                contains(
-                    'SKIPPING: Package does not have native iOS dependencies.')
+                contains('Package does not have native iOS dependencies.')
               ],
             ));
       });

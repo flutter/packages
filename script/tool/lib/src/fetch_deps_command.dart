@@ -28,15 +28,46 @@ class FetchDepsCommand extends PackageLoopingCommand {
     super.processRunner,
     super.platform,
   }) {
-    argParser.addFlag(_dartFlag, defaultsTo: true, help: 'Run "pub get".');
+    argParser.addFlag(_dartFlag, defaultsTo: true, help: 'Run "pub get"');
+    argParser.addFlag(_supportingTargetPlatformsOnlyFlag,
+        help: 'Restricted "pub get" runs to packages that have at least one '
+            'example supporting at least one of the platform flags passed.\n'
+            'If no platform flags are passed, this will exclude all packages.');
     argParser.addFlag(platformAndroid,
-        help: 'Run "gradlew dependencies" for Android plugins.');
-    argParser.addFlag(platformIOS, help: 'Run "pod install" for iOS plugins.');
+        help: 'Run "gradlew dependencies" for Android plugins.\n'
+            'Include packages with Android examples when used with '
+            '--$_supportingTargetPlatformsOnlyFlag');
+    argParser.addFlag(platformIOS,
+        help: 'Run "pod install" for iOS plugins.\n'
+            'Include packages with iOS examples when used with '
+            '--$_supportingTargetPlatformsOnlyFlag');
+    argParser.addFlag(platformLinux,
+        help: 'Include packages with Linux examples when used with '
+            '--$_supportingTargetPlatformsOnlyFlag');
     argParser.addFlag(platformMacOS,
-        help: 'Run "pod install" for macOS plugins.');
+        help: 'Run "pod install" for macOS plugins.\n'
+            'Include packages with macOS examples when used with '
+            '--$_supportingTargetPlatformsOnlyFlag');
+    argParser.addFlag(platformWeb,
+        help: 'Include packages with Web examples when used with '
+            '--$_supportingTargetPlatformsOnlyFlag');
+    argParser.addFlag(platformWindows,
+        help: 'Include packages with Windows examples when used with '
+            '--$_supportingTargetPlatformsOnlyFlag');
   }
 
   static const String _dartFlag = 'dart';
+  static const String _supportingTargetPlatformsOnlyFlag =
+      'supporting-target-platforms-only';
+
+  static const Iterable<String> _platforms = <String>[
+    platformAndroid,
+    platformIOS,
+    platformLinux,
+    platformMacOS,
+    platformWeb,
+    platformWindows,
+  ];
 
   @override
   final String name = 'fetch-deps';
@@ -47,39 +78,42 @@ class FetchDepsCommand extends PackageLoopingCommand {
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     bool fetchedDeps = false;
+    final List<String> skips = <String>[];
     if (getBoolArg(_dartFlag)) {
-      fetchedDeps = true;
-      if (!await _fetchDartPackages(package)) {
-        // If Dart-level depenendencies fail, fail immediately since the native
-        // dependencies won't be useful.
-        return PackageResult.fail(<String>['Failed to "pub get".']);
+      final bool filterPlatforms =
+          getBoolArg(_supportingTargetPlatformsOnlyFlag);
+      if (!filterPlatforms || _hasExampleSupportingRequestedPlatform(package)) {
+        fetchedDeps = true;
+        if (!await _fetchDartPackages(package)) {
+          // If Dart-level depenendencies fail, fail immediately since the
+          // native dependencies won't be useful.
+          return PackageResult.fail(<String>['Failed to "pub get".']);
+        }
+      } else {
+        skips.add('Skipping Dart dependencies; no examples support requested '
+            'platforms.');
       }
     }
 
-    final Iterable<String> supportedPlatforms = <String>[
-      platformAndroid,
-      platformIOS,
-      platformMacOS,
-    ];
-    final Iterable<String> targetPlatforms =
-        supportedPlatforms.where((String platform) => getBoolArg(platform));
-
     final List<String> errors = <String>[];
-    final List<String> skips = <String>[];
-    for (final String platform in targetPlatforms) {
+    for (final FlutterPlatform platform in _targetPlatforms) {
       final PackageResult result;
       switch (platform) {
-        case platformAndroid:
+        case FlutterPlatform.android:
           result = await _fetchAndroidDeps(package);
           break;
-        case platformIOS:
+        case FlutterPlatform.ios:
           result = await _fetchDarwinDeps(package, platformIOS);
           break;
-        case platformMacOS:
+        case FlutterPlatform.macos:
           result = await _fetchDarwinDeps(package, platformMacOS);
           break;
-        default:
-          throw UnimplementedError();
+        case FlutterPlatform.linux:
+        case FlutterPlatform.web:
+        case FlutterPlatform.windows:
+          // No native dependency handling yet.
+          result = PackageResult.skip('Nothing to do for $platform.');
+          break;
       }
       switch (result.state) {
         case RunState.succeeded:
@@ -103,7 +137,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
       return PackageResult.success();
     }
     if (skips.isNotEmpty) {
-      return PackageResult.skip(skips.join(', '));
+      return PackageResult.skip(<String>['', ...skips].join('\n- '));
     }
 
     printError('At least one type of dependency must be requested');
@@ -155,10 +189,8 @@ class FetchDepsCommand extends PackageLoopingCommand {
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
-      final Directory platformDir = example.platformDirectory(
-          platform == platformMacOS
-              ? FlutterPlatform.macos
-              : FlutterPlatform.ios);
+      final Directory platformDir =
+          example.platformDirectory(getPlatformByName(platform));
 
       final File generatedXCConfig = platform == platformMacOS
           ? platformDir
@@ -203,4 +235,15 @@ class FetchDepsCommand extends PackageLoopingCommand {
         workingDir: package.directory);
     return exitCode == 0;
   }
+
+  bool _hasExampleSupportingRequestedPlatform(RepositoryPackage package) {
+    return package.getExamples().any((RepositoryPackage example) {
+      return _targetPlatforms.any(
+          (FlutterPlatform platform) => example.appSupportsPlatform(platform));
+    });
+  }
+
+  Iterable<FlutterPlatform> get _targetPlatforms => _platforms
+      .where((String platform) => getBoolArg(platform))
+      .map((String platformName) => getPlatformByName(platformName));
 }
