@@ -72,6 +72,7 @@ void main() {
         'packages/a_plugin/pigeons/messages.dart',
         // Test scripts.
         'packages/a_plugin/run_tests.sh',
+        'packages/a_plugin/dart_test.yaml',
         // Tools.
         'packages/a_plugin/tool/a_development_tool.dart',
         // Example build files.

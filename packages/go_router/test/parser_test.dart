@@ -5,10 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/information_provider.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/parser.dart';
 
 RouteInformation createRouteInformation(String location, [Object? extra]) {
   return RouteInformation(
@@ -222,7 +218,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (_, GoRouterState state) {
-        lastRedirectLocation = state.location;
+        lastRedirectLocation = state.uri.toString();
         return null;
       },
     );
@@ -291,7 +287,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (BuildContext context, GoRouterState state) {
-        if (state.location != '/123/family/345') {
+        if (state.uri.toString() != '/123/family/345') {
           return '/123/family/345';
         }
         return null;
@@ -381,7 +377,8 @@ void main() {
       GoRoute(
         path: '/abc',
         builder: (_, __) => const Placeholder(),
-        redirect: (BuildContext context, GoRouterState state) => state.location,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.uri.toString(),
       ),
     ];
     final GoRouteInformationParser parser = await createParser(

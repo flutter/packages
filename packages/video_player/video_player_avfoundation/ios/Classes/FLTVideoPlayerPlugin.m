@@ -76,8 +76,6 @@ static void *statusContext = &statusContext;
 static void *presentationSizeContext = &presentationSizeContext;
 static void *durationContext = &durationContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
-static void *playbackBufferEmptyContext = &playbackBufferEmptyContext;
-static void *playbackBufferFullContext = &playbackBufferFullContext;
 static void *rateContext = &rateContext;
 
 @implementation FLTVideoPlayer
@@ -112,14 +110,6 @@ static void *rateContext = &rateContext;
          forKeyPath:@"playbackLikelyToKeepUp"
             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
             context:playbackLikelyToKeepUpContext];
-  [item addObserver:self
-         forKeyPath:@"playbackBufferEmpty"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:playbackBufferEmptyContext];
-  [item addObserver:self
-         forKeyPath:@"playbackBufferFull"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:playbackBufferFullContext];
 
   // Add observer to AVPlayer instead of AVPlayerItem since the AVPlayerItem does not have a "rate"
   // property
@@ -408,19 +398,15 @@ NS_INLINE UIViewController *rootViewController(void) {
       [self updatePlayingState];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
+    [self updatePlayingState];
     if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
-      [self updatePlayingState];
       if (_eventSink != nil) {
         _eventSink(@{@"event" : @"bufferingEnd"});
       }
-    }
-  } else if (context == playbackBufferEmptyContext) {
-    if (_eventSink != nil) {
-      _eventSink(@{@"event" : @"bufferingStart"});
-    }
-  } else if (context == playbackBufferFullContext) {
-    if (_eventSink != nil) {
-      _eventSink(@{@"event" : @"bufferingEnd"});
+    } else {
+      if (_eventSink != nil) {
+        _eventSink(@{@"event" : @"bufferingStart"});
+      }
     }
   } else if (context == rateContext) {
     // Important: Make sure to cast the object to AVPlayer when observing the rate property,
@@ -597,6 +583,14 @@ NS_INLINE UIViewController *rootViewController(void) {
 /// is useful for the case where the Engine is in the process of deconstruction
 /// so the channel is going to die or is already dead.
 - (void)disposeSansEventChannel {
+  // This check prevents the crash caused by removing the KVO observers twice.
+  // When performing a Hot Restart, the leftover players are disposed once directly
+  // by [FLTVideoPlayerPlugin initialize:] method and then disposed again by
+  // [FLTVideoPlayer onTextureUnregistered:] call leading to possible over-release.
+  if (_disposed) {
+    return;
+  }
+
   _disposed = YES;
   [_playerLayer removeFromSuperlayer];
   [_displayLink invalidate];
@@ -606,8 +600,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   [currentItem removeObserver:self forKeyPath:@"presentationSize"];
   [currentItem removeObserver:self forKeyPath:@"duration"];
   [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
-  [currentItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
-  [currentItem removeObserver:self forKeyPath:@"playbackBufferFull"];
+  [self.player removeObserver:self forKeyPath:@"rate"];
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -698,10 +691,15 @@ NS_INLINE UIViewController *rootViewController(void) {
     } else {
       assetPath = [_registrar lookupKeyForAsset:input.asset];
     }
-    player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
-                                      frameUpdater:frameUpdater
-                                     playerFactory:_playerFactory];
-    return [self onPlayerSetup:player frameUpdater:frameUpdater];
+    @try {
+      player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
+                                        frameUpdater:frameUpdater
+                                       playerFactory:_playerFactory];
+      return [self onPlayerSetup:player frameUpdater:frameUpdater];
+    } @catch (NSException *exception) {
+      *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
+      return nil;
+    }
   } else if (input.uri) {
     player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater

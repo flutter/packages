@@ -96,8 +96,8 @@ void main() {
       preferences = await SharedPreferences.getInstance();
     });
 
-    tearDown(() {
-      preferences.clear();
+    tearDown(() async {
+      await preferences.clear();
       SharedPreferences.resetStatic();
     });
 
@@ -111,8 +111,8 @@ void main() {
       preferences = await SharedPreferences.getInstance();
     });
 
-    tearDown(() {
-      preferences.clear();
+    tearDown(() async {
+      await preferences.clear();
       SharedPreferences.resetStatic();
     });
 
@@ -126,11 +126,40 @@ void main() {
       preferences = await SharedPreferences.getInstance();
     });
 
-    tearDown(() {
-      preferences.clear();
+    tearDown(() async {
+      await preferences.clear();
       SharedPreferences.resetStatic();
     });
 
     runAllTests();
+  });
+
+  testWidgets('allowList only gets allowed items', (WidgetTester _) async {
+    const String allowedString = 'stringKey';
+    const String allowedBool = 'boolKey';
+    const String notAllowedDouble = 'doubleKey';
+    const String resultString = 'resultString';
+
+    const Set<String> allowList = <String>{allowedString, allowedBool};
+
+    SharedPreferences.resetStatic();
+    SharedPreferences.setPrefix('', allowList: allowList);
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString(allowedString, resultString);
+    await prefs.setBool(allowedBool, true);
+    await prefs.setDouble(notAllowedDouble, 3.14);
+
+    await prefs.reload();
+
+    final String? testString = prefs.getString(allowedString);
+    expect(testString, resultString);
+
+    final bool? testBool = prefs.getBool(allowedBool);
+    expect(testBool, true);
+
+    final double? testDouble = prefs.getDouble(notAllowedDouble);
+    expect(testDouble, null);
   });
 }

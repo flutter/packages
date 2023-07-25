@@ -1,5 +1,6 @@
-## NEXT
+## 6.1.12
 
+* Removes the use of `canLaunchUrl` in `Link`, to avoid issues on platforms where `canLaunchUrl` is unreliable or requires permissions.
 * Updates minimum supported macOS version to 10.14.
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

@@ -104,6 +104,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   ImageCapture? imageCapture;
 
+  /// The flash mode currently configured for [imageCapture].
+  int? _currentFlashMode;
+
   /// The [ImageAnalysis] instance that can be configured to analyze individual
   /// frames.
   ImageAnalysis? imageAnalysis;
@@ -317,9 +320,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> dispose(int cameraId) async {
     preview?.releaseFlutterSurfaceTexture();
-    liveCameraState?.removeObservers();
+    unawaited(liveCameraState?.removeObservers());
     processCameraProvider?.unbindAll();
-    imageAnalysis?.clearAnalyzer();
+    unawaited(imageAnalysis?.clearAnalyzer());
   }
 
   /// The camera has been initialized.
@@ -423,8 +426,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> pausePreview(int cameraId) async {
-    _unbindUseCaseFromLifecycle(preview!);
     _previewIsPaused = true;
+    await _unbindUseCaseFromLifecycle(preview!);
   }
 
   /// Resume the paused preview for the selected camera.
@@ -432,8 +435,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> resumePreview(int cameraId) async {
-    await _bindPreviewToLifecycle(cameraId);
     _previewIsPaused = false;
+    await _bindPreviewToLifecycle(cameraId);
   }
 
   /// Returns a widget showing a live camera preview.
@@ -459,11 +462,30 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<XFile> takePicture(int cameraId) async {
-    // TODO(camsim99): Add support for flash mode configuration.
-    // https://github.com/flutter/flutter/issues/120715
+    if (_currentFlashMode != null) {
+      await imageCapture!.setFlashMode(_currentFlashMode!);
+    }
     final String picturePath = await imageCapture!.takePicture();
-
     return XFile(picturePath);
+  }
+
+  /// Sets the flash mode for the selected camera.
+  @override
+  Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    switch (mode) {
+      case FlashMode.off:
+        _currentFlashMode = ImageCapture.flashModeOff;
+        break;
+      case FlashMode.auto:
+        _currentFlashMode = ImageCapture.flashModeAuto;
+        break;
+      case FlashMode.always:
+        _currentFlashMode = ImageCapture.flashModeOn;
+        break;
+      case FlashMode.torch:
+        // TODO(camsim99): Implement torch mode when CameraControl is wrapped.
+        break;
+    }
   }
 
   /// Configures and starts a video recording. Returns silently without doing
@@ -507,7 +529,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (videoOutputPath == null) {
       // Stop the current active recording as we will be unable to complete it
       // in this error case.
-      recording!.close();
+      unawaited(recording!.close());
       recording = null;
       pendingRecording = null;
       throw CameraException(
@@ -516,7 +538,7 @@ class AndroidCameraCameraX extends CameraPlatform {
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-    recording!.close();
+    unawaited(recording!.close());
     recording = null;
     pendingRecording = null;
     return XFile(videoOutputPath!);
@@ -526,7 +548,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> pauseVideoRecording(int cameraId) async {
     if (recording != null) {
-      recording!.pause();
+      await recording!.pause();
     }
   }
 
@@ -534,7 +556,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> resumeVideoRecording(int cameraId) async {
     if (recording != null) {
-      recording!.resume();
+      await recording!.resume();
     }
   }
 
@@ -583,12 +605,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Configures the [imageAnalysis] instance for image streaming and binds it
   /// to camera lifecycle controlled by the [processCameraProvider].
   Future<void> _configureAndBindImageAnalysisToLifecycle() async {
-    if (imageAnalysis != null &&
-        await processCameraProvider!.isBound(imageAnalysis!)) {
-      // imageAnalysis already configured and bound to lifecycle.
-      return;
-    }
-
     // Create Analyzer that can read image data for image streaming.
     final WeakReference<AndroidCameraCameraX> weakThis =
         WeakReference<AndroidCameraCameraX>(this);
@@ -614,7 +630,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           width: imageProxy.width);
 
       weakThis.target!.cameraImageDataStreamController!.add(cameraImageData);
-      imageProxy.close();
+      unawaited(imageProxy.close());
     }
 
     // shouldCreateDetachedObjectForTesting is used to create an Analyzer
@@ -626,8 +642,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = createImageAnalysis(null);
-    imageAnalysis!.setAnalyzer(analyzer);
+    imageAnalysis ??= createImageAnalysis(null);
+    unawaited(imageAnalysis!.setAnalyzer(analyzer));
+
+    if (await processCameraProvider!.isBound(imageAnalysis!)) {
+      // No need to bind imageAnalysis to lifecycle again.
+      return;
+    }
 
     // TODO(camsim99): Reset live camera state observers here when
     // https://github.com/flutter/packages/pull/3419 lands.
@@ -652,7 +673,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The [onListen] callback for the stream controller used for image
   /// streaming.
   Future<void> _onFrameStreamListen() async {
-    _configureAndBindImageAnalysisToLifecycle();
+    await _configureAndBindImageAnalysisToLifecycle();
   }
 
   /// The [onCancel] callback for the stream controller used for image
@@ -661,7 +682,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Removes the previously set analyzer on the [imageAnalysis] instance, since
   /// image information should no longer be streamed.
   FutureOr<void> _onFrameStreamCancel() async {
-    imageAnalysis!.clearAnalyzer();
+    unawaited(imageAnalysis!.clearAnalyzer());
   }
 
   /// Converts between Android ImageFormat constants and [ImageFormatGroup]s.
@@ -687,7 +708,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// removed, as well.
   Future<void> _updateLiveCameraState(int cameraId) async {
     final CameraInfo cameraInfo = await camera!.getCameraInfo();
-    liveCameraState?.removeObservers();
+    await liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo.getCameraState();
     await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
   }

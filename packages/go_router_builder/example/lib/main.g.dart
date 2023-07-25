@@ -53,6 +53,8 @@ extension $HomeRouteExtension on HomeRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $FamilyRouteExtension on FamilyRoute {
@@ -70,6 +72,8 @@ extension $FamilyRouteExtension on FamilyRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $PersonRouteExtension on PersonRoute {
@@ -88,6 +92,8 @@ extension $PersonRouteExtension on PersonRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }
 
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
@@ -110,7 +116,16 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
 }
+
+const _$PersonDetailsEnumMap = {
+  PersonDetails.hobbies: 'hobbies',
+  PersonDetails.favoriteFood: 'favorite-food',
+  PersonDetails.favoriteSport: 'favorite-sport',
+};
 
 extension $FamilyCountRouteExtension on FamilyCountRoute {
   static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
@@ -127,13 +142,9 @@ extension $FamilyCountRouteExtension on FamilyCountRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
-}
 
-const _$PersonDetailsEnumMap = {
-  PersonDetails.hobbies: 'hobbies',
-  PersonDetails.favoriteFood: 'favorite-food',
-  PersonDetails.favoriteSport: 'favorite-sport',
-};
+  void replace(BuildContext context) => context.replace(location);
+}
 
 extension<T extends Enum> on Map<T, String> {
   T _$fromName(String value) =>
@@ -163,4 +174,6 @@ extension $LoginRouteExtension on LoginRoute {
 
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
 }

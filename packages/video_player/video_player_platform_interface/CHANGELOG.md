@@ -1,7 +1,11 @@
-## NEXT
+## 6.3.0
+
+* Adds support for picture-in-picture on iOS.
+
+## 6.2.0
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
-* Adds support for picture-in-picture on iOS.
+* Adds web options to customize control's list and displaying context menu.
 
 ## 6.1.0
 

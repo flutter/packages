@@ -41,4 +41,7 @@ void main() {
     params: <String, String>{},
     queryParams: <String, String>{},
   );
+
+  state.queryParametersAll;
+  state.location;
 }
