@@ -38,13 +38,15 @@ class InfoIterable extends IterableBase<String> {
 class ShellRouteConfig extends RouteBaseConfig {
   ShellRouteConfig._({
     required this.navigatorKey,
+    required this.parentNavigatorKey,
     required super.routeDataClass,
     required super.parent,
-    required super.parentNavigatorKey,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
   final String? navigatorKey;
+
+  final String? parentNavigatorKey;
 
   @override
   Iterable<String> classDeclarations() => <String>[
@@ -57,7 +59,8 @@ extension $_extensionName on $_className {
 
   @override
   String get routeConstructorParameters =>
-      navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,';
+      '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
+      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
 
   @override
   String get factorConstructorParameters =>
@@ -65,9 +68,6 @@ extension $_extensionName on $_className {
 
   @override
   String get routeDataClassName => 'ShellRouteData';
-
-  @override
-  String get childrenGetterName => 'routes';
 
   @override
   String get dataConvertionFunctionName => '\$route';
@@ -78,8 +78,8 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
   StatefulShellRouteConfig._({
     required super.routeDataClass,
     required super.parent,
-    this.navigatorContainerBuilder,
-    this.restorationScopeId,
+    required this.navigatorContainerBuilder,
+    required this.restorationScopeId,
   }) : super._();
 
   final String? navigatorContainerBuilder;
@@ -105,9 +105,6 @@ extension $_extensionName on $_className {
 
   @override
   String get routeDataClassName => 'StatefulShellRouteData';
-
-  @override
-  String get childrenGetterName => 'branches';
 
   @override
   String get dataConvertionFunctionName => '\$route';
@@ -141,9 +138,6 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   String get routeDataClassName => 'StatefulShellBranchData';
 
   @override
-  String get childrenGetterName => 'routes';
-
-  @override
   String get dataConvertionFunctionName => '\$branch';
 }
 
@@ -152,9 +146,9 @@ class GoRouteConfig extends RouteBaseConfig {
   GoRouteConfig._({
     required this.path,
     required this.name,
+    required this.parentNavigatorKey,
     required super.routeDataClass,
     required super.parent,
-    required super.parentNavigatorKey,
   }) : super._();
 
   /// The path of the GoRoute to be created by this configuration.
@@ -162,6 +156,8 @@ class GoRouteConfig extends RouteBaseConfig {
 
   /// The name of the GoRoute to be created by this configuration.
   final String? name;
+
+  final String? parentNavigatorKey;
 
   late final Set<String> _pathParams = Set<String>.unmodifiable(_parsedPath
       .whereType<ParameterToken>()
@@ -384,13 +380,12 @@ extension $_extensionName on $_className {
   String get routeConstructorParameters => '''
     path: ${escapeDartString(path)},
     ${name != null ? 'name: ${escapeDartString(name!)},' : ''}
+    ${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}
 ''';
 
   @override
   String get routeDataClassName => 'GoRouteData';
 
-  @override
-  String get childrenGetterName => 'routes';
   @override
   String get dataConvertionFunctionName => '\$route';
 }
@@ -400,7 +395,6 @@ abstract class RouteBaseConfig {
   RouteBaseConfig._({
     required this.routeDataClass,
     required this.parent,
-    this.parentNavigatorKey,
   });
 
   /// Creates a new [RouteBaseConfig] represented the annotation data in [reader].
@@ -456,11 +450,11 @@ abstract class RouteBaseConfig {
           parent: parent,
           navigatorKey: _generateParameterGetterCode(
             classElement,
-            keyName: r'$navigatorKey',
+            parameterName: r'$navigatorKey',
           ),
           parentNavigatorKey: _generateParameterGetterCode(
             classElement,
-            keyName: r'$parentNavigatorKey',
+            parameterName: r'$parentNavigatorKey',
           ),
         );
         break;
@@ -484,7 +478,7 @@ abstract class RouteBaseConfig {
           parent: parent,
           navigatorKey: _generateParameterGetterCode(
             classElement,
-            keyName: r'$navigatorKey',
+            parameterName: r'$navigatorKey',
           ),
           restorationScopeId: _generateParameterGetterCode(
             classElement,
@@ -508,7 +502,7 @@ abstract class RouteBaseConfig {
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
             classElement,
-            keyName: r'$parentNavigatorKey',
+            parameterName: r'$parentNavigatorKey',
           ),
         );
     }
@@ -530,18 +524,15 @@ abstract class RouteBaseConfig {
   /// The parent of this route config.
   final RouteBaseConfig? parent;
 
-  /// The parent navigator key string that is used for initialize the
-  /// `RouteBase` class this config generates.
-  final String? parentNavigatorKey;
-
   static String _generateChildrenGetterName(String name) {
-    return name == 'TypedStatefulShellRoute' ? 'branches' : 'routes';
+    return (name == 'TypedStatefulShellRoute' ||
+            name == 'StatefulShellRouteData')
+        ? 'branches'
+        : 'routes';
   }
 
-  static String? _generateParameterGetterCode(
-    InterfaceElement classElement, {
-    required String parameterName,
-  }) {
+  static String? _generateParameterGetterCode(InterfaceElement classElement,
+      {required String parameterName}) {
     final String? fieldDisplayName = classElement.fields
         .where((FieldElement element) {
           if (!element.isStatic || element.name != parameterName) {
@@ -624,18 +615,13 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
     final String routesBit = _children.isEmpty
         ? ''
         : '''
-${childrenGetterName}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
+${_generateChildrenGetterName(routeDataClassName)}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
 ''';
-
-    final String parentNavigatorKeyParameter = parentNavigatorKey == null
-        ? ''
-        : 'parentNavigatorKey: $parentNavigatorKey,';
 
     return '''
 $routeDataClassName.$dataConvertionFunctionName(
     $routeConstructorParameters
     $factorConstructorParameters
-    $parentNavigatorKeyParameter
     $routesBit
   )
 ''';
@@ -647,10 +633,6 @@ $routeDataClassName.$dataConvertionFunctionName(
   /// The name of `RouteData` subclass this configuration represents.
   @protected
   String get routeDataClassName;
-
-  /// The name to get children.
-  @protected
-  String get childrenGetterName;
 
   /// The function name of `RouteData` to get Routes or branches.
   @protected
