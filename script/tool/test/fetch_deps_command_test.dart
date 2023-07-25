@@ -402,6 +402,11 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
+            const ProcessCall(
+              'flutter',
+              <String>['precache', '--ios'],
+              null,
+            ),
             ProcessCall(
               'flutter',
               const <String>['pub', 'get'],
@@ -446,6 +451,11 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
+            const ProcessCall(
+              'flutter',
+              <String>['precache', '--ios'],
+              null,
+            ),
             for (final Directory directory in exampleIOSDirs)
               ProcessCall(
                 'pod',
@@ -477,6 +487,11 @@ void main() {
         expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
+            const ProcessCall(
+              'flutter',
+              <String>['precache', '--ios'],
+              null,
+            ),
             ProcessCall(
               'flutter',
               const <String>['pub', 'get'],
@@ -507,7 +522,8 @@ void main() {
         processRunner
                 .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
             <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(exitCode: 1)),
+          FakeProcessInfo(MockProcess(), <String>['precache']),
+          FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get']),
         ];
 
         Error? commandError;

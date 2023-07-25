@@ -11,7 +11,8 @@ import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
-const int _exitNothingRequested = 3;
+const int _exitPrecacheFailed = 3;
+const int _exitNothingRequested = 4;
 
 /// Download dependencies, both Dart and native.
 ///
@@ -74,6 +75,31 @@ class FetchDepsCommand extends PackageLoopingCommand {
 
   @override
   final String description = 'Fetches dependencies for packages';
+
+  @override
+  Future<void> initializeRun() async {
+    // `pod install` requires having the platform artifacts precached. See
+    // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L47
+    // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L130
+    if (getBoolArg(platformIOS)) {
+      final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>['precache', '--ios'],
+      );
+      if (exitCode != 0) {
+        throw ToolExit(_exitPrecacheFailed);
+      }
+    }
+    if (getBoolArg(platformMacOS)) {
+      final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>['precache', '--macos'],
+      );
+      if (exitCode != 0) {
+        throw ToolExit(_exitPrecacheFailed);
+      }
+    }
+  }
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
