@@ -2,7 +2,7 @@ tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
-  - name: download Dart and android deps
+  - name: download Dart and Android deps
     script: script/tool_runner.sh
     infra_step: true
     args: ["fetch-deps", "--android", "--supporting-target-platforms-only"]

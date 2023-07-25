@@ -30,7 +30,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
   }) {
     argParser.addFlag(_dartFlag, defaultsTo: true, help: 'Run "pub get"');
     argParser.addFlag(_supportingTargetPlatformsOnlyFlag,
-        help: 'Restricted "pub get" runs to packages that have at least one '
+        help: 'Restricts "pub get" runs to packages that have at least one '
             'example supporting at least one of the platform flags passed.\n'
             'If no platform flags are passed, this will exclude all packages.');
     argParser.addFlag(platformAndroid,
@@ -183,6 +183,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
       RepositoryPackage package, final String platform) async {
     if (!pluginSupportsPlatform(platform, package,
         requiredMode: PlatformSupport.inline)) {
+      // Convert from the flag (lower case ios/macos) to the actual name.
       final String displayPlatform = platform.replaceFirst('os', 'OS');
       return PackageResult.skip(
           'Package does not have native $displayPlatform dependencies.');
@@ -192,6 +193,10 @@ class FetchDepsCommand extends PackageLoopingCommand {
       final Directory platformDir =
           example.platformDirectory(getPlatformByName(platform));
 
+      // Running `pod install` requires `flutter pub get` or `flutter build` to
+      // have been run at some point to create the necessary native build files.
+      // See https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/templates/cocoapods/Podfile-macos#L13-L15
+      // and https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/templates/cocoapods/Podfile-ios-swift#L14-L16
       final File generatedXCConfig = platform == platformMacOS
           ? platformDir
               .childDirectory('Flutter')
@@ -200,8 +205,6 @@ class FetchDepsCommand extends PackageLoopingCommand {
           : platformDir
               .childDirectory('Flutter')
               .childFile('Generated.xcconfig');
-      // Running `pod install` requires `flutter pub get` or `flutter build` to
-      // have been run at some point to create the necessary native build files.
       if (!generatedXCConfig.existsSync()) {
         final int exitCode = await processRunner.runAndStream(
           flutterCommand,
