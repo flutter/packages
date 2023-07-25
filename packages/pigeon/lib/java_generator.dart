@@ -36,6 +36,7 @@ class JavaOptions {
     this.package,
     this.copyrightHeader,
     this.useGeneratedAnnotation,
+    this.areEncoderDecoderPublic,
   });
 
   /// The name of the class that will house all the generated classes.
@@ -46,6 +47,9 @@ class JavaOptions {
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
+
+  /// If true, generated encoders and decoders will be public.
+  final bool? areEncoderDecoderPublic;
 
   /// Determines if the `javax.annotation.Generated` is used in the output. This
   /// is false by default since that dependency isn't available in plugins by
@@ -61,6 +65,7 @@ class JavaOptions {
       className: map['className'] as String?,
       package: map['package'] as String?,
       copyrightHeader: copyrightHeader?.cast<String>(),
+      areEncoderDecoderPublic: map['areEncoderDecoderPublic'] as bool?,
       useGeneratedAnnotation: map['useGeneratedAnnotation'] as bool?,
     );
   }
@@ -72,6 +77,8 @@ class JavaOptions {
       if (className != null) 'className': className!,
       if (package != null) 'package': package!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (areEncoderDecoderPublic != null)
+        'areEncoderDecoderPublic': areEncoderDecoderPublic!,
       if (useGeneratedAnnotation != null)
         'useGeneratedAnnotation': useGeneratedAnnotation!,
     };
@@ -332,7 +339,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }) {
     indent.newln();
     indent.writeln('@NonNull');
-    indent.write('ArrayList<Object> toList() ');
+    indent.write(
+        '${generatorOptions.areEncoderDecoderPublic ?? false ? 'public ' : ''}ArrayList<Object> toList() ');
     indent.addScoped('{', '}', () {
       indent.writeln(
           'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
@@ -371,7 +379,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }) {
     indent.newln();
     indent.write(
-        'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
+        'static ${generatorOptions.areEncoderDecoderPublic ?? false ? 'public ' : ''} @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
     indent.addScoped('{', '}', () {
       const String result = 'pigeonResult';
       indent.writeln('${klass.name} $result = new ${klass.name}();');

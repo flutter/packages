@@ -190,6 +190,7 @@ class PigeonOptions {
     this.astOut,
     this.debugGenerators,
     this.basePath,
+    this.areEncoderDecoderPublic,
     String? dartPackageName,
   }) : _dartPackageName = dartPackageName;
 
@@ -259,6 +260,9 @@ class PigeonOptions {
   /// The name of the package the pigeon files will be used in.
   final String? _dartPackageName;
 
+  /// If true, generated encoders and decoders will be public.
+  final bool? areEncoderDecoderPublic;
+
   /// Creates a [PigeonOptions] from a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   static PigeonOptions fromMap(Map<String, Object> map) {
@@ -296,6 +300,7 @@ class PigeonOptions {
       astOut: map['astOut'] as String?,
       debugGenerators: map['debugGenerators'] as bool?,
       basePath: map['basePath'] as String?,
+      areEncoderDecoderPublic: map['areEncoderDecoderPublic'] as bool?,
       dartPackageName: map['dartPackageName'] as String?,
     );
   }
@@ -325,6 +330,8 @@ class PigeonOptions {
       if (oneLanguage != null) 'oneLanguage': oneLanguage!,
       if (debugGenerators != null) 'debugGenerators': debugGenerators!,
       if (basePath != null) 'basePath': basePath!,
+      if (areEncoderDecoderPublic != null)
+        'areEncoderDecoderPublic': areEncoderDecoderPublic!,
       if (_dartPackageName != null) 'dartPackageName': _dartPackageName!,
     };
     return result;
