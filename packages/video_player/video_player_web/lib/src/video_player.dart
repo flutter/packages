@@ -205,6 +205,9 @@ class VideoPlayer {
 
   /// Sets options
   Future<void> setOptions(VideoPlayerWebOptions options) async {
+    // incase called multiple times, reset options
+    _resetOptions();
+
     if (options.controls.enabled) {
       _videoElement.controls = true;
       final String controlsList = options.controls.controlsList;
@@ -227,11 +230,30 @@ class VideoPlayer {
     }
   }
 
+  void _resetOptions() {
+    _videoElement.controls = false;
+    if (_videoElement.hasAttribute('controlsList')) {
+      _videoElement.setAttribute('controlsList', '');
+    }
+    if (_videoElement.hasAttribute('disablePictureInPicture')) {
+      _videoElement.setAttribute('disablePictureInPicture', false);
+    }
+    if (_onContextMenu != null) {
+      _videoElement.removeEventListener('contextmenu', _onContextMenu);
+      _onContextMenu = null;
+    }
+    if (_videoElement.hasAttribute('disableRemotePlayback')) {
+      _videoElement.setAttribute('disableRemotePlayback', false);
+    }
+  }
+
   /// Disposes of the current [html.VideoElement].
   void dispose() {
     _videoElement.removeAttribute('src');
-    _videoElement.removeEventListener('contextmenu', _onContextMenu);
-    _onContextMenu = null;
+    if (_onContextMenu != null) {
+      _videoElement.removeEventListener('contextmenu', _onContextMenu);
+      _onContextMenu = null;
+    }
     _videoElement.load();
   }
 

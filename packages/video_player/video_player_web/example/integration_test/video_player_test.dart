@@ -356,6 +356,56 @@ void main() {
           expect(video.getAttribute('disableRemotePlayback'), 'true');
         });
       });
+
+      group('when called first time', () {
+        testWidgets('expect correct options', (WidgetTester tester) async {
+          await player.setOptions(
+            const VideoPlayerWebOptions(
+              controls: VideoPlayerWebOptionsControls.enabled(
+                allowDownload: false,
+                allowFullscreen: false,
+                allowPlaybackRate: false,
+                allowPictureInPicture: false,
+              ),
+              allowContextMenu: false,
+              allowRemotePlayback: false,
+            ),
+          );
+
+          expect(video.controls, isTrue);
+          expect(video.controlsList, isNotNull);
+          expect(video.controlsList?.length, 3);
+          expect(video.controlsList?.contains('nodownload'), isTrue);
+          expect(video.controlsList?.contains('nofullscreen'), isTrue);
+          expect(video.controlsList?.contains('noplaybackrate'), isTrue);
+          expect(video.getAttribute('disablePictureInPicture'), 'true');
+          expect(video.getAttribute('disableRemotePlayback'), 'true');
+        });
+
+        group('when called once more', () {
+          testWidgets('expect correct options', (WidgetTester tester) async {
+            await player.setOptions(
+              const VideoPlayerWebOptions(
+                // ignore: avoid_redundant_argument_values
+                controls: VideoPlayerWebOptionsControls.disabled(),
+                // ignore: avoid_redundant_argument_values
+                allowContextMenu: true,
+                // ignore: avoid_redundant_argument_values
+                allowRemotePlayback: true,
+              ),
+            );
+
+            expect(video.controls, isFalse);
+            expect(video.controlsList, isNotNull);
+            expect(video.controlsList?.length, 0);
+            expect(video.controlsList?.contains('nodownload'), isFalse);
+            expect(video.controlsList?.contains('nofullscreen'), isFalse);
+            expect(video.controlsList?.contains('noplaybackrate'), isFalse);
+            expect(video.getAttribute('disablePictureInPicture'), isNull);
+            expect(video.getAttribute('disableRemotePlayback'), isNull);
+          });
+        });
+      });
     });
   });
 }
