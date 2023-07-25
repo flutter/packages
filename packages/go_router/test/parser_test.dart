@@ -218,7 +218,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (_, GoRouterState state) {
-        lastRedirectLocation = state.location;
+        lastRedirectLocation = state.uri.toString();
         return null;
       },
     );
@@ -287,7 +287,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (BuildContext context, GoRouterState state) {
-        if (state.location != '/123/family/345') {
+        if (state.uri.toString() != '/123/family/345') {
           return '/123/family/345';
         }
         return null;
@@ -377,7 +377,8 @@ void main() {
       GoRoute(
         path: '/abc',
         builder: (_, __) => const Placeholder(),
-        redirect: (BuildContext context, GoRouterState state) => state.location,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.uri.toString(),
       ),
     ];
     final GoRouteInformationParser parser = await createParser(

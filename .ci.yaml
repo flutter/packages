@@ -310,6 +310,10 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 0 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_2 master
     recipe: packages/packages
@@ -319,6 +323,10 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 1 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_3 master
     recipe: packages/packages
@@ -328,6 +336,10 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 2 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_4 master
     recipe: packages/packages
@@ -337,6 +349,10 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 3 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_5 master
     recipe: packages/packages
@@ -346,6 +362,10 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 4 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_6 master
     recipe: packages/packages
@@ -355,6 +375,10 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 5 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_1 stable
     recipe: packages/packages
@@ -365,6 +389,10 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 0 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_2 stable
     recipe: packages/packages
@@ -375,6 +403,10 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 1 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_3 stable
     recipe: packages/packages
@@ -385,6 +417,10 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 2 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_4 stable
     recipe: packages/packages
@@ -395,6 +431,10 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 3 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_5 stable
     recipe: packages/packages
@@ -405,6 +445,10 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 4 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   - name: Linux_android android_platform_tests_shard_6 stable
     recipe: packages/packages
@@ -415,6 +459,10 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 5 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
 
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
