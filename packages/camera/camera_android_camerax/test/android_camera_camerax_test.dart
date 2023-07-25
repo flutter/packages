@@ -1047,7 +1047,7 @@ void main() {
       imageDataCompleter.complete(imageData);
     });
 
-    // ignore: unused_local_variable
+    // Test ImageAnalysis use case is bound to ProcessCameraProvider.
     final Analyzer capturedAnalyzer =
         verify(camera.mockImageAnalysis.setAnalyzer(captureAny)).captured.single
             as Analyzer;
@@ -1055,6 +1055,8 @@ void main() {
         mockProcessCameraProvider.isBound(camera.mockImageAnalysis));
     await untilCalled(mockProcessCameraProvider.bindToLifecycle(
         mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
+
+    await capturedAnalyzer.analyze(mockImageProxy);
 
     final CameraImageData imageData = await imageDataCompleter.future;
 
