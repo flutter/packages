@@ -218,6 +218,9 @@ class FetchDepsCommand extends PackageLoopingCommand {
         'pod',
         <String>['install'],
         workingDir: platformDir,
+        environment: <String, String>{
+          'LANG': 'en_US.UTF-8',
+        },
       );
       if (exitCode != 0) {
         printError('Unable to "pod install"');
