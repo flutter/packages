@@ -238,6 +238,7 @@ class CapturingUIDelegate extends WKUIDelegate {
   CapturingUIDelegate({
     super.onCreateWebView,
     super.requestMediaCapturePermission,
+    super.runJavaScriptPanel,
     super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;

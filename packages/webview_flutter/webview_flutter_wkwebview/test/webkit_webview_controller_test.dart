@@ -90,12 +90,16 @@ void main() {
               WKFrameInfo frame,
               WKMediaCaptureType type,
             )? requestMediaCapturePermission,
+            Future<WKJavaScriptPanelCompletionData> Function(
+                    WKWebView, WKJavaScriptPanelType, String, String?)?
+                runJavaScriptPanel,
             InstanceManager? instanceManager,
           }) {
             return uiDelegate ??
                 CapturingUIDelegate(
                   onCreateWebView: onCreateWebView,
                   requestMediaCapturePermission: requestMediaCapturePermission,
+                  runJavaScriptPanel: runJavaScriptPanel
                 );
           },
         ),
@@ -1224,6 +1228,7 @@ class CapturingUIDelegate extends WKUIDelegate {
   CapturingUIDelegate({
     super.onCreateWebView,
     super.requestMediaCapturePermission,
+    super.runJavaScriptPanel,
     super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;
