@@ -99,8 +99,13 @@ class RecorderHostApiImpl extends RecorderHostApi {
           bitRate: bitRate,
           qualitySelector: qualitySelector);
     });
-    create(identifier, aspectRatio, bitRate,
-        instanceManager.getIdentifier(qualitySelector)!);
+    create(
+        identifier,
+        aspectRatio,
+        bitRate,
+        qualitySelector == null
+            ? null
+            : instanceManager.getIdentifier(qualitySelector)!);
   }
 
   /// Prepares a [Recording] using this recorder. The output file will be saved

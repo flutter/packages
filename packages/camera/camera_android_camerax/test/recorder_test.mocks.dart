@@ -48,6 +48,7 @@ class MockTestRecorderHostApi extends _i1.Mock
     int? identifier,
     int? aspectRatio,
     int? bitRate,
+    int? qualitySelector,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -56,6 +57,7 @@ class MockTestRecorderHostApi extends _i1.Mock
             identifier,
             aspectRatio,
             bitRate,
+            qualitySelector,
           ],
         ),
         returnValueForMissingStub: null,

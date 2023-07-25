@@ -41,7 +41,11 @@ public class RecorderHostApiImpl implements RecorderHostApi {
   }
 
   @Override
-  public void create(@NonNull Long instanceId, @Nullable Long aspectRatio, @Nullable Long bitRate, @Nullable Long qualitySelector) {
+  public void create(
+      @NonNull Long instanceId,
+      @Nullable Long aspectRatio,
+      @Nullable Long bitRate,
+      @Nullable Long qualitySelector) {
     Recorder.Builder recorderBuilder = cameraXProxy.createRecorderBuilder();
     if (aspectRatio != null) {
       recorderBuilder.setAspectRatio(aspectRatio.intValue());
@@ -50,7 +54,8 @@ public class RecorderHostApiImpl implements RecorderHostApi {
       recorderBuilder.setTargetVideoEncodingBitRate(bitRate.intValue());
     }
     if (qualitySelector != null) {
-      recorderBuilder.setQualitySelector(Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(qualitySelector)));
+      recorderBuilder.setQualitySelector(
+          Objects.requireNonNull(instanceManager.getInstance(qualitySelector)));
     }
     Recorder recorder = recorderBuilder.setExecutor(ContextCompat.getMainExecutor(context)).build();
     instanceManager.addDartCreatedInstance(recorder, instanceId);
