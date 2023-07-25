@@ -1047,6 +1047,7 @@ void main() {
       imageDataCompleter.complete(imageData);
     });
 
+    // ignore: unused_local_variable
     final Analyzer capturedAnalyzer =
         verify(camera.mockImageAnalysis.setAnalyzer(captureAny)).captured.single
             as Analyzer;

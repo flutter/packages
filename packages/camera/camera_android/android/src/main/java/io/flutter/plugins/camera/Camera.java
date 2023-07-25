@@ -282,11 +282,7 @@ class Camera
     if (SdkCapabilityChecker.supportsEncoderProfiles() && recordingProfile != null) {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
-              recordingProfile,
-              outputFilePath,
-              getFps(),
-              getVideoBitrate(),
-              getAudioBitrate());
+              recordingProfile, outputFilePath, getFps(), getVideoBitrate(), getAudioBitrate());
     } else {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
