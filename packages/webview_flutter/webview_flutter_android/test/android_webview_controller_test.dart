@@ -65,6 +65,9 @@ void main() {
         android_webview.WebChromeClient instance,
         android_webview.PermissionRequest request,
       )? onPermissionRequest,
+      void Function(android_webview.WebChromeClient instance,
+              android_webview.ConsoleMessage message)?
+          onConsoleMessage,
     })? createWebChromeClient,
     android_webview.WebView? mockWebView,
     android_webview.WebViewClient? mockWebViewClient,
@@ -97,7 +100,11 @@ void main() {
                           )? onGeolocationPermissionsShowPrompt,
                           void Function(
                                   android_webview.WebChromeClient instance)?
-                              onGeolocationPermissionsHidePrompt}) =>
+                              onGeolocationPermissionsHidePrompt,
+                          void Function(
+                                  android_webview.WebChromeClient instance,
+                                  android_webview.ConsoleMessage message)?
+                              onConsoleMessage}) =>
                       MockWebChromeClient(),
               createAndroidWebView: () => nonNullMockWebView,
               createAndroidWebViewClient: ({
@@ -590,6 +597,7 @@ void main() {
           dynamic onGeolocationPermissionsShowPrompt,
           dynamic onGeolocationPermissionsHidePrompt,
           dynamic onPermissionRequest,
+          dynamic onConsoleMessage,
         }) {
           onShowFileChooserCallback = onShowFileChooser!;
           return mockWebChromeClient;
@@ -658,6 +666,7 @@ void main() {
           void Function(android_webview.WebChromeClient instance)?
               onGeolocationPermissionsHidePrompt,
           dynamic onPermissionRequest,
+          dynamic onConsoleMessage,
         }) {
           onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
           onGeoPermissionHidePromptHandle = onGeolocationPermissionsHidePrompt!;
@@ -710,6 +719,7 @@ void main() {
             android_webview.WebChromeClient instance,
             android_webview.PermissionRequest request,
           )? onPermissionRequest,
+          dynamic onConsoleMessage,
         }) {
           onPermissionRequestCallback = onPermissionRequest!;
           return mockWebChromeClient;
@@ -762,6 +772,7 @@ void main() {
             android_webview.WebChromeClient instance,
             android_webview.PermissionRequest request,
           )? onPermissionRequest,
+          dynamic onConsoleMessage,
         }) {
           onPermissionRequestCallback = onPermissionRequest!;
           return mockWebChromeClient;
