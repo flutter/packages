@@ -14,10 +14,14 @@ buildscript {
     }
 }
 
+plugins {
+  id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
+}
+
 allprojects {
+    apply plugin: 'com.google.cloud.artifactregistry.gradle-plugin'
     repositories {
-        google()
-        mavenCentral()
+        maven { url 'artifactregistry://us-maven.pkg.dev/artifact-foundry-prod/maven-3p' }
     }
 }
 
