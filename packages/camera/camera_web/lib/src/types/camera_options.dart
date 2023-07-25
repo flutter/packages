@@ -79,7 +79,7 @@ class AudioConstraints {
           bitrate == other.bitrate;
 
   @override
-  int get hashCode => enabled.hashCode ^ bitrate.hashCode;
+  int get hashCode => Object.hash(enabled, bitrate);
 }
 
 /// Defines constraints that the video track must have
@@ -128,7 +128,9 @@ class VideoConstraints {
       json['deviceId'] = <String, Object>{'exact': deviceId!};
     }
 
-    json['bitrate'] = bitrate;
+    if (bitrate != null) {
+      json['bitrate'] = bitrate;
+    }
 
     return json;
   }
@@ -145,12 +147,7 @@ class VideoConstraints {
           deviceId == other.deviceId;
 
   @override
-  int get hashCode =>
-      bitrate.hashCode ^
-      facingMode.hashCode ^
-      width.hashCode ^
-      height.hashCode ^
-      deviceId.hashCode;
+  int get hashCode => Object.hash(bitrate, facingMode, width, height, deviceId);
 }
 
 /// The camera type used in [FacingModeConstraint].
