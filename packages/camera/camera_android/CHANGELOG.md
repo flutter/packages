@@ -1,6 +1,7 @@
 ## 0.10.8+5
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+* Bump: `com.android.tools.build:gradle:7.2.0`
  
 ## 0.10.8+4
 
@@ -37,7 +38,6 @@
 ## 0.10.6+1
 
 * Adds a namespace for compatibility with AGP 8.0.
-* Bump: `com.android.tools.build:gradle:7.2.0`
 
 ## 0.10.6
 
