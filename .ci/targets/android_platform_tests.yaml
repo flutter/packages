@@ -22,6 +22,9 @@ tasks:
   - name: native integration tests
     script: script/tool_runner.sh
     args: ["native-test", "--android", "--no-unit"]
-  - name: drive examples
+  - name: drive examples - simulator
     script: script/tool_runner.sh
     args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml"]
+  - name: Firebase Test Lab
+    script: script/tool_runner.sh
+    args: ["firebase-test-lab", "--device model=redfin,version=30", "--exclude=script/configs/exclude_integration_android.yaml"]
