@@ -302,6 +302,11 @@ public class ExposurePointFeatureTest {
         new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
     exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
 
+    MeteringRectangle[] defaultRegions =
+        new MeteringRectangle[] {new MeteringRectangle(0, 0, 100, 100, 0)};
+    when(mockCaptureRequestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS))
+        .thenReturn(defaultRegions);
+
     exposurePointFeature.setValue(null);
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
     exposurePointFeature.setValue(new Point(0d, null));
@@ -309,7 +314,7 @@ public class ExposurePointFeatureTest {
     exposurePointFeature.setValue(new Point(null, 0d));
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
 
-    verify(mockCaptureRequestBuilder, times(3)).set(any(), eq(exposurePointFeature.defaultRegions));
+    verify(mockCaptureRequestBuilder, times(3)).set(any(), eq(defaultRegions));
   }
 
   @Test
@@ -319,6 +324,11 @@ public class ExposurePointFeatureTest {
     CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
     ExposurePointFeature exposurePointFeature =
         new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
+
+    MeteringRectangle[] defaultRegions =
+        new MeteringRectangle[] {new MeteringRectangle(0, 0, 100, 100, 0)};
+    when(mockCaptureRequestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS))
+        .thenReturn(defaultRegions);
 
     exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
 
