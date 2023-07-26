@@ -68,7 +68,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setLooping(bool looping) async {}
 
   @override
-  Future<void> clearCache() async {}
+  Future<bool> clearCache() async => false;
 
   @override
   VideoFormat? get formatHint => null;
@@ -1303,8 +1303,9 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> clearCache(int textureId) async {
+  Future<bool> clearCache(int textureId) async {
     calls.add('clearCache');
+    return true;
   }
 
   @override

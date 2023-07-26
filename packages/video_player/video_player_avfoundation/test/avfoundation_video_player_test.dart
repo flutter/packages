@@ -101,9 +101,10 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void clearCache(ClearCacheMessage msg) {
+  ClearCacheMessageResponse clearCache(ClearCacheMessage msg) {
     log.add('clearCache');
     clearCacheMessage = msg;
+    return ClearCacheMessageResponse(hasSucceeded: true);
   }
 }
 

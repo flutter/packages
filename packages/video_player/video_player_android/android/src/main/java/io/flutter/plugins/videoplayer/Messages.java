@@ -16,10 +16,6 @@ import io.flutter.plugin.common.StandardMessageCodec;
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /** Generated class from Pigeon. */
@@ -35,8 +31,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -55,7 +50,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -104,7 +99,10 @@ public class Messages {
     static @NonNull TextureMessage fromList(@NonNull ArrayList<Object> list) {
       TextureMessage pigeonResult = new TextureMessage();
       Object textureId = list.get(0);
-      pigeonResult.setTextureId((textureId == null) ? null : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
+      pigeonResult.setTextureId(
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
       return pigeonResult;
     }
   }
@@ -175,7 +173,10 @@ public class Messages {
     static @NonNull LoopingMessage fromList(@NonNull ArrayList<Object> list) {
       LoopingMessage pigeonResult = new LoopingMessage();
       Object textureId = list.get(0);
-      pigeonResult.setTextureId((textureId == null) ? null : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
+      pigeonResult.setTextureId(
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
       Object isLooping = list.get(1);
       pigeonResult.setIsLooping((Boolean) isLooping);
       return pigeonResult;
@@ -281,6 +282,55 @@ public class Messages {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class ClearCacheMessageResponse {
+    private @NonNull Boolean hasSucceeded;
+
+    public @NonNull Boolean getHasSucceeded() {
+      return hasSucceeded;
+    }
+
+    public void setHasSucceeded(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"hasSucceeded\" is null.");
+      }
+      this.hasSucceeded = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    ClearCacheMessageResponse() {}
+
+    public static final class Builder {
+
+      private @Nullable Boolean hasSucceeded;
+
+      public @NonNull Builder setHasSucceeded(@NonNull Boolean setterArg) {
+        this.hasSucceeded = setterArg;
+        return this;
+      }
+
+      public @NonNull ClearCacheMessageResponse build() {
+        ClearCacheMessageResponse pigeonReturn = new ClearCacheMessageResponse();
+        pigeonReturn.setHasSucceeded(hasSucceeded);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(hasSucceeded);
+      return toListResult;
+    }
+
+    static @NonNull ClearCacheMessageResponse fromList(@NonNull ArrayList<Object> list) {
+      ClearCacheMessageResponse pigeonResult = new ClearCacheMessageResponse();
+      Object hasSucceeded = list.get(0);
+      pigeonResult.setHasSucceeded((Boolean) hasSucceeded);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
   public static final class ClearCacheMessage {
     private @NonNull Long textureId;
 
@@ -324,7 +374,10 @@ public class Messages {
     static @NonNull ClearCacheMessage fromList(@NonNull ArrayList<Object> list) {
       ClearCacheMessage pigeonResult = new ClearCacheMessage();
       Object textureId = list.get(0);
-      pigeonResult.setTextureId((textureId == null) ? null : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
+      pigeonResult.setTextureId(
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
       return pigeonResult;
     }
   }
@@ -395,7 +448,10 @@ public class Messages {
     static @NonNull VolumeMessage fromList(@NonNull ArrayList<Object> list) {
       VolumeMessage pigeonResult = new VolumeMessage();
       Object textureId = list.get(0);
-      pigeonResult.setTextureId((textureId == null) ? null : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
+      pigeonResult.setTextureId(
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
       Object volume = list.get(1);
       pigeonResult.setVolume((Double) volume);
       return pigeonResult;
@@ -468,7 +524,10 @@ public class Messages {
     static @NonNull PlaybackSpeedMessage fromList(@NonNull ArrayList<Object> list) {
       PlaybackSpeedMessage pigeonResult = new PlaybackSpeedMessage();
       Object textureId = list.get(0);
-      pigeonResult.setTextureId((textureId == null) ? null : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
+      pigeonResult.setTextureId(
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
       Object speed = list.get(1);
       pigeonResult.setSpeed((Double) speed);
       return pigeonResult;
@@ -541,9 +600,15 @@ public class Messages {
     static @NonNull PositionMessage fromList(@NonNull ArrayList<Object> list) {
       PositionMessage pigeonResult = new PositionMessage();
       Object textureId = list.get(0);
-      pigeonResult.setTextureId((textureId == null) ? null : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
+      pigeonResult.setTextureId(
+          (textureId == null)
+              ? null
+              : ((textureId instanceof Integer) ? (Integer) textureId : (Long) textureId));
       Object position = list.get(1);
-      pigeonResult.setPosition((position == null) ? null : ((position instanceof Integer) ? (Integer) position : (Long) position));
+      pigeonResult.setPosition(
+          (position == null)
+              ? null
+              : ((position instanceof Integer) ? (Integer) position : (Long) position));
       return pigeonResult;
     }
   }
@@ -714,9 +779,15 @@ public class Messages {
       Object formatHint = list.get(3);
       pigeonResult.setFormatHint((String) formatHint);
       Object maxCacheSize = list.get(4);
-      pigeonResult.setMaxCacheSize((maxCacheSize == null) ? null : ((maxCacheSize instanceof Integer) ? (Integer) maxCacheSize : (Long) maxCacheSize));
+      pigeonResult.setMaxCacheSize(
+          (maxCacheSize == null)
+              ? null
+              : ((maxCacheSize instanceof Integer) ? (Integer) maxCacheSize : (Long) maxCacheSize));
       Object maxFileSize = list.get(5);
-      pigeonResult.setMaxFileSize((maxFileSize == null) ? null : ((maxFileSize instanceof Integer) ? (Integer) maxFileSize : (Long) maxFileSize));
+      pigeonResult.setMaxFileSize(
+          (maxFileSize == null)
+              ? null
+              : ((maxFileSize instanceof Integer) ? (Integer) maxFileSize : (Long) maxFileSize));
       Object httpHeaders = list.get(6);
       pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
       return pigeonResult;
@@ -783,22 +854,24 @@ public class Messages {
         case (byte) 128:
           return ClearCacheMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return ClearCacheMessageResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return IsCacheSupportedMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return IsSupportedMessageResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return IsCacheSupportedMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return LoopingMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return IsSupportedMessageResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return MixWithOthersMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return LoopingMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return PlaybackSpeedMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return MixWithOthersMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return PositionMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return PlaybackSpeedMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
-          return TextureMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return PositionMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 137:
+          return TextureMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 138:
           return VolumeMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -810,32 +883,35 @@ public class Messages {
       if (value instanceof ClearCacheMessage) {
         stream.write(128);
         writeValue(stream, ((ClearCacheMessage) value).toList());
-      } else if (value instanceof CreateMessage) {
+      } else if (value instanceof ClearCacheMessageResponse) {
         stream.write(129);
+        writeValue(stream, ((ClearCacheMessageResponse) value).toList());
+      } else if (value instanceof CreateMessage) {
+        stream.write(130);
         writeValue(stream, ((CreateMessage) value).toList());
       } else if (value instanceof IsCacheSupportedMessage) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((IsCacheSupportedMessage) value).toList());
       } else if (value instanceof IsSupportedMessageResponse) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((IsSupportedMessageResponse) value).toList());
       } else if (value instanceof LoopingMessage) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((LoopingMessage) value).toList());
       } else if (value instanceof MixWithOthersMessage) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((MixWithOthersMessage) value).toList());
       } else if (value instanceof PlaybackSpeedMessage) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((PlaybackSpeedMessage) value).toList());
       } else if (value instanceof PositionMessage) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, ((PositionMessage) value).toList());
       } else if (value instanceof TextureMessage) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((TextureMessage) value).toList());
       } else if (value instanceof VolumeMessage) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((VolumeMessage) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -848,7 +924,7 @@ public class Messages {
 
     void initialize();
 
-    @NonNull 
+    @NonNull
     TextureMessage create(@NonNull CreateMessage msg);
 
     void dispose(@NonNull TextureMessage msg);
@@ -857,16 +933,18 @@ public class Messages {
 
     void setVolume(@NonNull VolumeMessage msg);
 
-    @NonNull 
-    IsSupportedMessageResponse isCacheSupportedForNetworkMedia(@NonNull IsCacheSupportedMessage msg);
+    @NonNull
+    IsSupportedMessageResponse isCacheSupportedForNetworkMedia(
+        @NonNull IsCacheSupportedMessage msg);
 
-    void clearCache(@NonNull ClearCacheMessage msg);
+    @NonNull
+    ClearCacheMessageResponse clearCache(@NonNull ClearCacheMessage msg);
 
     void setPlaybackSpeed(@NonNull PlaybackSpeedMessage msg);
 
     void play(@NonNull TextureMessage msg);
 
-    @NonNull 
+    @NonNull
     PositionMessage position(@NonNull TextureMessage msg);
 
     void seekTo(@NonNull PositionMessage msg);
@@ -879,8 +957,12 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return AndroidVideoPlayerApiCodec.INSTANCE;
     }
-    /**Sets up an instance of `AndroidVideoPlayerApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable AndroidVideoPlayerApi api) {
+    /**
+     * Sets up an instance of `AndroidVideoPlayerApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable AndroidVideoPlayerApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -892,8 +974,7 @@ public class Messages {
                 try {
                   api.initialize();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -916,8 +997,7 @@ public class Messages {
                 try {
                   TextureMessage output = api.create(msgArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -940,8 +1020,7 @@ public class Messages {
                 try {
                   api.dispose(msgArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -964,8 +1043,7 @@ public class Messages {
                 try {
                   api.setLooping(msgArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -988,8 +1066,7 @@ public class Messages {
                 try {
                   api.setVolume(msgArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -1002,7 +1079,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.AndroidVideoPlayerApi.isCacheSupportedForNetworkMedia", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.AndroidVideoPlayerApi.isCacheSupportedForNetworkMedia",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1012,8 +1091,7 @@ public class Messages {
                 try {
                   IsSupportedMessageResponse output = api.isCacheSupportedForNetworkMedia(msgArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -1034,10 +1112,9 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 ClearCacheMessage msgArg = (ClearCacheMessage) args.get(0);
                 try {
-                  api.clearCache(msgArg);
-                  wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                  ClearCacheMessageResponse output = api.clearCache(msgArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -1050,7 +1127,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.AndroidVideoPlayerApi.setPlaybackSpeed", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.AndroidVideoPlayerApi.setPlaybackSpeed",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1060,8 +1139,7 @@ public class Messages {
                 try {
                   api.setPlaybackSpeed(msgArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -1084,8 +1162,7 @@ public class Messages {
                 try {
                   api.play(msgArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -1108,8 +1185,7 @@ public class Messages {
                 try {
                   PositionMessage output = api.position(msgArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -1132,8 +1208,7 @@ public class Messages {
                 try {
                   api.seekTo(msgArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -1156,8 +1231,7 @@ public class Messages {
                 try {
                   api.pause(msgArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -1170,7 +1244,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.AndroidVideoPlayerApi.setMixWithOthers", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.AndroidVideoPlayerApi.setMixWithOthers",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -1180,8 +1256,7 @@ public class Messages {
                 try {
                   api.setMixWithOthers(msgArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }

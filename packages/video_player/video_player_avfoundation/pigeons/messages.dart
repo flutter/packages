@@ -30,6 +30,11 @@ class IsSupportedMessageResponse {
   bool isSupported;
 }
 
+class ClearCacheMessageResponse {
+  ClearCacheMessageResponse(this.hasSucceeded);
+  bool hasSucceeded;
+}
+
 class IsCacheSupportedMessage {
   IsCacheSupportedMessage(this.url);
   String url;
@@ -84,7 +89,7 @@ abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('setLooping:')
   void setLooping(LoopingMessage msg);
   @ObjCSelector('clearCache:')
-  void clearCache(ClearCacheMessage msg);
+  ClearCacheMessageResponse clearCache(ClearCacheMessage msg);
   @ObjCSelector('setVolume:')
   void setVolume(VolumeMessage msg);
   @ObjCSelector('isCacheSupportedForNetworkMedia:')

@@ -715,7 +715,8 @@ NS_INLINE UIViewController *rootViewController(void) {
   player.isLooping = input.isLooping.boolValue;
 }
 
-- (void)clearCache:(FLTClearCacheMessage *)input error:(FlutterError **)error {
+- (FLTClearCacheMessageResponse *)clearCache:(FLTClearCacheMessage *)input
+                                       error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
   NSLog(@"Clean cache");
   [player.resourceLoaderManager cleanCache];
@@ -723,10 +724,12 @@ NS_INLINE UIViewController *rootViewController(void) {
   //    NSLog(@"file cache size: %@", @(fileSize));
   NSError *error2;
   [CacheManager cleanAllCacheWithError:&error2];
+
   if (error2) {
     NSLog(@"clean cache failure: %@", error2);
+    return [FLTClearCacheMessageResponse makeWithHasSucceeded:@(0)];
   }
-  [CacheManager cleanAllCacheWithError:&error2];
+  return [FLTClearCacheMessageResponse makeWithHasSucceeded:@(1)];
 }
 
 - (void)setVolume:(FLTVolumeMessage *)input error:(FlutterError **)error {
@@ -752,9 +755,9 @@ NS_INLINE UIViewController *rootViewController(void) {
 }
 
 - (FLTIsSupportedMessageResponse *)isCacheSupportedForNetworkMedia:(FLTIsCacheSupportedMessage *)msg
-                                                     error:(FlutterError **)error {
+                                                             error:(FlutterError **)error {
   BOOL isSupported = [self isCacheSupported:msg.url];
-    FLTIsSupportedMessageResponse *result =
+  FLTIsSupportedMessageResponse *result =
       [FLTIsSupportedMessageResponse makeWithIsSupported:[NSNumber numberWithBool:isSupported]];
   return result;
 }

@@ -18,16 +18,16 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
+import io.flutter.plugins.videoplayer.Messages.ClearCacheMessage;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
+import io.flutter.plugins.videoplayer.Messages.IsCacheSupportedMessage;
+import io.flutter.plugins.videoplayer.Messages.IsSupportedMessageResponse;
 import io.flutter.plugins.videoplayer.Messages.LoopingMessage;
 import io.flutter.plugins.videoplayer.Messages.MixWithOthersMessage;
 import io.flutter.plugins.videoplayer.Messages.PlaybackSpeedMessage;
 import io.flutter.plugins.videoplayer.Messages.PositionMessage;
 import io.flutter.plugins.videoplayer.Messages.TextureMessage;
 import io.flutter.plugins.videoplayer.Messages.VolumeMessage;
-import io.flutter.plugins.videoplayer.Messages.IsCacheSupportedMessage;
-import io.flutter.plugins.videoplayer.Messages.ClearCacheMessage;
-import io.flutter.plugins.videoplayer.Messages.IsSupportedMessageResponse;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -166,7 +166,6 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               arg.getFormatHint(),
               httpHeaders,
               options);
-     
     }
     videoPlayers.put(handle.id(), player);
 
@@ -184,8 +183,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     player.setLooping(arg.getIsLooping());
   }
 
-  public void clearCache(@NonNull ClearCacheMessage msg) {
-    VideoCache.clearVideoCache(flutterState.applicationContext);
+  public ClearCacheMessageResponse clearCache(@NonNull ClearCacheMessage msg) {
+
+    boolean hasSucceed = VideoCache.clearVideoCache(flutterState.applicationContext);
+    ClearCacheMessageResponse response =
+        new ClearCacheMessageResponse.Builder().setHasSucceeded(hasSucceed);
+    return response;
   }
 
   public void setVolume(@NonNull VolumeMessage arg) {

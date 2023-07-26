@@ -30,11 +30,12 @@ public class VideoCache {
     return sDownloadCache;
   }
 
-  public static void clearVideoCache(@NonNull Context context) {
+  public static boolean clearVideoCache(@NonNull Context context) {
     try {
       File dir = new File(context.getCacheDir(), cacheFolder);
-      deleteDir(dir);
+      return deleteDir(dir);
     } catch (Exception e) {
+      return false;
       e.printStackTrace();
     }
   }
