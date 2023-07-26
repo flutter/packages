@@ -128,7 +128,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:[NSNumber numberWithInt:0]
+        enableCache:@(0)
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
@@ -160,7 +160,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
         packageName:nil
          formatHint:nil
-        enableCache:[NSNumber numberWithInt:0]
+        enableCache:@(0)
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -183,7 +183,7 @@
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCachemp4"];
+  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CanCacheMP4"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FLTVideoPlayerPlugin *videoPlayerPlugin =
@@ -439,7 +439,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:[NSNumber numberWithInt:0]
+        enableCache:@(0)
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
@@ -473,7 +473,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:[NSNumber numberWithInt:0]
+        enableCache:@(0)
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
@@ -583,7 +583,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:[NSNumber numberWithInt:0]
+        enableCache:@(0)
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -622,7 +622,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:[NSNumber numberWithInt:0]
+        enableCache:@(0)
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -650,7 +650,7 @@
                                                          uri:uri
                                                  packageName:nil
                                                   formatHint:nil
-                                                 enableCache:[NSNumber numberWithInt:0]
+                                                 enableCache:@(0)
                                                  httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
 
@@ -722,7 +722,7 @@
                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
           packageName:nil
            formatHint:nil
-          enableCache:[NSNumber numberWithInt:0]
+          enableCache:@(0)
           httpHeaders:@{}];
     FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
     XCTAssertNil(error);
@@ -775,7 +775,7 @@
                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
           packageName:nil
            formatHint:nil
-          enableCache:[NSNumber numberWithInt:0]
+          enableCache:@(0)
           httpHeaders:@{}];
     FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
     XCTAssertNil(error);

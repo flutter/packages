@@ -355,18 +355,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final VideoFormat? formatHint;
 
   /// **iOS only**. Will set is caching is true (enabled) or false (disabled), default (disabled).
-  /// currently only mimetypes: video/mp4 and audio/flac files can be cached. For other mimetypes this setting is ignored.
-  /// detection with whatever is set here.
+  /// Currently only mimetypes: video/mp4 and audio/flac files can be cached. For other mimetypes this setting is ignored.
+  /// Detection with whatever is set here.
   bool? enableCache;
 
   /// **Android only**. Will set the size of the total cache. Default maxCacheSize is 0 (no cache enabled).
-  /// currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
-  /// detection with whatever is set here.
+  /// Currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
+  /// Detection with whatever is set here.
   int? maxCacheSize;
 
   /// **Android only**. Will set the size of a cache for one file. Default maxFileSize is 0 (no cache enabled).
-  /// currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
-  /// detection with whatever is set here.
+  /// Currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
+  /// Detection with whatever is set here.
   int? maxFileSize;
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -570,10 +570,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Returns if caching is supported for network media.
   Future<bool> isCacheSupportedForNetworkMedia(String url) async {
-    return _applyIsCacheSupported(url);
-  }
-
-  Future<bool> _applyIsCacheSupported(String url) async {
     if (_isDisposedOrNotInitialized) {
       return false;
     }
