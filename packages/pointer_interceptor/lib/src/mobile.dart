@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:flutter/widgets.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 /// A [Widget] that prevents clicks from being swallowed by [HtmlElementView]s.
 class PointerInterceptor extends StatelessWidget {
@@ -29,6 +32,16 @@ class PointerInterceptor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return child;
+    if (Platform.isAndroid || Platform.isIOS) {
+      return Stack(alignment: Alignment.center, children: <Widget>[
+        Opacity(
+          opacity: 0,
+          child: WebViewWidget(controller: WebViewController()),
+        ),
+        child,
+      ]);
+    } else {
+      return child;
+    }
   }
 }
