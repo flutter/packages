@@ -29,14 +29,10 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       defaultsTo: 'flutter-cirrus',
       help: 'The Firebase project name.',
     );
-    final String? homeDir = io.Platform.environment['HOME'];
     argParser.addOption('service-key',
-        defaultsTo: homeDir == null
-            ? null
-            : path.join(homeDir, 'gcloud-service-key.json'),
         help: 'The path to the service key for gcloud authentication.\n'
-            r'If not provided, \$HOME/gcloud-service-key.json will be '
-            r'assumed if $HOME is set.');
+            'If not provided, setup will be skipped, so testing will fail '
+            'unless gcloud is already configured.');
     argParser.addOption('test-run-id',
         defaultsTo: const Uuid().v4(),
         help:
