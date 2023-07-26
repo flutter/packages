@@ -27,4 +27,4 @@ tasks:
   #  args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml"]
   - name: Firebase Test Lab
     script: script/tool_runner.sh
-    args: ["firebase-test-lab", "--device model=redfin,version=30", "--exclude=script/configs/exclude_integration_android.yaml"]
+    args: ["firebase-test-lab", "--device", "model=redfin,version=30", "--exclude=script/configs/exclude_integration_android.yaml", "--project", "flutter-infra-staging"]

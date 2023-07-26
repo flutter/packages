@@ -25,11 +25,10 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
     super.platform,
   }) {
     argParser.addOption(
-      'project',
-      defaultsTo: 'flutter-cirrus',
+      _gCloudProjectArg,
       help: 'The Firebase project name.',
     );
-    argParser.addOption('service-key',
+    argParser.addOption(_gCloudServiceKeyArg,
         help: 'The path to the service key for gcloud authentication.\n'
             'If not provided, setup will be skipped, so testing will fail '
             'unless gcloud is already configured.');
@@ -62,6 +61,9 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
     );
   }
 
+  static const String _gCloudServiceKeyArg = 'service-key';
+  static const String _gCloudProjectArg = 'project';
+
   @override
   final String name = 'firebase-test-lab';
 
@@ -78,9 +80,10 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       return;
     }
 
-    final String serviceKey = getStringArg('service-key');
+    final String serviceKey = getStringArg(_gCloudServiceKeyArg);
     if (serviceKey.isEmpty) {
-      print('No --service-key provided; skipping gcloud authorization');
+      print(
+          'No --$_gCloudServiceKeyArg provided; skipping gcloud authorization');
     } else {
       final io.ProcessResult result = await processRunner.run(
         'gcloud',
@@ -95,11 +98,16 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
         printError('Unable to activate gcloud account.');
         throw ToolExit(_exitGcloudAuthFailed);
       }
+    }
+    final String project = getStringArg(_gCloudProjectArg);
+    if (project.isEmpty) {
+      print('No --$_gCloudProjectArg provided; skipping gcloud config');
+    } else {
       final int exitCode = await processRunner.runAndStream('gcloud', <String>[
         'config',
         'set',
         'project',
-        getStringArg('project'),
+        project,
       ]);
       print('');
       if (exitCode == 0) {
