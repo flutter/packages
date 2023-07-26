@@ -14,14 +14,15 @@ buildscript {
     }
 }
 
-plugins {
-  id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
-}
-
 allprojects {
-    apply plugin: 'com.google.cloud.artifactregistry.gradle-plugin'
     repositories {
-        maven { url 'artifactregistry://us-maven.pkg.dev/artifact-foundry-prod/maven-3p' }
+        // See GRADLE_STRUCTURE.md for more info.
+        if (System.getenv().containsKey('ARTIFACT_HUB')) {
+            println "Using artifact hub"
+            maven { url System.getenv('ARTIFACT_HUB') }
+        }
+        google()
+        mavenCentral()
     }
 }
 
