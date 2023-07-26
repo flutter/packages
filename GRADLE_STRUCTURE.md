@@ -1,8 +1,8 @@
 # Gradle Structure
 
-`package/example/android/settings.gradle` imports the flutter tooling and includes the `app` directory and it configures GoogleCloudPlatform/artifact-registry-maven-tools for use in ci.
+package/example/android/settings.gradle imports the flutter tooling, includes the app directory, and configures GoogleCloudPlatform/artifact-registry-maven-tools for use in ci.
 
-This repo has a GCP instance that mirrors dependencies available from `google()` and `mavenCentral()` used by ci (or googlers). This gives us redudent uptime for dependency availability.
+This repo has a GCP instance that mirrors dependencies available from `google()` and `mavenCentral()` used by ci (or googlers). This gives us redundant uptime for dependency availability.
 
 Using this cache is not intended or avaiable for contributors outside of CI. We protect that execution with an environment variable `ARTIFACT_HUB_REPOSITORY` to ensure that by default users do not see rejected cloud credentials or errors in builds.
 
