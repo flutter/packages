@@ -14,7 +14,7 @@ void main() {
     test('asserts  valid counts for rows and columns', () {
       TableCellBuilderDelegate? delegate;
       expect(
-            () {
+        () {
           delegate = TableCellBuilderDelegate(
             cellBuilder: (_, __) => cell,
             columnBuilder: (_) => span,
@@ -26,7 +26,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('pinnedColumnCount >= 0'),
           ),
@@ -34,7 +34,7 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate = TableCellBuilderDelegate(
             cellBuilder: (_, __) => cell,
             columnBuilder: (_) => span,
@@ -46,7 +46,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('pinnedRowCount >= 0'),
           ),
@@ -54,7 +54,7 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate = TableCellBuilderDelegate(
             cellBuilder: (_, __) => cell,
             columnBuilder: (_) => span,
@@ -65,7 +65,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('rowCount >= 0'),
           ),
@@ -73,7 +73,7 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate = TableCellBuilderDelegate(
             cellBuilder: (_, __) => cell,
             columnBuilder: (_) => span,
@@ -84,7 +84,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('columnCount >= 0'),
           ),
@@ -92,7 +92,7 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate = TableCellBuilderDelegate(
             cellBuilder: (_, __) => cell,
             columnBuilder: (_) => span,
@@ -104,7 +104,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('pinnedColumnCount <= columnCount'),
           ),
@@ -112,7 +112,7 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate = TableCellBuilderDelegate(
             cellBuilder: (_, __) => cell,
             columnBuilder: (_) => span,
@@ -124,7 +124,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('pinnedRowCount <= rowCount'),
           ),
@@ -197,7 +197,7 @@ void main() {
     test('asserts  valid counts for rows and columns', () {
       TableCellListDelegate? delegate;
       expect(
-            () {
+        () {
           delegate = TableCellListDelegate(
             cells: <List<Widget>>[<Widget>[]],
             columnBuilder: (_) => span,
@@ -207,14 +207,14 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('pinnedColumnCount >= 0'),
           ),
         ),
       );
       expect(
-            () {
+        () {
           delegate = TableCellListDelegate(
             cells: <List<Widget>>[<Widget>[]],
             columnBuilder: (_) => span,
@@ -224,14 +224,14 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('pinnedRowCount >= 0'),
           ),
         ),
       );
       expect(
-            () {
+        () {
           delegate = TableCellListDelegate(
             cells: <List<Widget>>[
               <Widget>[cell, cell],
@@ -244,14 +244,14 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('rowCount >= pinnedRowCount'),
           ),
         ),
       );
       expect(
-            () {
+        () {
           delegate = TableCellListDelegate(
             cells: <List<Widget>>[
               <Widget>[cell, cell],
@@ -264,7 +264,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('columnCount >= pinnedColumnCount'),
           ),
@@ -276,7 +276,7 @@ void main() {
     test('Asserts child lists lengths match', () {
       TableCellListDelegate? delegate;
       expect(
-            () {
+        () {
           delegate = TableCellListDelegate(
             cells: <List<Widget>>[
               <Widget>[cell, cell],
@@ -288,7 +288,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains(
                 'Each list of Widgets within cells must be of the same length.'),
@@ -444,12 +444,12 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate.pinnedColumnCount = -1;
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('value >= 0'),
           ),
@@ -457,12 +457,12 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate.pinnedRowCount = -1;
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('value >= 0'),
           ),
@@ -470,12 +470,12 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate.pinnedColumnCount = 4;
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('value <= columnCount'),
           ),
@@ -483,12 +483,12 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate.pinnedRowCount = 4;
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('value <= rowCount'),
           ),

@@ -41,11 +41,11 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 ### TableView
 
 The code in `example/` shows a `TableView` of initially 400 cells, each varying
-in sizes with a few `TableSpanDecoration`s like background colors and borders.
-The `builder` constructor is called on demand for the cells that are visible in
-the TableView. Additional rows can be added on demand while the vertical
-position can jump between the first and last row using the buttons at the bottom
-of the screen.
+in sizes with a few `TableSpanDecoration`s like background colors and borders. The
+`builder` constructor is called on demand for the cells that are visible in the
+TableView. Additional rows can be added on demand while the vertical position
+can jump between the first and last row using the buttons at the bottom of the
+screen.
 
 ## Changelog
 
