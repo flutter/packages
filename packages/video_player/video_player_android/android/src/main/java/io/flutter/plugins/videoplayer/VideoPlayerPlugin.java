@@ -25,6 +25,9 @@ import io.flutter.plugins.videoplayer.Messages.PlaybackSpeedMessage;
 import io.flutter.plugins.videoplayer.Messages.PositionMessage;
 import io.flutter.plugins.videoplayer.Messages.TextureMessage;
 import io.flutter.plugins.videoplayer.Messages.VolumeMessage;
+import io.flutter.plugins.videoplayer.Messages.IsCacheSupportedMessage;
+import io.flutter.plugins.videoplayer.Messages.ClearCacheMessage;
+import io.flutter.plugins.videoplayer.Messages.IsSupportedMessageResponse;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -149,6 +152,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               options);
     } else {
       Map<String, String> httpHeaders = arg.getHttpHeaders();
+      boolean isSupported = isCacheSupported(Uri.parse(arg.getUri()));
+      if (isSupported) {
+        options.maxCacheSize = arg.getMaxCacheSize();
+        options.maxFileSize = arg.getMaxFileSize();
+      }
       player =
           new VideoPlayer(
               flutterState.applicationContext,
@@ -158,11 +166,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               arg.getFormatHint(),
               httpHeaders,
               options);
-      boolean isSupported = isCacheSupported(Uri.parse(arg.getUri()));
-      if (isSupported) {
-        player.setMaxCacheSize(arg.getMaxCacheSize());
-        player.setMaxFileSize(arg.getMaxFileSize());
-      }
+     
     }
     videoPlayers.put(handle.id(), player);
 
@@ -180,7 +184,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     player.setLooping(arg.getIsLooping());
   }
 
-  public void clearCache(@NonNull Messages.ClearCacheMessage msg) {
+  public void clearCache(@NonNull ClearCacheMessage msg) {
     VideoCache.clearVideoCache(flutterState.applicationContext);
   }
 
@@ -226,10 +230,10 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @NonNull
-  public Messages.IsSupportedMessage isCacheSupportedForNetworkMedia(
-      @NonNull Messages.IsCacheSupportedMessage arg) {
+  public IsSupportedMessageResponse isCacheSupportedForNetworkMedia(
+      @NonNull IsCacheSupportedMessage arg) {
     boolean isSupported = isCacheSupported(Uri.parse(arg.getUrl()));
-    return new Messages.IsSupportedMessage.Builder().setIsSupported(isSupported).build();
+    return new IsSupportedMessageResponse.Builder().setIsSupported(isSupported).build();
   }
 
   private interface KeyForAssetFn {
@@ -278,7 +282,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   public static String getMimeType(@NonNull String url) {
     String type = null;
     String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-    if (extension != null) {
+    if (extension != null && !extension.isEmpty()) {
       type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
     }
     return type;

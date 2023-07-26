@@ -58,8 +58,8 @@ class LoopingMessage {
   }
 }
 
-class IsSupportedMessage {
-  IsSupportedMessage({
+class IsSupportedMessageResponse {
+  IsSupportedMessageResponse({
     required this.isSupported,
   });
 
@@ -71,9 +71,9 @@ class IsSupportedMessage {
     ];
   }
 
-  static IsSupportedMessage decode(Object result) {
+  static IsSupportedMessageResponse decode(Object result) {
     result as List<Object?>;
-    return IsSupportedMessage(
+    return IsSupportedMessageResponse(
       isSupported: result[0]! as bool,
     );
   }
@@ -245,8 +245,7 @@ class CreateMessage {
       formatHint: result[3] as String?,
       maxCacheSize: result[4] as int?,
       maxFileSize: result[5] as int?,
-      httpHeaders:
-          (result[6] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      httpHeaders: (result[6] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
 }
@@ -285,7 +284,7 @@ class _AndroidVideoPlayerApiCodec extends StandardMessageCodec {
     } else if (value is IsCacheSupportedMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is IsSupportedMessage) {
+    } else if (value is IsSupportedMessageResponse) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else if (value is LoopingMessage) {
@@ -314,25 +313,25 @@ class _AndroidVideoPlayerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return ClearCacheMessage.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return CreateMessage.decode(readValue(buffer)!);
-      case 130:
+      case 130: 
         return IsCacheSupportedMessage.decode(readValue(buffer)!);
-      case 131:
-        return IsSupportedMessage.decode(readValue(buffer)!);
-      case 132:
+      case 131: 
+        return IsSupportedMessageResponse.decode(readValue(buffer)!);
+      case 132: 
         return LoopingMessage.decode(readValue(buffer)!);
-      case 133:
+      case 133: 
         return MixWithOthersMessage.decode(readValue(buffer)!);
-      case 134:
+      case 134: 
         return PlaybackSpeedMessage.decode(readValue(buffer)!);
-      case 135:
+      case 135: 
         return PositionMessage.decode(readValue(buffer)!);
-      case 136:
+      case 136: 
         return TextureMessage.decode(readValue(buffer)!);
-      case 137:
+      case 137: 
         return VolumeMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -354,7 +353,8 @@ class AndroidVideoPlayerApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.AndroidVideoPlayerApi.initialize', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -464,11 +464,9 @@ class AndroidVideoPlayerApi {
     }
   }
 
-  Future<IsSupportedMessage> isCacheSupportedForNetworkMedia(
-      IsCacheSupportedMessage arg_msg) async {
+  Future<IsSupportedMessageResponse> isCacheSupportedForNetworkMedia(IsCacheSupportedMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.AndroidVideoPlayerApi.isCacheSupportedForNetworkMedia',
-        codec,
+        'dev.flutter.pigeon.AndroidVideoPlayerApi.isCacheSupportedForNetworkMedia', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -489,7 +487,7 @@ class AndroidVideoPlayerApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as IsSupportedMessage?)!;
+      return (replyList[0] as IsSupportedMessageResponse?)!;
     }
   }
 

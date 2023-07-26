@@ -100,10 +100,10 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  IsSupportedMessage isCacheSupportedForNetworkMedia(
+  IsSupportedMessageResponse isCacheSupportedForNetworkMedia(
       IsCacheSupportedMessage msg) {
     log.add('isCacheSupportedForNetworkMedia');
-    return IsSupportedMessage(isSupported: true);
+    return IsSupportedMessageResponse(isSupported: true);
   }
 }
 

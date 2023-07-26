@@ -25,8 +25,8 @@ class LoopingMessage {
   bool isLooping;
 }
 
-class IsSupportedMessage {
-  IsSupportedMessage(this.isSupported);
+class IsSupportedMessageResponse {
+  IsSupportedMessageResponse(this.isSupported);
   bool isSupported;
 }
 
@@ -88,7 +88,7 @@ abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('setVolume:')
   void setVolume(VolumeMessage msg);
   @ObjCSelector('isCacheSupportedForNetworkMedia:')
-  IsSupportedMessage isCacheSupportedForNetworkMedia(
+  IsSupportedMessageResponse isCacheSupportedForNetworkMedia(
       IsCacheSupportedMessage msg);
   @ObjCSelector('setPlaybackSpeed:')
   void setPlaybackSpeed(PlaybackSpeedMessage msg);

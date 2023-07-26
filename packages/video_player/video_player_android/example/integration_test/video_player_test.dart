@@ -89,7 +89,7 @@ void main() {
         (WidgetTester tester) async {
       await controller.initialize();
 
-      final bool? isSupported =
+      final bool isSupported =
           await controller.isCacheSupportedForNetworkMedia('www.video.mp4');
 
       expect(isSupported, true);

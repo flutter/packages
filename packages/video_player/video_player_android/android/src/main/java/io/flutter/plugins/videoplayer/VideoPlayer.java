@@ -272,14 +272,6 @@ final class VideoPlayer {
     exoPlayer.setPlayWhenReady(true);
   }
 
-  void setMaxCacheSize(Long value) {
-    options.maxCacheSize = value;
-  }
-
-  void setMaxFileSize(Long value) {
-    options.maxFileSize = value;
-  }
-
   void pause() {
     exoPlayer.setPlayWhenReady(false);
   }

@@ -751,11 +751,11 @@ NS_INLINE UIViewController *rootViewController(void) {
   return result;
 }
 
-- (FLTIsSupportedMessage *)isCacheSupportedForNetworkMedia:(FLTIsCacheSupportedMessage *)msg
+- (FLTIsSupportedMessageResponse *)isCacheSupportedForNetworkMedia:(FLTIsCacheSupportedMessage *)msg
                                                      error:(FlutterError **)error {
   BOOL isSupported = [self isCacheSupported:msg.url];
-  FLTIsSupportedMessage *result =
-      [FLTIsSupportedMessage makeWithIsSupported:[NSNumber numberWithBool:isSupported]];
+    FLTIsSupportedMessageResponse *result =
+      [FLTIsSupportedMessageResponse makeWithIsSupported:[NSNumber numberWithBool:isSupported]];
   return result;
 }
 
