@@ -275,7 +275,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   });
 
   TableCellDelegateMixin get _delegate =>
-      delegate as TableCellDelegateMixin; // Follow up with goderbauer
+      delegate as TableCellDelegateMixin; // -> use the super class implementation, override to control type safety
 
   // Cached Table metrics
   Map<int, _Span> _columnMetrics = <int, _Span>{};

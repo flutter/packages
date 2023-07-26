@@ -109,7 +109,7 @@ mixin TableCellDelegateMixin on TwoDimensionalChildDelegate {
   /// If the value returned by this builder for a particular index changes
   /// throughout the lifetime of the delegate object, [notifyListeners] must be
   /// called.
-  TableSpan buildColumn(int index); // Follow up with goderbauer
+  TableSpan buildColumn(int index);
 
   /// Builds the [TableSpan] that describe the row at the provided index.
   ///
@@ -145,28 +145,25 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
         _pinnedColumnCount = pinnedColumnCount,
         _rowBuilder = rowBuilder,
         _pinnedRowCount = pinnedRowCount,
-        _cellBuilder = cellBuilder,
         super(
-          builder: _cellBuilder, // Follow up with goderbauer
+          builder: (BuildContext context, ChildVicinity vicinity) => () // Piinks: restore
           maxXIndex: columnCount - 1,
           maxYIndex: rowCount - 1,
         );
-
-  final TableViewCellBuilder _cellBuilder;
 
   @override
   int get columnCount => maxXIndex! + 1;
   set columnCount(int value) {
     assert(pinnedColumnCount <= value);
-    maxXIndex = value - 1; // Follow up with goderbauer
+    maxXIndex = value - 1;
     // Also, if so, add assert >= 0 in super class.
+    // Super class calls notifyListener
   }
 
   /// some docs...
   final TableSpanBuilder columnBuilder;
   @override
-  TableSpan buildColumn(int index) =>
-      columnBuilder(index); // Follow up with goderbauer
+  TableSpan buildColumn(int index) => columnBuilder(index);
 
   @override
   int get pinnedColumnCount => _pinnedColumnCount;

@@ -273,7 +273,7 @@ class TableSpanDecoration {
   /// paint is called with the `rect` for the cell representing the pinned
   /// column and separately with a `rect` containing all the other unpinned
   /// cells.
-  // Follow up with goderbauer
+  // -> all three in one object
   void paint(Canvas canvas, Rect rect, Axis axis) {
     if (color != null) {
       canvas.drawRect(
