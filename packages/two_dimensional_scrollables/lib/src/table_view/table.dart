@@ -278,7 +278,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   @override
   set delegate(TwoDimensionalChildDelegate value) {
     // TODO(Piinks): remove this assertion and add type safety to function
-    //  signature once the covariant reaches stable.
+    // signature once the covariant reaches stable.
     assert(value is TableCellDelegateMixin);
     super.delegate = value;
   }
@@ -894,7 +894,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
-            axis: Axis.horizontal,
+            axisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -903,7 +903,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
-            axis: Axis.vertical,
+            axisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -915,7 +915,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
-            axis: Axis.vertical,
+            axisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -924,7 +924,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
-            axis: Axis.horizontal,
+            axisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -952,7 +952,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
-            axis: Axis.horizontal,
+            axisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -961,7 +961,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
-            axis: Axis.vertical,
+            axisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -973,7 +973,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
-            axis: Axis.vertical,
+            axisDirection: verticalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });
@@ -982,7 +982,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
-            axis: Axis.horizontal,
+            axisDirection: horizontalAxisDirection,
           );
           decoration.paint(paintingDetails);
         });

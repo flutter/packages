@@ -230,6 +230,7 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
     // length.
     assert(
       children.map((List<Widget> array) => array.length).toSet().length == 1,
+      'Each list of Widgets within cells must be of the same length.',
     );
     assert(rowCount >= pinnedRowCount);
     assert(columnCount >= pinnedColumnCount);
@@ -251,6 +252,7 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   int _pinnedColumnCount;
   set pinnedColumnCount(int value) {
     assert(value >= 0);
+    assert(value <= columnCount);
     if (pinnedColumnCount == value) {
       return;
     }
@@ -274,6 +276,7 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   int _pinnedRowCount;
   set pinnedRowCount(int value) {
     assert(value >= 0);
+    assert(value <= rowCount);
     if (pinnedRowCount == value) {
       return;
     }

@@ -151,7 +151,7 @@ void main() {
       TableCellBuilderDelegate oldDelegate;
       TableSpan spanBuilder(int index) => span;
       Widget cellBuilder(BuildContext context, TableVicinity vicinity) => cell;
-      TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
+      final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
         columnBuilder: spanBuilder,
         rowBuilder: spanBuilder,
@@ -166,123 +166,334 @@ void main() {
 
       // change column count
       oldDelegate = delegate;
-      delegate = TableCellBuilderDelegate(
-        cellBuilder: cellBuilder,
-        columnBuilder: spanBuilder,
-        rowBuilder: spanBuilder,
-        columnCount: 6,
-        pinnedColumnCount: 1,
-        rowCount: 6,
-        pinnedRowCount: 2,
-      );
+      delegate.columnCount = 6;
       expect(notified, 1);
-      expect(oldDelegate.shouldRebuild(oldDelegate), isTrue);
-
-      // change column builder
-      oldDelegate = delegate;
-      delegate = TableCellBuilderDelegate(
-        cellBuilder: cellBuilder,
-        columnBuilder: (_) =>
-            const TableSpan(extent: FixedTableSpanExtent(100)),
-        rowBuilder: spanBuilder,
-        columnCount: 6,
-        pinnedColumnCount: 1,
-        rowCount: 6,
-        pinnedRowCount: 2,
-      );
-      expect(notified, 2);
-      expect(oldDelegate.shouldRebuild(oldDelegate), isTrue);
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
 
       // change pinned column count
       oldDelegate = delegate;
-      delegate = TableCellBuilderDelegate(
-        cellBuilder: cellBuilder,
-        columnBuilder: (_) =>
-            const TableSpan(extent: FixedTableSpanExtent(100)),
-        rowBuilder: spanBuilder,
-        columnCount: 6,
-        pinnedColumnCount: 2,
-        rowCount: 6,
-        pinnedRowCount: 2,
-      );
-      expect(notified, 3);
-      expect(oldDelegate.shouldRebuild(oldDelegate), isTrue);
+      delegate.pinnedColumnCount = 2;
+      expect(notified, 2);
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
 
       // change row count
       oldDelegate = delegate;
-      delegate = TableCellBuilderDelegate(
-        cellBuilder: cellBuilder,
-        columnBuilder: (_) =>
-            const TableSpan(extent: FixedTableSpanExtent(100)),
-        rowBuilder: spanBuilder,
-        columnCount: 6,
-        pinnedColumnCount: 2,
-        rowCount: 7,
-        pinnedRowCount: 2,
-      );
-      expect(notified, 4);
-      expect(oldDelegate.shouldRebuild(oldDelegate), isTrue);
-
-      // change row builder
-      oldDelegate = delegate;
-      delegate = TableCellBuilderDelegate(
-        cellBuilder: cellBuilder,
-        columnBuilder: (_) =>
-            const TableSpan(extent: FixedTableSpanExtent(100)),
-        rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
-        columnCount: 6,
-        pinnedColumnCount: 2,
-        rowCount: 7,
-        pinnedRowCount: 2,
-      );
-      expect(notified, 5);
-      expect(oldDelegate.shouldRebuild(oldDelegate), isTrue);
+      delegate.rowCount = 7;
+      expect(notified, 3);
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
 
       // change pinned row count
       oldDelegate = delegate;
-      delegate = TableCellBuilderDelegate(
-        cellBuilder: cellBuilder,
-        columnBuilder: (_) =>
-            const TableSpan(extent: FixedTableSpanExtent(100)),
-        rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
-        columnCount: 6,
-        pinnedColumnCount: 2,
-        rowCount: 7,
-        pinnedRowCount: 3,
-      );
-      expect(notified, 6);
-      expect(oldDelegate.shouldRebuild(oldDelegate), isTrue);
+      delegate.pinnedRowCount = 3;
+      expect(notified, 4);
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
 
-      // change cell builder
-      oldDelegate = delegate;
-      delegate = TableCellBuilderDelegate(
-        cellBuilder: (_, __) => Container(),
-        columnBuilder: (_) =>
-            const TableSpan(extent: FixedTableSpanExtent(100)),
-        rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
-        columnCount: 6,
-        pinnedColumnCount: 2,
-        rowCount: 7,
-        pinnedRowCount: 3,
-      );
-      expect(notified, 7);
-      expect(oldDelegate.shouldRebuild(oldDelegate), isTrue);
+      // Builder delegate always returns true.
+      expect(delegate.shouldRebuild(delegate), isTrue);
     });
   });
 
   group('TableCellListDelegate', () {
-    test('asserts  valid counts for rows and columns', () {});
+    test('asserts  valid counts for rows and columns', () {
+      TableCellListDelegate? delegate;
+      expect(
+        () {
+          delegate = TableCellListDelegate(
+            cells: <List<Widget>>[<Widget>[]],
+            columnBuilder: (_) => span,
+            rowBuilder: (_) => span,
+            pinnedColumnCount: -1, // asserts
+          );
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains('pinnedColumnCount >= 0'),
+          ),
+        ),
+      );
+      expect(
+        () {
+          delegate = TableCellListDelegate(
+            cells: <List<Widget>>[<Widget>[]],
+            columnBuilder: (_) => span,
+            rowBuilder: (_) => span,
+            pinnedRowCount: -1, // asserts
+          );
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains('pinnedRowCount >= 0'),
+          ),
+        ),
+      );
+      expect(
+        () {
+          delegate = TableCellListDelegate(
+            cells: <List<Widget>>[
+              <Widget>[cell, cell],
+              <Widget>[cell, cell],
+            ],
+            columnBuilder: (_) => span,
+            rowBuilder: (_) => span,
+            pinnedRowCount: 3, // asserts
+          );
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains('rowCount >= pinnedRowCount'),
+          ),
+        ),
+      );
+      expect(
+        () {
+          delegate = TableCellListDelegate(
+            cells: <List<Widget>>[
+              <Widget>[cell, cell],
+              <Widget>[cell, cell],
+            ],
+            columnBuilder: (_) => span,
+            rowBuilder: (_) => span,
+            pinnedColumnCount: 3, // asserts
+          );
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains('columnCount >= pinnedColumnCount'),
+          ),
+        ),
+      );
+      expect(delegate, isNull);
+    });
 
-    test('Asserts child lists lengths match', () {});
+    test('Asserts child lists lengths match', () {
+      TableCellListDelegate? delegate;
+      expect(
+        () {
+          delegate = TableCellListDelegate(
+            cells: <List<Widget>>[
+              <Widget>[cell, cell],
+              <Widget>[cell, cell, cell],
+            ],
+            columnBuilder: (_) => span,
+            rowBuilder: (_) => span,
+          );
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains(
+                'Each list of Widgets within cells must be of the same length.'),
+          ),
+        ),
+      );
+      expect(delegate, isNull);
+    });
 
     test('Notifies listeners & rebuilds', () {
-      // change column count
-      // change column builder
+      int notified = 0;
+      TableCellListDelegate oldDelegate;
+      TableSpan spanBuilder(int index) => span;
+      TableCellListDelegate delegate = TableCellListDelegate(
+        cells: <List<Widget>>[
+          <Widget>[cell, cell],
+          <Widget>[cell, cell],
+        ],
+        columnBuilder: spanBuilder,
+        rowBuilder: spanBuilder,
+        pinnedColumnCount: 1,
+        pinnedRowCount: 1,
+      );
+      delegate.addListener(() {
+        notified++;
+      });
+
       // change pinned column count
-      // change row count
-      // change row builder
+      oldDelegate = delegate;
+      delegate.pinnedColumnCount = 0;
+      expect(notified, 1);
+
       // change pinned row count
-      // should rebuild
+      oldDelegate = delegate;
+      delegate.pinnedRowCount = 0;
+      expect(notified, 2);
+
+      // shouldRebuild
+      // columnCount
+      oldDelegate = delegate;
+      delegate = TableCellListDelegate(
+        cells: <List<Widget>>[
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+        ],
+        columnBuilder: spanBuilder,
+        rowBuilder: spanBuilder,
+      );
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
+
+      // columnBuilder
+      oldDelegate = delegate;
+      delegate = TableCellListDelegate(
+        cells: <List<Widget>>[
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+        ],
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(150),
+        ),
+        rowBuilder: spanBuilder,
+      );
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
+
+      // rowCount
+      oldDelegate = delegate;
+      delegate = TableCellListDelegate(
+        cells: <List<Widget>>[
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+        ],
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(150),
+        ),
+        rowBuilder: spanBuilder,
+      );
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
+
+      // rowBuilder
+      oldDelegate = delegate;
+      delegate = TableCellListDelegate(
+        cells: <List<Widget>>[
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+        ],
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(150),
+        ),
+        rowBuilder: (int index) => const TableSpan(
+          extent: RemainingTableSpanExtent(),
+        ),
+      );
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
+
+      // pinned row count
+      oldDelegate = delegate;
+      delegate = TableCellListDelegate(
+        cells: <List<Widget>>[
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+        ],
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(150),
+        ),
+        rowBuilder: (int index) => const TableSpan(
+          extent: RemainingTableSpanExtent(),
+        ),
+        pinnedRowCount: 2,
+      );
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
+
+      // pinned column count
+      oldDelegate = delegate;
+      delegate = TableCellListDelegate(
+        cells: <List<Widget>>[
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+        ],
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(150),
+        ),
+        rowBuilder: (int index) => const TableSpan(
+          extent: RemainingTableSpanExtent(),
+        ),
+        pinnedColumnCount: 2,
+        pinnedRowCount: 2,
+      );
+      expect(delegate.shouldRebuild(oldDelegate), isTrue);
+
+      // Nothing changed
+      expect(delegate.shouldRebuild(delegate), isFalse);
+    });
+
+    test('Changing pinned row and column counts asserts valid values', () {
+      final TableCellListDelegate delegate = TableCellListDelegate(
+        cells: <List<Widget>>[
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+          <Widget>[cell, cell, cell],
+        ],
+        columnBuilder: (int index) => const TableSpan(
+          extent: FixedTableSpanExtent(150),
+        ),
+        rowBuilder: (int index) => const TableSpan(
+          extent: RemainingTableSpanExtent(),
+        ),
+        pinnedColumnCount: 2,
+        pinnedRowCount: 2,
+      );
+
+      expect(
+        () {
+          delegate.pinnedColumnCount = -1;
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains('value >= 0'),
+          ),
+        ),
+      );
+
+      expect(
+        () {
+          delegate.pinnedRowCount = -1;
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains('value >= 0'),
+          ),
+        ),
+      );
+
+      expect(
+        () {
+          delegate.pinnedColumnCount = 4;
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains('value <= columnCount'),
+          ),
+        ),
+      );
+
+      expect(
+        () {
+          delegate.pinnedRowCount = 4;
+        },
+        throwsA(
+          isA<AssertionError>().having(
+            (AssertionError error) => error.toString(),
+            'description',
+            contains('value <= rowCount'),
+          ),
+        ),
+      );
     });
   });
 }

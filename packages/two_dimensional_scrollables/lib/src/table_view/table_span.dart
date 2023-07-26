@@ -261,17 +261,15 @@ class TableSpanDecoration {
 
   /// Called to draw the decoration around a span.
   ///
-  /// If the span represents a row, `axis` will be [Axis.horizontal]. For
-  /// columns, [Axis.vertical] is used.
+  /// The provided [TableSpanDecorationPaintDetails] describes the bounds and
+  /// orientation of the span that are currently visible inside the viewport of
+  /// the table. The extent of the actual span may be larger.
   ///
-  /// The provided `rect` describes the bounds of the span that are currently
-  /// visible inside the viewport of the table. The extent of the actual span
-  /// may be larger.
-  ///
-  /// If a span contains pinned parts, [paint] is invoked separately for the pinned
-  /// and unpinned parts. For example: If a row contains a pinned column,
-  /// paint is called with the `rect` for the cell representing the pinned
-  /// column and separately with a `rect` containing all the other unpinned
+  /// If a span contains pinned parts, [paint] is invoked separately for the
+  /// pinned and unpinned parts. For example: If a row contains a pinned column,
+  /// paint is called with the [TableSpanDecorationPaintDetails.rect] for the
+  /// cell representing the pinned column and separately with another
+  /// [TableSpanDecorationPaintDetails.rect] containing all the other unpinned
   /// cells.
   void paint(TableSpanDecorationPaintDetails details) {
     if (color != null) {
@@ -313,34 +311,37 @@ class TableSpanBorder {
 
   /// Called to draw the border around a span.
   ///
-  /// If the span represents a row, `axis` will be [Axis.horizontal]. For
-  /// columns, [Axis.vertical] is used.
+  /// If the span represents a row, `axisDirection` will be [AxisDirection.left]
+  /// or [AxisDirection.right]. For columns, the `axisDirection` will be
+  /// [AxisDirection.down] or [AxisDirection.up].
   ///
-  /// The provided `rect` describes the bounds of the span that are currently
-  /// visible inside the viewport of the table. The extent of the actual span
-  /// may be larger.
+  /// The provided [TableSpanDecorationPaintDetails] describes the bounds and
+  /// orientation of the span that are currently visible inside the viewport of
+  /// the table. The extent of the actual span may be larger.
   ///
-  /// If a span contains pinned parts, [paint] is invoked separately for the pinned
-  /// and unpinned parts. For example: If a row contains a pinned column,
-  /// paint is called with the `rect` for the cell representing the pinned
-  /// column and separately with a `rect` containing all the other unpinned
+  /// If a span contains pinned parts, [paint] is invoked separately for the
+  /// pinned and unpinned parts. For example: If a row contains a pinned column,
+  /// paint is called with the [TableSpanDecorationPaintDetails.rect] for the
+  /// cell representing the pinned column and separately with another
+  /// [TableSpanDecorationPaintDetails.rect] containing all the other unpinned
   /// cells.
   void paint(TableSpanDecorationPaintDetails details) {
-    switch (details.axis) {
+    final AxisDirection axisDirection = details.axisDirection;
+    switch (axisDirectionToAxis(axisDirection)) {
       case Axis.horizontal:
         paintBorder(
           details.canvas,
           details.rect,
-          top: leading,
-          bottom: trailing,
+          top: axisDirection == AxisDirection.right ? leading : trailing,
+          bottom: axisDirection == AxisDirection.right ? trailing : leading,
         );
         break;
       case Axis.vertical:
         paintBorder(
           details.canvas,
           details.rect,
-          left: leading,
-          right: trailing,
+          left: axisDirection == AxisDirection.down ? leading : trailing,
+          right: axisDirection == AxisDirection.down ? trailing : leading,
         );
         break;
     }
@@ -354,11 +355,11 @@ class TableSpanBorder {
 class TableSpanDecorationPaintDetails {
   /// Creates the details needed to paint a [TableSpanDecoration].
   ///
-  /// The [canvas], [rect], and [axis] must be provided.
+  /// The [canvas], [rect], and [axisDirection] must be provided.
   TableSpanDecorationPaintDetails({
     required this.canvas,
     required this.rect,
-    required this.axis,
+    required this.axisDirection,
   });
 
   /// The [Canvas] that the [TableSpanDecoration] will be painted to.
@@ -371,9 +372,11 @@ class TableSpanDecorationPaintDetails {
   /// which is the area the [TableSpanDecoration] will be applied to.
   final Rect rect;
 
-  /// The [Axis] of the [TableSpan].
+  /// The [AxisDirection] of the [Axis] of the [TableSpan].
   ///
-  /// When [Axis.vertical], a column is being painted. When [Axis.horizontal],
-  /// a row is being painted.
-  final Axis axis;
+  /// When [AxisDirection.down] or [AxisDirection.up], which would be
+  /// [Axis.vertical], a column is being painted. When [AxisDirection.left] or
+  /// [AxisDirection.right], which would be [Axis.horizontal], a row is being
+  /// painted.
+  final AxisDirection axisDirection;
 }

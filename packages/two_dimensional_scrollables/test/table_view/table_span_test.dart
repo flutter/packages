@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/table_view.dart';
 
@@ -55,7 +56,7 @@ void main() {
           isA<AssertionError>().having(
             (AssertionError error) => error.toString(),
             'description',
-            contains('fraction >= 0.0 && fraction <= 1.0'),
+            contains('fraction >= 0.0'),
           ),
         ),
       );
@@ -130,7 +131,44 @@ void main() {
     });
   });
 
-  test('TableSpanDecoration', () {});
+  test('TableSpanDecoration', () {
+    TableSpanDecoration decoration = const TableSpanDecoration(color: Color(0xffff0000),);
+    final TestCanvas canvas = TestCanvas();
+    const Rect rect = Rect.fromLTWH(0, 0, 10, 10);
+    final TableSpanDecorationPaintDetails details = TableSpanDecorationPaintDetails(canvas: canvas, rect: rect, axisDirection: AxisDirection.down,);
+    decoration.paint(details);
+    expect(canvas.rect, rect);
+    expect(canvas.paint.color, const Color(0xffff0000));
+    expect(canvas.paint.isAntiAlias, isFalse);
+    final TestTableSpanBorder border = TestTableSpanBorder(leading: const BorderSide(),);
+    decoration = TableSpanDecoration(border: border);
+    decoration.paint(details);
+    expect(border.details, details);
+  });
+}
 
-  test('TableSpanBorder', () {});
+class TestCanvas implements Canvas {
+  final List<Invocation> noSuchMethodInvocations = <Invocation>[];
+  late Rect rect;
+  late Paint paint;
+
+  @override
+  void drawRect(Rect rect, Paint paint) {
+    rect = rect;
+    paint = paint;
+  }
+
+  @override
+  void noSuchMethod(Invocation invocation) {
+    noSuchMethodInvocations.add(invocation);
+  }
+}
+
+class TestTableSpanBorder extends TableSpanBorder {
+  TestTableSpanBorder({ super.leading });
+  TableSpanDecorationPaintDetails? details;
+  @override
+  void paint(TableSpanDecorationPaintDetails details) {
+    details = details;
+  }
 }

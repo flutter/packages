@@ -45,37 +45,39 @@ with a few `TableSpanDecoration`s like background colors and borders. The
 TableView.
 
 ```dart
-TableView.builder(
-  cellBuilder: (BuildContext context, TableVicinity vicinity) {
-    return Center(
-      child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
-    );
-  },
-  columnCount: 10,
-  columnBuilder: (int column) {
-    return TableSpan(
-      extent: FixedTableSpanExtent(100),
-      foregroundDecoration: TableSpanDecoration(
-        border: TableSpanBorder(
-          trailing: BorderSide(
-           color: Colors.black,
-           width: 2,
-           style: BorderStyle.solid,
+TableView _getTableView() {
+  return TableView.builder(
+    cellBuilder: (BuildContext context, TableVicinity vicinity) {
+      return Center(
+        child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
+      );
+    },
+    columnCount: 10,
+    columnBuilder: (int column) {
+      return TableSpan(
+        extent: FixedTableSpanExtent(100),
+        foregroundDecoration: TableSpanDecoration(
+          border: TableSpanBorder(
+            trailing: BorderSide(
+             color: Colors.black,
+             width: 2,
+             style: BorderStyle.solid,
+            ),
           ),
         ),
-      ),
-    );
-  },
-  rowCount: 10,
-  rowBuilder: (int row) {
-    return TableSpan(
-      extent: FixedTableSpanExtent(100),
-      backgroundDecoration: TableSpanDecoration(
-        color: row.isEven? Colors.blueAccent[100] : Colors.white,
-      ),
-    );
-  },
-);
+      );
+    },
+    rowCount: 10,
+    rowBuilder: (int row) {
+      return TableSpan(
+        extent: FixedTableSpanExtent(100),
+        backgroundDecoration: TableSpanDecoration(
+          color: row.isEven? Colors.blueAccent[100] : Colors.white,
+        ),
+      );
+    },
+  );
+}
 ```
 
 ## Changelog
