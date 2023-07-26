@@ -273,18 +273,17 @@ class TableSpanDecoration {
   /// paint is called with the `rect` for the cell representing the pinned
   /// column and separately with a `rect` containing all the other unpinned
   /// cells.
-  // -> all three in one object
-  void paint(Canvas canvas, Rect rect, Axis axis) {
+  void paint(TableSpanDecorationPaintDetails details) {
     if (color != null) {
-      canvas.drawRect(
-        rect,
+      details.canvas.drawRect(
+        details.rect,
         Paint()
           ..color = color!
           ..isAntiAlias = false,
       );
     }
     if (border != null) {
-      border!.paint(canvas, rect, axis);
+      border!.paint(details);
     }
   }
 }
@@ -297,16 +296,19 @@ class TableSpanBorder {
     this.leading = BorderSide.none,
   });
 
-  /// The border to draw on the trailing side of the span.
+  /// The border to draw on the trailing side of the span, based on the
+  /// [AxisDirection].
   ///
-  /// The trailing side of a row is the bottom, the trailing side of a column
-  /// is its right side. // Follow up with goderbauer
+  /// The trailing side of a row is the bottom when [Axis.vertical] is
+  /// [AxisDirection.down], the trailing side of a column
+  /// is its right side when the [Axis.horizontal] is [AxisDirection.right].
   final BorderSide trailing;
 
   /// The border to draw on the leading side of the span.
   ///
-  /// The leading side of a row is the top, the trailing side of a column
-  /// is its left side.
+  /// The leading side of a row is the top when [Axis.vertical] is
+  /// [AxisDirection.down], the leading side of a column
+  /// is its left side when the [Axis.horizontal] is [AxisDirection.right].
   final BorderSide leading;
 
   /// Called to draw the border around a span.
@@ -323,14 +325,55 @@ class TableSpanBorder {
   /// paint is called with the `rect` for the cell representing the pinned
   /// column and separately with a `rect` containing all the other unpinned
   /// cells.
-  void paint(Canvas canvas, Rect rect, Axis axis) {
-    switch (axis) {
+  void paint(TableSpanDecorationPaintDetails details) {
+    switch (details.axis) {
       case Axis.horizontal:
-        paintBorder(canvas, rect, top: leading, bottom: trailing);
+        paintBorder(
+          details.canvas,
+          details.rect,
+          top: leading,
+          bottom: trailing,
+        );
         break;
       case Axis.vertical:
-        paintBorder(canvas, rect, left: leading, right: trailing);
+        paintBorder(
+          details.canvas,
+          details.rect,
+          left: leading,
+          right: trailing,
+        );
         break;
     }
   }
+}
+
+/// Provides the details of a given [TableSpanDecoration] for painting.
+///
+/// Created during paint by the [RenderTableViewport] for the
+/// [TableSpan.foregroundDecoration] and [TableSpan.backgroundDecoration].
+class TableSpanDecorationPaintDetails {
+  /// Creates the details needed to paint a [TableSpanDecoration].
+  ///
+  /// The [canvas], [rect], and [axis] must be provided.
+  TableSpanDecorationPaintDetails({
+    required this.canvas,
+    required this.rect,
+    required this.axis,
+  });
+
+  /// The [Canvas] that the [TableSpanDecoration] will be painted to.
+  final Canvas canvas;
+
+  /// A [Rect] representing the visible area of a row or column in the
+  /// [TableView], as represented by a [TableSpan].
+  ///
+  /// This Rect contains all of the visible children in a given row or column,
+  /// which is the area the [TableSpanDecoration] will be applied to.
+  final Rect rect;
+
+  /// The [Axis] of the [TableSpan].
+  ///
+  /// When [Axis.vertical], a column is being painted. When [Axis.horizontal],
+  /// a row is being painted.
+  final Axis axis;
 }

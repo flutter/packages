@@ -11,7 +11,7 @@ vertical and horizontal axes.
 ### TableView
 
 `TableView` is a subclass of `TwoDimensionalScrollView`, building its provided
-`TableViewCell` children lazily in a `TwoDimensionalViewport`. This widget can
+children lazily in a `TwoDimensionalViewport`. This widget can
 
 - Scroll diagonally, or lock axes
 - Apply decorations to rows and columns
@@ -47,10 +47,8 @@ TableView.
 ```dart
 TableView.builder(
   cellBuilder: (BuildContext context, TableVicinity vicinity) {
-    return TableViewCell(
-      child: Center(
-        child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
-      ),
+    return Center(
+      child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
     );
   },
   columnCount: 10,

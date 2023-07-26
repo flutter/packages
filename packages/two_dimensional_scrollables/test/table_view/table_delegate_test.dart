@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/table_view.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(50));
-const TableViewCell cell = TableViewCell(child: SizedBox.shrink());
+const Widget cell = SizedBox.shrink();
 
 void main() {
   group('TableCellBuilderDelegate', () {
@@ -92,7 +92,7 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate = TableCellBuilderDelegate(
             cellBuilder: (_, __) => cell,
             columnBuilder: (_) => span,
@@ -104,7 +104,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('pinnedColumnCount <= columnCount'),
           ),
@@ -112,7 +112,7 @@ void main() {
       );
 
       expect(
-            () {
+        () {
           delegate = TableCellBuilderDelegate(
             cellBuilder: (_, __) => cell,
             columnBuilder: (_) => span,
@@ -124,7 +124,7 @@ void main() {
         },
         throwsA(
           isA<AssertionError>().having(
-                (AssertionError error) => error.toString(),
+            (AssertionError error) => error.toString(),
             'description',
             contains('pinnedRowCount <= rowCount'),
           ),
@@ -150,7 +150,7 @@ void main() {
       int notified = 0;
       TableCellBuilderDelegate oldDelegate;
       TableSpan spanBuilder(int index) => span;
-      TableViewCell cellBuilder(BuildContext context, TableVicinity vicinity) => cell;
+      Widget cellBuilder(BuildContext context, TableVicinity vicinity) => cell;
       TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
         columnBuilder: spanBuilder,
@@ -182,7 +182,8 @@ void main() {
       oldDelegate = delegate;
       delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
-        columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
         rowBuilder: spanBuilder,
         columnCount: 6,
         pinnedColumnCount: 1,
@@ -196,7 +197,8 @@ void main() {
       oldDelegate = delegate;
       delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
-        columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
         rowBuilder: spanBuilder,
         columnCount: 6,
         pinnedColumnCount: 2,
@@ -210,7 +212,8 @@ void main() {
       oldDelegate = delegate;
       delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
-        columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
         rowBuilder: spanBuilder,
         columnCount: 6,
         pinnedColumnCount: 2,
@@ -224,7 +227,8 @@ void main() {
       oldDelegate = delegate;
       delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
-        columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
         rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
         columnCount: 6,
         pinnedColumnCount: 2,
@@ -238,7 +242,8 @@ void main() {
       oldDelegate = delegate;
       delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
-        columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
         rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
         columnCount: 6,
         pinnedColumnCount: 2,
@@ -251,8 +256,9 @@ void main() {
       // change cell builder
       oldDelegate = delegate;
       delegate = TableCellBuilderDelegate(
-        cellBuilder: (_, __) => TableViewCell(child: Container()),
-        columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        cellBuilder: (_, __) => Container(),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
         rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
         columnCount: 6,
         pinnedColumnCount: 2,

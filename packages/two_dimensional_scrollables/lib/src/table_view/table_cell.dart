@@ -37,27 +37,7 @@ class TableVicinity extends ChildVicinity {
 
 /// Parent data structure used by [RenderTableViewport].
 class TableViewParentData extends TwoDimensionalViewportParentData {
+  // TODO(Piinks): Add back merged cells here, https://github.com/flutter/flutter/issues/131224
   /// Converts the [ChildVicinity] to a [TableVicinity] for ease of use.
   TableVicinity get tableVicinity => vicinity as TableVicinity;
-}
-
-// Follow up with goderbauer
-
-// TODO(Piinks): Add back merged cells here, https://github.com/flutter/flutter/issues/131224
-/// A widget that wraps each child of the [TableView], and relays information
-/// about the configuration of the cell to the [RenderTableViewport].
-class TableViewCell extends ParentDataWidget<TableViewParentData> {
-  /// Configures a cell for a child of the [TableView].
-  const TableViewCell({
-    super.key,
-    required super.child,
-  });
-
-  @override
-  void applyParentData(RenderObject renderObject) {
-    assert(renderObject.parentData is TableViewParentData);
-  }
-
-  @override
-  Type get debugTypicalAncestorWidgetClass => TableViewport;
 }

@@ -8,7 +8,7 @@ import 'package:two_dimensional_scrollables/table_view.dart';
 void main() {
   group('TableSpanExtent', () {
     test('FixedTableSpanExtent', () {
-      FixedTableSpanExtent extent = FixedTableSpanExtent(150);
+      FixedTableSpanExtent extent = const FixedTableSpanExtent(150);
       expect(
         extent.calculateExtent(const TableSpanExtentDelegate(
             precedingExtent: 0, viewportExtent: 0)),

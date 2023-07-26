@@ -24,10 +24,10 @@ import 'table_span.dart';
 /// vertically. If there is not enough space for all the columns, it will
 /// scroll horizontally.
 ///
-/// The content displayed by the table is organized in [TableViewCell]s. Each
-/// cell can belong to exactly one row and one column. The table supports lazy
-/// rendering and will only instantiate those cells that are currently visible
-/// in the table's viewport and those that extend into the [cacheExtent]
+/// Each child [Widget] can belong to exactly one row and one column as
+/// represented by its [TableVicinity]. The table supports lazy rendering and
+/// will only instantiate those cells that are currently visible in the table's
+/// viewport and those that extend into the [cacheExtent].
 ///
 /// The layout of the table (e.g. how many rows/columns there are and their
 /// extents) as well as the content of the individual cells is defined by
@@ -35,7 +35,7 @@ import 'table_span.dart';
 /// the [TableCellDelegateMixin]. The [TableView.builder] and [TableView.list]
 /// constructors create their own delegate.
 ///
-/// This example shows a TableView of 100 [TableViewCell]s, all sized 100 by 100
+/// This example shows a TableView of 100 children, all sized 100 by 100
 /// pixels with a few [TableSpanDecoration]s like background colors and borders.
 /// The `builder` constructor is called on demand for the cells that are visible
 /// in the TableView.
@@ -43,10 +43,8 @@ import 'table_span.dart';
 /// ```dart
 /// TableView.builder(
 ///   cellBuilder: (BuildContext context, TableVicinity vicinity) {
-///     return TableViewCell(
-///       child: Center(
-///         child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
-///       ),
+///     return Center(
+///       child: Text('Cell ${vicinity.column} : ${vicinity.row}'),
 ///     );
 ///   },
 ///   columnCount: 10,
@@ -108,7 +106,7 @@ class TableView extends TwoDimensionalScrollView {
   /// cells that are actually visible.
   ///
   /// This constructor generates a [TableCellBuilderDelegate] for building
-  /// [TableViewCell]s on demand using the required [cellBuilder],
+  /// children on demand using the required [cellBuilder],
   /// [columnBuilder], and [rowBuilder].
   TableView.builder({
     super.key,
@@ -169,7 +167,7 @@ class TableView extends TwoDimensionalScrollView {
     int pinnedColumnCount = 0,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
-    List<List<TableViewCell>> cells = const <List<TableViewCell>>[],
+    List<List<Widget>> cells = const <List<Widget>>[],
   })  : assert(pinnedRowCount >= 0),
         assert(pinnedColumnCount >= 0),
         super(
@@ -201,10 +199,10 @@ class TableView extends TwoDimensionalScrollView {
   }
 }
 
-/// A widget through which a portion of a Table of [TableViewCell]s are viewed,
+/// A widget through which a portion of a Table of [Widget] children are viewed,
 /// typically in combination with a [TableView].
 class TableViewport extends TwoDimensionalViewport {
-  /// Creates a viewport for [TableViewCell]s that extend and scroll in both
+  /// Creates a viewport for [Widget]s that extend and scroll in both
   /// horizontal and vertical dimensions.
   const TableViewport({
     super.key,
@@ -274,8 +272,16 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     super.clipBehavior,
   });
 
-  TableCellDelegateMixin get _delegate =>
-      delegate as TableCellDelegateMixin; // -> use the super class implementation, override to control type safety
+  @override
+  TableCellDelegateMixin get delegate =>
+      super.delegate as TableCellDelegateMixin;
+  @override
+  set delegate(TwoDimensionalChildDelegate value) {
+    // TODO(Piinks): remove this assertion and add type safety to function
+    //  signature once the covariant reaches stable.
+    assert(value is TableCellDelegateMixin);
+    super.delegate = value;
+  }
 
   // Cached Table metrics
   Map<int, _Span> _columnMetrics = <int, _Span>{};
@@ -302,9 +308,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   int? get _lastPinnedRow =>
-      _delegate.pinnedRowCount > 0 ? _delegate.pinnedRowCount - 1 : null;
+      delegate.pinnedRowCount > 0 ? delegate.pinnedRowCount - 1 : null;
   int? get _lastPinnedColumn =>
-      _delegate.pinnedColumnCount > 0 ? _delegate.pinnedColumnCount - 1 : null;
+      delegate.pinnedColumnCount > 0 ? delegate.pinnedColumnCount - 1 : null;
 
   double get _pinnedRowsExtent => _lastPinnedRow != null
       ? _rowMetrics[_lastPinnedRow]!.trailingOffset
@@ -389,14 +395,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     double startOfPinnedColumn = 0;
 
     final Map<int, _Span> newColumnMetrics = <int, _Span>{};
-    for (int column = 0; column < _delegate.columnCount; column++) {
-      final bool isPinned = column < _delegate.pinnedColumnCount;
+    for (int column = 0; column < delegate.columnCount; column++) {
+      final bool isPinned = column < delegate.pinnedColumnCount;
       final double leadingOffset =
           isPinned ? startOfPinnedColumn : startOfRegularColumn;
       _Span? span = _columnMetrics.remove(column);
       assert(needsDelegateRebuild || span != null);
       final TableSpan configuration = needsDelegateRebuild
-          ? _delegate.buildColumn(column)
+          ? delegate.buildColumn(column)
           : span!.configuration;
       span ??= _Span();
       span.update(
@@ -429,7 +435,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         startOfPinnedColumn = span.trailingOffset;
       }
     }
-    assert(newColumnMetrics.length >= _delegate.pinnedColumnCount);
+    assert(newColumnMetrics.length >= delegate.pinnedColumnCount);
     for (final _Span span in _columnMetrics.values) {
       span.dispose();
     }
@@ -441,15 +447,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     double startOfPinnedRow = 0;
 
     final Map<int, _Span> newRowMetrics = <int, _Span>{};
-    for (int row = 0; row < _delegate.rowCount; row++) {
-      final bool isPinned = row < _delegate.pinnedRowCount;
+    for (int row = 0; row < delegate.rowCount; row++) {
+      final bool isPinned = row < delegate.pinnedRowCount;
       final double leadingOffset =
           isPinned ? startOfPinnedRow : startOfRegularRow;
       _Span? span = _rowMetrics.remove(row);
       assert(needsDelegateRebuild || span != null);
-      final TableSpan configuration = needsDelegateRebuild
-          ? _delegate.rowBuilder(row)
-          : span!.configuration;
+      final TableSpan configuration =
+          needsDelegateRebuild ? delegate.buildRow(row) : span!.configuration;
       span ??= _Span();
       span.update(
         isPinned: isPinned,
@@ -481,14 +486,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         startOfPinnedRow = span.trailingOffset;
       }
     }
-    assert(newRowMetrics.length >= _delegate.pinnedRowCount);
+    assert(newRowMetrics.length >= delegate.pinnedRowCount);
     for (final _Span span in _rowMetrics.values) {
       span.dispose();
     }
     _rowMetrics = newRowMetrics;
 
     final double maxVerticalScrollExtent;
-    if (_rowMetrics.length <= _delegate.pinnedRowCount) {
+    if (_rowMetrics.length <= delegate.pinnedRowCount) {
       assert(_firstNonPinnedRow == null && _lastNonPinnedRow == null);
       maxVerticalScrollExtent = 0.0;
     } else {
@@ -505,7 +510,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     final double maxHorizontalScrollExtent;
-    if (_columnMetrics.length <= _delegate.pinnedColumnCount) {
+    if (_columnMetrics.length <= delegate.pinnedColumnCount) {
       assert(_firstNonPinnedColumn == null && _lastNonPinnedColumn == null);
       maxHorizontalScrollExtent = 0.0;
     } else {
@@ -885,19 +890,43 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // Default, row major order. Rows go first.
       case Axis.vertical:
         backgroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          decoration.paint(context.canvas, rect, Axis.horizontal);
+          final TableSpanDecorationPaintDetails paintingDetails =
+              TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axis: Axis.horizontal,
+          );
+          decoration.paint(paintingDetails);
         });
         backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          decoration.paint(context.canvas, rect, Axis.vertical);
+          final TableSpanDecorationPaintDetails paintingDetails =
+              TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axis: Axis.vertical,
+          );
+          decoration.paint(paintingDetails);
         });
         break;
       // Column major order. Columns go first.
       case Axis.horizontal:
         backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          decoration.paint(context.canvas, rect, Axis.vertical);
+          final TableSpanDecorationPaintDetails paintingDetails =
+              TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axis: Axis.vertical,
+          );
+          decoration.paint(paintingDetails);
         });
         backgroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          decoration.paint(context.canvas, rect, Axis.horizontal);
+          final TableSpanDecorationPaintDetails paintingDetails =
+              TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axis: Axis.horizontal,
+          );
+          decoration.paint(paintingDetails);
         });
     }
 
@@ -919,19 +948,43 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // Default, row major order. Rows go first.
       case Axis.vertical:
         foregroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          decoration.paint(context.canvas, rect, Axis.horizontal);
+          final TableSpanDecorationPaintDetails paintingDetails =
+              TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axis: Axis.horizontal,
+          );
+          decoration.paint(paintingDetails);
         });
         foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          decoration.paint(context.canvas, rect, Axis.vertical);
+          final TableSpanDecorationPaintDetails paintingDetails =
+              TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axis: Axis.vertical,
+          );
+          decoration.paint(paintingDetails);
         });
         break;
       // Column major order. Columns go first.
       case Axis.horizontal:
         foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          decoration.paint(context.canvas, rect, Axis.vertical);
+          final TableSpanDecorationPaintDetails paintingDetails =
+              TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axis: Axis.vertical,
+          );
+          decoration.paint(paintingDetails);
         });
         foregroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          decoration.paint(context.canvas, rect, Axis.horizontal);
+          final TableSpanDecorationPaintDetails paintingDetails =
+              TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axis: Axis.horizontal,
+          );
+          decoration.paint(paintingDetails);
         });
     }
   }
