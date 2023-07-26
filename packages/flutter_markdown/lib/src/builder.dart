@@ -841,13 +841,22 @@ class MarkdownBuilder implements md.NodeVisitor {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
     final Key k = key == null ? UniqueKey() : Key(key);
     if (selectable) {
-      return SelectableText.rich(
-        text!,
-        // ignore: deprecated_member_use
-        textScaleFactor: styleSheet.textScaleFactor,
-        textAlign: textAlign ?? TextAlign.start,
+      // return SelectableText.rich(
+      //   text!,
+      //   // ignore: deprecated_member_use
+      //   textScaleFactor: styleSheet.textScaleFactor,
+      //   textAlign: textAlign ?? TextAlign.start,
+      //   onTap: onTapText,
+      //   key: k,
+      // );
+      return GestureDetector(
         onTap: onTapText,
-        key: k,
+        child: Text.rich(
+          text!,
+          key: k,
+          textScaleFactor: styleSheet.textScaleFactor,
+          textAlign: textAlign ?? TextAlign.start,
+        ),
       );
     } else {
       return RichText(
