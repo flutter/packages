@@ -59,7 +59,7 @@ extension $HomeRouteExtension on HomeRoute {
 
 extension $FamilyRouteExtension on FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        state.pathParameters['fid']!,
+        state.uri.pathParameters['fid']!,
       );
 
   String get location => GoRouteData.$location(
@@ -78,8 +78,8 @@ extension $FamilyRouteExtension on FamilyRoute {
 
 extension $PersonRouteExtension on PersonRoute {
   static PersonRoute _fromState(GoRouterState state) => PersonRoute(
-        state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!),
+        state.uri.pathParameters['fid']!,
+        int.parse(state.uri.pathParameters['pid']!),
       );
 
   String get location => GoRouteData.$location(
@@ -99,10 +99,10 @@ extension $PersonRouteExtension on PersonRoute {
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
   static PersonDetailsRoute _fromState(GoRouterState state) =>
       PersonDetailsRoute(
-        state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!),
-        _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!),
-        $extra: state.extra as int?,
+        state.uri.pathParameters['fid']!,
+        int.parse(state.uri.pathParameters['pid']!),
+        _$PersonDetailsEnumMap._$fromName(state.uri.pathParameters['details']!),
+        $extra: state.uri.extra as int?,
       );
 
   String get location => GoRouteData.$location(
@@ -129,7 +129,7 @@ const _$PersonDetailsEnumMap = {
 
 extension $FamilyCountRouteExtension on FamilyCountRoute {
   static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
-        int.parse(state.pathParameters['count']!),
+        int.parse(state.uri.pathParameters['count']!),
       );
 
   String get location => GoRouteData.$location(
@@ -158,7 +158,7 @@ RouteBase get $loginRoute => GoRouteData.$route(
 
 extension $LoginRouteExtension on LoginRoute {
   static LoginRoute _fromState(GoRouterState state) => LoginRoute(
-        fromPage: state.queryParameters['from-page'],
+        fromPage: state.uri.queryParameters['from-page'],
       );
 
   String get location => GoRouteData.$location(

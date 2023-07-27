@@ -22,7 +22,7 @@ RouteBase get $requiredExtraRoute => GoRouteData.$route(
 extension $RequiredExtraRouteExtension on RequiredExtraRoute {
   static RequiredExtraRoute _fromState(GoRouterState state) =>
       RequiredExtraRoute(
-        $extra: state.extra as Extra,
+        $extra: state.uri.extra as Extra,
       );
 
   String get location => GoRouteData.$location(
@@ -49,7 +49,7 @@ RouteBase get $optionalExtraRoute => GoRouteData.$route(
 extension $OptionalExtraRouteExtension on OptionalExtraRoute {
   static OptionalExtraRoute _fromState(GoRouterState state) =>
       OptionalExtraRoute(
-        $extra: state.extra as Extra?,
+        $extra: state.uri.extra as Extra?,
       );
 
   String get location => GoRouteData.$location(
