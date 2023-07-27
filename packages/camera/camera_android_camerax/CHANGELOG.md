@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates android example to be able to use custom use artifactregistery.
+
 ## 0.5.0+11
 
 * Fixes issue with image data not being emitted after relistening to stream returned by `onStreamedFrameAvailable`.
