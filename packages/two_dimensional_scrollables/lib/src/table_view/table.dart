@@ -133,16 +133,16 @@ class TableView extends TwoDimensionalScrollView {
         assert(pinnedColumnCount >= 0),
         assert(columnCount >= pinnedColumnCount),
         super(
-          delegate: TableCellBuilderDelegate(
-            columnCount: columnCount,
-            rowCount: rowCount,
-            pinnedColumnCount: pinnedColumnCount,
-            pinnedRowCount: pinnedRowCount,
-            cellBuilder: cellBuilder,
-            columnBuilder: columnBuilder,
-            rowBuilder: rowBuilder,
-          ),
-        );
+        delegate: TableCellBuilderDelegate(
+          columnCount: columnCount,
+          rowCount: rowCount,
+          pinnedColumnCount: pinnedColumnCount,
+          pinnedRowCount: pinnedRowCount,
+          cellBuilder: cellBuilder,
+          columnBuilder: columnBuilder,
+          rowBuilder: rowBuilder,
+        ),
+      );
 
   /// Creates a [TableView] from an explicit two dimensional array of children.
   ///
@@ -173,21 +173,21 @@ class TableView extends TwoDimensionalScrollView {
   })  : assert(pinnedRowCount >= 0),
         assert(pinnedColumnCount >= 0),
         super(
-          delegate: TableCellListDelegate(
-            pinnedColumnCount: pinnedColumnCount,
-            pinnedRowCount: pinnedRowCount,
-            cells: cells,
-            columnBuilder: columnBuilder,
-            rowBuilder: rowBuilder,
-          ),
-        );
+        delegate: TableCellListDelegate(
+          pinnedColumnCount: pinnedColumnCount,
+          pinnedRowCount: pinnedRowCount,
+          cells: cells,
+          columnBuilder: columnBuilder,
+          rowBuilder: rowBuilder,
+        ),
+      );
 
   @override
   TableViewport buildViewport(
-    BuildContext context,
-    ViewportOffset verticalOffset,
-    ViewportOffset horizontalOffset,
-  ) {
+      BuildContext context,
+      ViewportOffset verticalOffset,
+      ViewportOffset horizontalOffset,
+      ) {
     return TableViewport(
       verticalOffset: verticalOffset,
       verticalAxisDirection: verticalDetails.direction,
@@ -235,9 +235,9 @@ class TableViewport extends TwoDimensionalViewport {
 
   @override
   void updateRenderObject(
-    BuildContext context,
-    RenderTableViewport renderObject,
-  ) {
+      BuildContext context,
+      RenderTableViewport renderObject,
+      ) {
     renderObject
       ..horizontalOffset = horizontalOffset
       ..horizontalAxisDirection = horizontalAxisDirection
@@ -353,7 +353,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         );
         switch (mainAxis) {
           case Axis.vertical:
-            // Row major order, rows go first.
+          // Row major order, rows go first.
             result.add(
               HitTestEntry(_rowMetrics[cellParentData.tableVicinity.row]!),
             );
@@ -363,7 +363,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             );
             break;
           case Axis.horizontal:
-            // Column major order, columns go first.
+          // Column major order, columns go first.
             result.add(
               HitTestEntry(
                   _columnMetrics[cellParentData.tableVicinity.column]!),
@@ -399,7 +399,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     for (int column = 0; column < delegate.columnCount; column++) {
       final bool isPinned = column < delegate.pinnedColumnCount;
       final double leadingOffset =
-          isPinned ? startOfPinnedColumn : startOfRegularColumn;
+      isPinned ? startOfPinnedColumn : startOfRegularColumn;
       _Span? span = _columnMetrics.remove(column);
       assert(needsDelegateRebuild || span != null);
       final TableSpan configuration = needsDelegateRebuild
@@ -451,11 +451,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     for (int row = 0; row < delegate.rowCount; row++) {
       final bool isPinned = row < delegate.pinnedRowCount;
       final double leadingOffset =
-          isPinned ? startOfPinnedRow : startOfRegularRow;
+      isPinned ? startOfPinnedRow : startOfRegularRow;
       _Span? span = _rowMetrics.remove(row);
       assert(needsDelegateRebuild || span != null);
       final TableSpan configuration =
-          needsDelegateRebuild ? delegate.buildRow(row) : span!.configuration;
+      needsDelegateRebuild ? delegate.buildRow(row) : span!.configuration;
       span ??= _Span();
       span.update(
         isPinned: isPinned,
@@ -528,7 +528,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     final bool acceptedDimension = horizontalOffset.applyContentDimensions(
-            0.0, maxHorizontalScrollExtent) &&
+        0.0, maxHorizontalScrollExtent) &&
         verticalOffset.applyContentDimensions(0.0, maxVerticalScrollExtent);
     if (!acceptedDimension) {
       _updateFirstAndLastVisibleCell();
@@ -607,13 +607,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     final double? offsetIntoColumn = _firstNonPinnedColumn != null
         ? horizontalOffset.pixels -
-            _columnMetrics[_firstNonPinnedColumn]!.leadingOffset -
-            _pinnedColumnsExtent
+        _columnMetrics[_firstNonPinnedColumn]!.leadingOffset -
+        _pinnedColumnsExtent
         : null;
     final double? offsetIntoRow = _firstNonPinnedRow != null
         ? verticalOffset.pixels -
-            _rowMetrics[_firstNonPinnedRow]!.leadingOffset -
-            _pinnedRowsExtent
+        _rowMetrics[_firstNonPinnedRow]!.leadingOffset -
+        _pinnedRowsExtent
         : null;
 
     if (_lastPinnedRow != null && _lastPinnedColumn != null) {
@@ -696,11 +696,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   final LayerHandle<ClipRectLayer> _clipPinnedRowsHandle =
-      LayerHandle<ClipRectLayer>();
+  LayerHandle<ClipRectLayer>();
   final LayerHandle<ClipRectLayer> _clipPinnedColumnsHandle =
-      LayerHandle<ClipRectLayer>();
+  LayerHandle<ClipRectLayer>();
   final LayerHandle<ClipRectLayer> _clipCellsHandle =
-      LayerHandle<ClipRectLayer>();
+  LayerHandle<ClipRectLayer>();
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -728,7 +728,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           viewportDimension.width - _pinnedColumnsExtent,
           viewportDimension.height - _pinnedRowsExtent,
         ),
-        (PaintingContext context, Offset offset) {
+            (PaintingContext context, Offset offset) {
           _paintCells(
             context: context,
             offset: offset,
@@ -755,7 +755,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           _pinnedColumnsExtent,
           viewportDimension.height - _pinnedRowsExtent,
         ),
-        (PaintingContext context, Offset offset) {
+            (PaintingContext context, Offset offset) {
           _paintCells(
             context: context,
             offset: offset,
@@ -783,7 +783,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           viewportDimension.width - _pinnedColumnsExtent,
           _pinnedRowsExtent,
         ),
-        (PaintingContext context, Offset offset) {
+            (PaintingContext context, Offset offset) {
           _paintCells(
             context: context,
             offset: offset,
@@ -807,7 +807,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         offset: offset,
         leading: const TableVicinity(column: 0, row: 0),
         trailing:
-            TableVicinity(column: _lastPinnedColumn!, row: _lastPinnedRow!),
+        TableVicinity(column: _lastPinnedColumn!, row: _lastPinnedRow!),
       );
     }
   }
@@ -820,9 +820,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }) {
     // Column decorations
     final LinkedHashMap<Rect, TableSpanDecoration> foregroundColumns =
-        LinkedHashMap<Rect, TableSpanDecoration>();
+    LinkedHashMap<Rect, TableSpanDecoration>();
     final LinkedHashMap<Rect, TableSpanDecoration> backgroundColumns =
-        LinkedHashMap<Rect, TableSpanDecoration>();
+    LinkedHashMap<Rect, TableSpanDecoration>();
 
     for (int column = leading.column; column <= trailing.column; column++) {
       final _Span span = _columnMetrics[column]!;
@@ -853,9 +853,9 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     // Row decorations
     final LinkedHashMap<Rect, TableSpanDecoration> foregroundRows =
-        LinkedHashMap<Rect, TableSpanDecoration>();
+    LinkedHashMap<Rect, TableSpanDecoration>();
     final LinkedHashMap<Rect, TableSpanDecoration> backgroundRows =
-        LinkedHashMap<Rect, TableSpanDecoration>();
+    LinkedHashMap<Rect, TableSpanDecoration>();
 
     for (int row = leading.row; row <= trailing.row; row++) {
       final _Span span = _rowMetrics[row]!;
@@ -890,11 +890,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     // Background decorations
     switch (mainAxis) {
-      // Default, row major order. Rows go first.
+    // Default, row major order. Rows go first.
       case Axis.vertical:
         backgroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
           final TableSpanDecorationPaintDetails paintingDetails =
-              TableSpanDecorationPaintDetails(
+          TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
@@ -903,7 +903,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         });
         backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
           final TableSpanDecorationPaintDetails paintingDetails =
-              TableSpanDecorationPaintDetails(
+          TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
@@ -911,11 +911,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           decoration.paint(paintingDetails);
         });
         break;
-      // Column major order. Columns go first.
+    // Column major order. Columns go first.
       case Axis.horizontal:
         backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
           final TableSpanDecorationPaintDetails paintingDetails =
-              TableSpanDecorationPaintDetails(
+          TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
@@ -924,7 +924,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         });
         backgroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
           final TableSpanDecorationPaintDetails paintingDetails =
-              TableSpanDecorationPaintDetails(
+          TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
@@ -948,11 +948,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     // Foreground decorations
     switch (mainAxis) {
-      // Default, row major order. Rows go first.
+    // Default, row major order. Rows go first.
       case Axis.vertical:
         foregroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
           final TableSpanDecorationPaintDetails paintingDetails =
-              TableSpanDecorationPaintDetails(
+          TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
@@ -961,7 +961,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         });
         foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
           final TableSpanDecorationPaintDetails paintingDetails =
-              TableSpanDecorationPaintDetails(
+          TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
@@ -969,11 +969,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           decoration.paint(paintingDetails);
         });
         break;
-      // Column major order. Columns go first.
+    // Column major order. Columns go first.
       case Axis.horizontal:
         foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
           final TableSpanDecorationPaintDetails paintingDetails =
-              TableSpanDecorationPaintDetails(
+          TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: verticalAxisDirection,
@@ -982,7 +982,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         });
         foregroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
           final TableSpanDecorationPaintDetails paintingDetails =
-              TableSpanDecorationPaintDetails(
+          TableSpanDecorationPaintDetails(
             canvas: context.canvas,
             rect: rect,
             axisDirection: horizontalAxisDirection,
@@ -1053,17 +1053,17 @@ class _Span
       return;
     }
     final Map<Type, GestureRecognizer> newRecognizers =
-        <Type, GestureRecognizer>{};
+    <Type, GestureRecognizer>{};
     for (final Type type in configuration.recognizerFactories.keys) {
       assert(!newRecognizers.containsKey(type));
       newRecognizers[type] = _recognizers?.remove(type) ??
           configuration.recognizerFactories[type]!.constructor();
       assert(
-        newRecognizers[type].runtimeType == type,
-        'GestureRecognizerFactory of type $type created a GestureRecognizer of '
-        'type ${newRecognizers[type].runtimeType}. The '
-        'GestureRecognizerFactory must be specialized with the type of the '
-        'class that it returns from its constructor method.',
+      newRecognizers[type].runtimeType == type,
+      'GestureRecognizerFactory of type $type created a GestureRecognizer of '
+          'type ${newRecognizers[type].runtimeType}. The '
+          'GestureRecognizerFactory must be specialized with the type of the '
+          'class that it returns from its constructor method.',
       );
       configuration.recognizerFactories[type]!
           .initializer(newRecognizers[type]!);
