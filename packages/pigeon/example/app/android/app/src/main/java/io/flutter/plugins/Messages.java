@@ -233,7 +233,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.getHostLanguage", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -254,7 +256,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.add", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -281,7 +285,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.ExampleHostApi.sendMessage", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -330,7 +336,9 @@ public class Messages {
     public void flutterMethod(@Nullable String aStringArg, @NonNull Reply<String> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
-              binaryMessenger, "dev.flutter.pigeon.MessageFlutterApi.flutterMethod", getCodec());
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod",
+              getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {

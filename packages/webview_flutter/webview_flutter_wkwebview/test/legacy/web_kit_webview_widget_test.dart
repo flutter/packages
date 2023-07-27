@@ -777,7 +777,6 @@ void main() {
           details: const NSError(
             code: WKErrorCode.javaScriptResultTypeIsUnsupported,
             domain: '',
-            localizedDescription: '',
           ),
         ));
         expect(
@@ -1049,7 +1048,9 @@ void main() {
           const NSError(
             code: WKErrorCode.webViewInvalidated,
             domain: 'domain',
-            localizedDescription: 'my desc',
+            userInfo: <String, Object?>{
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+            },
           ),
         );
 
@@ -1086,7 +1087,9 @@ void main() {
           const NSError(
             code: WKErrorCode.webContentProcessTerminated,
             domain: 'domain',
-            localizedDescription: 'my desc',
+            userInfo: <String, Object?>{
+              NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+            },
           ),
         );
 

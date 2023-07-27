@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_command.dart';
 
 /// In theory this should be 8191, but in practice that was still resulting in

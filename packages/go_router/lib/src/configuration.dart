@@ -45,7 +45,9 @@ class RouteConfiguration {
           }
         } else {
           if (route.path.startsWith('/') || route.path.endsWith('/')) {
-            throw GoError('sub-route path may not start or end with /: $route');
+            throw GoError(
+              'sub-route path may not start or end with "/": $route',
+            );
           }
         }
         subRouteIsTopLevel = false;
@@ -200,14 +202,12 @@ class RouteConfiguration {
   GoRouterState buildTopLevelGoRouterState(RouteMatchList matchList) {
     return GoRouterState(
       this,
-      location: matchList.uri.toString(),
+      uri: matchList.uri,
       // No name available at the top level trim the query params off the
       // sub-location to match route.redirect
       fullPath: matchList.fullPath,
       pathParameters: matchList.pathParameters,
       matchedLocation: matchList.uri.path,
-      queryParameters: matchList.uri.queryParameters,
-      queryParametersAll: matchList.uri.queryParametersAll,
       extra: matchList.extra,
       pageKey: const ValueKey<String>('topLevel'),
     );
@@ -465,15 +465,13 @@ class RouteConfiguration {
         context,
         GoRouterState(
           this,
-          location: matchList.uri.toString(),
+          uri: matchList.uri,
           matchedLocation: match.matchedLocation,
           name: route.name,
           path: route.path,
           fullPath: matchList.fullPath,
           extra: matchList.extra,
           pathParameters: matchList.pathParameters,
-          queryParameters: matchList.uri.queryParameters,
-          queryParametersAll: matchList.uri.queryParametersAll,
           pageKey: match.pageKey,
         ),
       );

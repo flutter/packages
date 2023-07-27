@@ -4,12 +4,12 @@
 
 import 'dart:async';
 
-import 'package:colorize/colorize.dart';
 import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 
 import 'core.dart';
+import 'output_utils.dart';
 import 'package_command.dart';
 import 'repository_package.dart';
 
@@ -208,7 +208,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
   /// messages. DO NOT RELY on someone noticing a warning; instead, use it for
   /// things that might be useful to someone debugging an unexpected result.
   void logWarning(String warningMessage) {
-    _printColorized(warningMessage, Styles.YELLOW);
+    printWarning(warningMessage);
     if (_currentPackageEntry != null) {
       _packagesWithWarnings.add(_currentPackageEntry!);
     } else {
@@ -467,7 +467,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
       }
 
       if (!captureOutput) {
-        summary = (Colorize(summary)..apply(style)).toString();
+        summary = colorizeString(summary, style);
       }
       print('  ${entry.package.displayName} - $summary');
     }
@@ -500,7 +500,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
     if (captureOutput) {
       print(message);
     } else {
-      print(Colorize(message)..apply(color));
+      print(colorizeString(message, color));
     }
   }
 

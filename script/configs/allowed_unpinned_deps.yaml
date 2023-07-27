@@ -1,14 +1,8 @@
-# The list of external dependencies that are allowed as pinned dependencies.
+# The list of external dependencies that are allowed as unpinned dependencies.
 # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
 #
 # All entries here should have an explanation for why they are here, either
 # via being part of one of the default-allowed groups, or a specific reason.
-
-## Legacy allowances, for dependencies that predate the tooling.
-# TODO(stuartmorgan): Audit these. See
-# https://github.com/flutter/flutter/issues/122713
-- equatable
-- xml
 
 ## Explicit allowances
 
@@ -19,8 +13,6 @@
 # cautious about adding to this list.
 - build_verify
 - google_maps
-- path_to_regexp
-- source_gen_test
 - win32
 
 ## Allowed by default
@@ -32,6 +24,7 @@
 - build
 - build_config
 - build_runner
+- build_test
 - collection
 - convert
 - crypto

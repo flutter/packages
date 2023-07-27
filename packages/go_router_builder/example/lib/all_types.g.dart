@@ -302,6 +302,12 @@ extension $EnumRouteExtension on EnumRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
+const _$PersonDetailsEnumMap = {
+  PersonDetails.hobbies: 'hobbies',
+  PersonDetails.favoriteFood: 'favorite-food',
+  PersonDetails.favoriteSport: 'favorite-sport',
+};
+
 extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
   static EnhancedEnumRoute _fromState(GoRouterState state) => EnhancedEnumRoute(
         requiredEnumField: _$SportDetailsEnumMap
@@ -335,6 +341,13 @@ extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
 
   void replace(BuildContext context) => context.replace(location);
 }
+
+const _$SportDetailsEnumMap = {
+  SportDetails.volleyball: 'volleyball',
+  SportDetails.football: 'football',
+  SportDetails.tennis: 'tennis',
+  SportDetails.hockey: 'hockey',
+};
 
 extension $StringRouteExtension on StringRoute {
   static StringRoute _fromState(GoRouterState state) => StringRoute(
@@ -506,6 +519,12 @@ extension $IterableRouteExtension on IterableRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
+const _$CookingRecipeEnumMap = {
+  CookingRecipe.burger: 'burger',
+  CookingRecipe.pizza: 'pizza',
+  CookingRecipe.tacos: 'tacos',
+};
+
 extension $IterableRouteWithDefaultValuesExtension
     on IterableRouteWithDefaultValues {
   static IterableRouteWithDefaultValues _fromState(GoRouterState state) =>
@@ -621,25 +640,6 @@ extension $IterableRouteWithDefaultValuesExtension
 
   void replace(BuildContext context) => context.replace(location);
 }
-
-const _$PersonDetailsEnumMap = {
-  PersonDetails.hobbies: 'hobbies',
-  PersonDetails.favoriteFood: 'favorite-food',
-  PersonDetails.favoriteSport: 'favorite-sport',
-};
-
-const _$SportDetailsEnumMap = {
-  SportDetails.volleyball: 'volleyball',
-  SportDetails.football: 'football',
-  SportDetails.tennis: 'tennis',
-  SportDetails.hockey: 'hockey',
-};
-
-const _$CookingRecipeEnumMap = {
-  CookingRecipe.burger: 'burger',
-  CookingRecipe.pizza: 'pizza',
-  CookingRecipe.tacos: 'tacos',
-};
 
 T? _$convertMapValue<T>(
   String key,

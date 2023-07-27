@@ -11,6 +11,7 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 
 import 'common/core.dart';
 import 'common/file_utils.dart';
+import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/process_runner.dart';
 import 'common/pub_utils.dart';
