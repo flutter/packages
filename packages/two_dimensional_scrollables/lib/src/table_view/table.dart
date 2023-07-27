@@ -128,8 +128,10 @@ class TableView extends TwoDimensionalScrollView {
     required TableViewCellBuilder cellBuilder,
   })  : assert(pinnedRowCount >= 0),
         assert(rowCount >= 0),
+        assert(rowCount >= pinnedRowCount),
         assert(columnCount >= 0),
         assert(pinnedColumnCount >= 0),
+        assert(columnCount >= pinnedColumnCount),
         super(
           delegate: TableCellBuilderDelegate(
             columnCount: columnCount,
@@ -170,6 +172,7 @@ class TableView extends TwoDimensionalScrollView {
     List<List<Widget>> cells = const <List<Widget>>[],
   })  : assert(pinnedRowCount >= 0),
         assert(pinnedColumnCount >= 0),
+  // TODO(Piinks): Add more assertions like in the delegate
         super(
           delegate: TableCellListDelegate(
             pinnedColumnCount: pinnedColumnCount,
@@ -181,7 +184,7 @@ class TableView extends TwoDimensionalScrollView {
         );
 
   @override
-  Widget buildViewport(
+  TableViewport buildViewport(
     BuildContext context,
     ViewportOffset verticalOffset,
     ViewportOffset horizontalOffset,
@@ -191,7 +194,7 @@ class TableView extends TwoDimensionalScrollView {
       verticalAxisDirection: verticalDetails.direction,
       horizontalOffset: horizontalOffset,
       horizontalAxisDirection: horizontalDetails.direction,
-      delegate: delegate,
+      delegate: delegate as TableCellDelegateMixin,
       mainAxis: mainAxis,
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
@@ -210,15 +213,11 @@ class TableViewport extends TwoDimensionalViewport {
     required super.verticalAxisDirection,
     required super.horizontalOffset,
     required super.horizontalAxisDirection,
-    required super.delegate,
+    required TableCellDelegateMixin super.delegate,
     required super.mainAxis,
     super.cacheExtent,
     super.clipBehavior,
   });
-
-  @override
-  TableCellDelegateMixin get delegate =>
-      super.delegate as TableCellDelegateMixin;
 
   @override
   RenderTwoDimensionalViewport createRenderObject(BuildContext context) {
@@ -230,14 +229,14 @@ class TableViewport extends TwoDimensionalViewport {
       mainAxis: mainAxis,
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
-      delegate: delegate,
+      delegate: delegate as TableCellDelegateMixin,
       childManager: context as TwoDimensionalChildManager,
     );
   }
 
   @override
   void updateRenderObject(
-      BuildContext context, RenderTableViewport renderObject) {
+      BuildContext context, RenderTableViewport renderObject,) {
     renderObject
       ..horizontalOffset = horizontalOffset
       ..horizontalAxisDirection = horizontalAxisDirection
