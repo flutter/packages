@@ -7,7 +7,7 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
   static IterableDefaultValueRoute _fromState(GoRouterState state) =>
       IterableDefaultValueRoute(
         param:
-            state.queryParametersAll['param']?.map(int.parse) ?? const <int>[0],
+            state.uri.queryParametersAll['param']?.map(int.parse) ?? const <int>[0],
       );
 
   String get location => GoRouteData.$location(
