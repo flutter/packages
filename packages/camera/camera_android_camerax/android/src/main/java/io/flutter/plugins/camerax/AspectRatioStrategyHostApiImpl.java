@@ -40,7 +40,7 @@ public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostAp
   }
 
   /**
-   * Constructs a {@link AspectRatioStrategyHostApiImpl}.
+   * Constructs an {@link AspectRatioStrategyHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for constructors and static method of {@link AspectRatioStrategy}
@@ -53,7 +53,7 @@ public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostAp
   }
 
   /**
-   * Creates a {@link AspectRatioStrategy} instance with the preferred aspect ratio and fallback
+   * Creates an {@link AspectRatioStrategy} instance with the preferred aspect ratio and fallback
    * rule specified.
    */
   @Override

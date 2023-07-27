@@ -17,7 +17,7 @@ import 'java_object.dart';
 class ResolutionStrategy extends JavaObject {
   /// Constructs a [ResolutionStrategy].
   ResolutionStrategy({
-    required this.boundSize,
+    required Size this.boundSize,
     this.fallbackRule,
     super.binaryMessenger,
     super.instanceManager,
