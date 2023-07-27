@@ -1226,7 +1226,7 @@ Future<void> main() async {
       );
     },
   );
-  
+
   group('Logging', () {
     testWidgets('can receive console log messages',
         (WidgetTester tester) async {

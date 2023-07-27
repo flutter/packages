@@ -822,7 +822,8 @@ void main() {
         },
       );
 
-      final Map<String, JavaScriptLogLevel> logs = <String, JavaScriptLogLevel>{};
+      final Map<String, JavaScriptLogLevel> logs =
+          <String, JavaScriptLogLevel>{};
       await controller.setConsoleLogCallback(
         (JavaScriptLogLevel level, String message) async {
           logs[message] = level;
