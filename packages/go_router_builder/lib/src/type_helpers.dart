@@ -46,7 +46,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
 /// Otherwise, throws an [InvalidGenerationSourceError].
 String decodeParameter(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
-    return 'state.uri.${_stateValueAccess(element, pathParameters)}';
+    return 'state.${_stateValueAccess(element, pathParameters)}';
   }
 
   final DartType paramType = element.type;
@@ -101,7 +101,7 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (pathParameters.contains(element.name)) {
     access = 'pathParameters[${escapeDartString(element.name)}]';
   } else {
-    access = 'queryParameters[${escapeDartString(element.name.kebab)}]';
+    access = 'uri.queryParameters[${escapeDartString(element.name.kebab)}]';
   }
   if (pathParameters.contains(element.name) ||
       (!element.type.isNullableType && !element.hasDefaultValue)) {
@@ -230,7 +230,7 @@ class _TypeHelperString extends _TypeHelper {
   @override
   String _decode(
           ParameterElement parameterElement, Set<String> pathParameters) =>
-      'state.uri.${_stateValueAccess(parameterElement, pathParameters)}';
+      'state.${_stateValueAccess(parameterElement, pathParameters)}';
 
   @override
   String _encode(String fieldName, DartType type) => fieldName;
@@ -338,7 +338,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           '${helperName(paramType)})';
     }
     return '${helperName(paramType)}'
-        '(state.uri.${_stateValueAccess(parameterElement, pathParameters)})';
+        '(state.${_stateValueAccess(parameterElement, pathParameters)})';
   }
 }
 
