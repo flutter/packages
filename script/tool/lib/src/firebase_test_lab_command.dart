@@ -15,7 +15,6 @@ import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 const int _exitGcloudAuthFailed = 3;
-const int _exitNoResultsBucket = 3;
 
 /// A command to run tests via Firebase test lab.
 class FirebaseTestLabCommand extends PackageLoopingCommand {
