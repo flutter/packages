@@ -172,7 +172,7 @@ class TableView extends TwoDimensionalScrollView {
     List<List<Widget>> cells = const <List<Widget>>[],
   })  : assert(pinnedRowCount >= 0),
         assert(pinnedColumnCount >= 0),
-  // TODO(Piinks): Add more assertions like in the delegate
+        // TODO(Piinks): Add more assertions like in the delegate
         super(
           delegate: TableCellListDelegate(
             pinnedColumnCount: pinnedColumnCount,
@@ -236,7 +236,9 @@ class TableViewport extends TwoDimensionalViewport {
 
   @override
   void updateRenderObject(
-      BuildContext context, RenderTableViewport renderObject,) {
+    BuildContext context,
+    RenderTableViewport renderObject,
+  ) {
     renderObject
       ..horizontalOffset = horizontalOffset
       ..horizontalAxisDirection = horizontalAxisDirection

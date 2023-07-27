@@ -21,19 +21,16 @@ void main() {
   });
 
   group('RenderTableViewport', () {
-    testWidgets('parent data', (WidgetTester tester) async {
-
-    });
+    testWidgets('parent data', (WidgetTester tester) async {});
 
     testWidgets('hit testing', (WidgetTester tester) async {
       // cells, rows, columns, mainAxis
     });
 
-    testWidgets('provides correct details in TableSpanExtentDelegate', (WidgetTester tester) async {
-    });
+    testWidgets('provides correct details in TableSpanExtentDelegate',
+        (WidgetTester tester) async {});
 
-    testWidgets('regular layout - no pinning', (WidgetTester tester) async {
-    });
+    testWidgets('regular layout - no pinning', (WidgetTester tester) async {});
 
     testWidgets('pinned rows and columns', (WidgetTester tester) async {
       // Just pinned rows
@@ -41,10 +38,8 @@ void main() {
       // Both
     });
 
-    testWidgets('only paints visible cells', (WidgetTester tester) async {
-    });
+    testWidgets('only paints visible cells', (WidgetTester tester) async {});
 
-    testWidgets('paints decorations in order', (WidgetTester tester) async {
-    });
+    testWidgets('paints decorations in order', (WidgetTester tester) async {});
   });
 }

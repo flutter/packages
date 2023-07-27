@@ -132,15 +132,24 @@ void main() {
   });
 
   test('TableSpanDecoration', () {
-    TableSpanDecoration decoration = const TableSpanDecoration(color: Color(0xffff0000),);
+    TableSpanDecoration decoration = const TableSpanDecoration(
+      color: Color(0xffff0000),
+    );
     final TestCanvas canvas = TestCanvas();
     const Rect rect = Rect.fromLTWH(0, 0, 10, 10);
-    final TableSpanDecorationPaintDetails details = TableSpanDecorationPaintDetails(canvas: canvas, rect: rect, axisDirection: AxisDirection.down,);
+    final TableSpanDecorationPaintDetails details =
+        TableSpanDecorationPaintDetails(
+      canvas: canvas,
+      rect: rect,
+      axisDirection: AxisDirection.down,
+    );
     decoration.paint(details);
     expect(canvas.rect, rect);
     expect(canvas.paint.color, const Color(0xffff0000));
     expect(canvas.paint.isAntiAlias, isFalse);
-    final TestTableSpanBorder border = TestTableSpanBorder(leading: const BorderSide(),);
+    final TestTableSpanBorder border = TestTableSpanBorder(
+      leading: const BorderSide(),
+    );
     decoration = TableSpanDecoration(border: border);
     decoration.paint(details);
     expect(border.details, details);
@@ -165,7 +174,7 @@ class TestCanvas implements Canvas {
 }
 
 class TestTableSpanBorder extends TableSpanBorder {
-  TestTableSpanBorder({ super.leading });
+  TestTableSpanBorder({super.leading});
   TableSpanDecorationPaintDetails? details;
   @override
   void paint(TableSpanDecorationPaintDetails details) {
