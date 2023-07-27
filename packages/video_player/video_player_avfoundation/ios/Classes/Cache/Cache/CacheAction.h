@@ -4,7 +4,11 @@
 
 #import <Foundation/Foundation.h>
 
-typedef NS_ENUM(NSInteger, CacheType) { CacheTypeLocal = 0, CacheTypeRemote };
+// CacheTypeRemote and CacheTypeLocal are cache optimization options.
+// CacheTypeRemote acts as a local cache refresh action by setting the NSURLRequestReloadIgnoringLocalAndRemoteCacheData flag. When this cache policy is used, it means that *Ignore local cache data, and instruct proxies and other intermediates to disregard their caches so far as the protocol allows.
+// CacheTypeLocal uses localCache. It does not validate the relevance of it.
+
+typedef enum { CacheTypeLocal = 0, CacheTypeRemote } CacheType;
 
 @interface CacheAction : NSObject
 

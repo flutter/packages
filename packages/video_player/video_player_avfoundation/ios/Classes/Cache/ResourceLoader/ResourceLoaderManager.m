@@ -13,6 +13,7 @@ static NSString *kCacheScheme = @"VideoPlayerCache:";
 
 @end
 
+// the ResourceLoaderManager class manages the resource loading process for AVPlayer by utilizing ResourceLoader instances to handle loading of resources with custom schemes. It acts as a bridge between AVPlayer and the custom resource loading mechanism, allowing the AVPlayer to load media resources using AVAssetResourceLoader and AVURLAsset. This setup is useful for scenarios where custom resource loading or caching is required during media playback.
 @implementation ResourceLoaderManager
 
 - (instancetype)init {

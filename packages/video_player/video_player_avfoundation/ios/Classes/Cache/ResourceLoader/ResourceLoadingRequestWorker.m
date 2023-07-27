@@ -17,6 +17,7 @@
 
 @end
 
+// to handle the process of downloading and loading media resources for AVAssetResourceLoader in an AVPlayer
 @implementation ResourceLoadingRequestWorker
 
 - (instancetype)initWithContentDownloader:(ContentDownloader *)contentDownloader
@@ -32,6 +33,7 @@
   return self;
 }
 
+// This method is called to initiate the downloading and loading process. It uses the information from the AVAssetResourceLoadingDataRequest associated with the request to determine the offset, length, and whether to download the content till the end.
 - (void)startWork {
   AVAssetResourceLoadingDataRequest *dataRequest = self.request.dataRequest;
 
@@ -69,6 +71,7 @@
   return error;
 }
 
+//mThis method fulfills the content information in the AVAssetResourceLoadingContentInformationRequest associated with the request. It checks if the content information is missing and then fills it using the information from the ContentDownloader.
 - (void)fullfillContentInfo {
   AVAssetResourceLoadingContentInformationRequest *contentInformationRequest =
       self.request.contentInformationRequest;

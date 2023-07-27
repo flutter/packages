@@ -108,6 +108,7 @@ static NSInteger kBufferSize = 10 * 1024;
 
 @class ActionWorker;
 
+// This class is responsible for processing a sequence of CacheAction objects to fetch content data from a URL either from a local cache or a remote server. It acts as an intermediary between the caching mechanism (ContentCacheWorker) and the URL session data task (NSURLSessionDataTask).
 @protocol ActionWorkerDelegate <NSObject>
 
 - (void)actionWorker:(ActionWorker *)actionWorker didReceiveResponse:(NSURLResponse *)response;
@@ -210,6 +211,7 @@ static NSInteger kBufferSize = 10 * 1024;
     return;
   }
 
+  // CacheTypeLocal
   if (action.cacheType == CacheTypeLocal) {
     NSError *error;
     NSData *data = [self.cacheWorker cachedDataForRange:action.range error:&error];
@@ -224,6 +226,7 @@ static NSInteger kBufferSize = 10 * 1024;
       [self processActionsLater];
     }
   } else {
+    // CacheTypeRemote or default
     long long fromOffset = action.range.location;
     long long endOffset = action.range.location + action.range.length - 1;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.url];
@@ -340,6 +343,8 @@ static NSInteger kBufferSize = 10 * 1024;
 
 #pragma mark - Class: ContentDownloaderStatus
 
+// This class manages the status of content downloading by keeping track of URLs that are currently being downloaded. It uses a shared instance pattern (shared) to maintain a central state for all downloaders.
+
 @interface ContentDownloaderStatus ()
 
 @property(nonatomic, strong) NSMutableSet *downloadingURLS;
@@ -397,6 +402,7 @@ static NSInteger kBufferSize = 10 * 1024;
 
 @end
 
+// This class handles content downloading from a specified URL. It interacts with a ContentCacheWorker for caching the downloaded content and uses an ActionWorker for handling the downloading process.
 @implementation ContentDownloader
 
 - (void)dealloc {
@@ -458,6 +464,8 @@ static NSInteger kBufferSize = 10 * 1024;
 }
 
 #pragma mark - ActionWorkerDelegate
+
+
 
 - (void)actionWorker:(ActionWorker *)actionWorker didReceiveResponse:(NSURLResponse *)response {
   if (!self.info) {

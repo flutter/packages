@@ -6,10 +6,10 @@
 
 @implementation CacheAction
 
-- (instancetype)initWithActionType:(CacheType)actionType range:(NSRange)range {
+- (instancetype)initWithActionType:(CacheType)cacheType range:(NSRange)range {
   self = [super init];
   if (self) {
-    _cacheType = actionType;
+    _cacheType = cacheType;
     _range = range;
   }
   return self;

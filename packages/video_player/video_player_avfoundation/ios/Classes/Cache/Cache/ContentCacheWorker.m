@@ -13,6 +13,7 @@ static NSString *kMCMediaCacheResponseKey = @"kContentCacheResponseKey";
 static NSString *MediaCacheErrorDomain = @"video_player_cache";
 
 @interface ContentCacheWorker ()
+//responsible for managing the caching of content, particularly for a video player or media streaming functionality. It implements methods for reading and writing data to a cache file, handling cache fragments, managing cache actions, and tracking cache statistics.
 
 @property(nonatomic, strong) NSFileHandle *readFileHandle;
 @property(nonatomic, strong) NSFileHandle *writeFileHandle;
@@ -71,10 +72,12 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   return self;
 }
 
+// This class returns the configuration.
 - (CacheConfiguration *)cacheConfiguration {
   return self.internalCacheConfiguration;
 }
 
+//used to cache data in the file for a specific range. It writes the provided NSData to the cache file at the specified location, updating the internal cache configuration with the new cached fragment information.
 - (void)cacheData:(NSData *)data forRange:(NSRange)range error:(NSError **)error {
   @synchronized(self.writeFileHandle) {
     @try {
@@ -94,6 +97,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   }
 }
 
+// This method retrieves cached data from the file for a given range. It reads the data from the cache file using the file handle, based on the provided range.
 - (NSData *)cachedDataForRange:(NSRange)range error:(NSError **)error {
   @synchronized(self.readFileHandle) {
     @try {
@@ -113,6 +117,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   return nil;
 }
 
+//This method provides an array of CacheAction objects for a given range. It identifies the cached fragments within the range and returns an array of CacheAction objects, representing local and remote cache actions.
 - (NSArray<CacheAction *> *)cachedDataActionsForRange:(NSRange)range {
   NSArray *cachedFragments = [self.internalCacheConfiguration cacheFragments];
   NSMutableArray *actions = [NSMutableArray array];
@@ -194,6 +199,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   return [actions copy];
 }
 
+// This method sets the content information for the cache, including the content length. It truncates the cache file to the specified content length and saves the content information in the internal cache configuration.
 - (void)setContentInfo:(ContentInfo *)contentInfo error:(NSError **)error {
   self.internalCacheConfiguration.contentInfo = contentInfo;
   @try {
@@ -208,6 +214,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   }
 }
 
+// This method is used to save the current state of the cache to disk. It synchronizes the file handle and saves the internal cache configuration.
 - (void)save {
   @synchronized(self.writeFileHandle) {
     [self.writeFileHandle synchronizeFile];
@@ -215,6 +222,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   }
 }
 
+// startWritting and finishWritting are used to indicate the start and end of writing data to the cache file. They keep track of the writing progress and time taken to write data.
 - (void)startWritting {
   if (!self.writting) {
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -238,6 +246,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
 
 #pragma mark - Notification
 
+//This callback is triggered when the application enters the background. It saves the cache data when the application is about to move to the background state to ensure data integrity.
 - (void)applicationDidEnterBackground:(NSNotification *)notification {
   [self save];
 }
