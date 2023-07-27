@@ -172,7 +172,6 @@ class TableView extends TwoDimensionalScrollView {
     List<List<Widget>> cells = const <List<Widget>>[],
   })  : assert(pinnedRowCount >= 0),
         assert(pinnedColumnCount >= 0),
-        // TODO(Piinks): Add more assertions like in the delegate
         super(
           delegate: TableCellListDelegate(
             pinnedColumnCount: pinnedColumnCount,
