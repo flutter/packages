@@ -258,7 +258,10 @@ class RouteBuilder {
 
         // Build the Navigator for this shell route
         Widget buildShellNavigator(
-            List<NavigatorObserver>? observers, String? restorationScopeId) {
+          List<NavigatorObserver>? observers,
+          String? restorationScopeId,
+          bool? requestFocus,
+        ) {
           return _buildNavigator(
             pagePopContext.onPopPage,
             keyToPages[shellNavigatorKey]!,
@@ -266,6 +269,7 @@ class RouteBuilder {
             observers: observers ?? const <NavigatorObserver>[],
             restorationScopeId: restorationScopeId,
             heroController: heroController,
+            requestFocus: requestFocus,
           );
         }
 
@@ -298,6 +302,7 @@ class RouteBuilder {
     List<NavigatorObserver> observers = const <NavigatorObserver>[],
     String? restorationScopeId,
     HeroController? heroController,
+    bool? requestFocus,
   }) {
     final Widget navigator = Navigator(
       key: navigatorKey,
@@ -305,6 +310,7 @@ class RouteBuilder {
       pages: pages,
       observers: observers,
       onPopPage: onPopPage,
+      requestFocus: requestFocus,
     );
     if (heroController != null) {
       return HeroControllerScope(
