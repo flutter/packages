@@ -232,19 +232,13 @@ class VideoPlayer {
 
   void _resetOptions() {
     _videoElement.controls = false;
-    if (_videoElement.hasAttribute('controlsList')) {
-      _videoElement.setAttribute('controlsList', '');
-    }
-    if (_videoElement.hasAttribute('disablePictureInPicture')) {
-      _videoElement.setAttribute('disablePictureInPicture', false);
-    }
+    _videoElement.removeAttribute('controlsList');
+    _videoElement.removeAttribute('disablePictureInPicture');
     if (_onContextMenu != null) {
       _videoElement.removeEventListener('contextmenu', _onContextMenu);
       _onContextMenu = null;
     }
-    if (_videoElement.hasAttribute('disableRemotePlayback')) {
-      _videoElement.setAttribute('disableRemotePlayback', false);
-    }
+    _videoElement.removeAttribute('disableRemotePlayback');
   }
 
   /// Disposes of the current [html.VideoElement].
