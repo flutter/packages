@@ -398,6 +398,30 @@
   XCTAssertFalse(response.isSupported.boolValue);
 }
 
+- (void)testClearCache {
+  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
+      OCMProtocolMock(@protocol(FlutterTextureRegistry));
+  NSObject<FlutterPluginRegistry> *registry =
+      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"canClearCache"];
+  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
+  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  FLTVideoPlayerPlugin *videoPlayerPlugin =
+      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+    
+    FLTClearCacheMessage *message = [FLTClearCacheMessage
+                                     makeWithTextureId:@1];
+
+    FLTClearCacheMessageResponse *response =
+    [videoPlayerPlugin clearCache:message error:&error];
+  XCTAssertNil(error);
+  XCTAssertTrue(response.hasSucceeded.boolValue);
+}
+
 - (void)testDeregistersFromPlayer {
   NSObject<FlutterPluginRegistry> *registry =
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
