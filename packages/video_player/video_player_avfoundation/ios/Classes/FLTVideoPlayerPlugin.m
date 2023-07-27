@@ -727,9 +727,9 @@ NS_INLINE UIViewController *rootViewController(void) {
 
   if (error2) {
     NSLog(@"clean cache failure: %@", error2);
-    return [FLTClearCacheMessageResponse makeWithHasSucceeded:@(0)];
+    return [FLTClearCacheMessageResponse makeWithHasSucceeded:@NO];
   }
-  return [FLTClearCacheMessageResponse makeWithHasSucceeded:@(1)];
+  return [FLTClearCacheMessageResponse makeWithHasSucceeded:@YES];
 }
 
 - (void)setVolume:(FLTVolumeMessage *)input error:(FlutterError **)error {

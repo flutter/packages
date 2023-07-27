@@ -128,7 +128,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:@(0)
+        enableCache:@NO
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
@@ -160,7 +160,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
         packageName:nil
          formatHint:nil
-        enableCache:@(0)
+        enableCache:@NO
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -178,7 +178,7 @@
   XCTAssertEqual([player position], 1234);
 }
 
-- (void)testCanCacheMP4 {
+- (void)testIsCacheSupported_yesForMP4 {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
@@ -202,7 +202,7 @@
   XCTAssertTrue(response.isSupported.boolValue);
 }
 
-- (void)testCanCacheFLAC {
+- (void)testIsCacheSupported_yesForFLAC {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
@@ -226,7 +226,7 @@
   XCTAssertTrue(response.isSupported.boolValue);
 }
 
-- (void)testCantCacheM3U8 {
+- (void)testIsCacheSupported_noForM3U8 {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
@@ -250,7 +250,7 @@
   XCTAssertFalse(response.isSupported.boolValue);
 }
 
-- (void)testCantCacheAAC {
+- (void)testIsCacheSupported_noForAAC {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
@@ -275,12 +275,12 @@
   XCTAssertFalse(response.isSupported.boolValue);
 }
 
-- (void)testCantCacheTS {
+- (void)testIsCacheSupported_noForTS {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCachets"];
+  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheTS"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FLTVideoPlayerPlugin *videoPlayerPlugin =
@@ -300,31 +300,7 @@
   XCTAssertFalse(response.isSupported.boolValue);
 }
 
-- (void)testCantCachem3u8 {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCachem3u8"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
-
-  FlutterError *error;
-  [videoPlayerPlugin initialize:&error];
-  XCTAssertNil(error);
-
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
-
-  FLTIsSupportedMessageResponse *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
-  XCTAssertNil(error);
-  XCTAssertFalse(response.isSupported.boolValue);
-}
-
-- (void)testCantCacheMKV {
+- (void)testIsCacheSupported_noForMKV {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
@@ -349,7 +325,7 @@
   XCTAssertFalse(response.isSupported.boolValue);
 }
 
-- (void)testCantCacheWEBM {
+- (void)testIsCacheSupported_noForWEBM {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
@@ -374,7 +350,7 @@
   XCTAssertFalse(response.isSupported.boolValue);
 }
 
-- (void)testCantCacheMP3 {
+- (void)testIsCacheSupported_noForMP3 {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
@@ -398,7 +374,7 @@
   XCTAssertFalse(response.isSupported.boolValue);
 }
 
-- (void)testCantCachOGG {
+- (void)testIsCacheSupported_noForOGG {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistry> *registry =
@@ -439,7 +415,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:@(0)
+        enableCache:@NO
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
@@ -473,7 +449,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:@(0)
+        enableCache:@NO
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
@@ -583,7 +559,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:@(0)
+        enableCache:@NO
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -622,7 +598,7 @@
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        enableCache:@(0)
+        enableCache:@NO
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
@@ -650,7 +626,7 @@
                                                          uri:uri
                                                  packageName:nil
                                                   formatHint:nil
-                                                 enableCache:@(0)
+                                                 enableCache:@NO
                                                  httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
 
@@ -722,7 +698,7 @@
                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
           packageName:nil
            formatHint:nil
-          enableCache:@(0)
+          enableCache:@NO
           httpHeaders:@{}];
     FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
     XCTAssertNil(error);
@@ -775,7 +751,7 @@
                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
           packageName:nil
            formatHint:nil
-          enableCache:@(0)
+          enableCache:@NO
           httpHeaders:@{}];
     FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
     XCTAssertNil(error);

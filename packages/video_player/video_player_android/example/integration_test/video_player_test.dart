@@ -81,8 +81,8 @@ void main() {
 
     testWidgets('can clear cache', (WidgetTester tester) async {
       await controller.initialize();
-
-      await controller.clearCache();
+      final bool hasSucceeded = await controller.clearCache();
+      expect(hasSucceeded, true);
     });
 
     testWidgets('can check if caching is supported',

@@ -322,9 +322,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   }
 
   /// Clears the cache.
-  Future<void> clearCache() async {
+  Future<bool> clearCache() async {
     value = value.copyWith(isPlaying: true);
-    await _applyClearCache();
+    return _applyClearCache();
   }
 
   /// Pauses the video.
@@ -359,8 +359,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     }
   }
 
-  Future<void> _applyClearCache() async {
-    await _platform.clearCache(_textureId);
+  Future<bool> _applyClearCache() async {
+    return _platform.clearCache(_textureId);
   }
 
   Future<void> _applyPlaybackSpeed() async {
