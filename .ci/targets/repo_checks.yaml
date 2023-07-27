@@ -48,5 +48,9 @@ tasks:
     script: script/tool_runner.sh
     args: ["publish-check", "--allow-pre-release"]
     always: true
-  # TODO(stuartmorgan): Convert remaining checks from Cirrus repo_checks. See
-  # https://github.com/flutter/flutter/issues/114373
+  - name: CHANGELOG and version validation
+    script: .ci/scripts/check_version.sh
+    always: true
+  - name: federated safety check
+    script: .ci/scripts/check_federated_safety.sh
+    always: true

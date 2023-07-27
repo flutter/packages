@@ -8,7 +8,6 @@ environment:
   flutter: ">=3.3.0"
 
 dependencies:
-  adaptive_dialog: 1.8.2
   adaptive_navigation: ^0.0.4
   collection: ^1.15.0
   cupertino_icons: ^1.0.2
