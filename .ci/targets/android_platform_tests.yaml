@@ -6,31 +6,22 @@ tasks:
     script: script/tool_runner.sh
     infra_step: true
     args: ["fetch-deps", "--android", "--supporting-target-platforms-only"]
-  #- name: build examples
-  #  script: script/tool_runner.sh
-  #  args: ["build-examples", "--apk"]
-  #- name: lint
-  #  script: script/tool_runner.sh
-  #  args: ["lint-android"]
+  - name: build examples
+    script: script/tool_runner.sh
+    args: ["build-examples", "--apk"]
+  - name: lint
+    script: script/tool_runner.sh
+    args: ["lint-android"]
   # Native unit and native integration are split into two steps to allow for
   # different exclusions.
   # TODO(stuartmorgan): Eliminate the native unit test exclusion, and combine
   # these steps.
-  #- name: native unit tests
-  #  script: script/tool_runner.sh
-  #  args: ["native-test", "--android", "--no-integration", "--exclude=script/configs/exclude_native_unit_android.yaml"]
-  #- name: native integration tests
-  #  script: script/tool_runner.sh
-  #  args: ["native-test", "--android", "--no-unit"]
-  #- name: drive examples - simulator
-  #  script: script/tool_runner.sh
-  #  args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml"]
-  - name: Firebase Test Lab
+  - name: native unit tests
     script: script/tool_runner.sh
-    args:
-      - "firebase-test-lab"
-      - "--device"
-      - "model=redfin,version=30"
-      - "--exclude=script/configs/exclude_integration_android.yaml"
-      - "--project=flutter-infra-staging"
-      - "--results-bucket=flutter_firebase_testlab_staging"
+    args: ["native-test", "--android", "--no-integration", "--exclude=script/configs/exclude_native_unit_android.yaml"]
+  - name: native integration tests
+    script: script/tool_runner.sh
+    args: ["native-test", "--android", "--no-unit"]
+  - name: drive examples
+    script: script/tool_runner.sh
+    args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml"]
