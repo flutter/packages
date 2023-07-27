@@ -387,6 +387,21 @@ void main() {
     requestCallback(const TestPlatformWebViewPermissionRequest());
     expect(permissionRequestCallbackCalled, isTrue);
   });
+
+  test('setConsoleLogCallback', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    void onConsoleMessage(JavaScriptLogLevel level, String message) {}
+
+    await webViewController.setConsoleLogCallback(onConsoleMessage);
+
+    verify(
+        mockPlatformWebViewController.setConsoleLogCallback(onConsoleMessage));
+  });
 }
 
 class TestPlatformWebViewPermissionRequest

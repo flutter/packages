@@ -798,6 +798,101 @@ void main() {
       expect(callbackCalled, isFalse);
     });
 
+    test('setOnConsoleLogCallback', () async {
+      late final void Function(
+        android_webview.WebChromeClient instance,
+        android_webview.ConsoleMessage message,
+      ) onConsoleMessageCallback;
+
+      final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        createWebChromeClient: ({
+          dynamic onProgressChanged,
+          dynamic onShowFileChooser,
+          dynamic onGeolocationPermissionsShowPrompt,
+          dynamic onGeolocationPermissionsHidePrompt,
+          dynamic onPermissionRequest,
+          void Function(
+            android_webview.WebChromeClient,
+            android_webview.ConsoleMessage,
+          )? onConsoleMessage,
+        }) {
+          onConsoleMessageCallback = onConsoleMessage!;
+          return mockWebChromeClient;
+        },
+      );
+
+      final Map<String, JavaScriptLogLevel> logs = <String, JavaScriptLogLevel>{};
+      await controller.setConsoleLogCallback(
+        (JavaScriptLogLevel level, String message) async {
+          logs[message] = level;
+        },
+      );
+
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Debug message',
+          level: ConsoleMessageLevel.debug,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Error message',
+          level: ConsoleMessageLevel.error,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Log message',
+          level: ConsoleMessageLevel.log,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Tip message',
+          level: ConsoleMessageLevel.tip,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Warning message',
+          level: ConsoleMessageLevel.warning,
+          sourceId: 'source',
+        ),
+      );
+      onConsoleMessageCallback(
+        mockWebChromeClient,
+        ConsoleMessage(
+          lineNumber: 42,
+          message: 'Unknown message',
+          level: ConsoleMessageLevel.unknown,
+          sourceId: 'source',
+        ),
+      );
+
+      expect(logs.length, 6);
+      expect(logs['Debug message'], JavaScriptLogLevel.debug);
+      expect(logs['Error message'], JavaScriptLogLevel.error);
+      expect(logs['Log message'], JavaScriptLogLevel.log);
+      expect(logs['Tip message'], JavaScriptLogLevel.info);
+      expect(logs['Warning message'], JavaScriptLogLevel.warning);
+      expect(logs['Unknown message'], JavaScriptLogLevel.log);
+    });
+
     test('runJavaScript', () async {
       final MockWebView mockWebView = MockWebView();
       final AndroidWebViewController controller = createControllerWithMocks(

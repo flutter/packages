@@ -1,3 +1,7 @@
+## 3.10.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `AndroidWebViewController.setConsoleLogCallback`.
+
 ## 3.9.2
 
 * Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller or PlatformView

@@ -353,6 +353,20 @@ class WebViewController {
   Future<void> setUserAgent(String? userAgent) {
     return platform.setUserAgent(userAgent);
   }
+
+  /// Sets a callback that notifies the host application on any log messages
+  /// written to the JavaScript console.
+  ///
+  /// On iOS setting this callback will inject a custom [WKUserScript] which
+  /// overrides the default implementation of `console.debug`, `console.error`,
+  /// `console.info`, `console.log` and `console.warning` methods. The iOS
+  /// WebKit framework unfortunately doesn't provide a build in method to
+  /// forward console messages.
+  Future<void> setConsoleLogCallback(
+      void Function(JavaScriptLogLevel javaScriptLogLevel, String message)
+          onConsoleMessage) {
+    return platform.setConsoleLogCallback(onConsoleMessage);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.

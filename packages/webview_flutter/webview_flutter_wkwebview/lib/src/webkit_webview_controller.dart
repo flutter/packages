@@ -329,7 +329,8 @@ class WebKitWebViewController extends PlatformWebViewController {
         javaScriptChannelParams is WebKitJavaScriptChannelParams
             ? javaScriptChannelParams
             : WebKitJavaScriptChannelParams.fromJavaScriptChannelParams(
-                javaScriptChannelParams);
+                javaScriptChannelParams,
+              );
 
     _javaScriptChannelParams[webKitParams.name] = webKitParams;
 
@@ -514,6 +515,14 @@ class WebKitWebViewController extends PlatformWebViewController {
         .addUserScript(userScript);
   }
 
+  /// Sets a callback that notifies the host application of any log messages
+  /// written to the JavaScript console.
+  ///
+  /// Because the iOS WKWebView doesn't provide a build in way to access the
+  /// console, setting this callback will inject a custom [WKUserScript] which
+  /// overrides the JavaScript `console.debug`, `console.error`, `console.info`,
+  /// `console.log` and `console.warn` methods and forwards the console message
+  /// via a `JavaScriptChannel` to the host application.
   @override
   Future<void> setConsoleLogCallback(
     void Function(JavaScriptLogLevel type, String message) onConsoleMessage,
@@ -522,8 +531,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     final JavaScriptChannelParams channelParams = WebKitJavaScriptChannelParams(
         name: 'fltConsoleMessage',
-        webKitProxy:
-            (params as WebKitWebViewControllerCreationParams).webKitProxy,
+        webKitProxy: _webKitParams.webKitProxy,
         onMessageReceived: (JavaScriptMessage message) {
           if (_onConsoleLogCallback == null) {
             return;
@@ -626,6 +634,9 @@ window.addEventListener("error", function(e) {
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.
       if (!_zoomEnabled) _disableZoom(),
+      // Console logs are forwarded with a WKUserScript, so this adds it back
+      // if a console callback was registered with [setConsoleLogCallback].
+      if (_onConsoleLogCallback != null) _injectConsoleOverride(),
     ]);
   }
 

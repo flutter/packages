@@ -49,15 +49,11 @@ void main() {
         )? observeValue,
       })? createMockWebView,
       MockWKWebViewConfiguration? mockWebViewConfiguration,
-      MockWKScriptMessageHandler? mockWKScriptMessageHandler,
       InstanceManager? instanceManager,
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
       late final MockWKWebView nonNullMockWebView;
-
-      final MockWKScriptMessageHandler nonNullMockWKScriptMessageHandler =
-          mockWKScriptMessageHandler ?? MockWKScriptMessageHandler();
 
       final PlatformWebViewControllerCreationParams controllerCreationParams =
           WebKitWebViewControllerCreationParams(
@@ -103,14 +99,7 @@ void main() {
                   requestMediaCapturePermission: requestMediaCapturePermission,
                 );
           },
-          createScriptMessageHandler: ({
-            required void Function(
-              WKUserContentController userContentController,
-              WKScriptMessage scriptMessage,
-            ) didReceiveScriptMessage,
-          }) {
-            return nonNullMockWKScriptMessageHandler;
-          },
+          createScriptMessageHandler: WKScriptMessageHandler.detached,
         ),
         instanceManager: instanceManager,
       );
@@ -1177,35 +1166,37 @@ void main() {
       verify(mockWebView.setInspectable(true));
     });
 
-    test('setConsoleLogCallback', () async {
-      final MockWKUserContentController mockUserContentController =
-          MockWKUserContentController();
-      final WebKitWebViewController controller = createControllerWithMocks(
-        mockUserContentController: mockUserContentController,
-      );
+    group('Console logging', () {
+      test('setConsoleLogCallback should inject the correct JavaScript',
+          () async {
+        final MockWKUserContentController mockUserContentController =
+            MockWKUserContentController();
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockUserContentController: mockUserContentController,
+        );
 
-      await controller
-          .setConsoleLogCallback((JavaScriptLogLevel level, String message) {});
+        await controller.setConsoleLogCallback(
+            (JavaScriptLogLevel level, String message) {});
 
-      final List<dynamic> capturedScripts =
-          verify(mockUserContentController.addUserScript(captureAny))
-              .captured
-              .toList();
-      final WKUserScript messageHandlerScript =
-          capturedScripts[0] as WKUserScript;
-      final WKUserScript overrideConsoleScript =
-          capturedScripts[1] as WKUserScript;
+        final List<dynamic> capturedScripts =
+            verify(mockUserContentController.addUserScript(captureAny))
+                .captured
+                .toList();
+        final WKUserScript messageHandlerScript =
+            capturedScripts[0] as WKUserScript;
+        final WKUserScript overrideConsoleScript =
+            capturedScripts[1] as WKUserScript;
 
-      expect(messageHandlerScript.isMainFrameOnly, isFalse);
-      expect(messageHandlerScript.injectionTime,
-          WKUserScriptInjectionTime.atDocumentStart);
-      expect(messageHandlerScript.source,
-          'window.fltConsoleMessage = webkit.messageHandlers.fltConsoleMessage;');
+        expect(messageHandlerScript.isMainFrameOnly, isFalse);
+        expect(messageHandlerScript.injectionTime,
+            WKUserScriptInjectionTime.atDocumentStart);
+        expect(messageHandlerScript.source,
+            'window.fltConsoleMessage = webkit.messageHandlers.fltConsoleMessage;');
 
-      expect(overrideConsoleScript.isMainFrameOnly, isTrue);
-      expect(overrideConsoleScript.injectionTime,
-          WKUserScriptInjectionTime.atDocumentStart);
-      expect(overrideConsoleScript.source, '''
+        expect(overrideConsoleScript.isMainFrameOnly, isTrue);
+        expect(overrideConsoleScript.injectionTime,
+            WKUserScriptInjectionTime.atDocumentStart);
+        expect(overrideConsoleScript.source, '''
 function log(type, args) {
   var message =  Object.values(args)
       .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v) : v.toString())
@@ -1236,6 +1227,62 @@ window.addEventListener("error", function(e) {
   log("error", e.message + " at " + e.filename + ":" + e.lineno + ":" + e.colno);
 });
       ''');
+      });
+
+      test('setConsoleLogCallback should parse levels correctly', () async {
+        final MockWKUserContentController mockUserContentController =
+            MockWKUserContentController();
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockUserContentController: mockUserContentController,
+        );
+
+        final Map<JavaScriptLogLevel, String> logs =
+            <JavaScriptLogLevel, String>{};
+        await controller.setConsoleLogCallback(
+            (JavaScriptLogLevel level, String message) =>
+                logs[level] = message);
+
+        final List<dynamic> capturedParameters = verify(
+                mockUserContentController.addScriptMessageHandler(
+                    captureAny, any))
+            .captured
+            .toList();
+        final WKScriptMessageHandler scriptMessageHandler =
+            capturedParameters[0] as WKScriptMessageHandler;
+
+        scriptMessageHandler.didReceiveScriptMessage(
+            mockUserContentController,
+            const WKScriptMessage(
+                name: 'test',
+                body: '{"level": "debug", "message": "Debug message"}'));
+        scriptMessageHandler.didReceiveScriptMessage(
+            mockUserContentController,
+            const WKScriptMessage(
+                name: 'test',
+                body: '{"level": "error", "message": "Error message"}'));
+        scriptMessageHandler.didReceiveScriptMessage(
+            mockUserContentController,
+            const WKScriptMessage(
+                name: 'test',
+                body: '{"level": "info", "message": "Info message"}'));
+        scriptMessageHandler.didReceiveScriptMessage(
+            mockUserContentController,
+            const WKScriptMessage(
+                name: 'test',
+                body: '{"level": "log", "message": "Log message"}'));
+        scriptMessageHandler.didReceiveScriptMessage(
+            mockUserContentController,
+            const WKScriptMessage(
+                name: 'test',
+                body: '{"level": "warning", "message": "Warning message"}'));
+
+        expect(logs.length, 5);
+        expect(logs[JavaScriptLogLevel.debug], 'Debug message');
+        expect(logs[JavaScriptLogLevel.error], 'Error message');
+        expect(logs[JavaScriptLogLevel.info], 'Info message');
+        expect(logs[JavaScriptLogLevel.log], 'Log message');
+        expect(logs[JavaScriptLogLevel.warning], 'Warning message');
+      });
     });
   });
 
