@@ -73,6 +73,25 @@ const String kTransparentBackgroundPage = '''
 </html>
 ''';
 
+const String kAlertTestPage = '''
+<html>  
+   <head>     
+      <script type = "text/javascript">  
+            function showAlert() {      
+               alert ("This is an alert dialog box");  
+            }  
+      </script>       
+   </head>  
+     
+   <body>  
+      <p> Click the following button to see the effect </p>        
+      <form>  
+         <input type = "button" value = "Click me" onclick = "showAlert();" />  
+      </form>       
+   </body>  
+</html>  
+''';
+
 class WebViewExample extends StatefulWidget {
   const WebViewExample({super.key, this.cookieManager});
 
@@ -201,6 +220,7 @@ enum MenuOptions {
   loadHtmlString,
   transparentBackground,
   setCookie,
+  javaScriptAlert
 }
 
 class SampleMenu extends StatelessWidget {
@@ -261,6 +281,9 @@ class SampleMenu extends StatelessWidget {
           case MenuOptions.setCookie:
             _onSetCookie();
             break;
+          case MenuOptions.javaScriptAlert:
+            _onJavaScriptAlertExample(context);
+            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -316,6 +339,10 @@ class SampleMenu extends StatelessWidget {
           key: ValueKey<String>('ShowTransparentBackgroundExample'),
           value: MenuOptions.transparentBackground,
           child: Text('Transparent background example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.javaScriptAlert,
+          child: Text('JavaScript Alert Example'),
         ),
       ],
     );
@@ -439,6 +466,10 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _onTransparentBackground() {
     return webViewController.loadHtmlString(kTransparentBackgroundPage);
+  }
+
+  Future<void> _onJavaScriptAlertExample(BuildContext context) {
+    return webViewController.loadHtmlString(kAlertTestPage);
   }
 
   Widget _getCookieList(String cookies) {
