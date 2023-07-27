@@ -14,7 +14,8 @@ import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
-const int _exitGcloudAuthFailed = 2;
+const int _exitGcloudAuthFailed = 3;
+const int _exitNoResultsBucket = 3;
 
 /// A command to run tests via Firebase test lab.
 class FirebaseTestLabCommand extends PackageLoopingCommand {
@@ -52,8 +53,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
         ],
         help:
             'Device model(s) to test. See https://cloud.google.com/sdk/gcloud/reference/firebase/test/android/run for more info');
-    argParser.addOption('results-bucket',
-        defaultsTo: 'gs://flutter_cirrus_testlab');
+    argParser.addOption(_gCloudResultsBucketArg, mandatory: true);
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',
@@ -63,6 +63,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
 
   static const String _gCloudServiceKeyArg = 'service-key';
   static const String _gCloudProjectArg = 'project';
+  static const String _gCloudResultsBucketArg = 'results-bucket';
 
   @override
   final String name = 'firebase-test-lab';
@@ -288,7 +289,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       'build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
       '--timeout',
       '7m',
-      '--results-bucket=${getStringArg('results-bucket')}',
+      '--results-bucket=gs://${getStringArg(_gCloudResultsBucketArg)}',
       '--results-dir=$resultsDir',
       for (final String device in getStringListArg('device')) ...<String>[
         '--device',
