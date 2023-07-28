@@ -36,7 +36,8 @@ See the API documentation for details on the following topics:
 - [Named routes](https://pub.dev/documentation/go_router/latest/topics/Named%20routes-topic.html)
 - [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 
-## Migration guides
+## Migration Guides
+- [Migrating to 10.0.0](https://flutter.dev/go/go-router-v10-breaking-changes).
 - [Migrating to 9.0.0](https://flutter.dev/go/go-router-v9-breaking-changes).
 - [Migrating to 8.0.0](https://flutter.dev/go/go-router-v8-breaking-changes).
 - [Migrating to 7.0.0](https://flutter.dev/go/go-router-v7-breaking-changes).
@@ -53,6 +54,15 @@ See the
 [Changelog](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md)
 for a list of new features and breaking changes.
 
-## Roadmap
-See the [GitHub project](https://github.com/orgs/flutter/projects/17/) for a 
-prioritized list of feature requests and known issues.
+## Triage
+See the [GitHub issues](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+)
+for all Go Router issues.
+
+The project follows the same priority system as flutter framework.
+[P0](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP0+)
+[P1](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP1+)
+[P2](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP2+)
+[P3](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP3+)
+
+[Package PRs](https://github.com/flutter/packages/pulls?q=is%3Apr+is%3Aopen+label%3A%22p%3A+go_router%22%2C%22p%3A+go_router_builder%22)
+

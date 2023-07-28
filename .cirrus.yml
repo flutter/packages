@@ -45,30 +45,11 @@ task:
     zone: us-central1-a
     namespace: default
   matrix:
-    # Repository rules and best-practice enforcement.
-    # Only channel-agnostic tests should go here since it is only run once
-    # (on Flutter master).
-    - name: repo_checks
-      always:
-        version_script:
-          # For pre-submit, pass the PR labels to the script to allow for
-          # check overrides.
-          # For post-submit, ignore platform version breaking version changes
-          # and missing version/CHANGELOG detection since the labels aren't
-          # available outside of the context of the PR.
-          - if [[ $CIRRUS_PR == "" ]]; then
-          -   ./script/tool_runner.sh version-check --ignore-platform-interface-breaks
-          - else
-          -   ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
-          - fi
-        federated_safety_script:
-          # This check is only meaningful for PRs, as it validates changes
-          # rather than state.
-          - if [[ $CIRRUS_PR == "" ]]; then
-          -   echo "Only run in presubmit"
-          - else
-          -   ./script/tool_runner.sh federation-safety-check
-          - fi
+    # TODO(stuartmorgan): Migrate this to LUCI; See check_version.sh.
+    - name: version_check
+      only_if: $CIRRUS_PR != ''
+      version_script:
+        - ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$CIRRUS_PR_LABELS"
 
 # Heavy-workload Linux tasks.
 # These use machines with more CPUs and memory, so will reduce parallelization

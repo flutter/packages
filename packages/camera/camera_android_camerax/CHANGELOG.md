@@ -1,3 +1,13 @@
+## 0.5.0+12
+
+* Wraps classes needed to implement resolution configuration for image capture, image analysis, and preview.
+* Removes usages of deprecated APIs for resolution configuration.
+* Bumps CameraX version to 1.3.0-beta01.
+
+## 0.5.0+11
+
+* Fixes issue with image data not being emitted after relistening to stream returned by `onStreamedFrameAvailable`.
+
 ## 0.5.0+10
 
 * Implements off, auto, and always flash mode configurations for image capture.
