@@ -12,6 +12,7 @@ import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'resolution_selector.dart';
 import 'use_case.dart';
 
 /// Use case for providing CPU accessible images for performing image analysis.
@@ -23,13 +24,13 @@ class ImageAnalysis extends UseCase {
   ImageAnalysis(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.targetResolution})
+      this.resolutionSelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = _ImageAnalysisHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createfromInstances(this, targetResolution);
+    _api.createfromInstances(this, resolutionSelector);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
@@ -37,7 +38,7 @@ class ImageAnalysis extends UseCase {
   ImageAnalysis.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.targetResolution})
+      this.resolutionSelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -49,7 +50,10 @@ class ImageAnalysis extends UseCase {
   late final _ImageAnalysisHostApiImpl _api;
 
   /// Target resolution of the camera preview stream.
-  final ResolutionInfo? targetResolution;
+  ///
+  /// If not set, this [UseCase] will default to the behavior described in:
+  /// https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector).
+  final ResolutionSelector? resolutionSelector;
 
   /// Sets an [Analyzer] to receive and analyze images.
   Future<void> setAnalyzer(Analyzer analyzer) =>
@@ -83,18 +87,20 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
   /// on the native side.
   Future<void> createfromInstances(
     ImageAnalysis instance,
-    ResolutionInfo? targetResolution,
+    ResolutionSelector? resolutionSelector,
   ) {
     return create(
       instanceManager.addDartCreatedInstance(
         instance,
         onCopy: (ImageAnalysis original) => ImageAnalysis.detached(
-          targetResolution: original.targetResolution,
+          resolutionSelector: original.resolutionSelector,
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
         ),
       ),
-      targetResolution,
+      resolutionSelector == null
+          ? null
+          : instanceManager.getIdentifier(resolutionSelector),
     );
   }
 
