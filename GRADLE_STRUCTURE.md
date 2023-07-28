@@ -2,11 +2,11 @@
 
 `package/example/android/settings.gradle` imports the flutter tooling, includes the app directory, and configures GoogleCloudPlatform/artifact-registry-maven-tools for use in CI.
 
-This repo has a GCP instance that mirrors dependencies available from `google()` and `mavenCentral()` used by ci (or googlers). This gives us redundant uptime for dependency availability.
+This repo has a GCP instance that mirrors dependencies available from `google()` and `mavenCentral()` used by CI (or Googlers). This gives us redundant uptime for dependency availability.
 
-Using this cache is not intended or avaiable for contributors outside of CI. We protect that execution with an environment variable `ARTIFACT_HUB_REPOSITORY` to ensure that by default users do not see rejected cloud credentials or errors in builds.
+Using the specific google hosted cache is not intended or avaiable for contributors outside of CI. We protect that execution with an environment variable `ARTIFACT_HUB_REPOSITORY` to ensure that by default users do not see rejected cloud credentials or errors in builds. Contributors could setup an aritfact repository and set the environment variable to point to a hosted repository but that is practically not worth it for almost all contributors. 
 
-Googlers can debug locally by setting `ARTIFACT_HUB_REPOSITORY` to the valid artifact hub value and authenticating with GCP. To authenticate run `gcloud auth application-default login`. To find artifact hub url use `<url>` section of go/artifact-hub#maven or inspect the value on CI servers. CI uses a service account for billing. That is defined in go/artifact-hub-service-account (googler access only).
+Googlers can debug locally by setting `ARTIFACT_HUB_REPOSITORY` to the valid artifact hub value and authenticating with GCP. To authenticate run `gcloud auth application-default login`. To find artifact hub url use `<url>` section of go/artifact-hub#maven or inspect the value on CI servers. CI uses a service account for billing. That is defined in go/artifact-hub-service-account (Googler access only).
 
 ## Useful links for debuging
 https://github.com/GoogleCloudPlatform/artifact-registry-maven-tools/blob/master/README.md
