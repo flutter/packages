@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates android example to be able to use custom use artifactregistery.
-
 ## 0.5.0+12
 
 * Wraps classes needed to implement resolution configuration for image capture, image analysis, and preview.
