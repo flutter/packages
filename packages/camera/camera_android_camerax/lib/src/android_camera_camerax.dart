@@ -116,10 +116,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraSelector? cameraSelector;
 
-  /// The resolution preset used to create a camera that should be used for
-  /// capturing still images and recording video.
-  ResolutionPreset? _resolutionPreset;
-
   /// The controller we need to broadcast the different camera events.
   ///
   /// It is a `broadcast` because multiple controllers will connect to
@@ -233,19 +229,17 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
     processCameraProvider!.unbindAll();
 
+    // TODO(camsim99): Implement resolution configuration for UseCases
+    // configured here. https://github.com/flutter/flutter/issues/120462
+
     // Configure Preview instance.
-    _resolutionPreset = resolutionPreset;
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
-    final ResolutionInfo? previewTargetResolution =
-        _getTargetResolutionForPreview(resolutionPreset);
-    preview = createPreview(targetRotation, previewTargetResolution);
+    preview = createPreview(targetRotation);
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.
-    final ResolutionInfo? imageCaptureTargetResolution =
-        _getTargetResolutionForImageCapture(_resolutionPreset);
-    imageCapture = createImageCapture(null, imageCaptureTargetResolution);
+    imageCapture = createImageCapture(null);
 
     // Configure VideoCapture and Recorder instances.
     // TODO(gmackall): Enable video capture resolution configuration in createRecorder().
@@ -642,7 +636,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // TODO(camsim99): Support resolution configuration.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis ??= createImageAnalysis(null);
+    imageAnalysis ??= createImageAnalysis();
     unawaited(imageAnalysis!.setAnalyzer(analyzer));
 
     if (await processCameraProvider!.isBound(imageAnalysis!)) {
@@ -780,23 +774,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
-  /// Returns [ResolutionInfo] that maps to the specified resolution preset for
-  /// a camera preview.
-  ResolutionInfo? _getTargetResolutionForPreview(ResolutionPreset? resolution) {
-    // TODO(camsim99): Implement resolution configuration.
-    // https://github.com/flutter/flutter/issues/120462
-    return null;
-  }
-
-  /// Returns [ResolutionInfo] that maps to the specified resolution preset for
-  /// image capture.
-  ResolutionInfo? _getTargetResolutionForImageCapture(
-      ResolutionPreset? resolution) {
-    // TODO(camsim99): Implement resolution configuration.
-    // https://github.com/flutter/flutter/issues/120462
-    return null;
-  }
-
   // Methods for calls that need to be tested:
 
   /// Requests camera permissions.
@@ -829,18 +806,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns a [Preview] configured with the specified target rotation and
   /// resolution.
   @visibleForTesting
-  Preview createPreview(int targetRotation, ResolutionInfo? targetResolution) {
-    return Preview(
-        targetRotation: targetRotation, targetResolution: targetResolution);
+  Preview createPreview(int targetRotation) {
+    return Preview(targetRotation: targetRotation);
   }
 
   /// Returns an [ImageCapture] configured with specified flash mode and
   /// target resolution.
   @visibleForTesting
-  ImageCapture createImageCapture(
-      int? flashMode, ResolutionInfo? targetResolution) {
-    return ImageCapture(
-        targetFlashMode: flashMode, targetResolution: targetResolution);
+  ImageCapture createImageCapture(int? flashMode) {
+    return ImageCapture(targetFlashMode: flashMode);
   }
 
   /// Returns a [Recorder] for use in video capture.
@@ -857,7 +831,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Returns an [ImageAnalysis] configured with specified target resolution.
   @visibleForTesting
-  ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
-    return ImageAnalysis(targetResolution: targetResolution);
+  ImageAnalysis createImageAnalysis() {
+    return ImageAnalysis();
   }
 }
