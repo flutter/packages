@@ -81,12 +81,13 @@ task:
         matrix:
           CHANNEL: "master"
           CHANNEL: "stable"
+        GCLOUD_KEY_PATH: $HOME/gcloud-service-key.json
         MAPS_API_KEY: ENCRYPTED[d6583b08f79f91ea4844c77460f04539965e46ad2fd97fb7c062b4dfe88016228b86ebe8c220ab4187e0c4bd773dc1e7]
         GCLOUD_FIREBASE_TESTLAB_KEY: ENCRYPTED[1a2eebf9367197bbe812d9a0ea83a53a05aeba4bb5e4964fe6a69727883cd87e51238d39237b1f80b0894c48419ac268]
       firebase_test_lab_script:
         - if [[ -n "$GCLOUD_FIREBASE_TESTLAB_KEY" ]]; then
-        -   echo $GCLOUD_FIREBASE_TESTLAB_KEY > ${HOME}/gcloud-service-key.json
-        -   ./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --exclude=script/configs/exclude_integration_android.yaml
+        -   echo $GCLOUD_FIREBASE_TESTLAB_KEY > "${GCLOUD_KEY_PATH}"
+        -   ./script/tool_runner.sh firebase-test-lab --device model=redfin,version=30 --exclude=script/configs/exclude_integration_android.yaml --project=flutter-cirrus --results-bucket=flutter_cirrus_testlab --service-key="${GCLOUD_KEY_PATH}"
         - else
         -   echo "This user does not have permission to run Firebase Test Lab tests."
         - fi

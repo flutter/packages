@@ -597,9 +597,6 @@ class _TestPreviewHostApiCodec extends StandardMessageCodec {
     if (value is ResolutionInfo) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is ResolutionInfo) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -609,8 +606,6 @@ class _TestPreviewHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return ResolutionInfo.decode(readValue(buffer)!);
-      case 129:
         return ResolutionInfo.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -623,7 +618,7 @@ abstract class TestPreviewHostApi {
       TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = _TestPreviewHostApiCodec();
 
-  void create(int identifier, int? rotation, ResolutionInfo? targetResolution);
+  void create(int identifier, int? rotation, int? resolutionSelectorId);
 
   int setSurfaceProvider(int identifier);
 
@@ -651,9 +646,8 @@ abstract class TestPreviewHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.PreviewHostApi.create was null, expected non-null int.');
           final int? arg_rotation = (args[1] as int?);
-          final ResolutionInfo? arg_targetResolution =
-              (args[2] as ResolutionInfo?);
-          api.create(arg_identifier!, arg_rotation, arg_targetResolution);
+          final int? arg_resolutionSelectorId = (args[2] as int?);
+          api.create(arg_identifier!, arg_rotation, arg_resolutionSelectorId);
           return <Object?>[];
         });
       }
@@ -1033,35 +1027,12 @@ abstract class TestRecordingHostApi {
   }
 }
 
-class _TestImageCaptureHostApiCodec extends StandardMessageCodec {
-  const _TestImageCaptureHostApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ResolutionInfo) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return ResolutionInfo.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 abstract class TestImageCaptureHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
       TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> codec = _TestImageCaptureHostApiCodec();
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void create(int identifier, int? flashMode, ResolutionInfo? targetResolution);
+  void create(int identifier, int? flashMode, int? resolutionSelectorId);
 
   void setFlashMode(int identifier, int flashMode);
 
@@ -1087,9 +1058,8 @@ abstract class TestImageCaptureHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ImageCaptureHostApi.create was null, expected non-null int.');
           final int? arg_flashMode = (args[1] as int?);
-          final ResolutionInfo? arg_targetResolution =
-              (args[2] as ResolutionInfo?);
-          api.create(arg_identifier!, arg_flashMode, arg_targetResolution);
+          final int? arg_resolutionSelectorId = (args[2] as int?);
+          api.create(arg_identifier!, arg_flashMode, arg_resolutionSelectorId);
           return <Object?>[];
         });
       }
@@ -1144,8 +1114,8 @@ abstract class TestImageCaptureHostApi {
   }
 }
 
-class _TestImageAnalysisHostApiCodec extends StandardMessageCodec {
-  const _TestImageAnalysisHostApiCodec();
+class _TestResolutionStrategyHostApiCodec extends StandardMessageCodec {
+  const _TestResolutionStrategyHostApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is ResolutionInfo) {
@@ -1167,12 +1137,128 @@ class _TestImageAnalysisHostApiCodec extends StandardMessageCodec {
   }
 }
 
+abstract class TestResolutionStrategyHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec =
+      _TestResolutionStrategyHostApiCodec();
+
+  void create(int identifier, ResolutionInfo? boundSize, int? fallbackRule);
+
+  static void setup(TestResolutionStrategyHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ResolutionStrategyHostApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ResolutionStrategyHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ResolutionStrategyHostApi.create was null, expected non-null int.');
+          final ResolutionInfo? arg_boundSize = (args[1] as ResolutionInfo?);
+          final int? arg_fallbackRule = (args[2] as int?);
+          api.create(arg_identifier!, arg_boundSize, arg_fallbackRule);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestResolutionSelectorHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier, int? resolutionStrategyIdentifier,
+      int? aspectRatioStrategyIdentifier);
+
+  static void setup(TestResolutionSelectorHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ResolutionSelectorHostApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ResolutionSelectorHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ResolutionSelectorHostApi.create was null, expected non-null int.');
+          final int? arg_resolutionStrategyIdentifier = (args[1] as int?);
+          final int? arg_aspectRatioStrategyIdentifier = (args[2] as int?);
+          api.create(arg_identifier!, arg_resolutionStrategyIdentifier,
+              arg_aspectRatioStrategyIdentifier);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestAspectRatioStrategyHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier, int preferredAspectRatio, int fallbackRule);
+
+  static void setup(TestAspectRatioStrategyHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.AspectRatioStrategyHostApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.AspectRatioStrategyHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.AspectRatioStrategyHostApi.create was null, expected non-null int.');
+          final int? arg_preferredAspectRatio = (args[1] as int?);
+          assert(arg_preferredAspectRatio != null,
+              'Argument for dev.flutter.pigeon.AspectRatioStrategyHostApi.create was null, expected non-null int.');
+          final int? arg_fallbackRule = (args[2] as int?);
+          assert(arg_fallbackRule != null,
+              'Argument for dev.flutter.pigeon.AspectRatioStrategyHostApi.create was null, expected non-null int.');
+          api.create(
+              arg_identifier!, arg_preferredAspectRatio!, arg_fallbackRule!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
 abstract class TestImageAnalysisHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
       TestDefaultBinaryMessengerBinding.instance;
-  static const MessageCodec<Object?> codec = _TestImageAnalysisHostApiCodec();
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void create(int identifier, ResolutionInfo? targetResolutionIdentifier);
+  void create(int identifier, int? resolutionSelectorId);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
@@ -1197,9 +1283,8 @@ abstract class TestImageAnalysisHostApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ImageAnalysisHostApi.create was null, expected non-null int.');
-          final ResolutionInfo? arg_targetResolutionIdentifier =
-              (args[1] as ResolutionInfo?);
-          api.create(arg_identifier!, arg_targetResolutionIdentifier);
+          final int? arg_resolutionSelectorId = (args[1] as int?);
+          api.create(arg_identifier!, arg_resolutionSelectorId);
           return <Object?>[];
         });
       }
