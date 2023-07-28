@@ -465,8 +465,9 @@ targets:
         ]
 
   # Device versions of Android integration tests, run via FTL.
-  # TODO(stuartmorgan): Revisit whether we want these once we have more data
-  # about emulator tests; see https://github.com/flutter/flutter/issues/131429.
+  # TODO(stuartmorgan): Revisit whether physical device tests are redundant once
+  # we have more data about emulator tests; see
+  # https://github.com/flutter/flutter/issues/131429.
 
   - name: Linux_android android_device_tests_shard_1 master
     bringup: true # New target
