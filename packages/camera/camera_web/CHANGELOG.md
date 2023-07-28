@@ -1,3 +1,7 @@
+## 0.3.1+5
+
+* Updates README to improve example of `Image` creation.
+
 ## 0.3.1+4
 
 * Removes obsolete null checks on non-nullable values.
