@@ -1,37 +1,20 @@
 # Run on PRs and main branch post submit only. Don't run tests when tagging.
 only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
-env:
-  CHANNEL: "master" # Default to master when not explicitly set by a task.
 
 setup_template: &SETUP_TEMPLATE
   upgrade_flutter_script:
-    # Channels that are part of our normal test matrix use a pinned,
-    # auto-rolled version to prevent out-of-band CI failures due to changes in
-    # Flutter.
-    - TARGET_TREEISH=$CHANNEL
-    - if [[ "$CHANNEL" == "master" || "$CHANNEL" == "stable" ]]; then
-    -   TARGET_TREEISH=$(< .ci/flutter_$CHANNEL.version)
-    - fi
-    # Ensure that the repository has all the branches.
+    # Ensure that the repository has everything.
     - cd $FLUTTER_HOME
     - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
     - git fetch origin
-    # Switch to the requested channel.
+    # Switch to the pinned master version.
+    - PINNED_VERSION=$(< .ci/flutter_master.version)
     - git checkout $TARGET_TREEISH
-    # When using a branch rather than a hash or version tag, reset to the
-    # upstream branch rather than using pull, since the base image can sometimes
-    # be in a state where it has diverged from upstream (!).
-    - if [[ "$TARGET_TREEISH" == "$CHANNEL" ]] && [[ "$CHANNEL" != *"."* ]]; then
-    -   git reset --hard @{u}
-    - fi
     # Run doctor to allow auditing of what version of Flutter the run is using.
     - flutter doctor -v
   tool_setup_script:
     - .ci/scripts/prepare_tool.sh
 
-# Light-workload Linux tasks.
-# These use default machines, with fewer CPUs, to reduce pressure on the
-# concurrency limits.
 task:
   << : *SETUP_TEMPLATE
   gke_container:
