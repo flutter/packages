@@ -5,12 +5,12 @@ only_if: $CIRRUS_TAG == '' && ($CIRRUS_PR != '' || $CIRRUS_BRANCH == 'main')
 
 setup_template: &SETUP_TEMPLATE
   upgrade_flutter_script:
+    - PINNED_VERSION=$(< .ci/flutter_master.version)
     # Ensure that the repository has everything.
     - cd $FLUTTER_HOME
     - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
     - git fetch origin
     # Switch to the pinned master version.
-    - PINNED_VERSION=$(< .ci/flutter_master.version)
     - git checkout $TARGET_TREEISH
     # Run doctor to allow auditing of what version of Flutter the run is using.
     - flutter doctor -v
