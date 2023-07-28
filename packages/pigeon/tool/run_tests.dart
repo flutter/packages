@@ -167,11 +167,8 @@ Future<void> main(List<String> args) async {
     androidJavaUnitTests,
     androidJavaLint,
     androidKotlinUnitTests,
-    // TODO(stuartmorgan): Include these once CI supports running simulator
-    // tests. Currently these tests aren't run in CI.
-    // See https://github.com/flutter/flutter/issues/111505.
-    // androidJavaIntegrationTests,
-    // androidKotlinIntegrationTests,
+    androidJavaIntegrationTests,
+    androidKotlinIntegrationTests,
   ];
   const List<String> macOSHostTests = <String>[
     iOSObjCUnitTests,
@@ -198,9 +195,6 @@ Future<void> main(List<String> args) async {
     windowsHostTests,
     // Tests that are deliberately not included in CI:
     <String>[
-      // See comment in linuxHostTests:
-      androidJavaIntegrationTests,
-      androidKotlinIntegrationTests,
       // See comments in macOSHostTests:
       iOSObjCIntegrationTests,
       iOSSwiftIntegrationTests,

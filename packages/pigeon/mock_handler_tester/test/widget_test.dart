@@ -74,14 +74,14 @@ void main() {
       TestHostApi.setup(mock);
       expect(
         await const BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.MessageApi.initialize',
+          'dev.flutter.pigeon.mock_handler_tester.MessageApi.initialize',
           StandardMessageCodec(),
         ).send(<Object?>[null]),
         isEmpty,
       );
       try {
         await const BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.MessageApi.search',
+          'dev.flutter.pigeon.mock_handler_tester.MessageApi.search',
           StandardMessageCodec(),
         ).send(<Object?>[null]) as List<Object?>?;
         expect(true, isFalse); // should not reach here
@@ -90,7 +90,7 @@ void main() {
         expect(
           error.toString(),
           contains(
-            'Argument for dev.flutter.pigeon.MessageApi.search was null, expected non-null MessageSearchRequest.',
+            'Argument for dev.flutter.pigeon.mock_handler_tester.MessageApi.search was null, expected non-null MessageSearchRequest.',
           ),
         );
       }

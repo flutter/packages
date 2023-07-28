@@ -14,7 +14,7 @@ import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
-const int _exitGcloudAuthFailed = 2;
+const int _exitGcloudAuthFailed = 3;
 
 /// A command to run tests via Firebase test lab.
 class FirebaseTestLabCommand extends PackageLoopingCommand {
@@ -25,18 +25,13 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
     super.platform,
   }) {
     argParser.addOption(
-      'project',
-      defaultsTo: 'flutter-cirrus',
+      _gCloudProjectArg,
       help: 'The Firebase project name.',
     );
-    final String? homeDir = io.Platform.environment['HOME'];
-    argParser.addOption('service-key',
-        defaultsTo: homeDir == null
-            ? null
-            : path.join(homeDir, 'gcloud-service-key.json'),
+    argParser.addOption(_gCloudServiceKeyArg,
         help: 'The path to the service key for gcloud authentication.\n'
-            r'If not provided, \$HOME/gcloud-service-key.json will be '
-            r'assumed if $HOME is set.');
+            'If not provided, setup will be skipped, so testing will fail '
+            'unless gcloud is already configured.');
     argParser.addOption('test-run-id',
         defaultsTo: const Uuid().v4(),
         help:
@@ -57,14 +52,17 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
         ],
         help:
             'Device model(s) to test. See https://cloud.google.com/sdk/gcloud/reference/firebase/test/android/run for more info');
-    argParser.addOption('results-bucket',
-        defaultsTo: 'gs://flutter_cirrus_testlab');
+    argParser.addOption(_gCloudResultsBucketArg, mandatory: true);
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',
       help: 'Enables the given Dart SDK experiments.',
     );
   }
+
+  static const String _gCloudServiceKeyArg = 'service-key';
+  static const String _gCloudProjectArg = 'project';
+  static const String _gCloudResultsBucketArg = 'results-bucket';
 
   @override
   final String name = 'firebase-test-lab';
@@ -82,9 +80,10 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       return;
     }
 
-    final String serviceKey = getStringArg('service-key');
+    final String serviceKey = getStringArg(_gCloudServiceKeyArg);
     if (serviceKey.isEmpty) {
-      print('No --service-key provided; skipping gcloud authorization');
+      print(
+          'No --$_gCloudServiceKeyArg provided; skipping gcloud authorization');
     } else {
       final io.ProcessResult result = await processRunner.run(
         'gcloud',
@@ -99,11 +98,16 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
         printError('Unable to activate gcloud account.');
         throw ToolExit(_exitGcloudAuthFailed);
       }
+    }
+    final String project = getStringArg(_gCloudProjectArg);
+    if (project.isEmpty) {
+      print('No --$_gCloudProjectArg provided; skipping gcloud config');
+    } else {
       final int exitCode = await processRunner.runAndStream('gcloud', <String>[
         'config',
         'set',
         'project',
-        getStringArg('project'),
+        project,
       ]);
       print('');
       if (exitCode == 0) {
@@ -284,7 +288,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       'build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
       '--timeout',
       '7m',
-      '--results-bucket=${getStringArg('results-bucket')}',
+      '--results-bucket=gs://${getStringArg(_gCloudResultsBucketArg)}',
       '--results-dir=$resultsDir',
       for (final String device in getStringListArg('device')) ...<String>[
         '--device',
