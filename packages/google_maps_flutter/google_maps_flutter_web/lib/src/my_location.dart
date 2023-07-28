@@ -76,7 +76,7 @@ void _addMyLocationButton(gmaps.GMap map, GoogleMapController controller) {
   controller._myLocationButton = MyLocationButton();
   controller._myLocationButton?.addClickListener(
     (_) async {
-      _centerMyCurrentLocation(controller);
+      await _centerMyCurrentLocation(controller);
     },
   );
   map.addListener('dragend', () {
@@ -201,7 +201,6 @@ class MyLocationButton {
     _btnChild.disabled = true;
     _imageChild.classes.remove('waiting');
     _imageChild.style.backgroundPosition = '-24px 0px';
-    print('disable button');
   }
 
   /// Check button disabled or enabled

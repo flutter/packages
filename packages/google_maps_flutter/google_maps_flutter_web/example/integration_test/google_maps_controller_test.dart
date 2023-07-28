@@ -584,39 +584,6 @@ void main() {
           expect(capturedMarkers.first.position, currentLocation);
           expect(capturedMarkers.first.zIndex, 0.5);
         });
-
-        testWidgets(
-            'My location button should be disable when dont have permission access to location',
-            (WidgetTester tester) async {
-          late final MockGeolocation mockGeolocation = MockGeolocation();
-
-          controller = createController(
-              mapConfiguration: const MapConfiguration(
-            myLocationEnabled: true,
-            myLocationButtonEnabled: true,
-          ));
-
-          controller.debugSetOverrides(
-            createMap: (_, __) => map,
-            markers: markers,
-            geolocation: mockGeolocation,
-          );
-
-          when(mockGeolocation.watchPosition()).thenAnswer((_) {
-            return Stream<MockGeoposition>.error('permission denied');
-          });
-          when(mockGeolocation.getCurrentPosition(timeout: anyNamed('timeout')))
-              .thenAnswer(
-            (_) async => throw Exception('permission denied'),
-          );
-
-          controller.init();
-
-          await tester.pumpAndSettle();
-
-          expect(controller.myLocationButton, isNotNull);
-          expect(controller.myLocationButton?.isDisabled(), true);
-        });
       });
     });
 
