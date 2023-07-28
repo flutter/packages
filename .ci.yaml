@@ -464,6 +464,71 @@ targets:
           {"dependency": "android_virtual_device", "version": "33"}
         ]
 
+  # Device versions of Android integration tests, run via FTL.
+  # TODO(stuartmorgan): Revisit whether physical device tests are redundant once
+  # we have more data about emulator tests; see
+  # https://github.com/flutter/flutter/issues/131429.
+
+  - name: Linux_android android_device_tests_shard_1 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 6"
+
+  - name: Linux_android android_device_tests_shard_2 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 6"
+
+  - name: Linux_android android_device_tests_shard_3 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 2 --shardCount 6"
+
+  - name: Linux_android android_device_tests_shard_4 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 3 --shardCount 6"
+
+  - name: Linux_android android_device_tests_shard_5 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 4 --shardCount 6"
+
+  - name: Linux_android android_device_tests_shard_6 master
+    bringup: true # New target
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: android_device_tests.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 5 --shardCount 6"
+
   ### Web tasks ###
   - name: Linux_web web_build_all_packages master
     recipe: packages/packages
