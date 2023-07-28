@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show Platform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:xdg_directories/xdg_directories.dart';
@@ -11,11 +10,6 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('XDG Directories', (WidgetTester _) async {
-    // Check that the test is running on Linux.
-    if (!Platform.isLinux) {
-      throw Exception('This test is only valid on Linux');
-    }
-
     // Check that getUserDirectory() returns a Directory.
     expect(
       getUserDirectory('Home') != null,
