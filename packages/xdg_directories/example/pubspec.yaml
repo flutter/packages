@@ -1,5 +1,5 @@
 name: xdg_directories_example
-description: Demonstrates how to use the video_player plugin.
+description: Demonstrates how to use the xdg_directories package.
 publish_to: 'none'
 
 environment:
