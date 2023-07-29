@@ -500,6 +500,10 @@ NSString *const errorMethod = @"error";
       return;
     }
 
+    if (_videoWriter.status != AVAssetWriterStatusWriting && output != _captureVideoOutput) {
+      return;
+    }
+
     CFRetain(sampleBuffer);
     CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
