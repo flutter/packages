@@ -14,6 +14,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Represents image format. Mirrors ImageFormat in camera.dart.
+ */
 typedef NS_ENUM(NSInteger, ImageFormat) {
   ImageFormatJPEG,
   ImageFormatHEIC,
