@@ -1,3 +1,7 @@
+## 2.2.4
+
+* Bumps example go_router version to v10.0.0 and migrate example code.
+
 ## 2.2.3
 
 * Removes `path_to_regexp` from the dependencies.
