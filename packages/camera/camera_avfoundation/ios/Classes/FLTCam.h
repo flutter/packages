@@ -14,6 +14,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSInteger, ImageFormat) {
+  ImageFormatJPEG,
+  ImageFormatHEIC,
+};
+
 /**
  * A class that manages camera's state and performs camera operations.
  */
@@ -30,6 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic) FLTFlashMode flashMode;
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
+@property(readonly, nonatomic) ImageFormat imageFormat;
 
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
@@ -47,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)start;
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result;
+- (void)captureToFile:(FLTThreadSafeFlutterResult *)result imageFormat:(ImageFormat)imageFormat;
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
 /**

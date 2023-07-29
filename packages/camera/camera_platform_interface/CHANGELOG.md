@@ -1,3 +1,7 @@
+## 2.5.2
+
+* Add support to HEIC format on take picture (only iOS).
+
 ## 2.5.1
 
 * Removes obsolete null checks on non-nullable values.

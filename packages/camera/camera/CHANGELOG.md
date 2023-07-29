@@ -1,3 +1,7 @@
+## 0.10.6
+
+* Add support to HEIC format to iOS
+
 ## 0.10.5+2
 
 * Fixes unawaited_futures violations.

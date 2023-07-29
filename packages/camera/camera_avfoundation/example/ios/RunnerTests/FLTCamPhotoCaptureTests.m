@@ -49,7 +49,7 @@
 
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
-    [cam captureToFile:mockResult];
+    [cam captureToFile:mockResult imageFormat:ImageFormatHEIC];
   });
 
   [self waitForExpectationsWithTimeout:1 handler:nil];
@@ -89,7 +89,7 @@
 
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
-    [cam captureToFile:mockResult];
+    [cam captureToFile:mockResult imageFormat:ImageFormatHEIC];
   });
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }

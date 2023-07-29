@@ -244,18 +244,34 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result {
+- (void)captureToFile:(FLTThreadSafeFlutterResult *)result imageFormat:(ImageFormat)imageFormat {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
+  NSString *extension;
   if (_resolutionPreset == FLTResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
   }
+  
+  if (self.imageFormat == ImageFormatHEIC) {
+    if (@available(iOS 11.0, *)) {
+        if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
+            settings = [AVCapturePhotoSettings photoSettingsWithFormat:@{ AVVideoCodecKey : AVVideoCodecTypeHEVC }];
+            extension = @"heic";
+        } else {
+            settings = [AVCapturePhotoSettings photoSettingsWithFormat:@{ AVVideoCodecKey : AVVideoCodecTypeJPEG }];
+            extension = @"jpg";
+        }
+    } else {
+        extension = @"jpg";
+    }
+  }
+
 
   AVCaptureFlashMode avFlashMode = FLTGetAVCaptureFlashModeForFLTFlashMode(_flashMode);
   if (avFlashMode != -1) {
     [settings setFlashMode:avFlashMode];
   }
   NSError *error;
-  NSString *path = [self getTemporaryFilePathWithExtension:@"jpg"
+  NSString *path = [self getTemporaryFilePathWithExtension:extension
                                                  subfolder:@"pictures"
                                                     prefix:@"CAP_"
                                                      error:error];

@@ -2,6 +2,10 @@
 
 * Fixes unawaited_futures violations.
 
+## 0.9.14
+
+* Add support to HEIC format
+
 ## 0.9.13+2
 
 * Removes obsolete null checks on non-nullable values.

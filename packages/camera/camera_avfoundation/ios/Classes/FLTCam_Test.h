@@ -30,6 +30,9 @@
 /// True when images from the camera are being streamed.
 @property(assign, nonatomic) BOOL isStreamingImages;
 
+/// The output format image capturing.
+@property(assign, nonatomic) ImageFormat imageFormat;
+
 /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
 /// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
 /// FLTSavePhotoDelegate that handles the result of each photo capture operation. Note that photo
