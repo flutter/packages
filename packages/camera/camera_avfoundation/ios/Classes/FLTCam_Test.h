@@ -31,7 +31,7 @@
 @property(assign, nonatomic) BOOL isStreamingImages;
 
 /// The output format image capturing.
-@property(assign, nonatomic) ImageFormat imageFormat;
+@property(assign, nonatomic) ImageExtension imageExtension;
 
 /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
 /// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
