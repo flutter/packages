@@ -15,13 +15,20 @@ import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 List<CameraDescription> get mockAvailableCameras => <CameraDescription>[
-      const CameraDescription(name: 'camBack', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
-      const CameraDescription(name: 'camFront', lensDirection: CameraLensDirection.front, sensorOrientation: 180),
+      const CameraDescription(
+          name: 'camBack',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90),
+      const CameraDescription(
+          name: 'camFront',
+          lensDirection: CameraLensDirection.front,
+          sensorOrientation: 180),
     ];
 
 int get mockInitializeCamera => 13;
 
-CameraInitializedEvent get mockOnCameraInitializedEvent => const CameraInitializedEvent(
+CameraInitializedEvent get mockOnCameraInitializedEvent =>
+    const CameraInitializedEvent(
       13,
       75,
       75,
@@ -37,7 +44,8 @@ DeviceOrientationChangedEvent get mockOnDeviceOrientationChangedEvent =>
 
 CameraClosingEvent get mockOnCameraClosingEvent => const CameraClosingEvent(13);
 
-CameraErrorEvent get mockOnCameraErrorEvent => const CameraErrorEvent(13, 'closing');
+CameraErrorEvent get mockOnCameraErrorEvent =>
+    const CameraErrorEvent(13, 'closing');
 
 XFile mockTakePicture = XFile('foo/bar.png');
 
@@ -49,7 +57,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   group('camera', () {
-    test('debugCheckIsDisposed should not throw assertion error when disposed', () {
+    test('debugCheckIsDisposed should not throw assertion error when disposed',
+        () {
       const MockCameraDescription description = MockCameraDescription();
       final CameraController controller = CameraController(
         description,
@@ -61,7 +70,8 @@ void main() {
       expect(controller.debugCheckIsDisposed, returnsNormally);
     });
 
-    test('debugCheckIsDisposed should throw assertion error when not disposed', () {
+    test('debugCheckIsDisposed should throw assertion error when not disposed',
+        () {
       const MockCameraDescription description = MockCameraDescription();
       final CameraController controller = CameraController(
         description,
@@ -90,7 +100,10 @@ void main() {
 
     test('Can be initialized', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
@@ -101,7 +114,10 @@ void main() {
 
     test('can be disposed', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
@@ -116,7 +132,10 @@ void main() {
 
     test('initialize() throws CameraException when disposed', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
@@ -137,9 +156,13 @@ void main() {
           )));
     });
 
-    test('initialize() throws $CameraException on $PlatformException ', () async {
+    test('initialize() throws $CameraException on $PlatformException ',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       mockPlatformException = true;
@@ -157,17 +180,25 @@ void main() {
     test('initialize() sets imageFormat', () async {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
       final CameraController cameraController = CameraController(
-        const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+        const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90),
         ResolutionPreset.max,
         imageFormatGroup: ImageFormatGroup.yuv420,
       );
       await cameraController.initialize();
-      verify(CameraPlatform.instance.initializeCamera(13, imageFormatGroup: ImageFormatGroup.yuv420)).called(1);
+      verify(CameraPlatform.instance
+              .initializeCamera(13, imageFormatGroup: ImageFormatGroup.yuv420))
+          .called(1);
     });
 
     test('prepareForVideoRecording() calls $CameraPlatform ', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
@@ -178,7 +209,10 @@ void main() {
 
     test('takePicture() throws $CameraException when uninitialized ', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       expect(
         cameraController.takePicture(),
@@ -198,13 +232,18 @@ void main() {
       );
     });
 
-    test('takePicture() throws $CameraException when takePicture is true', () async {
+    test('takePicture() throws $CameraException when takePicture is true',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      cameraController.value = cameraController.value.copyWith(isTakingPicture: true);
+      cameraController.value =
+          cameraController.value.copyWith(isTakingPicture: true);
       expect(
           cameraController.takePicture(),
           throwsA(isA<CameraException>().having(
@@ -216,7 +255,10 @@ void main() {
 
     test('takePicture() returns $XFile', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
       final XFile xFile = await cameraController.takePicture();
@@ -224,9 +266,13 @@ void main() {
       expect(xFile.path, mockTakePicture.path);
     });
 
-    test('takePicture() throws $CameraException on $PlatformException', () async {
+    test('takePicture() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
@@ -241,9 +287,13 @@ void main() {
       mockPlatformException = false;
     });
 
-    test('startVideoRecording() throws $CameraException when uninitialized', () async {
+    test('startVideoRecording() throws $CameraException when uninitialized',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       expect(
@@ -263,14 +313,19 @@ void main() {
         ),
       );
     });
-    test('startVideoRecording() throws $CameraException when recording videos', () async {
+    test('startVideoRecording() throws $CameraException when recording videos',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
 
-      cameraController.value = cameraController.value.copyWith(isRecordingVideo: true);
+      cameraController.value =
+          cameraController.value.copyWith(isRecordingVideo: true);
 
       expect(
           cameraController.startVideoRecording(),
@@ -281,9 +336,13 @@ void main() {
           )));
     });
 
-    test('getMaxZoomLevel() throws $CameraException when uninitialized', () async {
+    test('getMaxZoomLevel() throws $CameraException when uninitialized',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       expect(
@@ -306,7 +365,10 @@ void main() {
 
     test('getMaxZoomLevel() throws $CameraException when disposed', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
@@ -330,20 +392,29 @@ void main() {
       );
     });
 
-    test('getMaxZoomLevel() throws $CameraException when a platform exception occured.', () async {
+    test(
+        'getMaxZoomLevel() throws $CameraException when a platform exception occured.',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
-      when(CameraPlatform.instance.getMaxZoomLevel(mockInitializeCamera)).thenThrow(CameraException(
+      when(CameraPlatform.instance.getMaxZoomLevel(mockInitializeCamera))
+          .thenThrow(CameraException(
         'TEST_ERROR',
         'This is a test error messge',
       ));
 
       expect(
           cameraController.getMaxZoomLevel,
-          throwsA(isA<CameraException>().having((CameraException error) => error.code, 'code', 'TEST_ERROR').having(
+          throwsA(isA<CameraException>()
+              .having(
+                  (CameraException error) => error.code, 'code', 'TEST_ERROR')
+              .having(
                 (CameraException error) => error.description,
                 'description',
                 'This is a test error messge',
@@ -352,19 +423,27 @@ void main() {
 
     test('getMaxZoomLevel() returns max zoom level.', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
-      when(CameraPlatform.instance.getMaxZoomLevel(mockInitializeCamera)).thenAnswer((_) => Future<double>.value(42.0));
+      when(CameraPlatform.instance.getMaxZoomLevel(mockInitializeCamera))
+          .thenAnswer((_) => Future<double>.value(42.0));
 
       final double maxZoomLevel = await cameraController.getMaxZoomLevel();
       expect(maxZoomLevel, 42.0);
     });
 
-    test('getMinZoomLevel() throws $CameraException when uninitialized', () async {
+    test('getMinZoomLevel() throws $CameraException when uninitialized',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       expect(
@@ -387,7 +466,10 @@ void main() {
 
     test('getMinZoomLevel() throws $CameraException when disposed', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
@@ -411,20 +493,29 @@ void main() {
       );
     });
 
-    test('getMinZoomLevel() throws $CameraException when a platform exception occured.', () async {
+    test(
+        'getMinZoomLevel() throws $CameraException when a platform exception occured.',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
-      when(CameraPlatform.instance.getMinZoomLevel(mockInitializeCamera)).thenThrow(CameraException(
+      when(CameraPlatform.instance.getMinZoomLevel(mockInitializeCamera))
+          .thenThrow(CameraException(
         'TEST_ERROR',
         'This is a test error messge',
       ));
 
       expect(
           cameraController.getMinZoomLevel,
-          throwsA(isA<CameraException>().having((CameraException error) => error.code, 'code', 'TEST_ERROR').having(
+          throwsA(isA<CameraException>()
+              .having(
+                  (CameraException error) => error.code, 'code', 'TEST_ERROR')
+              .having(
                 (CameraException error) => error.description,
                 'description',
                 'This is a test error messge',
@@ -433,11 +524,15 @@ void main() {
 
     test('getMinZoomLevel() returns max zoom level.', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
-      when(CameraPlatform.instance.getMinZoomLevel(mockInitializeCamera)).thenAnswer((_) => Future<double>.value(42.0));
+      when(CameraPlatform.instance.getMinZoomLevel(mockInitializeCamera))
+          .thenAnswer((_) => Future<double>.value(42.0));
 
       final double maxZoomLevel = await cameraController.getMinZoomLevel();
       expect(maxZoomLevel, 42.0);
@@ -445,7 +540,10 @@ void main() {
 
     test('setZoomLevel() throws $CameraException when uninitialized', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       expect(
@@ -468,7 +566,10 @@ void main() {
 
     test('setZoomLevel() throws $CameraException when disposed', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
@@ -492,20 +593,29 @@ void main() {
       );
     });
 
-    test('setZoomLevel() throws $CameraException when a platform exception occured.', () async {
+    test(
+        'setZoomLevel() throws $CameraException when a platform exception occured.',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
-      when(CameraPlatform.instance.setZoomLevel(mockInitializeCamera, 42.0)).thenThrow(CameraException(
+      when(CameraPlatform.instance.setZoomLevel(mockInitializeCamera, 42.0))
+          .thenThrow(CameraException(
         'TEST_ERROR',
         'This is a test error messge',
       ));
 
       expect(
           () => cameraController.setZoomLevel(42),
-          throwsA(isA<CameraException>().having((CameraException error) => error.code, 'code', 'TEST_ERROR').having(
+          throwsA(isA<CameraException>()
+              .having(
+                  (CameraException error) => error.code, 'code', 'TEST_ERROR')
+              .having(
                 (CameraException error) => error.description,
                 'description',
                 'This is a test error messge',
@@ -514,35 +624,52 @@ void main() {
       reset(CameraPlatform.instance);
     });
 
-    test('setZoomLevel() completes and calls method channel with correct value.', () async {
+    test(
+        'setZoomLevel() completes and calls method channel with correct value.',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
 
       await cameraController.initialize();
       await cameraController.setZoomLevel(42.0);
 
-      verify(CameraPlatform.instance.setZoomLevel(mockInitializeCamera, 42.0)).called(1);
+      verify(CameraPlatform.instance.setZoomLevel(mockInitializeCamera, 42.0))
+          .called(1);
     });
 
     test('setFlashMode() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
       await cameraController.setFlashMode(FlashMode.always);
 
-      verify(CameraPlatform.instance.setFlashMode(cameraController.cameraId, FlashMode.always)).called(1);
+      verify(CameraPlatform.instance
+              .setFlashMode(cameraController.cameraId, FlashMode.always))
+          .called(1);
     });
 
-    test('setFlashMode() throws $CameraException on $PlatformException', () async {
+    test('setFlashMode() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.setFlashMode(cameraController.cameraId, FlashMode.always)).thenThrow(
+      when(CameraPlatform.instance
+              .setFlashMode(cameraController.cameraId, FlashMode.always))
+          .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
           message: 'This is a test error message',
@@ -560,22 +687,33 @@ void main() {
 
     test('setExposureMode() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
       await cameraController.setExposureMode(ExposureMode.auto);
 
-      verify(CameraPlatform.instance.setExposureMode(cameraController.cameraId, ExposureMode.auto)).called(1);
+      verify(CameraPlatform.instance
+              .setExposureMode(cameraController.cameraId, ExposureMode.auto))
+          .called(1);
     });
 
-    test('setExposureMode() throws $CameraException on $PlatformException', () async {
+    test('setExposureMode() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.setExposureMode(cameraController.cameraId, ExposureMode.auto)).thenThrow(
+      when(CameraPlatform.instance
+              .setExposureMode(cameraController.cameraId, ExposureMode.auto))
+          .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
           message: 'This is a test error message',
@@ -593,23 +731,32 @@ void main() {
 
     test('setExposurePoint() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
       await cameraController.setExposurePoint(const Offset(0.5, 0.5));
 
-      verify(CameraPlatform.instance.setExposurePoint(cameraController.cameraId, const Point<double>(0.5, 0.5)))
+      verify(CameraPlatform.instance.setExposurePoint(
+              cameraController.cameraId, const Point<double>(0.5, 0.5)))
           .called(1);
     });
 
-    test('setExposurePoint() throws $CameraException on $PlatformException', () async {
+    test('setExposurePoint() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.setExposurePoint(cameraController.cameraId, const Point<double>(0.5, 0.5)))
+      when(CameraPlatform.instance.setExposurePoint(
+              cameraController.cameraId, const Point<double>(0.5, 0.5)))
           .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
@@ -628,25 +775,37 @@ void main() {
 
     test('getMinExposureOffset() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.getMinExposureOffset(cameraController.cameraId))
+      when(CameraPlatform.instance
+              .getMinExposureOffset(cameraController.cameraId))
           .thenAnswer((_) => Future<double>.value(0.0));
 
       await cameraController.getMinExposureOffset();
 
-      verify(CameraPlatform.instance.getMinExposureOffset(cameraController.cameraId)).called(1);
+      verify(CameraPlatform.instance
+              .getMinExposureOffset(cameraController.cameraId))
+          .called(1);
     });
 
-    test('getMinExposureOffset() throws $CameraException on $PlatformException', () async {
+    test('getMinExposureOffset() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.getMinExposureOffset(cameraController.cameraId)).thenThrow(
+      when(CameraPlatform.instance
+              .getMinExposureOffset(cameraController.cameraId))
+          .thenThrow(
         CameraException(
           'TEST_ERROR',
           'This is a test error message',
@@ -664,25 +823,37 @@ void main() {
 
     test('getMaxExposureOffset() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.getMaxExposureOffset(cameraController.cameraId))
+      when(CameraPlatform.instance
+              .getMaxExposureOffset(cameraController.cameraId))
           .thenAnswer((_) => Future<double>.value(1.0));
 
       await cameraController.getMaxExposureOffset();
 
-      verify(CameraPlatform.instance.getMaxExposureOffset(cameraController.cameraId)).called(1);
+      verify(CameraPlatform.instance
+              .getMaxExposureOffset(cameraController.cameraId))
+          .called(1);
     });
 
-    test('getMaxExposureOffset() throws $CameraException on $PlatformException', () async {
+    test('getMaxExposureOffset() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.getMaxExposureOffset(cameraController.cameraId)).thenThrow(
+      when(CameraPlatform.instance
+              .getMaxExposureOffset(cameraController.cameraId))
+          .thenThrow(
         CameraException(
           'TEST_ERROR',
           'This is a test error message',
@@ -700,25 +871,38 @@ void main() {
 
     test('getExposureOffsetStepSize() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.getExposureOffsetStepSize(cameraController.cameraId))
+      when(CameraPlatform.instance
+              .getExposureOffsetStepSize(cameraController.cameraId))
           .thenAnswer((_) => Future<double>.value(0.0));
 
       await cameraController.getExposureOffsetStepSize();
 
-      verify(CameraPlatform.instance.getExposureOffsetStepSize(cameraController.cameraId)).called(1);
+      verify(CameraPlatform.instance
+              .getExposureOffsetStepSize(cameraController.cameraId))
+          .called(1);
     });
 
-    test('getExposureOffsetStepSize() throws $CameraException on $PlatformException', () async {
+    test(
+        'getExposureOffsetStepSize() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      when(CameraPlatform.instance.getExposureOffsetStepSize(cameraController.cameraId)).thenThrow(
+      when(CameraPlatform.instance
+              .getExposureOffsetStepSize(cameraController.cameraId))
+          .thenThrow(
         CameraException(
           'TEST_ERROR',
           'This is a test error message',
@@ -736,28 +920,53 @@ void main() {
 
     test('setExposureOffset() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      when(CameraPlatform.instance.getMinExposureOffset(cameraController.cameraId)).thenAnswer((_) async => -1.0);
-      when(CameraPlatform.instance.getMaxExposureOffset(cameraController.cameraId)).thenAnswer((_) async => 2.0);
-      when(CameraPlatform.instance.getExposureOffsetStepSize(cameraController.cameraId)).thenAnswer((_) async => 1.0);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 1.0)).thenAnswer((_) async => 1.0);
+      when(CameraPlatform.instance
+              .getMinExposureOffset(cameraController.cameraId))
+          .thenAnswer((_) async => -1.0);
+      when(CameraPlatform.instance
+              .getMaxExposureOffset(cameraController.cameraId))
+          .thenAnswer((_) async => 2.0);
+      when(CameraPlatform.instance
+              .getExposureOffsetStepSize(cameraController.cameraId))
+          .thenAnswer((_) async => 1.0);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 1.0))
+          .thenAnswer((_) async => 1.0);
 
       await cameraController.setExposureOffset(1.0);
 
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 1.0)).called(1);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 1.0))
+          .called(1);
     });
 
-    test('setExposureOffset() throws $CameraException on $PlatformException', () async {
+    test('setExposureOffset() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      when(CameraPlatform.instance.getMinExposureOffset(cameraController.cameraId)).thenAnswer((_) async => -1.0);
-      when(CameraPlatform.instance.getMaxExposureOffset(cameraController.cameraId)).thenAnswer((_) async => 2.0);
-      when(CameraPlatform.instance.getExposureOffsetStepSize(cameraController.cameraId)).thenAnswer((_) async => 1.0);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 1.0)).thenThrow(
+      when(CameraPlatform.instance
+              .getMinExposureOffset(cameraController.cameraId))
+          .thenAnswer((_) async => -1.0);
+      when(CameraPlatform.instance
+              .getMaxExposureOffset(cameraController.cameraId))
+          .thenAnswer((_) async => 2.0);
+      when(CameraPlatform.instance
+              .getExposureOffsetStepSize(cameraController.cameraId))
+          .thenAnswer((_) async => 1.0);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 1.0))
+          .thenThrow(
         CameraException(
           'TEST_ERROR',
           'This is a test error message',
@@ -773,17 +982,34 @@ void main() {
           )));
     });
 
-    test('setExposureOffset() throws $CameraException when offset is out of bounds', () async {
+    test(
+        'setExposureOffset() throws $CameraException when offset is out of bounds',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      when(CameraPlatform.instance.getMinExposureOffset(cameraController.cameraId)).thenAnswer((_) async => -1.0);
-      when(CameraPlatform.instance.getMaxExposureOffset(cameraController.cameraId)).thenAnswer((_) async => 2.0);
-      when(CameraPlatform.instance.getExposureOffsetStepSize(cameraController.cameraId)).thenAnswer((_) async => 1.0);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 0.0)).thenAnswer((_) async => 0.0);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, -1.0)).thenAnswer((_) async => 0.0);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 2.0)).thenAnswer((_) async => 0.0);
+      when(CameraPlatform.instance
+              .getMinExposureOffset(cameraController.cameraId))
+          .thenAnswer((_) async => -1.0);
+      when(CameraPlatform.instance
+              .getMaxExposureOffset(cameraController.cameraId))
+          .thenAnswer((_) async => 2.0);
+      when(CameraPlatform.instance
+              .getExposureOffsetStepSize(cameraController.cameraId))
+          .thenAnswer((_) async => 1.0);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 0.0))
+          .thenAnswer((_) async => 0.0);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, -1.0))
+          .thenAnswer((_) async => 0.0);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 2.0))
+          .thenAnswer((_) async => 0.0);
 
       expect(
           cameraController.setExposureOffset(3.0),
@@ -804,27 +1030,56 @@ void main() {
       await cameraController.setExposureOffset(-1.0);
       await cameraController.setExposureOffset(2.0);
 
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 0.0)).called(1);
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, -1.0)).called(1);
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 2.0)).called(1);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 0.0))
+          .called(1);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, -1.0))
+          .called(1);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 2.0))
+          .called(1);
     });
 
     test('setExposureOffset() rounds offset to nearest step', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      when(CameraPlatform.instance.getMinExposureOffset(cameraController.cameraId)).thenAnswer((_) async => -1.2);
-      when(CameraPlatform.instance.getMaxExposureOffset(cameraController.cameraId)).thenAnswer((_) async => 1.2);
-      when(CameraPlatform.instance.getExposureOffsetStepSize(cameraController.cameraId)).thenAnswer((_) async => 0.4);
+      when(CameraPlatform.instance
+              .getMinExposureOffset(cameraController.cameraId))
+          .thenAnswer((_) async => -1.2);
+      when(CameraPlatform.instance
+              .getMaxExposureOffset(cameraController.cameraId))
+          .thenAnswer((_) async => 1.2);
+      when(CameraPlatform.instance
+              .getExposureOffsetStepSize(cameraController.cameraId))
+          .thenAnswer((_) async => 0.4);
 
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, -1.2)).thenAnswer((_) async => -1.2);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, -0.8)).thenAnswer((_) async => -0.8);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, -0.4)).thenAnswer((_) async => -0.4);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 0.0)).thenAnswer((_) async => 0.0);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 0.4)).thenAnswer((_) async => 0.4);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 0.8)).thenAnswer((_) async => 0.8);
-      when(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 1.2)).thenAnswer((_) async => 1.2);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, -1.2))
+          .thenAnswer((_) async => -1.2);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, -0.8))
+          .thenAnswer((_) async => -0.8);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, -0.4))
+          .thenAnswer((_) async => -0.4);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 0.0))
+          .thenAnswer((_) async => 0.0);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 0.4))
+          .thenAnswer((_) async => 0.4);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 0.8))
+          .thenAnswer((_) async => 0.8);
+      when(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 1.2))
+          .thenAnswer((_) async => 1.2);
 
       await cameraController.setExposureOffset(1.2);
       await cameraController.setExposureOffset(-1.2);
@@ -843,62 +1098,97 @@ void main() {
       await cameraController.setExposureOffset(-0.6);
       await cameraController.setExposureOffset(-0.7);
 
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 0.8)).called(2);
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, -0.8)).called(2);
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 0.0)).called(2);
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, 0.4)).called(4);
-      verify(CameraPlatform.instance.setExposureOffset(cameraController.cameraId, -0.4)).called(4);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 0.8))
+          .called(2);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, -0.8))
+          .called(2);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 0.0))
+          .called(2);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, 0.4))
+          .called(4);
+      verify(CameraPlatform.instance
+              .setExposureOffset(cameraController.cameraId, -0.4))
+          .called(4);
     });
 
     test('pausePreview() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      cameraController.value = cameraController.value.copyWith(deviceOrientation: DeviceOrientation.portraitUp);
+      cameraController.value = cameraController.value
+          .copyWith(deviceOrientation: DeviceOrientation.portraitUp);
 
       await cameraController.pausePreview();
 
-      verify(CameraPlatform.instance.pausePreview(cameraController.cameraId)).called(1);
+      verify(CameraPlatform.instance.pausePreview(cameraController.cameraId))
+          .called(1);
       expect(cameraController.value.isPreviewPaused, equals(true));
-      expect(cameraController.value.previewPauseOrientation, DeviceOrientation.portraitUp);
+      expect(cameraController.value.previewPauseOrientation,
+          DeviceOrientation.portraitUp);
     });
 
-    test('pausePreview() does not call $CameraPlatform when already paused', () async {
+    test('pausePreview() does not call $CameraPlatform when already paused',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      cameraController.value = cameraController.value.copyWith(isPreviewPaused: true);
+      cameraController.value =
+          cameraController.value.copyWith(isPreviewPaused: true);
 
       await cameraController.pausePreview();
 
-      verifyNever(CameraPlatform.instance.pausePreview(cameraController.cameraId));
+      verifyNever(
+          CameraPlatform.instance.pausePreview(cameraController.cameraId));
       expect(cameraController.value.isPreviewPaused, equals(true));
     });
 
-    test('pausePreview() sets previewPauseOrientation according to locked orientation', () async {
+    test(
+        'pausePreview() sets previewPauseOrientation according to locked orientation',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
       cameraController.value = cameraController.value.copyWith(
           isPreviewPaused: false,
           deviceOrientation: DeviceOrientation.portraitUp,
-          lockedCaptureOrientation: Optional<DeviceOrientation>.of(DeviceOrientation.landscapeRight));
+          lockedCaptureOrientation:
+              Optional<DeviceOrientation>.of(DeviceOrientation.landscapeRight));
 
       await cameraController.pausePreview();
 
-      expect(cameraController.value.deviceOrientation, equals(DeviceOrientation.portraitUp));
-      expect(cameraController.value.previewPauseOrientation, equals(DeviceOrientation.landscapeRight));
+      expect(cameraController.value.deviceOrientation,
+          equals(DeviceOrientation.portraitUp));
+      expect(cameraController.value.previewPauseOrientation,
+          equals(DeviceOrientation.landscapeRight));
     });
 
-    test('pausePreview() throws $CameraException on $PlatformException', () async {
+    test('pausePreview() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      when(CameraPlatform.instance.pausePreview(cameraController.cameraId)).thenThrow(
+      when(CameraPlatform.instance.pausePreview(cameraController.cameraId))
+          .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
           message: 'This is a test error message',
@@ -916,37 +1206,54 @@ void main() {
 
     test('resumePreview() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      cameraController.value = cameraController.value.copyWith(isPreviewPaused: true);
+      cameraController.value =
+          cameraController.value.copyWith(isPreviewPaused: true);
 
       await cameraController.resumePreview();
 
-      verify(CameraPlatform.instance.resumePreview(cameraController.cameraId)).called(1);
+      verify(CameraPlatform.instance.resumePreview(cameraController.cameraId))
+          .called(1);
       expect(cameraController.value.isPreviewPaused, equals(false));
     });
 
-    test('resumePreview() does not call $CameraPlatform when not paused', () async {
+    test('resumePreview() does not call $CameraPlatform when not paused',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      cameraController.value = cameraController.value.copyWith(isPreviewPaused: false);
+      cameraController.value =
+          cameraController.value.copyWith(isPreviewPaused: false);
 
       await cameraController.resumePreview();
 
-      verifyNever(CameraPlatform.instance.resumePreview(cameraController.cameraId));
+      verifyNever(
+          CameraPlatform.instance.resumePreview(cameraController.cameraId));
       expect(cameraController.value.isPreviewPaused, equals(false));
     });
 
-    test('resumePreview() throws $CameraException on $PlatformException', () async {
+    test('resumePreview() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      cameraController.value = cameraController.value.copyWith(isPreviewPaused: true);
-      when(CameraPlatform.instance.resumePreview(cameraController.cameraId)).thenThrow(
+      cameraController.value =
+          cameraController.value.copyWith(isPreviewPaused: true);
+      when(CameraPlatform.instance.resumePreview(cameraController.cameraId))
+          .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
           message: 'This is a test error message',
@@ -964,28 +1271,41 @@ void main() {
 
     test('lockCaptureOrientation() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
       await cameraController.lockCaptureOrientation();
-      expect(cameraController.value.lockedCaptureOrientation, equals(DeviceOrientation.portraitUp));
-      await cameraController.lockCaptureOrientation(DeviceOrientation.landscapeRight);
-      expect(cameraController.value.lockedCaptureOrientation, equals(DeviceOrientation.landscapeRight));
+      expect(cameraController.value.lockedCaptureOrientation,
+          equals(DeviceOrientation.portraitUp));
+      await cameraController
+          .lockCaptureOrientation(DeviceOrientation.landscapeRight);
+      expect(cameraController.value.lockedCaptureOrientation,
+          equals(DeviceOrientation.landscapeRight));
 
-      verify(CameraPlatform.instance.lockCaptureOrientation(cameraController.cameraId, DeviceOrientation.portraitUp))
+      verify(CameraPlatform.instance.lockCaptureOrientation(
+              cameraController.cameraId, DeviceOrientation.portraitUp))
           .called(1);
-      verify(CameraPlatform.instance
-              .lockCaptureOrientation(cameraController.cameraId, DeviceOrientation.landscapeRight))
+      verify(CameraPlatform.instance.lockCaptureOrientation(
+              cameraController.cameraId, DeviceOrientation.landscapeRight))
           .called(1);
     });
 
-    test('lockCaptureOrientation() throws $CameraException on $PlatformException', () async {
+    test(
+        'lockCaptureOrientation() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      when(CameraPlatform.instance.lockCaptureOrientation(cameraController.cameraId, DeviceOrientation.portraitUp))
+      when(CameraPlatform.instance.lockCaptureOrientation(
+              cameraController.cameraId, DeviceOrientation.portraitUp))
           .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
@@ -1004,22 +1324,34 @@ void main() {
 
     test('unlockCaptureOrientation() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
 
       await cameraController.unlockCaptureOrientation();
       expect(cameraController.value.lockedCaptureOrientation, equals(null));
 
-      verify(CameraPlatform.instance.unlockCaptureOrientation(cameraController.cameraId)).called(1);
+      verify(CameraPlatform.instance
+              .unlockCaptureOrientation(cameraController.cameraId))
+          .called(1);
     });
 
-    test('unlockCaptureOrientation() throws $CameraException on $PlatformException', () async {
+    test(
+        'unlockCaptureOrientation() throws $CameraException on $PlatformException',
+        () async {
       final CameraController cameraController = CameraController(
-          const CameraDescription(name: 'cam', lensDirection: CameraLensDirection.back, sensorOrientation: 90),
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
           ResolutionPreset.max);
       await cameraController.initialize();
-      when(CameraPlatform.instance.unlockCaptureOrientation(cameraController.cameraId)).thenThrow(
+      when(CameraPlatform.instance
+              .unlockCaptureOrientation(cameraController.cameraId))
+          .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
           message: 'This is a test error message',
@@ -1037,7 +1369,9 @@ void main() {
   });
 }
 
-class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements CameraPlatform {
+class MockCameraPlatform extends Mock
+    with MockPlatformInterfaceMixin
+    implements CameraPlatform {
   @override
   Future<void> initializeCamera(
     int? cameraId, {
@@ -1057,7 +1391,8 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
   }
 
   @override
-  Future<List<CameraDescription>> availableCameras() => Future<List<CameraDescription>>.value(mockAvailableCameras);
+  Future<List<CameraDescription>> availableCameras() =>
+      Future<List<CameraDescription>>.value(mockAvailableCameras);
 
   @override
   Future<int> createCamera(
@@ -1078,46 +1413,52 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
       Stream<CameraClosingEvent>.value(mockOnCameraClosingEvent);
 
   @override
-  Stream<CameraErrorEvent> onCameraError(int cameraId) => Stream<CameraErrorEvent>.value(mockOnCameraErrorEvent);
+  Stream<CameraErrorEvent> onCameraError(int cameraId) =>
+      Stream<CameraErrorEvent>.value(mockOnCameraErrorEvent);
 
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() =>
-      Stream<DeviceOrientationChangedEvent>.value(mockOnDeviceOrientationChangedEvent);
+      Stream<DeviceOrientationChangedEvent>.value(
+          mockOnDeviceOrientationChangedEvent);
 
   @override
-  Future<XFile> takePicture(int cameraId, {ImageExtension imageExtension = ImageExtension.jpeg}) =>
-      mockPlatformException
-          ? throw PlatformException(code: 'foo', message: 'bar')
-          : Future<XFile>.value(mockTakePicture);
+  Future<XFile> takePicture(int cameraId) => mockPlatformException
+      ? throw PlatformException(code: 'foo', message: 'bar')
+      : Future<XFile>.value(mockTakePicture);
 
   @override
   Future<void> prepareForVideoRecording() async =>
       super.noSuchMethod(Invocation.method(#prepareForVideoRecording, null));
 
   @override
-  Future<XFile> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) =>
+  Future<XFile> startVideoRecording(int cameraId,
+          {Duration? maxVideoDuration}) =>
       Future<XFile>.value(mockVideoRecordingXFile);
 
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) {
-    return startVideoRecording(options.cameraId, maxVideoDuration: options.maxDuration);
+    return startVideoRecording(options.cameraId,
+        maxVideoDuration: options.maxDuration);
   }
 
   @override
-  Future<void> lockCaptureOrientation(int? cameraId, DeviceOrientation? orientation) async =>
-      super.noSuchMethod(Invocation.method(#lockCaptureOrientation, <Object?>[cameraId, orientation]));
+  Future<void> lockCaptureOrientation(
+          int? cameraId, DeviceOrientation? orientation) async =>
+      super.noSuchMethod(Invocation.method(
+          #lockCaptureOrientation, <Object?>[cameraId, orientation]));
 
   @override
   Future<void> unlockCaptureOrientation(int? cameraId) async =>
-      super.noSuchMethod(Invocation.method(#unlockCaptureOrientation, <Object?>[cameraId]));
+      super.noSuchMethod(
+          Invocation.method(#unlockCaptureOrientation, <Object?>[cameraId]));
 
   @override
   Future<void> pausePreview(int? cameraId) async =>
       super.noSuchMethod(Invocation.method(#pausePreview, <Object?>[cameraId]));
 
   @override
-  Future<void> resumePreview(int? cameraId) async =>
-      super.noSuchMethod(Invocation.method(#resumePreview, <Object?>[cameraId]));
+  Future<void> resumePreview(int? cameraId) async => super
+      .noSuchMethod(Invocation.method(#resumePreview, <Object?>[cameraId]));
 
   @override
   Future<double> getMaxZoomLevel(int? cameraId) async => super.noSuchMethod(
@@ -1133,40 +1474,48 @@ class MockCameraPlatform extends Mock with MockPlatformInterfaceMixin implements
 
   @override
   Future<void> setZoomLevel(int? cameraId, double? zoom) async =>
-      super.noSuchMethod(Invocation.method(#setZoomLevel, <Object?>[cameraId, zoom]));
+      super.noSuchMethod(
+          Invocation.method(#setZoomLevel, <Object?>[cameraId, zoom]));
 
   @override
   Future<void> setFlashMode(int? cameraId, FlashMode? mode) async =>
-      super.noSuchMethod(Invocation.method(#setFlashMode, <Object?>[cameraId, mode]));
+      super.noSuchMethod(
+          Invocation.method(#setFlashMode, <Object?>[cameraId, mode]));
 
   @override
   Future<void> setExposureMode(int? cameraId, ExposureMode? mode) async =>
-      super.noSuchMethod(Invocation.method(#setExposureMode, <Object?>[cameraId, mode]));
+      super.noSuchMethod(
+          Invocation.method(#setExposureMode, <Object?>[cameraId, mode]));
 
   @override
   Future<void> setExposurePoint(int? cameraId, Point<double>? point) async =>
-      super.noSuchMethod(Invocation.method(#setExposurePoint, <Object?>[cameraId, point]));
+      super.noSuchMethod(
+          Invocation.method(#setExposurePoint, <Object?>[cameraId, point]));
 
   @override
-  Future<double> getMinExposureOffset(int? cameraId) async => super.noSuchMethod(
+  Future<double> getMinExposureOffset(int? cameraId) async =>
+      super.noSuchMethod(
         Invocation.method(#getMinExposureOffset, <Object?>[cameraId]),
         returnValue: Future<double>.value(0.0),
       ) as Future<double>;
 
   @override
-  Future<double> getMaxExposureOffset(int? cameraId) async => super.noSuchMethod(
+  Future<double> getMaxExposureOffset(int? cameraId) async =>
+      super.noSuchMethod(
         Invocation.method(#getMaxExposureOffset, <Object?>[cameraId]),
         returnValue: Future<double>.value(1.0),
       ) as Future<double>;
 
   @override
-  Future<double> getExposureOffsetStepSize(int? cameraId) async => super.noSuchMethod(
+  Future<double> getExposureOffsetStepSize(int? cameraId) async =>
+      super.noSuchMethod(
         Invocation.method(#getExposureOffsetStepSize, <Object?>[cameraId]),
         returnValue: Future<double>.value(1.0),
       ) as Future<double>;
 
   @override
-  Future<double> setExposureOffset(int? cameraId, double? offset) async => super.noSuchMethod(
+  Future<double> setExposureOffset(int? cameraId, double? offset) async =>
+      super.noSuchMethod(
         Invocation.method(#setExposureOffset, <Object?>[cameraId, offset]),
         returnValue: Future<double>.value(1.0),
       ) as Future<double>;

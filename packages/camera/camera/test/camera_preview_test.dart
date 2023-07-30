@@ -122,6 +122,9 @@ class FakeController extends ValueNotifier<CameraValue>
 
   @override
   CameraDescription get description => value.description;
+
+  @override
+  ImageExtension get imageExtension => ImageExtension.png;
 }
 
 void main() {
