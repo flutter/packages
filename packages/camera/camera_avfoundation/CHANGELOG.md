@@ -1,10 +1,7 @@
 ## NEXT
 
-* Fixes unawaited_futures violations.
-
-## 0.9.14
-
 * Add support to HEIC format
+* Fixes unawaited_futures violations.
 
 ## 0.9.13+2
 
