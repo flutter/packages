@@ -57,7 +57,7 @@ typedef NS_ENUM(NSInteger, ImageExtension) {
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result
-       ImageExtension:(ImageExtension)imageExtension;
+       imageExtension:(ImageExtension)imageExtension;
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
 /**
