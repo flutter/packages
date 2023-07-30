@@ -500,6 +500,7 @@ NSString *const errorMethod = @"error";
       return;
     }
 
+    // ignore audio samples until the first video sample arrives to avoid black frames at video start
     if (_videoWriter.status != AVAssetWriterStatusWriting && output != _captureVideoOutput) {
       return;
     }
