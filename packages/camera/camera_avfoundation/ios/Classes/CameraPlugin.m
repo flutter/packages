@@ -186,7 +186,7 @@
     }else if ([@"takePicture" isEqualToString:call.method]) {
     NSString *formatString = call.arguments[@"imageExtension"];
     
-   imageExtension imageExtension = ImageExtensionJPEG;
+   ImageExtension imageExtension = ImageExtensionJPEG;
     if ([formatString isEqualToString:@"heic"]) {
         imageExtension = ImageExtensionHEIC;
     }
