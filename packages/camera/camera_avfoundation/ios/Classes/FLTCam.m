@@ -244,7 +244,7 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result imageExtension:(imageExtension)imageExtension {
+- (void)captureToFile:(FLTThreadSafeFlutterResult *)result imageExtension:(ImageExtension)imageExtension {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
   NSString *extension;
   if (_resolutionPreset == FLTResolutionPresetMax) {
