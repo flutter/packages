@@ -244,14 +244,14 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result imageFormat:(ImageFormat)imageFormat {
+- (void)captureToFile:(FLTThreadSafeFlutterResult *)result imageExtension:(imageExtension)imageExtension {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
   NSString *extension;
   if (_resolutionPreset == FLTResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
   }
   
-  if (self.imageFormat == ImageFormatHEIC) {
+  if (self.imageExtension == ImageExtensionHEIC) {
     if (@available(iOS 11.0, *)) {
         if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
             settings = [AVCapturePhotoSettings photoSettingsWithFormat:@{ AVVideoCodecKey : AVVideoCodecTypeHEVC }];

@@ -15,11 +15,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Represents image format. Mirrors ImageFormat in camera.dart.
+ * Represents image format. Mirrors ImageExtension in camera.dart.
  */
-typedef NS_ENUM(NSInteger, ImageFormat) {
-  ImageFormatJPEG,
-  ImageFormatHEIC,
+typedef NS_ENUM(NSInteger, ImageExtension) {
+  ImageExtensionJPEG,
+  ImageExtensionHEIC,
 };
 
 /**
@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, ImageFormat) {
 @property(assign, nonatomic) FLTFlashMode flashMode;
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
-@property(readonly, nonatomic) ImageFormat imageFormat;
+@property(readonly, nonatomic) ImageExtension imageExtension;
 
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
@@ -56,7 +56,8 @@ typedef NS_ENUM(NSInteger, ImageFormat) {
 - (void)start;
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result imageFormat:(ImageFormat)imageFormat;
+- (void)captureToFile:(FLTThreadSafeFlutterResult *)result
+       ImageExtension:(ImageExtension)imageExtension;
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
 /**

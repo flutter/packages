@@ -186,13 +186,13 @@
     }else if ([@"takePicture" isEqualToString:call.method]) {
     NSString *formatString = call.arguments[@"imageExtension"];
     
-   ImageFormat imageFormat = ImageFormatJPEG;
+   imageExtension imageExtension = ImageExtensionJPEG;
     if ([formatString isEqualToString:@"heic"]) {
-        imageFormat = ImageFormatHEIC;
+        imageExtension = ImageExtensionHEIC;
     }
 
     
-      [_camera captureToFile:result imageFormat:imageFormat];
+      [_camera captureToFile:result imageExtension:imageExtension];
     }
     else if ([@"dispose" isEqualToString:call.method]) {
       [_registry unregisterTexture:cameraId];
