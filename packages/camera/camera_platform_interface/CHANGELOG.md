@@ -1,4 +1,4 @@
-## 2.5.2
+## NEXT
 
 * Add support to HEIC format on take picture (only iOS).
 
