@@ -7,21 +7,29 @@ import 'package:flutter_image/flutter_image.dart';
 
 void main() => runApp(const MyApp());
 
-/// The main app
+/// The main app.
 class MyApp extends StatelessWidget {
-  /// Contructs main app
+  /// Contructs main app.
   const MyApp({super.key});
+
+  /// Returns the URL to load an asset from this example app as a network source.
+  String getUrlForAssetAsNetworkSource(String assetKey) {
+    return 'https://github.com/flutter/packages/blob/main/packages/flutter_image/example/$assetKey?raw=true';
+  }
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    final String imageUrl =
+        getUrlForAssetAsNetworkSource('assets/display_image.jpg');
+
+    return MaterialApp(
       title: 'flutter_image example app',
-      home: HomeScreen(imageUrl: 'https://picsum.photos/250?image=9'),
+      home: HomeScreen(imageUrl: imageUrl),
     );
   }
 }
 
-/// The home screen
+/// The home screen.
 class HomeScreen extends StatelessWidget {
   /// Contructs a [HomeScreen]
   const HomeScreen({
@@ -29,7 +37,7 @@ class HomeScreen extends StatelessWidget {
     required this.imageUrl,
   });
 
-  /// URL of the network image
+  /// URL of the network image.
   final String imageUrl;
 
   @override
