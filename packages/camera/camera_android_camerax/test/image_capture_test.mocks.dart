@@ -5,9 +5,9 @@
 // @dart=2.19
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i3;
 
-import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i3;
+import 'package:camera_android_camerax/src/resolution_selector.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 
 import 'test_camerax_library.g.dart' as _i2;
@@ -36,7 +36,7 @@ class MockTestImageCaptureHostApi extends _i1.Mock
   void create(
     int? identifier,
     int? flashMode,
-    _i3.ResolutionInfo? targetResolution,
+    int? resolutionSelectorId,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -44,7 +44,7 @@ class MockTestImageCaptureHostApi extends _i1.Mock
           [
             identifier,
             flashMode,
-            targetResolution,
+            resolutionSelectorId,
           ],
         ),
         returnValueForMissingStub: null,
@@ -65,13 +65,13 @@ class MockTestImageCaptureHostApi extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  _i4.Future<String> takePicture(int? identifier) => (super.noSuchMethod(
+  _i3.Future<String> takePicture(int? identifier) => (super.noSuchMethod(
         Invocation.method(
           #takePicture,
           [identifier],
         ),
-        returnValue: _i4.Future<String>.value(''),
-      ) as _i4.Future<String>);
+        returnValue: _i3.Future<String>.value(''),
+      ) as _i3.Future<String>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
@@ -91,4 +91,15 @@ class MockTestInstanceManagerHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+}
+
+/// A class which mocks [ResolutionSelector].
+///
+/// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
+class MockResolutionSelector extends _i1.Mock
+    implements _i4.ResolutionSelector {
+  MockResolutionSelector() {
+    _i1.throwOnMissingStub(this);
+  }
 }

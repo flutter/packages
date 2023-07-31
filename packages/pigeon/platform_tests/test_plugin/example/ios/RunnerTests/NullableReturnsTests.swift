@@ -35,7 +35,7 @@ class NullableReturnsTests: XCTestCase {
   func testNullableParameterWithHostApi() {
     let api = MockNullableArgHostApi()
     let binaryMessenger = MockBinaryMessenger<Int64?>(codec: codec)
-    let channel = "dev.flutter.pigeon.NullableArgHostApi.doit"
+    let channel = "dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit"
 
     NullableArgHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: api)
     XCTAssertNotNil(binaryMessenger.handlers[channel])

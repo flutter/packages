@@ -1,3 +1,8 @@
+## 3.9.2
+
+* Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller or PlatformView
+  implementation flag changes. 
+
 ## 3.9.1
 
 * Adjusts SDK checks for better testability.

@@ -31,6 +31,7 @@ needed for your project.
   // Set this to a unique prefix for your plugin or application, per Objective-C naming conventions.
   objcOptions: ObjcOptions(prefix: 'PGN'),
   copyrightHeader: 'pigeons/copyright.txt',
+  dartPackageName: 'pigeon_example_package',
 ))
 ```
 Then make a simple call to run pigeon on the Dart file containing your definitions.
