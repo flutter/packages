@@ -7,7 +7,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:xdg_directories/xdg_directories.dart';
-import 'widgets/directory_display.dart';
 
 void main() {
   runApp(const MyApp());
@@ -79,51 +78,51 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(
               height: 20,
             ),
-            DirectoryDisplay(
+            _singleDirectoryPath(
               title: 'Selected directory:',
-              value: selectedUserDirectory,
+              path: selectedUserDirectory,
             ),
             const SizedBox(
               height: 50,
             ),
-            DirectoryDisplay(
+            _singleDirectoryPath(
               title: 'Data Home:',
-              value: dataHome.path,
+              path: dataHome.path,
             ),
             const SizedBox(
               height: 50,
             ),
-            DirectoryDisplay(
+            _singleDirectoryPath(
               title: 'Config Home:',
-              value: configHome.path,
+              path: configHome.path,
             ),
             const SizedBox(
               height: 50,
             ),
-            DirectoryDisplay.listOfValues(
+            _listOfDirectoryPaths(
               title: 'Data Directories:',
-              values: dataDirs.map((Directory d) => d.path).toList(),
+              paths: dataDirs.map((Directory d) => d.path).toList(),
             ),
             const SizedBox(
               height: 50,
             ),
-            DirectoryDisplay.listOfValues(
+            _listOfDirectoryPaths(
               title: 'Config Directories:',
-              values: configDirs.map((Directory d) => d.path).toList(),
+              paths: configDirs.map((Directory d) => d.path).toList(),
             ),
             const SizedBox(
               height: 50,
             ),
-            DirectoryDisplay(
+            _singleDirectoryPath(
               title: 'Cache Home:',
-              value: cacheHome.path,
+              path: cacheHome.path,
             ),
             const SizedBox(
               height: 50,
             ),
-            DirectoryDisplay(
+            _singleDirectoryPath(
               title: 'Runtime Directory:',
-              value: runtimeDir?.path,
+              path: runtimeDir?.path,
             ),
             const SizedBox(
               height: 100,
@@ -133,4 +132,82 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
+
+/// This is a Widget that displays a title and a directory path.
+Widget _singleDirectoryPath({
+  required String title,
+  String? path,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.only(left: 10, bottom: 5),
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+          ),
+        ),
+      ),
+      Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 5,
+        ),
+        color: Colors.black38,
+        child: Text(
+          path ?? '',
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+/// This is a Widget that displays a title and a list of directory paths.
+Widget _listOfDirectoryPaths({
+  required String title,
+  required List<String> paths,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      Padding(
+        padding: const EdgeInsets.only(left: 10, bottom: 5),
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+          ),
+        ),
+      ),
+      ListView.builder(
+        shrinkWrap: true,
+        itemCount: paths.length,
+        itemBuilder: (BuildContext context, int index) => Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 5,
+          ),
+          color: Colors.black38,
+          child: Text(
+            paths[index],
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }
