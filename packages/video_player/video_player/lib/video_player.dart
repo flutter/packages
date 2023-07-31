@@ -301,6 +301,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   VideoPlayerController.networkUrl(
     Uri url, {
     this.formatHint,
+    this.maxCacheSize,
+    this.maxFileSize,
+    this.enableCache,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},

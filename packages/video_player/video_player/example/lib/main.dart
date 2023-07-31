@@ -22,7 +22,7 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         key: const ValueKey<String>('home_page'),
         appBar: AppBar(
@@ -48,6 +48,10 @@ class _App extends StatelessWidget {
                 icon: Icon(Icons.cloud),
                 text: 'Remote',
               ),
+              Tab(
+                icon: Icon(Icons.cloud),
+                text: 'Remote cache',
+              ),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset'),
               Tab(icon: Icon(Icons.list), text: 'List example'),
             ],
@@ -56,6 +60,7 @@ class _App extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             _BumbleBeeRemoteVideo(),
+            _BumbleBeeRemoteCacheVideo(),
             _ButterFlyAssetVideo(),
             _ButterFlyAssetVideoInList(),
           ],
@@ -259,6 +264,87 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BumbleBeeRemoteCacheVideo extends StatefulWidget {
+  @override
+  _BumbleBeeRemoteCacheVideoState createState() =>
+      _BumbleBeeRemoteCacheVideoState();
+}
+
+class _BumbleBeeRemoteCacheVideoState
+    extends State<_BumbleBeeRemoteCacheVideo> {
+  late VideoPlayerController _controller;
+
+  Future<ClosedCaptionFile> _loadCaptions() async {
+    final String fileContents = await DefaultAssetBundle.of(context)
+        .loadString('assets/bumble_bee_captions.vtt');
+    return WebVTTCaptionFile(
+        fileContents); // For vtt files, use WebVTTCaptionFile
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.networkUrl(
+      Uri.parse(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+      ),
+      enableCache: true,
+      maxCacheSize: 1600,
+      maxFileSize: 1000,
+      closedCaptionFile: _loadCaptions(),
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
+
+    _controller.addListener(() {
+      setState(() {});
+    });
+    _controller.setLooping(true);
+    _controller.initialize();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Container(padding: const EdgeInsets.only(top: 20.0)),
+          const Text('With remote cache mp4'),
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  VideoPlayer(_controller),
+                  ClosedCaption(text: _controller.value.caption.text),
+                  _ControlsOverlay(controller: _controller),
+                  VideoProgressIndicator(_controller, allowScrubbing: true),
+                ],
+              ),
+            ),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+            ),
+            onPressed: () {
+              _controller.clearCache();
+            },
+            child: const Text('clear cache'),
+          )
         ],
       ),
     );
