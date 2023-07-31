@@ -816,7 +816,8 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (BOOL)doesInfoPlistSupportPictureInPicture {
   NSArray *backgroundModes = [NSBundle.mainBundle objectForInfoDictionaryKey:@"UIBackgroundModes"];
-  return [backgroundModes isKindOfClass:[NSArray class]] && [backgroundModes containsObject:@"audio"];
+  return
+      [backgroundModes isKindOfClass:[NSArray class]] && [backgroundModes containsObject:@"audio"];
 }
 
 - (void)startPictureInPicture:(FLTStartPictureInPictureMessage *)input
