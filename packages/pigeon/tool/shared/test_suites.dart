@@ -371,7 +371,7 @@ Future<int> _runCommandLineTests() async {
       '--input',
       'pigeons/message.dart',
       '--dart_out',
-      '$tempDir/subdirectory/message.g.dart',
+      '$tempDir/subdirectory/does/not/exist/message.g.dart',
     ],
   ];
 
