@@ -38,3 +38,8 @@ dev_dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.0.0
   test: ^1.16.0
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {path_provider_android: {path: ../../path_provider/path_provider_android}, path_provider_foundation: {path: ../../path_provider/path_provider_foundation}, path_provider_linux: {path: ../../path_provider/path_provider_linux}, path_provider_windows: {path: ../../path_provider/path_provider_windows}}
