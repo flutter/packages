@@ -1,3 +1,11 @@
+## 0.5.3
+
+* Initial support for custom overlays. [#98596](https://github.com/flutter/flutter/issues/98596).
+
+## 0.5.2
+
+* Adds options for gesture handling and tilt controls.
+
 ## 0.5.1
 
 * Adds padding support to `CameraUpdate.newLatLngBounds`. Issue [#122192](https://github.com/flutter/flutter/issues/122192).

@@ -1,3 +1,8 @@
+## 10.1.4
+
+* Adds package name to method channel strings to avoid potential collisions between plugins.
+* Adds dartPackageName option to `pigeonOptions`.
+
 ## 10.1.3
 
 * Adds generic `Object` field support to data classes.
