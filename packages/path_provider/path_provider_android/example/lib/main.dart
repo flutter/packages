@@ -39,6 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<String?>? _tempDirectory;
   Future<String?>? _appSupportDirectory;
   Future<String?>? _appDocumentsDirectory;
+  Future<String?>? _appCacheDirectory;
   Future<String?>? _externalDocumentsDirectory;
   Future<List<String>?>? _externalStorageDirectories;
   Future<List<String>?>? _externalCacheDirectories;
@@ -89,6 +90,12 @@ class _MyHomePageState extends State<MyHomePage> {
   void _requestAppSupportDirectory() {
     setState(() {
       _appSupportDirectory = provider.getApplicationSupportPath();
+    });
+  }
+
+  void _requestAppCacheDirectory() {
+    setState(() {
+      _appCacheDirectory = provider.getApplicationCachePath();
     });
   }
 
@@ -147,6 +154,15 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             FutureBuilder<String?>(
                 future: _appSupportDirectory, builder: _buildDirectory),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                onPressed: _requestAppCacheDirectory,
+                child: const Text('Get Application Cache Directory'),
+              ),
+            ),
+            FutureBuilder<String?>(
+                future: _appCacheDirectory, builder: _buildDirectory),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
