@@ -60,7 +60,7 @@ class MyShellRouteData extends StatefulShellRouteData {
     GoRouterState state,
     StatefulNavigationShell navigationShell,
   ) {
-       return navigationShell;
+    return navigationShell;
   }
 
   static const String $restorationScopeId = 'restorationScopeId';
@@ -123,9 +123,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: 
-      
-      AnimatedBranchContainer(
+      body: AnimatedBranchContainer(
         currentIndex: navigationShell.currentIndex,
         children: children,
       ),
