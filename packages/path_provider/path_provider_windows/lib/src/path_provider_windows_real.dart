@@ -244,8 +244,8 @@ class PathProviderWindows extends PathProviderPlatform {
     return sanitized.isEmpty ? null : sanitized;
   }
 
-  Future<String?> _createApplicationSubdirectory(String folderID) async {
-    final String? baseDir = await getPath(folderID);
+  Future<String?> _createApplicationSubdirectory(String folderId) async {
+    final String? baseDir = await getPath(folderId);
     if (baseDir == null) {
       return null;
     }
