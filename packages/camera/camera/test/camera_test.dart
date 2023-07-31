@@ -1422,9 +1422,11 @@ class MockCameraPlatform extends Mock
           mockOnDeviceOrientationChangedEvent);
 
   @override
-  Future<XFile> takePicture(int cameraId) => mockPlatformException
-      ? throw PlatformException(code: 'foo', message: 'bar')
-      : Future<XFile>.value(mockTakePicture);
+  Future<XFile> takePicture(int cameraId,
+          {ImageExtension imageExtension = ImageExtension.jpeg}) =>
+      mockPlatformException
+          ? throw PlatformException(code: 'foo', message: 'bar')
+          : Future<XFile>.value(mockTakePicture);
 
   @override
   Future<void> prepareForVideoRecording() async =>
