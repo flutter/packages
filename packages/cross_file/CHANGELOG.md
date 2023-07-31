@@ -1,4 +1,4 @@
-## 0.3.4+5
+## 0.3.3+5
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Improved documentation about ignored parameters in IO module.
