@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'XDG Directories Demo',
       home: MyHomePage(title: 'XDG Directories Demo'),
+      color: Colors.blue,
     );
   }
 }
@@ -41,38 +42,24 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
       body: Center(
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                'Select a user directory name:',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: 25,
-                ),
-                textAlign: TextAlign.start,
-              ),
+            const SizedBox(
+              height: 20,
             ),
             ListView.builder(
               shrinkWrap: true,
               itemCount: userDirectoryNames.length,
-              itemBuilder: (BuildContext context, int index) => ListTile(
-                title: Text(userDirectoryNames.elementAt(index)),
-                visualDensity: VisualDensity.standard,
-                onTap: () => setState(
-                  () {
-                    selectedUserDirectory =
-                        getUserDirectory(userDirectoryNames.elementAt(index))
-                                ?.path ??
-                            '';
-                  },
-                ),
+              itemBuilder: (BuildContext context, int index) =>
+                  _singleDirectoryPath(
+                title: userDirectoryNames.elementAt(index),
+                path: getUserDirectory(userDirectoryNames.elementAt(index))
+                        ?.path ??
+                    '',
               ),
             ),
             const SizedBox(
