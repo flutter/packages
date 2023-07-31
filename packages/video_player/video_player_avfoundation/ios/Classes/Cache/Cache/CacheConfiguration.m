@@ -21,10 +21,8 @@ static NSString *kURLKey = @"kURLKey";
 
 @end
 
-// Provide functionality related to caching configuration and content download statistics. Let's go through each class and its methods:
 @implementation CacheConfiguration
 
-// Ps used to create and retrieve a CacheConfiguration object based on the provided filePath. It attempts to unarchive a previously saved configuration from the file. If the file does not exist or the unarchiving fails, a new CacheConfiguration object is created and returned.
 + (instancetype)configurationWithFilePath:(NSString *)filePath error:(NSError **)error {
   filePath = [self configurationFilePathForFilePath:filePath];
   NSData *data = [NSData dataWithContentsOfFile:filePath];
@@ -106,7 +104,6 @@ static NSString *kURLKey = @"kURLKey";
 
 #pragma mark - Update
 
-// This method is used to save the CacheConfiguration object to disk. It uses NSKeyedArchiver to archive the object and writes the data to the specified file path with a slight delay using performSelector:afterDelay: to avoid excessive disk I/O.
 - (void)save {
   [[self class] cancelPreviousPerformRequestsWithTarget:self
                                                selector:@selector(archiveData)
@@ -131,7 +128,6 @@ static NSString *kURLKey = @"kURLKey";
   }
 }
 
-// This method is used to add a cache fragment to the internal cache fragments array. It efficiently manages cache fragments, ensuring that overlapping fragments are combined, and new fragments are inserted in the correct order.
 - (void)addCacheFragment:(NSRange)fragment {
   if (fragment.location == NSNotFound || fragment.length == 0) {
     return;

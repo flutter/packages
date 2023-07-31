@@ -9,7 +9,6 @@ NSString *CacheConfigurationKey = @"CacheConfigurationKey";
 
 static NSString *kMContentCacheDirectory;
 
-// responsible for managing caching (directory) of content
 @implementation CacheManager
 
 + (void)load {
@@ -30,14 +29,12 @@ static NSString *kMContentCacheDirectory;
   return kMContentCacheDirectory;
 }
 
-// returns filepath for file (content) url
 + (NSString *)cachedFilePathForURL:(NSURL *)url {
   NSLog(@"%@", url);
   NSString *pathComponent = url.absoluteString;
   return [[self cacheDirectory] stringByAppendingPathComponent:pathComponent];
 }
 
-// returns CacheConfiguration for file (content) url
 + (CacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error {
   NSString *filePath = [self cachedFilePathForURL:url];
   CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath
@@ -67,7 +64,6 @@ static NSString *kMContentCacheDirectory;
   return size;
 }
 
-// removes all (downloading)files in cache directory
 + (void)cleanAllCacheWithError:(NSError **)error {
   // Find downloading file
   NSMutableSet *downloadingFiles = [NSMutableSet set];

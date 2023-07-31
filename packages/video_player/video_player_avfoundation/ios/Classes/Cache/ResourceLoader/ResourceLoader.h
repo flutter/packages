@@ -8,6 +8,12 @@
 
 @interface ResourceLoader : NSObject
 
+/*!
+ This class acts as a resource loader for AVAssetResourceLoader and handles loading of media resource data from a specified URL.
+ It supports caching and downloading of media data from the URL using a ContentCacheWorker and ContentDownloader.
+ It uses a delegate pattern to notify the consumer of the resource loader about the progress and completion of resource loading.
+ */
+
 @property(nonatomic, strong, readonly) NSURL *url;
 @property(nonatomic, weak) id<ResourceLoaderDelegate> delegate;
 

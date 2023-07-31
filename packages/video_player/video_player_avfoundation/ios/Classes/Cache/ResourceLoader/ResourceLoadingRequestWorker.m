@@ -33,7 +33,6 @@
   return self;
 }
 
-// This method is called to initiate the downloading and loading process. It uses the information from the AVAssetResourceLoadingDataRequest associated with the request to determine the offset, length, and whether to download the content till the end.
 - (void)startWork {
   AVAssetResourceLoadingDataRequest *dataRequest = self.request.dataRequest;
 

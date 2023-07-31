@@ -6,9 +6,22 @@
 
 @interface ContentInfo : NSObject <NSCoding>
 
+
+/**
+ @property contentType
+ */
 @property(nonatomic, copy) NSString *contentType;
+/**
+ @property byteRangeAccessSupported
+ */
 @property(nonatomic, assign) BOOL byteRangeAccessSupported;
+/**
+ @property contentLength
+ */
 @property(nonatomic, assign) unsigned long long contentLength;
+/**
+ @property downloadedContentLength
+ */
 @property(nonatomic) unsigned long long downloadedContentLength;
 
 @end
