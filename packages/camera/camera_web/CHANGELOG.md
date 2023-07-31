@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Changes `availableCameras` to not ask for the microphone permission.
+
 ## 0.3.1+4
 
 * Removes obsolete null checks on non-nullable values.
