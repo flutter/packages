@@ -291,6 +291,9 @@ NS_INLINE UIViewController *rootViewController(void) {
   return self;
 }
 
+/**
+ * Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate to the controller.
+ */
 - (void)setupPiPController {
   if ([AVPictureInPictureController isPictureInPictureSupported]) {
     self.pictureInPictureController =
