@@ -1,6 +1,7 @@
 ## 3.1.1
 
-* Updates package metadata to point to its new repository.
+* Transfers the package source from https://github.com/google/platform.dart to
+  https://github.com/flutter/packages.
 
 ## 3.1.0
 
