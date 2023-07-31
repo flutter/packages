@@ -69,23 +69,26 @@ class FakePlatform extends Platform {
   /// [json] must be a JSON string that matches the encoding produced by
   /// [toJson].
   factory FakePlatform.fromJson(String json) {
-    Map<String, dynamic> map = JsonDecoder().convert(json);
+    final Map<String, dynamic> map =
+        const JsonDecoder().convert(json) as Map<String, dynamic>;
     return FakePlatform(
-      numberOfProcessors: map['numberOfProcessors'],
-      pathSeparator: map['pathSeparator'],
-      operatingSystem: map['operatingSystem'],
-      operatingSystemVersion: map['operatingSystemVersion'],
-      localHostname: map['localHostname'],
-      environment: map['environment'].cast<String, String>(),
-      executable: map['executable'],
-      resolvedExecutable: map['resolvedExecutable'],
-      script: Uri.parse(map['script']),
-      executableArguments: map['executableArguments'].cast<String>(),
-      packageConfig: map['packageConfig'],
-      version: map['version'],
-      stdinSupportsAnsi: map['stdinSupportsAnsi'],
-      stdoutSupportsAnsi: map['stdoutSupportsAnsi'],
-      localeName: map['localeName'],
+      numberOfProcessors: map['numberOfProcessors'] as int?,
+      pathSeparator: map['pathSeparator'] as String?,
+      operatingSystem: map['operatingSystem'] as String?,
+      operatingSystemVersion: map['operatingSystemVersion'] as String?,
+      localHostname: map['localHostname'] as String?,
+      environment:
+          (map['environment'] as Map<Object?, Object?>).cast<String, String>(),
+      executable: map['executable'] as String?,
+      resolvedExecutable: map['resolvedExecutable'] as String?,
+      script: Uri.parse(map['script'] as String),
+      executableArguments:
+          (map['executableArguments'] as List<Object?>).cast<String>(),
+      packageConfig: map['packageConfig'] as String?,
+      version: map['version'] as String?,
+      stdinSupportsAnsi: map['stdinSupportsAnsi'] as bool?,
+      stdoutSupportsAnsi: map['stdoutSupportsAnsi'] as bool?,
+      localeName: map['localeName'] as String?,
     );
   }
 
