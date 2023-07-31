@@ -394,6 +394,7 @@ class RecordingProcessRunner extends ProcessRunner {
     String executable,
     List<String> args, {
     Directory? workingDir,
+    Map<String, String>? environment,
     bool exitOnError = false,
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
@@ -412,6 +413,7 @@ class RecordingProcessRunner extends ProcessRunner {
     String executable,
     List<String> args, {
     Directory? workingDir,
+    Map<String, String>? environment,
     bool exitOnError = false,
     bool logOnError = false,
     Encoding stdoutEncoding = io.systemEncoding,

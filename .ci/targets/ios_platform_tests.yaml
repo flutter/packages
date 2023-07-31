@@ -5,6 +5,10 @@ tasks:
   - name: create simulator
     script: .ci/scripts/create_simulator.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: download Dart and iOS deps
+    script: script/tool_runner.sh
+    args: ["fetch-deps", "--ios", "--supporting-target-platforms-only"]
+    infra_step: true
   - name: build examples
     script: script/tool_runner.sh
     args: ["build-examples", "--ios"]

@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageCaptureHostApi;
 import java.io.File;
@@ -52,17 +53,19 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
    */
   @Override
   public void create(
-      @NonNull Long identifier,
-      @Nullable Long flashMode,
-      @Nullable GeneratedCameraXLibrary.ResolutionInfo targetResolution) {
+      @NonNull Long identifier, @Nullable Long flashMode, @Nullable Long resolutionSelectorId) {
     ImageCapture.Builder imageCaptureBuilder = cameraXProxy.createImageCaptureBuilder();
+
     if (flashMode != null) {
       // This sets the requested flash mode, but may fail silently.
       imageCaptureBuilder.setFlashMode(flashMode.intValue());
     }
-    if (targetResolution != null) {
-      imageCaptureBuilder.setTargetResolution(CameraXProxy.sizeFromResolution(targetResolution));
+    if (resolutionSelectorId != null) {
+      ResolutionSelector resolutionSelector =
+          Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
+      imageCaptureBuilder.setResolutionSelector(resolutionSelector);
     }
+
     ImageCapture imageCapture = imageCaptureBuilder.build();
     instanceManager.addDartCreatedInstance(imageCapture, identifier);
   }
