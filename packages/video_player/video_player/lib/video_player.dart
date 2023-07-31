@@ -623,8 +623,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
-  /// Sets the location of the video player view.
-  /// So picture-in-picture can use it for animating.
+  /// Sets the location of the video player view in order to animate the picture-in-picture view.
+  ///
   /// The rect will represent the location of the video player view in Flutter. The rect will be
   /// passed to the platform to position the native picture-in-picture overlay correctly.
   Future<void> setPictureInPictureOverlaySettings({

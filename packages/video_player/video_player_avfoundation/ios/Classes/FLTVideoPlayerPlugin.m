@@ -280,7 +280,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   _playerLayer.opacity = 0.001;
   [rootViewController().view.layer addSublayer:_playerLayer];
 
-  [self setupPipController];
+  [self setupPiPController];
 
   [self createVideoOutputAndDisplayLink:frameUpdater];
 
@@ -291,7 +291,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   return self;
 }
 
-- (void)setupPipController {
+- (void)setupPiPController {
   if ([AVPictureInPictureController isPictureInPictureSupported]) {
     self.pictureInPictureController =
         [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
@@ -816,8 +816,7 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (BOOL)doesInfoPlistSupportPictureInPicture {
   NSArray *backgroundModes = [NSBundle.mainBundle objectForInfoDictionaryKey:@"UIBackgroundModes"];
-  return ![backgroundModes isKindOfClass:[NSArray class]] ||
-         ![backgroundModes containsObject:@"audio"];
+  return [backgroundModes isKindOfClass:[NSArray class]] && [backgroundModes containsObject:@"audio"];
 }
 
 - (void)startPictureInPicture:(FLTStartPictureInPictureMessage *)input
