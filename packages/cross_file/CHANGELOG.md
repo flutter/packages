@@ -1,7 +1,8 @@
 ## 0.3.4+5
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
-* Updates `mimeType` documentation to reflect that it is not intended to be set on io implementation.
+* Improved documentation about ignored parameters in IO module.=======
+
 
 ## 0.3.3+4
 
