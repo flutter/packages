@@ -26,8 +26,3 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {path_provider_platform_interface: {path: ../../path_provider/path_provider_platform_interface}}
