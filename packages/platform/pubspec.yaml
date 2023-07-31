@@ -1,7 +1,8 @@
 name: platform
+description: A pluggable, mockable platform information abstraction for Dart.
+repository: https://github.com/flutter/packages/tree/main/packages/platform
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+platform%22
 version: 3.1.0
-description: A pluggable, mockable platform abstraction for Dart.
-homepage: https://github.com/google/platform.dart
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
