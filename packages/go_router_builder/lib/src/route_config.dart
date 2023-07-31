@@ -70,18 +70,21 @@ extension $_extensionName on $_className {
   String get routeDataClassName => 'ShellRouteData';
 
   @override
-  String get dataConvertionFunctionName => '\$route';
+  String get dataConvertionFunctionName => r'$route';
 }
 
 /// The configuration to generate class declarations for a StatefulShellRouteData.
 class StatefulShellRouteConfig extends RouteBaseConfig {
   StatefulShellRouteConfig._({
+    required this.parentNavigatorKey,
     required super.routeDataClass,
     required super.parent,
     required this.navigatorContainerBuilder,
     required this.restorationScopeId,
   }) : super._();
 
+  
+  final String? parentNavigatorKey;
   final String? navigatorContainerBuilder;
   final String? restorationScopeId;
 
@@ -96,6 +99,7 @@ extension $_extensionName on $_className {
 
   @override
   String get routeConstructorParameters =>
+      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}'
       '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
       '${navigatorContainerBuilder == null ? '' : 'navigatorContainerBuilder: $navigatorContainerBuilder,'}';
 
@@ -107,7 +111,7 @@ extension $_extensionName on $_className {
   String get routeDataClassName => 'StatefulShellRouteData';
 
   @override
-  String get dataConvertionFunctionName => '\$route';
+  String get dataConvertionFunctionName => r'$route';
 }
 
 /// The configuration to generate class declarations for a StatefulShellBranchData.
@@ -138,7 +142,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   String get routeDataClassName => 'StatefulShellBranchData';
 
   @override
-  String get dataConvertionFunctionName => '\$branch';
+  String get dataConvertionFunctionName => r'$branch';
 }
 
 /// The configuration to generate class declarations for a GoRouteData.
@@ -387,7 +391,7 @@ extension $_extensionName on $_className {
   String get routeDataClassName => 'GoRouteData';
 
   @override
-  String get dataConvertionFunctionName => '\$route';
+  String get dataConvertionFunctionName => r'$route';
 }
 
 /// Represents a `TypedGoRoute` annotation to the builder.
@@ -442,7 +446,7 @@ abstract class RouteBaseConfig {
     // ignore: deprecated_member_use
     final InterfaceElement classElement = typeParamType.element;
 
-    RouteBaseConfig? value;
+    final RouteBaseConfig value;
     switch (typeName) {
       case 'TypedShellRoute':
         value = ShellRouteConfig._(
@@ -462,6 +466,10 @@ abstract class RouteBaseConfig {
         value = StatefulShellRouteConfig._(
           routeDataClass: classElement,
           parent: parent,
+          parentNavigatorKey: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$parentNavigatorKey',
+          ),
           restorationScopeId: _generateParameterGetterCode(
             classElement,
             parameterName: r'$restorationScopeId',
@@ -505,9 +513,12 @@ abstract class RouteBaseConfig {
             parameterName: r'$parentNavigatorKey',
           ),
         );
+        break;
+      default:
+         throw UnsupportedError('Unrecognized type $typeName');
     }
 
-    value!._children.addAll(reader
+    value._children.addAll(reader
         .read(_generateChildrenGetterName(typeName))
         .listValue
         .map<RouteBaseConfig>((DartObject e) => RouteBaseConfig._fromAnnotation(
