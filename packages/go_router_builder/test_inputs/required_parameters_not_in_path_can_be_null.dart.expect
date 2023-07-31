@@ -7,7 +7,7 @@ extension $NullableRequiredParamNotInPathExtension
     on NullableRequiredParamNotInPath {
   static NullableRequiredParamNotInPath _fromState(GoRouterState state) =>
       NullableRequiredParamNotInPath(
-        id: _$convertMapValue('id', state.queryParameters, int.parse),
+        id: _$convertMapValue('id', state.uri.queryParameters, int.parse),
       );
 
   String get location => GoRouteData.$location(
