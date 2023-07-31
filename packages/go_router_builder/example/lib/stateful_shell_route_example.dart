@@ -62,10 +62,10 @@ class MyShellRouteData extends StatefulShellRouteData {
     return ScaffoldWithNavBar(navigationShell: navigationShell);
   }
 
-  static final String $restorationScopeId = 'restorationScopeId';
+  static const String $restorationScopeId = 'restorationScopeId';
 
-  static final ShellNavigationContainerBuilder $navigatorContainerBuilder =
-      ( (_, __, List<Widget> children) => ListView(children: children));
+  static Widget $navigatorContainerBuilder(_, __, List<Widget> children) =>
+      ListView(children: children);
 }
 
 class BranchAData extends StatefulShellBranchData {
@@ -76,7 +76,7 @@ class BranchBData extends StatefulShellBranchData {
   const BranchBData();
 
   static final GlobalKey<NavigatorState> $navigatorKey = _sectionANavigatorKey;
-  static final String $restorationScopeId = 'restorationScopeId';
+  static const String $restorationScopeId = 'restorationScopeId';
 }
 
 class DetailsARouteData extends GoRouteData {

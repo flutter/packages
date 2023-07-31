@@ -84,11 +84,12 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
     required this.restorationScopeId,
   }) : super._();
 
-  
   /// The parent navigator key.
   final String? parentNavigatorKey;
+
   /// The navigator container builder.
   final String? navigatorContainerBuilder;
+
   /// The restoration scope id.
   final String? restorationScopeId;
 
@@ -129,6 +130,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 
   /// The command for calling the navigator key getter from the ShellRouteData.
   final String? navigatorKey;
+
   /// The restoration scope id.
   final String? restorationScopeId;
 
@@ -170,7 +172,6 @@ class GoRouteConfig extends RouteBaseConfig {
 
   late final Set<String> _pathParams =
       pathParametersFromPattern(_rawJoinedPath);
-
 
   String get _rawJoinedPath {
     final List<String> pathSegments = <String>[];
@@ -513,7 +514,7 @@ abstract class RouteBaseConfig {
         );
         break;
       default:
-         throw UnsupportedError('Unrecognized type $typeName');
+        throw UnsupportedError('Unrecognized type $typeName');
     }
 
     value._children.addAll(reader
@@ -567,10 +568,21 @@ abstract class RouteBaseConfig {
         .map<String>((FieldElement e) => e.displayName)
         .firstOrNull;
 
-    if (fieldDisplayName == null) {
-      return null;
+    if (fieldDisplayName != null) {
+      return '${classElement.name}.$fieldDisplayName';
     }
-    return '${classElement.name}.$fieldDisplayName';
+
+    final String? methodDisplayName = classElement.methods
+        .where((MethodElement element) {
+          return element.isStatic && element.name == parameterName;
+        })
+        .map<String>((MethodElement e) => e.displayName)
+        .firstOrNull;
+
+    if (methodDisplayName != null) {
+      return '${classElement.name}.$methodDisplayName';
+    }
+    return null;
   }
 
   /// Generates all of the members that correspond to `this`.
