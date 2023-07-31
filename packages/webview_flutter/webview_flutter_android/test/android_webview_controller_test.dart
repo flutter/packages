@@ -1216,5 +1216,68 @@ void main() {
         ),
       );
     });
+
+    testWidgets('PlatformView is recreated when the controller changes',
+        (WidgetTester tester) async {
+      final MockPlatformViewsServiceProxy mockPlatformViewsService =
+          MockPlatformViewsServiceProxy();
+
+      when(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      ).thenReturn(MockSurfaceAndroidViewController());
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: createControllerWithMocks(),
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: createControllerWithMocks(),
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+    });
   });
 }

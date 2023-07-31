@@ -10,6 +10,7 @@ import android.hardware.camera2.params.MeteringRectangle;
 import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.CameraRegionUtils;
@@ -24,6 +25,8 @@ public class ExposurePointFeature extends CameraFeature<Point> {
   @Nullable private Point exposurePoint;
   private MeteringRectangle exposureRectangle;
   @NonNull private final SensorOrientationFeature sensorOrientationFeature;
+  private boolean defaultRegionsHasBeenSet = false;
+  @VisibleForTesting @Nullable public MeteringRectangle[] defaultRegions;
 
   /**
    * Creates a new instance of the {@link ExposurePointFeature}.
@@ -78,9 +81,18 @@ public class ExposurePointFeature extends CameraFeature<Point> {
     if (!checkIsSupported()) {
       return;
     }
-    requestBuilder.set(
-        CaptureRequest.CONTROL_AE_REGIONS,
-        exposureRectangle == null ? null : new MeteringRectangle[] {exposureRectangle});
+
+    if (!defaultRegionsHasBeenSet) {
+      defaultRegions = requestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
+      defaultRegionsHasBeenSet = true;
+    }
+
+    if (exposureRectangle != null) {
+      requestBuilder.set(
+          CaptureRequest.CONTROL_AE_REGIONS, new MeteringRectangle[] {exposureRectangle});
+    } else {
+      requestBuilder.set(CaptureRequest.CONTROL_AE_REGIONS, defaultRegions);
+    }
   }
 
   private void buildExposureRectangle() {

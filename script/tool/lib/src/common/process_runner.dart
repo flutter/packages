@@ -30,12 +30,13 @@ class ProcessRunner {
     String executable,
     List<String> args, {
     Directory? workingDir,
+    Map<String, String>? environment,
     bool exitOnError = false,
   }) async {
     print(
         'Running command: "$executable ${args.join(' ')}" in ${workingDir?.path ?? io.Directory.current.path}');
     final io.Process process = await io.Process.start(executable, args,
-        workingDirectory: workingDir?.path);
+        workingDirectory: workingDir?.path, environment: environment);
     await Future.wait(<Future<dynamic>>[
       io.stdout.addStream(process.stdout),
       io.stderr.addStream(process.stderr),
@@ -62,14 +63,19 @@ class ProcessRunner {
   /// Defaults to `false`
   ///
   /// Returns the [io.ProcessResult] of the [executable].
-  Future<io.ProcessResult> run(String executable, List<String> args,
-      {Directory? workingDir,
-      bool exitOnError = false,
-      bool logOnError = false,
-      Encoding stdoutEncoding = io.systemEncoding,
-      Encoding stderrEncoding = io.systemEncoding}) async {
+  Future<io.ProcessResult> run(
+    String executable,
+    List<String> args, {
+    Directory? workingDir,
+    Map<String, String>? environment,
+    bool exitOnError = false,
+    bool logOnError = false,
+    Encoding stdoutEncoding = io.systemEncoding,
+    Encoding stderrEncoding = io.systemEncoding,
+  }) async {
     final io.ProcessResult result = await io.Process.run(executable, args,
         workingDirectory: workingDir?.path,
+        environment: environment,
         stdoutEncoding: stdoutEncoding,
         stderrEncoding: stderrEncoding);
     if (result.exitCode != 0) {
