@@ -12,7 +12,7 @@ class FakePlatform extends Platform {
   ///
   /// Unspecified properties will *not* be assigned default values (they will
   /// remain `null`). If an unset non-null value is read, a [StateError] will
-  /// be thrown instead of returnin `null`.
+  /// be thrown instead of returning `null`.
   FakePlatform({
     int? numberOfProcessors,
     String? pathSeparator,
