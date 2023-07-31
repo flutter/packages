@@ -30,6 +30,7 @@ packages/multicast_dns/**                                @dnfield
 packages/palette_generator/**                            @gspencergoog
 packages/path_provider/**                                @stuartmorgan
 packages/pigeon/**                                       @tarrinneal
+packages/platform/**                                     @stuartmorgan
 packages/plugin_platform_interface/**                    @stuartmorgan
 packages/pointer_interceptor/**                          @ditman
 packages/quick_actions/**                                @bparrishMines
