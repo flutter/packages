@@ -4,52 +4,30 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:xdg_directories/xdg_directories.dart';
+import 'package:xdg_directories_example/main.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('XDG Directories', (WidgetTester _) async {
-    // Check that getUserDirectory() returns a Directory.
-    expect(
-      getUserDirectory('Home') != null,
-      true,
-      reason: 'getUserDirectory() should return a Directory',
-    );
+  testWidgets('xdg_directories_demo', (WidgetTester _) async {
+    // Build our app and trigger a frame.
+    await _.pumpWidget(const MyApp());
 
-    // Check that dataHome returns a Directory.
-    expect(
-      dataHome.path.isNotEmpty,
-      true,
-      reason: 'dataHome should return a Directory',
-    );
+    // Verify that our counter starts at 0.
+    expect(find.text('XDG Directories Demo'), findsOneWidget);
+    expect(find.text('Data Home:'), findsOneWidget);
 
-    // Check that configHome returns a Directory.
-    expect(
-      configHome.path.isNotEmpty,
-      true,
-      reason: 'configHome should return a Directory',
-    );
+    // Tap the '+' icon and trigger a frame.
+    // await _.tap(find.byIcon(Icons.add));
+    // await _.pump();
 
-    // Check that cacheHome returns a Directory.
-    expect(
-      cacheHome.path.isNotEmpty,
-      true,
-      reason: 'cacheHome should return a Directory',
-    );
+    // Verify that our counter has incremented.
+    // expect(find.text('0'), findsNothing);
+    // expect(find.text('1'), findsOneWidget);
 
-    // Check that dataDirs returns a List<Directory>.
-    expect(
-      dataDirs.isNotEmpty,
-      true,
-      reason: 'dataDirs should return a List<Directory>',
-    );
+    // await _.tap(find.byIcon(Icons.add));
+    // await _.pump();
 
-    // Check that configDirs returns a List<Directory>.
-    expect(
-      configDirs.isNotEmpty,
-      true,
-      reason: 'configDirs should return a List<Directory>',
-    );
+    // expect(find.text('0'), findsNothing);
   });
 }

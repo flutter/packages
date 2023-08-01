@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: ListView(
+          padding: const EdgeInsets.only(left: 20),
           shrinkWrap: true,
           children: <Widget>[
             const SizedBox(
@@ -54,63 +55,20 @@ class _MyHomePageState extends State<MyHomePage> {
             ListView.builder(
               shrinkWrap: true,
               itemCount: userDirectoryNames.length,
-              itemBuilder: (BuildContext context, int index) =>
-                  _singleDirectoryPath(
-                title: userDirectoryNames.elementAt(index),
-                path: getUserDirectory(userDirectoryNames.elementAt(index))
-                        ?.path ??
-                    '',
+              itemBuilder: (BuildContext context, int index) => Text(
+                '${userDirectoryNames.elementAt(index)}: \n${getUserDirectory(userDirectoryNames.elementAt(index))?.path}\n',
               ),
             ),
-            const SizedBox(
-              height: 20,
-            ),
-            _singleDirectoryPath(
-              title: 'Selected directory:',
-              path: selectedUserDirectory,
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            _singleDirectoryPath(
-              title: 'Data Home:',
-              path: dataHome.path,
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            _singleDirectoryPath(
-              title: 'Config Home:',
-              path: configHome.path,
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            _listOfDirectoryPaths(
-              title: 'Data Directories:',
-              paths: dataDirs.map((Directory d) => d.path).toList(),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            _listOfDirectoryPaths(
-              title: 'Config Directories:',
-              paths: configDirs.map((Directory d) => d.path).toList(),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            _singleDirectoryPath(
-              title: 'Cache Home:',
-              path: cacheHome.path,
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-            _singleDirectoryPath(
-              title: 'Runtime Directory:',
-              path: runtimeDir?.path,
-            ),
+            Text('Data Home: \n${dataHome.path}\n'),
+            Text('Config Home: \n${configHome.path}\n'),
+            Text(
+                'Data Directories: \n${dataDirs.map((Directory directory) => directory.path).toList().join('\n')}\n'),
+            Text(
+                'Config Directories: \n${configDirs.map((Directory directory) => directory.path).toList().join('\n')}\n'),
+            Text('Cache Home: \n${cacheHome.path}\n'),
+            Text('Runtime Directory: \n${runtimeDir?.path}\n'),
+            Text('Cache Home: \n${cacheHome.path}\n'),
+            Text('Cache Home: \n${cacheHome.path}\n'),
             const SizedBox(
               height: 100,
             ),
@@ -119,82 +77,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-}
-
-/// This is a Widget that displays a title and a directory path.
-Widget _singleDirectoryPath({
-  required String title,
-  String? path,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Padding(
-        padding: const EdgeInsets.only(left: 10, bottom: 5),
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontSize: 18,
-          ),
-        ),
-      ),
-      Container(
-        margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 5,
-        ),
-        color: Colors.black38,
-        child: Text(
-          path ?? '',
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ],
-  );
-}
-
-/// This is a Widget that displays a title and a list of directory paths.
-Widget _listOfDirectoryPaths({
-  required String title,
-  required List<String> paths,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: <Widget>[
-      Padding(
-        padding: const EdgeInsets.only(left: 10, bottom: 5),
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontSize: 18,
-          ),
-        ),
-      ),
-      ListView.builder(
-        shrinkWrap: true,
-        itemCount: paths.length,
-        itemBuilder: (BuildContext context, int index) => Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 5,
-          ),
-          color: Colors.black38,
-          child: Text(
-            paths[index],
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
 }
