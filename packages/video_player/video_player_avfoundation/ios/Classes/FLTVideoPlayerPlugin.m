@@ -292,7 +292,8 @@ NS_INLINE UIViewController *rootViewController(void) {
 }
 
 /**
- * Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate to the controller.
+ * Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate to
+ * the controller.
  */
 - (void)setupPiPController {
   if ([AVPictureInPictureController isPictureInPictureSupported]) {
@@ -828,8 +829,8 @@ NS_INLINE UIViewController *rootViewController(void) {
   if (![self doesInfoPlistSupportPictureInPicture]) {
     *error = [FlutterError
         errorWithCode:@"video_player"
-              message:@"Failed to start picture-in-picture because UIBackgroundModes: audio, "
-                      @"AirPlay, picture-in-picture is not enabled in Info.plist"
+              message:@"Failed to start picture-in-picture because UIBackgroundModes: audio "
+                      @"is not enabled in Info.plist"
               details:nil];
     return;
   }
@@ -841,8 +842,8 @@ NS_INLINE UIViewController *rootViewController(void) {
   if (![self doesInfoPlistSupportPictureInPicture]) {
     *error = [FlutterError
         errorWithCode:@"video_player"
-              message:@"Failed to stop picture-in-picture because UIBackgroundModes: audio, "
-                      @"AirPlay, picture-in-picture is not enabled in Info.plist"
+              message:@"Failed to stop picture-in-picture because UIBackgroundModes: audio "
+                      @"is not enabled in Info.plist"
               details:nil];
     return;
   }
