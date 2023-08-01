@@ -5,13 +5,15 @@
 // @dart=2.19
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i7;
 
-import 'package:camera_android_camerax/src/pending_recording.dart' as _i4;
+import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i4;
+import 'package:camera_android_camerax/src/pending_recording.dart' as _i6;
+import 'package:camera_android_camerax/src/quality_selector.dart' as _i3;
 import 'package:camera_android_camerax/src/recording.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'test_camerax_library.g.dart' as _i3;
+import 'test_camerax_library.g.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -34,11 +36,27 @@ class _FakeRecording_0 extends _i1.SmartFake implements _i2.Recording {
         );
 }
 
+/// A class which mocks [QualitySelector].
+///
+/// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
+class MockQualitySelector extends _i1.Mock implements _i3.QualitySelector {
+  MockQualitySelector() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  List<_i4.QualityConstraint> get qualityList => (super.noSuchMethod(
+        Invocation.getter(#qualityList),
+        returnValue: <_i4.QualityConstraint>[],
+      ) as List<_i4.QualityConstraint>);
+}
+
 /// A class which mocks [TestRecorderHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestRecorderHostApi extends _i1.Mock
-    implements _i3.TestRecorderHostApi {
+    implements _i5.TestRecorderHostApi {
   MockTestRecorderHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -99,7 +117,7 @@ class MockTestRecorderHostApi extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i3.TestInstanceManagerHostApi {
+    implements _i5.TestInstanceManagerHostApi {
   MockTestInstanceManagerHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -118,23 +136,23 @@ class MockTestInstanceManagerHostApi extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 // ignore: must_be_immutable
-class MockPendingRecording extends _i1.Mock implements _i4.PendingRecording {
+class MockPendingRecording extends _i1.Mock implements _i6.PendingRecording {
   MockPendingRecording() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Future<_i2.Recording> start() => (super.noSuchMethod(
+  _i7.Future<_i2.Recording> start() => (super.noSuchMethod(
         Invocation.method(
           #start,
           [],
         ),
-        returnValue: _i5.Future<_i2.Recording>.value(_FakeRecording_0(
+        returnValue: _i7.Future<_i2.Recording>.value(_FakeRecording_0(
           this,
           Invocation.method(
             #start,
             [],
           ),
         )),
-      ) as _i5.Future<_i2.Recording>);
+      ) as _i7.Future<_i2.Recording>);
 }
