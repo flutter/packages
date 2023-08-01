@@ -46,8 +46,8 @@
   BOOL foundPlaybackSpeed5x = [playbackSpeed5x waitForExistenceWithTimeout:30.0];
   XCTAssertTrue(foundPlaybackSpeed5x);
 
-  // Cycle through tabs.
-  for (NSString *tabName in @[ @"Asset mp4", @"Remote mp4" ]) {
+//  // Cycle through tabs.
+  for (NSString *tabName in @[@"Remote cache mp4", @"Remote enc m3u8" , @"Asset mp4"]) {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"label BEGINSWITH %@", tabName];
     XCUIElement *unselectedTab = [app.staticTexts elementMatchingPredicate:predicate];
     XCTAssertTrue([unselectedTab waitForExistenceWithTimeout:30.0]);
@@ -58,7 +58,31 @@
         elementMatchingPredicate:[NSPredicate predicateWithFormat:@"label BEGINSWITH %@", tabName]];
     XCTAssertTrue([selectedTab waitForExistenceWithTimeout:30.0]);
     XCTAssertTrue(selectedTab.isSelected);
+      
+      if ([remoteTab.label containsString:@"Remote cache mp4"]) {
+          XCUIElement *playButtonCache = app.staticTexts[@"Play"];
+          XCTAssertTrue([playButtonCache waitForExistenceWithTimeout:30.0]);
+          [playButtonCache tap];
+
+          NSPredicate *find1xButtonCache = [NSPredicate predicateWithFormat:@"label CONTAINS '1.0x'"];
+          XCUIElement *playbackSpeed1xCache = [app.staticTexts elementMatchingPredicate:find1xButtonCache];
+          BOOL foundPlaybackSpeed1xCache = [playbackSpeed1xCache waitForExistenceWithTimeout:30.0];
+          XCTAssertTrue(foundPlaybackSpeed1xCache);
+          [playbackSpeed1xCache tap];
+
+          XCUIElement *playbackSpeed5xButtonCache = app.buttons[@"5.0x"];
+          XCTAssertTrue([playbackSpeed5xButtonCache waitForExistenceWithTimeout:30.0]);
+          [playbackSpeed5xButtonCache tap];
+
+          NSPredicate *find5xButtonCache = [NSPredicate predicateWithFormat:@"label CONTAINS '5.0x'"];
+          XCUIElement *playbackSpeed5xCache = [app.staticTexts elementMatchingPredicate:find5xButtonCache];
+          BOOL foundPlaybackSpeed5xCache = [playbackSpeed5xCache waitForExistenceWithTimeout:30.0];
+          XCTAssertTrue(foundPlaybackSpeed5xCache);
+          
+          XCUIElement *clearCacheButton = app.buttons[@"clear cache"];
+          XCTAssertTrue([clearCacheButton waitForExistenceWithTimeout:30.0]);
+          [clearCacheButton tap];
+      }
   }
 }
-
 @end
