@@ -6,7 +6,6 @@
 
 @interface ContentInfo : NSObject <NSCoding>
 
-
 /**
  @property contentType
  */

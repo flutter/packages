@@ -718,7 +718,6 @@ NS_INLINE UIViewController *rootViewController(void) {
 - (FLTClearCacheMessageResponse *)clearCache:(FLTClearCacheMessage *)input
                                        error:(FlutterError **)error {
   FLTVideoPlayer *player = self.playersByTextureId[input.textureId];
-  NSLog(@"Clean cache");
   [player.resourceLoaderManager cleanCache];
   //    unsigned long long fileSize = [CacheManager calculateCachedSizeWithError:nil];
   //    NSLog(@"file cache size: %@", @(fileSize));

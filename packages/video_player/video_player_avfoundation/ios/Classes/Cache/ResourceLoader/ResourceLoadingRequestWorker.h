@@ -8,7 +8,8 @@
 @protocol ResourceLoadingRequestWorkerDelegate;
 
 /*!
- to handle the process of downloading and loading media resources for AVAssetResourceLoader in an AVPlayer
+ to handle the process of downloading and loading media resources for AVAssetResourceLoader in an
+ AVPlayer
  */
 @interface ResourceLoadingRequestWorker : NSObject
 
@@ -20,7 +21,9 @@
 @property(nonatomic, strong, readonly) AVAssetResourceLoadingRequest *request;
 
 /*!
- This method is called to initiate the downloading and loading process. It uses the information from the AVAssetResourceLoadingDataRequest associated with the request to determine the offset, length, and whether to download the content till the end.
+ This method is called to initiate the downloading and loading process. It uses the information from
+ the AVAssetResourceLoadingDataRequest associated with the request to determine the offset, length,
+ and whether to download the content till the end.
  */
 - (void)startWork;
 /*!

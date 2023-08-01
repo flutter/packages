@@ -239,7 +239,8 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
 
 #pragma mark - Notification
 
-//This callback is triggered when the application enters the background. It saves the cache data when the application is about to move to the background state to ensure data integrity.
+// This callback is triggered when the application enters the background. It saves the cache data
+// when the application is about to move to the background state to ensure data integrity.
 - (void)applicationDidEnterBackground:(NSNotification *)notification {
   [self save];
 }

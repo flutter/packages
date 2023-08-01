@@ -19,6 +19,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
 import io.flutter.plugins.videoplayer.Messages.ClearCacheMessage;
+import io.flutter.plugins.videoplayer.Messages.ClearCacheMessageResponse;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.plugins.videoplayer.Messages.IsCacheSupportedMessage;
 import io.flutter.plugins.videoplayer.Messages.IsSupportedMessageResponse;
@@ -185,9 +186,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
 
   public ClearCacheMessageResponse clearCache(@NonNull ClearCacheMessage msg) {
 
-    boolean hasSucceed = VideoCache.clearVideoCache(flutterState.applicationContext);
+    boolean hasSucceeded = VideoCache.clearVideoCache(flutterState.applicationContext);
     ClearCacheMessageResponse response =
-        new ClearCacheMessageResponse.Builder().setHasSucceeded(hasSucceed);
+        new ClearCacheMessageResponse.Builder().setHasSucceeded(hasSucceeded);
     return response;
   }
 

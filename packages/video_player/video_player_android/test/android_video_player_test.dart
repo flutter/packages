@@ -210,9 +210,9 @@ void main() {
     });
 
     test('clearCache', () async {
-      await player.clearCache(1);
+      final bool hasSucceeded = await player.clearCache(1);
       expect(log.log.last, 'clearCache');
-      expect(log.clearCacheMessage?.textureId, 1);
+      expect(hasSucceeded, true);
     });
 
     test('create with file', () async {

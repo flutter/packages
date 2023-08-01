@@ -40,7 +40,8 @@ static NSString *kURLKey = @"kURLKey";
   return configuration;
 }
 
-//returns the file path with a ".mt_cfg" extension. It is used for saving and retrieving the configuration file.
+// returns the file path with a ".mt_cfg" extension. It is used for saving and retrieving the
+// configuration file.
 + (NSString *)configurationFilePathForFilePath:(NSString *)filePath {
   return [filePath stringByAppendingPathExtension:@"mt_cfg"];
 }

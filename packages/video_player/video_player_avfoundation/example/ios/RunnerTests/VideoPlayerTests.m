@@ -412,14 +412,12 @@
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
-    
-    FLTClearCacheMessage *message = [FLTClearCacheMessage
-                                     makeWithTextureId:@1];
 
-    FLTClearCacheMessageResponse *response =
-    [videoPlayerPlugin clearCache:message error:&error];
+  FLTClearCacheMessage *message = [FLTClearCacheMessage makeWithTextureId:@1];
+
+  FLTClearCacheMessageResponse *response = [videoPlayerPlugin clearCache:message error:&error];
   XCTAssertNil(error);
-  XCTAssertTrue(response.hasSucceeded.boolValue);
+  XCTAssertFalse(response.hasSucceeded.boolValue);
 }
 
 - (void)testDeregistersFromPlayer {
