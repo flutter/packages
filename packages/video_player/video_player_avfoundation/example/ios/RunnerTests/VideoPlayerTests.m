@@ -178,6 +178,44 @@
   XCTAssertEqual([player position], 1234);
 }
 
+- (void)testSeekToWithCache {
+  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
+      OCMProtocolMock(@protocol(FlutterTextureRegistry));
+  NSObject<FlutterPluginRegistry> *registry =
+      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [registry registrarForPlugin:@"SeekToWithCache"];
+  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
+  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  FLTVideoPlayerPlugin *videoPlayerPlugin =
+      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+  FLTCreateMessage *create = [FLTCreateMessage
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.mp4"
+        packageName:nil
+         formatHint:nil
+        enableCache:@YES
+        httpHeaders:@{}];
+  FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
+  NSNumber *textureId = textureMessage.textureId;
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
+  FLTPositionMessage *message = [FLTPositionMessage makeWithTextureId:textureId position:@1234];
+  [videoPlayerPlugin seekTo:message
+                 completion:^(FlutterError *_Nullable error) {
+                   [initializedExpectation fulfill];
+                 }];
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+  OCMVerify([mockTextureRegistry textureFrameAvailable:message.textureId.intValue]);
+
+  FLTVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  XCTAssertEqual([player position], 1234);
+}
+
 - (void)testIsCacheSupported_yesForMP4 {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
@@ -417,7 +455,7 @@
 
   FLTClearCacheMessageResponse *response = [videoPlayerPlugin clearCache:message error:&error];
   XCTAssertNil(error);
-  XCTAssertFalse(response.hasSucceeded.boolValue);
+  XCTAssertTrue(response.hasSucceeded.boolValue);
 }
 
 - (void)testDeregistersFromPlayer {
