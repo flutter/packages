@@ -740,6 +740,15 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<Object?>.value(),
       ) as _i6.Future<Object?>);
   @override
+  _i6.Future<void> setInspectable(bool? inspectable) => (super.noSuchMethod(
+        Invocation.method(
+          #setInspectable,
+          [inspectable],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+  @override
   _i5.WKWebView copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
@@ -845,6 +854,16 @@ class MockWKWebViewConfiguration extends _i1.Mock
         Invocation.method(
           #setAllowsInlineMediaPlayback,
           [allow],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+  @override
+  _i6.Future<void> setLimitsNavigationsToAppBoundDomains(bool? limit) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLimitsNavigationsToAppBoundDomains,
+          [limit],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),

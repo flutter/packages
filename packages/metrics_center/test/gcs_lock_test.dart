@@ -22,7 +22,12 @@ enum TestPhase {
   run2,
 }
 
-@GenerateMocks(<Type>[AuthClient])
+@GenerateMocks(<Type>[
+  AuthClient,
+  StorageApi
+], customMocks: <MockSpec<dynamic>>[
+  MockSpec<ObjectsResource>(onMissingStub: OnMissingStub.returnDefault)
+])
 void main() {
   const Duration kDelayStep = Duration(milliseconds: 10);
   final Map<String, dynamic>? credentialsJson = getTestGcpCredentialsJson();
@@ -36,7 +41,7 @@ void main() {
     Zone.current.fork(specification: spec).run<void>(() {
       fakeAsync((FakeAsync fakeAsync) {
         final MockAuthClient mockClient = MockAuthClient();
-        final GcsLock lock = GcsLock(mockClient, 'mockBucket');
+        final GcsLock lock = GcsLock(StorageApi(mockClient), 'mockBucket');
         when(mockClient.send(any)).thenThrow(DetailedApiRequestError(412, ''));
         final Future<void> runFinished =
             lock.protectedRun('mock.lock', () async {});
@@ -63,7 +68,7 @@ void main() {
   test('GcsLock integration test: single protectedRun is successful', () async {
     final AutoRefreshingAuthClient client = await clientViaServiceAccount(
         ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
-    final GcsLock lock = GcsLock(client, kTestBucketName);
+    final GcsLock lock = GcsLock(StorageApi(client), kTestBucketName);
     int testValue = 0;
     await lock.protectedRun('test.lock', () async {
       testValue = 1;
@@ -74,8 +79,8 @@ void main() {
   test('GcsLock integration test: protectedRun is exclusive', () async {
     final AutoRefreshingAuthClient client = await clientViaServiceAccount(
         ServiceAccountCredentials.fromJson(credentialsJson), Storage.SCOPES);
-    final GcsLock lock1 = GcsLock(client, kTestBucketName);
-    final GcsLock lock2 = GcsLock(client, kTestBucketName);
+    final GcsLock lock1 = GcsLock(StorageApi(client), kTestBucketName);
+    final GcsLock lock2 = GcsLock(StorageApi(client), kTestBucketName);
 
     TestPhase phase = TestPhase.run1;
     final Completer<void> started1 = Completer<void>();
@@ -105,4 +110,39 @@ void main() {
     await finished1;
     await finished2;
   }, skip: credentialsJson == null);
+
+  test('GcsLock attempts to unlock again on a DetailedApiRequestError',
+      () async {
+    fakeAsync((FakeAsync fakeAsync) {
+      final StorageApi mockStorageApi = MockStorageApi();
+      final ObjectsResource mockObjectsResource = MockObjectsResource();
+      final GcsLock gcsLock = GcsLock(mockStorageApi, kTestBucketName);
+      const String lockFileName = 'test.lock';
+      when(mockStorageApi.objects).thenReturn(mockObjectsResource);
+
+      // Simulate a failure to delete a lock file.
+      when(mockObjectsResource.delete(kTestBucketName, lockFileName))
+          .thenThrow(DetailedApiRequestError(504, ''));
+
+      gcsLock.protectedRun(lockFileName, () async {});
+
+      // Allow time to pass by to ensure deleting the lock file is retried multiple times.
+      fakeAsync.elapse(const Duration(milliseconds: 30));
+      verify(mockObjectsResource.delete(kTestBucketName, lockFileName))
+          .called(3);
+
+      // Simulate a successful deletion of the lock file.
+      when(mockObjectsResource.delete(kTestBucketName, lockFileName))
+          .thenAnswer((_) => Future<void>(
+                () {
+                  return;
+                },
+              ));
+
+      // At this point, there should only be one more (successful) attempt to delete the lock file.
+      fakeAsync.elapse(const Duration(minutes: 2));
+      verify(mockObjectsResource.delete(kTestBucketName, lockFileName))
+          .called(1);
+    });
+  });
 }

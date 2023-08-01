@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import '../../file_selector_platform_interface.dart';
@@ -37,7 +35,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   }
 
   /// Opens a file dialog for loading files and returns a file path.
-  /// Returns `null` if user cancels the operation.
+  ///
+  /// Returns `null` if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
   Future<XFile?> openFile({
     List<XTypeGroup>? acceptedTypeGroups,
     String? initialDirectory,
@@ -47,6 +48,10 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   }
 
   /// Opens a file dialog for loading files and returns a list of file paths.
+  ///
+  /// Returns an empty list if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
   Future<List<XFile>> openFiles({
     List<XTypeGroup>? acceptedTypeGroups,
     String? initialDirectory,
@@ -55,8 +60,13 @@ abstract class FileSelectorPlatform extends PlatformInterface {
     throw UnimplementedError('openFiles() has not been implemented.');
   }
 
-  /// Opens a file dialog for saving files and returns a file path at which to save.
-  /// Returns `null` if user cancels the operation.
+  /// Opens a file dialog for saving files and returns a file path at which to
+  /// save.
+  ///
+  /// Returns `null` if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
+  @Deprecated('Use getSaveLocation instead')
   Future<String?> getSavePath({
     List<XTypeGroup>? acceptedTypeGroups,
     String? initialDirectory,
@@ -66,8 +76,28 @@ abstract class FileSelectorPlatform extends PlatformInterface {
     throw UnimplementedError('getSavePath() has not been implemented.');
   }
 
+  /// Opens a file dialog for saving files and returns a file location at which
+  /// to save.
+  ///
+  /// Returns `null` if the user cancels the operation.
+  Future<FileSaveLocation?> getSaveLocation({
+    List<XTypeGroup>? acceptedTypeGroups,
+    SaveDialogOptions options = const SaveDialogOptions(),
+  }) async {
+    final String? path = await getSavePath(
+      acceptedTypeGroups: acceptedTypeGroups,
+      initialDirectory: options.initialDirectory,
+      suggestedName: options.suggestedName,
+      confirmButtonText: options.confirmButtonText,
+    );
+    return path == null ? null : FileSaveLocation(path);
+  }
+
   /// Opens a file dialog for loading directories and returns a directory path.
-  /// Returns `null` if user cancels the operation.
+  ///
+  /// Returns `null` if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
   Future<String?> getDirectoryPath({
     String? initialDirectory,
     String? confirmButtonText,
@@ -75,7 +105,12 @@ abstract class FileSelectorPlatform extends PlatformInterface {
     throw UnimplementedError('getDirectoryPath() has not been implemented.');
   }
 
-  /// Opens a file dialog for loading directories and returns multiple directory paths.
+  /// Opens a file dialog for loading directories and returns multiple directory
+  /// paths.
+  ///
+  /// Returns an empty list if the user cancels the operation.
+  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
+  // duplicate this to add a parameter.
   Future<List<String>> getDirectoryPaths({
     String? initialDirectory,
     String? confirmButtonText,

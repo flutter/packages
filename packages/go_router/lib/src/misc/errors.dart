@@ -13,3 +13,15 @@ class GoError extends Error {
   @override
   String toString() => 'GoError: $message';
 }
+
+/// Thrown when [GoRouter] can not handle a user request.
+class GoException implements Exception {
+  /// Creates an exception with message describing the reason.
+  GoException(this.message);
+
+  /// The reason that causes this exception.
+  final String message;
+
+  @override
+  String toString() => 'GoException: $message';
+}

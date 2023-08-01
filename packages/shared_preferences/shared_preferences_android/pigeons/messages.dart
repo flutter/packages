@@ -41,9 +41,15 @@ abstract class SharedPreferencesApi {
 
   /// Removes all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool clearWithPrefix(String prefix);
+  bool clear(
+    String prefix,
+    List<String>? allowList,
+  );
 
   /// Gets all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  Map<String, Object> getAllWithPrefix(String prefix);
+  Map<String, Object> getAll(
+    String prefix,
+    List<String>? allowList,
+  );
 }

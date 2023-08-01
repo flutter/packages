@@ -110,6 +110,16 @@ public class FileUtilTest {
   }
 
   @Test
+  public void FileUtil_getPathFromUri_noExtensionInBaseName() throws IOException {
+    Uri uri = MockContentProvider.NO_EXTENSION_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+        uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
+    String path = fileUtils.getPathFromUri(context, uri);
+    assertTrue(path.endsWith("abc.png"));
+  }
+
+  @Test
   public void FileUtil_getImageName_mismatchedType() throws IOException {
     Uri uri = MockContentProvider.WEBP_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
@@ -133,6 +143,7 @@ public class FileUtilTest {
     public static final Uri PNG_URI = Uri.parse("content://dummy/a.b.png");
     public static final Uri WEBP_URI = Uri.parse("content://dummy/c.d.png");
     public static final Uri UNKNOWN_URI = Uri.parse("content://dummy/e.f.g");
+    public static final Uri NO_EXTENSION_URI = Uri.parse("content://dummy/abc");
 
     @Override
     public boolean onCreate() {
@@ -157,6 +168,7 @@ public class FileUtilTest {
     public String getType(@NonNull Uri uri) {
       if (uri.equals(PNG_URI)) return "image/png";
       if (uri.equals(WEBP_URI)) return "image/webp";
+      if (uri.equals(NO_EXTENSION_URI)) return "image/png";
       return null;
     }
 

@@ -50,15 +50,15 @@ void main() {
 
   group('flags', () {
     test('fails if --changelog is missing', () async {
-      Exception? commandError;
+      Error? commandError;
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=next',
-      ], exceptionHandler: (Exception e) {
+      ], errorHandler: (Error e) {
         commandError = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --changelog is blank', () async {
@@ -76,14 +76,14 @@ void main() {
     });
 
     test('fails if --version is missing', () async {
-      Exception? commandError;
+      Error? commandError;
       await runCapturingPrint(
-          runner, <String>['update-release-info', '--changelog', ''],
-          exceptionHandler: (Exception e) {
+          runner, <String>['update-release-info', '--changelog', 'A change.'],
+          errorHandler: (Error e) {
         commandError = e;
       });
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --version is an unknown value', () async {
@@ -92,7 +92,7 @@ void main() {
         'update-release-info',
         '--version=foo',
         '--changelog',
-        '',
+        'A change.',
       ], exceptionHandler: (Exception e) {
         commandError = e;
       });

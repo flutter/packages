@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -205,6 +201,23 @@ class NSUrlRequest {
   final Map<String, String> allHttpHeaderFields;
 }
 
+/// Keys that may exist in the user info map of `NSError`.
+class NSErrorUserInfoKey {
+  NSErrorUserInfoKey._();
+
+  /// The corresponding value is a localized string representation of the error
+  /// that, if present, will be returned by [NSError.localizedDescription].
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nslocalizeddescriptionkey.
+  static const String NSLocalizedDescription = 'NSLocalizedDescription';
+
+  /// The URL which caused a load to fail.
+  ///
+  /// See https://developer.apple.com/documentation/foundation/nsurlerrorfailingurlstringerrorkey?language=objc.
+  static const String NSURLErrorFailingURLStringError =
+      'NSErrorFailingURLStringKey';
+}
+
 /// Information about an error condition.
 ///
 /// Wraps [NSError](https://developer.apple.com/documentation/foundation/nserror?language=objc).
@@ -214,19 +227,35 @@ class NSError {
   const NSError({
     required this.code,
     required this.domain,
-    required this.localizedDescription,
+    this.userInfo = const <String, Object?>{},
   });
 
   /// The error code.
   ///
-  /// Note that errors are domain-specific.
+  /// Error codes are [domain]-specific.
   final int code;
 
   /// A string containing the error domain.
   final String domain;
 
+  /// Map of arbitrary data.
+  ///
+  /// See [NSErrorUserInfoKey] for possible keys (non-exhaustive).
+  ///
+  /// This currently only supports values that are a String.
+  final Map<String, Object?> userInfo;
+
   /// A string containing the localized description of the error.
-  final String localizedDescription;
+  String? get localizedDescription =>
+      userInfo[NSErrorUserInfoKey.NSLocalizedDescription] as String?;
+
+  @override
+  String toString() {
+    if (localizedDescription?.isEmpty ?? true) {
+      return 'Error $domain:$code:$userInfo';
+    }
+    return '$localizedDescription ($domain:$code:$userInfo)';
+  }
 }
 
 /// A representation of an HTTP cookie.

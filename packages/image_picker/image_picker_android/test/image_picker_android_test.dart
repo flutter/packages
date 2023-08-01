@@ -654,6 +654,129 @@ void main() {
     });
   });
 
+  group('#getMedia', () {
+    test('calls the method correctly', () async {
+      const List<String> fakePaths = <String>['/foo.jgp', 'bar.jpg'];
+      api.returnValue = fakePaths;
+
+      final List<XFile> files = await picker.getMedia(
+        options: const MediaOptions(
+          allowMultiple: true,
+        ),
+      );
+
+      expect(api.lastCall, _LastPickType.image);
+      expect(files.length, 2);
+      expect(files[0].path, fakePaths[0]);
+      expect(files[1].path, fakePaths[1]);
+    });
+
+    test('passes default image options', () async {
+      await picker.getMedia(
+        options: const MediaOptions(
+          allowMultiple: true,
+        ),
+      );
+
+      expect(api.passedImageOptions?.maxWidth, null);
+      expect(api.passedImageOptions?.maxHeight, null);
+      expect(api.passedImageOptions?.quality, 100);
+    });
+
+    test('passes image option arguments correctly', () async {
+      await picker.getMedia(
+          options: const MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions(
+          maxWidth: 10.0,
+          maxHeight: 20.0,
+          imageQuality: 70,
+        ),
+      ));
+
+      expect(api.passedImageOptions?.maxWidth, 10.0);
+      expect(api.passedImageOptions?.maxHeight, 20.0);
+      expect(api.passedImageOptions?.quality, 70);
+    });
+
+    test('does not accept a negative width or height argument', () {
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions(maxWidth: -1.0),
+          ),
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions(maxHeight: -1.0),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept an invalid imageQuality argument', () {
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions(imageQuality: -1),
+          ),
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            imageOptions: ImageOptions(imageQuality: 101),
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('handles an empty path response gracefully', () async {
+      api.returnValue = <String>[];
+
+      expect(
+          await picker.getMedia(
+            options: const MediaOptions(
+              allowMultiple: true,
+            ),
+          ),
+          <String>[]);
+    });
+
+    test('defaults to not using Android Photo Picker', () async {
+      await picker.getMedia(
+        options: const MediaOptions(
+          allowMultiple: true,
+        ),
+      );
+
+      expect(api.passedPhotoPickerFlag, false);
+    });
+
+    test('allows using Android Photo Picker', () async {
+      picker.useAndroidPhotoPicker = true;
+      await picker.getMedia(
+        options: const MediaOptions(
+          allowMultiple: true,
+        ),
+      );
+
+      expect(api.passedPhotoPickerFlag, true);
+    });
+  });
+
   group('#getImageFromSource', () {
     test('calls the method correctly', () async {
       const String fakePath = '/foo.jpg';
@@ -807,29 +930,41 @@ class _FakeImagePickerApi implements ImagePickerApi {
 
   @override
   Future<List<String?>> pickImages(
-      SourceSpecification source,
-      ImageSelectionOptions options,
-      bool allowMultiple,
-      bool usePhotoPicker) async {
+    SourceSpecification source,
+    ImageSelectionOptions options,
+    GeneralOptions generalOptions,
+  ) async {
     lastCall = _LastPickType.image;
     passedSource = source;
     passedImageOptions = options;
-    passedAllowMultiple = allowMultiple;
-    passedPhotoPickerFlag = usePhotoPicker;
+    passedAllowMultiple = generalOptions.allowMultiple;
+    passedPhotoPickerFlag = generalOptions.usePhotoPicker;
+    return returnValue as List<String?>? ?? <String>[];
+  }
+
+  @override
+  Future<List<String?>> pickMedia(
+    MediaSelectionOptions options,
+    GeneralOptions generalOptions,
+  ) async {
+    lastCall = _LastPickType.image;
+    passedImageOptions = options.imageSelectionOptions;
+    passedPhotoPickerFlag = generalOptions.usePhotoPicker;
+    passedAllowMultiple = generalOptions.allowMultiple;
     return returnValue as List<String?>? ?? <String>[];
   }
 
   @override
   Future<List<String?>> pickVideos(
-      SourceSpecification source,
-      VideoSelectionOptions options,
-      bool allowMultiple,
-      bool usePhotoPicker) async {
+    SourceSpecification source,
+    VideoSelectionOptions options,
+    GeneralOptions generalOptions,
+  ) async {
     lastCall = _LastPickType.video;
     passedSource = source;
     passedVideoOptions = options;
-    passedAllowMultiple = allowMultiple;
-    passedPhotoPickerFlag = usePhotoPicker;
+    passedAllowMultiple = generalOptions.allowMultiple;
+    passedPhotoPickerFlag = generalOptions.usePhotoPicker;
     return returnValue as List<String?>? ?? <String>[];
   }
 

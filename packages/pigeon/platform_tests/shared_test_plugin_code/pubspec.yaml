@@ -1,5 +1,5 @@
 name: shared_test_plugin_code
-description: Common code for test_plugin and altenate_language_test_plugin
+description: Common code for test_plugin and alternate_language_test_plugin
 version: 0.0.1
 publish_to: none
 

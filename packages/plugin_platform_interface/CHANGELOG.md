@@ -1,5 +1,6 @@
-## NEXT
+## 2.1.5
 
+* Updates README to improve example and discuss `base`.
 * Updates minimum Flutter version to 3.3.
 
 ## 2.1.4

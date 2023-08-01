@@ -201,7 +201,7 @@ extension _WKNSErrorDataConverter on NSErrorData {
     return NSError(
       domain: domain,
       code: code,
-      localizedDescription: localizedDescription,
+      userInfo: userInfo?.cast<String, Object?>() ?? <String, Object?>{},
     );
   }
 }
@@ -639,6 +639,17 @@ class WKWebViewConfigurationHostApiImpl extends WKWebViewConfigurationHostApi {
     );
   }
 
+  /// Calls [setLimitsNavigationsToAppBoundDomains] with the ids of the provided object instances.
+  Future<void> setLimitsNavigationsToAppBoundDomainsForInstances(
+    WKWebViewConfiguration instance,
+    bool limit,
+  ) {
+    return setLimitsNavigationsToAppBoundDomains(
+      instanceManager.getIdentifier(instance)!,
+      limit,
+    );
+  }
+
   /// Calls [setMediaTypesRequiringUserActionForPlayback] with the ids of the provided object instances.
   Future<void> setMediaTypesRequiringUserActionForPlaybackForInstances(
     WKWebViewConfiguration instance,
@@ -1064,6 +1075,17 @@ class WKWebViewHostApiImpl extends WKWebViewHostApi {
         details: (exception.details as NSErrorData).toNSError(),
       );
     }
+  }
+
+  /// Calls [setInspectable] with the ids of the provided object instances.
+  Future<void> setInspectableForInstances(
+    WKWebView instance,
+    bool inspectable,
+  ) async {
+    return setInspectable(
+      instanceManager.getIdentifier(instance)!,
+      inspectable,
+    );
   }
 
   /// Calls [setNavigationDelegate] with the ids of the provided object instances.

@@ -1,6 +1,10 @@
-## 2.4.0
+## 2.5.0
 
 * Adds support to track content offset changes. See `PlatformWebViewController.setOnContentOffsetChanged`.
+
+## 2.4.0
+
+* Adds support to retrieve the url from a web resource loading error. See `WebResourceError.url`.
 
 ## 2.3.1
 

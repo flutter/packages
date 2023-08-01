@@ -93,6 +93,7 @@ class GoogleMap extends StatefulWidget {
     required this.initialCameraPosition,
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
+    this.webGestureHandling,
     this.compassEnabled = true,
     this.mapToolbarEnabled = true,
     this.cameraTargetBounds = CameraTargetBounds.unbounded,
@@ -104,6 +105,7 @@ class GoogleMap extends StatefulWidget {
     this.zoomGesturesEnabled = true,
     this.liteModeEnabled = false,
     this.tiltGesturesEnabled = true,
+    this.fortyFiveDegreeImageryEnabled = false,
     this.myLocationEnabled = false,
     this.myLocationButtonEnabled = true,
     this.layoutDirection,
@@ -178,6 +180,9 @@ class GoogleMap extends StatefulWidget {
 
   /// True if the map view should respond to tilt gestures.
   final bool tiltGesturesEnabled;
+
+  /// True if 45 degree imagery should be enabled. Web only.
+  final bool fortyFiveDegreeImageryEnabled;
 
   /// Padding to be set on map. See https://developers.google.com/maps/documentation/android-sdk/map#map_padding for more details.
   final EdgeInsets padding;
@@ -282,6 +287,11 @@ class GoogleMap extends StatefulWidget {
   /// were not claimed by any other gesture recognizer.
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers;
 
+  /// This setting controls how the API handles gestures on the map. Web only.
+  ///
+  /// See [WebGestureHandling] for more details.
+  final WebGestureHandling? webGestureHandling;
+
   /// Creates a [State] for this [GoogleMap].
   @override
   State createState() => _GoogleMapState();
@@ -360,41 +370,41 @@ class _GoogleMapState extends State<GoogleMap> {
       return;
     }
     final GoogleMapController controller = await _controller.future;
-    await controller._updateMapConfiguration(updates);
+    unawaited(controller._updateMapConfiguration(updates));
     _mapConfiguration = newConfig;
   }
 
   Future<void> _updateMarkers() async {
     final GoogleMapController controller = await _controller.future;
-    await controller._updateMarkers(
-        MarkerUpdates.from(_markers.values.toSet(), widget.markers));
+    unawaited(controller._updateMarkers(
+        MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
     _markers = keyByMarkerId(widget.markers);
   }
 
   Future<void> _updatePolygons() async {
     final GoogleMapController controller = await _controller.future;
-    await controller._updatePolygons(
-        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons));
+    unawaited(controller._updatePolygons(
+        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons)));
     _polygons = keyByPolygonId(widget.polygons);
   }
 
   Future<void> _updatePolylines() async {
     final GoogleMapController controller = await _controller.future;
-    await controller._updatePolylines(
-        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines));
+    unawaited(controller._updatePolylines(
+        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
     _polylines = keyByPolylineId(widget.polylines);
   }
 
   Future<void> _updateCircles() async {
     final GoogleMapController controller = await _controller.future;
-    await controller._updateCircles(
-        CircleUpdates.from(_circles.values.toSet(), widget.circles));
+    unawaited(controller._updateCircles(
+        CircleUpdates.from(_circles.values.toSet(), widget.circles)));
     _circles = keyByCircleId(widget.circles);
   }
 
   Future<void> _updateTileOverlays() async {
     final GoogleMapController controller = await _controller.future;
-    await controller._updateTileOverlays(widget.tileOverlays);
+    unawaited(controller._updateTileOverlays(widget.tileOverlays));
   }
 
   Future<void> onPlatformViewCreated(int id) async {
@@ -518,6 +528,7 @@ class _GoogleMapState extends State<GoogleMap> {
 MapConfiguration _configurationFromMapWidget(GoogleMap map) {
   assert(!map.liteModeEnabled || Platform.isAndroid);
   return MapConfiguration(
+    webGestureHandling: map.webGestureHandling,
     compassEnabled: map.compassEnabled,
     mapToolbarEnabled: map.mapToolbarEnabled,
     cameraTargetBounds: map.cameraTargetBounds,
@@ -526,6 +537,7 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     rotateGesturesEnabled: map.rotateGesturesEnabled,
     scrollGesturesEnabled: map.scrollGesturesEnabled,
     tiltGesturesEnabled: map.tiltGesturesEnabled,
+    fortyFiveDegreeImageryEnabled: map.fortyFiveDegreeImageryEnabled,
     trackCameraPosition: map.onCameraMove != null,
     zoomControlsEnabled: map.zoomControlsEnabled,
     zoomGesturesEnabled: map.zoomGesturesEnabled,

@@ -22,11 +22,8 @@ void main() {
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('ImageProxy', () {
-    setUp(() {});
-
     tearDown(() {
       TestImageProxyHostApi.setup(null);
-      TestInstanceManagerHostApi.setup(null);
     });
 
     test('getPlanes', () async {

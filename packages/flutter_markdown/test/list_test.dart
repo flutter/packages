@@ -194,17 +194,16 @@ void defineTests() {
 
         await tester.pumpWidget(
           boilerplate(
-            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-            // ignore: prefer_const_constructors
-            Column(
-              children: const <Widget>[
+            const Column(
+              children: <Widget>[
                 MarkdownBody(fitContent: false, data: data),
               ],
             ),
           ),
         );
 
-        final double screenWidth = tester.allElements.first.size!.width;
+        final double screenWidth =
+            find.byType(Column).evaluate().first.size!.width;
         final double markdownBodyWidth =
             find.byType(MarkdownBody).evaluate().single.size!.width;
 
@@ -219,17 +218,16 @@ void defineTests() {
 
         await tester.pumpWidget(
           boilerplate(
-            // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-            // ignore: prefer_const_constructors
-            Column(
-              children: const <Widget>[
+            const Column(
+              children: <Widget>[
                 MarkdownBody(data: data),
               ],
             ),
           ),
         );
 
-        final double screenWidth = tester.allElements.first.size!.width;
+        final double screenWidth =
+            find.byType(Column).evaluate().first.size!.width;
         final double markdownBodyWidth =
             find.byType(MarkdownBody).evaluate().single.size!.width;
 

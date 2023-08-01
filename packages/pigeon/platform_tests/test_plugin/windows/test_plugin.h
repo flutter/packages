@@ -58,10 +58,13 @@ class TestPlugin : public flutter::Plugin,
       const flutter::EncodableList& a_list) override;
   core_tests_pigeontest::ErrorOr<flutter::EncodableMap> EchoMap(
       const flutter::EncodableMap& a_map) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllClassesWrapper>
+  EchoClassWrapper(
+      const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
   ExtractNestedNullableString(
-      const core_tests_pigeontest::AllNullableTypesWrapper& wrapper) override;
-  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllNullableTypesWrapper>
+      const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllClassesWrapper>
   CreateNestedNullableString(const std::string* nullable_string) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllNullableTypes>
   SendMultipleNullableTypes(const bool* a_nullable_bool,

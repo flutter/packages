@@ -37,14 +37,33 @@ class SelectionOptions {
   List<TypeGroup?> allowedTypes;
 }
 
+/// The result from an open or save dialog.
+class FileDialogResult {
+  FileDialogResult({required this.paths, this.typeGroupIndex});
+
+  /// The selected paths.
+  ///
+  /// Empty if the dialog was canceled.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The Dart code treats the values as non-nullable.
+  List<String?> paths;
+
+  /// The type group index (into the list provided in [SelectionOptions]) of
+  /// the group that was selected when the dialog was confirmed.
+  ///
+  /// Null if no type groups were provided, or the dialog was canceled.
+  int? typeGroupIndex;
+}
+
 @HostApi(dartHostTestHandler: 'TestFileSelectorApi')
 abstract class FileSelectorApi {
-  List<String?> showOpenDialog(
+  FileDialogResult showOpenDialog(
     SelectionOptions options,
     String? initialDirectory,
     String? confirmButtonText,
   );
-  List<String?> showSaveDialog(
+  FileDialogResult showSaveDialog(
     SelectionOptions options,
     String? initialDirectory,
     String? suggestedName,

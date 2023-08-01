@@ -9,9 +9,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#104231)
-// ignore: unnecessary_import
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +26,7 @@ Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
-  server.forEach((HttpRequest request) {
+  unawaited(server.forEach((HttpRequest request) {
     if (request.uri.path == '/hello.txt') {
       request.response.writeln('Hello, world.');
     } else if (request.uri.path == '/secondary.txt') {
@@ -42,7 +39,7 @@ Future<void> main() async {
       fail('unexpected request: ${request.method} ${request.uri}');
     }
     request.response.close();
-  });
+  }));
   final String prefixUrl = 'http://${server.address.address}:${server.port}';
   final String primaryUrl = '$prefixUrl/hello.txt';
   final String secondaryUrl = '$prefixUrl/secondary.txt';
@@ -53,13 +50,15 @@ Future<void> main() async {
 
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
-    )
-      ..setPlatformNavigationDelegate(
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((_) => pageFinished.complete()),
-      )
-      ..loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+    );
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await controller.loadRequest(
+      LoadRequestParams(uri: Uri.parse(primaryUrl)),
+    );
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -120,9 +119,8 @@ Future<void> main() async {
       android.WebView.api = WebViewHostApiImpl(
         instanceManager: instanceManager,
       );
-      android.WebSettings.api = WebSettingsHostApiImpl(
-        instanceManager: instanceManager,
-      );
+      android.WebSettings.api =
+          WebSettingsHostApiImpl(instanceManager: instanceManager);
       android.WebChromeClient.api = WebChromeClientHostApiImpl(
         instanceManager: instanceManager,
       );
@@ -180,14 +178,14 @@ Future<void> main() async {
 
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
-    )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setPlatformNavigationDelegate(
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((_) => pageFinished.complete()),
-      )
-      ..loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -214,19 +212,19 @@ Future<void> main() async {
 
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
-    )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setPlatformNavigationDelegate(
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((String url) => pageLoads.add(url)),
-      )
-      ..loadRequest(
-        LoadRequestParams(
-          uri: Uri.parse(headersUrl),
-          headers: headers,
-        ),
-      );
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((String url) => pageLoads.add(url)));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await controller.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse(headersUrl),
+        headers: headers,
+      ),
+    );
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -246,15 +244,16 @@ Future<void> main() async {
 
   testWidgets('JavascriptChannel', (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
+
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
-    )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setPlatformNavigationDelegate(
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((_) => pageFinished.complete()),
-      );
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
 
     final Completer<String> channelCompleter = Completer<String>();
     await controller.addJavaScriptChannel(
@@ -321,15 +320,17 @@ Future<void> main() async {
 
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
-    )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setPlatformNavigationDelegate(
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((_) => pageFinished.complete()),
-      )
-      ..setUserAgent('Custom_User_Agent1')
-      ..loadRequest(LoadRequestParams(uri: Uri.parse('about:blank')));
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    unawaited(controller.setUserAgent('Custom_User_Agent1'));
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    await controller
+        .loadRequest(LoadRequestParams(uri: Uri.parse('about:blank')));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -388,23 +389,24 @@ Future<void> main() async {
     testWidgets('Auto media playback', (WidgetTester tester) async {
       Completer<void> pageLoaded = Completer<void>();
 
-      PlatformWebViewController controller = AndroidWebViewController(
+      AndroidWebViewController controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          AndroidNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )..setOnPageFinished((_) => pageLoaded.complete()),
-        )
-        ..setMediaPlaybackRequiresUserGesture(false)
-        ..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(
-              'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            ),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$videoTestBase64',
           ),
-        );
+        ),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -421,22 +423,23 @@ Future<void> main() async {
       expect(isPaused, false);
 
       pageLoaded = Completer<void>();
-      controller = PlatformWebViewController(
+      controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          PlatformNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )..setOnPageFinished((_) => pageLoaded.complete()),
-        )
-        ..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(
-              'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            ),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      delegate = AndroidNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$videoTestBase64',
           ),
-        );
+        ),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -457,35 +460,37 @@ Future<void> main() async {
       final Completer<void> pageLoaded = Completer<void>();
       final Completer<void> videoPlaying = Completer<void>();
 
-      final PlatformWebViewController controller = AndroidWebViewController(
+      final AndroidWebViewController controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          AndroidNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )..setOnPageFinished((_) => pageLoaded.complete()),
-        )
-        ..addJavaScriptChannel(
-          JavaScriptChannelParams(
-            name: 'VideoTestTime',
-            onMessageReceived: (JavaScriptMessage message) {
-              final double currentTime = double.parse(message.message);
-              // Let it play for at least 1 second to make sure the related video's properties are set.
-              if (currentTime > 1 && !videoPlaying.isCompleted) {
-                videoPlaying.complete(null);
-              }
-            },
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+      unawaited(controller.addJavaScriptChannel(
+        JavaScriptChannelParams(
+          name: 'VideoTestTime',
+          onMessageReceived: (JavaScriptMessage message) {
+            final double currentTime = double.parse(message.message);
+            // Let it play for at least 1 second to make sure the related video's properties are set.
+            if (currentTime > 1 && !videoPlaying.isCompleted) {
+              videoPlaying.complete(null);
+            }
+          },
+        ),
+      ));
+
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$videoTestBase64',
           ),
-        )
-        ..setMediaPlaybackRequiresUserGesture(false)
-        ..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(
-              'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            ),
-          ),
-        );
+        ),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -540,23 +545,24 @@ Future<void> main() async {
     testWidgets('Auto media playback', (WidgetTester tester) async {
       Completer<void> pageLoaded = Completer<void>();
 
-      PlatformWebViewController controller = AndroidWebViewController(
+      AndroidWebViewController controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          AndroidNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )..setOnPageFinished((_) => pageLoaded.complete()),
-        )
-        ..setMediaPlaybackRequiresUserGesture(false)
-        ..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(
-              'data:text/html;charset=utf-8;base64,$audioTestBase64',
-            ),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$audioTestBase64',
           ),
-        );
+        ),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -573,22 +579,22 @@ Future<void> main() async {
       expect(isPaused, false);
 
       pageLoaded = Completer<void>();
-      controller = PlatformWebViewController(
+      controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          PlatformNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )..setOnPageFinished((_) => pageLoaded.complete()),
-        )
-        ..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(
-              'data:text/html;charset=utf-8;base64,$audioTestBase64',
-            ),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      delegate = AndroidNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$audioTestBase64',
           ),
-        );
+        ),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -621,20 +627,21 @@ Future<void> main() async {
 
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
-    )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setPlatformNavigationDelegate(
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((_) => pageLoaded.complete()),
-      )
-      ..loadRequest(
-        LoadRequestParams(
-          uri: Uri.parse(
-            'data:text/html;charset=utf-8;base64,$getTitleTestBase64',
-          ),
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    await controller.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse(
+          'data:text/html;charset=utf-8;base64,$getTitleTestBase64',
         ),
-      );
+      ),
+    );
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -688,23 +695,25 @@ Future<void> main() async {
           Completer<ContentOffsetChange>();
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          PlatformNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )..setOnPageFinished((_) => pageLoaded.complete()),
-        )
-        ..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(
-              'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
-            ),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      unawaited(controller.setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
+        offsetsCompleter.complete(contentOffsetChange);
+      }));
+
+
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
           ),
-        )
-        ..setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
-          offsetsCompleter.complete(contentOffsetChange);
-        });
+        ),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -728,6 +737,7 @@ Future<void> main() async {
       // time to settle.
       expect(scrollPos.dx, isNot(X_SCROLL));
       expect(scrollPos.dy, isNot(Y_SCROLL));
+
       await controller.scrollTo(X_SCROLL, Y_SCROLL);
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL);
@@ -762,22 +772,24 @@ Future<void> main() async {
 
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          PlatformNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )
-            ..setOnPageFinished((_) => pageLoaded.complete())
-            ..setOnNavigationRequest((NavigationRequest navigationRequest) {
-              return (navigationRequest.url.contains('youtube.com'))
-                  ? NavigationDecision.prevent
-                  : NavigationDecision.navigate;
-            }),
-        )
-        ..loadRequest(
-          LoadRequestParams(uri: Uri.parse(blankPageEncoded)),
-        );
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(
+        delegate.setOnNavigationRequest((NavigationRequest navigationRequest) {
+          return (navigationRequest.url.contains('youtube.com'))
+              ? NavigationDecision.prevent
+              : NavigationDecision.navigate;
+        }),
+      );
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+      await controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse(blankPageEncoded)),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -803,18 +815,21 @@ Future<void> main() async {
 
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          PlatformNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )..setOnWebResourceError((WebResourceError error) {
-              errorCompleter.complete(error);
-            }),
-        )
-        ..loadRequest(
-          LoadRequestParams(uri: Uri.parse('https://www.notawebsite..com')),
-        );
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(
+        delegate.setOnWebResourceError((WebResourceError error) {
+          errorCompleter.complete(error);
+        }),
+      );
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+      await controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse('https://www.notawebsite..com')),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -829,9 +844,7 @@ Future<void> main() async {
 
       expect(error.errorType, isNotNull);
       expect(
-        (error as AndroidWebResourceError)
-            .failingUrl
-            ?.startsWith('https://www.notawebsite..com'),
+        error.url?.startsWith('https://www.notawebsite..com'),
         isTrue,
       );
     });
@@ -844,24 +857,27 @@ Future<void> main() async {
 
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          PlatformNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )
-            ..setOnPageFinished((_) => pageFinishCompleter.complete())
-            ..setOnWebResourceError((WebResourceError error) {
-              errorCompleter.complete(error);
-            }),
-        )
-        ..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(
-              'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
-            ),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(
+        delegate.setOnPageFinished((_) => pageFinishCompleter.complete()),
+      );
+      unawaited(
+        delegate.setOnWebResourceError((WebResourceError error) {
+          errorCompleter.complete(error);
+        }),
+      );
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
           ),
-        );
+        ),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -880,20 +896,22 @@ Future<void> main() async {
 
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          PlatformNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )
-            ..setOnPageFinished((_) => pageLoaded.complete())
-            ..setOnNavigationRequest((NavigationRequest navigationRequest) {
-              return (navigationRequest.url.contains('youtube.com'))
-                  ? NavigationDecision.prevent
-                  : NavigationDecision.navigate;
-            }),
-        )
-        ..loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(delegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        return (navigationRequest.url.contains('youtube.com'))
+            ? NavigationDecision.prevent
+            : NavigationDecision.navigate;
+      }));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+      await controller
+          .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -923,23 +941,23 @@ Future<void> main() async {
 
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(
-          PlatformNavigationDelegate(
-            const PlatformNavigationDelegateCreationParams(),
-          )
-            ..setOnPageFinished((_) => pageLoaded.complete())
-            ..setOnNavigationRequest(
-                (NavigationRequest navigationRequest) async {
-              NavigationDecision decision = NavigationDecision.prevent;
-              decision = await Future<NavigationDecision>.delayed(
-                  const Duration(milliseconds: 10),
-                  () => NavigationDecision.navigate);
-              return decision;
-            }),
-        )
-        ..loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(delegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) async {
+        NavigationDecision decision = NavigationDecision.prevent;
+        decision = await Future<NavigationDecision>.delayed(
+            const Duration(milliseconds: 10),
+            () => NavigationDecision.navigate);
+        return decision;
+      }));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await controller
+          .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -962,17 +980,17 @@ Future<void> main() async {
     testWidgets('can receive url changes', (WidgetTester tester) async {
       final Completer<void> pageLoaded = Completer<void>();
 
-      final PlatformNavigationDelegate navigationDelegate =
-          PlatformNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      )..setOnPageFinished((_) => pageLoaded.complete());
-
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(navigationDelegate)
-        ..loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await controller
+          .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -983,10 +1001,10 @@ Future<void> main() async {
       ));
 
       await pageLoaded.future;
-      await navigationDelegate.setOnPageFinished((_) {});
+      await delegate.setOnPageFinished((_) {});
 
       final Completer<String> urlChangeCompleter = Completer<String>();
-      await navigationDelegate.setOnUrlChange((UrlChange change) {
+      await delegate.setOnUrlChange((UrlChange change) {
         urlChangeCompleter.complete(change.url);
       });
 
@@ -999,17 +1017,17 @@ Future<void> main() async {
         (WidgetTester tester) async {
       final Completer<void> pageLoaded = Completer<void>();
 
-      final PlatformNavigationDelegate navigationDelegate =
-          PlatformNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      )..setOnPageFinished((_) => pageLoaded.complete());
-
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(navigationDelegate)
-        ..loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await controller
+          .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -1020,10 +1038,10 @@ Future<void> main() async {
       ));
 
       await pageLoaded.future;
-      await navigationDelegate.setOnPageFinished((_) {});
+      await delegate.setOnPageFinished((_) {});
 
       final Completer<String> urlChangeCompleter = Completer<String>();
-      await navigationDelegate.setOnUrlChange((UrlChange change) {
+      await delegate.setOnUrlChange((UrlChange change) {
         urlChangeCompleter.complete(change.url);
       });
 
@@ -1041,11 +1059,13 @@ Future<void> main() async {
 
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
-    )
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setPlatformNavigationDelegate(PlatformNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      )..setOnPageFinished((_) => pageLoaded.complete()));
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -1068,12 +1088,15 @@ Future<void> main() async {
 
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((_) => pageLoaded.complete()))
-        ..loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await controller
+          .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -1137,18 +1160,21 @@ Future<void> main() async {
 
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setJavaScriptMode(JavaScriptMode.unrestricted)
-        ..setPlatformNavigationDelegate(PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((_) => pageLoadCompleter.complete()))
-        ..loadRequest(
-          LoadRequestParams(
-            uri: Uri.parse(
-              'data:text/html;charset=utf-8;base64,$openWindowTestBase64',
-            ),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(
+          delegate.setOnPageFinished((_) => pageLoadCompleter.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$openWindowTestBase64',
           ),
-        );
+        ),
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -1178,11 +1204,14 @@ Future<void> main() async {
 
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
-      )
-        ..setPlatformNavigationDelegate(PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        )..setOnPageFinished((_) => pageLoaded.complete()))
-        ..loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
+      );
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await controller
+          .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {

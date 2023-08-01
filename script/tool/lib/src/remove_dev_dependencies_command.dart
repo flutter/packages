@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:file/file.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
@@ -16,7 +15,7 @@ import 'common/repository_package.dart';
 /// clients of the library, but not for development of the library.
 class RemoveDevDependenciesCommand extends PackageLoopingCommand {
   /// Creates a publish metadata updater command instance.
-  RemoveDevDependenciesCommand(Directory packagesDir) : super(packagesDir);
+  RemoveDevDependenciesCommand(super.packagesDir);
 
   @override
   final String name = 'remove-dev-dependencies';

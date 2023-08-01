@@ -60,6 +60,13 @@ HRESULT TestFileDialogController::GetResult(IShellItem** out_item) const {
   return S_OK;
 }
 
+HRESULT TestFileDialogController::GetFileTypeIndex(UINT* out_index) const {
+  // Arbitrarily always return the last group. (No -1 because the return value
+  // from GetFileTypeIndex is defined to be one-indexed.)
+  *out_index = static_cast<UINT>(filter_groups_.size());
+  return S_OK;
+}
+
 HRESULT TestFileDialogController::GetResults(
     IShellItemArray** out_items) const {
   *out_items = std::get<IShellItemArrayPtr>(mock_result_);

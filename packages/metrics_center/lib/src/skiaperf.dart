@@ -7,7 +7,8 @@
 import 'dart:convert';
 
 import 'package:gcloud/storage.dart';
-import 'package:googleapis/storage/v1.dart' show DetailedApiRequestError;
+import 'package:googleapis/storage/v1.dart'
+    show DetailedApiRequestError, StorageApi;
 import 'package:googleapis_auth/auth_io.dart';
 
 import 'common.dart';
@@ -388,7 +389,7 @@ class SkiaPerfDestination extends MetricDestination {
     }
     final SkiaPerfGcsAdaptor adaptor =
         SkiaPerfGcsAdaptor(storage.bucket(bucketName));
-    final GcsLock lock = GcsLock(client, bucketName);
+    final GcsLock lock = GcsLock(StorageApi(client), bucketName);
     return SkiaPerfDestination(adaptor, lock);
   }
 

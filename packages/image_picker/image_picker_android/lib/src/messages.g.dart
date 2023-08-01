@@ -26,6 +26,32 @@ enum CacheRetrievalType {
   video,
 }
 
+class GeneralOptions {
+  GeneralOptions({
+    required this.allowMultiple,
+    required this.usePhotoPicker,
+  });
+
+  bool allowMultiple;
+
+  bool usePhotoPicker;
+
+  Object encode() {
+    return <Object?>[
+      allowMultiple,
+      usePhotoPicker,
+    ];
+  }
+
+  static GeneralOptions decode(Object result) {
+    result as List<Object?>;
+    return GeneralOptions(
+      allowMultiple: result[0]! as bool,
+      usePhotoPicker: result[1]! as bool,
+    );
+  }
+}
+
 /// Options for image selection and output.
 class ImageSelectionOptions {
   ImageSelectionOptions({
@@ -59,6 +85,28 @@ class ImageSelectionOptions {
       maxWidth: result[0] as double?,
       maxHeight: result[1] as double?,
       quality: result[2]! as int,
+    );
+  }
+}
+
+class MediaSelectionOptions {
+  MediaSelectionOptions({
+    required this.imageSelectionOptions,
+  });
+
+  ImageSelectionOptions imageSelectionOptions;
+
+  Object encode() {
+    return <Object?>[
+      imageSelectionOptions.encode(),
+    ];
+  }
+
+  static MediaSelectionOptions decode(Object result) {
+    result as List<Object?>;
+    return MediaSelectionOptions(
+      imageSelectionOptions:
+          ImageSelectionOptions.decode(result[0]! as List<Object?>),
     );
   }
 }
@@ -192,14 +240,20 @@ class _ImagePickerApiCodec extends StandardMessageCodec {
     } else if (value is CacheRetrievalResult) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is ImageSelectionOptions) {
+    } else if (value is GeneralOptions) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is SourceSpecification) {
+    } else if (value is ImageSelectionOptions) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is VideoSelectionOptions) {
+    } else if (value is MediaSelectionOptions) {
       buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is SourceSpecification) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is VideoSelectionOptions) {
+      buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -214,10 +268,14 @@ class _ImagePickerApiCodec extends StandardMessageCodec {
       case 129:
         return CacheRetrievalResult.decode(readValue(buffer)!);
       case 130:
-        return ImageSelectionOptions.decode(readValue(buffer)!);
+        return GeneralOptions.decode(readValue(buffer)!);
       case 131:
-        return SourceSpecification.decode(readValue(buffer)!);
+        return ImageSelectionOptions.decode(readValue(buffer)!);
       case 132:
+        return MediaSelectionOptions.decode(readValue(buffer)!);
+      case 133:
+        return SourceSpecification.decode(readValue(buffer)!);
+      case 134:
         return VideoSelectionOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -242,17 +300,13 @@ class ImagePickerApi {
   Future<List<String?>> pickImages(
       SourceSpecification arg_source,
       ImageSelectionOptions arg_options,
-      bool arg_allowMultiple,
-      bool arg_usePhotoPicker) async {
+      GeneralOptions arg_generalOptions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImagePickerApi.pickImages', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(<Object?>[
-      arg_source,
-      arg_options,
-      arg_allowMultiple,
-      arg_usePhotoPicker
-    ]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_source, arg_options, arg_generalOptions])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -281,17 +335,47 @@ class ImagePickerApi {
   Future<List<String?>> pickVideos(
       SourceSpecification arg_source,
       VideoSelectionOptions arg_options,
-      bool arg_allowMultiple,
-      bool arg_usePhotoPicker) async {
+      GeneralOptions arg_generalOptions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImagePickerApi.pickVideos', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(<Object?>[
-      arg_source,
-      arg_options,
-      arg_allowMultiple,
-      arg_usePhotoPicker
-    ]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_source, arg_options, arg_generalOptions])
+        as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as List<Object?>?)!.cast<String?>();
+    }
+  }
+
+  /// Selects images and videos and returns their paths.
+  ///
+  /// Elements must not be null, by convention. See
+  /// https://github.com/flutter/flutter/issues/97848
+  Future<List<String?>> pickMedia(
+      MediaSelectionOptions arg_mediaSelectionOptions,
+      GeneralOptions arg_generalOptions) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ImagePickerApi.pickMedia', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_mediaSelectionOptions, arg_generalOptions])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

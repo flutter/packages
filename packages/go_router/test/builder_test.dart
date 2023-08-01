@@ -4,11 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/src/builder.dart';
-import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/matching.dart';
-import 'package:go_router/src/router.dart';
+import 'package:go_router/go_router.dart';
 
 import 'test_helpers.dart';
 
@@ -36,8 +32,6 @@ void main() {
             RouteMatch(
               route: config.routes.first as GoRoute,
               matchedLocation: '/',
-              extra: null,
-              error: null,
               pageKey: const ValueKey<String>('/'),
             ),
           ],
@@ -121,8 +115,6 @@ void main() {
             RouteMatch(
               route: config.routes.first as GoRoute,
               matchedLocation: '/',
-              extra: null,
-              error: null,
               pageKey: const ValueKey<String>('/'),
             ),
           ],
@@ -176,15 +168,11 @@ void main() {
             RouteMatch(
               route: config.routes.first,
               matchedLocation: '',
-              extra: null,
-              error: null,
               pageKey: const ValueKey<String>(''),
             ),
             RouteMatch(
               route: config.routes.first.routes.first,
               matchedLocation: '/details',
-              extra: null,
-              error: null,
               pageKey: const ValueKey<String>('/details'),
             ),
           ],
@@ -251,8 +239,6 @@ void main() {
             RouteMatch(
               route: config.routes.first.routes.first as GoRoute,
               matchedLocation: '/a/details',
-              extra: null,
-              error: null,
               pageKey: const ValueKey<String>('/a/details'),
             ),
           ],

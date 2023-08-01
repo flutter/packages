@@ -525,8 +525,8 @@ void main() {
                 'Publishing all packages that have changed relative to "HEAD~"'),
             contains('Running `pub publish ` in ${plugin1.path}...'),
             contains('Running `pub publish ` in ${plugin2.path}...'),
-            contains('plugin1 - \x1B[32mpublished\x1B[0m'),
-            contains('plugin2/plugin2 - \x1B[32mpublished\x1B[0m'),
+            contains('plugin1 - published'),
+            contains('plugin2/plugin2 - published'),
           ]));
       expect(
           processRunner.recordedCalls,
