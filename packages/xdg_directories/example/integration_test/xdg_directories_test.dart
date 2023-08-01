@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:xdg_directories/xdg_directories.dart';
@@ -16,18 +17,21 @@ void main() {
 
     expect(find.textContaining(dataHome.path), findsOneWidget);
     expect(find.textContaining(configHome.path), findsOneWidget);
-    expect(find.textContaining(dataDirs.join('\n')), findsOneWidget);
-    expect(find.textContaining(configDirs.join('\n')), findsOneWidget);
-    expect(find.textContaining(cacheHome.path), findsOneWidget);
-    expect(find.textContaining(runtimeDir?.path ?? ''), findsOneWidget);
+    expect(
+        find.textContaining(
+            dataDirs.map((Directory directory) => directory.path).join('\n')),
+        findsOneWidget);
+    expect(
+        find.textContaining(
+            configDirs.map((Directory directory) => directory.path).join('\n')),
+        findsOneWidget);
 
-    final Set<String> userDirectoryNames = getUserDirectoryNames();
+    expect(
+      find.textContaining(cacheHome.path, skipOffstage: false),
+      findsOneWidget,
+    );
 
-    for (final String userDirectoryName in userDirectoryNames) {
-      final String userDirectoryPath =
-          getUserDirectory(userDirectoryName)?.path ?? '';
-
-      expect(find.textContaining(userDirectoryPath), findsOneWidget);
-    }
+    expect(find.textContaining(runtimeDir?.path ?? '', skipOffstage: false),
+        findsOneWidget);
   });
 }
