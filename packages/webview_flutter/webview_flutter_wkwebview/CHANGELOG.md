@@ -1,3 +1,7 @@
+## 3.8.0
+
+* Adds support for `setOnContentOffsetChanged` method to the `WebKitWebViewController`.
+
 ## 3.7.2
 
 * Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller changes.

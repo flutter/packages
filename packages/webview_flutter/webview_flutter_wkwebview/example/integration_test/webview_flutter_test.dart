@@ -715,7 +715,9 @@ Future<void> main() async {
       unawaited(controller.setPlatformNavigationDelegate(delegate));
       unawaited(controller
           .setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
-        offsetsCompleter.complete(contentOffsetChange);
+            if(!offsetsCompleter.isCompleted) {
+              offsetsCompleter.complete(contentOffsetChange);
+            }
       }));
 
       await controller.loadRequest(

@@ -83,7 +83,7 @@ class UIScrollViewHostApiImpl extends UIScrollViewHostApi {
   ) async {
     return setDelegate(
       instanceManager.getIdentifier(instance)!,
-      delegate != null ? instanceManager.getIdentifier(delegate)! : null,
+      delegate != null ? instanceManager.getIdentifier(delegate) : null,
     );
   }
 }
@@ -142,11 +142,13 @@ class UIScrollViewDelegateFlutterApiImpl
 
   @override
   void scrollViewDidScroll(int identifier, int uiScrollViewIdentifier) {
-    final void Function(UIScrollView)? function =
+    final void Function(UIScrollView)? callback =
         _getDelegate(identifier).scrollViewDidScroll;
-    final UIScrollView uiScrollView = instanceManager
-        .getInstanceWithWeakReference(uiScrollViewIdentifier)! as UIScrollView;
-    function?.call(uiScrollView);
+    final UIScrollView? uiScrollView = instanceManager
+        .getInstanceWithWeakReference(uiScrollViewIdentifier) as UIScrollView?;
+    if(uiScrollView != null && callback != null) {
+      callback.call(uiScrollView);
+    }
   }
 }
 

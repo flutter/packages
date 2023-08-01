@@ -402,7 +402,7 @@ class WebViewFlutterApiImpl implements WebViewFlutterApi {
       webViewInstance != null,
       'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
-    webViewInstance!.onScrollChanged!(ContentOffsetChange(x, y));
+    webViewInstance!.onScrollChanged?.call(ContentOffsetChange(x, y));
   }
 }
 
