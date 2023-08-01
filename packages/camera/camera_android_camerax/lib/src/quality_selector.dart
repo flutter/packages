@@ -62,9 +62,12 @@ class QualitySelector extends JavaObject {
   final FallbackStrategy? fallbackStrategy;
 
   /// to do
-  Future<ResolutionInfo> getResolution(
-      CameraInfo cameraInfo, QualityConstraint quality) {
-    return _api.getResolutionFromInstance(this, cameraInfo, quality);
+  static Future<ResolutionInfo> getResolution(
+      CameraInfo cameraInfo, QualityConstraint quality,
+      {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager}) {
+    final _QualitySelectorHostApiImpl api = _QualitySelectorHostApiImpl(
+        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+    return api.getResolutionFromInstance(cameraInfo, quality);
   }
 }
 
@@ -117,7 +120,7 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
   }
 
   /// to do
-  Future<ResolutionInfo> getResolutionFromInstance(QualitySelector instance,
+  Future<ResolutionInfo> getResolutionFromInstance(
       CameraInfo cameraInfo, QualityConstraint quality) async {
     final int? cameraInfoIdentifier = instanceManager.getIdentifier(cameraInfo);
     final ResolutionInfo resolution =
