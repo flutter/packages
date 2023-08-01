@@ -37,6 +37,7 @@ public class VideoPlayerTest {
   private EventChannel fakeEventChannel;
   private TextureRegistry.SurfaceTextureEntry fakeSurfaceTextureEntry;
   private VideoPlayerOptions fakeVideoPlayerOptions;
+  private VideoPlayerOptions fakeVideoPlayerOptionsWitchCache;
   private QueuingEventSink fakeEventSink;
   private DefaultHttpDataSource.Factory httpDataSourceFactorySpy;
 
@@ -50,6 +51,9 @@ public class VideoPlayerTest {
     fakeEventChannel = mock(EventChannel.class);
     fakeSurfaceTextureEntry = mock(TextureRegistry.SurfaceTextureEntry.class);
     fakeVideoPlayerOptions = mock(VideoPlayerOptions.class);
+    fakeVideoPlayerOptionsWitchCache = mock(VideoPlayerOptions.class).maxCacheSize;
+    fakeVideoPlayerOptionsWitchCache.maxCacheSize = 100;
+    fakeVideoPlayerOptionsWitchCache.maxFileSize = 100;
     fakeEventSink = mock(QueuingEventSink.class);
     httpDataSourceFactorySpy = spy(new DefaultHttpDataSource.Factory());
   }
@@ -247,6 +251,46 @@ public class VideoPlayerTest {
             fakeEventChannel,
             fakeSurfaceTextureEntry,
             fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
+
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  Map<String, Object> event = new HashMap<>();
+                  event.put("event", "isPlayingStateUpdate");
+                  event.put("isPlaying", (Boolean) invocation.getArguments()[0]);
+                  fakeEventSink.success(event);
+                  return null;
+                })
+        .when(fakeExoPlayer)
+        .setPlayWhenReady(anyBoolean());
+
+    videoPlayer.play();
+
+    verify(fakeEventSink).success(eventCaptor.capture());
+    HashMap<String, Object> event1 = eventCaptor.getValue();
+
+    assertEquals(event1.get("event"), "isPlayingStateUpdate");
+    assertEquals(event1.get("isPlaying"), true);
+
+    videoPlayer.pause();
+
+    verify(fakeEventSink, times(2)).success(eventCaptor.capture());
+    HashMap<String, Object> event2 = eventCaptor.getValue();
+
+    assertEquals(event2.get("event"), "isPlayingStateUpdate");
+    assertEquals(event2.get("isPlaying"), false);
+  }
+
+  @Test
+  public void onIsPlayingWithCacheChangedSendsExpectedEvent() {
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceTextureEntry,
+            fakeVideoPlayerOptionsWitchCache,
             fakeEventSink,
             httpDataSourceFactorySpy);
 
