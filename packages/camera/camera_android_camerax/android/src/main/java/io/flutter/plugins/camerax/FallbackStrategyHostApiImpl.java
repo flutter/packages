@@ -33,31 +33,7 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
         @NonNull QualityConstraint qualityConstraint,
         @NonNull VideoResolutionFallbackRule fallbackRule) {
       // Determined proper CameraX Quality.
-      Quality quality = null;
-      switch (qualityConstraint) {
-        case SD:
-          quality = Quality.SD;
-          break;
-        case HD:
-          quality = Quality.HD;
-          break;
-        case FHD:
-          quality = Quality.FHD;
-          break;
-        case UHD:
-          quality = Quality.UHD;
-          break;
-        case LOWEST:
-          quality = Quality.LOWEST;
-          break;
-        case HIGHEST:
-          quality = Quality.HIGHEST;
-          break;
-      }
-
-      if (quality == null) {
-        throw new IllegalArgumentException("whoops");
-      }
+      Quality quality = QualitySelectorHostApiImpl.getCameraXQualityFromQuality(qualityConstraint);
 
       // Construct proper FallbackStrategy.
       switch (fallbackRule) {
@@ -81,7 +57,6 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public FallbackStrategyHostApiImpl(@NonNull InstanceManager instanceManager) {
-
     this(instanceManager, new FallbackStrategyProxy());
   }
 

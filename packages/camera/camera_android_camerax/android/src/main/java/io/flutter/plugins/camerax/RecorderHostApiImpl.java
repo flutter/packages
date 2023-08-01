@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
+import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
 import androidx.core.content.ContextCompat;
 import io.flutter.plugin.common.BinaryMessenger;

@@ -33,7 +33,6 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
   /** Proxy for constructors and static method of {@link QualitySelector}. */
   @VisibleForTesting
   public static class QualitySelectorProxy {
-
     /** Creates an instance of {@link QualitySelector}. */
     public QualitySelector create(
         @NonNull List<Long> qualityIndexList, @Nullable FallbackStrategy fallbackStrategy) {
@@ -41,19 +40,17 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
       for (Long qualityIndex : qualityIndexList) {
         qualityList.add(getQualityConstant(qualityIndex));
       }
-
-      if (qualityList.size() == 1) {
+      
+      boolean fallbackStrategySpecified = fallbackStrategy != null;
+      if (qualityList.size() == 0) {
+        throw new IllegalArgumentException("List of at least one Quality must be supplied to create QualitySelector.");
+      }
+      else if (qualityList.size() == 1) {
         Quality quality = qualityList.get(0);
-        if (fallbackStrategy == null) {
-          return QualitySelector.from(quality);
-        }
-        return QualitySelector.from(quality, fallbackStrategy);
+        return fallbackStrategySpecified ? QualitySelector.from(quality, fallbackStrategy) : QualitySelector.from(quality);
       }
 
-      if (fallbackStrategy == null) {
-        return QualitySelector.fromOrderedList(qualityList);
-      }
-      return QualitySelector.fromOrderedList(qualityList);
+      return fallbackStrategySpecified ? QualitySelector.fromOrderedList(qualityList, fallbackStrategy) : QualitySelector.fromOrderedList(qualityList);
     }
 
     private Quality getQualityConstant(@NonNull Long qualityIndex) {
@@ -68,7 +65,6 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
   public QualitySelectorHostApiImpl(@NonNull InstanceManager instanceManager) {
-
     this(instanceManager, new QualitySelectorProxy());
   }
 
@@ -133,6 +129,6 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
       case HIGHEST:
         return Quality.HIGHEST;
     }
-    throw new IllegalArgumentException("whoops");
+    throw new IllegalArgumentException("QualityConstraint " + quality + " is unhandled by QualitySelectorHostApiImpl.");
   }
 }
