@@ -4,6 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:xdg_directories/xdg_directories.dart';
 import 'package:xdg_directories_example/main.dart';
 
 void main() {
@@ -13,21 +14,20 @@ void main() {
     // Build our app and trigger a frame.
     await _.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('XDG Directories Demo'), findsOneWidget);
-    expect(find.text('Data Home:'), findsOneWidget);
+    expect(find.textContaining(dataHome.path), findsOneWidget);
+    expect(find.textContaining(configHome.path), findsOneWidget);
+    expect(find.textContaining(dataDirs.join('\n')), findsOneWidget);
+    expect(find.textContaining(configDirs.join('\n')), findsOneWidget);
+    expect(find.textContaining(cacheHome.path), findsOneWidget);
+    expect(find.textContaining(runtimeDir?.path ?? ''), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    // await _.tap(find.byIcon(Icons.add));
-    // await _.pump();
+    final Set<String> userDirectoryNames = getUserDirectoryNames();
 
-    // Verify that our counter has incremented.
-    // expect(find.text('0'), findsNothing);
-    // expect(find.text('1'), findsOneWidget);
+    for (final String userDirectoryName in userDirectoryNames) {
+      final String userDirectoryPath =
+          getUserDirectory(userDirectoryName)?.path ?? '';
 
-    // await _.tap(find.byIcon(Icons.add));
-    // await _.pump();
-
-    // expect(find.text('0'), findsNothing);
+      expect(find.textContaining(userDirectoryPath), findsOneWidget);
+    }
   });
 }

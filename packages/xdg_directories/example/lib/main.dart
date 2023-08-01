@@ -67,8 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 'Config Directories: \n${configDirs.map((Directory directory) => directory.path).toList().join('\n')}\n'),
             Text('Cache Home: \n${cacheHome.path}\n'),
             Text('Runtime Directory: \n${runtimeDir?.path}\n'),
-            Text('Cache Home: \n${cacheHome.path}\n'),
-            Text('Cache Home: \n${cacheHome.path}\n'),
             const SizedBox(
               height: 100,
             ),
