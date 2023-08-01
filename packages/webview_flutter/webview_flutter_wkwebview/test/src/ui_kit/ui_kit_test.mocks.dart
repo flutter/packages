@@ -406,6 +406,21 @@ class MockTestUIScrollViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  void setDelegate(
+    int? identifier,
+    int? uiScrollViewDelegateIdentifier,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setDelegate,
+          [
+            identifier,
+            uiScrollViewDelegateIdentifier,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestUIViewHostApi].

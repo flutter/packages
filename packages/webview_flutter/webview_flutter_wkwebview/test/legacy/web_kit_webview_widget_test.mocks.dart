@@ -194,6 +194,16 @@ class MockUIScrollView extends _i1.Mock implements _i3.UIScrollView {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<void> setDelegate(_i3.UIScrollViewDelegate? delegate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setDelegate,
+          [delegate],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
   _i3.UIScrollView copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
@@ -491,6 +501,16 @@ class MockWKWebView extends _i1.Mock implements _i4.WKWebView {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<void> setScrollViewDelegate(_i3.UIScrollViewDelegate? delegate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setScrollViewDelegate,
+          [delegate],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
   _i5.Future<void> setNavigationDelegate(_i4.WKNavigationDelegate? delegate) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -757,6 +777,16 @@ class MockWKWebViewConfiguration extends _i1.Mock
         Invocation.method(
           #setAllowsInlineMediaPlayback,
           [allow],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> setLimitsNavigationsToAppBoundDomains(bool? limit) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLimitsNavigationsToAppBoundDomains,
+          [limit],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),

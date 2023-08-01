@@ -888,6 +888,33 @@ void FWFUIScrollViewHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate"
+        binaryMessenger:binaryMessenger
+                  codec:FWFUIScrollViewHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(setDelegateForScrollViewWithIdentifier:
+                                                          uiScrollViewDelegateIdentifier:error:)],
+                @"FWFUIScrollViewHostApi api (%@) doesn't respond to "
+                @"@selector(setDelegateForScrollViewWithIdentifier:uiScrollViewDelegateIdentifier:"
+                @"error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_identifier = GetNullableObjectAtIndex(args, 0);
+        NSNumber *arg_uiScrollViewDelegateIdentifier = GetNullableObjectAtIndex(args, 1);
+        FlutterError *error;
+        [api setDelegateForScrollViewWithIdentifier:arg_identifier
+                     uiScrollViewDelegateIdentifier:arg_uiScrollViewDelegateIdentifier
+                                              error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }
 @interface FWFWKWebViewConfigurationHostApiCodecReader : FlutterStandardReader
 @end
@@ -2867,5 +2894,71 @@ NSObject<FlutterMessageCodec> *FWFNSUrlFlutterApiGetCodec(void) {
                  reply:^(id reply) {
                    completion(nil);
                  }];
+}
+@end
+
+NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateHostApiGetCodec(void) {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  return sSharedObject;
+}
+
+void FWFUIScrollViewDelegateHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+                                         NSObject<FWFUIScrollViewDelegateHostApi> *api) {
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create"
+        binaryMessenger:binaryMessenger
+                  codec:FWFUIScrollViewDelegateHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(createWithIdentifier:error:)],
+                @"FWFUIScrollViewDelegateHostApi api (%@) doesn't respond to "
+                @"@selector(createWithIdentifier:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_identifier = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        [api createWithIdentifier:arg_identifier error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+}
+NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateFlutterApiGetCodec(void) {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  return sSharedObject;
+}
+
+@interface FWFUIScrollViewDelegateFlutterApi ()
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@end
+
+@implementation FWFUIScrollViewDelegateFlutterApi
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+  self = [super init];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+  }
+  return self;
+}
+- (void)scrollViewDidScrollWithIdentifier:(NSNumber *)arg_identifier
+                   uiScrollViewIdentifier:(NSNumber *)arg_uiScrollViewIdentifier
+                               completion:(void (^)(FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview."
+                             @"UIScrollViewDelegateFlutterApi.scrollViewDidScroll"
+             binaryMessenger:self.binaryMessenger
+                       codec:FWFUIScrollViewDelegateFlutterApiGetCodec()];
+  [channel
+      sendMessage:@[ arg_identifier ?: [NSNull null], arg_uiScrollViewIdentifier ?: [NSNull null] ]
+            reply:^(id reply) {
+              completion(nil);
+            }];
 }
 @end

@@ -26,10 +26,12 @@
  * @return A mock FWFScrollViewDelegate.
  */
 - (id)mockDelegateWithManager:(FWFInstanceManager *)instanceManager identifier:(long)identifier {
-    FWFScrollViewDelegate *delegate = [[FWFScrollViewDelegate alloc]initWithBinaryMessenger:OCMProtocolMock(@protocol (FlutterBinaryMessenger)) instanceManager: instanceManager];
-    
-    [instanceManager addDartCreatedInstance:delegate withIdentifier:0];
-    return OCMPartialMock(delegate);
+  FWFScrollViewDelegate *delegate = [[FWFScrollViewDelegate alloc]
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+
+  [instanceManager addDartCreatedInstance:delegate withIdentifier:0];
+  return OCMPartialMock(delegate);
 }
 
 /**
@@ -40,21 +42,22 @@
  * @return A mock FWFUIScrollViewDelegateFlutterApiImpl.
  */
 - (id)mockFlutterApiWithManager:(FWFInstanceManager *)instanceManager {
-    FWFScrollViewDelegateFlutterApiImpl *flutterAPI = [[FWFScrollViewDelegateFlutterApiImpl alloc]
-                                                       initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
-                                                               instanceManager:instanceManager];
-    return OCMPartialMock(flutterAPI);
+  FWFScrollViewDelegateFlutterApiImpl *flutterAPI = [[FWFScrollViewDelegateFlutterApiImpl alloc]
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+  return OCMPartialMock(flutterAPI);
 }
 
 - (void)testCreateWithIdentifier {
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
-    FWFScrollViewDelegateHostApiImpl *hostAPI = [[FWFScrollViewDelegateHostApiImpl alloc]
+  FWFScrollViewDelegateHostApiImpl *hostAPI = [[FWFScrollViewDelegateHostApiImpl alloc]
       initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
               instanceManager:instanceManager];
 
   FlutterError *error;
   [hostAPI createWithIdentifier:@0 error:&error];
-    FWFScrollViewDelegate *delegate = (FWFScrollViewDelegate *)[instanceManager instanceForIdentifier:0];
+  FWFScrollViewDelegate *delegate =
+      (FWFScrollViewDelegate *)[instanceManager instanceForIdentifier:0];
 
   XCTAssertTrue([delegate conformsToProtocol:@protocol(UIScrollViewDelegate)]);
   XCTAssertNil(error);
@@ -63,15 +66,18 @@
 - (void)testOnScrollViewDidScrollForDelegateWithIdentifier {
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
 
-    FWFScrollViewDelegate *mockDelegate = [self mockDelegateWithManager:instanceManager identifier:0];
-    FWFScrollViewDelegateFlutterApiImpl *mockFlutterAPI = [self mockFlutterApiWithManager:instanceManager];
+  FWFScrollViewDelegate *mockDelegate = [self mockDelegateWithManager:instanceManager identifier:0];
+  FWFScrollViewDelegateFlutterApiImpl *mockFlutterAPI =
+      [self mockFlutterApiWithManager:instanceManager];
 
   OCMStub([mockDelegate ScrollViewDelegateAPI]).andReturn(mockFlutterAPI);
-    UIScrollView *scrollView = [[UIScrollView alloc] init];
+  UIScrollView *scrollView = [[UIScrollView alloc] init];
 
-    [instanceManager addDartCreatedInstance:scrollView withIdentifier:1];
-    
-    [mockDelegate scrollViewDidScroll:scrollView];
-    OCMVerify([mockFlutterAPI scrollViewDidScrollWithIdentifier:@0 uiScrollViewIdentifier:@1 completion:OCMOCK_ANY]);
+  [instanceManager addDartCreatedInstance:scrollView withIdentifier:1];
+
+  [mockDelegate scrollViewDidScroll:scrollView];
+  OCMVerify([mockFlutterAPI scrollViewDidScrollWithIdentifier:@0
+                                       uiScrollViewIdentifier:@1
+                                                   completion:OCMOCK_ANY]);
 }
 @end

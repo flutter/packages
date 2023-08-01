@@ -79,11 +79,11 @@ class UIScrollViewHostApiImpl extends UIScrollViewHostApi {
   /// Calls [setContentOffset] with the ids of the provided object instances.
   Future<void> setDelegateForInstances(
     UIScrollView instance,
-    UIScrollViewDelegate delegate,
+    UIScrollViewDelegate? delegate,
   ) async {
     return setDelegate(
       instanceManager.getIdentifier(instance)!,
-      instanceManager.getIdentifier(delegate)!,
+      delegate != null ? instanceManager.getIdentifier(delegate)! : null,
     );
   }
 }

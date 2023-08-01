@@ -80,7 +80,7 @@ class UIScrollView extends UIView {
   /// Set the delegate to this scroll view.
   ///
   /// Represents [UIScrollView.delegate](https://developer.apple.com/documentation/uikit/uiscrollview/1619430-delegate?language=objc).
-  Future<void> setDelegate(UIScrollViewDelegate delegate) {
+  Future<void> setDelegate(UIScrollViewDelegate? delegate) {
     return _scrollViewApi.setDelegateForInstances(this, delegate);
   }
 

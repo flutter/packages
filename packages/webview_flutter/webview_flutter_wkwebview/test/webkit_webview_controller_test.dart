@@ -23,6 +23,7 @@ import 'webkit_webview_controller_test.mocks.dart';
 @GenerateMocks(<Type>[
   NSUrl,
   UIScrollView,
+  UIScrollViewDelegate,
   WKPreferences,
   WKUserContentController,
   WKWebsiteDataStore,
@@ -35,6 +36,7 @@ void main() {
   group('WebKitWebViewController', () {
     WebKitWebViewController createControllerWithMocks({
       MockUIScrollView? mockScrollView,
+      MockUIScrollViewDelegate? mockScrollViewDelegate,
       MockWKPreferences? mockPreferences,
       WKUIDelegate? uiDelegate,
       MockWKUserContentController? mockUserContentController,
@@ -57,48 +59,48 @@ void main() {
       final PlatformWebViewControllerCreationParams controllerCreationParams =
           WebKitWebViewControllerCreationParams(
         webKitProxy: WebKitProxy(
-          createWebViewConfiguration: ({InstanceManager? instanceManager}) {
-            return nonNullMockWebViewConfiguration;
-          },
-          createWebView: (
-            _, {
-            void Function(
-              String keyPath,
-              NSObject object,
-              Map<NSKeyValueChangeKey, Object?> change,
-            )? observeValue,
-            InstanceManager? instanceManager,
-          }) {
-            nonNullMockWebView = createMockWebView == null
-                ? MockWKWebView()
-                : createMockWebView(
-                    nonNullMockWebViewConfiguration,
-                    observeValue: observeValue,
-                  );
-            return nonNullMockWebView;
-          },
-          createUIDelegate: ({
-            void Function(
-              WKWebView webView,
-              WKWebViewConfiguration configuration,
-              WKNavigationAction navigationAction,
-            )? onCreateWebView,
-            Future<WKPermissionDecision> Function(
-              WKUIDelegate instance,
-              WKWebView webView,
-              WKSecurityOrigin origin,
-              WKFrameInfo frame,
-              WKMediaCaptureType type,
-            )? requestMediaCapturePermission,
-            InstanceManager? instanceManager,
-          }) {
-            return uiDelegate ??
-                CapturingUIDelegate(
-                  onCreateWebView: onCreateWebView,
-                  requestMediaCapturePermission: requestMediaCapturePermission,
+            createWebViewConfiguration: ({InstanceManager? instanceManager}) {
+          return nonNullMockWebViewConfiguration;
+        }, createWebView: (
+          _, {
+          void Function(
+            String keyPath,
+            NSObject object,
+            Map<NSKeyValueChangeKey, Object?> change,
+          )? observeValue,
+          InstanceManager? instanceManager,
+        }) {
+          nonNullMockWebView = createMockWebView == null
+              ? MockWKWebView()
+              : createMockWebView(
+                  nonNullMockWebViewConfiguration,
+                  observeValue: observeValue,
                 );
-          },
-        ),
+          return nonNullMockWebView;
+        }, createUIDelegate: ({
+          void Function(
+            WKWebView webView,
+            WKWebViewConfiguration configuration,
+            WKNavigationAction navigationAction,
+          )? onCreateWebView,
+          Future<WKPermissionDecision> Function(
+            WKUIDelegate instance,
+            WKWebView webView,
+            WKSecurityOrigin origin,
+            WKFrameInfo frame,
+            WKMediaCaptureType type,
+          )? requestMediaCapturePermission,
+          InstanceManager? instanceManager,
+        }) {
+          return uiDelegate ??
+              CapturingUIDelegate(
+                onCreateWebView: onCreateWebView,
+                requestMediaCapturePermission: requestMediaCapturePermission,
+              );
+        }, createUIScrollViewDelegate: (
+                {void Function(UIScrollView scrollView)? scrollViewDidScroll}) {
+          return mockScrollViewDelegate ?? MockUIScrollViewDelegate();
+        }),
         instanceManager: instanceManager,
       );
 
@@ -117,7 +119,6 @@ void main() {
           mockUserContentController ?? MockWKUserContentController());
       when(nonNullMockWebViewConfiguration.websiteDataStore)
           .thenReturn(mockWebsiteDataStore ?? MockWKWebsiteDataStore());
-
       return controller;
     }
 

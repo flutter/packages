@@ -225,6 +225,8 @@ abstract class TestUIScrollViewHostApi {
 
   void setContentOffset(int identifier, double x, double y);
 
+  void setDelegate(int identifier, int? uiScrollViewDelegateIdentifier);
+
   static void setup(TestUIScrollViewHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -330,6 +332,30 @@ abstract class TestUIScrollViewHostApi {
           assert(arg_y != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setContentOffset was null, expected non-null double.');
           api.setContentOffset(arg_identifier!, arg_x!, arg_y!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate was null, expected non-null int.');
+          final int? arg_uiScrollViewDelegateIdentifier = (args[1] as int?);
+          api.setDelegate(arg_identifier!, arg_uiScrollViewDelegateIdentifier);
           return <Object?>[];
         });
       }
@@ -1809,6 +1835,48 @@ abstract class TestNSUrlHostApi {
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlHostApi.getAbsoluteString was null, expected non-null int.');
           final String? output = api.getAbsoluteString(arg_identifier!);
           return <Object?>[output];
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `UIScrollViewDelegate`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+abstract class TestUIScrollViewDelegateHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier);
+
+  static void setup(TestUIScrollViewDelegateHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create was null, expected non-null int.');
+          api.create(arg_identifier!);
+          return <Object?>[];
         });
       }
     }

@@ -51,17 +51,17 @@
   if (self) {
     _ScrollViewDelegateAPI =
         [[FWFScrollViewDelegateFlutterApiImpl alloc] initWithBinaryMessenger:binaryMessenger
-                                                               instanceManager:instanceManager];
+                                                             instanceManager:instanceManager];
   }
   return self;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
   [self.ScrollViewDelegateAPI _onScrollViewDidScrollForDelegate:self
-                                                     uiScrollView:scrollView
-                                                       completion:^(FlutterError *error) {
-                                                         NSAssert(!error, @"%@", error);
-                                                       }];
+                                                   uiScrollView:scrollView
+                                                     completion:^(FlutterError *error) {
+                                                       NSAssert(!error, @"%@", error);
+                                                     }];
 }
 @end
 
@@ -88,8 +88,8 @@
                        error:(FlutterError *_Nullable *_Nonnull)error {
   FWFScrollViewDelegate *uiScrollViewDelegate =
       [[FWFScrollViewDelegate alloc] initWithBinaryMessenger:self.binaryMessenger
-                                               instanceManager:self.instanceManager];
-      [self.instanceManager addDartCreatedInstance:uiScrollViewDelegate
+                                             instanceManager:self.instanceManager];
+  [self.instanceManager addDartCreatedInstance:uiScrollViewDelegate
                                 withIdentifier:identifier.longValue];
 }
 @end

@@ -964,6 +964,31 @@ class UIScrollViewHostApi {
       return;
     }
   }
+
+  Future<void> setDelegate(
+      int arg_identifier, int? arg_uiScrollViewDelegateIdentifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_uiScrollViewDelegateIdentifier])
+        as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 class _WKWebViewConfigurationHostApiCodec extends StandardMessageCodec {
@@ -2921,6 +2946,87 @@ abstract class NSUrlFlutterApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlFlutterApi.create was null, expected non-null int.');
           api.create(arg_identifier!);
+          return;
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `UIScrollViewDelegate`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+class UIScrollViewDelegateHostApi {
+  /// Constructor for [UIScrollViewDelegateHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  UIScrollViewDelegateHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<void> create(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+/// Flutter API for `UIScrollViewDelegate`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+abstract class UIScrollViewDelegateFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void scrollViewDidScroll(int identifier, int uiScrollViewIdentifier);
+
+  static void setup(UIScrollViewDelegateFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null, expected non-null int.');
+          final int? arg_uiScrollViewIdentifier = (args[1] as int?);
+          assert(arg_uiScrollViewIdentifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null, expected non-null int.');
+          api.scrollViewDidScroll(arg_identifier!, arg_uiScrollViewIdentifier!);
           return;
         });
       }

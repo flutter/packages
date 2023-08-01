@@ -702,10 +702,10 @@ Future<void> main() async {
       );
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(controller.setPlatformNavigationDelegate(delegate));
-      unawaited(controller.setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
+      unawaited(controller
+          .setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
         offsetsCompleter.complete(contentOffsetChange);
       }));
-
 
       await controller.loadRequest(
         LoadRequestParams(

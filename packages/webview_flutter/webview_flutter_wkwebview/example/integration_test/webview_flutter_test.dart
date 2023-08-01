@@ -675,7 +675,8 @@ Future<void> main() async {
   });
 
   group('Programmatic Scroll', () {
-    testWidgets('setAndGetAndListenScrollPosition', (WidgetTester tester) async {
+    testWidgets('setAndGetAndListenScrollPosition',
+        (WidgetTester tester) async {
       const String scrollTestPage = '''
         <!DOCTYPE html>
         <html>
@@ -712,10 +713,10 @@ Future<void> main() async {
       );
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(controller.setPlatformNavigationDelegate(delegate));
-      unawaited(controller.setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
+      unawaited(controller
+          .setOnContentOffsetChanged((ContentOffsetChange contentOffsetChange) {
         offsetsCompleter.complete(contentOffsetChange);
       }));
-
 
       await controller.loadRequest(
         LoadRequestParams(

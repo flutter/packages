@@ -401,7 +401,7 @@ abstract class UIScrollViewHostApi {
 
   @ObjCSelector(
       'setDelegateForScrollViewWithIdentifier:uiScrollViewDelegateIdentifier:')
-  void setDelegate(int identifier, int uiScrollViewDelegateIdentifier);
+  void setDelegate(int identifier, int? uiScrollViewDelegateIdentifier);
 }
 
 /// Mirror of WKWebViewConfiguration.

@@ -222,13 +222,12 @@ class WebKitWebViewController extends PlatformWebViewController {
     _webView.setUIDelegate(_uiDelegate);
     _uiScrollViewDelegate = _webKitParams.webKitProxy
         .createUIScrollViewDelegate(
-        scrollViewDidScroll: (UIScrollView uiScrollView) async {
-          final Point<double> offset = await uiScrollView.getContentOffset();
-          _onContentOffsetChangedCallback
-              ?.call(ContentOffsetChange(offset.x.toInt(), offset.y.toInt()));
-        });
-    _webView.scrollView.setDelegate(_uiScrollViewDelegate);
-
+            scrollViewDidScroll: (UIScrollView uiScrollView) async {
+      final Point<double> offset = await uiScrollView.getContentOffset();
+      _onContentOffsetChangedCallback
+          ?.call(ContentOffsetChange(offset.x.toInt(), offset.y.toInt()));
+    });
+    _webView.setScrollViewDelegate(_uiScrollViewDelegate);
   }
 
   /// The WebKit WebView being controlled.
@@ -272,7 +271,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   );
 
   late final WKUIDelegate _uiDelegate;
-  
+
   late final UIScrollViewDelegate _uiScrollViewDelegate;
 
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
@@ -565,7 +564,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   @override
   Future<void> setOnContentOffsetChanged(
       void Function(ContentOffsetChange contentOffsetChange)?
-      onOffsetChange) async {
+          onOffsetChange) async {
     _onContentOffsetChangedCallback = onOffsetChange;
   }
 

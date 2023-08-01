@@ -996,6 +996,13 @@ class WKWebView extends UIView {
     return _webViewApi.setUIDelegateForInstances(this, delegate);
   }
 
+  /// Used to set a scroll view delegate to a web view's scroll view.
+  ///
+  /// Sets [UIScrollView.UIScrollViewDelegate](https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc).
+  Future<void> setScrollViewDelegate(UIScrollViewDelegate? delegate) {
+    return scrollView.setDelegate(delegate);
+  }
+
   /// The object you use to manage navigation behavior for the web view.
   ///
   /// Sets [WKWebView.navigationDelegate](https://developer.apple.com/documentation/webkit/wkwebview/1414971-navigationdelegate?language=objc).

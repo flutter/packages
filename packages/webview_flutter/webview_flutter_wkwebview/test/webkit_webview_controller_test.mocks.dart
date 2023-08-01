@@ -228,6 +228,16 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
   @override
+  _i6.Future<void> setDelegate(_i4.UIScrollViewDelegate? delegate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setDelegate,
+          [delegate],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+  @override
   _i4.UIScrollView copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
@@ -291,6 +301,64 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+}
+
+/// A class which mocks [UIScrollViewDelegate].
+///
+/// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
+class MockUIScrollViewDelegate extends _i1.Mock
+    implements _i4.UIScrollViewDelegate {
+  MockUIScrollViewDelegate() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i6.Future<void> addObserver(
+    _i2.NSObject? observer, {
+    required String? keyPath,
+    required Set<_i2.NSKeyValueObservingOptions>? options,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addObserver,
+          [observer],
+          {
+            #keyPath: keyPath,
+            #options: options,
+          },
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+  @override
+  _i6.Future<void> removeObserver(
+    _i2.NSObject? observer, {
+    required String? keyPath,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeObserver,
+          [observer],
+          {#keyPath: keyPath},
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+  @override
+  _i2.NSObject copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeNSObject_0(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i2.NSObject);
 }
 
 /// A class which mocks [WKPreferences].
@@ -582,6 +650,16 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
       (super.noSuchMethod(
         Invocation.method(
           #setUIDelegate,
+          [delegate],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+  @override
+  _i6.Future<void> setScrollViewDelegate(_i4.UIScrollViewDelegate? delegate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setScrollViewDelegate,
           [delegate],
         ),
         returnValue: _i6.Future<void>.value(),
