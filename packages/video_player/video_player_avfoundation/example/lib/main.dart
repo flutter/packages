@@ -191,8 +191,8 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               final Offset offset = box.localToGlobal(Offset.zero);
               _controller.setPictureInPictureOverlaySettings(
                 settings: PictureInPictureOverlaySettings(
-                  top: offset.dx,
-                  left: offset.dy,
+                  top: offset.dy,
+                  left: offset.dx,
                   width: box.size.width,
                   height: box.size.height,
                 ),
