@@ -121,7 +121,7 @@ class ExampleHostApiSetup {
   static var codec: FlutterStandardMessageCodec { ExampleHostApiCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?) {
-    let getHostLanguageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ExampleHostApi.getHostLanguage", binaryMessenger: binaryMessenger, codec: codec)
+    let getHostLanguageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHostLanguageChannel.setMessageHandler { _, reply in
         do {
@@ -134,7 +134,7 @@ class ExampleHostApiSetup {
     } else {
       getHostLanguageChannel.setMessageHandler(nil)
     }
-    let addChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ExampleHostApi.add", binaryMessenger: binaryMessenger, codec: codec)
+    let addChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -150,7 +150,7 @@ class ExampleHostApiSetup {
     } else {
       addChannel.setMessageHandler(nil)
     }
-    let sendMessageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ExampleHostApi.sendMessage", binaryMessenger: binaryMessenger, codec: codec)
+    let sendMessageChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -176,7 +176,7 @@ class MessageFlutterApi {
     self.binaryMessenger = binaryMessenger
   }
   func flutterMethod(aString aStringArg: String?, completion: @escaping (String) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.MessageFlutterApi.flutterMethod", binaryMessenger: binaryMessenger)
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod", binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       let result = response as! String
       completion(result)

@@ -1,6 +1,12 @@
-## 0.5.0+12
+## 0.5.0+13
 
 * Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
+## 0.5.0+12
+
+* Wraps classes needed to implement resolution configuration for image capture, image analysis, and preview.
+* Removes usages of deprecated APIs for resolution configuration.
+* Bumps CameraX version to 1.3.0-beta01.
 
 ## 0.5.0+11
 
