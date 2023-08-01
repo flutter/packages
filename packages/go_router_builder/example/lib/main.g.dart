@@ -158,7 +158,7 @@ RouteBase get $loginRoute => GoRouteData.$route(
 
 extension $LoginRouteExtension on LoginRoute {
   static LoginRoute _fromState(GoRouterState state) => LoginRoute(
-        fromPage: state.queryParameters['from-page'],
+        fromPage: state.uri.queryParameters['from-page'],
       );
 
   String get location => GoRouteData.$location(
