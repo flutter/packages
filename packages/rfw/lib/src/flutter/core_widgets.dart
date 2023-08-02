@@ -537,6 +537,8 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
     );
   },
 
+  // The "#docregion" pragma below makes this accessible from the README.md file.
+  // #docregion Row
   'Row': (BuildContext context, DataSource source) {
     return Row(
       mainAxisAlignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['mainAxisAlignment']) ?? MainAxisAlignment.start,
@@ -548,6 +550,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       children: source.childList(['children']),
     );
   },
+  // #enddocregion Row
 
   'SafeArea': (BuildContext context, DataSource source) {
     return SafeArea(

@@ -6,12 +6,11 @@ package io.flutter.plugins.camera.features.noisereduction;
 
 import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import io.flutter.BuildConfig;
 import io.flutter.plugins.camera.CameraProperties;
+import io.flutter.plugins.camera.SdkCapabilityChecker;
 import io.flutter.plugins.camera.features.CameraFeature;
 import java.util.HashMap;
 
@@ -36,7 +35,7 @@ public class NoiseReductionFeature extends CameraFeature<NoiseReductionMode> {
     NOISE_REDUCTION_MODES.put(NoiseReductionMode.fast, CaptureRequest.NOISE_REDUCTION_MODE_FAST);
     NOISE_REDUCTION_MODES.put(
         NoiseReductionMode.highQuality, CaptureRequest.NOISE_REDUCTION_MODE_HIGH_QUALITY);
-    if (VERSION.SDK_INT >= VERSION_CODES.M) {
+    if (SdkCapabilityChecker.supportsMarshmallowNoiseReductionModes()) {
       NOISE_REDUCTION_MODES.put(
           NoiseReductionMode.minimal, CaptureRequest.NOISE_REDUCTION_MODE_MINIMAL);
       NOISE_REDUCTION_MODES.put(
