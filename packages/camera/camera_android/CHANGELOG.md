@@ -1,3 +1,7 @@
+## 0.10.8+5
+
+* Provides a default exposure point if null.
+
 ## 0.10.8+4
 
 * Adjusts SDK checks for better testability.

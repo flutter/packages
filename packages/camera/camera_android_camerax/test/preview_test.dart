@@ -5,6 +5,7 @@
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/preview.dart';
+import 'package:camera_android_camerax/src/resolution_selector.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -12,7 +13,8 @@ import 'package:mockito/mockito.dart';
 import 'preview_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
-@GenerateMocks(<Type>[TestInstanceManagerHostApi, TestPreviewHostApi])
+@GenerateMocks(
+    <Type>[TestInstanceManagerHostApi, TestPreviewHostApi, ResolutionSelector])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -32,11 +34,11 @@ void main() {
       Preview.detached(
         instanceManager: instanceManager,
         targetRotation: 90,
-        targetResolution: ResolutionInfo(width: 50, height: 10),
+        resolutionSelector: MockResolutionSelector(),
       );
 
       verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
-          argThat(isA<ResolutionInfo>())));
+          argThat(isA<ResolutionSelector>())));
     });
 
     test('create calls create on the Java side', () async {
@@ -47,21 +49,26 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
       const int targetRotation = 90;
-      const int targetResolutionWidth = 10;
-      const int targetResolutionHeight = 50;
+      final MockResolutionSelector mockResolutionSelector =
+          MockResolutionSelector();
+      const int mockResolutionSelectorId = 24;
+
+      instanceManager.addHostCreatedInstance(
+          mockResolutionSelector, mockResolutionSelectorId,
+          onCopy: (ResolutionSelector original) {
+        return MockResolutionSelector();
+      });
+
       Preview(
         instanceManager: instanceManager,
         targetRotation: targetRotation,
-        targetResolution: ResolutionInfo(
-            width: targetResolutionWidth, height: targetResolutionHeight),
+        resolutionSelector: mockResolutionSelector,
       );
 
-      final VerificationResult createVerification = verify(mockApi.create(
-          argThat(isA<int>()), argThat(equals(targetRotation)), captureAny));
-      final ResolutionInfo capturedResolutionInfo =
-          createVerification.captured.single as ResolutionInfo;
-      expect(capturedResolutionInfo.width, equals(targetResolutionWidth));
-      expect(capturedResolutionInfo.height, equals(targetResolutionHeight));
+      verify(mockApi.create(
+          argThat(isA<int>()),
+          argThat(equals(targetRotation)),
+          argThat(equals(mockResolutionSelectorId))));
     });
 
     test(

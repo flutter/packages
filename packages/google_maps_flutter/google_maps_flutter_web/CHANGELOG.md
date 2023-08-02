@@ -1,3 +1,7 @@
+## 0.5.3
+
+* Initial support for custom overlays. [#98596](https://github.com/flutter/flutter/issues/98596).
+
 ## 0.5.2
 
 * Adds options for gesture handling and tilt controls.

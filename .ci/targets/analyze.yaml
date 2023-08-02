@@ -4,6 +4,10 @@ tasks:
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: analyze repo tools
     script: .ci/scripts/analyze_repo_tools.sh
+  - name: download Dart deps
+    script: script/tool_runner.sh
+    args: ["fetch-deps"]
+    infra_step: true
   - name: analyze
     script: script/tool_runner.sh
     # DO NOT change the custom-analysis argument here without changing the Dart repo.
