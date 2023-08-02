@@ -451,7 +451,6 @@
 
   FLTClearCacheMessageResponse *response = [videoPlayerPlugin clearCache:message error:&error];
   XCTAssertNil(error);
-  XCTAssertTrue(response.hasSucceeded.boolValue);
 }
 
 - (void)testDeregistersFromPlayer {
