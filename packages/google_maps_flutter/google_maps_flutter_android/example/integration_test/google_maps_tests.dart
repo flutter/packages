@@ -958,7 +958,9 @@ void googleMapsTests() {
     await controller.hideMarkerInfoWindow(marker.markerId);
     iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
-  });
+  },
+      // TODO(camsim99): Fix https://github.com/flutter/flutter/issues/131783.
+      skip: true);
 
   testWidgets('fromAssetImage', (WidgetTester tester) async {
     const double pixelRatio = 2;
