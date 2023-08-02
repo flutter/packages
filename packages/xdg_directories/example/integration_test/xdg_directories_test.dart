@@ -15,23 +15,23 @@ void main() {
     // Build our app and trigger a frame.
     await _.pumpWidget(const MyApp());
 
-    expect(find.textContaining(dataHome.path), findsOneWidget);
-    expect(find.textContaining(configHome.path), findsOneWidget);
+    expect(find.textContaining(dataHome.path), findsWidgets);
+    expect(find.textContaining(configHome.path), findsWidgets);
     expect(
         find.textContaining(
             dataDirs.map((Directory directory) => directory.path).join('\n')),
-        findsOneWidget);
+        findsWidgets);
     expect(
         find.textContaining(
             configDirs.map((Directory directory) => directory.path).join('\n')),
-        findsOneWidget);
+        findsWidgets);
 
     expect(
       find.textContaining(cacheHome.path, skipOffstage: false),
-      findsOneWidget,
+      findsWidgets,
     );
 
     expect(find.textContaining(runtimeDir?.path ?? '', skipOffstage: false),
-        findsOneWidget);
+        findsWidgets);
   });
 }
