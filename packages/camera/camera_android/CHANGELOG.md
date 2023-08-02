@@ -1,3 +1,7 @@
+## 0.10.9
+
+* Fixes video record crash on Android versions lower than 12.
+
 ## 0.10.8+5
 
 * Provides a default exposure point if null.
