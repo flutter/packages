@@ -449,7 +449,7 @@
 
   FLTClearCacheMessage *message = [FLTClearCacheMessage makeWithTextureId:@1];
 
-  FLTClearCacheMessageResponse *response = [videoPlayerPlugin clearCache:message error:&error];
+  [videoPlayerPlugin clearCache:message error:&error];
   XCTAssertNil(error);
 }
 
