@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Adds Support for StatefulShellRoute
+
 ## 2.2.5
 
 * Fixes a bug where shell routes without const constructor were not generated correctly.
