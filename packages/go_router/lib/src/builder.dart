@@ -45,6 +45,7 @@ class RouteBuilder {
     required this.restorationScopeId,
     required this.observers,
     required this.onPopPageWithRouteMatch,
+    required this.requestFocus,
   });
 
   /// Builder function for a go router with Navigator.
@@ -62,6 +63,9 @@ class RouteBuilder {
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
+
+  ///
+  final bool? requestFocus;
 
   /// NavigatorObserver used to receive notifications when navigating in between routes.
   /// changes.
@@ -137,6 +141,7 @@ class RouteBuilder {
         navigatorKey,
         observers: observers,
         restorationScopeId: restorationScopeId,
+        requestFocus: requestFocus,
       ),
     );
   }
@@ -259,9 +264,9 @@ class RouteBuilder {
         // Build the Navigator for this shell route
         Widget buildShellNavigator(
           List<NavigatorObserver>? observers,
-          String? restorationScopeId,
-          bool? requestFocus,
-        ) {
+          String? restorationScopeId, {
+          bool requestFocus = true,
+        }) {
           return _buildNavigator(
             pagePopContext.onPopPage,
             keyToPages[shellNavigatorKey]!,
@@ -310,7 +315,7 @@ class RouteBuilder {
       pages: pages,
       observers: observers,
       onPopPage: onPopPage,
-      requestFocus: requestFocus,
+      requestFocus: requestFocus ?? true,
     );
     if (heroController != null) {
       return HeroControllerScope(

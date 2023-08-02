@@ -83,6 +83,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
+    bool? requestFocus,
   })  : backButtonDispatcher = RootBackButtonDispatcher(),
         assert(
           initialExtra == null || initialLocation != null,
@@ -147,6 +148,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
         ...observers ?? <NavigatorObserver>[],
       ],
       restorationScopeId: restorationScopeId,
+      requestFocus: requestFocus,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
       builderWithNav: (BuildContext context, Widget child) =>
