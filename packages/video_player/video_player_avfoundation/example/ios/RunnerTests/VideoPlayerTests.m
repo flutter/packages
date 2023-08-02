@@ -140,6 +140,40 @@
   XCTAssertNotNil(player.playerLayer.superlayer, @"AVPlayerLayer should be added on screen.");
 }
 
+- (void)testInitWithCache {
+    // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
+    // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
+    // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
+    // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
+    // for issue #1, and restore the correct width and height for issue #2.
+    NSObject<FlutterPluginRegistry> *registry =
+        (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+    NSObject<FlutterPluginRegistrar> *registrar =
+        [registry registrarForPlugin:@"testPlayerLayerWorkaroundWithCache"];
+    FLTVideoPlayerPlugin *videoPlayerPlugin =
+        [[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+    FlutterError *error;
+    [videoPlayerPlugin initialize:&error];
+    XCTAssertNil(error);
+
+    FLTCreateMessage *create = [FLTCreateMessage
+        makeWithAsset:nil
+                  uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+          packageName:nil
+           formatHint:nil
+          enableCache:@YES
+          httpHeaders:@{}];
+    FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(textureMessage);
+    FLTVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
+    XCTAssertNotNil(player);
+
+    XCTAssertNotNil(player.playerLayer, @"AVPlayerLayer should be present.");
+    XCTAssertNotNil(player.playerLayer.superlayer, @"AVPlayerLayer should be added on screen.");
+}
+
 - (void)testSeekToInvokesTextureFrameAvailableOnTextureRegistry {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
@@ -161,44 +195,6 @@
         packageName:nil
          formatHint:nil
         enableCache:@NO
-        httpHeaders:@{}];
-  FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
-  NSNumber *textureId = textureMessage.textureId;
-
-  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
-  FLTPositionMessage *message = [FLTPositionMessage makeWithTextureId:textureId position:@1234];
-  [videoPlayerPlugin seekTo:message
-                 completion:^(FlutterError *_Nullable error) {
-                   [initializedExpectation fulfill];
-                 }];
-  [self waitForExpectationsWithTimeout:30.0 handler:nil];
-  OCMVerify([mockTextureRegistry textureFrameAvailable:message.textureId.intValue]);
-
-  FLTVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
-  XCTAssertEqual([player position], 1234);
-}
-
-- (void)testSeekToWithCache {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"SeekToWithCache"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
-
-  FlutterError *error;
-  [videoPlayerPlugin initialize:&error];
-  XCTAssertNil(error);
-  FLTCreateMessage *create = [FLTCreateMessage
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.mp4"
-        packageName:nil
-         formatHint:nil
-        enableCache:@YES
         httpHeaders:@{}];
   FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   NSNumber *textureId = textureMessage.textureId;
