@@ -141,37 +141,37 @@
 }
 
 - (void)testInitWithCache {
-    // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
-    // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
-    // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
-    // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
-    // for issue #1, and restore the correct width and height for issue #2.
-    NSObject<FlutterPluginRegistry> *registry =
-        (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-    NSObject<FlutterPluginRegistrar> *registrar =
-        [registry registrarForPlugin:@"testPlayerLayerWorkaroundWithCache"];
-    FLTVideoPlayerPlugin *videoPlayerPlugin =
-        [[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
+  // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
+  // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
+  // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
+  // for issue #1, and restore the correct width and height for issue #2.
+  NSObject<FlutterPluginRegistry> *registry =
+      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [registry registrarForPlugin:@"testPlayerLayerWorkaroundWithCache"];
+  FLTVideoPlayerPlugin *videoPlayerPlugin =
+      [[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
-    FlutterError *error;
-    [videoPlayerPlugin initialize:&error];
-    XCTAssertNil(error);
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
 
-    FLTCreateMessage *create = [FLTCreateMessage
-        makeWithAsset:nil
-                  uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-          packageName:nil
-           formatHint:nil
-          enableCache:@YES
-          httpHeaders:@{}];
-    FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
-    XCTAssertNil(error);
-    XCTAssertNotNil(textureMessage);
-    FLTVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
-    XCTAssertNotNil(player);
+  FLTCreateMessage *create = [FLTCreateMessage
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+        packageName:nil
+         formatHint:nil
+        enableCache:@YES
+        httpHeaders:@{}];
+  FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(textureMessage);
+  FLTVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
+  XCTAssertNotNil(player);
 
-    XCTAssertNotNil(player.playerLayer, @"AVPlayerLayer should be present.");
-    XCTAssertNotNil(player.playerLayer.superlayer, @"AVPlayerLayer should be added on screen.");
+  XCTAssertNotNil(player.playerLayer, @"AVPlayerLayer should be present.");
+  XCTAssertNotNil(player.playerLayer.superlayer, @"AVPlayerLayer should be added on screen.");
 }
 
 - (void)testSeekToInvokesTextureFrameAvailableOnTextureRegistry {

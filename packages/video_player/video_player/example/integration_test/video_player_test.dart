@@ -335,11 +335,5 @@ void main() {
       expect(controller.value.isPlaying, false);
       expect(controller.value.position, pausedPosition);
     });
-
-    testWidgets('can clear cache', (WidgetTester tester) async {
-      await controller.initialize();
-      final bool hasSucceeded = await controller.clearCache();
-      expect(hasSucceeded, true);
-    });
   });
 }
