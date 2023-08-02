@@ -188,7 +188,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
 
     boolean hasSucceeded = VideoCache.clearVideoCache(flutterState.applicationContext);
     ClearCacheMessageResponse response =
-        new ClearCacheMessageResponse.Builder().setHasSucceeded(hasSucceeded);
+        new ClearCacheMessageResponse.Builder().setHasSucceeded(hasSucceeded).build();
     return response;
   }
 

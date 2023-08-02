@@ -35,8 +35,8 @@ public class VideoCache {
       File dir = new File(context.getCacheDir(), cacheFolder);
       return deleteDir(dir);
     } catch (Exception e) {
-      return false;
       e.printStackTrace();
+      return false;
     }
   }
 
