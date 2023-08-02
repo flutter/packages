@@ -1,3 +1,7 @@
+## 2.2.5
+
+* Fixes a bug where shell routes without const constructor were not generated correctly.
+
 ## 2.2.4
 
 * Bumps example go_router version to v10.0.0 and migrate example code.
