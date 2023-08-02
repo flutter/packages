@@ -53,6 +53,11 @@ class MethodChannelPathProvider extends PathProviderPlatform {
   }
 
   @override
+  Future<String?> getApplicationCachePath() {
+    return methodChannel.invokeMethod<String>('getApplicationCacheDirectory');
+  }
+
+  @override
   Future<String?> getExternalStoragePath() {
     if (!_platform.isAndroid) {
       throw UnsupportedError('Functionality only available on Android');
