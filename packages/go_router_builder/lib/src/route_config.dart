@@ -50,13 +50,24 @@ class ShellRouteConfig extends RouteBaseConfig {
   final String? parentNavigatorKey;
 
   @override
-  Iterable<String> classDeclarations() => <String>[
-        '''
-extension $_extensionName on $_className {
-  static $_className _fromState(GoRouterState state) => const $_className();
-}
-'''
-      ];
+  Iterable<String> classDeclarations() {
+    if (routeDataClass.unnamedConstructor == null) {
+      throw InvalidGenerationSourceError(
+        'The ShellRouteData "$_className" class must have an unnamed constructor.',
+        element: routeDataClass,
+      );
+    }
+
+    final bool isConst = routeDataClass.unnamedConstructor!.isConst;
+
+    return <String>[
+      '''
+  extension $_extensionName on $_className {
+  static $_className _fromState(GoRouterState state) =>${isConst ? ' const' : ''} $_className();
+  }
+  '''
+    ];
+  }
 
   @override
   String get routeConstructorParameters =>
