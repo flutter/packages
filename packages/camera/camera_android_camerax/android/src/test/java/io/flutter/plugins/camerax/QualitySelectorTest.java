@@ -1,17 +1,14 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Remove GenApiImpls from filename or copy classes/methods to your own implementation
-
 package io.flutter.plugins.camerax;
 
-// TODO(bparrishMines): Import native classes
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -29,13 +26,9 @@ import org.mockito.junit.MockitoRule;
 public class QualitySelectorTest {
 
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-
   @Mock public QualitySelector mockQualitySelector;
-
   @Mock public BinaryMessenger mockBinaryMessenger;
-
   @Mock public QualitySelectorFlutterApi mockFlutterApi;
-
   @Mock public QualitySelectorHostApiImpl.QualitySelectorProxy mockProxy;
 
   InstanceManager instanceManager;
@@ -51,27 +44,31 @@ public class QualitySelectorTest {
   }
 
   @Test
-  public void hostApiCreateFrom() {
-
-    final Quality quality = Quality.SOME_ENUM_VALUE;
-
+  public void hostApiCreate_createsExpectedQualitySelectorWhenOneQualitySpecified() {
+    final List qualityList = Arrays.asList(QualityConstraint.UHD);
     final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
     final long fallbackStrategyIdentifier = 9;
+    final QualitySelectorHostApiImpl hostApi =
+    new QualitySelectorHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
+
     instanceManager.addDartCreatedInstance(mockFallbackStrategy, fallbackStrategyIdentifier);
 
-    when(mockProxy.createFrom(quality, mockFallbackStrategy)).thenReturn(mockQualitySelector);
+    try (MockedStatic<QualitySelector> mockedQualitySelector =
+      mockStatic(QualitySelector.class)) {
+        
+      }
 
-    final QualitySelectorHostApiImpl hostApi =
-        new QualitySelectorHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
-
+    // Test with no fallback strategy.
     final long instanceIdentifier = 0;
     hostApi.createFrom(instanceIdentifier, quality, fallbackStrategyIdentifier);
 
     assertEquals(instanceManager.getInstance(instanceIdentifier), mockQualitySelector);
+
+    // Test with fallback strategy.
   }
 
   @Test
-  public void hostApiCreateFromOrderedList() {
+  public void hostApiCreate_createsExpectedQualitySelectorWhenOrderedListOfQualitiesSpecified() {
 
     final List qualityList = new ArrayList<Object>();
 
@@ -115,30 +112,5 @@ public class QualitySelectorTest {
     verify(mockQualitySelector).getResolution(mockCameraInfo, quality);
 
     assertEquals(result, instanceManager.getIdentifierForStrongReference(returnValue));
-  }
-
-  @Test
-  public void flutterApiCreate() {
-    final QualitySelectorFlutterApiImpl flutterApi =
-        new QualitySelectorFlutterApiImpl(mockBinaryMessenger, instanceManager);
-    flutterApi.setApi(mockFlutterApi);
-
-    final List qualityList = new ArrayList<Object>();
-
-    final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
-
-    flutterApi.create(mockQualitySelector, qualityList, mockFallbackStrategy, reply -> {});
-
-    final long instanceIdentifier =
-        Objects.requireNonNull(
-            instanceManager.getIdentifierForStrongReference(mockQualitySelector));
-    verify(mockFlutterApi)
-        .create(
-            eq(instanceIdentifier),
-            eq(qualityList),
-            eq(
-                Objects.requireNonNull(
-                    instanceManager.getIdentifierForStrongReference(mockFallbackStrategy))),
-            any());
   }
 }
