@@ -65,7 +65,6 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for constructors and static method of {@link FallbackStrategy}
    */
-  @VisibleForTesting
   FallbackStrategyHostApiImpl(
       @NonNull InstanceManager instanceManager, @NonNull FallbackStrategyProxy proxy) {
     this.instanceManager = instanceManager;

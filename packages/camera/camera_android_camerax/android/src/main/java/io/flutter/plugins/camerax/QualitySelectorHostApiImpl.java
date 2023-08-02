@@ -39,21 +39,25 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
       for (Long qualityIndex : qualityIndexList) {
         qualityList.add(getQualityConstant(qualityIndex));
       }
-      
+
       boolean fallbackStrategySpecified = fallbackStrategy != null;
       if (qualityList.size() == 0) {
-        throw new IllegalArgumentException("List of at least one Quality must be supplied to create QualitySelector.");
-      }
-      else if (qualityList.size() == 1) {
+        throw new IllegalArgumentException(
+            "List of at least one Quality must be supplied to create QualitySelector.");
+      } else if (qualityList.size() == 1) {
         Quality quality = qualityList.get(0);
-        return fallbackStrategySpecified ? QualitySelector.from(quality, fallbackStrategy) : QualitySelector.from(quality);
+        return fallbackStrategySpecified
+            ? QualitySelector.from(quality, fallbackStrategy)
+            : QualitySelector.from(quality);
       }
 
-      return fallbackStrategySpecified ? QualitySelector.fromOrderedList(qualityList, fallbackStrategy) : QualitySelector.fromOrderedList(qualityList);
+      return fallbackStrategySpecified
+          ? QualitySelector.fromOrderedList(qualityList, fallbackStrategy)
+          : QualitySelector.fromOrderedList(qualityList);
     }
 
     private Quality getQualityConstant(@NonNull Long qualityIndex) {
-      QualityConstraint quality = QualityConstraint.values()[qualityIndex.intValue()];
+      QualityConstraint quality = QualityConstraint.values()[qualityIndex.intValue()]; // TODO(camsim99): Change this to use ordinal I think.
       return getCameraXQualityFromQuality(quality);
     }
   }
@@ -73,7 +77,6 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for constructors and static method of {@link QualitySelector}
    */
-  @VisibleForTesting
   QualitySelectorHostApiImpl(
       @NonNull InstanceManager instanceManager, @NonNull QualitySelectorProxy proxy) {
     this.instanceManager = instanceManager;
@@ -128,6 +131,7 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
       case HIGHEST:
         return Quality.HIGHEST;
     }
-    throw new IllegalArgumentException("QualityConstraint " + quality + " is unhandled by QualitySelectorHostApiImpl.");
+    throw new IllegalArgumentException(
+        "QualityConstraint " + quality + " is unhandled by QualitySelectorHostApiImpl.");
   }
 }

@@ -76,10 +76,14 @@ public class RecorderTest {
         .thenReturn(mockRecorderBuilder);
     when(mockRecorderBuilder.setExecutor(any(Executor.class))).thenReturn(mockRecorderBuilder);
     when(mockRecorderBuilder.build()).thenReturn(mockRecorder);
-    testInstanceManager.addDartCreatedInstance(mockQualitySelector, Long.valueOf(qualitySelectorId));
+    testInstanceManager.addDartCreatedInstance(
+        mockQualitySelector, Long.valueOf(qualitySelectorId));
 
     recorderHostApi.create(
-        Long.valueOf(recorderId), Long.valueOf(aspectRatio), Long.valueOf(bitRate), Long.valueOf(qualitySelectorId));
+        Long.valueOf(recorderId),
+        Long.valueOf(aspectRatio),
+        Long.valueOf(bitRate),
+        Long.valueOf(qualitySelectorId));
     verify(mockCameraXProxy).createRecorderBuilder();
     verify(mockRecorderBuilder).setAspectRatio(aspectRatio);
     verify(mockRecorderBuilder).setTargetVideoEncodingBitRate(bitRate);

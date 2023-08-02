@@ -5,112 +5,148 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.QualitySelectorFlutterApi;
-import java.util.Objects;
+import android.util.Size;
+import androidx.camera.core.CameraInfo;
+import androidx.camera.video.FallbackStrategy;
+import androidx.camera.video.Quality;
+import androidx.camera.video.QualitySelector;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.QualityConstraint;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.stubbing.Answer;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 public class QualitySelectorTest {
 
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-  @Mock public QualitySelector mockQualitySelector;
-  @Mock public BinaryMessenger mockBinaryMessenger;
-  @Mock public QualitySelectorFlutterApi mockFlutterApi;
-  @Mock public QualitySelectorHostApiImpl.QualitySelectorProxy mockProxy;
+  @Mock public QualitySelector mockQualitySelectorWithNoFallbackStrategy;
+  @Mock public QualitySelector mockQualitySelectorWithFallbackStrategy;
 
   InstanceManager instanceManager;
 
   @Before
   public void setUp() {
-    instanceManager = InstanceManager.open(identifier -> {});
+    instanceManager = InstanceManager.create(identifier -> {});
   }
 
   @After
   public void tearDown() {
-    instanceManager.close();
+    instanceManager.stopFinalizationListener();
   }
 
   @Test
   public void hostApiCreate_createsExpectedQualitySelectorWhenOneQualitySpecified() {
-    final List qualityList = Arrays.asList(QualityConstraint.UHD);
+    final Long expectedIndex = Long.valueOf(QualityConstraint.UHD.ordinal());
+    final List<Long> qualityList = Arrays.asList(expectedIndex);
     final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
     final long fallbackStrategyIdentifier = 9;
     final QualitySelectorHostApiImpl hostApi =
-    new QualitySelectorHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
+        new QualitySelectorHostApiImpl(instanceManager);
 
     instanceManager.addDartCreatedInstance(mockFallbackStrategy, fallbackStrategyIdentifier);
 
-    try (MockedStatic<QualitySelector> mockedQualitySelector =
-      mockStatic(QualitySelector.class)) {
-        
-      }
+    try (MockedStatic<QualitySelector> mockedQualitySelector = mockStatic(QualitySelector.class)) {
+      mockedQualitySelector
+          .when(() -> QualitySelector.from(Quality.UHD))
+          .thenAnswer(
+              (Answer<QualitySelector>) invocation -> mockQualitySelectorWithNoFallbackStrategy);
+      mockedQualitySelector
+          .when(() -> QualitySelector.from(Quality.UHD, mockFallbackStrategy))
+          .thenAnswer(
+              (Answer<QualitySelector>) invocation -> mockQualitySelectorWithFallbackStrategy);
 
-    // Test with no fallback strategy.
-    final long instanceIdentifier = 0;
-    hostApi.createFrom(instanceIdentifier, quality, fallbackStrategyIdentifier);
+      // Test with no fallback strategy.
+      long instanceIdentifier = 0;
+      hostApi.create(instanceIdentifier, qualityList, null);
 
-    assertEquals(instanceManager.getInstance(instanceIdentifier), mockQualitySelector);
+      assertEquals(
+          instanceManager.getInstance(instanceIdentifier),
+          mockQualitySelectorWithNoFallbackStrategy);
 
-    // Test with fallback strategy.
+      // Test with fallback strategy.
+      instanceIdentifier = 1;
+      hostApi.create(instanceIdentifier, qualityList, fallbackStrategyIdentifier);
+
+      assertEquals(
+          instanceManager.getInstance(instanceIdentifier), mockQualitySelectorWithFallbackStrategy);
+    }
   }
 
   @Test
   public void hostApiCreate_createsExpectedQualitySelectorWhenOrderedListOfQualitiesSpecified() {
-
-    final List qualityList = new ArrayList<Object>();
-
+    final List<Long> expectedIndices = Arrays.asList(Long.valueOf(QualityConstraint.UHD.ordinal()), Long.valueOf(QualityConstraint.HIGHEST.ordinal()));
+    final List<QualityConstraint> qualityList =
+        Arrays.asList(QualityConstraint.UHD, QualityConstraint.HIGHEST);
+    final List<Quality> expectedQualityList = Arrays.asList(Quality.UHD, Quality.HIGHEST);
     final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
-    final long fallbackStrategyIdentifier = 11;
+    final long fallbackStrategyIdentifier = 9;
+    final QualitySelectorHostApiImpl hostApi =
+        new QualitySelectorHostApiImpl(instanceManager);
+
     instanceManager.addDartCreatedInstance(mockFallbackStrategy, fallbackStrategyIdentifier);
 
-    when(mockProxy.createFromOrderedList(qualityList, mockFallbackStrategy))
-        .thenReturn(mockQualitySelector);
-    final QualitySelectorHostApiImpl hostApi =
-        new QualitySelectorHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
+    try (MockedStatic<QualitySelector> mockedQualitySelector = mockStatic(QualitySelector.class)) {
+      mockedQualitySelector
+          .when(() -> QualitySelector.fromOrderedList(expectedQualityList))
+          .thenAnswer(
+              (Answer<QualitySelector>) invocation -> mockQualitySelectorWithNoFallbackStrategy);
+      mockedQualitySelector
+          .when(() -> QualitySelector.fromOrderedList(expectedQualityList, mockFallbackStrategy))
+          .thenAnswer(
+              (Answer<QualitySelector>) invocation -> mockQualitySelectorWithFallbackStrategy);
 
-    final long instanceIdentifier = 0;
-    hostApi.createFromOrderedList(instanceIdentifier, qualityList, fallbackStrategyIdentifier);
+      // Test with no fallback strategy.
+      long instanceIdentifier = 0;
+      hostApi.create(instanceIdentifier, expectedIndices, null);
 
-    assertEquals(instanceManager.getInstance(instanceIdentifier), mockQualitySelector);
+      assertEquals(
+          instanceManager.getInstance(instanceIdentifier),
+          mockQualitySelectorWithNoFallbackStrategy);
+
+      // Test with fallback strategy.
+      instanceIdentifier = 1;
+      hostApi.create(instanceIdentifier, expectedIndices, fallbackStrategyIdentifier);
+
+      assertEquals(
+          instanceManager.getInstance(instanceIdentifier), mockQualitySelectorWithFallbackStrategy);
+    }
   }
 
   @Test
   public void getResolution() {
-
-    final InvalidType mockCameraInfo = mock(InvalidType.class);
+    final CameraInfo mockCameraInfo = mock(CameraInfo.class);
     final long cameraInfoIdentifier = 6;
+    final QualityConstraint quality = QualityConstraint.FHD;
+    final Size sizeResult = new Size(30, 40);
+    final QualitySelectorHostApiImpl hostApi =
+        new QualitySelectorHostApiImpl(instanceManager);
+
     instanceManager.addDartCreatedInstance(mockCameraInfo, cameraInfoIdentifier);
 
-    final Quality quality = Quality.SOME_ENUM_VALUE;
+    try (MockedStatic<QualitySelector> mockedQualitySelector = mockStatic(QualitySelector.class)) {
+      mockedQualitySelector
+          .when(() -> QualitySelector.getResolution(mockCameraInfo, Quality.FHD))
+          .thenAnswer((Answer<Size>) invocation -> sizeResult);
 
-    final long instanceIdentifier = 0;
-    instanceManager.addDartCreatedInstance(mockQualitySelector, instanceIdentifier);
+      final ResolutionInfo result = hostApi.getResolution(cameraInfoIdentifier, quality);
 
-    final Size returnValue = mock(Size.class);
+      // verify(mockedQualitySelector).getResolution(mockCameraInfo, Quality.FHD);
 
-    when(mockQualitySelector.getResolution(instanceIdentifier, mockcameraInfo, quality))
-        .thenReturn(returnValue);
-
-    final QualitySelectorHostApiImpl hostApi =
-        new QualitySelectorHostApiImpl(mockBinaryMessenger, instanceManager);
-
-    final Long result = hostApi.getResolution(instanceIdentifier, cameraInfoIdentifier, quality);
-
-    verify(mockQualitySelector).getResolution(mockCameraInfo, quality);
-
-    assertEquals(result, instanceManager.getIdentifierForStrongReference(returnValue));
+      assertEquals(result.getWidth(), Long.valueOf(sizeResult.getWidth()));
+      assertEquals(result.getHeight(), Long.valueOf(sizeResult.getHeight()));
+    }
   }
 }
