@@ -1014,6 +1014,9 @@ public class CoreTests {
     /** Returns the passed map to test nested class serialization and deserialization. */
     @NonNull
     AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper);
+    /** Returns the passed enum to test serialization and deserialization. */
+    @NonNull
+    AnEnum echoEnum(@NonNull AnEnum anEnum);
     /** Returns the passed object, to test serialization and deserialization. */
     @Nullable
     AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
@@ -1074,11 +1077,13 @@ public class CoreTests {
     void echoAsyncUint8List(@NonNull byte[] aUint8List, @NonNull Result<byte[]> result);
     /** Returns the passed in generic Object asynchronously. */
     void echoAsyncObject(@NonNull Object anObject, @NonNull Result<Object> result);
-    /** Returns the passed list, to test serialization and deserialization asynchronously. */
+    /** Returns the passed list, to test asynchronous serialization and deserialization. */
     void echoAsyncList(@NonNull List<Object> aList, @NonNull Result<List<Object>> result);
-    /** Returns the passed map, to test serialization and deserialization asynchronously. */
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncMap(
         @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+    /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+    void echoAsyncEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result);
     /** Responds with an error from an async function returning a value. */
     void throwAsyncError(@NonNull Result<Object> result);
     /** Responds with an error from an async void function. */
@@ -1102,9 +1107,9 @@ public class CoreTests {
     void echoAsyncNullableUint8List(@Nullable byte[] aUint8List, @NonNull Result<byte[]> result);
     /** Returns the passed in generic Object asynchronously. */
     void echoAsyncNullableObject(@Nullable Object anObject, @NonNull Result<Object> result);
-    /** Returns the passed list, to test serialization and deserialization asynchronously. */
+    /** Returns the passed list, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableList(@Nullable List<Object> aList, @NonNull Result<List<Object>> result);
-    /** Returns the passed map, to test serialization and deserialization asynchronously. */
+    /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableMap(
         @Nullable Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
 
@@ -1495,6 +1500,31 @@ public class CoreTests {
                 try {
                   AllClassesWrapper output = api.echoClassWrapper(wrapperArg);
                   wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                try {
+                  AnEnum output = api.echoEnum(anEnumArg);
+                  wrapped.add(0, output.index);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
@@ -2085,6 +2115,37 @@ public class CoreTests {
                     };
 
                 api.echoAsyncMap(aMapArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                Result<AnEnum> resultCallback =
+                    new Result<AnEnum>() {
+                      public void success(AnEnum result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncEnum(anEnumArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

@@ -412,6 +412,8 @@ class HostIntegrationCoreApi {
   // deserialization.
   virtual ErrorOr<AllClassesWrapper> EchoClassWrapper(
       const AllClassesWrapper& wrapper) = 0;
+  // Returns the passed enum to test serialization and deserialization.
+  virtual ErrorOr<AnEnum> EchoEnum(const AnEnum& an_enum) = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
       const AllNullableTypes* everything) = 0;
@@ -476,16 +478,21 @@ class HostIntegrationCoreApi {
   virtual void EchoAsyncObject(
       const flutter::EncodableValue& an_object,
       std::function<void(ErrorOr<flutter::EncodableValue> reply)> result) = 0;
-  // Returns the passed list, to test serialization and deserialization
-  // asynchronously.
+  // Returns the passed list, to test asynchronous serialization and
+  // deserialization.
   virtual void EchoAsyncList(
       const flutter::EncodableList& a_list,
       std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
-  // Returns the passed map, to test serialization and deserialization
-  // asynchronously.
+  // Returns the passed map, to test asynchronous serialization and
+  // deserialization.
   virtual void EchoAsyncMap(
       const flutter::EncodableMap& a_map,
       std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and
+  // deserialization.
+  virtual void EchoAsyncEnum(
+      const AnEnum& an_enum,
+      std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
   // Responds with an error from an async function returning a value.
   virtual void ThrowAsyncError(
       std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
@@ -533,14 +540,14 @@ class HostIntegrationCoreApi {
       const flutter::EncodableValue* an_object,
       std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
           result) = 0;
-  // Returns the passed list, to test serialization and deserialization
-  // asynchronously.
+  // Returns the passed list, to test asynchronous serialization and
+  // deserialization.
   virtual void EchoAsyncNullableList(
       const flutter::EncodableList* a_list,
       std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
           result) = 0;
-  // Returns the passed map, to test serialization and deserialization
-  // asynchronously.
+  // Returns the passed map, to test asynchronous serialization and
+  // deserialization.
   virtual void EchoAsyncNullableMap(
       const flutter::EncodableMap* a_map,
       std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>

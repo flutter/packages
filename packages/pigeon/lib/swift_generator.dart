@@ -520,7 +520,11 @@ import FlutterMacOS
                     indent.writeln(call);
                     indent.writeln('reply(wrapResult(nil))');
                   } else {
-                    indent.writeln('let result = $call');
+                    String enumTag = '';
+                    if (isEnum(root, method.returnType)) {
+                      enumTag = '.rawValue';
+                    }
+                    indent.writeln('let result = $call$enumTag');
                     indent.writeln('reply(wrapResult(result))');
                   }
                 }, addTrailingNewline: false);

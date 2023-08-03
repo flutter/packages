@@ -487,6 +487,8 @@ $resultAt != null
       codecName = _getCodecName(api);
       _writeCodec(indent, codecName, api, root);
     }
+    final List<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toList();
     indent.newln();
     bool first = true;
     addDocumentationComments(
@@ -553,9 +555,21 @@ final BinaryMessenger? _binaryMessenger;
           final String nullHandler = func.returnType.isNullable
               ? (genericCastCall.isEmpty ? '' : '?')
               : '!';
-          final String returnStatement = func.returnType.isVoid
-              ? 'return;'
-              : 'return $nullablyTypedAccessor$nullHandler$genericCastCall;';
+          String returnStatement = 'return';
+          if (customEnumNames.contains(returnType)) {
+            if (func.returnType.isNullable) {
+              returnStatement =
+                  '$returnStatement $nullablyTypedAccessor == null ? null : $returnType.values[$accessor as int]';
+            } else {
+              returnStatement =
+                  '$returnStatement $returnType.values[$accessor! as int]';
+            }
+          } else if (!func.returnType.isVoid) {
+            returnStatement =
+                '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+          }
+          returnStatement = '$returnStatement;';
+
           indent.format('''
 final List<Object?>? replyList =
 \t\tawait channel.send($sendArgument) as List<Object?>?;

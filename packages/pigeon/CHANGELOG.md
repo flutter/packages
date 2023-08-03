@@ -1,3 +1,8 @@
+## 10.1.5
+
+* Adds primitive enum support.
+* Fixes Objc nullable enums.
+
 ## 10.1.4
 
 * Adds package name to method channel strings to avoid potential collisions between plugins.

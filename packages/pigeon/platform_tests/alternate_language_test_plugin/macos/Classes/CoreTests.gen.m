@@ -17,6 +17,12 @@
 #error File requires ARC to be enabled.
 #endif
 
+@interface AnEnumWrapper ()
+@end
+
+@implementation AnEnumWrapper
+@end
+
 static NSArray *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[
@@ -636,6 +642,29 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed enum to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoEnum:error:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to @selector(echoEnum:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        AnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        FlutterError *error;
+        AnEnum enumValue = [api echoEnum:arg_anEnum error:&error];
+        NSNumber *output = [NSNumber numberWithInteger:enumValue];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// Returns the passed object, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
@@ -1089,7 +1118,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
@@ -1113,7 +1142,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
@@ -1133,6 +1162,31 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                             FlutterError *_Nullable error) {
                  callback(wrapResult(output, error));
                }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAsyncEnum:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAsyncEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        AnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        [api echoAsyncEnum:arg_anEnum
+                completion:^(AnEnum enumValue, FlutterError *_Nullable error) {
+                  NSNumber *output = [NSNumber numberWithInteger:enumValue];
+                  callback(wrapResult(output, error));
+                }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1396,7 +1450,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
@@ -1420,7 +1474,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."

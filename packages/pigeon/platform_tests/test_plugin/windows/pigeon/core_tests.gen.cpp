@@ -1211,6 +1211,42 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              if (encodable_an_enum_arg.IsNull()) {
+                reply(WrapError("an_enum_arg unexpectedly null."));
+                return;
+              }
+              const AnEnum& an_enum_arg =
+                  (AnEnum)encodable_an_enum_arg.LongValue();
+              ErrorOr<AnEnum> output = api->EchoEnum(an_enum_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  EncodableValue((int)std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAllNullableTypes",
         &GetCodec());
     if (api != nullptr) {
@@ -1997,6 +2033,44 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     EncodableList wrapped;
                     wrapped.push_back(
                         EncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAsyncEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              if (encodable_an_enum_arg.IsNull()) {
+                reply(WrapError("an_enum_arg unexpectedly null."));
+                return;
+              }
+              const AnEnum& an_enum_arg =
+                  (AnEnum)encodable_an_enum_arg.LongValue();
+              api->EchoAsyncEnum(
+                  an_enum_arg, [reply](ErrorOr<AnEnum>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue((int)std::move(output).TakeValue()));
                     reply(EncodableValue(std::move(wrapped)));
                   });
             } catch (const std::exception& exception) {

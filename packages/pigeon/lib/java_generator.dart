@@ -734,8 +734,12 @@ Result<$returnType> $resultName =
                   indent.writeln('$call;');
                   indent.writeln('wrapped.add(0, null);');
                 } else {
+                  String enumTag = '';
+                  if (isEnum(root, method.returnType)) {
+                    enumTag = '.index';
+                  }
                   indent.writeln('$returnType output = $call;');
-                  indent.writeln('wrapped.add(0, output);');
+                  indent.writeln('wrapped.add(0, output$enumTag);');
                 }
               });
               indent.add(' catch (Throwable exception) ');

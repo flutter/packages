@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import com.example.alternate_language_test_plugin.CoreTests.AllClassesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AnEnum;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.Result;
@@ -99,9 +100,14 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
     return aMap;
   }
 
-  @NonNull
-  public AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper) {
+  @Override
+  public @NonNull AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper) {
     return wrapper;
+  }
+
+  @Override
+  public @NonNull AnEnum echoEnum(@NonNull AnEnum anEnum) {
+    return anEnum;
   }
 
   @Override
@@ -240,6 +246,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public void echoAsyncMap(
       @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
     result.success(aMap);
+  }
+
+  @Override
+  public void echoAsyncEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result) {
+    result.success(anEnum);
   }
 
   @Override

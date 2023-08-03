@@ -156,6 +156,21 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
             '$enumName${member.name[0].toUpperCase()}${member.name.substring(1)} = $index,');
       });
     });
+    _writeEnumWrapper(indent, enumName);
+  }
+
+  void _writeEnumWrapper(
+    Indent indent,
+    String enumName,
+  ) {
+    indent.newln();
+    indent.writeln('@class ${enumName}Wrapper;');
+    indent.newln();
+    indent.writeln(
+        '/// Wrapper for $enumName to manage primitive and nullable use.');
+    indent.writeln('@interface ${enumName}Wrapper : NSObject');
+    indent.writeln('@property(nonatomic, assign) $enumName value;');
+    indent.writeln('@end');
   }
 
   @override
@@ -291,7 +306,8 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     for (final Method func in api.methods) {
       final _ObjcPtr returnType =
           _objcTypeForDartType(generatorOptions.prefix, func.returnType);
-      final String callbackType = _callbackForType(func.returnType, returnType);
+      final String callbackType =
+          _callbackForType(root, func.returnType, returnType);
       addDocumentationComments(
           indent, func.documentationComments, _docCommentSpec);
 
@@ -335,18 +351,25 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       String? returnType;
       if (func.isAsynchronous) {
         returnType = 'void';
+        lastArgName = 'completion';
         if (func.returnType.isVoid) {
           lastArgType = 'void (^)(FlutterError *_Nullable)';
-          lastArgName = 'completion';
+        } else if (isEnum(root, func.returnType)) {
+          lastArgType =
+              'void (^)(${returnTypeName.baseName}, FlutterError *_Nullable)';
         } else {
           lastArgType =
-              'void (^)(${returnTypeName.ptr}_Nullable, FlutterError *_Nullable)';
-          lastArgName = 'completion';
+              'void (^)(${returnTypeName.withPtr}_Nullable, FlutterError *_Nullable)';
         }
       } else {
-        returnType = func.returnType.isVoid
-            ? 'void'
-            : 'nullable ${returnTypeName.ptr.trim()}';
+        if (func.returnType.isVoid) {
+          returnType = 'void';
+        } else if (isEnum(root, func.returnType)) {
+          returnType = returnTypeName.baseName;
+        } else {
+          returnType = 'nullable ${returnTypeName.withPtr.trim()}';
+        }
+
         lastArgType = 'FlutterError *_Nullable *_Nonnull';
         lastArgName = 'error';
       }
@@ -417,6 +440,26 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln('#if !__has_feature(objc_arc)');
     indent.writeln('#error File requires ARC to be enabled.');
     indent.writeln('#endif');
+    indent.newln();
+  }
+
+  @override
+  void writeEnum(
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Enum anEnum, {
+    required String dartPackageName,
+  }) {
+    final String enumName = _className(generatorOptions.prefix, anEnum.name);
+    addDocumentationComments(
+        indent, anEnum.documentationComments, _docCommentSpec);
+
+    indent.writeln('@interface ${enumName}Wrapper ()');
+    indent.writeln('@end');
+    indent.newln();
+    indent.writeln('@implementation ${enumName}Wrapper');
+    indent.writeln('@end');
     indent.newln();
   }
 
@@ -637,18 +680,26 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   void _writeChannelApiBinding(ObjcOptions generatorOptions, Root root,
       Indent indent, String apiName, Method func, String channel) {
-    void unpackArgs(String variable, Iterable<String> argNames) {
+    void unpackArgs(String variable) {
       indent.writeln('NSArray *args = $variable;');
-      map3(wholeNumbers.take(func.arguments.length), argNames, func.arguments,
-          (int count, String argName, NamedType arg) {
+      int count = 0;
+      for (final NamedType arg in func.arguments) {
+        final String argName = _getSafeArgName(count, arg);
         if (isEnum(root, arg.type)) {
-          return '${_className(generatorOptions.prefix, arg.type.baseName)} $argName = [GetNullableObjectAtIndex(args, $count) integerValue];';
+          final String className =
+              _className(generatorOptions.prefix, arg.type.baseName);
+          // indent.writeln(
+          //     '$className *$argName = [[${className}Wrapper alloc] init];');
+          indent.writeln(
+              '$className $argName = [GetNullableObjectAtIndex(args, $count) integerValue];');
         } else {
           final _ObjcPtr argType =
               _objcTypeForDartType(generatorOptions.prefix, arg.type);
-          return '${argType.ptr}$argName = GetNullableObjectAtIndex(args, $count);';
+          indent.writeln(
+              '${argType.withPtr}$argName = GetNullableObjectAtIndex(args, $count);');
         }
-      }).forEach(indent.writeln);
+        count++;
+      }
     }
 
     void writeAsyncBindings(Iterable<String> selectorComponents,
@@ -670,16 +721,28 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         }
       } else {
         const String callback = 'callback(wrapResult(output, error));';
+        String returnTypeString = '${returnType.withPtr}_Nullable output';
+        const String enumConvert =
+            'NSNumber *output = [NSNumber numberWithInteger:enumValue];';
+        if (isEnum(root, func.returnType)) {
+          returnTypeString = '${returnType.baseName} enumValue';
+        }
         if (func.arguments.isEmpty) {
           indent.writeScoped(
-              '[api ${selectorComponents.first}:^(${returnType.ptr}_Nullable output, FlutterError *_Nullable error) {',
+              '[api ${selectorComponents.first}:^($returnTypeString, FlutterError *_Nullable error) {',
               '}];', () {
+            if (isEnum(root, func.returnType)) {
+              indent.writeln(enumConvert);
+            }
             indent.writeln(callback);
           });
         } else {
           indent.writeScoped(
-              '[api $callSignature ${selectorComponents.last}:^(${returnType.ptr}_Nullable output, FlutterError *_Nullable error) {',
+              '[api $callSignature ${selectorComponents.last}:^($returnTypeString, FlutterError *_Nullable error) {',
               '}];', () {
+            if (isEnum(root, func.returnType)) {
+              indent.writeln(enumConvert);
+            }
             indent.writeln(callback);
           });
         }
@@ -692,7 +755,13 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         indent.writeln('$call;');
         indent.writeln('callback(wrapResult(nil, error));');
       } else {
-        indent.writeln('${returnType.ptr}output = $call;');
+        if (isEnum(root, func.returnType)) {
+          indent.writeln('${returnType.baseName} enumValue = $call;');
+          indent.writeln(
+              'NSNumber *output = [NSNumber numberWithInteger:enumValue];');
+        } else {
+          indent.writeln('${returnType.withPtr}output = $call;');
+        }
         indent.writeln('callback(wrapResult(output, error));');
       }
     }
@@ -718,7 +787,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         return '$selectorComponent:$argName';
       }).join(' ');
       if (func.arguments.isNotEmpty) {
-        unpackArgs('message', argNames);
+        unpackArgs('message');
       }
       if (func.isAsynchronous) {
         writeAsyncBindings(selectorComponents, callSignature, returnType);
@@ -927,7 +996,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   }) {
     final _ObjcPtr returnType =
         _objcTypeForDartType(languageOptions.prefix, func.returnType);
-    final String callbackType = _callbackForType(func.returnType, returnType);
+    final String callbackType =
+        _callbackForType(root, func.returnType, returnType);
 
     String argNameFunc(int count, NamedType arg) => _getSafeArgName(count, arg);
     final Iterable<String> argNames = indexMap(func.arguments, argNameFunc);
@@ -965,7 +1035,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
         if (func.returnType.isVoid) {
           indent.writeln('completion(nil);');
         } else {
-          indent.writeln('${returnType.ptr}output = reply;');
+          indent.writeln('${returnType.withPtr}output = reply;');
           indent.writeln('completion(output, nil);');
         }
       });
@@ -1016,10 +1086,14 @@ String _className(String? prefix, String className) {
 }
 
 /// Calculates callback block signature for async methods.
-String _callbackForType(TypeDeclaration type, _ObjcPtr objcType) {
-  return type.isVoid
-      ? 'void (^)(FlutterError *_Nullable)'
-      : 'void (^)(${objcType.ptr}_Nullable, FlutterError *_Nullable)';
+String _callbackForType(Root root, TypeDeclaration type, _ObjcPtr objcType) {
+  if (type.isVoid) {
+    return 'void (^)(FlutterError *_Nullable)';
+  } else if (isEnum(root, type)) {
+    return 'void (^)(${objcType.baseName}, FlutterError *_Nullable)';
+  } else {
+    return 'void (^)(${objcType.withPtr}_Nullable, FlutterError *_Nullable)';
+  }
 }
 
 /// Represents an ObjC pointer (ex 'id', 'NSString *').
@@ -1027,7 +1101,8 @@ class _ObjcPtr {
   const _ObjcPtr({required this.baseName}) : hasAsterisk = baseName != 'id';
   final String baseName;
   final bool hasAsterisk;
-  String get ptr => '$baseName${hasAsterisk ? ' *' : ' '}';
+  String get withPtr => '$baseName${hasAsterisk ? ' *' : ' '}';
+  String get ptr => hasAsterisk ? '*' : '';
 }
 
 /// Maps between Dart types to ObjC pointer types (ex 'String' => 'NSString *').
@@ -1051,7 +1126,7 @@ const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   final String result = args
       .map<String>((TypeDeclaration e) =>
-          _objcTypeForDartType(classPrefix, e).ptr.trim())
+          _objcTypeForDartType(classPrefix, e).withPtr.trim())
       .join(', ');
   return result;
 }
@@ -1059,7 +1134,7 @@ String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
 String? _objcTypePtrForPrimitiveDartType(
     String? classPrefix, TypeDeclaration type) {
   return _objcTypeForDartTypeMap.containsKey(type.baseName)
-      ? _objcTypeForDartType(classPrefix, type).ptr
+      ? _objcTypeForDartType(classPrefix, type).withPtr
       : null;
 }
 
@@ -1174,7 +1249,7 @@ String _makeObjcSignature({
       } else {
         final String nullable = arg.type.isNullable ? 'nullable ' : '';
         final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-        return '$nullable${argType.ptr.trim()}';
+        return '$nullable${argType.withPtr.trim()}';
       }
     }),
     lastArgType,

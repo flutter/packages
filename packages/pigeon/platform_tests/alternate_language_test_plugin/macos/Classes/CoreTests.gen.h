@@ -20,6 +20,13 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
   AnEnumThree = 2,
 };
 
+@class AnEnumWrapper;
+
+/// Wrapper for AnEnum to manage primitive and nullable use.
+@interface AnEnumWrapper : NSObject
+@property(nonatomic, assign) AnEnum value;
+@end
+
 @class AllTypes;
 @class AllNullableTypes;
 @class AllClassesWrapper;
@@ -177,6 +184,10 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable AllClassesWrapper *)echoClassWrapper:(AllClassesWrapper *)wrapper
                                            error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed enum to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (AnEnum)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed object, to test serialization and deserialization.
 - (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
                                               error:(FlutterError *_Nullable *_Nonnull)error;
@@ -247,13 +258,16 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed in generic Object asynchronously.
 - (void)echoAsyncObject:(id)anObject
              completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
-/// Returns the passed list, to test serialization and deserialization asynchronously.
+/// Returns the passed list, to test asynchronous serialization and deserialization.
 - (void)echoAsyncList:(NSArray<id> *)aList
            completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
-/// Returns the passed map, to test serialization and deserialization asynchronously.
+/// Returns the passed map, to test asynchronous serialization and deserialization.
 - (void)echoAsyncMap:(NSDictionary<NSString *, id> *)aMap
           completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                FlutterError *_Nullable))completion;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAsyncEnum:(AnEnum)anEnum
+           completion:(void (^)(AnEnum, FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.
@@ -287,10 +301,10 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed in generic Object asynchronously.
 - (void)echoAsyncNullableObject:(nullable id)anObject
                      completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
-/// Returns the passed list, to test serialization and deserialization asynchronously.
+/// Returns the passed list, to test asynchronous serialization and deserialization.
 - (void)echoAsyncNullableList:(nullable NSArray<id> *)aList
                    completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
-/// Returns the passed map, to test serialization and deserialization asynchronously.
+/// Returns the passed map, to test asynchronous serialization and deserialization.
 - (void)echoAsyncNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
                   completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                        FlutterError *_Nullable))completion;

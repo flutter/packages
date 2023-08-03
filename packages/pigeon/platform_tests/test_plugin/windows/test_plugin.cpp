@@ -19,6 +19,7 @@ namespace test_plugin {
 using core_tests_pigeontest::AllClassesWrapper;
 using core_tests_pigeontest::AllNullableTypes;
 using core_tests_pigeontest::AllTypes;
+using core_tests_pigeontest::AnEnum;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
@@ -102,6 +103,8 @@ ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
     const AllClassesWrapper& wrapper) {
   return wrapper;
 }
+
+ErrorOr<AnEnum> TestPlugin::EchoEnum(const AnEnum& an_enum) { return an_enum; }
 
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
     const AllClassesWrapper& wrapper) {
@@ -275,6 +278,11 @@ void TestPlugin::EchoAsyncMap(
     const EncodableMap& a_map,
     std::function<void(ErrorOr<EncodableMap> reply)> result) {
   result(a_map);
+}
+
+void TestPlugin::EchoAsyncEnum(
+    const AnEnum& an_enum, std::function<void(ErrorOr<AnEnum> reply)> result) {
+  result(an_enum);
 }
 
 void TestPlugin::EchoAsyncNullableAllNullableTypes(

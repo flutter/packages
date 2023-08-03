@@ -331,6 +331,8 @@ interface HostIntegrationCoreApi {
   fun echoMap(aMap: Map<String?, Any?>): Map<String?, Any?>
   /** Returns the passed map to test nested class serialization and deserialization. */
   fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoEnum(anEnum: AnEnum): AnEnum
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
   /**
@@ -378,10 +380,12 @@ interface HostIntegrationCoreApi {
   fun echoAsyncUint8List(aUint8List: ByteArray, callback: (Result<ByteArray>) -> Unit)
   /** Returns the passed in generic Object asynchronously. */
   fun echoAsyncObject(anObject: Any, callback: (Result<Any>) -> Unit)
-  /** Returns the passed list, to test serialization and deserialization asynchronously. */
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
   fun echoAsyncList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
-  /** Returns the passed map, to test serialization and deserialization asynchronously. */
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
   fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit)
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  fun echoAsyncEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit)
   /** Responds with an error from an async function returning a value. */
   fun throwAsyncError(callback: (Result<Any?>) -> Unit)
   /** Responds with an error from an async void function. */
@@ -404,9 +408,9 @@ interface HostIntegrationCoreApi {
   fun echoAsyncNullableUint8List(aUint8List: ByteArray?, callback: (Result<ByteArray?>) -> Unit)
   /** Returns the passed in generic Object asynchronously. */
   fun echoAsyncNullableObject(anObject: Any?, callback: (Result<Any?>) -> Unit)
-  /** Returns the passed list, to test serialization and deserialization asynchronously. */
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
-  /** Returns the passed map, to test serialization and deserialization asynchronously. */
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit)
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
   fun callFlutterThrowError(callback: (Result<Any?>) -> Unit)
@@ -673,6 +677,24 @@ interface HostIntegrationCoreApi {
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.echoClassWrapper(wrapperArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anEnumArg = AnEnum.ofRaw(args[0] as Int)!!
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoEnum(anEnumArg).raw)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -1064,6 +1086,26 @@ interface HostIntegrationCoreApi {
             val args = message as List<Any?>
             val aMapArg = args[0] as Map<String?, Any?>
             api.echoAsyncMap(aMapArg) { result: Result<Map<String?, Any?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anEnumArg = AnEnum.ofRaw(args[0] as Int)!!
+            api.echoAsyncEnum(anEnumArg) { result: Result<AnEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

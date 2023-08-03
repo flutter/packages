@@ -16,6 +16,12 @@
 #error File requires ARC to be enabled.
 #endif
 
+@interface PGNCodeWrapper ()
+@end
+
+@implementation PGNCodeWrapper
+@end
+
 static NSArray *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[

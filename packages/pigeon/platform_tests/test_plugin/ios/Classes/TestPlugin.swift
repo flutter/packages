@@ -81,9 +81,13 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aMap
   }
 
-   func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper {
+  func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper {
     return wrapper
-   }
+  }
+
+  func echo(_ anEnum: AnEnum) throws -> AnEnum {
+    return anEnum
+  }
 
   func extractNestedNullableString(from wrapper: AllClassesWrapper) -> String? {
     return wrapper.allNullableTypes.aNullableString;
@@ -184,6 +188,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echoAsync(_ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void) {
     completion(.success(aMap))
+  }
+
+  func echoAsync(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void) {
+    completion(.success(anEnum))
   }
 
   func echoAsyncNullable(_ anInt: Int64?, completion: @escaping (Result<Int64?, Error>) -> Void) {

@@ -332,6 +332,8 @@ protocol HostIntegrationCoreApi {
   func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?]
   /// Returns the passed map to test nested class serialization and deserialization.
   func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper
+  /// Returns the passed enum to test serialization and deserialization.
+  func echo(_ anEnum: AnEnum) throws -> AnEnum
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns the inner `aString` value from the wrapped object, to test
@@ -373,10 +375,12 @@ protocol HostIntegrationCoreApi {
   func echoAsync(_ aUint8List: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsync(_ anObject: Any, completion: @escaping (Result<Any, Error>) -> Void)
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsync(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsync(_ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  func echoAsync(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void)
   /// Responds with an error from an async function returning a value.
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void)
   /// Responds with an error from an async void function.
@@ -399,9 +403,9 @@ protocol HostIntegrationCoreApi {
   func echoAsyncNullable(_ aUint8List: FlutterStandardTypedData?, completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncNullable(_ anObject: Any?, completion: @escaping (Result<Any?, Error>) -> Void)
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void)
@@ -646,6 +650,22 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoClassWrapperChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed enum to test serialization and deserialization.
+    let echoEnumChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoEnumChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anEnumArg = AnEnum(rawValue: args[0] as! Int)!
+        do {
+          let result = try api.echo(anEnumArg).rawValue
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoEnumChannel.setMessageHandler(nil)
     }
     /// Returns the passed object, to test serialization and deserialization.
     let echoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
@@ -968,7 +988,7 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncObjectChannel.setMessageHandler(nil)
     }
-    /// Returns the passed list, to test serialization and deserialization asynchronously.
+    /// Returns the passed list, to test asynchronous serialization and deserialization.
     let echoAsyncListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncListChannel.setMessageHandler { message, reply in
@@ -986,7 +1006,7 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncListChannel.setMessageHandler(nil)
     }
-    /// Returns the passed map, to test serialization and deserialization asynchronously.
+    /// Returns the passed map, to test asynchronous serialization and deserialization.
     let echoAsyncMapChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncMapChannel.setMessageHandler { message, reply in
@@ -1003,6 +1023,24 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoAsyncMapChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed enum, to test asynchronous serialization and deserialization.
+    let echoAsyncEnumChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncEnumChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anEnumArg = AnEnum(rawValue: args[0] as! Int)!
+        api.echoAsync(anEnumArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncEnumChannel.setMessageHandler(nil)
     }
     /// Responds with an error from an async function returning a value.
     let throwAsyncErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError", binaryMessenger: binaryMessenger, codec: codec)
@@ -1196,7 +1234,7 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncNullableObjectChannel.setMessageHandler(nil)
     }
-    /// Returns the passed list, to test serialization and deserialization asynchronously.
+    /// Returns the passed list, to test asynchronous serialization and deserialization.
     let echoAsyncNullableListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableListChannel.setMessageHandler { message, reply in
@@ -1214,7 +1252,7 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncNullableListChannel.setMessageHandler(nil)
     }
-    /// Returns the passed map, to test serialization and deserialization asynchronously.
+    /// Returns the passed map, to test asynchronous serialization and deserialization.
     let echoAsyncNullableMapChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableMapChannel.setMessageHandler { message, reply in

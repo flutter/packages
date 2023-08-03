@@ -439,6 +439,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
+    testWidgets('enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.two;
+      final AnEnum receivedEnum = await api.echoEnum(sentEnum);
+      expect(receivedEnum, sentEnum);
+    });
+
     testWidgets('Nullable Int serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();

@@ -591,7 +591,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         indent.writeln(call);
                         indent.writeln('wrapped = listOf<Any?>(null)');
                       } else {
-                        indent.writeln('wrapped = listOf<Any?>($call)');
+                        String enumTag = '';
+                        if (isEnum(root, method.returnType)) {
+                          enumTag = '.raw';
+                        }
+                        indent.writeln('wrapped = listOf<Any?>($call$enumTag)');
                       }
                     }, addTrailingNewline: false);
                     indent.add(' catch (exception: Throwable) ');

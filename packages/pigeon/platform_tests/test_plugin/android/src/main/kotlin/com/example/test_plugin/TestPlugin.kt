@@ -87,6 +87,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     return wrapper
   }
 
+  override fun echoEnum(anEnum: AnEnum): AnEnum {
+    return anEnum
+  }
+
   override fun extractNestedNullableString(wrapper: AllClassesWrapper): String? {
     return wrapper.allNullableTypes.aNullableString
   }
@@ -184,6 +188,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoAsyncMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
     callback(Result.success(aMap))
+  }
+
+  override fun echoAsyncEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit) {
+    callback(Result.success(anEnum))
   }
 
   override fun echoAsyncNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit) {

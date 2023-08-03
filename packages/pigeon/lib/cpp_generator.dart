@@ -888,9 +888,13 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
             indent.writeln(
                 'std::unique_ptr<EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);');
             indent.writeln('const auto& $encodedReplyName = *response;');
-            _writeEncodableValueArgumentUnwrapping(indent, returnType,
-                argName: successCallbackArgument,
-                encodableArgName: encodedReplyName);
+            _writeEncodableValueArgumentUnwrapping(
+              indent,
+              root,
+              returnType,
+              argName: successCallbackArgument,
+              encodableArgName: encodedReplyName,
+            );
           }
           indent.writeln('on_success($successCallbackArgument);');
         });
@@ -968,8 +972,13 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                         indent.writeln('return;');
                       });
                     }
-                    _writeEncodableValueArgumentUnwrapping(indent, hostType,
-                        argName: argName, encodableArgName: encodableArgName);
+                    _writeEncodableValueArgumentUnwrapping(
+                      indent,
+                      root,
+                      hostType,
+                      argName: argName,
+                      encodableArgName: encodableArgName,
+                    );
                     methodArgument.add(argName);
                   });
                 }
@@ -1205,9 +1214,15 @@ return EncodableValue(EncodableList{
     } else {
       final HostDatatype hostType = getHostDatatype(returnType, root.classes,
           root.enums, _shortBaseCppTypeForBuiltinDartType);
-      const String extractedValue = 'std::move(output).TakeValue()';
-      final String wrapperType =
-          hostType.isBuiltin ? 'EncodableValue' : 'CustomEncodableValue';
+      String enumPrefix = '';
+      if (isEnum(root, returnType)) {
+        enumPrefix = '(int) ';
+      }
+      final String extractedValue =
+          '${enumPrefix}std::move(output).TakeValue()';
+      final String wrapperType = hostType.isBuiltin || isEnum(root, returnType)
+          ? 'EncodableValue'
+          : 'CustomEncodableValue';
       if (returnType.isNullable) {
         // The value is a std::optional, so needs an extra layer of
         // handling.
@@ -1297,6 +1312,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
   /// existing EncodableValue variable called [encodableArgName].
   void _writeEncodableValueArgumentUnwrapping(
     Indent indent,
+    Root root,
     HostDatatype hostType, {
     required String argName,
     required String encodableArgName,
@@ -1320,6 +1336,9 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
       } else if (hostType.isBuiltin) {
         indent.writeln(
             'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
+      } else if (hostType.isEnum) {
+        indent.writeln(
+            'const auto* $argName = &((${hostType.datatype})std::get<int>($encodableArgName));');
       } else {
         indent.writeln(
             'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName)));');
@@ -1342,6 +1361,9 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
       } else if (hostType.isBuiltin) {
         indent.writeln(
             'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
+      } else if (hostType.isEnum) {
+        indent.writeln(
+            'const ${hostType.datatype}& $argName = (${hostType.datatype})$encodableArgName.LongValue();');
       } else {
         indent.writeln(
             'const auto& $argName = std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName));');
@@ -1390,7 +1412,11 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 /// Returns a non-nullable variant of [type].
 HostDatatype _nonNullableType(HostDatatype type) {
   return HostDatatype(
-      datatype: type.datatype, isBuiltin: type.isBuiltin, isNullable: false);
+    datatype: type.datatype,
+    isBuiltin: type.isBuiltin,
+    isNullable: false,
+    isEnum: type.isEnum,
+  );
 }
 
 String _pascalCaseFromCamelCase(String camelCase) =>

@@ -92,6 +92,10 @@
   return wrapper;
 }
 
+- (AnEnum)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error {
+  return anEnum;
+}
+
 - (nullable NSString *)extractNestedNullableStringFrom:(AllClassesWrapper *)wrapper
                                                  error:(FlutterError *_Nullable *_Nonnull)error {
   return wrapper.allNullableTypes.aNullableString;
@@ -227,6 +231,11 @@
           completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                FlutterError *_Nullable))completion {
   completion(aMap, nil);
+}
+
+- (void)echoAsyncEnum:(AnEnum)anEnum
+           completion:(void (^)(AnEnum, FlutterError *_Nullable))completion {
+  completion(anEnum, nil);
 }
 
 - (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
