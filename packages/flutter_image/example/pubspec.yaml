@@ -10,7 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
   flutter_image:
     # When depending on this package from a real application you should use:
     #   flutter_image: ^x.y.z
@@ -22,6 +21,5 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
 flutter:
   uses-material-design: true
