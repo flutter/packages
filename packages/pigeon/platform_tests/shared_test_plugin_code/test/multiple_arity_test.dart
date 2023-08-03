@@ -4,9 +4,10 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_unit_tests/multiple_arity.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_test_plugin_code/src/generated/multiple_arity.gen.dart';
+
 import 'multiple_arity_test.mocks.dart';
 
 @GenerateMocks(<Type>[BinaryMessenger])

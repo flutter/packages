@@ -6,10 +6,10 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_unit_tests/flutter_unittests.gen.dart';
-import 'package:flutter_unit_tests/nullable_returns.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_test_plugin_code/src/generated/flutter_unittests.gen.dart';
+import 'package:shared_test_plugin_code/src/generated/nullable_returns.gen.dart';
 
 import 'null_safe_test.mocks.dart';
 import 'test_util.dart';

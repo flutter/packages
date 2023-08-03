@@ -8,7 +8,8 @@ import 'dart:typed_data' as _i4;
 import 'dart:ui' as _i5;
 
 import 'package:flutter/services.dart' as _i2;
-import 'package:flutter_unit_tests/primitive.gen.dart' as _i6;
+import 'package:shared_test_plugin_code/src/generated/primitive.gen.dart'
+    as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
