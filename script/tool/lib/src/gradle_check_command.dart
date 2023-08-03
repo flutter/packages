@@ -129,20 +129,34 @@ class GradleCheckCommand extends PackageLoopingCommand {
     const String keyVariable = 'artifactRepoKey';
     final RegExp keyPresentRegex =
         RegExp("$keyVariable\\s+=\\s+'ARTIFACT_HUB_REPOSITORY'");
-
+    final RegExp documentationPresentRegex =
+        RegExp(r'github.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
     final RegExp keyReadRegex =
-        RegExp('if\\s+\(System.getenv\(\).containsKey\($keyVariable\)\)');
+        RegExp('if.*System\.getenv.*containsKey.*$keyVariable');
     final RegExp keyUsedRegex =
-        RegExp('maven\\s+{\\s+url\\s+System.getenv($keyVariable)\\s+}');
+        RegExp('maven.*url.*System\.getenv.*$keyVariable.*');
 
     final bool keyPresent =
         gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
-    // final bool keyRead =
-    //     gradleLines.any((String line) => keyReadRegex.hasMatch(line));
-    // final bool keyUsed =
-    //     gradleLines.any((String line) => keyUsedRegex.hasMatch(line));
-
-    return keyPresent; //&& keyRead && keyUsed;
+    final bool documentationPresent =
+        gradleLines.any((String line) => documentationPresentRegex.hasMatch(line));
+    final bool keyRead =
+        gradleLines.any((String line) => keyReadRegex.hasMatch(line));
+    final bool keyUsed =
+        gradleLines.any((String line) => keyUsedRegex.hasMatch(line));
+    if (!keyPresent) {
+      printError('Does not have ARTIFACT_HUB_REPOSITORY');
+    }
+    if (!documentationPresent) {
+      printError('Does not have ARTIFACT_HUB_REPOSITORY documenation');
+    }
+    if (!keyRead) {
+      printError('Does not read ARTIFACT_HUB_REPOSITORY');
+    }
+    if (!keyUsed) {
+      printError('Does not use ARTIFACT_HUB_REPOSITORY');
+    }
+    return keyPresent && keyRead && keyUsed;
   }
 
   /// Validates the top-level build.gradle for an example app (e.g.,
