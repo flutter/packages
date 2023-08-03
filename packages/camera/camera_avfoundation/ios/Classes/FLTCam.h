@@ -15,14 +15,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- * Represents image format. Mirrors ImageExtension in camera.dart.
- */
-typedef NS_ENUM(NSInteger, ImageExtension) {
-  ImageExtensionJPEG,
-  ImageExtensionHEIC,
-};
-
-/**
  * A class that manages camera's state and performs camera operations.
  */
 @interface FLTCam : NSObject <FlutterTexture>
@@ -38,7 +30,7 @@ typedef NS_ENUM(NSInteger, ImageExtension) {
 @property(assign, nonatomic) FLTFlashMode flashMode;
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
-@property(readonly, nonatomic) ImageExtension imageExtension;
+@property(assign, nonatomic, readonly) ImageExtension imageExtension;
 
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
@@ -57,7 +49,7 @@ typedef NS_ENUM(NSInteger, ImageExtension) {
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result
-       imageExtension:(ImageExtension)imageExtension;
+    imageExtensionString:(NSString *)imageExtensionString;
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
 /**
