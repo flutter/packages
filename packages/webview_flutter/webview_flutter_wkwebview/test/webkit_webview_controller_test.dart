@@ -1175,8 +1175,8 @@ void main() {
           mockUserContentController: mockUserContentController,
         );
 
-        await controller.setConsoleLogCallback(
-            (JavaScriptLogLevel level, String message) {});
+        await controller
+            .setOnConsoleMessage((JavaScriptConsoleMessage message) {});
 
         final List<dynamic> capturedScripts =
             verify(mockUserContentController.addUserScript(captureAny))
@@ -1218,7 +1218,7 @@ let originalError = console.error;
 let originalDebug = console.debug;
 
 console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
-console.info = function() { log("info", arguments); originalInfo.apple(null, arguments) };
+console.info = function() { log("info", arguments); originalInfo.apply(null, arguments) };
 console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
 console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
 console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };
@@ -1238,9 +1238,9 @@ window.addEventListener("error", function(e) {
 
         final Map<JavaScriptLogLevel, String> logs =
             <JavaScriptLogLevel, String>{};
-        await controller.setConsoleLogCallback(
-            (JavaScriptLogLevel level, String message) =>
-                logs[level] = message);
+        await controller.setOnConsoleMessage(
+            (JavaScriptConsoleMessage message) =>
+                logs[message.level] = message.message);
 
         final List<dynamic> capturedParameters = verify(
                 mockUserContentController.addScriptMessageHandler(

@@ -1248,9 +1248,9 @@ Future<void> main() async {
       );
       unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
 
-      await controller
-          .setConsoleLogCallback((JavaScriptLogLevel level, String message) {
-        debugMessageReceived.complete('debug:Debug message');
+      await controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {
+        debugMessageReceived
+            .complete('${message.level.name}:${message.message}');
       });
 
       await controller.loadHtmlString(testPage);

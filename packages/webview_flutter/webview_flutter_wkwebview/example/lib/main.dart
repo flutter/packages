@@ -88,14 +88,20 @@ const String kLogExamplePage = '''
 </p>
 
 <style>
-    .center { text-align: center; }
-    .right { text-align: right; }
+    .btn-group button {
+      padding: 24px; 24px;
+      display: block;
+      width: 25%;
+      margin: 5px 0px 0px 0px;
+    }
 </style>
 
-<div class="row-fluid">
-    <div class="span4"><button onclick="console.error('This is an error message.')">Error</button></div>
-    <div class="span4 center"><button onclick="console.warn('This is a warning message.')">Warning</button></div>
-    <div class="span4 right"><button onclick="console.debug('This is a debug message.')">Debug</button></div>
+<div class="btn-group">
+    <button onclick="console.error('This is an error message.')">Error</button>
+    <button onclick="console.warn('This is a warning message.')">Warning</button>
+    <button onclick="console.info('This is a info message.')">Info</button>
+    <button onclick="console.debug('This is a debug message.')">Debug</button>
+    <button onclick="console.log('This is a log message.')">Log</button>
 </div>
 
 </body>
@@ -505,8 +511,9 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _onLogExample() {
     webViewController
-        .setConsoleLogCallback((JavaScriptLogLevel level, String message) {
-      debugPrint('== JS == ${level.name}: $message');
+        .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+      debugPrint(
+          '== JS == ${consoleMessage.level.name}: ${consoleMessage.message}');
     });
 
     return webViewController.loadHtmlString(kLogExamplePage);

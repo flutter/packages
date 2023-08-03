@@ -178,7 +178,10 @@ class AndroidWebViewController extends PlatformWebViewController {
                 break;
             }
 
-            _onConsoleLogCallback!(logLevel, consoleMessage.message);
+            _onConsoleLogCallback!(JavaScriptConsoleMessage(
+              level: logLevel,
+              message: consoleMessage.message,
+            ));
           }
         };
       },
@@ -246,8 +249,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
-  void Function(JavaScriptLogLevel level, String message)?
-      _onConsoleLogCallback;
+  void Function(JavaScriptConsoleMessage consoleMessage)? _onConsoleLogCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -534,8 +536,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// Sets a callback that notifies the host application of any log messages
   /// written to the JavaScript console.
   @override
-  Future<void> setConsoleLogCallback(
-      void Function(JavaScriptLogLevel level, String message)
+  Future<void> setOnConsoleMessage(
+      void Function(JavaScriptConsoleMessage consoleMessage)
           onConsoleMessage) async {
     _onConsoleLogCallback = onConsoleMessage;
   }

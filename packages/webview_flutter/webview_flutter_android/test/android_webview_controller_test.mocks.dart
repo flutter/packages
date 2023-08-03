@@ -739,14 +739,14 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-  _i9.Future<void> setConsoleLogCallback(
+  _i9.Future<void> setOnConsoleMessage(
           void Function(
             _i3.JavaScriptLogLevel,
             String,
           )? onConsoleMessage) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setConsoleLogCallback,
+          #setOnConsoleMessage,
           [onConsoleMessage],
         ),
         returnValue: _i9.Future<void>.value(),

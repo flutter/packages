@@ -362,10 +362,9 @@ class WebViewController {
   /// `console.info`, `console.log` and `console.warning` methods. The iOS
   /// WebKit framework unfortunately doesn't provide a build in method to
   /// forward console messages.
-  Future<void> setConsoleLogCallback(
-      void Function(JavaScriptLogLevel javaScriptLogLevel, String message)
-          onConsoleMessage) {
-    return platform.setConsoleLogCallback(onConsoleMessage);
+  Future<void> setOnConsoleMessage(
+      void Function(JavaScriptConsoleMessage message) onConsoleMessage) {
+    return platform.setOnConsoleMessage(onConsoleMessage);
   }
 }
 

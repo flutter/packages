@@ -395,12 +395,11 @@ void main() {
       mockPlatformWebViewController,
     );
 
-    void onConsoleMessage(JavaScriptLogLevel level, String message) {}
+    void onConsoleMessage(JavaScriptConsoleMessage message) {}
 
-    await webViewController.setConsoleLogCallback(onConsoleMessage);
+    await webViewController.setOnConsoleMessage(onConsoleMessage);
 
-    verify(
-        mockPlatformWebViewController.setConsoleLogCallback(onConsoleMessage));
+    verify(mockPlatformWebViewController.setOnConsoleMessage(onConsoleMessage));
   });
 }
 

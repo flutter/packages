@@ -13,6 +13,8 @@ import 'package:webview_flutter_platform_interface/src/platform_navigation_deleg
     as _i6;
 import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart'
     as _i4;
+import 'package:webview_flutter_platform_interface/src/types/javascript_console_message.dart'
+    as _i7;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -356,14 +358,11 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
-  _i5.Future<void> setConsoleLogCallback(
-          void Function(
-            _i2.JavaScriptLogLevel,
-            String,
-          )? onConsoleMessage) =>
+  _i5.Future<void> setOnConsoleMessage(
+          void Function(_i7.JavaScriptConsoleMessage)? onConsoleMessage) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setConsoleLogCallback,
+          #setOnConsoleMessage,
           [onConsoleMessage],
         ),
         returnValue: _i5.Future<void>.value(),

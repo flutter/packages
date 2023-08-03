@@ -270,7 +270,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
-  void Function(JavaScriptLogLevel, String)? _onConsoleLogCallback;
+  void Function(JavaScriptConsoleMessage)? _onConsoleMessageCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
@@ -524,44 +524,48 @@ class WebKitWebViewController extends PlatformWebViewController {
   /// `console.log` and `console.warn` methods and forwards the console message
   /// via a `JavaScriptChannel` to the host application.
   @override
-  Future<void> setConsoleLogCallback(
-    void Function(JavaScriptLogLevel type, String message) onConsoleMessage,
+  Future<void> setOnConsoleMessage(
+    void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage,
   ) {
-    _onConsoleLogCallback = onConsoleMessage;
+    _onConsoleMessageCallback = onConsoleMessage;
 
     final JavaScriptChannelParams channelParams = WebKitJavaScriptChannelParams(
         name: 'fltConsoleMessage',
         webKitProxy: _webKitParams.webKitProxy,
         onMessageReceived: (JavaScriptMessage message) {
-          if (_onConsoleLogCallback == null) {
+          if (_onConsoleMessageCallback == null) {
             return;
           }
 
           final Map<String, dynamic> consoleLog =
               jsonDecode(message.message) as Map<String, dynamic>;
+
+          JavaScriptLogLevel level;
           switch (consoleLog['level']) {
             case 'error':
-              _onConsoleLogCallback!(
-                  JavaScriptLogLevel.error, consoleLog['message']! as String);
+              level = JavaScriptLogLevel.error;
               break;
             case 'warning':
-              _onConsoleLogCallback!(
-                  JavaScriptLogLevel.warning, consoleLog['message']! as String);
+              level = JavaScriptLogLevel.warning;
               break;
             case 'debug':
-              _onConsoleLogCallback!(
-                  JavaScriptLogLevel.debug, consoleLog['message']! as String);
+              level = JavaScriptLogLevel.debug;
               break;
             case 'info':
-              _onConsoleLogCallback!(
-                  JavaScriptLogLevel.info, consoleLog['message']! as String);
+              level = JavaScriptLogLevel.info;
               break;
             case 'log':
             default:
-              _onConsoleLogCallback!(
-                  JavaScriptLogLevel.log, consoleLog['message']! as String);
+              level = JavaScriptLogLevel.log;
               break;
           }
+
+          _onConsoleMessageCallback!(
+            JavaScriptConsoleMessage(
+              level: level,
+              message: consoleLog['message']! as String,
+            ),
+          );
         });
 
     addJavaScriptChannel(channelParams);
@@ -592,7 +596,7 @@ let originalError = console.error;
 let originalDebug = console.debug;
 
 console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
-console.info = function() { log("info", arguments); originalInfo.apple(null, arguments) };
+console.info = function() { log("info", arguments); originalInfo.apply(null, arguments) };
 console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
 console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
 console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };
@@ -636,7 +640,7 @@ window.addEventListener("error", function(e) {
       if (!_zoomEnabled) _disableZoom(),
       // Console logs are forwarded with a WKUserScript, so this adds it back
       // if a console callback was registered with [setConsoleLogCallback].
-      if (_onConsoleLogCallback != null) _injectConsoleOverride(),
+      if (_onConsoleMessageCallback != null) _injectConsoleOverride(),
     ]);
   }
 

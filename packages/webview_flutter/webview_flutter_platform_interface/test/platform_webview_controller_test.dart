@@ -396,8 +396,8 @@ void main() {
             const PlatformWebViewControllerCreationParams());
 
     expect(
-      () => controller
-          .setConsoleLogCallback((JavaScriptLogLevel level, String message) {}),
+      () =>
+          controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {}),
       throwsUnimplementedError,
     );
   });
