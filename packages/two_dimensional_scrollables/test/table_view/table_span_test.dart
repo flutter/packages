@@ -163,8 +163,8 @@ class TestCanvas implements Canvas {
 
   @override
   void drawRect(Rect rect, Paint paint) {
-    rect = rect;
-    paint = paint;
+    this.rect = rect;
+    this.paint = paint;
   }
 
   @override
@@ -178,6 +178,6 @@ class TestTableSpanBorder extends TableSpanBorder {
   TableSpanDecorationPaintDetails? details;
   @override
   void paint(TableSpanDecorationPaintDetails details) {
-    details = details;
+    this.details = details;
   }
 }
