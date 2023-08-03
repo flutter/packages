@@ -46,10 +46,10 @@ class MockQualitySelector extends _i1.Mock implements _i3.QualitySelector {
   }
 
   @override
-  List<_i4.QualityConstraint> get qualityList => (super.noSuchMethod(
+  List<_i4.VideoQualityConstraint> get qualityList => (super.noSuchMethod(
         Invocation.getter(#qualityList),
-        returnValue: <_i4.QualityConstraint>[],
-      ) as List<_i4.QualityConstraint>);
+        returnValue: <_i4.VideoQualityConstraint>[],
+      ) as List<_i4.VideoQualityConstraint>);
 }
 
 /// A class which mocks [TestRecorderHostApi].
@@ -66,7 +66,7 @@ class MockTestRecorderHostApi extends _i1.Mock
     int? identifier,
     int? aspectRatio,
     int? bitRate,
-    int? qualitySelector,
+    int? qualitySelectorId,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -75,7 +75,7 @@ class MockTestRecorderHostApi extends _i1.Mock
             identifier,
             aspectRatio,
             bitRate,
-            qualitySelector,
+            qualitySelectorId,
           ],
         ),
         returnValueForMissingStub: null,

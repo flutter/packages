@@ -102,7 +102,7 @@ class ExposureCompensationRange {
 /// These are pre-defined quality constants that are universally used for video.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/Quality.
-enum QualityConstraint {
+enum VideoQualityConstraint {
   SD, // 480p
   HD, // 720p
   FHD, // 1080p
@@ -111,7 +111,7 @@ enum QualityConstraint {
   highest,
 }
 
-/// Different fallback strategies for selecting video resolution.
+/// Fallback rules for selecting video resolution.
 enum VideoResolutionFallbackRule {
   higherQualityOrLowerThan,
   higherQualityThan,
@@ -243,7 +243,7 @@ abstract class VideoCaptureFlutterApi {
 @HostApi(dartHostTestHandler: 'TestRecorderHostApi')
 abstract class RecorderHostApi {
   void create(
-      int identifier, int? aspectRatio, int? bitRate, int? qualitySelector);
+      int identifier, int? aspectRatio, int? bitRate, int? qualitySelectorId);
 
   int getAspectRatio(int identifier);
 
@@ -399,15 +399,17 @@ abstract class PlaneProxyFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestQualitySelectorHostApi')
 abstract class QualitySelectorHostApi {
-  // TODO(camsim99): Change qualityList to List<Quality> when enums are supported
-  // for collection types.
-  void create(int identifier, List<int> qualityList, int? fallbackStrategyId);
+  // TODO(camsim99): Change qualityList to List<VideoQualityConstraint> when
+  // enums are supported for collection types.
+  void create(int identifier, List<int> videoQualityConstraintIndexList,
+      int? fallbackStrategyId);
 
-  ResolutionInfo getResolution(int cameraInfoId, QualityConstraint qualityId);
+  ResolutionInfo getResolution(
+      int cameraInfoId, VideoQualityConstraint quality);
 }
 
 @HostApi(dartHostTestHandler: 'TestFallbackStrategyHostApi')
 abstract class FallbackStrategyHostApi {
-  void create(int identifier, QualityConstraint quality,
+  void create(int identifier, VideoQualityConstraint quality,
       VideoResolutionFallbackRule fallbackRule);
 }

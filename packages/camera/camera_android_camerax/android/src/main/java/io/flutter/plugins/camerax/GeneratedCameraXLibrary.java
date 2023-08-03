@@ -112,7 +112,7 @@ public class GeneratedCameraXLibrary {
    *
    * <p>See https://developer.android.com/reference/androidx/camera/video/Quality.
    */
-  public enum QualityConstraint {
+  public enum VideoQualityConstraint {
     SD(0),
     HD(1),
     FHD(2),
@@ -122,12 +122,12 @@ public class GeneratedCameraXLibrary {
 
     final int index;
 
-    private QualityConstraint(final int index) {
+    private VideoQualityConstraint(final int index) {
       this.index = index;
     }
   }
 
-  /** Different fallback strategies for selecting video resolution. */
+  /** Fallback rules for selecting video resolution. */
   public enum VideoResolutionFallbackRule {
     HIGHER_QUALITY_OR_LOWER_THAN(0),
     HIGHER_QUALITY_THAN(1),
@@ -1597,7 +1597,7 @@ public class GeneratedCameraXLibrary {
         @NonNull Long identifier,
         @Nullable Long aspectRatio,
         @Nullable Long bitRate,
-        @Nullable Long qualitySelector);
+        @Nullable Long qualitySelectorId);
 
     @NonNull
     Long getAspectRatio(@NonNull Long identifier);
@@ -1628,13 +1628,13 @@ public class GeneratedCameraXLibrary {
                 Number identifierArg = (Number) args.get(0);
                 Number aspectRatioArg = (Number) args.get(1);
                 Number bitRateArg = (Number) args.get(2);
-                Number qualitySelectorArg = (Number) args.get(3);
+                Number qualitySelectorIdArg = (Number) args.get(3);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
                       (aspectRatioArg == null) ? null : aspectRatioArg.longValue(),
                       (bitRateArg == null) ? null : bitRateArg.longValue(),
-                      (qualitySelectorArg == null) ? null : qualitySelectorArg.longValue());
+                      (qualitySelectorIdArg == null) ? null : qualitySelectorIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -3012,11 +3012,12 @@ public class GeneratedCameraXLibrary {
 
     void create(
         @NonNull Long identifier,
-        @NonNull List<Long> qualityList,
+        @NonNull List<Long> videoQualityConstraintIndexList,
         @Nullable Long fallbackStrategyId);
 
     @NonNull
-    ResolutionInfo getResolution(@NonNull Long cameraInfoId, @NonNull QualityConstraint qualityId);
+    ResolutionInfo getResolution(
+        @NonNull Long cameraInfoId, @NonNull VideoQualityConstraint quality);
 
     /** The codec used by QualitySelectorHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -3038,12 +3039,12 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                List<Long> qualityListArg = (List<Long>) args.get(1);
+                List<Long> videoQualityConstraintIndexListArg = (List<Long>) args.get(1);
                 Number fallbackStrategyIdArg = (Number) args.get(2);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
-                      qualityListArg,
+                      videoQualityConstraintIndexListArg,
                       (fallbackStrategyIdArg == null) ? null : fallbackStrategyIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
@@ -3068,13 +3069,13 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number cameraInfoIdArg = (Number) args.get(0);
-                QualityConstraint qualityIdArg =
-                    args.get(1) == null ? null : QualityConstraint.values()[(int) args.get(1)];
+                VideoQualityConstraint qualityArg =
+                    args.get(1) == null ? null : VideoQualityConstraint.values()[(int) args.get(1)];
                 try {
                   ResolutionInfo output =
                       api.getResolution(
                           (cameraInfoIdArg == null) ? null : cameraInfoIdArg.longValue(),
-                          qualityIdArg);
+                          qualityArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -3093,7 +3094,7 @@ public class GeneratedCameraXLibrary {
 
     void create(
         @NonNull Long identifier,
-        @NonNull QualityConstraint quality,
+        @NonNull VideoQualityConstraint quality,
         @NonNull VideoResolutionFallbackRule fallbackRule);
 
     /** The codec used by FallbackStrategyHostApi. */
@@ -3116,8 +3117,8 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                QualityConstraint qualityArg =
-                    args.get(1) == null ? null : QualityConstraint.values()[(int) args.get(1)];
+                VideoQualityConstraint qualityArg =
+                    args.get(1) == null ? null : VideoQualityConstraint.values()[(int) args.get(1)];
                 VideoResolutionFallbackRule fallbackRuleArg =
                     args.get(2) == null
                         ? null

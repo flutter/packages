@@ -87,6 +87,7 @@ public class RecorderTest {
     verify(mockCameraXProxy).createRecorderBuilder();
     verify(mockRecorderBuilder).setAspectRatio(aspectRatio);
     verify(mockRecorderBuilder).setTargetVideoEncodingBitRate(bitRate);
+    verify(mockRecorderBuilder).setQualitySelector(mockQualitySelector);
     verify(mockRecorderBuilder).build();
     assertEquals(testInstanceManager.getInstance(Long.valueOf(recorderId)), mockRecorder);
     testInstanceManager.remove(Long.valueOf(recorderId));

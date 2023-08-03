@@ -40,11 +40,9 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final FallbackStrategy fallbackStrategy = MockFallbackStrategy();
-
       QualitySelector.detached(
-        qualityList: const <QualityConstraint>[QualityConstraint.FHD],
-        fallbackStrategy: fallbackStrategy,
+        qualityList: const <VideoQualityConstraint>[VideoQualityConstraint.FHD],
+        fallbackStrategy: MockFallbackStrategy(),
         instanceManager: instanceManager,
       );
 
@@ -62,7 +60,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const QualityConstraint quality = QualityConstraint.FHD;
+      const VideoQualityConstraint quality = VideoQualityConstraint.FHD;
       final FallbackStrategy fallbackStrategy = MockFallbackStrategy();
       const int fallbackStrategyIdentifier = 9;
 
@@ -95,9 +93,9 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const List<QualityConstraint> qualityList = <QualityConstraint>[
-        QualityConstraint.FHD,
-        QualityConstraint.highest
+      const List<VideoQualityConstraint> qualityList = <VideoQualityConstraint>[
+        VideoQualityConstraint.FHD,
+        VideoQualityConstraint.highest
       ];
 
       final FallbackStrategy fallbackStrategy = MockFallbackStrategy();
@@ -133,7 +131,7 @@ void main() {
 
       final QualitySelector instance = QualitySelector.detached(
         instanceManager: instanceManager,
-        qualityList: const <QualityConstraint>[QualityConstraint.HD],
+        qualityList: const <VideoQualityConstraint>[VideoQualityConstraint.HD],
         fallbackStrategy: MockFallbackStrategy(),
       );
       const int instanceIdentifier = 0;
@@ -143,7 +141,6 @@ void main() {
         onCopy: (QualitySelector original) => QualitySelector.detached(
           qualityList: original.qualityList,
           fallbackStrategy: original.fallbackStrategy,
-          binaryMessenger: null,
           instanceManager: instanceManager,
         ),
       );
@@ -156,7 +153,7 @@ void main() {
         onCopy: (_) => MockCameraInfo(),
       );
 
-      const QualityConstraint quality = QualityConstraint.FHD;
+      const VideoQualityConstraint quality = VideoQualityConstraint.FHD;
       final ResolutionInfo expectedResult =
           ResolutionInfo(width: 34, height: 23);
 

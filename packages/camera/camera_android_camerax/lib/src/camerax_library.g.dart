@@ -49,7 +49,7 @@ enum LiveDataSupportedType {
 /// These are pre-defined quality constants that are universally used for video.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/Quality.
-enum QualityConstraint {
+enum VideoQualityConstraint {
   SD,
   HD,
   FHD,
@@ -58,7 +58,7 @@ enum QualityConstraint {
   highest,
 }
 
-/// Different fallback strategies for selecting video resolution.
+/// Fallback rules for selecting video resolution.
 enum VideoResolutionFallbackRule {
   higherQualityOrLowerThan,
   higherQualityThan,
@@ -1207,7 +1207,7 @@ class RecorderHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<void> create(int arg_identifier, int? arg_aspectRatio,
-      int? arg_bitRate, int? arg_qualitySelector) async {
+      int? arg_bitRate, int? arg_qualitySelectorId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.RecorderHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
@@ -1215,7 +1215,7 @@ class RecorderHostApi {
       arg_identifier,
       arg_aspectRatio,
       arg_bitRate,
-      arg_qualitySelector
+      arg_qualitySelectorId
     ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
@@ -2504,14 +2504,18 @@ class QualitySelectorHostApi {
 
   static const MessageCodec<Object?> codec = _QualitySelectorHostApiCodec();
 
-  Future<void> create(int arg_identifier, List<int?> arg_qualityList,
+  Future<void> create(
+      int arg_identifier,
+      List<int?> arg_videoQualityConstraintIndexList,
       int? arg_fallbackStrategyId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.QualitySelectorHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(
-            <Object?>[arg_identifier, arg_qualityList, arg_fallbackStrategyId])
-        as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_videoQualityConstraintIndexList,
+      arg_fallbackStrategyId
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -2529,13 +2533,12 @@ class QualitySelectorHostApi {
   }
 
   Future<ResolutionInfo> getResolution(
-      int arg_cameraInfoId, QualityConstraint arg_qualityId) async {
+      int arg_cameraInfoId, VideoQualityConstraint arg_quality) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.QualitySelectorHostApi.getResolution', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_cameraInfoId, arg_qualityId.index])
-            as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_cameraInfoId, arg_quality.index]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -2568,7 +2571,7 @@ class FallbackStrategyHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, QualityConstraint arg_quality,
+  Future<void> create(int arg_identifier, VideoQualityConstraint arg_quality,
       VideoResolutionFallbackRule arg_fallbackRule) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FallbackStrategyHostApi.create', codec,

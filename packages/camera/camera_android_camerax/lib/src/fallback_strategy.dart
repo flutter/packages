@@ -9,11 +9,13 @@ import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 
+/// Strategy that will be adopted when the device in use does not support all
+/// of the desired quality specified for a particular QualitySelector instance.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
 @immutable
-
-/// to do
 class FallbackStrategy extends JavaObject {
-  /// to do
+  /// Creates an [FallbackStrategy].
   FallbackStrategy(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
@@ -27,7 +29,7 @@ class FallbackStrategy extends JavaObject {
     _api.createFromInstance(this, quality, fallbackRule);
   }
 
-  /// to do
+  /// Constructs a [FallbackStrategy] that is not automatically attached to a native object.
   FallbackStrategy.detached(
       {super.binaryMessenger,
       super.instanceManager,
@@ -37,10 +39,10 @@ class FallbackStrategy extends JavaObject {
 
   late final _FallbackStrategyHostApiImpl _api;
 
-  /// to do
-  final QualityConstraint quality;
+  /// The input quality used to specify this fallback strategy relative to.
+  final VideoQualityConstraint quality;
 
-  /// to do
+  /// The fallback rule that this strategy will follow.
   final VideoResolutionFallbackRule fallbackRule;
 }
 
@@ -68,8 +70,11 @@ class _FallbackStrategyHostApiImpl extends FallbackStrategyHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates an [FallbackStrategy] instance with the...
-  void createFromInstance(FallbackStrategy instance, QualityConstraint quality,
+  /// Creates an [FallbackStrategy] instance with the specified video [quality]
+  /// and [fallbackRule].
+  void createFromInstance(
+      FallbackStrategy instance,
+      VideoQualityConstraint quality,
       VideoResolutionFallbackRule fallbackRule) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (FallbackStrategy original) {

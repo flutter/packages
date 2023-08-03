@@ -7,6 +7,7 @@ import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
+import 'fallback_strategy.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 import 'pending_recording.dart';
@@ -48,6 +49,27 @@ class Recorder extends JavaObject {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
+  /// Returns default [QualitySelector] for recordings.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/video/Recorder#DEFAULT_QUALITY_SELECTOR().
+  static QualitySelector getDefaultQualitySelector({
+    BinaryMessenger? binaryMessenger,
+    InstanceManager? instanceManager,
+  }) {
+    return QualitySelector.fromOrderedList(
+      binaryMessenger: binaryMessenger,
+      instanceManager: instanceManager,
+      qualityList: const <VideoQualityConstraint>[
+        VideoQualityConstraint.FHD,
+        VideoQualityConstraint.HD,
+        VideoQualityConstraint.SD
+      ],
+      fallbackStrategy: FallbackStrategy(
+          quality: VideoQualityConstraint.FHD,
+          fallbackRule: VideoResolutionFallbackRule.higherQualityOrLowerThan),
+    );
+  }
+
   late final RecorderHostApiImpl _api;
 
   /// The video aspect ratio of this [Recorder].
@@ -59,8 +81,8 @@ class Recorder extends JavaObject {
   /// The [QualitySelector] of this [Recorder] used to select the resolution of
   /// the recording depending on the resoutions supported by the camera.
   ///
-  /// Default is [defaultQualitySelector], and it is compatible with setting
-  /// the aspect ratio.
+  /// Default selector is that returned by [getDefaultQualitySelector], and it
+  /// is compatible with setting the aspect ratio.
   final QualitySelector? qualitySelector;
 
   /// Prepare a recording that will be saved to a file.

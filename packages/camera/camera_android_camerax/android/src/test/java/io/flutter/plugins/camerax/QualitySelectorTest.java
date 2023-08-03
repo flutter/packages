@@ -5,18 +5,16 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.verify;
 
 import android.util.Size;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.video.FallbackStrategy;
 import androidx.camera.video.Quality;
 import androidx.camera.video.QualitySelector;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.QualityConstraint;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityConstraint;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.After;
@@ -25,14 +23,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.stubbing.Answer;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 
 public class QualitySelectorTest {
 
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-  @Mock public QualitySelector mockQualitySelectorWithNoFallbackStrategy;
+  @Mock public QualitySelector mockQualitySelectorWithoutFallbackStrategy;
   @Mock public QualitySelector mockQualitySelectorWithFallbackStrategy;
 
   InstanceManager instanceManager;
@@ -49,12 +47,13 @@ public class QualitySelectorTest {
 
   @Test
   public void hostApiCreate_createsExpectedQualitySelectorWhenOneQualitySpecified() {
-    final Long expectedIndex = Long.valueOf(QualityConstraint.UHD.ordinal());
-    final List<Long> qualityList = Arrays.asList(expectedIndex);
+    final Long expectedVideoQualityConstraintIndex =
+        Long.valueOf(VideoQualityConstraint.UHD.ordinal());
+    final List<Long> videoQualityConstraintList =
+        Arrays.asList(expectedVideoQualityConstraintIndex);
     final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
     final long fallbackStrategyIdentifier = 9;
-    final QualitySelectorHostApiImpl hostApi =
-        new QualitySelectorHostApiImpl(instanceManager);
+    final QualitySelectorHostApiImpl hostApi = new QualitySelectorHostApiImpl(instanceManager);
 
     instanceManager.addDartCreatedInstance(mockFallbackStrategy, fallbackStrategyIdentifier);
 
@@ -62,7 +61,7 @@ public class QualitySelectorTest {
       mockedQualitySelector
           .when(() -> QualitySelector.from(Quality.UHD))
           .thenAnswer(
-              (Answer<QualitySelector>) invocation -> mockQualitySelectorWithNoFallbackStrategy);
+              (Answer<QualitySelector>) invocation -> mockQualitySelectorWithoutFallbackStrategy);
       mockedQualitySelector
           .when(() -> QualitySelector.from(Quality.UHD, mockFallbackStrategy))
           .thenAnswer(
@@ -70,15 +69,15 @@ public class QualitySelectorTest {
 
       // Test with no fallback strategy.
       long instanceIdentifier = 0;
-      hostApi.create(instanceIdentifier, qualityList, null);
+      hostApi.create(instanceIdentifier, videoQualityConstraintList, null);
 
       assertEquals(
           instanceManager.getInstance(instanceIdentifier),
-          mockQualitySelectorWithNoFallbackStrategy);
+          mockQualitySelectorWithoutFallbackStrategy);
 
       // Test with fallback strategy.
       instanceIdentifier = 1;
-      hostApi.create(instanceIdentifier, qualityList, fallbackStrategyIdentifier);
+      hostApi.create(instanceIdentifier, videoQualityConstraintList, fallbackStrategyIdentifier);
 
       assertEquals(
           instanceManager.getInstance(instanceIdentifier), mockQualitySelectorWithFallbackStrategy);
@@ -87,24 +86,30 @@ public class QualitySelectorTest {
 
   @Test
   public void hostApiCreate_createsExpectedQualitySelectorWhenOrderedListOfQualitiesSpecified() {
-    final List<Long> expectedIndices = Arrays.asList(Long.valueOf(QualityConstraint.UHD.ordinal()), Long.valueOf(QualityConstraint.HIGHEST.ordinal()));
-    final List<QualityConstraint> qualityList =
-        Arrays.asList(QualityConstraint.UHD, QualityConstraint.HIGHEST);
-    final List<Quality> expectedQualityList = Arrays.asList(Quality.UHD, Quality.HIGHEST);
+    final List<Long> expectedIndices =
+        Arrays.asList(
+            Long.valueOf(VideoQualityConstraint.UHD.ordinal()),
+            Long.valueOf(VideoQualityConstraint.HIGHEST.ordinal()));
+    final List<VideoQualityConstraint> videoQualityConstraintList =
+        Arrays.asList(VideoQualityConstraint.UHD, VideoQualityConstraint.HIGHEST);
+    final List<Quality> expectedVideoQualityConstraintList =
+        Arrays.asList(Quality.UHD, Quality.HIGHEST);
     final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
     final long fallbackStrategyIdentifier = 9;
-    final QualitySelectorHostApiImpl hostApi =
-        new QualitySelectorHostApiImpl(instanceManager);
+    final QualitySelectorHostApiImpl hostApi = new QualitySelectorHostApiImpl(instanceManager);
 
     instanceManager.addDartCreatedInstance(mockFallbackStrategy, fallbackStrategyIdentifier);
 
     try (MockedStatic<QualitySelector> mockedQualitySelector = mockStatic(QualitySelector.class)) {
       mockedQualitySelector
-          .when(() -> QualitySelector.fromOrderedList(expectedQualityList))
+          .when(() -> QualitySelector.fromOrderedList(expectedVideoQualityConstraintList))
           .thenAnswer(
-              (Answer<QualitySelector>) invocation -> mockQualitySelectorWithNoFallbackStrategy);
+              (Answer<QualitySelector>) invocation -> mockQualitySelectorWithoutFallbackStrategy);
       mockedQualitySelector
-          .when(() -> QualitySelector.fromOrderedList(expectedQualityList, mockFallbackStrategy))
+          .when(
+              () ->
+                  QualitySelector.fromOrderedList(
+                      expectedVideoQualityConstraintList, mockFallbackStrategy))
           .thenAnswer(
               (Answer<QualitySelector>) invocation -> mockQualitySelectorWithFallbackStrategy);
 
@@ -114,7 +119,7 @@ public class QualitySelectorTest {
 
       assertEquals(
           instanceManager.getInstance(instanceIdentifier),
-          mockQualitySelectorWithNoFallbackStrategy);
+          mockQualitySelectorWithoutFallbackStrategy);
 
       // Test with fallback strategy.
       instanceIdentifier = 1;
@@ -126,13 +131,12 @@ public class QualitySelectorTest {
   }
 
   @Test
-  public void getResolution() {
+  public void getResolution_returnsExpectedResolutionInfo() {
     final CameraInfo mockCameraInfo = mock(CameraInfo.class);
     final long cameraInfoIdentifier = 6;
-    final QualityConstraint quality = QualityConstraint.FHD;
+    final VideoQualityConstraint videoQualityConstraint = VideoQualityConstraint.FHD;
     final Size sizeResult = new Size(30, 40);
-    final QualitySelectorHostApiImpl hostApi =
-        new QualitySelectorHostApiImpl(instanceManager);
+    final QualitySelectorHostApiImpl hostApi = new QualitySelectorHostApiImpl(instanceManager);
 
     instanceManager.addDartCreatedInstance(mockCameraInfo, cameraInfoIdentifier);
 
@@ -141,7 +145,8 @@ public class QualitySelectorTest {
           .when(() -> QualitySelector.getResolution(mockCameraInfo, Quality.FHD))
           .thenAnswer((Answer<Size>) invocation -> sizeResult);
 
-      final ResolutionInfo result = hostApi.getResolution(cameraInfoIdentifier, quality);
+      final ResolutionInfo result =
+          hostApi.getResolution(cameraInfoIdentifier, videoQualityConstraint);
 
       assertEquals(result.getWidth(), Long.valueOf(sizeResult.getWidth()));
       assertEquals(result.getHeight(), Long.valueOf(sizeResult.getHeight()));

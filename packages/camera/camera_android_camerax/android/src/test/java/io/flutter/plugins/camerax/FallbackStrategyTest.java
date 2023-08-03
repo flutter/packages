@@ -1,4 +1,3 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -12,7 +11,7 @@ import static org.mockito.Mockito.mockStatic;
 
 import androidx.camera.video.FallbackStrategy;
 import androidx.camera.video.Quality;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.QualityConstraint;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityConstraint;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoResolutionFallbackRule;
 import org.junit.After;
 import org.junit.Before;
@@ -20,9 +19,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.stubbing.Answer;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 
 public class FallbackStrategyTest {
 
@@ -43,40 +42,44 @@ public class FallbackStrategyTest {
 
   @Test
   public void hostApiCreate_makesCallToCreateExpectedFallbackStrategy() {
-    final FallbackStrategyHostApiImpl hostApi =
-        new FallbackStrategyHostApiImpl(instanceManager);
+    final FallbackStrategyHostApiImpl hostApi = new FallbackStrategyHostApiImpl(instanceManager);
     final long instanceIdentifier = 45;
     final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
 
     try (MockedStatic<FallbackStrategy> mockedFallbackStrategy =
         mockStatic(FallbackStrategy.class)) {
-      for (QualityConstraint quality : QualityConstraint.values()) {
+      for (VideoQualityConstraint videoQualityConstraint : VideoQualityConstraint.values()) {
         for (VideoResolutionFallbackRule fallbackRule : VideoResolutionFallbackRule.values()) {
-          // Determine expected Quality based on QualityConstraint.
-          Quality expectedQuality1 = null;
-          switch (quality) {
+          // Determine expected Quality based on videoQualityConstraint being tested.
+          Quality convertedQuality = null;
+          switch (videoQualityConstraint) {
             case SD:
-              expectedQuality1 = Quality.SD;
+              convertedQuality = Quality.SD;
               break;
             case HD:
-              expectedQuality1 = Quality.HD;
+              convertedQuality = Quality.HD;
               break;
             case FHD:
-              expectedQuality1 = Quality.FHD;
+              convertedQuality = Quality.FHD;
               break;
             case UHD:
-              expectedQuality1 = Quality.UHD;
+              convertedQuality = Quality.UHD;
               break;
             case LOWEST:
-              expectedQuality1 = Quality.LOWEST;
+              convertedQuality = Quality.LOWEST;
               break;
             case HIGHEST:
-              expectedQuality1 = Quality.HIGHEST;
+              convertedQuality = Quality.HIGHEST;
               break;
             default:
-              fail("The QualityConstraint " + quality.toString() + "is unhandled by this test.");
+              fail(
+                  "The VideoQualityConstraint "
+                      + videoQualityConstraint.toString()
+                      + "is unhandled by this test.");
           }
-          final Quality expectedQuality = expectedQuality1;
+          // Set Quality as final local variable to avoid error about using non-final (or effecitvely final) local variables in lambda expressions.
+          final Quality expectedQuality = convertedQuality;
+
           // Mock calls to create FallbackStrategy according to fallbackRule being tested.
           switch (fallbackRule) {
             case HIGHER_QUALITY_OR_LOWER_THAN:
@@ -105,10 +108,10 @@ public class FallbackStrategyTest {
                       + fallbackRule.toString()
                       + "is unhandled by this test.");
           }
-          hostApi.create(instanceIdentifier, quality, fallbackRule);
+          hostApi.create(instanceIdentifier, videoQualityConstraint, fallbackRule);
           assertEquals(instanceManager.getInstance(instanceIdentifier), mockFallbackStrategy);
 
-          // Clear FallbackStrategy mock and InstanceManager.
+          // Clear/reset FallbackStrategy mock and InstanceManager.
           mockedFallbackStrategy.reset();
           instanceManager.clear();
         }

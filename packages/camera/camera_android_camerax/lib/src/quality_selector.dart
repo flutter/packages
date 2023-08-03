@@ -13,15 +13,18 @@ import 'java_object.dart';
 
 /// Quality setting used to configure components with quality setting
 /// requirements such as creating a Recorder.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/QualitySelector.
 @immutable
 class QualitySelector extends JavaObject {
-  /// to do
+  /// Creates a [QualitySelector] with the desired quality and fallback
+  /// strategy, if specified.
   QualitySelector.from(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      required QualityConstraint quality,
+      required VideoQualityConstraint quality,
       this.fallbackStrategy})
-      : qualityList = <QualityConstraint>[quality],
+      : qualityList = <VideoQualityConstraint>[quality],
         super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -30,7 +33,11 @@ class QualitySelector extends JavaObject {
     _api.createFromInstance(this, qualityList, fallbackStrategy);
   }
 
-  /// to do
+  /// Creates a [QualitySelector] with ordered desired qualities and fallback
+  /// strategy, if specified.
+  ///
+  /// The final quality will be seleced according to the order in which they are
+  /// specified.
   QualitySelector.fromOrderedList(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
@@ -55,15 +62,16 @@ class QualitySelector extends JavaObject {
 
   late final _QualitySelectorHostApiImpl _api;
 
-  /// to do
-  final List<QualityConstraint> qualityList;
+  /// Desired qualities for this selctor instance.
+  final List<VideoQualityConstraint> qualityList;
 
-  /// to do
+  /// Desired fallback strategy for this selector instance.
   final FallbackStrategy? fallbackStrategy;
 
-  /// to do
+  /// Retrieves te corresponding resolution from the input [quality] for the
+  /// camera represented by [cameraInfo].
   static Future<ResolutionInfo> getResolution(
-      CameraInfo cameraInfo, QualityConstraint quality,
+      CameraInfo cameraInfo, VideoQualityConstraint quality,
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager}) {
     final _QualitySelectorHostApiImpl api = _QualitySelectorHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
@@ -95,9 +103,12 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates an [QualitySelector] instance with the...
-  void createFromInstance(QualitySelector instance,
-      List<QualityConstraint> qualityList, FallbackStrategy? fallbackStrategy) {
+  /// Creates an [QualitySelector] instance with the desired qualities and
+  /// fallback strategy specified.
+  void createFromInstance(
+      QualitySelector instance,
+      List<VideoQualityConstraint> qualityList,
+      FallbackStrategy? fallbackStrategy) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (QualitySelector original) {
       return QualitySelector.detached(
@@ -108,7 +119,7 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
       );
     });
     final List<int> qualityIndices = qualityList
-        .map<int>((QualityConstraint quality) => quality.index)
+        .map<int>((VideoQualityConstraint quality) => quality.index)
         .toList();
 
     create(
@@ -119,9 +130,10 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
             : instanceManager.getIdentifier(fallbackStrategy));
   }
 
-  /// to do
+  /// Retrieves te corresponding resolution from the input [quality] for the
+  /// camera represented by [cameraInfo].
   Future<ResolutionInfo> getResolutionFromInstance(
-      CameraInfo cameraInfo, QualityConstraint quality) async {
+      CameraInfo cameraInfo, VideoQualityConstraint quality) async {
     final int? cameraInfoIdentifier = instanceManager.getIdentifier(cameraInfo);
     final ResolutionInfo resolution =
         await getResolution(cameraInfoIdentifier!, quality);
