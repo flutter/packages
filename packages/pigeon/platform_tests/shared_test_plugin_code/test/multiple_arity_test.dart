@@ -15,7 +15,7 @@ void main() {
   test('multiple arity', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     when(mockMessenger.send(
-            'dev.flutter.pigeon.flutter_unit_tests.MultipleArityHostApi.subtract',
+            'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract',
             any))
         .thenAnswer((Invocation realInvocation) async {
       final Object input = MultipleArityHostApi.codec
