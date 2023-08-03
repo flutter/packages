@@ -36,6 +36,12 @@ void main() {
     final String? result = await provider.getApplicationSupportPath();
     _verifySampleFile(result, 'applicationSupport');
   });
+
+  testWidgets('getApplicationCacheDirectory', (WidgetTester tester) async {
+    final PathProviderLinux provider = PathProviderLinux();
+    final String? result = await provider.getApplicationCachePath();
+    _verifySampleFile(result, 'applicationCache');
+  });
 }
 
 /// Verify a file called [name] in [directoryPath] by recreating it with test
