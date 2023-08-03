@@ -143,8 +143,6 @@ public class QualitySelectorTest {
 
       final ResolutionInfo result = hostApi.getResolution(cameraInfoIdentifier, quality);
 
-      // verify(mockedQualitySelector).getResolution(mockCameraInfo, Quality.FHD);
-
       assertEquals(result.getWidth(), Long.valueOf(sizeResult.getWidth()));
       assertEquals(result.getHeight(), Long.valueOf(sizeResult.getHeight()));
     }
