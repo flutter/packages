@@ -167,6 +167,12 @@ public class WebViewActivity extends Activity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    // TODO verify base case crash then uncomment and verify fix.
+    // BroadcastReceiver receiver = broadcastReceiver;
+    // if (receiver != null) {
+    //   deviceCommandReceiver = null;
+    //   context.unregisterReceiver(receiver);
+    // }
     unregisterReceiver(broadcastReceiver);
   }
 
