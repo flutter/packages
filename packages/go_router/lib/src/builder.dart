@@ -45,7 +45,7 @@ class RouteBuilder {
     required this.restorationScopeId,
     required this.observers,
     required this.onPopPageWithRouteMatch,
-    required this.requestFocus,
+    this.requestFocus = true,
   });
 
   /// Builder function for a go router with Navigator.
@@ -66,7 +66,9 @@ class RouteBuilder {
 
   /// Whether or not the navigator and it's new topmost route should request focus
   /// when the new route is pushed onto the navigator.
-  final bool? requestFocus;
+  /// 
+  /// Defaults to true.
+  final bool requestFocus;
 
   /// NavigatorObserver used to receive notifications when navigating in between routes.
   /// changes.
@@ -308,7 +310,7 @@ class RouteBuilder {
     List<NavigatorObserver> observers = const <NavigatorObserver>[],
     String? restorationScopeId,
     HeroController? heroController,
-    bool? requestFocus,
+    bool requestFocus = true,
   }) {
     final Widget navigator = Navigator(
       key: navigatorKey,
@@ -316,7 +318,7 @@ class RouteBuilder {
       pages: pages,
       observers: observers,
       onPopPage: onPopPage,
-      requestFocus: requestFocus ?? true,
+      requestFocus: requestFocus,
     );
     if (heroController != null) {
       return HeroControllerScope(
