@@ -25,11 +25,11 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  path_provider_android: ^2.0.6
-  path_provider_foundation: ^2.1.0
-  path_provider_linux: ^2.0.1
+  path_provider_android: ^2.1.0
+  path_provider_foundation: ^2.3.0
+  path_provider_linux: ^2.2.0
   path_provider_platform_interface: ^2.1.0
-  path_provider_windows: ^2.0.2
+  path_provider_windows: ^2.2.0
 
 dev_dependencies:
   flutter_test:
