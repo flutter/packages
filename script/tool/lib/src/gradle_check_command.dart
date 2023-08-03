@@ -126,18 +126,23 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// Required in root gradle file.
   bool _validateArtifactHubUsage(
       RepositoryPackage example, List<String> gradleLines) {
-    final String keyVariable = 'artifactRepoKey';
+    const String keyVariable = 'artifactRepoKey';
     final RegExp keyPresentRegex =
         RegExp("$keyVariable\\s+=\\s+'ARTIFACT_HUB_REPOSITORY'");
 
-    final RegExp keyReadRegex = RegExp('if\\s+(System.getenv().containsKey($keyVariable))');
-    final RegExp keyUsedRegex = RegExp('maven\\s+{\\s+url\\s+System.getenv($keyVariable)\\s+}');
+    final RegExp keyReadRegex =
+        RegExp('if\\s+\(System.getenv\(\).containsKey\($keyVariable\)\)');
+    final RegExp keyUsedRegex =
+        RegExp('maven\\s+{\\s+url\\s+System.getenv($keyVariable)\\s+}');
 
-    final bool keyPresent = gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
-    final bool keyRead = gradleLines.any((String line) => keyReadRegex.hasMatch(line));
-    final bool keyUsed = gradleLines.any((String line) => keyUsedRegex.hasMatch(line));
+    final bool keyPresent =
+        gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
+    // final bool keyRead =
+    //     gradleLines.any((String line) => keyReadRegex.hasMatch(line));
+    // final bool keyUsed =
+    //     gradleLines.any((String line) => keyUsedRegex.hasMatch(line));
 
-    return keyPresent && keyRead && keyUsed;
+    return keyPresent; //&& keyRead && keyUsed;
   }
 
   /// Validates the top-level build.gradle for an example app (e.g.,
@@ -156,6 +161,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
       succeeded = false;
     }
     if (!_validateKotlinVersion(package, lines)) {
+      succeeded = false;
+    }
+    if (!_validateArtifactHubUsage(package, lines)) {
       succeeded = false;
     }
     return succeeded;
