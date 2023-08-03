@@ -518,7 +518,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   /// Sets a callback that notifies the host application of any log messages
   /// written to the JavaScript console.
   ///
-  /// Because the iOS WKWebView doesn't provide a build in way to access the
+  /// Because the iOS WKWebView doesn't provide a built-in way to access the
   /// console, setting this callback will inject a custom [WKUserScript] which
   /// overrides the JavaScript `console.debug`, `console.error`, `console.info`,
   /// `console.log` and `console.warn` methods and forwards the console message
