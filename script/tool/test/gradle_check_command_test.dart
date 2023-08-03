@@ -140,19 +140,11 @@ gradle.projectsEvaluated {
     }
 }
 ''';
-    const String artifactHubSection = '''
-        // See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
-        def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
-        if (System.getenv().containsKey(artifactRepoKey)) {
-            println "Using artifact hub"
-            maven { url System.getenv(artifactRepoKey) }
-        }
-''';
     buildGradle.writeAsStringSync('''
 buildscript {
     ${kotlinVersion == null ? '' : "ext.kotlin_version = '$kotlinVersion'"}
     repositories {
-        ${includeArtifactHub ? artifactHubSection : ''}
+        ${includeArtifactHub ? GradleCheckCommand.exampleRootArtifactHubString : ''}
         google()
         mavenCentral()
     }
@@ -663,14 +655,15 @@ dependencies {
   });
 
   group('Artifact Hub check', () {
-    test('passes artifact if not set', () async {
+    test('passes artifact hub check when set', () async {
       const String packageName = 'a_package';
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
       writeFakePluginBuildGradle(package, includeLanguageVersion: true);
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
-      writeFakeExampleBuildGradles(example, pluginName: packageName);
+      // ignore: avoid_redundant_argument_values
+      writeFakeExampleBuildGradles(example, pluginName: packageName, includeArtifactHub: true);
       writeFakeManifest(example, isApp: true);
 
       final List<String> output =
@@ -680,6 +673,32 @@ dependencies {
         output,
         containsAllInOrder(<Matcher>[
           contains('Validating android/build.gradle'),
+        ]),
+      );
+    });
+    test('fails artifact hub check when missing', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example, pluginName: packageName, includeArtifactHub: false);
+      writeFakeManifest(example, isApp: true);
+
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Does not link artifact hub documentation.'),
+          contains(GradleCheckCommand.exampleRootArtifactHubString),
         ]),
       );
     });

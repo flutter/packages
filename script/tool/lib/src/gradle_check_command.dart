@@ -120,6 +120,18 @@ class GradleCheckCommand extends PackageLoopingCommand {
     return succeeded;
   }
 
+  /// String printed as example of valid example root build.gradle repository
+  /// configuration that enables artifact hub env variable.
+  @visibleForTesting
+  static const String exampleRootArtifactHubString = r'''
+        // See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
+        def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
+        if (System.getenv().containsKey(artifactRepoKey)) {
+            println "Using artifact hub"
+            maven { url System.getenv(artifactRepoKey) }
+        }
+''';
+
   /// Validates that [gradleLines] reads and uses a artifiact hub repository
   /// when ARTIFACT_HUB_REPOSITORY is set.
   ///
@@ -129,8 +141,8 @@ class GradleCheckCommand extends PackageLoopingCommand {
     const String keyVariable = 'artifactRepoKey';
     final RegExp keyPresentRegex =
         RegExp("$keyVariable\\s+=\\s+'ARTIFACT_HUB_REPOSITORY'");
-    final RegExp documentationPresentRegex =
-        RegExp(r'github.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
+    final RegExp documentationPresentRegex = RegExp(
+        r'github.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
     final RegExp keyReadRegex =
         RegExp('if.*System\.getenv.*containsKey.*$keyVariable');
     final RegExp keyUsedRegex =
@@ -138,25 +150,22 @@ class GradleCheckCommand extends PackageLoopingCommand {
 
     final bool keyPresent =
         gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
-    final bool documentationPresent =
-        gradleLines.any((String line) => documentationPresentRegex.hasMatch(line));
+    final bool documentationPresent = gradleLines
+        .any((String line) => documentationPresentRegex.hasMatch(line));
     final bool keyRead =
         gradleLines.any((String line) => keyReadRegex.hasMatch(line));
     final bool keyUsed =
         gradleLines.any((String line) => keyUsedRegex.hasMatch(line));
-    if (!keyPresent) {
-      printError('Does not have ARTIFACT_HUB_REPOSITORY');
-    }
+
     if (!documentationPresent) {
-      printError('Does not have ARTIFACT_HUB_REPOSITORY documenation');
+      printError('Does not link artifact hub documentation.');
     }
-    if (!keyRead) {
-      printError('Does not read ARTIFACT_HUB_REPOSITORY');
+    if (!(keyPresent && keyRead && keyUsed)) {
+      printError('Failed Artifact Hub validation. Include the following in '
+          'example root build.gradle:\n$exampleRootArtifactHubString');
     }
-    if (!keyUsed) {
-      printError('Does not use ARTIFACT_HUB_REPOSITORY');
-    }
-    return keyPresent && keyRead && keyUsed;
+
+    return keyPresent && documentationPresent && keyRead && keyUsed;
   }
 
   /// Validates the top-level build.gradle for an example app (e.g.,
