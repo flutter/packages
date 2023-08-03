@@ -632,6 +632,21 @@ class WebKitWebViewWidgetCreationParams
   // Maintains instances used to communicate with the native objects they
   // represent.
   final InstanceManager _instanceManager;
+
+  @override
+  int get hashCode => Object.hash(
+        controller,
+        layoutDirection,
+        _instanceManager,
+      );
+
+  @override
+  bool operator ==(Object other) {
+    return other is WebKitWebViewWidgetCreationParams &&
+        controller == other.controller &&
+        layoutDirection == other.layoutDirection &&
+        _instanceManager == other._instanceManager;
+  }
 }
 
 /// An implementation of [PlatformWebViewWidget] with the WebKit api.
@@ -651,7 +666,9 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
   @override
   Widget build(BuildContext context) {
     return UiKitView(
-      key: _webKitParams.key,
+      // Setting a default key using `params` ensures the `UIKitView` recreates
+      // the PlatformView when changes are made.
+      key: _webKitParams.key ?? ObjectKey(params),
       viewType: 'plugins.flutter.io/webview',
       onPlatformViewCreated: (_) {},
       layoutDirection: params.layoutDirection,
