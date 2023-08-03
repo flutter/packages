@@ -64,7 +64,8 @@ class RouteBuilder {
   /// its history.
   final String? restorationScopeId;
 
-  ///
+  /// Whether or not the navigator and it's new topmost route should request focus
+  /// when the new route is pushed onto the navigator.
   final bool? requestFocus;
 
   /// NavigatorObserver used to receive notifications when navigating in between routes.
