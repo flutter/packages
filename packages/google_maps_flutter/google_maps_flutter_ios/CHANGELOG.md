@@ -1,5 +1,6 @@
-## NEXT
+## 2.3.0
 
+* Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
 * Fixes unawaited_futures violations.
 
 ## 2.2.3
@@ -24,7 +25,6 @@
 ## 2.1.14
 
 * Updates links for the merge of flutter/plugins into flutter/packages.
-* Updates minimum Flutter version to 3.0.
 
 ## 2.1.13
 

@@ -1,5 +1,6 @@
-## NEXT
+## 2.5.0
 
+* Adds implementation for `cloudMapId` parameter to support cloud-based map styling.
 * Fixes unawaited_futures violations.
 
 ## 2.4.15
