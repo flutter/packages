@@ -540,6 +540,9 @@ class AndroidWebViewController extends PlatformWebViewController {
       void Function(JavaScriptConsoleMessage consoleMessage)
           onConsoleMessage) async {
     _onConsoleLogCallback = onConsoleMessage;
+
+    return _webChromeClient.setSynchronousReturnValueForOnConsoleMessage(
+        _onConsoleLogCallback != null);
   }
 }
 
