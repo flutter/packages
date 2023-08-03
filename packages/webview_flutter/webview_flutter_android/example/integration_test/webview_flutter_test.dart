@@ -356,6 +356,19 @@ Future<void> main() async {
       final String videoTest = '''
           <!DOCTYPE html><html>
           <head><title>Video auto play</title>
+            <style>
+              body,
+              html,
+              #container {
+                  height: 100%;
+                  width: 100%;
+              }
+
+              div {
+                height: 50%;
+                width: 100%;
+              }
+            </style>
             <script type="text/javascript">
               function play() {
                 var video = document.getElementById("video");
@@ -374,12 +387,31 @@ Future<void> main() async {
                 var video = document.getElementById("video");
                 return video.webkitDisplayingFullscreen;
               }
+              function toggleFullScreen() {
+                LogChannel.postMessage("JavaScript: Running onClick");
+                let elem = document.getElementById("video");
+
+                if (!document.fullscreenElement) {
+                  LogChannel.postMessage("JavaScript: Showing fullscreen");
+                  elem.requestFullscreen().catch((err) => {
+                    LogChannel.postMessage("JavaScript: Error attempting to enable fullscreen mode: " + err.message + " (" + err.name + ")",);
+                  });
+                  LogChannel.postMessage("JavaScript: Shown fullscreen");
+                } else {
+                  LogChannel.postMessage("JavaScript: Closing fullscreen");
+                  document.exitFullscreen();
+                  LogChannel.postMessage("JavaScript: Closed fullscreen");
+                }
+              }
             </script>
           </head>
           <body onload="play();">
-          <video controls playsinline autoplay id="video">
-            <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
-          </video>
+            <div onclick="toggleFullScreen();" style="background-color: aqua;"></div>
+            <div>
+              <video controls playsinline autoplay id="video" height="100%">
+                <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
+              </video>
+            </div>
           </body>
           </html>
         ''';
@@ -508,6 +540,67 @@ Future<void> main() async {
       final bool fullScreen = await controller
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, false);
+    });
+
+    testWidgets('Video plays fullscreen', (WidgetTester tester) async {
+      final Completer<void> fullscreenEntered = Completer<void>();
+      final Completer<void> fullscreenExited = Completer<void>();
+      final Completer<void> pageLoaded = Completer<void>();
+
+      final AndroidWebViewController controller = AndroidWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      unawaited(controller.setCustomWidgetCallbacks(onHideCustomWidget: () {
+        fullscreenExited.complete();
+      }, onShowCustomWidget:
+          (Widget webView, void Function()? onHideCustomView) {
+        fullscreenEntered.complete();
+        onHideCustomView!();
+      }));
+
+      unawaited(controller.addJavaScriptChannel(
+        JavaScriptChannelParams(
+          name: 'LogChannel',
+          onMessageReceived: (JavaScriptMessage message) {
+            print(message.message);
+          },
+        ),
+      ));
+
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$videoTestBase64',
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(
+              key: const Key('webview_widget'),
+              controller: controller,
+            ),
+          ).build(context);
+        },
+      ));
+
+      await pageLoaded.future;
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      await tester.tapAt(const Offset(20, 20));
+
+      await expectLater(fullscreenEntered.future, completes);
+      await expectLater(fullscreenExited.future, completes);
     });
   });
 
