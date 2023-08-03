@@ -79,12 +79,6 @@ void main() {
       expect(await controller.position, const Duration(seconds: 3));
     });
 
-    testWidgets('can clear cache', (WidgetTester tester) async {
-      await controller.initialize();
-      final bool hasSucceeded = await controller.clearCache();
-      expect(hasSucceeded, true);
-    });
-
     testWidgets('can check if caching is supported',
         (WidgetTester tester) async {
       await controller.initialize();
@@ -134,6 +128,12 @@ void main() {
 
       expect(await controller.position, greaterThan(Duration.zero));
     });
+
+    testWidgets('can clear cache', (WidgetTester tester) async {
+      await controller.initialize();
+      final bool hasSucceeded = await controller.clearCache();
+      expect(hasSucceeded, false);
+    });
   });
 
   group('network videos', () {
@@ -167,6 +167,12 @@ void main() {
 
       await expectLater(started.future, completes);
       await expectLater(ended.future, completes);
+    });
+
+    testWidgets('can clear cache', (WidgetTester tester) async {
+      await controller.initialize();
+      final bool hasSucceeded = await controller.clearCache();
+      expect(hasSucceeded, true);
     });
 
     testWidgets('live stream duration != 0', (WidgetTester tester) async {
