@@ -595,7 +595,7 @@ Future<void> main() async {
 
       await pageLoaded.future;
 
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
 
       await tester.tapAt(const Offset(20, 20));
 
