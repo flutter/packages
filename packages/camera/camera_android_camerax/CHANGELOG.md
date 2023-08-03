@@ -1,3 +1,7 @@
+## 0.5.0+13
+
+* Wraps classes needed to implement resolution configuration for video recording.
+
 ## 0.5.0+12
 
 * Wraps classes needed to implement resolution configuration for image capture, image analysis, and preview.
