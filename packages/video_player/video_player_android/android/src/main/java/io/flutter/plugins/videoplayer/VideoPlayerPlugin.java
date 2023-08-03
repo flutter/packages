@@ -184,7 +184,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     player.setLooping(arg.getIsLooping());
   }
 
-  @NonNull 
+  @NonNull
   public ClearCacheMessageResponse clearCache(@NonNull ClearCacheMessage msg) {
 
     boolean hasSucceeded = VideoCache.clearVideoCache(flutterState.applicationContext);
