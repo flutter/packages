@@ -66,6 +66,12 @@ class GradleCheckCommand extends PackageLoopingCommand {
       if (!_validateExampleTopLevelBuildGradle(package, topLevelGradleFile)) {
         succeeded = false;
       }
+      final File topLevelSettingsGradleFile =
+          _getSettignsGradleFile(androidDir);
+      if (!_validateExampleTopLevelSettingsGradle(
+          package, topLevelSettingsGradleFile)) {
+        succeeded = false;
+      }
 
       final File appGradleFile =
           _getBuildGradleFile(androidDir.childDirectory('app'));
@@ -81,6 +87,10 @@ class GradleCheckCommand extends PackageLoopingCommand {
 
   // Returns the gradle file in the given directory.
   File _getBuildGradleFile(Directory dir) => dir.childFile('build.gradle');
+
+  // Returns the settings gradle file in the given directory.
+  File _getSettignsGradleFile(Directory dir) =>
+      dir.childFile('settings.gradle');
 
   // Returns the main/AndroidManifest.xml file for the given package.
   File _getMainAndroidManifest(RepositoryPackage package,
@@ -123,7 +133,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// String printed as example of valid example root build.gradle repository
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
-  static const String exampleRootArtifactHubString = r'''
+  static const String exampleRootGradleArtifactHubString = r'''
         // See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
         def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
         if (System.getenv().containsKey(artifactRepoKey)) {
@@ -162,10 +172,76 @@ class GradleCheckCommand extends PackageLoopingCommand {
     }
     if (!(keyPresent && keyRead && keyUsed)) {
       printError('Failed Artifact Hub validation. Include the following in '
-          'example root build.gradle:\n$exampleRootArtifactHubString');
+          'example root build.gradle:\n$exampleRootGradleArtifactHubString');
     }
 
     return keyPresent && documentationPresent && keyRead && keyUsed;
+  }
+
+  /// Validates the top-level settings.gradle for an example app (e.g.,
+  /// some_package/example/android/settings.gradle).
+  _validateExampleTopLevelSettingsGradle(
+      RepositoryPackage package, File gradleSettingsFile) {
+    print('${indentation}Validating '
+        '${getRelativePosixPath(gradleSettingsFile, from: package.directory)}.');
+    final String contents = gradleSettingsFile.readAsStringSync();
+    final List<String> lines = contents.split('\n');
+    // This is tracked as a variable rather than a sequence of &&s so that all
+    // failures are reported at once, not just the first one.
+    bool succeeded = true;
+    if (!_validateArtifactHubSettingsUsage(package, lines)) {
+      succeeded = false;
+    }
+    return succeeded;
+  }
+
+  @visibleForTesting
+  static String exampleRootSettingsArtifactHubString = '''
+// See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.1"
+  }
+}
+apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
+''';
+
+  /// Validates that [gradleLines] reads and uses a artifiact hub repository
+  /// when ARTIFACT_HUB_REPOSITORY is set.
+  ///
+  /// Required in root gradle file.
+  bool _validateArtifactHubSettingsUsage(
+      RepositoryPackage example, List<String> gradleLines) {
+    final RegExp documentationPresentRegex = RegExp(
+        r'github.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
+    final RegExp artifactRegistryDefinitionRegex = RegExp(
+        'classpath.*gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin');
+    final RegExp artifactRegistryPluginApplyRegex = RegExp(
+        'apply.*plugin.*com.google.cloud.artifactregistry.gradle-plugin');
+
+    final bool documentationPresent = gradleLines
+        .any((String line) => documentationPresentRegex.hasMatch(line));
+    final bool artifactRegistryDefined = gradleLines
+        .any((String line) => artifactRegistryDefinitionRegex.hasMatch(line));
+    final bool artifactRegistryPluginApplied = gradleLines
+        .any((String line) => artifactRegistryPluginApplyRegex.hasMatch(line));
+
+    if (!documentationPresent) {
+      printError('Does not link artifact hub documentation.');
+    }
+    if (!(artifactRegistryDefined && artifactRegistryPluginApplied)) {
+      printError('Failed Artifact Hub validation. Include the following in '
+          'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
+    }
+
+    return documentationPresent &&
+        artifactRegistryDefined &&
+        artifactRegistryPluginApplied;
   }
 
   /// Validates the top-level build.gradle for an example app (e.g.,

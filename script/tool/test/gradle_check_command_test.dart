@@ -144,7 +144,7 @@ gradle.projectsEvaluated {
 buildscript {
     ${kotlinVersion == null ? '' : "ext.kotlin_version = '$kotlinVersion'"}
     repositories {
-        ${includeArtifactHub ? GradleCheckCommand.exampleRootArtifactHubString : ''}
+        ${includeArtifactHub ? GradleCheckCommand.exampleRootGradleArtifactHubString : ''}
         google()
         mavenCentral()
     }
@@ -698,7 +698,7 @@ dependencies {
         output,
         containsAllInOrder(<Matcher>[
           contains('Does not link artifact hub documentation.'),
-          contains(GradleCheckCommand.exampleRootArtifactHubString),
+          contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
         ]),
       );
     });
