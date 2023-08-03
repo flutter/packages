@@ -51,7 +51,7 @@
   id writerMock = OCMClassMock([AVAssetWriter class]);
   OCMStub([writerMock alloc]).andReturn(writerMock);
   OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
-    .andReturn(writerMock);
+      .andReturn(writerMock);
   __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
   OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
     status = AVAssetWriterStatusWriting;
@@ -63,35 +63,40 @@
   __block NSString *writtenSamples = @"";
 
   id videoMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
-  OCMStub([videoMock
-           assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
-           sourcePixelBufferAttributes:OCMOCK_ANY]).andReturn(videoMock);
+  OCMStub([videoMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
+                                                sourcePixelBufferAttributes:OCMOCK_ANY])
+      .andReturn(videoMock);
   OCMStub([videoMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
-    .andDo(^(NSInvocation *invocation) {
-      writtenSamples = [writtenSamples stringByAppendingString:@"v"];
-  });
+      .andDo(^(NSInvocation *invocation) {
+        writtenSamples = [writtenSamples stringByAppendingString:@"v"];
+      });
 
   id audioMock = OCMClassMock([AVAssetWriterInput class]);
-  OCMStub([audioMock
-           assetWriterInputWithMediaType:[OCMArg isEqual:AVMediaTypeAudio]
-           outputSettings:OCMOCK_ANY]).andReturn(audioMock);
+  OCMStub([audioMock assetWriterInputWithMediaType:[OCMArg isEqual:AVMediaTypeAudio]
+                                    outputSettings:OCMOCK_ANY])
+      .andReturn(audioMock);
   OCMStub([audioMock isReadyForMoreMediaData]).andReturn(YES);
   OCMStub([audioMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
     writtenSamples = [writtenSamples stringByAppendingString:@"a"];
   });
 
-  FLTThreadSafeFlutterResult *result = [[FLTThreadSafeFlutterResult alloc] initWithResult:^(id result) {}];
+  FLTThreadSafeFlutterResult *result =
+      [[FLTThreadSafeFlutterResult alloc] initWithResult:^(id result){
+      }];
   [_camera startVideoRecordingWithResult:result];
 
   char *samples = "aaavava";
+
   CMSampleBufferRef audioSampleBuffer = FLTCreateTestAudioSampleBuffer();
   for (int i = 0; i < strlen(samples); i++) {
-    if(samples[i] == 'v') {
-      [_camera captureOutput:_camera.captureVideoOutput didOutputSampleBuffer:_sampleBuffer
-              fromConnection:connectionMock];
+    if (samples[i] == 'v') {
+      [_camera captureOutput:_camera.captureVideoOutput
+          didOutputSampleBuffer:_sampleBuffer
+                 fromConnection:connectionMock];
     } else {
-      [_camera captureOutput:nil didOutputSampleBuffer:audioSampleBuffer
-              fromConnection:connectionMock];
+      [_camera captureOutput:nil
+          didOutputSampleBuffer:audioSampleBuffer
+                 fromConnection:connectionMock];
     }
   }
   CFRelease(audioSampleBuffer);
