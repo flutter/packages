@@ -67,6 +67,7 @@
                                                 sourcePixelBufferAttributes:OCMOCK_ANY])
       .andReturn(videoMock);
   OCMStub([videoMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
+      .ignoringNonObjectArgs()
       .andDo(^(NSInvocation *invocation) {
         writtenSamples = [writtenSamples stringByAppendingString:@"v"];
       });
