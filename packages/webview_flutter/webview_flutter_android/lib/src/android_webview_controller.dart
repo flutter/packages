@@ -160,14 +160,14 @@ class AndroidWebViewController extends PlatformWebViewController {
           if (weakReference.target?._onConsoleLogCallback != null) {
             JavaScriptLogLevel logLevel;
             switch (consoleMessage.level) {
+              // Android maps `console.debug` to `MessageLevel.TIP`, it seems
+              // `MessageLevel.DEBUG` if not being used.
               case ConsoleMessageLevel.debug:
+              case ConsoleMessageLevel.tip:
                 logLevel = JavaScriptLogLevel.debug;
                 break;
               case ConsoleMessageLevel.error:
                 logLevel = JavaScriptLogLevel.error;
-                break;
-              case ConsoleMessageLevel.tip:
-                logLevel = JavaScriptLogLevel.info;
                 break;
               case ConsoleMessageLevel.warning:
                 logLevel = JavaScriptLogLevel.warning;

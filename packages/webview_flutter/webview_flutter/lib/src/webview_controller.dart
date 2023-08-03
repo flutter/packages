@@ -357,6 +357,9 @@ class WebViewController {
   /// Sets a callback that notifies the host application on any log messages
   /// written to the JavaScript console.
   ///
+  /// Platforms may not preserve all the log level information so clients should
+  /// not rely on a 1:1 mapping between the JavaScript calls.
+  ///
   /// On iOS setting this callback will inject a custom [WKUserScript] which
   /// overrides the default implementation of `console.debug`, `console.error`,
   /// `console.info`, `console.log` and `console.warning` methods. The iOS
