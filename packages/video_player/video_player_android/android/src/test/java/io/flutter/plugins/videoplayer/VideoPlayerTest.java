@@ -51,9 +51,9 @@ public class VideoPlayerTest {
     fakeEventChannel = mock(EventChannel.class);
     fakeSurfaceTextureEntry = mock(TextureRegistry.SurfaceTextureEntry.class);
     fakeVideoPlayerOptions = mock(VideoPlayerOptions.class);
-    fakeVideoPlayerOptionsWitchCache = mock(VideoPlayerOptions.class).maxCacheSize;
-    fakeVideoPlayerOptionsWitchCache.maxCacheSize = 100;
-    fakeVideoPlayerOptionsWitchCache.maxFileSize = 100;
+    fakeVideoPlayerOptionsWitchCache = mock(VideoPlayerOptions.class);
+    fakeVideoPlayerOptionsWitchCache.maxCacheSize = 100L;
+    fakeVideoPlayerOptionsWitchCache.maxFileSize = 100L;
     fakeEventSink = mock(QueuingEventSink.class);
     httpDataSourceFactorySpy = spy(new DefaultHttpDataSource.Factory());
   }
