@@ -1,6 +1,10 @@
-## 0.3.1+5
+## 0.3.2+1
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
+## 0.3.2
+
+* Changes `availableCameras` to not ask for the microphone permission.
 
 ## 0.3.1+4
 

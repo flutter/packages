@@ -254,7 +254,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     for (final MapEntry<String, List<String>> entry
         in _targetDeviceFlags.entries) {
       final String platform = entry.key;
-      if (example.directory.childDirectory(platform).existsSync()) {
+      if (example.appSupportsPlatform(getPlatformByName(platform))) {
         deviceFlags.addAll(entry.value);
       } else {
         final String exampleName =

@@ -1148,13 +1148,12 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  Preview createPreview(int targetRotation, ResolutionInfo? targetResolution) {
+  Preview createPreview(int targetRotation) {
     return testPreview;
   }
 
   @override
-  ImageCapture createImageCapture(
-      int? flashMode, ResolutionInfo? targetResolution) {
+  ImageCapture createImageCapture(int? flashMode) {
     return testImageCapture;
   }
 
@@ -1169,7 +1168,7 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
+  ImageAnalysis createImageAnalysis() {
     return mockImageAnalysis;
   }
 }

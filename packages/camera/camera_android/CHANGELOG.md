@@ -1,8 +1,11 @@
-## 0.10.8+5
+## 0.10.8+6
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
-* Bump: `com.android.tools.build:gradle:7.2.0`
- 
+
+## 0.10.8+5
+
+* Provides a default exposure point if null.
+
 ## 0.10.8+4
 
 * Adjusts SDK checks for better testability.
