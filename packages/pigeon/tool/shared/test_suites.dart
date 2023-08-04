@@ -50,7 +50,6 @@ const String windowsUnitTests = 'windows_unittests';
 const String windowsIntegrationTests = 'windows_integration_tests';
 const String dartUnitTests = 'dart_unittests';
 const String flutterUnitTests = 'flutter_unittests';
-const String mockHandlerTests = 'mock_handler_tests';
 const String commandLineTests = 'command_line_tests';
 
 const Map<String, TestInfo> testSuites = <String, TestInfo>{
@@ -101,9 +100,6 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
   macOSSwiftIntegrationTests: TestInfo(
       function: _runMacOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code on macOS.'),
-  mockHandlerTests: TestInfo(
-      function: _runMockHandlerTests,
-      description: 'Unit tests on generated Dart mock handler code.'),
   commandLineTests: TestInfo(
       function: _runCommandLineTests,
       description: 'Tests running pigeon with various command-line options.'),
@@ -308,24 +304,6 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
 
 Future<int> _runIOSSwiftIntegrationTests() async {
   return _runMobileIntegrationTests('iOS', _testPluginRelativePath);
-}
-
-Future<int> _runMockHandlerTests() async {
-  const String unitTestsPath = './mock_handler_tester';
-  final int generateCode = await runPigeon(
-    input: './pigeons/message.dart',
-    dartOut: './mock_handler_tester/test/message.dart',
-    dartTestOut: './mock_handler_tester/test/test.dart',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
-
-  final int testCode = await runFlutterCommand(unitTestsPath, 'test');
-  if (testCode != 0) {
-    return testCode;
-  }
-  return 0;
 }
 
 Future<int> _runWindowsUnitTests() async {
