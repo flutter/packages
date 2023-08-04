@@ -315,7 +315,7 @@ void main() {
     });
   });
 
-  test('skips if requseted if "pub get" fails in the resolver', () async {
+  test('skips if requested if "pub get" fails in the resolver', () async {
     final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
 
     final FakeProcessInfo failingPubGet = FakeProcessInfo(
