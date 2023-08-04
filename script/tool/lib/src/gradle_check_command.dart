@@ -195,6 +195,8 @@ class GradleCheckCommand extends PackageLoopingCommand {
     return succeeded;
   }
 
+  /// String printed as example of valid example root settings.gradle repository
+  /// configuration that enables artifact hub env variable.
   @visibleForTesting
   static String exampleRootSettingsArtifactHubString = '''
 // See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
