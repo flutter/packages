@@ -70,7 +70,7 @@ should add it to your `pubspec.yaml` as usual.
 You should be able to use `package:image_picker` _almost_ as normal.
 
 Once the user has picked a file, the returned `XFile` instance will contain a
-`network`-accessible Blob URL (pointing to a location within the browser).
+`network`-accessible `Blob` URL (pointing to a location within the browser).
 
 The instance will also let you retrieve the bytes of the selected file across all platforms.
 
