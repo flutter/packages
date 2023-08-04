@@ -617,7 +617,8 @@ class AVFoundationCamera extends CameraPlatform {
           arguments['exposurePointSupported']! as bool,
           deserializeFocusMode(arguments['focusMode']! as String),
           arguments['focusPointSupported']! as bool,
-          deserializeImageExtension(arguments['imageExtension']! as String),
+          imageExtension:
+              deserializeImageExtension(arguments['imageExtension']! as String),
         ));
         break;
       case 'resolution_changed':

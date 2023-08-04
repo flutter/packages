@@ -51,15 +51,14 @@ class CameraInitializedEvent extends CameraEvent {
   /// The `previewWidth` represents the width of the generated preview in pixels.
   /// The `previewHeight` represents the height of the generated preview in pixels.
   const CameraInitializedEvent(
-    super.cameraId,
-    this.previewWidth,
-    this.previewHeight,
-    this.exposureMode,
-    this.exposurePointSupported,
-    this.focusMode,
-    this.focusPointSupported,
-    this.imageExtension,
-  );
+      super.cameraId,
+      this.previewWidth,
+      this.previewHeight,
+      this.exposureMode,
+      this.exposurePointSupported,
+      this.focusMode,
+      this.focusPointSupported,
+      {this.imageExtension = ImageExtension.jpeg});
 
   /// Converts the supplied [Map] to an instance of the [CameraInitializedEvent]
   /// class.

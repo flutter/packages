@@ -205,7 +205,6 @@ void main() {
         true,
         FocusMode.auto,
         true,
-        ImageExtension.jpeg,
       ));
       await initializeFuture;
 
@@ -251,7 +250,6 @@ void main() {
         true,
         FocusMode.auto,
         true,
-        ImageExtension.jpeg,
       ));
       await initializeFuture;
 
@@ -300,7 +298,6 @@ void main() {
         true,
         FocusMode.auto,
         true,
-        ImageExtension.jpeg,
       ));
       await initializeFuture;
     });
@@ -321,7 +318,6 @@ void main() {
         true,
         FocusMode.auto,
         true,
-        ImageExtension.jpeg,
       );
       await camera.handleCameraMethodCall(
           MethodCall('initialized', event.toJson()), cameraId);
@@ -476,7 +472,6 @@ void main() {
           true,
           FocusMode.auto,
           true,
-          ImageExtension.jpeg,
         ),
       );
       await initializeFuture;

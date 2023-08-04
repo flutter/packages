@@ -226,14 +226,10 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
-  Future<XFile> takePicture(int cameraId,
-      {ImageExtension imageExtension = ImageExtension.jpeg}) async {
+  Future<XFile> takePicture(int cameraId) async {
     final String? path = await _channel.invokeMethod<String>(
       'takePicture',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'imageExtension': _serializeImageExtension(imageExtension)
-      },
+      <String, dynamic>{'cameraId': cameraId},
     );
 
     if (path == null) {
@@ -571,16 +567,6 @@ class AndroidCamera extends CameraPlatform {
     return 'max';
   }
 
-  /// Returns the format of the image as a String.
-  String _serializeImageExtension(ImageExtension imageExtension) {
-    switch (imageExtension) {
-      case ImageExtension.jpeg:
-        return 'jpeg';
-      case ImageExtension.heic:
-        return 'heic';
-    }
-  }
-
   /// Converts messages received from the native platform into device events.
   Future<dynamic> _handleDeviceMethodCall(MethodCall call) async {
     switch (call.method) {
@@ -611,7 +597,6 @@ class AndroidCamera extends CameraPlatform {
           arguments['exposurePointSupported']! as bool,
           deserializeFocusMode(arguments['focusMode']! as String),
           arguments['focusPointSupported']! as bool,
-          deserializeImageExtension(arguments['imageExtension']! as String),
         ));
         break;
       case 'resolution_changed':
