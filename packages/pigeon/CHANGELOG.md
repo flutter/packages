@@ -1,3 +1,7 @@
+## 10.1.5
+
+* Fixes import in generated Dart test output when overriding package name.
+
 ## 10.1.4
 
 * Adds package name to method channel strings to avoid potential collisions between plugins.
