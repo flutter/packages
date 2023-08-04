@@ -37,11 +37,12 @@ The [`cancel` event](https://caniuse.com/mdn-api_htmlinputelement_cancel_event)
 used by the plugin to detect when users close the file selector without picking
 a file is relatively new, and will only work in recent browsers.
 
-### `getImage()` parameters and `MediaOptions`
+### `ImagePickerOptions` support
 
-The `getImage`, `getMultiImage` and `getMedia` methods receive either a
-`MediaOptions` object with `maxWidth`, `maxHeight` and `imageQuality` options,
-or separately as individual parameters.
+The `ImagePickerOptions` configuration object allows passing resize (`maxWidth`,
+`maxHeight`) and quality (`imageQuality`) parameters to some methods of this
+plugin, which in other platforms control how selected images are resized or
+re-encoded.
 
 On the web:
 
