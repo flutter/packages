@@ -1217,7 +1217,8 @@ Future<void> main() async {
 
       await controller
           .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
-        debugMessageReceived.complete('${consoleMessage.level.name}:${consoleMessage.message}');
+        debugMessageReceived
+            .complete('${consoleMessage.level.name}:${consoleMessage.message}');
       });
 
       await controller.loadHtmlString(testPage);

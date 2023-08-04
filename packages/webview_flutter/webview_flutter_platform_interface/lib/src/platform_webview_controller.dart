@@ -7,7 +7,6 @@ import 'package:flutter/painting.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'platform_navigation_delegate.dart';
-import 'types/javascript_console_message.dart';
 import 'types/types.dart';
 import 'webview_platform.dart' show WebViewPlatform;
 
@@ -275,8 +274,7 @@ abstract class PlatformWebViewController extends PlatformInterface {
   /// Sets a callback that notifies the host application of any console messages
   /// written to the JavaScript console.
   Future<void> setOnConsoleMessage(
-      void Function(JavaScriptConsoleMessage consoleMessage)
-          onConsoleMessage) {
+      void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage) {
     throw UnimplementedError(
       'setConsoleLogCallback is not implemented on the current platform',
     );
