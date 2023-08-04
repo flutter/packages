@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_ios/google_maps_flutter_ios.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
@@ -162,12 +163,14 @@ void main() {
 
     final GoogleMapsFlutterIOS maps = GoogleMapsFlutterIOS();
 
-    await tester.pumpWidget(maps.buildViewWithConfiguration(1, (int id) {},
-        widgetConfiguration: const MapWidgetConfiguration(
-            initialCameraPosition:
-                CameraPosition(target: LatLng(0, 0), zoom: 1),
-            textDirection: TextDirection.ltr),
-        mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId)));
+    await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: maps.buildViewWithConfiguration(1, (int id) {},
+            widgetConfiguration: const MapWidgetConfiguration(
+                initialCameraPosition:
+                    CameraPosition(target: LatLng(0, 0), zoom: 1),
+                textDirection: TextDirection.ltr),
+            mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId))));
 
     expect(
       await passedCloudMapIdCompleter.future,
