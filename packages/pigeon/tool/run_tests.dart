@@ -160,8 +160,6 @@ Future<List<String>> _modifiedFiles(
 Future<void> main(List<String> args) async {
   // Run most tests on Linux, since Linux tends to be the easiest and cheapest.
   const List<String> linuxHostTests = <String>[
-    dartUnitTests,
-    flutterUnitTests,
     mockHandlerTests,
     commandLineTests,
     androidJavaUnitTests,
@@ -198,6 +196,10 @@ Future<void> main(List<String> args) async {
       // See comments in macOSHostTests:
       iOSObjCIntegrationTests,
       iOSSwiftIntegrationTests,
+      // These are Dart unit tests, which are already run by the normal
+      // test-dart repo tools command.
+      dartUnitTests,
+      flutterUnitTests,
     ],
   ]);
 
