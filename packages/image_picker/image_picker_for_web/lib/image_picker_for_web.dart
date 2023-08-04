@@ -42,28 +42,14 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     ImagePickerPlatform.instance = ImagePickerPlugin();
   }
 
-  /// Returns an [XFile] with the image that was picked.
-  ///
-  /// The `source` argument controls where the image comes from. This can
-  /// be either [ImageSource.camera] or [ImageSource.gallery].
-  ///
-  /// Note that the `maxWidth`, `maxHeight` and `imageQuality` arguments are not supported on the web. If any of these arguments is supplied, it'll be silently ignored by the web version of the plugin.
-  ///
-  /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
-  /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
-  /// Defaults to [CameraDevice.rear].
-  ///
-  /// If no images were picked, the return value is null.
+  /// Returns an [XFile] with the image that was picked, or `null` if no images were picked.
   @override
-  Future<XFile?> getImage({
+  Future<XFile?> getImageFromSource({
     required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
+    ImagePickerOptions options = const ImagePickerOptions(),
   }) async {
     final String? capture =
-        computeCaptureAttribute(source, preferredCameraDevice);
+        computeCaptureAttribute(source, options.preferredCameraDevice);
     final List<XFile> files = await getFiles(
       accept: _kAcceptImageMimeType,
       capture: capture,
@@ -72,10 +58,31 @@ class ImagePickerPlugin extends ImagePickerPlatform {
         ? null
         : _imageResizer.resizeImageIfNeeded(
             files.first,
-            maxWidth,
-            maxHeight,
-            imageQuality,
+            options.maxWidth,
+            options.maxHeight,
+            options.imageQuality,
           );
+  }
+
+  /// Returns a [List<XFile>] with the images that were picked, if any.
+  @override
+  Future<List<XFile>> getMultiImageWithOptions({
+    MultiImagePickerOptions options = const MultiImagePickerOptions(),
+  }) async {
+    final List<XFile> images = await getFiles(
+      accept: _kAcceptImageMimeType,
+      multiple: true,
+    );
+    final Iterable<Future<XFile>> resized = images.map(
+      (XFile image) => _imageResizer.resizeImageIfNeeded(
+        image,
+        options.imageOptions.maxWidth,
+        options.imageOptions.maxHeight,
+        options.imageOptions.imageQuality,
+      ),
+    );
+
+    return Future.wait<XFile>(resized);
   }
 
   /// Returns an [XFile] containing the video that was picked.
@@ -103,29 +110,6 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       capture: capture,
     );
     return files.isEmpty ? null : files.first;
-  }
-
-  /// Injects a file input, and returns a list of XFile images that the user selected locally.
-  @override
-  Future<List<XFile>> getMultiImage({
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-  }) async {
-    final List<XFile> images = await getFiles(
-      accept: _kAcceptImageMimeType,
-      multiple: true,
-    );
-    final Iterable<Future<XFile>> resized = images.map(
-      (XFile image) => _imageResizer.resizeImageIfNeeded(
-        image,
-        maxWidth,
-        maxHeight,
-        imageQuality,
-      ),
-    );
-
-    return Future.wait<XFile>(resized);
   }
 
   /// Injects a file input, and returns a list of XFile media that the user selected locally.
@@ -175,6 +159,58 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     _injectAndActivate(input);
 
     return _getSelectedXFiles(input);
+  }
+
+  // Deprecated methods follow...
+
+  /// Returns an [XFile] with the image that was picked.
+  ///
+  /// The `source` argument controls where the image comes from. This can
+  /// be either [ImageSource.camera] or [ImageSource.gallery].
+  ///
+  /// Note that the `maxWidth`, `maxHeight` and `imageQuality` arguments are not supported on the web. If any of these arguments is supplied, it'll be silently ignored by the web version of the plugin.
+  ///
+  /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
+  /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
+  /// Defaults to [CameraDevice.rear].
+  ///
+  /// If no images were picked, the return value is null.
+  @override
+  @Deprecated('Use getImageFromSource instead.')
+  Future<XFile?> getImage({
+    required ImageSource source,
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+    CameraDevice preferredCameraDevice = CameraDevice.rear,
+  }) async {
+    return getImageFromSource(
+        source: source,
+        options: ImagePickerOptions(
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          imageQuality: imageQuality,
+          preferredCameraDevice: preferredCameraDevice,
+        ));
+  }
+
+  /// Injects a file input, and returns a list of XFile images that the user selected locally.
+  @override
+  @Deprecated('Use getMultiImageWithOptions instead.')
+  Future<List<XFile>> getMultiImage({
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+  }) async {
+    return getMultiImageWithOptions(
+      options: MultiImagePickerOptions(
+        imageOptions: ImageOptions(
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          imageQuality: imageQuality,
+        ),
+      ),
+    );
   }
 
   // DOM methods
