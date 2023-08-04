@@ -475,10 +475,7 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> setOnConsoleMessage(
-          void Function(
-            _i3.JavaScriptLogLevel,
-            String,
-          )? onConsoleMessage) =>
+          void Function(_i3.JavaScriptConsoleMessage)? onConsoleMessage) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnConsoleMessage,

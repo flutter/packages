@@ -16,8 +16,6 @@ import 'package:webview_flutter_platform_interface/src/platform_navigation_deleg
 import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart'
     as _i6;
 import 'package:webview_flutter_platform_interface/src/platform_webview_widget.dart'
-    as _i10;
-import 'package:webview_flutter_platform_interface/src/types/javascript_console_message.dart'
     as _i9;
 import 'package:webview_flutter_platform_interface/src/types/types.dart' as _i2;
 
@@ -377,7 +375,7 @@ class MockPlatformWebViewController extends _i1.Mock
       ) as _i7.Future<void>);
   @override
   _i7.Future<void> setOnConsoleMessage(
-          void Function(_i9.JavaScriptConsoleMessage)? onConsoleMessage) =>
+          void Function(_i2.JavaScriptConsoleMessage)? onConsoleMessage) =>
       (super.noSuchMethod(
         Invocation.method(
           #setOnConsoleMessage,
@@ -392,7 +390,7 @@ class MockPlatformWebViewController extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockPlatformWebViewWidget extends _i1.Mock
-    implements _i10.PlatformWebViewWidget {
+    implements _i9.PlatformWebViewWidget {
   MockPlatformWebViewWidget() {
     _i1.throwOnMissingStub(this);
   }

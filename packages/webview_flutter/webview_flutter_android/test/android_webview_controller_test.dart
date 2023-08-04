@@ -889,7 +889,7 @@ void main() {
       expect(logs['Debug message'], JavaScriptLogLevel.debug);
       expect(logs['Error message'], JavaScriptLogLevel.error);
       expect(logs['Log message'], JavaScriptLogLevel.log);
-      expect(logs['Tip message'], JavaScriptLogLevel.info);
+      expect(logs['Tip message'], JavaScriptLogLevel.debug);
       expect(logs['Warning message'], JavaScriptLogLevel.warning);
       expect(logs['Unknown message'], JavaScriptLogLevel.log);
     });
