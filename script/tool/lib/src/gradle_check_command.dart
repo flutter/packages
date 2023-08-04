@@ -180,7 +180,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
 
   /// Validates the top-level settings.gradle for an example app (e.g.,
   /// some_package/example/android/settings.gradle).
-  _validateExampleTopLevelSettingsGradle(
+  bool _validateExampleTopLevelSettingsGradle(
       RepositoryPackage package, File gradleSettingsFile) {
     print('${indentation}Validating '
         '${getRelativePosixPath(gradleSettingsFile, from: package.directory)}.');
