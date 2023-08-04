@@ -202,6 +202,11 @@ class VideoPlayer {
     return Duration(milliseconds: (_videoElement.currentTime * 1000).round());
   }
 
+  /// Returns if cache clearing has succeeded. In web cache cannot be cleared with this function,
+  Future<bool> clearCache() async {
+    return false;
+  }
+
   /// Disposes of the current [html.VideoElement].
   void dispose() {
     _videoElement.removeAttribute('src');

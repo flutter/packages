@@ -79,7 +79,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Returns true if caching is supported for the mimetype of the network video url.
-  Future<bool> isCacheSupportedForNetworkMedia(String url) {
+  Future<bool> isCacheSupportedForNetworkMedia(int textureId, String url) {
     throw UnimplementedError(
         'isCacheSupportedForNetworkMedia() has not been implemented.');
   }
