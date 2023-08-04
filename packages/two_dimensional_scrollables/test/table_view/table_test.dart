@@ -2,13 +2,51 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' show Platform;
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/table_view.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(100));
 const Widget cell = SizedBox.shrink();
+
+TableSpan getTappableSpan(int index, VoidCallback callback) {
+  return TableSpan(
+    extent: const FixedTableSpanExtent(100),
+    recognizerFactories: <Type, GestureRecognizerFactory>{
+      TapGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
+        () => TapGestureRecognizer(),
+        (TapGestureRecognizer t) => t.onTap = () => callback(),
+      ),
+    },
+  );
+}
+
+TableSpan getMouseTrackingSpan(
+  int index, {
+  PointerEnterEventListener? onEnter,
+  PointerExitEventListener? onExit,
+}) {
+  return TableSpan(
+    extent: const FixedTableSpanExtent(100),
+    onEnter: onEnter,
+    onExit: onExit,
+    cursor: SystemMouseCursors.cell,
+  );
+}
+
+final bool masterChannel = !Platform.environment.containsKey('CHANNEL') ||
+    Platform.environment['CHANNEL'] == 'master';
+
+// TODO(Piinks): Remove once painting can be validated by mock_canvas in
+//  flutter_test
+// Contact Piinks if goldens need to be regenerated.
+final bool runGoldens = Platform.isMacOS && masterChannel;
 
 void main() {
   group('TableView.builder', () {
@@ -30,7 +68,9 @@ void main() {
       expect(delegate.rowBuilder(0), span);
       expect(
         delegate.builder(
-            _NullBuildContext(), const TableVicinity(row: 0, column: 0)),
+          _NullBuildContext(),
+          const TableVicinity(row: 0, column: 0),
+        ),
         cell,
       );
     });
@@ -251,24 +291,24 @@ void main() {
         parentDataOf(viewport.firstChild!).vicinity,
         vicinity,
       );
-      expect(
-        parentDataOf(tester
-                .renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)))
-            .vicinity,
-        vicinity,
+      TableViewParentData parentData = parentDataOf(
+        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
       );
+      expect(parentData.vicinity, vicinity);
+      expect(parentData.layoutOffset, Offset.zero);
+      expect(parentData.isVisible, isTrue);
       // after first child
       vicinity = const TableVicinity(column: 1, row: 0);
       expect(
         parentDataOf(viewport.childAfter(viewport.firstChild!)!).vicinity,
         vicinity,
       );
-      expect(
-        parentDataOf(tester
-                .renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)))
-            .vicinity,
-        vicinity,
+      parentData = parentDataOf(
+        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
       );
+      expect(parentData.vicinity, vicinity);
+      expect(parentData.layoutOffset, const Offset(200, 0.0));
+      expect(parentData.isVisible, isTrue);
       // before first child (none)
       expect(
         viewport.childBefore(viewport.firstChild!),
@@ -281,12 +321,12 @@ void main() {
         parentDataOf(viewport.lastChild!).vicinity,
         vicinity,
       );
-      expect(
-        parentDataOf(tester
-                .renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)))
-            .vicinity,
-        vicinity,
+      parentData = parentDataOf(
+        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
       );
+      expect(parentData.vicinity, vicinity);
+      expect(parentData.layoutOffset, const Offset(800.0, 800.0));
+      expect(parentData.isVisible, isFalse);
       // after last child (none)
       expect(
         viewport.childAfter(viewport.lastChild!),
@@ -298,17 +338,198 @@ void main() {
         parentDataOf(viewport.childBefore(viewport.lastChild!)!).vicinity,
         vicinity,
       );
-      expect(
-        parentDataOf(tester
-                .renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)))
-            .vicinity,
-        vicinity,
+      parentData = parentDataOf(
+        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
       );
+      expect(parentData.vicinity, vicinity);
+      expect(parentData.layoutOffset, const Offset(600.0, 800.0));
+      expect(parentData.isVisible, isFalse);
     });
 
-    testWidgets('hit testing', (WidgetTester tester) async {
-      // cells, rows, columns, mainAxis
-      // TODO(Piinks)
+    testWidgets('TableSpan gesture hit testing', (WidgetTester tester) async {
+      int tapCounter = 0;
+      // Rows
+      TableView tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        columnBuilder: (_) => span,
+        rowBuilder: (int index) => index.isEven
+            ? getTappableSpan(
+                index,
+                () => tapCounter++,
+              )
+            : span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+
+      // Even rows are set up for taps.
+      expect(tapCounter, 0);
+      // Tap along along a row
+      await tester.tap(find.text('Row: 0 Column: 0'));
+      await tester.tap(find.text('Row: 0 Column: 1'));
+      await tester.tap(find.text('Row: 0 Column: 2'));
+      await tester.tap(find.text('Row: 0 Column: 3'));
+      expect(tapCounter, 4);
+      // Tap along some odd rows
+      await tester.tap(find.text('Row: 1 Column: 0'));
+      await tester.tap(find.text('Row: 1 Column: 1'));
+      await tester.tap(find.text('Row: 3 Column: 2'));
+      await tester.tap(find.text('Row: 5 Column: 3'));
+      expect(tapCounter, 4);
+      // Check other even rows
+      await tester.tap(find.text('Row: 2 Column: 1'));
+      await tester.tap(find.text('Row: 2 Column: 2'));
+      await tester.tap(find.text('Row: 4 Column: 4'));
+      await tester.tap(find.text('Row: 4 Column: 5'));
+      expect(tapCounter, 8);
+
+      // Columns
+      tapCounter = 0;
+      tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        rowBuilder: (_) => span,
+        columnBuilder: (int index) => index.isEven
+            ? getTappableSpan(
+                index,
+                () => tapCounter++,
+              )
+            : span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+
+      // Even columns are set up for taps.
+      expect(tapCounter, 0);
+      // Tap along along a column
+      await tester.tap(find.text('Row: 1 Column: 0'));
+      await tester.tap(find.text('Row: 2 Column: 0'));
+      await tester.tap(find.text('Row: 3 Column: 0'));
+      await tester.tap(find.text('Row: 4 Column: 0'));
+      expect(tapCounter, 4);
+      // Tap along some odd columns
+      await tester.tap(find.text('Row: 1 Column: 1'));
+      await tester.tap(find.text('Row: 2 Column: 1'));
+      await tester.tap(find.text('Row: 3 Column: 3'));
+      await tester.tap(find.text('Row: 4 Column: 3'));
+      expect(tapCounter, 4);
+      // Check other even columns
+      await tester.tap(find.text('Row: 2 Column: 2'));
+      await tester.tap(find.text('Row: 3 Column: 2'));
+      await tester.tap(find.text('Row: 4 Column: 4'));
+      await tester.tap(find.text('Row: 5 Column: 4'));
+      expect(tapCounter, 8);
+
+      // Intersecting - main axis sets precedence
+      int rowTapCounter = 0;
+      int columnTapCounter = 0;
+      tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        rowBuilder: (int index) => index.isEven
+            ? getTappableSpan(
+                index,
+                () => rowTapCounter++,
+              )
+            : span,
+        columnBuilder: (int index) => index.isEven
+            ? getTappableSpan(
+                index,
+                () => columnTapCounter++,
+              )
+            : span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+
+      // Even columns and rows are set up for taps, mainAxis is vertical by
+      // default, mening row major order. Rows should take precedence where they
+      // intersect at even indices.
+      expect(columnTapCounter, 0);
+      expect(rowTapCounter, 0);
+      // Tap where non intersecting, but even.
+      await tester.tap(find.text('Row: 2 Column: 3')); // Row
+      await tester.tap(find.text('Row: 4 Column: 5')); // Row
+      await tester.tap(find.text('Row: 3 Column: 2')); // Column
+      await tester.tap(find.text('Row: 1 Column: 6')); // Column
+      expect(columnTapCounter, 2);
+      expect(rowTapCounter, 2);
+      // Tap where both are odd and nothing should receive a tap.
+      await tester.tap(find.text('Row: 1 Column: 1'));
+      await tester.tap(find.text('Row: 3 Column: 1'));
+      await tester.tap(find.text('Row: 3 Column: 3'));
+      await tester.tap(find.text('Row: 5 Column: 3'));
+      expect(columnTapCounter, 2);
+      expect(rowTapCounter, 2);
+      // Check intersections.
+      await tester.tap(find.text('Row: 2 Column: 2'));
+      await tester.tap(find.text('Row: 4 Column: 2'));
+      await tester.tap(find.text('Row: 2 Column: 4'));
+      await tester.tap(find.text('Row: 4 Column: 4'));
+      expect(columnTapCounter, 2);
+      expect(rowTapCounter, 6); // Rows took precedence
+
+      // Change mainAxis
+      rowTapCounter = 0;
+      columnTapCounter = 0;
+      tableView = TableView.builder(
+        mainAxis: Axis.horizontal,
+        rowCount: 50,
+        columnCount: 50,
+        rowBuilder: (int index) => index.isEven
+            ? getTappableSpan(
+                index,
+                () => rowTapCounter++,
+              )
+            : span,
+        columnBuilder: (int index) => index.isEven
+            ? getTappableSpan(
+                index,
+                () => columnTapCounter++,
+              )
+            : span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      expect(rowTapCounter, 0);
+      expect(columnTapCounter, 0);
+
+      // Check intersections.
+      await tester.tap(find.text('Row: 2 Column: 2'));
+      await tester.tap(find.text('Row: 4 Column: 2'));
+      await tester.tap(find.text('Row: 2 Column: 4'));
+      await tester.tap(find.text('Row: 4 Column: 4'));
+      expect(columnTapCounter, 4); // Columns took precedence
+      expect(rowTapCounter, 0);
     });
 
     testWidgets('provides correct details in TableSpanExtentDelegate',
@@ -374,8 +595,9 @@ void main() {
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return SizedBox.square(
-              dimension: 200,
-              child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),);
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
         },
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -405,7 +627,7 @@ void main() {
       // Let's scroll!
       verticalController.jumpTo(verticalController.position.maxScrollExtent);
       await tester.pump();
-      expect(verticalController.position.pixels, 9400.0);
+      expect(verticalController.position.pixels, 4400.0);
       expect(horizontalController.position.pixels, 0.0);
       expect(find.text('Row: 49 Column: 0'), findsOneWidget);
       expect(find.text('Row: 48 Column: 0'), findsOneWidget);
@@ -421,17 +643,474 @@ void main() {
       expect(find.text('Row: 1 Column: 1'), findsNothing);
 
       // Let's scroll some more!
+      horizontalController.jumpTo(verticalController.position.maxScrollExtent);
+      await tester.pump();
+      expect(verticalController.position.pixels, 4400.0);
+      expect(horizontalController.position.pixels, 4400.0);
+      expect(find.text('Row: 49 Column: 49'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 49'), findsOneWidget);
+      expect(find.text('Row: 49 Column: 48'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 48'), findsOneWidget);
+      // Nothing within the CacheExtent
+      expect(find.text('Row: 50 Column: 50'), findsNothing);
+      expect(find.text('Row: 51 Column: 51'), findsNothing);
+      // Not around.
+      expect(find.text('Row: 0 Column: 0'), findsNothing);
+      expect(find.text('Row: 1 Column: 0'), findsNothing);
+      expect(find.text('Row: 0 Column: 1'), findsNothing);
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
     });
 
     testWidgets('pinned rows and columns', (WidgetTester tester) async {
       // Just pinned rows
+      final ScrollController verticalController = ScrollController();
+      final ScrollController horizontalController = ScrollController();
+      TableView tableView = TableView.builder(
+        rowCount: 50,
+        pinnedRowCount: 1,
+        columnCount: 50,
+        columnBuilder: (_) => span,
+        rowBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+        verticalDetails: ScrollableDetails.vertical(
+          controller: verticalController,
+        ),
+        horizontalDetails: ScrollableDetails.horizontal(
+          controller: horizontalController,
+        ),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      expect(verticalController.position.pixels, 0.0);
+      expect(horizontalController.position.pixels, 0.0);
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 1'), findsOneWidget);
+      // Within the cacheExtent
+      expect(find.text('Row: 6 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 7 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 8'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 8'), findsOneWidget);
+      // Outside of the cacheExtent
+      expect(find.text('Row: 10 Column: 10'), findsNothing);
+      expect(find.text('Row: 11 Column: 10'), findsNothing);
+      expect(find.text('Row: 10 Column: 11'), findsNothing);
+      expect(find.text('Row: 11 Column: 11'), findsNothing);
+
+      // Let's scroll!
+      verticalController.jumpTo(verticalController.position.maxScrollExtent);
+      await tester.pump();
+      expect(verticalController.position.pixels, 4200.0);
+      expect(horizontalController.position.pixels, 0.0);
+      expect(find.text('Row: 49 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 49 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 1'), findsOneWidget);
+      // Within the CacheExtent
+      expect(find.text('Row: 49 Column: 8'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 9'), findsOneWidget);
+      // Not around unless pinned.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget); // Pinned row
+      expect(find.text('Row: 1 Column: 0'), findsNothing);
+      expect(find.text('Row: 0 Column: 1'), findsOneWidget); // Pinned row
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
+
+      // Let's scroll some more!
+      horizontalController.jumpTo(verticalController.position.maxScrollExtent);
+      await tester.pump();
+      expect(verticalController.position.pixels, 4200.0);
+      expect(horizontalController.position.pixels, 4200.0);
+      expect(find.text('Row: 49 Column: 49'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 49'), findsOneWidget);
+      expect(find.text('Row: 49 Column: 48'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 48'), findsOneWidget);
+      // Nothing within the CacheExtent
+      expect(find.text('Row: 50 Column: 50'), findsNothing);
+      expect(find.text('Row: 51 Column: 51'), findsNothing);
+      // Not around unless pinned.
+      expect(find.text('Row: 0 Column: 49'), findsOneWidget); // Pinned row
+      expect(find.text('Row: 1 Column: 49'), findsNothing);
+      expect(find.text('Row: 0 Column: 48'), findsOneWidget); // Pinned row
+      expect(find.text('Row: 1 Column: 48'), findsNothing);
+
       // Just pinned columns
+      verticalController.jumpTo(0.0);
+      horizontalController.jumpTo(0.0);
+      tableView = TableView.builder(
+        rowCount: 50,
+        pinnedColumnCount: 1,
+        columnCount: 50,
+        columnBuilder: (_) => span,
+        rowBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+        verticalDetails: ScrollableDetails.vertical(
+          controller: verticalController,
+        ),
+        horizontalDetails: ScrollableDetails.horizontal(
+          controller: horizontalController,
+        ),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      expect(verticalController.position.pixels, 0.0);
+      expect(horizontalController.position.pixels, 0.0);
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 1'), findsOneWidget);
+      // Within the cacheExtent
+      expect(find.text('Row: 6 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 7 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 8'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 9'), findsOneWidget);
+      // Outside of the cacheExtent
+      expect(find.text('Row: 10 Column: 10'), findsNothing);
+      expect(find.text('Row: 11 Column: 10'), findsNothing);
+      expect(find.text('Row: 10 Column: 11'), findsNothing);
+      expect(find.text('Row: 11 Column: 11'), findsNothing);
+
+      // Let's scroll!
+      verticalController.jumpTo(verticalController.position.maxScrollExtent);
+      await tester.pump();
+      expect(verticalController.position.pixels, 4400.0);
+      expect(horizontalController.position.pixels, 0.0);
+      expect(find.text('Row: 49 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 49 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 1'), findsOneWidget);
+      // Within the CacheExtent
+      expect(find.text('Row: 49 Column: 8'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 9'), findsOneWidget);
+      // Not around unless pinned.
+      expect(find.text('Row: 49 Column: 0'), findsOneWidget); // Pinned column
+      expect(find.text('Row: 48 Column: 0'), findsOneWidget); // Pinned column
+      expect(find.text('Row: 0 Column: 1'), findsNothing);
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
+
+      // Let's scroll some more!
+      horizontalController.jumpTo(verticalController.position.maxScrollExtent);
+      await tester.pump();
+      expect(verticalController.position.pixels, 4400.0);
+      expect(horizontalController.position.pixels, 4400.0);
+      expect(find.text('Row: 49 Column: 49'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 49'), findsOneWidget);
+      expect(find.text('Row: 49 Column: 48'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 48'), findsOneWidget);
+      // Nothing within the CacheExtent
+      expect(find.text('Row: 50 Column: 50'), findsNothing);
+      expect(find.text('Row: 51 Column: 51'), findsNothing);
+      // Not around.
+      expect(find.text('Row: 49 Column: 0'), findsOneWidget); // Pinned column
+      expect(find.text('Row: 48 Column: 0'), findsOneWidget); // Pinned column
+      expect(find.text('Row: 0 Column: 1'), findsNothing);
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
+
       // Both
+      verticalController.jumpTo(0.0);
+      horizontalController.jumpTo(0.0);
+      tableView = TableView.builder(
+        rowCount: 50,
+        pinnedColumnCount: 1,
+        pinnedRowCount: 1,
+        columnCount: 50,
+        columnBuilder: (_) => span,
+        rowBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+        verticalDetails: ScrollableDetails.vertical(
+          controller: verticalController,
+        ),
+        horizontalDetails: ScrollableDetails.horizontal(
+          controller: horizontalController,
+        ),
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      expect(verticalController.position.pixels, 0.0);
+      expect(horizontalController.position.pixels, 0.0);
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 1'), findsOneWidget);
+      // Within the cacheExtent
+      expect(find.text('Row: 7 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 6 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 0 Column: 8'), findsOneWidget);
+      expect(find.text('Row: 1 Column: 9'), findsOneWidget);
+      // Outside of the cacheExtent
+      expect(find.text('Row: 10 Column: 10'), findsNothing);
+      expect(find.text('Row: 11 Column: 10'), findsNothing);
+      expect(find.text('Row: 10 Column: 11'), findsNothing);
+      expect(find.text('Row: 11 Column: 11'), findsNothing);
+
+      // Let's scroll!
+      verticalController.jumpTo(verticalController.position.maxScrollExtent);
+      await tester.pump();
+      expect(verticalController.position.pixels, 4200.0);
+      expect(horizontalController.position.pixels, 0.0);
+      expect(find.text('Row: 49 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 0'), findsOneWidget);
+      expect(find.text('Row: 49 Column: 1'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 1'), findsOneWidget);
+      // Within the CacheExtent
+      expect(find.text('Row: 49 Column: 8'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 9'), findsOneWidget);
+      // Not around unless pinned.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget); // Pinned
+      expect(find.text('Row: 48 Column: 0'), findsOneWidget); // Pinned
+      expect(find.text('Row: 0 Column: 1'), findsOneWidget); // Pinned
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
+
+      // Let's scroll some more!
+      horizontalController.jumpTo(verticalController.position.maxScrollExtent);
+      await tester.pump();
+      expect(verticalController.position.pixels, 4200.0);
+      expect(horizontalController.position.pixels, 4200.0);
+      expect(find.text('Row: 49 Column: 49'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 49'), findsOneWidget);
+      expect(find.text('Row: 49 Column: 48'), findsOneWidget);
+      expect(find.text('Row: 48 Column: 48'), findsOneWidget);
+      // Nothing within the CacheExtent
+      expect(find.text('Row: 50 Column: 50'), findsNothing);
+      expect(find.text('Row: 51 Column: 51'), findsNothing);
+      // Not around unless pinned.
+      expect(find.text('Row: 0 Column: 0'), findsOneWidget); // Pinned
+      expect(find.text('Row: 49 Column: 0'), findsOneWidget); // Pinned
+      expect(find.text('Row: 0 Column: 49'), findsOneWidget); // Pinned
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
     });
 
-    testWidgets('only paints visible cells', (WidgetTester tester) async {});
+    testWidgets('only paints visible cells', (WidgetTester tester) async {
+      final ScrollController verticalController = ScrollController();
+      final ScrollController horizontalController = ScrollController();
+      final TableView tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        columnBuilder: (_) => span,
+        rowBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+        verticalDetails: ScrollableDetails.vertical(
+          controller: verticalController,
+        ),
+        horizontalDetails: ScrollableDetails.horizontal(
+          controller: horizontalController,
+        ),
+      );
 
-    testWidgets('paints decorations in order', (WidgetTester tester) async {});
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+
+      bool cellNeedsPaint(String cell) {
+        return find.text(cell).evaluate().first.renderObject!.debugNeedsPaint;
+      }
+
+      expect(cellNeedsPaint('Row: 0 Column: 0'), isFalse);
+      expect(cellNeedsPaint('Row: 0 Column: 1'), isFalse);
+      expect(cellNeedsPaint('Row: 0 Column: 2'), isFalse);
+      expect(cellNeedsPaint('Row: 0 Column: 3'), isFalse);
+      expect(cellNeedsPaint('Row: 0 Column: 4'), isFalse);
+      expect(cellNeedsPaint('Row: 0 Column: 5'), isFalse);
+      expect(cellNeedsPaint('Row: 0 Column: 6'), isFalse);
+      expect(cellNeedsPaint('Row: 0 Column: 7'), isFalse);
+      expect(cellNeedsPaint('Row: 0 Column: 8'), isTrue); // cacheExtent
+      expect(cellNeedsPaint('Row: 0 Column: 9'), isTrue); // cacheExtent
+      expect(cellNeedsPaint('Row: 0 Column: 10'), isTrue); // cacheExtent
+      expect(
+        find.text('Row: 0 Column: 11'),
+        findsNothing,
+      ); // outside of cacheExtent
+
+      expect(cellNeedsPaint('Row: 1 Column: 0'), isFalse);
+      expect(cellNeedsPaint('Row: 2 Column: 0'), isFalse);
+      expect(cellNeedsPaint('Row: 3 Column: 0'), isFalse);
+      expect(cellNeedsPaint('Row: 4 Column: 0'), isFalse);
+      expect(cellNeedsPaint('Row: 5 Column: 0'), isFalse);
+      expect(cellNeedsPaint('Row: 6 Column: 0'), isTrue); // cacheExtent
+      expect(cellNeedsPaint('Row: 7 Column: 0'), isTrue); // cacheExtent
+      expect(cellNeedsPaint('Row: 8 Column: 0'), isTrue); // cacheExtent
+      expect(
+        find.text('Row: 9 Column: 0'),
+        findsNothing,
+      ); // outside of cacheExtent
+
+      // Check a couple other cells
+      expect(cellNeedsPaint('Row: 5 Column: 7'), isFalse); // last visible cell
+      expect(cellNeedsPaint('Row: 6 Column: 7'), isTrue); // also in cacheExtent
+      expect(cellNeedsPaint('Row: 5 Column: 8'), isTrue); // also in cacheExtent
+      expect(cellNeedsPaint('Row: 6 Column: 8'), isTrue); // also in cacheExtent
+    });
+
+    testWidgets('paints decorations in correct order',
+        (WidgetTester tester) async {
+      // TODO(Piinks): Rewrite this to remove golden files from this repo when
+      //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
+      // foreground, background, and precedence per mainAxis
+      TableView tableView = TableView.builder(
+        rowCount: 2,
+        columnCount: 2,
+        columnBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+              border: TableSpanBorder(
+                  trailing: BorderSide(
+            color: Colors.orange,
+            width: 3,
+          ))),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isEven ? Colors.red : null,
+          ),
+        ),
+        rowBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+              border: TableSpanBorder(
+                  leading: BorderSide(
+            color: Colors.green,
+            width: 3,
+          ))),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isOdd ? Colors.blue : null,
+          ),
+        ),
+        cellBuilder: (_, TableVicinity vicinity) {
+          return const SizedBox.square(
+            dimension: 200,
+            child: Center(child: FlutterLogo()),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      await expectLater(
+        find.byType(TableView),
+        matchesGoldenFile('goldens/tableSpanDecoration.defaultMainAxis.png'),
+        skip: !runGoldens,
+      );
+
+      // Switch main axis
+      tableView = TableView.builder(
+        mainAxis: Axis.horizontal,
+        rowCount: 2,
+        columnCount: 2,
+        columnBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+              border: TableSpanBorder(
+                  trailing: BorderSide(
+            color: Colors.orange,
+            width: 3,
+          ))),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isEven ? Colors.red : null,
+          ),
+        ),
+        rowBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+              border: TableSpanBorder(
+                  leading: BorderSide(
+            color: Colors.green,
+            width: 3,
+          ))),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isOdd ? Colors.blue : null,
+          ),
+        ),
+        cellBuilder: (_, TableVicinity vicinity) {
+          return const SizedBox.square(
+            dimension: 200,
+            child: Center(child: FlutterLogo()),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      await expectLater(
+        find.byType(TableView),
+        matchesGoldenFile('goldens/tableSpanDecoration.horizontalMainAxis.png'),
+        skip: !runGoldens,
+      );
+    });
+
+    testWidgets('mouse handling', (WidgetTester tester) async {
+      int enterCounter = 0;
+      int exitCounter = 0;
+      final TableView tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        columnBuilder: (_) => span,
+        rowBuilder: (int index) => index.isEven
+            ? getMouseTrackingSpan(
+                index,
+                onEnter: (_) => enterCounter++,
+                onExit: (_) => exitCounter++,
+              )
+            : span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      // Even rows will respond to mouse, odd will not
+      final Offset evenRow = tester.getCenter(find.text('Row: 2 Column: 2'));
+      final Offset oddRow = tester.getCenter(find.text('Row: 3 Column: 2'));
+      final TestGesture gesture = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+      );
+      await gesture.addPointer(location: oddRow);
+      expect(enterCounter, 0);
+      expect(exitCounter, 0);
+      expect(
+        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+        SystemMouseCursors.basic,
+      );
+      await gesture.moveTo(evenRow);
+      await tester.pumpAndSettle();
+      expect(enterCounter, 1);
+      expect(exitCounter, 0);
+      expect(
+        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+        SystemMouseCursors.cell,
+      );
+      await gesture.moveTo(oddRow);
+      await tester.pumpAndSettle();
+      expect(enterCounter, 1);
+      expect(exitCounter, 1);
+      expect(
+        RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+        SystemMouseCursors.basic,
+      );
+    });
   });
 }
 
