@@ -1,6 +1,10 @@
-## 0.3.1+5
+## 0.3.2+1
 
 * Updates README to improve example of `Image` creation.
+
+## 0.3.2
+
+* Changes `availableCameras` to not ask for the microphone permission.
 
 ## 0.3.1+4
 
