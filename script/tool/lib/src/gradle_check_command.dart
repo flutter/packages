@@ -154,9 +154,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
     final RegExp documentationPresentRegex = RegExp(
         r'github.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
     final RegExp keyReadRegex =
-        RegExp('if.*System\.getenv.*containsKey.*$keyVariable');
+        RegExp('if.*System.getenv.*containsKey.*$keyVariable');
     final RegExp keyUsedRegex =
-        RegExp('maven.*url.*System\.getenv.*$keyVariable.*');
+        RegExp('maven.*url.*System.getenv.*$keyVariable.*');
 
     final bool keyPresent =
         gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
