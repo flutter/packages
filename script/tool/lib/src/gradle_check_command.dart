@@ -130,11 +130,16 @@ class GradleCheckCommand extends PackageLoopingCommand {
     return succeeded;
   }
 
+  /// Documentation url for Artifact hub implementation in flutter repo's.
+  @visibleForTesting
+  static const String artifactHubDocumentationString =
+      r'https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure';
+
   /// String printed as example of valid example root build.gradle repository
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
-  static const String exampleRootGradleArtifactHubString = r'''
-        // See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
+  static const String exampleRootGradleArtifactHubString = '''
+        // See $artifactHubDocumentationString for more info.
         def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
         if (System.getenv().containsKey(artifactRepoKey)) {
             println "Using artifact hub"
@@ -167,10 +172,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     final bool keyUsed =
         gradleLines.any((String line) => keyUsedRegex.hasMatch(line));
 
-    if (!documentationPresent) {
-      printError('Does not link artifact hub documentation.');
-    }
-    if (!(keyPresent && keyRead && keyUsed)) {
+    if (!(documentationPresent && keyPresent && keyRead && keyUsed)) {
       printError('Failed Artifact Hub validation. Include the following in '
           'example root build.gradle:\n$exampleRootGradleArtifactHubString');
     }
@@ -199,7 +201,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
   static String exampleRootSettingsArtifactHubString = '''
-// See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
+// See $artifactHubDocumentationString for more info.
 buildscript {
   repositories {
     maven {
@@ -233,10 +235,9 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
     final bool artifactRegistryPluginApplied = gradleLines
         .any((String line) => artifactRegistryPluginApplyRegex.hasMatch(line));
 
-    if (!documentationPresent) {
-      printError('Does not link artifact hub documentation.');
-    }
-    if (!(artifactRegistryDefined && artifactRegistryPluginApplied)) {
+    if (!(documentationPresent &&
+        artifactRegistryDefined &&
+        artifactRegistryPluginApplied)) {
       printError('Failed Artifact Hub validation. Include the following in '
           'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
     }
