@@ -7,7 +7,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_image/flutter_image.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 
 class MyApp extends StatelessWidget {
@@ -15,16 +17,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return const MaterialApp(
+      title: 'SharedPreferences Demo',
+      home: NetworkImageWithRetryDemo(),
+    );
+  }
+}
+
+class NetworkImageWithRetryDemo extends StatefulWidget {
+  const NetworkImageWithRetryDemo({super.key});
+
+  @override
+  State<NetworkImageWithRetryDemo> createState() => _NetworkImageWithRetryDemoState();
+}
+
+class _NetworkImageWithRetryDemoState extends State<NetworkImageWithRetryDemo> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Flutter Demo'),
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Demo'),
-        ),
-        body: const Image(
+      body: const Center(
+        child: Image(
           image: NetworkImageWithRetry('https://picsum.photos/250?image=9'),
         ),
       ),
