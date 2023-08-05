@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_unit_tests/non_null_fields.gen.dart';
+import 'package:shared_test_plugin_code/src/generated/non_null_fields.gen.dart';
 
 void main() {
   test('test constructor', () {
