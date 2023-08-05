@@ -510,11 +510,16 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
       basePath: options.basePath ?? '',
     );
     const DartGenerator testGenerator = DartGenerator();
+    // The test code needs the actual package name of the Dart output, even if
+    // the package name has been overridden for other uses.
+    final String outputPackageName =
+        deducePackageName(options.dartOut ?? '') ?? options.getPackageName();
     testGenerator.generateTest(
       dartOptionsWithHeader,
       root,
       sink,
       dartPackageName: options.getPackageName(),
+      dartOutputPackageName: outputPackageName,
     );
   }
 
