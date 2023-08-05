@@ -1,3 +1,7 @@
+## 10.1.6
+
+* Creates target files before trying to write to it.
+
 ## 10.1.5
 
 * Fixes import in generated Dart test output when overriding package name.
