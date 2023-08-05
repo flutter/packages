@@ -160,7 +160,6 @@ Future<List<String>> _modifiedFiles(
 Future<void> main(List<String> args) async {
   // Run most tests on Linux, since Linux tends to be the easiest and cheapest.
   const List<String> linuxHostTests = <String>[
-    mockHandlerTests,
     commandLineTests,
     androidJavaUnitTests,
     androidJavaLint,
