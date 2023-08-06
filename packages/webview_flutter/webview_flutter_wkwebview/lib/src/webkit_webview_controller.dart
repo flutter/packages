@@ -224,7 +224,7 @@ class WebKitWebViewController extends PlatformWebViewController {
         .createUIScrollViewDelegate(
             scrollViewDidScroll: (UIScrollView uiScrollView) async {
       final Point<double> offset = await uiScrollView.getContentOffset();
-      _onContentOffsetChangedCallback
+      weakThis.target?._onContentOffsetChangedCallback
           ?.call(ContentOffsetChange(offset.x.toInt(), offset.y.toInt()));
     });
     _webView.setScrollViewDelegate(_uiScrollViewDelegate);
@@ -282,7 +282,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
-  Function(ContentOffsetChange contentOffsetChange)?
+  void Function(ContentOffsetChange contentOffsetChange)?
       _onContentOffsetChangedCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>

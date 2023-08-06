@@ -16,6 +16,7 @@ enum DirectoryType {
   downloads,
   library,
   temp,
+  applicationCache,
 }
 
 @HostApi(dartHostTestHandler: 'TestPathProviderApi')
