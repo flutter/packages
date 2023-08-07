@@ -24,7 +24,10 @@ dependencies:
     sdk: flutter
   local_auth_android: ^1.0.0
   local_auth_ios:
-    path: ../local_auth_ios
+    git:
+      url: https://github.com/0ttik/packages.git
+      ref: 0ttik-patch-1
+      path: packages/local_auth/local_auth_ios
   local_auth_platform_interface: ^1.0.1
   local_auth_windows: ^1.0.0
 
