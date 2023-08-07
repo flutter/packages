@@ -145,10 +145,7 @@ public class WebViewActivity extends Activity {
 
     // Register receiver that may finish this Activity.
     ContextCompat.registerReceiver(
-        this,
-        broadcastReceiver,
-        closeIntentFilter,
-        ContextCompat.RECEIVER_EXPORTED);
+        this, broadcastReceiver, closeIntentFilter, ContextCompat.RECEIVER_EXPORTED);
   }
 
   @VisibleForTesting
