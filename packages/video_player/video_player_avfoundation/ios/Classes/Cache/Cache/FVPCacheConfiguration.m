@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "CacheConfiguration.h"
+#import "FVPCacheConfiguration.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import "CacheManager.h"
+#import "FVPCacheManager.h"
 
 static NSString *kFileNameKey = @"kFileNameKey";
 static NSString *kCacheFragmentsKey = @"kCacheFragmentsKey";
@@ -12,7 +12,7 @@ static NSString *kDownloadInfoKey = @"kDownloadInfoKey";
 static NSString *kContentInfoKey = @"kContentInfoKey";
 static NSString *kURLKey = @"kURLKey";
 
-@interface CacheConfiguration () <NSCoding>
+@interface FVPCacheConfiguration () <NSCoding>
 
 @property(nonatomic, copy) NSString *filePath;
 @property(nonatomic, copy) NSString *fileName;
@@ -21,18 +21,18 @@ static NSString *kURLKey = @"kURLKey";
 
 @end
 
-@implementation CacheConfiguration
+@implementation FVPCacheConfiguration
 
 + (instancetype)configurationWithFilePath:(NSString *)filePath error:(NSError **)error {
   filePath = [self configurationFilePathForFilePath:filePath];
   NSData *data = [NSData dataWithContentsOfFile:filePath];
-  CacheConfiguration *configuration =
-      [NSKeyedUnarchiver unarchivedObjectOfClass:[CacheConfiguration class]
+  FVPCacheConfiguration *configuration =
+      [NSKeyedUnarchiver unarchivedObjectOfClass:[FVPCacheConfiguration class]
                                         fromData:data
                                            error:error];
 
   if (!configuration) {
-    configuration = [[CacheConfiguration alloc] init];
+    configuration = [[FVPCacheConfiguration alloc] init];
     configuration.fileName = [filePath lastPathComponent];
   }
   configuration.filePath = filePath;
@@ -92,7 +92,7 @@ static NSString *kURLKey = @"kURLKey";
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-  CacheConfiguration *configuration = [[CacheConfiguration allocWithZone:zone] init];
+  FVPCacheConfiguration *configuration = [[FVPCacheConfiguration allocWithZone:zone] init];
   configuration.fileName = self.fileName;
   configuration.filePath = self.filePath;
   configuration.internalCacheFragments = self.internalCacheFragments;
@@ -207,10 +207,10 @@ static NSString *kURLKey = @"kURLKey";
 
 @end
 
-@implementation CacheConfiguration (Convenient)
+@implementation FVPCacheConfiguration (Convenient)
 
 + (BOOL)createAndSaveDownloadedConfigurationForURL:(NSURL *)url error:(NSError **)error {
-  NSString *filePath = [CacheManager cachedFilePathForURL:url];
+  NSString *filePath = [FVPCacheManager cachedFilePathForURL:url];
   NSFileManager *fileManager = [NSFileManager defaultManager];
   NSDictionary<NSFileAttributeKey, id> *attributes = [fileManager attributesOfItemAtPath:filePath
                                                                                    error:error];
@@ -221,11 +221,11 @@ static NSString *kURLKey = @"kURLKey";
   NSUInteger fileSize = (NSUInteger)attributes.fileSize;
   NSRange range = NSMakeRange(0, fileSize);
 
-  CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath
-                                                                              error:error];
+  FVPCacheConfiguration *configuration = [FVPCacheConfiguration configurationWithFilePath:filePath
+                                                                                    error:error];
   configuration.url = url;
 
-  ContentInfo *contentInfo = [ContentInfo new];
+  FVPContentInfo *contentInfo = [FVPContentInfo new];
 
   NSString *fileExtension = [url pathExtension];
   NSString *UTI = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(

@@ -2,18 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "ResourceLoaderManager.h"
-#import "ResourceLoader.h"
+#import "FVPResourceLoaderManager.h"
+#import "FVPResourceLoader.h"
 
-static NSString *kCacheScheme = @"VideoPlayerCache:";
+static NSString *kCacheScheme = @"FVPVideoPlayerCache:";
 
-@interface ResourceLoaderManager () <ResourceLoaderDelegate>
+@interface FVPResourceLoaderManager () <FVPResourceLoaderDelegate>
 
-@property(nonatomic, strong) NSMutableDictionary<id<NSCoding>, ResourceLoader *> *loaders;
+@property(nonatomic, strong) NSMutableDictionary<id<NSCoding>, FVPResourceLoader *> *loaders;
 
 @end
 
-@implementation ResourceLoaderManager
+@implementation FVPResourceLoaderManager
 
 - (instancetype)init {
   self = [super init];
@@ -29,10 +29,11 @@ static NSString *kCacheScheme = @"VideoPlayerCache:";
 }
 
 - (void)cancelLoaders {
-  [self.loaders enumerateKeysAndObjectsUsingBlock:^(
-                    id<NSCoding> _Nonnull key, ResourceLoader *_Nonnull obj, BOOL *_Nonnull stop) {
-    [obj cancel];
-  }];
+  [self.loaders
+      enumerateKeysAndObjectsUsingBlock:^(id<NSCoding> _Nonnull key,
+                                          FVPResourceLoader *_Nonnull obj, BOOL *_Nonnull stop) {
+        [obj cancel];
+      }];
   [self.loaders removeAllObjects];
 }
 
@@ -42,13 +43,13 @@ static NSString *kCacheScheme = @"VideoPlayerCache:";
     shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest {
   NSURL *resourceURL = [loadingRequest.request URL];
   if ([resourceURL.absoluteString hasPrefix:kCacheScheme]) {
-    ResourceLoader *loader = [self loaderForRequest:loadingRequest];
+    FVPResourceLoader *loader = [self loaderForRequest:loadingRequest];
     if (!loader) {
       NSURL *originURL = nil;
       NSString *originStr = [resourceURL absoluteString];
       originStr = [originStr stringByReplacingOccurrencesOfString:kCacheScheme withString:@""];
       originURL = [NSURL URLWithString:originStr];
-      loader = [[ResourceLoader alloc] initWithURL:originURL];
+      loader = [[FVPResourceLoader alloc] initWithURL:originURL];
       loader.delegate = self;
       NSString *key = [self keyForResourceLoaderWithURL:resourceURL];
       self.loaders[key] = loader;
@@ -62,13 +63,13 @@ static NSString *kCacheScheme = @"VideoPlayerCache:";
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader
     didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest {
-  ResourceLoader *loader = [self loaderForRequest:loadingRequest];
+  FVPResourceLoader *loader = [self loaderForRequest:loadingRequest];
   [loader removeRequest:loadingRequest];
 }
 
 #pragma mark - ResourceLoaderDelegate
 
-- (void)resourceLoader:(ResourceLoader *)resourceLoader didFailWithError:(NSError *)error {
+- (void)resourceLoader:(FVPResourceLoader *)resourceLoader didFailWithError:(NSError *)error {
   [resourceLoader cancel];
   if ([self.delegate respondsToSelector:@selector(resourceLoaderManagerLoadURL:
                                                               didFailWithError:)]) {
@@ -86,15 +87,15 @@ static NSString *kCacheScheme = @"VideoPlayerCache:";
   return nil;
 }
 
-- (ResourceLoader *)loaderForRequest:(AVAssetResourceLoadingRequest *)request {
+- (FVPResourceLoader *)loaderForRequest:(AVAssetResourceLoadingRequest *)request {
   NSString *requestKey = [self keyForResourceLoaderWithURL:request.request.URL];
-  ResourceLoader *loader = self.loaders[requestKey];
+  FVPResourceLoader *loader = self.loaders[requestKey];
   return loader;
 }
 
 @end
 
-@implementation ResourceLoaderManager (Convenient)
+@implementation FVPResourceLoaderManager (Convenient)
 
 + (NSURL *)assetURLWithURL:(NSURL *)url {
   if (!url) {
@@ -107,7 +108,7 @@ static NSString *kCacheScheme = @"VideoPlayerCache:";
 }
 
 - (AVPlayerItem *)playerItemWithURL:(NSURL *)url {
-  NSURL *assetURL = [ResourceLoaderManager assetURLWithURL:url];
+  NSURL *assetURL = [FVPResourceLoaderManager assetURLWithURL:url];
   AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:assetURL options:nil];
   [urlAsset.resourceLoader setDelegate:self queue:dispatch_get_main_queue()];
   AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:urlAsset];

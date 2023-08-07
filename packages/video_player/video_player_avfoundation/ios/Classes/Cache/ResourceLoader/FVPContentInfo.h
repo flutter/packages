@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ContentInfo : NSObject <NSCoding>
+@interface FVPContentInfo : NSObject <NSCoding>
 
 /**
  @property contentType

@@ -63,7 +63,7 @@
 @property(nonatomic, readonly) BOOL disposed;
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
-@property(nonatomic, strong) ResourceLoaderManager *resourceLoaderManager;
+@property(nonatomic, strong) FVPResourceLoaderManager *resourceLoaderManager;
 @property(nonatomic, readonly) BOOL isInitialized;
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
@@ -227,7 +227,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   AVPlayerItem *item;
   if (cacheEnabled.boolValue) {
     NSLog(@"cache enabled %@", url);
-    ResourceLoaderManager *resourceLoaderManager = [ResourceLoaderManager new];
+    FVPResourceLoaderManager *resourceLoaderManager = [FVPResourceLoaderManager new];
     self.resourceLoaderManager = resourceLoaderManager;
     item = [resourceLoaderManager playerItemWithURL:url];
   } else {
@@ -722,7 +722,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   //    unsigned long long fileSize = [CacheManager calculateCachedSizeWithError:nil];
   //    NSLog(@"file cache size: %@", @(fileSize));
   NSError *error2;
-  [CacheManager cleanAllCacheWithError:&error2];
+  [FVPCacheManager cleanAllCacheWithError:&error2];
 
   if (error2) {
     NSLog(@"clean cache failure: %@", error2);

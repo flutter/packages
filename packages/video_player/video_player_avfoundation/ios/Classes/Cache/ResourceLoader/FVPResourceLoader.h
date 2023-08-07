@@ -4,9 +4,9 @@
 
 #import <Foundation/Foundation.h>
 @import AVFoundation;
-@protocol ResourceLoaderDelegate;
+@protocol FVPResourceLoaderDelegate;
 
-@interface ResourceLoader : NSObject
+@interface FVPResourceLoader : NSObject
 
 /*!
  This class acts as a resource loader for AVAssetResourceLoader and handles loading of media
@@ -16,7 +16,7 @@
  */
 
 @property(nonatomic, strong, readonly) NSURL *url;
-@property(nonatomic, weak) id<ResourceLoaderDelegate> delegate;
+@property(nonatomic, weak) id<FVPResourceLoaderDelegate> delegate;
 
 - (instancetype)initWithURL:(NSURL *)url;
 
@@ -27,8 +27,8 @@
 
 @end
 
-@protocol ResourceLoaderDelegate <NSObject>
+@protocol FVPResourceLoaderDelegate <NSObject>
 
-- (void)resourceLoader:(ResourceLoader *)resourceLoader didFailWithError:(NSError *)error;
+- (void)resourceLoader:(FVPResourceLoader *)resourceLoader didFailWithError:(NSError *)error;
 
 @end

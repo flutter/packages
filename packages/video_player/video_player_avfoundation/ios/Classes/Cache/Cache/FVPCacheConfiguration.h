@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 #import <Foundation/Foundation.h>
-#import "ContentInfo.h"
+#import "FVPContentInfo.h"
 
 /*!
  Provide functionality related to caching configuration and content download statistics. Let's go
  through each class and its methods:
  */
-@interface CacheConfiguration : NSObject <NSCopying>
+@interface FVPCacheConfiguration : NSObject <NSCopying>
 
 /*!
  return configuration based on the provided filePath
@@ -33,7 +33,7 @@
  @property contentInfo
  information about the content being downloaded or cached
  */
-@property(nonatomic, strong) ContentInfo *contentInfo;
+@property(nonatomic, strong) FVPContentInfo *contentInfo;
 
 /*!
  @property url
@@ -77,7 +77,7 @@
 
 @end
 
-@interface CacheConfiguration (Convenient)
+@interface FVPCacheConfiguration (Convenient)
 
 /*!
  This class method is a convenient way to create and save a CacheConfiguration object with download

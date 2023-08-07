@@ -2,26 +2,26 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "ResourceLoadingRequestWorker.h"
-#import "ContentDownloader.h"
-#import "ContentInfo.h"
+#import "FVPResourceLoadingRequestWorker.h"
+#import "FVPContentDownloader.h"
+#import "FVPContentInfo.h"
 
 @import MobileCoreServices;
 @import AVFoundation;
 @import UIKit;
 
-@interface ResourceLoadingRequestWorker () <ContentDownloaderDelegate>
+@interface FVPResourceLoadingRequestWorker () <FVPContentDownloaderDelegate>
 
 @property(nonatomic, strong, readwrite) AVAssetResourceLoadingRequest *request;
-@property(nonatomic, strong) ContentDownloader *contentDownloader;
+@property(nonatomic, strong) FVPContentDownloader *contentDownloader;
 
 @end
 
 // to handle the process of downloading and loading media resources for AVAssetResourceLoader in an
 // AVPlayer
-@implementation ResourceLoadingRequestWorker
+@implementation FVPResourceLoadingRequestWorker
 
-- (instancetype)initWithContentDownloader:(ContentDownloader *)contentDownloader
+- (instancetype)initWithContentDownloader:(FVPContentDownloader *)contentDownloader
                    resourceLoadingRequest:(AVAssetResourceLoadingRequest *)request {
   self = [super init];
   if (self) {
@@ -87,18 +87,18 @@
   }
 }
 
-#pragma mark - ContentDownloaderDelegate
+#pragma mark - FVPContentDownloaderDelegate
 
-- (void)contentDownloader:(ContentDownloader *)downloader
+- (void)contentDownloader:(FVPContentDownloader *)downloader
        didReceiveResponse:(NSURLResponse *)response {
   [self fullfillContentInfo];
 }
 
-- (void)contentDownloader:(ContentDownloader *)downloader didReceiveData:(NSData *)data {
+- (void)contentDownloader:(FVPContentDownloader *)downloader didReceiveData:(NSData *)data {
   [self.request.dataRequest respondWithData:data];
 }
 
-- (void)contentDownloader:(ContentDownloader *)downloader didFinishedWithError:(NSError *)error {
+- (void)contentDownloader:(FVPContentDownloader *)downloader didFinishedWithError:(NSError *)error {
   if (error.code == NSURLErrorCancelled) {
     return;
   }

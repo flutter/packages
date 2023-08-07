@@ -3,15 +3,15 @@
 // found in the LICENSE file.
 
 #import <Foundation/Foundation.h>
-#import "CacheConfiguration.h"
+#import "FVPCacheConfiguration.h"
 
-extern NSString *CacheConfigurationKey;
-extern NSString *CacheFinishedErrorKey;
+extern NSString *FVPCacheConfigurationKey;
+extern NSString *FVPCacheFinishedErrorKey;
 
 /*!
  responsible for managing caching (directory) of content
  */
-@interface CacheManager : NSObject
+@interface FVPCacheManager : NSObject
 
 /*!
  returns filepath for file (content) url
@@ -21,7 +21,7 @@ extern NSString *CacheFinishedErrorKey;
 /*!
  returns CacheConfiguration for file (content) url
  */
-+ (CacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error;
++ (FVPCacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error;
 
 /*!
  removes all (downloading)files in cache directory

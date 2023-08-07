@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "ContentInfo.h"
+#import "FVPContentInfo.h"
 
 static NSString *kContentLengthKey = @"kContentLengthKey";
 static NSString *kContentTypeKey = @"kContentTypeKey";
 static NSString *kByteRangeAccessSupported = @"kByteRangeAccessSupported";
 
-@implementation ContentInfo
+@implementation FVPContentInfo
 - (void)encodeWithCoder:(NSCoder *)aCoder {
   [aCoder encodeObject:@(self.contentLength) forKey:kContentLengthKey];
   [aCoder encodeObject:self.contentType forKey:kContentTypeKey];

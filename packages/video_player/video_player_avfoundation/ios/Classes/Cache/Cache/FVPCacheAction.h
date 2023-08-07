@@ -4,22 +4,22 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum { CacheTypeLocal = 0, CacheTypeRemote } CacheType;
+typedef enum { FVPCacheTypeLocal = 0, FVPCacheTypeRemote } FVPCacheType;
 
-@interface CacheAction : NSObject
+@interface FVPCacheAction : NSObject
 
-- (instancetype)initWithActionType:(CacheType)cacheType range:(NSRange)range;
+- (instancetype)initWithActionType:(FVPCacheType)cacheType range:(NSRange)range;
 
 /*!
  * @property cacheType
- * CacheTypeRemote and CacheTypeLocal are cache optimization options.
- * CacheTypeRemote acts as a local cache refresh action by setting the
+ * FVPCacheTypeRemote and FVPCacheTypeLocal are cache optimization options.
+ * FVPCacheTypeRemote acts as a local cache refresh action by setting the
  * NSURLRequestReloadIgnoringLocalAndRemoteCacheData flag. When this cache policy is used, it means
  * Ignore local cache data, and instruct proxies and other intermediates to disregard their caches
- * so far as the protocol allows. CacheTypeLocal uses localCache. It does not validate the relevance
- * of it.
+ * so far as the protocol allows. FVPCacheTypeLocal uses localCache. It does not validate the
+ * relevance of it.
  */
-@property(nonatomic) CacheType cacheType;
+@property(nonatomic) FVPCacheType cacheType;
 
 /*!
  * @property range

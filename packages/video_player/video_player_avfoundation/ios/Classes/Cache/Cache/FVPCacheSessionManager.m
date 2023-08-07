@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "CacheSessionManager.h"
+#import "FVPCacheSessionManager.h"
 
-@interface CacheSessionManager ()
+@interface FVPCacheSessionManager ()
 
 @property(nonatomic, strong) NSOperationQueue *downloadQueue;
 
 @end
 
-@implementation CacheSessionManager
+@implementation FVPCacheSessionManager
 
 + (instancetype)shared {
   static id instance = nil;

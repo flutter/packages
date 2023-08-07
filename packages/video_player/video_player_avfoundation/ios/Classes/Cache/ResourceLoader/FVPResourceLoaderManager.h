@@ -5,7 +5,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <Foundation/Foundation.h>
 
-@protocol ResourceLoaderManagerDelegate;
+@protocol FVPResourceLoaderManagerDelegate;
 
 /*!
  the ResourceLoaderManager class manages the resource loading process for AVPlayer by utilizing
@@ -14,9 +14,9 @@
  resources using AVAssetResourceLoader and AVURLAsset. This setup is useful for scenarios where
  custom resource loading or caching is required during media playback.
  */
-@interface ResourceLoaderManager : NSObject <AVAssetResourceLoaderDelegate>
+@interface FVPResourceLoaderManager : NSObject <AVAssetResourceLoaderDelegate>
 
-@property(nonatomic, weak) id<ResourceLoaderManagerDelegate> delegate;
+@property(nonatomic, weak) id<FVPResourceLoaderManagerDelegate> delegate;
 
 /*!
  cleans the cache
@@ -30,7 +30,7 @@
 
 @end
 
-@protocol ResourceLoaderManagerDelegate <NSObject>
+@protocol FVPResourceLoaderManagerDelegate <NSObject>
 
 /*!
  resourceLoaderManagerLoadURL
@@ -39,7 +39,7 @@
 
 @end
 
-@interface ResourceLoaderManager (Convenient)
+@interface FVPResourceLoaderManager (Convenient)
 
 /*!
  assetURLWithURL

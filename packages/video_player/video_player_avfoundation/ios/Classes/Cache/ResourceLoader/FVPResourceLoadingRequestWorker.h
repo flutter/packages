@@ -4,19 +4,19 @@
 
 #import <Foundation/Foundation.h>
 
-@class ContentDownloader, AVAssetResourceLoadingRequest;
-@protocol ResourceLoadingRequestWorkerDelegate;
+@class FVPContentDownloader, AVAssetResourceLoadingRequest;
+@protocol FVPResourceLoadingRequestWorkerDelegate;
 
 /*!
  to handle the process of downloading and loading media resources for AVAssetResourceLoader in an
  AVPlayer
  */
-@interface ResourceLoadingRequestWorker : NSObject
+@interface FVPResourceLoadingRequestWorker : NSObject
 
-- (instancetype)initWithContentDownloader:(ContentDownloader *)contentDownloader
+- (instancetype)initWithContentDownloader:(FVPContentDownloader *)contentDownloader
                    resourceLoadingRequest:(AVAssetResourceLoadingRequest *)request;
 
-@property(nonatomic, weak) id<ResourceLoadingRequestWorkerDelegate> delegate;
+@property(nonatomic, weak) id<FVPResourceLoadingRequestWorkerDelegate> delegate;
 
 @property(nonatomic, strong, readonly) AVAssetResourceLoadingRequest *request;
 
@@ -37,9 +37,9 @@
 
 @end
 
-@protocol ResourceLoadingRequestWorkerDelegate <NSObject>
+@protocol FVPResourceLoadingRequestWorkerDelegate <NSObject>
 
-- (void)resourceLoadingRequestWorker:(ResourceLoadingRequestWorker *)requestWorker
+- (void)resourceLoadingRequestWorker:(FVPResourceLoadingRequestWorker *)requestWorker
                 didCompleteWithError:(NSError *)error;
 
 @end

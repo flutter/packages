@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 // umbrella class
-#ifndef VideoPlayerCache_h
-#define VideoPlayerCache_h
+#ifndef FVPVideoPlayerCache_h
+#define FVPVideoPlayerCache_h
 
-#import "CacheManager.h"
-#import "ContentDownloader.h"
-#import "ContentInfo.h"
-#import "ResourceLoaderManager.h"
+#import "FVPCacheManager.h"
+#import "FVPContentDownloader.h"
+#import "FVPContentInfo.h"
+#import "FVPResourceLoaderManager.h"
 
 #endif

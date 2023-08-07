@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "CacheAction.h"
+#import "FVPCacheAction.h"
 
-@implementation CacheAction
+@implementation FVPCacheAction
 
-- (instancetype)initWithActionType:(CacheType)cacheType range:(NSRange)range {
+- (instancetype)initWithActionType:(FVPCacheType)cacheType range:(NSRange)range {
   self = [super init];
   if (self) {
     _cacheType = cacheType;
@@ -15,7 +15,7 @@
   return self;
 }
 
-- (BOOL)isEqual:(CacheAction *)object {
+- (BOOL)isEqual:(FVPCacheAction *)object {
   return NSEqualRanges(object.range, self.range) && object.cacheType == self.cacheType;
 }
 

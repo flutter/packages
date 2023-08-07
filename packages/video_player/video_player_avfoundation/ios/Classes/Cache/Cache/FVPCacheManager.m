@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "CacheManager.h"
-#import "ContentDownloader.h"
+#import "FVPCacheManager.h"
+#import "FVPContentDownloader.h"
 
-NSString *CacheConfigurationKey = @"CacheConfigurationKey";
+NSString *FVPCacheConfigurationKey = @"CacheConfigurationKey";
 
 static NSString *kMContentCacheDirectory;
 
-@implementation CacheManager
+@implementation FVPCacheManager
 
 + (void)load {
   static dispatch_once_t onceToken;
@@ -35,10 +35,10 @@ static NSString *kMContentCacheDirectory;
   return [[self cacheDirectory] stringByAppendingPathComponent:pathComponent];
 }
 
-+ (CacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error {
++ (FVPCacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error {
   NSString *filePath = [self cachedFilePathForURL:url];
-  CacheConfiguration *configuration = [CacheConfiguration configurationWithFilePath:filePath
-                                                                              error:error];
+  FVPCacheConfiguration *configuration = [FVPCacheConfiguration configurationWithFilePath:filePath
+                                                                                    error:error];
   return configuration;
 }
 
@@ -70,11 +70,11 @@ static NSString *kMContentCacheDirectory;
 + (void)cleanAllCacheWithError:(NSError **)error {
   // Find downloading file
   NSMutableSet *downloadingFiles = [NSMutableSet set];
-  [[[ContentDownloaderStatus shared] urls]
+  [[[FVPContentDownloaderStatus shared] urls]
       enumerateObjectsUsingBlock:^(NSURL *_Nonnull obj, BOOL *_Nonnull stop) {
         NSString *file = [self cachedFilePathForURL:obj];
         [downloadingFiles addObject:file];
-        NSString *configurationPath = [CacheConfiguration configurationFilePathForFilePath:file];
+        NSString *configurationPath = [FVPCacheConfiguration configurationFilePathForFilePath:file];
         [downloadingFiles addObject:configurationPath];
       }];
 

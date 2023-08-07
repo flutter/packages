@@ -12,7 +12,7 @@
  guarantees that all parts of the application that need access to the download queue use the same
  instance, avoiding duplication and synchronization issues.
  */
-@interface CacheSessionManager : NSObject
+@interface FVPCacheSessionManager : NSObject
 
 /*!
  @Property downloadQueue

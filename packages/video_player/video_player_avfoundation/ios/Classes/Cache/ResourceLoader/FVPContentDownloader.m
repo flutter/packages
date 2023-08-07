@@ -2,18 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "ContentDownloader.h"
+#import "FVPContentDownloader.h"
 #import <MobileCoreServices/MobileCoreServices.h>
-#import "CacheSessionManager.h"
-#import "ContentInfo.h"
+#import "FVPCacheSessionManager.h"
+#import "FVPContentInfo.h"
 
-#import "CacheAction.h"
-#import "CacheManager.h"
-#import "ContentCacheWorker.h"
+#import "FVPCacheAction.h"
+#import "FVPCacheManager.h"
+#import "FVPContentCacheWorker.h"
 
-#pragma mark - Class: URLSessionDelegateObject
+#pragma mark - Class: FVPURLSessionDelegateObject
 
-@protocol URLSessionDelegateObjectDelegate <NSObject>
+@protocol FVPURLSessionDelegateObjectDelegate <NSObject>
 
 - (void)URLSession:(NSURLSession *)session
     didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -34,18 +34,18 @@
 
 static NSInteger kBufferSize = 10 * 1024;
 
-@interface URLSessionDelegateObject : NSObject <NSURLSessionDelegate>
+@interface FVPURLSessionDelegateObject : NSObject <NSURLSessionDelegate>
 
-- (instancetype)initWithDelegate:(id<URLSessionDelegateObjectDelegate>)delegate;
+- (instancetype)initWithDelegate:(id<FVPURLSessionDelegateObjectDelegate>)delegate;
 
-@property(nonatomic, weak) id<URLSessionDelegateObjectDelegate> delegate;
+@property(nonatomic, weak) id<FVPURLSessionDelegateObjectDelegate> delegate;
 @property(nonatomic, strong) NSMutableData *bufferData;
 
 @end
 
-@implementation URLSessionDelegateObject
+@implementation FVPURLSessionDelegateObject
 
-- (instancetype)initWithDelegate:(id<URLSessionDelegateObjectDelegate>)delegate {
+- (instancetype)initWithDelegate:(id<FVPURLSessionDelegateObjectDelegate>)delegate {
   self = [super init];
   if (self) {
     _delegate = delegate;
@@ -106,61 +106,61 @@ static NSInteger kBufferSize = 10 * 1024;
 
 #pragma mark - Class: ActionWorker
 
-@class ActionWorker;
+@class FVPActionWorker;
 
-// This class is responsible for processing a sequence of CacheAction objects to fetch content data
-// from a URL either from a local cache or a remote server. It acts as an intermediary between the
-// caching mechanism (ContentCacheWorker) and the URL session data task (NSURLSessionDataTask).
-@protocol ActionWorkerDelegate <NSObject>
+// This class is responsible for processing a sequence of FVPCacheAction objects to fetch content
+// data from a URL either from a local cache or a remote server. It acts as an intermediary between
+// the caching mechanism (ContentCacheWorker) and the URL session data task (NSURLSessionDataTask).
+@protocol FVPActionWorkerDelegate <NSObject>
 
-- (void)actionWorker:(ActionWorker *)actionWorker didReceiveResponse:(NSURLResponse *)response;
-- (void)actionWorker:(ActionWorker *)actionWorker
+- (void)actionWorker:(FVPActionWorker *)actionWorker didReceiveResponse:(NSURLResponse *)response;
+- (void)actionWorker:(FVPActionWorker *)actionWorker
       didReceiveData:(NSData *)data
              isLocal:(BOOL)isLocal;
-- (void)actionWorker:(ActionWorker *)actionWorker didFinishWithError:(NSError *)error;
+- (void)actionWorker:(FVPActionWorker *)actionWorker didFinishWithError:(NSError *)error;
 
 @end
 
-@interface ActionWorker : NSObject <URLSessionDelegateObjectDelegate>
+@interface FVPActionWorker : NSObject <FVPURLSessionDelegateObjectDelegate>
 
-@property(nonatomic, strong) NSMutableArray<CacheAction *> *actions;
-- (instancetype)initWithActions:(NSArray<CacheAction *> *)actions
+@property(nonatomic, strong) NSMutableArray<FVPCacheAction *> *actions;
+- (instancetype)initWithActions:(NSArray<FVPCacheAction *> *)actions
                             url:(NSURL *)url
-                    cacheWorker:(ContentCacheWorker *)cacheWorker;
+                    cacheWorker:(FVPContentCacheWorker *)cacheWorker;
 
 @property(nonatomic, assign) BOOL canSaveToCache;
-@property(nonatomic, weak) id<ActionWorkerDelegate> delegate;
+@property(nonatomic, weak) id<FVPActionWorkerDelegate> delegate;
 
 - (void)start;
 - (void)cancel;
 
 @property(nonatomic, getter=isCancelled) BOOL cancelled;
 
-@property(nonatomic, strong) ContentCacheWorker *cacheWorker;
+@property(nonatomic, strong) FVPContentCacheWorker *cacheWorker;
 @property(nonatomic, strong) NSURL *url;
 
 @property(nonatomic, strong) NSURLSession *session;
-@property(nonatomic, strong) URLSessionDelegateObject *sessionDelegateObject;
+@property(nonatomic, strong) FVPURLSessionDelegateObject *sessionDelegateObject;
 @property(nonatomic, strong) NSURLSessionDataTask *task;
 @property(nonatomic) NSInteger startOffset;
 
 @end
 
-@interface ActionWorker ()
+@interface FVPActionWorker ()
 
 @property(nonatomic) NSTimeInterval notifyTime;
 
 @end
 
-@implementation ActionWorker
+@implementation FVPActionWorker
 
 - (void)dealloc {
   [self cancel];
 }
 
-- (instancetype)initWithActions:(NSArray<CacheAction *> *)actions
+- (instancetype)initWithActions:(NSArray<FVPCacheAction *> *)actions
                             url:(NSURL *)url
-                    cacheWorker:(ContentCacheWorker *)cacheWorker {
+                    cacheWorker:(FVPContentCacheWorker *)cacheWorker {
   self = [super init];
   if (self) {
     _canSaveToCache = YES;
@@ -182,9 +182,9 @@ static NSInteger kBufferSize = 10 * 1024;
   self.cancelled = YES;
 }
 
-- (URLSessionDelegateObject *)sessionDelegateObject {
+- (FVPURLSessionDelegateObject *)sessionDelegateObject {
   if (!_sessionDelegateObject) {
-    _sessionDelegateObject = [[URLSessionDelegateObject alloc] initWithDelegate:self];
+    _sessionDelegateObject = [[FVPURLSessionDelegateObject alloc] initWithDelegate:self];
   }
 
   return _sessionDelegateObject;
@@ -197,7 +197,7 @@ static NSInteger kBufferSize = 10 * 1024;
     NSURLSession *session =
         [NSURLSession sessionWithConfiguration:configuration
                                       delegate:self.sessionDelegateObject
-                                 delegateQueue:[CacheSessionManager shared].downloadQueue];
+                                 delegateQueue:[FVPCacheSessionManager shared].downloadQueue];
     _session = session;
   }
   return _session;
@@ -208,13 +208,13 @@ static NSInteger kBufferSize = 10 * 1024;
     return;
   }
 
-  CacheAction *action = [self popFirstActionInList];
+  FVPCacheAction *action = [self popFirstActionInList];
   if (!action) {
     return;
   }
 
-  // CacheTypeLocal
-  if (action.cacheType == CacheTypeLocal) {
+  // FVPCacheTypeLocal
+  if (action.cacheType == FVPCacheTypeLocal) {
     NSError *error;
     NSData *data = [self.cacheWorker cachedDataForRange:action.range error:&error];
     if (error) {
@@ -228,7 +228,7 @@ static NSInteger kBufferSize = 10 * 1024;
       [self processActionsLater];
     }
   } else {
-    // CacheTypeRemote or default
+    // FVPCacheTypeRemote or default
     long long fromOffset = action.range.location;
     long long endOffset = action.range.location + action.range.length - 1;
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.url];
@@ -250,9 +250,9 @@ static NSInteger kBufferSize = 10 * 1024;
   });
 }
 
-- (CacheAction *)popFirstActionInList {
+- (FVPCacheAction *)popFirstActionInList {
   @synchronized(self) {
-    CacheAction *action = [self.actions firstObject];
+    FVPCacheAction *action = [self.actions firstObject];
     if (action) {
       [self.actions removeObjectAtIndex:0];
       return action;
@@ -264,7 +264,7 @@ static NSInteger kBufferSize = 10 * 1024;
   return nil;
 }
 
-#pragma mark - URLSessionDelegateObjectDelegate
+#pragma mark - FVPURLSessionDelegateObjectDelegate
 
 - (void)URLSession:(NSURLSession *)session
     didReceiveChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -343,22 +343,22 @@ static NSInteger kBufferSize = 10 * 1024;
 
 @end
 
-#pragma mark - Class: ContentDownloaderStatus
+#pragma mark - Class: FVPContentDownloaderStatus
 
 // This class manages the status of content downloading by keeping track of URLs that are currently
 // being downloaded. It uses a shared instance pattern (shared) to maintain a central state for all
 // downloaders.
 
-@interface ContentDownloaderStatus ()
+@interface FVPContentDownloaderStatus ()
 
 @property(nonatomic, strong) NSMutableSet *downloadingURLS;
 
 @end
 
-@implementation ContentDownloaderStatus
+@implementation FVPContentDownloaderStatus
 
 + (instancetype)shared {
-  static ContentDownloaderStatus *instance = nil;
+  static FVPContentDownloaderStatus *instance = nil;
   static dispatch_once_t onceToken;
   dispatch_once(&onceToken, ^{
     instance = [[self alloc] init];
@@ -392,15 +392,15 @@ static NSInteger kBufferSize = 10 * 1024;
 
 @end
 
-#pragma mark - Class: ContentDownloader
+#pragma mark - Class: FVPContentDownloader
 
-@interface ContentDownloader () <ActionWorkerDelegate>
+@interface FVPContentDownloader () <FVPActionWorkerDelegate>
 
 @property(nonatomic, strong) NSURL *url;
 @property(nonatomic, strong) NSURLSessionDataTask *task;
 
-@property(nonatomic, strong) ContentCacheWorker *cacheWorker;
-@property(nonatomic, strong) ActionWorker *actionWorker;
+@property(nonatomic, strong) FVPContentCacheWorker *cacheWorker;
+@property(nonatomic, strong) FVPActionWorker *actionWorker;
 
 @property(nonatomic) BOOL downloadToEnd;
 
@@ -409,20 +409,20 @@ static NSInteger kBufferSize = 10 * 1024;
 // This class handles content downloading from a specified URL. It interacts with a
 // ContentCacheWorker for caching the downloaded content and uses an ActionWorker for handling the
 // downloading process.
-@implementation ContentDownloader
+@implementation FVPContentDownloader
 
 - (void)dealloc {
-  [[ContentDownloaderStatus shared] removeURL:self.url];
+  [[FVPContentDownloaderStatus shared] removeURL:self.url];
 }
 
-- (instancetype)initWithURL:(NSURL *)url cacheWorker:(ContentCacheWorker *)cacheWorker {
+- (instancetype)initWithURL:(NSURL *)url cacheWorker:(FVPContentCacheWorker *)cacheWorker {
   self = [super init];
   if (self) {
     _saveToCache = YES;
     _url = url;
     _cacheWorker = cacheWorker;
     _info = _cacheWorker.cacheConfiguration.contentInfo;
-    [[ContentDownloaderStatus shared] addURL:self.url];
+    [[FVPContentDownloaderStatus shared] addURL:self.url];
   }
   return self;
 }
@@ -440,23 +440,22 @@ static NSInteger kBufferSize = 10 * 1024;
 
   NSArray *actions = [self.cacheWorker cachedDataActionsForRange:range];
 
-  self.actionWorker = [[ActionWorker alloc] initWithActions:actions
-                                                        url:self.url
-                                                cacheWorker:self.cacheWorker];
+  self.actionWorker = [[FVPActionWorker alloc] initWithActions:actions
+                                                           url:self.url
+                                                   cacheWorker:self.cacheWorker];
   self.actionWorker.canSaveToCache = self.saveToCache;
   self.actionWorker.delegate = self;
   [self.actionWorker start];
 }
 
 - (void)downloadFromStartToEnd {
-  // ---
   self.downloadToEnd = YES;
   NSRange range = NSMakeRange(0, 2);
   NSArray *actions = [self.cacheWorker cachedDataActionsForRange:range];
 
-  self.actionWorker = [[ActionWorker alloc] initWithActions:actions
-                                                        url:self.url
-                                                cacheWorker:self.cacheWorker];
+  self.actionWorker = [[FVPActionWorker alloc] initWithActions:actions
+                                                           url:self.url
+                                                   cacheWorker:self.cacheWorker];
   self.actionWorker.canSaveToCache = self.saveToCache;
   self.actionWorker.delegate = self;
   [self.actionWorker start];
@@ -464,16 +463,16 @@ static NSInteger kBufferSize = 10 * 1024;
 
 - (void)cancel {
   self.actionWorker.delegate = nil;
-  [[ContentDownloaderStatus shared] removeURL:self.url];
+  [[FVPContentDownloaderStatus shared] removeURL:self.url];
   [self.actionWorker cancel];
   self.actionWorker = nil;
 }
 
 #pragma mark - ActionWorkerDelegate
 
-- (void)actionWorker:(ActionWorker *)actionWorker didReceiveResponse:(NSURLResponse *)response {
+- (void)actionWorker:(FVPActionWorker *)actionWorker didReceiveResponse:(NSURLResponse *)response {
   if (!self.info) {
-    ContentInfo *info = [ContentInfo new];
+    FVPContentInfo *info = [FVPContentInfo new];
 
     if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
       NSHTTPURLResponse *HTTPURLResponse = (NSHTTPURLResponse *)response;
@@ -503,7 +502,7 @@ static NSInteger kBufferSize = 10 * 1024;
   }
 }
 
-- (void)actionWorker:(ActionWorker *)actionWorker
+- (void)actionWorker:(FVPActionWorker *)actionWorker
       didReceiveData:(NSData *)data
              isLocal:(BOOL)isLocal {
   if ([self.delegate respondsToSelector:@selector(contentDownloader:didReceiveData:)]) {
@@ -511,8 +510,8 @@ static NSInteger kBufferSize = 10 * 1024;
   }
 }
 
-- (void)actionWorker:(ActionWorker *)actionWorker didFinishWithError:(NSError *)error {
-  [[ContentDownloaderStatus shared] removeURL:self.url];
+- (void)actionWorker:(FVPActionWorker *)actionWorker didFinishWithError:(NSError *)error {
+  [[FVPContentDownloaderStatus shared] removeURL:self.url];
 
   if (!error && self.downloadToEnd) {
     self.downloadToEnd = NO;

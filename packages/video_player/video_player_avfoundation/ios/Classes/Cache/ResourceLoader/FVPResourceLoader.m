@@ -2,26 +2,27 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "ResourceLoader.h"
-#import "ContentCacheWorker.h"
-#import "ContentDownloader.h"
-#import "ContentInfo.h"
-#import "ResourceLoadingRequestWorker.h"
+#import "FVPResourceLoader.h"
+#import "FVPContentCacheWorker.h"
+#import "FVPContentDownloader.h"
+#import "FVPContentInfo.h"
+#import "FVPResourceLoadingRequestWorker.h"
 
-NSString *const MCResourceLoaderErrorDomainE = @"LSFilePlayerResourceLoaderErrorDomain";
+NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderErrorDomain";
 
-@interface ResourceLoader () <ResourceLoadingRequestWorkerDelegate>
+@interface FVPResourceLoader () <FVPResourceLoadingRequestWorkerDelegate>
 
 @property(nonatomic, strong, readwrite) NSURL *url;
-@property(nonatomic, strong) ContentCacheWorker *cacheWorker;
-@property(nonatomic, strong) ContentDownloader *contentDownloader;
-@property(nonatomic, strong) NSMutableArray<ResourceLoadingRequestWorker *> *pendingRequestWorkers;
+@property(nonatomic, strong) FVPContentCacheWorker *cacheWorker;
+@property(nonatomic, strong) FVPContentDownloader *contentDownloader;
+@property(nonatomic, strong)
+    NSMutableArray<FVPResourceLoadingRequestWorker *> *pendingRequestWorkers;
 
 @property(nonatomic, getter=isCancelled) BOOL cancelled;
 
 @end
 
-@implementation ResourceLoader
+@implementation FVPResourceLoader
 
 - (void)dealloc {
   [_contentDownloader cancel];
@@ -31,8 +32,8 @@ NSString *const MCResourceLoaderErrorDomainE = @"LSFilePlayerResourceLoaderError
   self = [super init];
   if (self) {
     _url = url;
-    _cacheWorker = [[ContentCacheWorker alloc] initWithURL:url];
-    _contentDownloader = [[ContentDownloader alloc] initWithURL:url cacheWorker:_cacheWorker];
+    _cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:url];
+    _contentDownloader = [[FVPContentDownloader alloc] initWithURL:url cacheWorker:_cacheWorker];
     _pendingRequestWorkers = [NSMutableArray array];
   }
   return self;
@@ -52,9 +53,9 @@ NSString *const MCResourceLoaderErrorDomainE = @"LSFilePlayerResourceLoaderError
 }
 
 - (void)removeRequest:(AVAssetResourceLoadingRequest *)request {
-  __block ResourceLoadingRequestWorker *requestWorker = nil;
+  __block FVPResourceLoadingRequestWorker *requestWorker = nil;
   [self.pendingRequestWorkers
-      enumerateObjectsUsingBlock:^(ResourceLoadingRequestWorker *_Nonnull obj, NSUInteger idx,
+      enumerateObjectsUsingBlock:^(FVPResourceLoadingRequestWorker *_Nonnull obj, NSUInteger idx,
                                    BOOL *_Nonnull stop) {
         if (obj.request == request) {
           requestWorker = obj;
@@ -71,51 +72,51 @@ NSString *const MCResourceLoaderErrorDomainE = @"LSFilePlayerResourceLoaderError
   [self.contentDownloader cancel];
   [self.pendingRequestWorkers removeAllObjects];
 
-  [[ContentDownloaderStatus shared] removeURL:self.url];
+  [[FVPContentDownloaderStatus shared] removeURL:self.url];
 }
 
-#pragma mark - ResourceLoadingRequestWorkerDelegate
+#pragma mark - FVPResourceLoadingRequestWorkerDelegate
 
-- (void)resourceLoadingRequestWorker:(ResourceLoadingRequestWorker *)requestWorker
+- (void)resourceLoadingRequestWorker:(FVPResourceLoadingRequestWorker *)requestWorker
                 didCompleteWithError:(NSError *)error {
   [self removeRequest:requestWorker.request];
   if (error && [self.delegate respondsToSelector:@selector(resourceLoader:didFailWithError:)]) {
     [self.delegate resourceLoader:self didFailWithError:error];
   }
   if (self.pendingRequestWorkers.count == 0) {
-    [[ContentDownloaderStatus shared] removeURL:self.url];
+    [[FVPContentDownloaderStatus shared] removeURL:self.url];
   }
 }
 
 #pragma mark - Helper
 
 - (void)startNoCacheWorkerWithRequest:(AVAssetResourceLoadingRequest *)request {
-  [[ContentDownloaderStatus shared] addURL:self.url];
-  ContentDownloader *contentDownloader = [[ContentDownloader alloc] initWithURL:self.url
-                                                                    cacheWorker:self.cacheWorker];
-  ResourceLoadingRequestWorker *requestWorker =
-      [[ResourceLoadingRequestWorker alloc] initWithContentDownloader:contentDownloader
-                                               resourceLoadingRequest:request];
+  [[FVPContentDownloaderStatus shared] addURL:self.url];
+  FVPContentDownloader *contentDownloader =
+      [[FVPContentDownloader alloc] initWithURL:self.url cacheWorker:self.cacheWorker];
+  FVPResourceLoadingRequestWorker *requestWorker =
+      [[FVPResourceLoadingRequestWorker alloc] initWithContentDownloader:contentDownloader
+                                                  resourceLoadingRequest:request];
   [self.pendingRequestWorkers addObject:requestWorker];
   requestWorker.delegate = self;
   [requestWorker startWork];
 }
 
 - (void)startWorkerWithRequest:(AVAssetResourceLoadingRequest *)request {
-  [[ContentDownloaderStatus shared] addURL:self.url];
-  ResourceLoadingRequestWorker *requestWorker =
-      [[ResourceLoadingRequestWorker alloc] initWithContentDownloader:self.contentDownloader
-                                               resourceLoadingRequest:request];
+  [[FVPContentDownloaderStatus shared] addURL:self.url];
+  FVPResourceLoadingRequestWorker *requestWorker =
+      [[FVPResourceLoadingRequestWorker alloc] initWithContentDownloader:self.contentDownloader
+                                                  resourceLoadingRequest:request];
   [self.pendingRequestWorkers addObject:requestWorker];
   requestWorker.delegate = self;
   [requestWorker startWork];
 }
 
 - (NSError *)loaderCancelledError {
-  NSError *error =
-      [[NSError alloc] initWithDomain:MCResourceLoaderErrorDomainE
-                                 code:-3
-                             userInfo:@{NSLocalizedDescriptionKey : @"Resource loader cancelled"}];
+  NSError *error = [[NSError alloc]
+      initWithDomain:mFVPResourceLoaderErrorDomainE
+                code:-3
+            userInfo:@{NSLocalizedDescriptionKey : @"FVP Resource loader cancelled"}];
   return error;
 }
 

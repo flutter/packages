@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "ContentCacheWorker.h"
-#import "CacheAction.h"
-#import "CacheManager.h"
+#import "FVPContentCacheWorker.h"
+#import "FVPCacheAction.h"
+#import "FVPCacheManager.h"
 
 @import UIKit;
 
@@ -12,13 +12,13 @@ static NSInteger const kPackageLength = 512 * 1024;  // 512 kb per package
 static NSString *kMCMediaCacheResponseKey = @"kContentCacheResponseKey";
 static NSString *MediaCacheErrorDomain = @"video_player_cache";
 
-@interface ContentCacheWorker ()
+@interface FVPContentCacheWorker ()
 
 @property(nonatomic, strong) NSFileHandle *readFileHandle;
 @property(nonatomic, strong) NSFileHandle *writeFileHandle;
 @property(nonatomic, strong, readwrite) NSError *setupError;
 @property(nonatomic, copy) NSString *filePath;
-@property(nonatomic, strong) CacheConfiguration *internalCacheConfiguration;
+@property(nonatomic, strong) FVPCacheConfiguration *internalCacheConfiguration;
 
 @property(nonatomic) long long currentOffset;
 
@@ -28,7 +28,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
 
 @end
 
-@implementation ContentCacheWorker
+@implementation FVPContentCacheWorker
 
 - (void)dealloc {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -40,7 +40,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
 - (instancetype)initWithURL:(NSURL *)url {
   self = [super init];
   if (self) {
-    NSString *path = [CacheManager cachedFilePathForURL:url];
+    NSString *path = [FVPCacheManager cachedFilePathForURL:url];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     _filePath = path;
     NSError *error;
@@ -60,8 +60,8 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
       _readFileHandle = [NSFileHandle fileHandleForReadingFromURL:fileURL error:&error];
       if (!error) {
         _writeFileHandle = [NSFileHandle fileHandleForWritingToURL:fileURL error:&error];
-        _internalCacheConfiguration = [CacheConfiguration configurationWithFilePath:path
-                                                                              error:&error];
+        _internalCacheConfiguration = [FVPCacheConfiguration configurationWithFilePath:path
+                                                                                 error:&error];
         _internalCacheConfiguration.url = url;
       }
     }
@@ -72,7 +72,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
 }
 
 // This class returns the configuration.
-- (CacheConfiguration *)cacheConfiguration {
+- (FVPCacheConfiguration *)cacheConfiguration {
   return self.internalCacheConfiguration;
 }
 
@@ -114,7 +114,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   return nil;
 }
 
-- (NSArray<CacheAction *> *)cachedDataActionsForRange:(NSRange)range {
+- (NSArray<FVPCacheAction *> *)cachedDataActionsForRange:(NSRange)range {
   NSArray *cachedFragments = [self.internalCacheConfiguration cacheFragments];
   NSMutableArray *actions = [NSMutableArray array];
 
@@ -130,8 +130,8 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
         if (intersectionRange.length > 0) {
           NSInteger package = intersectionRange.length / kPackageLength;
           for (NSInteger i = 0; i <= package; i++) {
-            CacheAction *action = [CacheAction new];
-            action.cacheType = CacheTypeLocal;
+            FVPCacheAction *action = [FVPCacheAction new];
+            action.cacheType = FVPCacheTypeLocal;
 
             NSInteger offset = i * kPackageLength;
             NSInteger offsetLocation = intersectionRange.location + offset;
@@ -148,30 +148,30 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
         }
       }];
   if (actions.count == 0) {
-    CacheAction *action = [CacheAction new];
-    action.cacheType = CacheTypeRemote;
+    FVPCacheAction *action = [FVPCacheAction new];
+    action.cacheType = FVPCacheTypeRemote;
     action.range = range;
     [actions addObject:action];
   } else {
     // Add remote fragments
     NSMutableArray *localRemoteActions = [NSMutableArray array];
-    [actions enumerateObjectsUsingBlock:^(CacheAction *_Nonnull obj, NSUInteger idx,
+    [actions enumerateObjectsUsingBlock:^(FVPCacheAction *_Nonnull obj, NSUInteger idx,
                                           BOOL *_Nonnull stop) {
       NSRange actionRange = obj.range;
       if (idx == 0) {
         if (range.location < actionRange.location) {
-          CacheAction *action = [CacheAction new];
-          action.cacheType = CacheTypeRemote;
+          FVPCacheAction *action = [FVPCacheAction new];
+          action.cacheType = FVPCacheTypeRemote;
           action.range = NSMakeRange(range.location, actionRange.location - range.location);
           [localRemoteActions addObject:action];
         }
         [localRemoteActions addObject:obj];
       } else {
-        CacheAction *lastAction = [localRemoteActions lastObject];
+        FVPCacheAction *lastAction = [localRemoteActions lastObject];
         NSInteger lastOffset = lastAction.range.location + lastAction.range.length;
         if (actionRange.location > lastOffset) {
-          CacheAction *action = [CacheAction new];
-          action.cacheType = CacheTypeRemote;
+          FVPCacheAction *action = [FVPCacheAction new];
+          action.cacheType = FVPCacheTypeRemote;
           action.range = NSMakeRange(lastOffset, actionRange.location - lastOffset);
           [localRemoteActions addObject:action];
         }
@@ -181,8 +181,8 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
       if (idx == actions.count - 1) {
         NSInteger localEndOffset = actionRange.location + actionRange.length;
         if (endOffset > localEndOffset) {
-          CacheAction *action = [CacheAction new];
-          action.cacheType = CacheTypeRemote;
+          FVPCacheAction *action = [FVPCacheAction new];
+          action.cacheType = FVPCacheTypeRemote;
           action.range = NSMakeRange(localEndOffset, endOffset - localEndOffset);
           [localRemoteActions addObject:action];
         }
@@ -195,7 +195,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   return [actions copy];
 }
 
-- (void)setContentInfo:(ContentInfo *)contentInfo error:(NSError **)error {
+- (void)setContentInfo:(FVPContentInfo *)contentInfo error:(NSError **)error {
   self.internalCacheConfiguration.contentInfo = contentInfo;
   @try {
     [self.writeFileHandle truncateFileAtOffset:contentInfo.contentLength];

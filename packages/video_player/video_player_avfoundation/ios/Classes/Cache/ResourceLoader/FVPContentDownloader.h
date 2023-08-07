@@ -4,11 +4,11 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol ContentDownloaderDelegate;
-@class ContentInfo;
-@class ContentCacheWorker;
+@protocol FVPContentDownloaderDelegate;
+@class FVPContentInfo;
+@class FVPContentCacheWorker;
 
-@interface ContentDownloaderStatus : NSObject
+@interface FVPContentDownloaderStatus : NSObject
 
 + (instancetype)shared;
 
@@ -34,9 +34,9 @@
 
 @end
 
-@interface ContentDownloader : NSObject
+@interface FVPContentDownloader : NSObject
 
-- (instancetype)initWithURL:(NSURL *)url cacheWorker:(ContentCacheWorker *)cacheWorker;
+- (instancetype)initWithURL:(NSURL *)url cacheWorker:(FVPContentCacheWorker *)cacheWorker;
 
 /**
  @property url
@@ -48,13 +48,13 @@
  @property delegate
  ContentDownloaderDelegate
  */
-@property(nonatomic, weak) id<ContentDownloaderDelegate> delegate;
+@property(nonatomic, weak) id<FVPContentDownloaderDelegate> delegate;
 
 /**
  @property info
  hold information about the content
  */
-@property(nonatomic, strong) ContentInfo *info;
+@property(nonatomic, strong) FVPContentInfo *info;
 
 /**
  @property saveToCache
@@ -80,24 +80,24 @@
 
 @end
 
-@protocol ContentDownloaderDelegate <NSObject>
+@protocol FVPContentDownloaderDelegate <NSObject>
 
 @optional
 
 /**
  callback when received response
  */
-- (void)contentDownloader:(ContentDownloader *)downloader
+- (void)contentDownloader:(FVPContentDownloader *)downloader
        didReceiveResponse:(NSURLResponse *)response;
 
 /**
  callback when received data
  */
-- (void)contentDownloader:(ContentDownloader *)downloader didReceiveData:(NSData *)data;
+- (void)contentDownloader:(FVPContentDownloader *)downloader didReceiveData:(NSData *)data;
 
 /**
  callback when error received
  */
-- (void)contentDownloader:(ContentDownloader *)downloader didFinishedWithError:(NSError *)error;
+- (void)contentDownloader:(FVPContentDownloader *)downloader didFinishedWithError:(NSError *)error;
 
 @end
