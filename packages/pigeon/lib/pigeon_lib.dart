@@ -473,7 +473,6 @@ class DartGeneratorAdapter implements GeneratorAdapter {
     final DartOptions dartOptionsWithHeader = _dartOptionsWithCopyrightHeader(
       options.dartOptions,
       options.copyrightHeader,
-      dartOutPath: options.dartOut,
       basePath: options.basePath ?? '',
     );
     const DartGenerator generator = DartGenerator();
