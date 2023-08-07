@@ -17,6 +17,10 @@ void main() {
     // Generally all devices should have some default browser.
     expect(await launcher.canLaunch('http://flutter.dev'), true);
 
+    // Launch a url then close.
+    expect(await launcher.launch('http://flutter.dev'), true);
+    await launcher.closeWebView();
+
     // sms:, tel:, and mailto: links may not be openable on every device, so
     // aren't tested here.
   });
