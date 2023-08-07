@@ -1,6 +1,6 @@
 ## 10.1.6
 
-* How about Fixes generation failures when an output file is in a directory that doesn't already exist.
+* Fixes generation failures when an output file is in a directory that doesn't already exist.
 
 ## 10.1.5
 
