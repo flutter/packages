@@ -35,10 +35,10 @@ void main() {
             headers: <String, String>{'my_header_key': 'my_header_value'}),
         true);
     // Allow time for page to load.
-    await Future.delayed(Duration(seconds: 3));
+    await Future<void>.delayed(const Duration(seconds: 3));
     await launcher.closeWebView();
     // Delay required to catch android side crashes in onDestroy
-    await Future.delayed(Duration(seconds: 3));
+    await Future<void>.delayed(const Duration(seconds: 3));
 
     // sms:, tel:, and mailto: links may not be openable on every device, so
     // aren't tested here.
