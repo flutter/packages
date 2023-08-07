@@ -86,7 +86,7 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
   self.lastCallState = nil;
   context.localizedFallbackTitle = strings.localizedFallbackTitle;
   if (@available(iOS 10.0, *)) {
-    context.localizedCancelTitle = strings.localizedCancelTitle;
+    context.localizedCancelTitle = strings.cancelButton;
   }
 
   LAPolicy policy = options.biometricOnly.boolValue
