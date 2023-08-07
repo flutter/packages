@@ -98,24 +98,18 @@ void main() {
         );
       });
 
-      testWidgets('requests video and audio permissions',
-          (WidgetTester tester) async {
+      testWidgets('requests video permissions', (WidgetTester tester) async {
         final List<CameraDescription> _ =
             await CameraPlatform.instance.availableCameras();
 
         verify(
-          () => cameraService.getMediaStreamForOptions(
-            const CameraOptions(
-              audio: AudioConstraints(enabled: true),
-            ),
-          ),
+          () => cameraService.getMediaStreamForOptions(const CameraOptions()),
         ).called(1);
       });
 
       testWidgets(
           'releases the camera stream '
-          'used to request video and audio permissions',
-          (WidgetTester tester) async {
+          'used to request video permissions', (WidgetTester tester) async {
         final MockMediaStreamTrack videoTrack = MockMediaStreamTrack();
 
         bool videoTrackStopped = false;
@@ -124,11 +118,7 @@ void main() {
         });
 
         when(
-          () => cameraService.getMediaStreamForOptions(
-            const CameraOptions(
-              audio: AudioConstraints(enabled: true),
-            ),
-          ),
+          () => cameraService.getMediaStreamForOptions(const CameraOptions()),
         ).thenAnswer(
           (_) => Future<MediaStream>.value(
             FakeMediaStream(<MediaStreamTrack>[videoTrack]),

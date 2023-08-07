@@ -599,6 +599,7 @@ if (replyList == null) {
     Root root,
     StringSink sink, {
     required String dartPackageName,
+    required String dartOutputPackageName,
   }) {
     final Indent indent = Indent(sink);
     final String sourceOutPath = generatorOptions.sourceOutPath ?? '';
@@ -620,7 +621,7 @@ if (replyList == null) {
     } else {
       final String path =
           relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
-      indent.writeln("import 'package:$dartPackageName/$path';");
+      indent.writeln("import 'package:$dartOutputPackageName/$path';");
     }
     for (final Api api in root.apis) {
       if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
