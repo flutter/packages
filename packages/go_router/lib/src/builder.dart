@@ -66,9 +66,9 @@ class RouteBuilder {
 
   /// Whether or not the navigator created by this builder and it's new topmost route should request focus
   /// when the new route is pushed onto the navigator.
-  /// 
+  ///
   /// Defaults to true.
-  /// 
+  ///
   /// {@macro flutter.widgets.navigator.requestFocus}
   final bool requestFocus;
 
