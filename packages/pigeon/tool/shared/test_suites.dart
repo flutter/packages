@@ -366,7 +366,7 @@ Future<int> _runCommandLineTests() async {
       '--ast_out',
       tempOutput
     ],
-    // Test writing a file in a directory that doesn't exist
+    // Test writing a file in a directory that doesn't exist.
     <String>[
       '--input',
       'pigeons/message.dart',
