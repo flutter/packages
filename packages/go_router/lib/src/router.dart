@@ -49,7 +49,7 @@ typedef GoExceptionHandler = void Function(
 /// See [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 /// for more details.
 /// 
-/// To disable automatically requesting focus when new routes are pushed to the navigator, set "requestFocus" to false.
+/// To disable automatically requesting focus when new routes are pushed to the navigator, set `requestFocus` to false.
 ///
 /// See also:
 /// * [Configuration](https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html)
