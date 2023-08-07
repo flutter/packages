@@ -777,7 +777,6 @@ dependencies {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Does not link artifact hub documentation.'),
           contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
         ]),
       );

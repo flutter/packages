@@ -67,7 +67,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
         succeeded = false;
       }
       final File topLevelSettingsGradleFile =
-          _getSettignsGradleFile(androidDir);
+          _getSettingsGradleFile(androidDir);
       if (!_validateExampleTopLevelSettingsGradle(
           package, topLevelSettingsGradleFile)) {
         succeeded = false;
@@ -89,7 +89,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
   File _getBuildGradleFile(Directory dir) => dir.childFile('build.gradle');
 
   // Returns the settings gradle file in the given directory.
-  File _getSettignsGradleFile(Directory dir) =>
+  File _getSettingsGradleFile(Directory dir) =>
       dir.childFile('settings.gradle');
 
   // Returns the main/AndroidManifest.xml file for the given package.
@@ -153,15 +153,16 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// Required in root gradle file.
   bool _validateArtifactHubUsage(
       RepositoryPackage example, List<String> gradleLines) {
+    // Gradle variable name used to hold environment variable string.
     const String keyVariable = 'artifactRepoKey';
     final RegExp keyPresentRegex =
-        RegExp("$keyVariable\\s+=\\s+'ARTIFACT_HUB_REPOSITORY'");
+        RegExp('$keyVariable' r"\s+=\s+'ARTIFACT_HUB_REPOSITORY'");
     final RegExp documentationPresentRegex = RegExp(
-        r'github.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
+        r'github\.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
     final RegExp keyReadRegex =
-        RegExp('if.*System.getenv.*containsKey.*$keyVariable');
+        RegExp(r'if.*System\.getenv.*\.containsKey.*' '$keyVariable');
     final RegExp keyUsedRegex =
-        RegExp('maven.*url.*System.getenv.*$keyVariable.*');
+        RegExp(r'maven.*url.*System\.getenv\(' '$keyVariable');
 
     final bool keyPresent =
         gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
@@ -222,11 +223,11 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
   bool _validateArtifactHubSettingsUsage(
       RepositoryPackage example, List<String> gradleLines) {
     final RegExp documentationPresentRegex = RegExp(
-        r'github.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
+        r'github\.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
     final RegExp artifactRegistryDefinitionRegex = RegExp(
-        'classpath.*gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin');
+        r'classpath.*gradle\.plugin\.com\.google\.cloud\.artifactregistry:artifactregistry-gradle-plugin');
     final RegExp artifactRegistryPluginApplyRegex = RegExp(
-        'apply.*plugin.*com.google.cloud.artifactregistry.gradle-plugin');
+        r'apply.*plugin.*com\.google\.cloud\.artifactregistry\.gradle-plugin');
 
     final bool documentationPresent = gradleLines
         .any((String line) => documentationPresentRegex.hasMatch(line));
