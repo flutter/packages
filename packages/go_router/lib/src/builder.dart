@@ -64,7 +64,7 @@ class RouteBuilder {
   /// its history.
   final String? restorationScopeId;
 
-  /// Whether or not the navigator and it's new topmost route should request focus
+  /// Whether or not the navigator created by this builder and it's new topmost route should request focus
   /// when the new route is pushed onto the navigator.
   /// 
   /// Defaults to true.
