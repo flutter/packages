@@ -83,7 +83,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
-    bool? requestFocus,
+    bool requestFocus = true,
   })  : backButtonDispatcher = RootBackButtonDispatcher(),
         assert(
           initialExtra == null || initialLocation != null,

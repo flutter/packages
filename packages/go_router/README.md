@@ -19,8 +19,7 @@ GoRouter has a number of features to make navigation straightforward:
   visible at the bottom of the
   screen
 - Support for both Material and Cupertino apps
-- Backwards-compatibility with Navigator API. Support Navigator API such as navigatorKey,
-  observers, restorationScopeId, requestFocus.
+- Backwards-compatibility with Navigator API
 
 ## Documentation
 See the API documentation for details on the following topics:
