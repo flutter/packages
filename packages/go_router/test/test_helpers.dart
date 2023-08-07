@@ -149,7 +149,7 @@ Future<GoRouter> createRouter(
   GoRouterWidgetBuilder? errorBuilder,
   String? restorationScopeId,
   GoExceptionHandler? onException,
-  bool? requestFocus,
+  bool requestFocus = true,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
