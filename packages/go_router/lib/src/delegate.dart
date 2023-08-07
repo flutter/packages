@@ -26,7 +26,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
-    bool? requestFocus,
+    bool requestFocus = true,
   }) : _configuration = configuration {
     builder = RouteBuilder(
       configuration: configuration,
