@@ -16,7 +16,19 @@
 }
 
 - (BOOL)isEqual:(FVPCacheAction *)object {
-  return NSEqualRanges(object.range, self.range) && object.cacheType == self.cacheType;
+    if (!NSEqualRanges(object.range, self.range)) {
+        return NO;
+    }
+    
+    if (object.cacheType != self.cacheType) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (NSUInteger)hash {
+    return [[NSString stringWithFormat:@"%@%@", NSStringFromRange(self.range), @(self.cacheType)] hash];
 }
 
 @end
