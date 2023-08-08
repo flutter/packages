@@ -37,13 +37,12 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   [_writeFileHandle closeFile];
 }
 
-- (instancetype)initWithURL:(NSURL *)url {
+- (instancetype)initWithURL:(NSURL *)url error:(NSError *)error {
   self = [super init];
   if (self) {
     NSString *path = [FVPCacheManager cachedFilePathForURL:url];
     NSFileManager *fileManager = [NSFileManager defaultManager];
     _filePath = path;
-    NSError *error;
     NSString *cacheFolder = [path stringByDeletingLastPathComponent];
     if (![fileManager fileExistsAtPath:cacheFolder]) {
       [fileManager createDirectoryAtPath:cacheFolder
@@ -65,8 +64,8 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
         _internalCacheConfiguration.url = url;
       }
     }
-
-    _setupError = error;
+//
+//    _setupError = error;
   }
   return self;
 }

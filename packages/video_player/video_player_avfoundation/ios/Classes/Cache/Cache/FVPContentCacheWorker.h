@@ -14,18 +14,18 @@
  */
 @interface FVPContentCacheWorker : NSObject
 
-- (instancetype)initWithURL:(NSURL *)url;
+- (instancetype)initWithURL:(NSURL *)url error:(NSError *)error;
 
 /**
  * @property cacheConfiguration
  */
 @property(nonatomic, strong, readonly) FVPCacheConfiguration *cacheConfiguration;
-
-/*!
- @property setupError
- error callback, returns error when setup fails
- */
-@property(nonatomic, strong, readonly) NSError *setupError;
+//
+///*!
+// @property setupError
+// error callback, returns error when setup fails
+// */
+//@property(nonatomic, strong, readonly) NSError *setupError;
 /**
  * @property setupError
  * error callback, returns error when setup fails

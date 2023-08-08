@@ -28,11 +28,11 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
   [_contentDownloader cancel];
 }
 
-- (instancetype)initWithURL:(NSURL *)url {
+- (instancetype)initWithURL:(NSURL *)url error:(NSError *)error {
   self = [super init];
   if (self) {
     _url = url;
-    _cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:url];
+      _cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:url error:error];
     _contentDownloader = [[FVPContentDownloader alloc] initWithURL:url cacheWorker:_cacheWorker];
     _pendingRequestWorkers = [NSMutableArray array];
   }

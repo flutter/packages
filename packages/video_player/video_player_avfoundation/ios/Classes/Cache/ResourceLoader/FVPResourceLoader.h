@@ -18,7 +18,7 @@
 @property(nonatomic, strong, readonly) NSURL *url;
 @property(nonatomic, weak) id<FVPResourceLoaderDelegate> delegate;
 
-- (instancetype)initWithURL:(NSURL *)url;
+- (instancetype)initWithURL:(NSURL *)url error:(NSError *)error;
 
 - (void)addRequest:(AVAssetResourceLoadingRequest *)request;
 - (void)removeRequest:(AVAssetResourceLoadingRequest *)request;
