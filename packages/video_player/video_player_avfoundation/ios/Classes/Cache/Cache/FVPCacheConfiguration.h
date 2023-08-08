@@ -85,9 +85,6 @@
  */
 - (void)addDownloadedBytes:(long long)bytes spent:(NSTimeInterval)time;
 
-@end
-
-@interface FVPCacheConfiguration (Convenient)
 /**
  * Creates and saves a CacheConfiguration object with download
  * statistics for a given URL. It creates a new CacheConfiguration object, sets the content

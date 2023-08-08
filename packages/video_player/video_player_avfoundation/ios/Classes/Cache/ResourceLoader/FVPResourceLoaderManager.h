@@ -28,19 +28,6 @@
  */
 - (void)cancelLoaders;
 
-@end
-
-@protocol FVPResourceLoaderManagerDelegate <NSObject>
-
-/**
- * playerItemWithURL
- */
-- (void)resourceLoaderManagerLoadURL:(NSURL *)url didFailWithError:(NSError *)error;
-
-@end
-
-@interface FVPResourceLoaderManager (Convenient)
-
 /**
  * resourceLoaderManagerLoadURL
  */
@@ -49,5 +36,14 @@
  playerItemWithURL
  */
 - (AVPlayerItem *)playerItemWithURL:(NSURL *)url;
+
+@end
+
+@protocol FVPResourceLoaderManagerDelegate <NSObject>
+
+/**
+ * playerItemWithURL
+ */
+- (void)resourceLoaderManagerLoadURL:(NSURL *)url didFailWithError:(NSError *)error;
 
 @end

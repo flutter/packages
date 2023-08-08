@@ -205,10 +205,6 @@ static NSString *kURLKey = @"kURLKey";
   }
 }
 
-@end
-
-@implementation FVPCacheConfiguration (Convenient)
-
 + (BOOL)createAndSaveDownloadedConfigurationForURL:(NSURL *)url error:(NSError **)error {
   NSString *filePath = [FVPCacheManager cachedFilePathForURL:url];
   NSFileManager *fileManager = [NSFileManager defaultManager];

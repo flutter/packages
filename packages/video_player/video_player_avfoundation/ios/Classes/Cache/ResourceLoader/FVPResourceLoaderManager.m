@@ -93,10 +93,6 @@ static NSString *kCacheScheme = @"FVPVideoPlayerCache:";
   return loader;
 }
 
-@end
-
-@implementation FVPResourceLoaderManager (Convenient)
-
 + (NSURL *)assetURLWithURL:(NSURL *)url {
   if (!url) {
     return nil;
