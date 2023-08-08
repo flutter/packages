@@ -25,6 +25,11 @@ void main() {
     _verifySampleFile(result, 'applicationSupport');
   });
 
+  testWidgets('getApplicationCacheDirectory', (WidgetTester tester) async {
+    final Directory result = await getApplicationCacheDirectory();
+    _verifySampleFile(result, 'applicationCache');
+  });
+
   testWidgets('getLibraryDirectory', (WidgetTester tester) async {
     if (Platform.isIOS) {
       final Directory result = await getLibraryDirectory();
