@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/pending_recording.dart';
 import 'package:camera_android_camerax/src/quality_selector.dart';
@@ -15,8 +16,10 @@ import 'test_camerax_library.g.dart';
 
 @GenerateMocks(<Type>[
   QualitySelector,
-  TestRecorderHostApi,
   TestInstanceManagerHostApi,
+  TestFallbackStrategyHostApi,
+  TestRecorderHostApi,
+  TestQualitySelectorHostApi,
   PendingRecording
 ])
 void main() {
@@ -68,6 +71,35 @@ void main() {
 
       verify(mockApi.create(argThat(isA<int>()), aspectRatio, bitRate,
           qualitySelectorIdentifier));
+    });
+
+    test('getDefaultQualitySelector returns expected QualitySelector',
+        () async {
+      final MockTestQualitySelectorHostApi mockQualitySelectorApi =
+          MockTestQualitySelectorHostApi();
+      final MockTestFallbackStrategyHostApi mockFallbackStrategyApi =
+          MockTestFallbackStrategyHostApi();
+      TestQualitySelectorHostApi.setup(mockQualitySelectorApi);
+      TestFallbackStrategyHostApi.setup(mockFallbackStrategyApi);
+
+      final QualitySelector defaultQualitySelector =
+          Recorder.getDefaultQualitySelector();
+
+      expect(
+          defaultQualitySelector.qualityList,
+          equals(const <VideoQualityConstraint>[
+            VideoQualityConstraint.FHD,
+            VideoQualityConstraint.HD,
+            VideoQualityConstraint.SD
+          ]));
+      expect(defaultQualitySelector.fallbackStrategy!.quality,
+          equals(VideoQualityConstraint.FHD));
+      expect(defaultQualitySelector.fallbackStrategy!.fallbackRule,
+          equals(VideoResolutionFallbackRule.higherQualityOrLowerThan));
+
+      // Cleanup test Host APIs used only for this test.
+      TestQualitySelectorHostApi.setup(null);
+      TestFallbackStrategyHostApi.setup(null);
     });
 
     test('prepareRecording calls prepareRecording on Java side', () async {

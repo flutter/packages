@@ -33,7 +33,7 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
   @VisibleForTesting
   public static class QualitySelectorProxy {
     /** Creates an instance of {@link QualitySelector}. */
-    public QualitySelector create(
+    public @NonNull QualitySelector create(
         @NonNull List<Long> videoQualityConstraintIndexList,
         @Nullable FallbackStrategy fallbackStrategy) {
       // Convert each index of VideoQualityConstraint to Quality.
@@ -109,7 +109,7 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
    * {@link CameraInfo} represented by the identifier specified.
    */
   @Override
-  public ResolutionInfo getResolution(
+  public @NonNull ResolutionInfo getResolution(
       @NonNull Long cameraInfoIdentifier, @NonNull VideoQualityConstraint quality) {
     final Size result =
         QualitySelector.getResolution(
@@ -125,8 +125,8 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
    * Converts the specified {@link VideoQualityConstraint} to a {@link Quality} that is understood
    * by CameraX.
    */
-  public static Quality getQualityFromVideoQualityConstraint(
-      VideoQualityConstraint videoQualityConstraint) {
+  public static @NonNull Quality getQualityFromVideoQualityConstraint(
+      @NonNull VideoQualityConstraint videoQualityConstraint) {
     switch (videoQualityConstraint) {
       case SD:
         return Quality.SD;

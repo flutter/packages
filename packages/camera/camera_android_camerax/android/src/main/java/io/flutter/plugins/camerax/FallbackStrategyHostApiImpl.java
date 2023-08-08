@@ -27,7 +27,7 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
   @VisibleForTesting
   public static class FallbackStrategyProxy {
     /** Creates an instance of {@link FallbackStrategy}. */
-    public FallbackStrategy create(
+    public @NonNull FallbackStrategy create(
         @NonNull VideoQualityConstraint videoQualityConstraint,
         @NonNull VideoResolutionFallbackRule fallbackRule) {
       Quality videoQuality =
