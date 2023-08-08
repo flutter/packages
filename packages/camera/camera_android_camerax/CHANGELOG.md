@@ -1,3 +1,7 @@
+## 0.5.0+13
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.5.0+12
 
 * Wraps classes needed to implement resolution configuration for image capture, image analysis, and preview.
