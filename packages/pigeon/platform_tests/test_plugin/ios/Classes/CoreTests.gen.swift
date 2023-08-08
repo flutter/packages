@@ -360,6 +360,7 @@ protocol HostIntegrationCoreApi {
   func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]?
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(_ aNullableMap: [String?: Any?]?) throws -> [String?: Any?]?
+  func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void)
@@ -658,8 +659,8 @@ class HostIntegrationCoreApiSetup {
         let args = message as! [Any?]
         let anEnumArg = AnEnum(rawValue: args[0] as! Int)!
         do {
-          let result = try api.echo(anEnumArg).rawValue
-          reply(wrapResult(result))
+          let result = try api.echo(anEnumArg)
+          reply(wrapResult(result.rawValue))
         } catch {
           reply(wrapError(error))
         }
@@ -863,6 +864,21 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoNullableMapChannel.setMessageHandler(nil)
     }
+    let echoNullableEnumChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNullableEnumChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anEnumArg: AnEnum? = args[0] is NSNull ? nil : AnEnum(rawValue: args[0] as! Int)!
+        do {
+          let result = try api.echoNullable(anEnumArg)
+          reply(wrapResult(result?.rawValue))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNullableEnumChannel.setMessageHandler(nil)
+    }
     /// A no-op function taking no arguments and returning no value, to sanity
     /// test basic asynchronous calling.
     let noopAsyncChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync", binaryMessenger: binaryMessenger, codec: codec)
@@ -1033,7 +1049,7 @@ class HostIntegrationCoreApiSetup {
         api.echoAsync(anEnumArg) { result in
           switch result {
             case .success(let res):
-              reply(wrapResult(res))
+              reply(wrapResult(res.rawValue))
             case .failure(let error):
               reply(wrapError(error))
           }

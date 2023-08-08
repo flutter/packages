@@ -134,6 +134,11 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   override fun echoNullableMap(aNullableMap: Map<String?, Any?>?): Map<String?, Any?>? {
     return aNullableMap
   }
+
+  override fun echoNullableEnum(anEnum: AnEnum?): AnEnum? {
+    return anEnum
+  }
+
   override fun noopAsync(callback: (Result<Unit>) -> Unit) {
     callback(Result.success(Unit))
   }

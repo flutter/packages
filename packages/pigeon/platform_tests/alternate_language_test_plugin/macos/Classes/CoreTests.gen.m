@@ -951,6 +951,34 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoNullableEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(echoNullableEnum:error:)],
+          @"HostIntegrationCoreApi api (%@) doesn't respond to @selector(echoNullableEnum:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
+        AnEnumWrapper *arg_anEnum = arg_anEnumAsNumber == nil ? nil : [[AnEnumWrapper alloc] init];
+        if (arg_anEnum != nil) {
+          arg_anEnum.value = [arg_anEnumAsNumber integerValue];
+        }
+        FlutterError *error;
+        AnEnumWrapper *enumWrapper = [api echoNullableEnum:arg_anEnum error:&error];
+        NSNumber *output =
+            enumWrapper == nil ? nil : [NSNumber numberWithInteger:enumWrapper.value];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   {

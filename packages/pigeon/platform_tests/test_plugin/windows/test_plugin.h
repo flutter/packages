@@ -89,6 +89,8 @@ class TestPlugin : public flutter::Plugin,
   EchoNullableList(const flutter::EncodableList* a_nullable_list) override;
   core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableMap>>
   EchoNullableMap(const flutter::EncodableMap* a_nullable_map) override;
+  core_tests_pigeontest::ErrorOr<std::optional<core_tests_pigeontest::AnEnum>>
+  EchoNullableEnum(const core_tests_pigeontest::AnEnum* an_enum) override;
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;
@@ -153,6 +155,11 @@ class TestPlugin : public flutter::Plugin,
       const flutter::EncodableMap& a_map,
       std::function<
           void(core_tests_pigeontest::ErrorOr<flutter::EncodableMap> reply)>
+          result) override;
+  void EchoAsyncEnum(
+      const core_tests_pigeontest::AnEnum& an_enum,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnEnum> reply)>
           result) override;
   void EchoAsyncNullableInt(
       const int64_t* an_int,

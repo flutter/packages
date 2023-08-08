@@ -559,7 +559,7 @@ final BinaryMessenger? _binaryMessenger;
           if (customEnumNames.contains(returnType)) {
             if (func.returnType.isNullable) {
               returnStatement =
-                  '$returnStatement $nullablyTypedAccessor == null ? null : $returnType.values[$accessor as int]';
+                  '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
             } else {
               returnStatement =
                   '$returnStatement $returnType.values[$accessor! as int]';

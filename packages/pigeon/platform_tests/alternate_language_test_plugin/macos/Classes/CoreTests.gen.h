@@ -236,6 +236,8 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (nullable NSDictionary<NSString *, id> *)echoNullableMap:
                                                (nullable NSDictionary<NSString *, id> *)aNullableMap
                                                      error:(FlutterError *_Nullable *_Nonnull)error;
+- (AnEnumWrapper *_Nullable)echoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
+                                       error:(FlutterError *_Nullable *_Nonnull)error;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;

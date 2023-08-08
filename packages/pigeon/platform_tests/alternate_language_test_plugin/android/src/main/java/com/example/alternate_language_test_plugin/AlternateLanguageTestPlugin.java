@@ -177,6 +177,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @Nullable AnEnum echoNullableEnum(@Nullable AnEnum anEnum) {
+    return anEnum;
+  }
+
+  @Override
   public void noopAsync(@NonNull Result<Void> result) {
     result.success(null);
   }

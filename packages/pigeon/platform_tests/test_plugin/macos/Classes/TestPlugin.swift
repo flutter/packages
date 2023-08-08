@@ -133,6 +133,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aNullableMap
   }
 
+  func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum? {
+    return anEnum
+  }
+
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void) {
     completion(.success(Void()))
   }

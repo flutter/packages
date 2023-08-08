@@ -163,6 +163,11 @@
   return aNullableMap;
 }
 
+- (AnEnumWrapper *_Nullable)echoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
+                                       error:(FlutterError *_Nullable *_Nonnull)error {
+  return anEnumWrapped;
+}
+
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   completion(nil);
 }

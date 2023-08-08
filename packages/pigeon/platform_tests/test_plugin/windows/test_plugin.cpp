@@ -210,6 +210,14 @@ ErrorOr<std::optional<EncodableMap>> TestPlugin::EchoNullableMap(
   return *a_nullable_map;
 };
 
+ErrorOr<std::optional<AnEnum>> TestPlugin::EchoNullableEnum(
+    const AnEnum* an_enum) {
+  if (!an_enum) {
+    return std::nullopt;
+  }
+  return *an_enum;
+}
+
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);

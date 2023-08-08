@@ -453,6 +453,8 @@ class HostIntegrationCoreApi {
   // Returns the passed map, to test serialization and deserialization.
   virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableMap(
       const flutter::EncodableMap* a_nullable_map) = 0;
+  virtual ErrorOr<std::optional<AnEnum>> EchoNullableEnum(
+      const AnEnum* an_enum) = 0;
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic asynchronous calling.
   virtual void NoopAsync(

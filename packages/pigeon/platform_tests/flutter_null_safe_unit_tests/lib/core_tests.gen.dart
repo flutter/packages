@@ -1026,6 +1026,31 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AnEnum?> echoNullableEnum(AnEnum? arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.flutter_unit_tests.HostIntegrationCoreApi.echoNullableEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   Future<void> noopAsync() async {

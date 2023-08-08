@@ -363,6 +363,7 @@ interface HostIntegrationCoreApi {
   fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
   /** Returns the passed map, to test serialization and deserialization. */
   fun echoNullableMap(aNullableMap: Map<String?, Any?>?): Map<String?, Any?>?
+  fun echoNullableEnum(anEnum: AnEnum?): AnEnum?
   /**
    * A no-op function taking no arguments and returning no value, to sanity
    * test basic asynchronous calling.
@@ -923,6 +924,24 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anEnumArg = if (args[0] == null) null else AnEnum.ofRaw(args[0] as Int)
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNullableEnum(anEnumArg)?.raw)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1111,7 +1130,7 @@ interface HostIntegrationCoreApi {
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(wrapResult(data!!.raw))
               }
             }
           }

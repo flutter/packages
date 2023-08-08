@@ -503,9 +503,11 @@ import FlutterMacOS
                 indent.addScoped('{ result in', '}', () {
                   indent.write('switch result ');
                   indent.addScoped('{', '}', () {
+                    final String enumTag =
+                        isEnum(root, method.returnType) ? '.rawValue' : '';
                     indent.writeln('case .success$successVariableInit:');
                     indent.nest(1, () {
-                      indent.writeln('reply(wrapResult($resultName))');
+                      indent.writeln('reply(wrapResult($resultName$enumTag))');
                     });
                     indent.writeln('case .failure(let error):');
                     indent.nest(1, () {
@@ -524,8 +526,12 @@ import FlutterMacOS
                     if (isEnum(root, method.returnType)) {
                       enumTag = '.rawValue';
                     }
-                    indent.writeln('let result = $call$enumTag');
-                    indent.writeln('reply(wrapResult(result))');
+                    enumTag = method.returnType.isNullable &&
+                            isEnum(root, method.returnType)
+                        ? '?$enumTag'
+                        : enumTag;
+                    indent.writeln('let result = $call');
+                    indent.writeln('reply(wrapResult(result$enumTag))');
                   }
                 }, addTrailingNewline: false);
                 indent.addScoped(' catch {', '}', () {
@@ -644,9 +650,12 @@ import FlutterMacOS
   }) {
     String castForceUnwrap(String value, TypeDeclaration type, Root root) {
       if (isEnum(root, type)) {
-        assert(!type.isNullable,
-            'nullable enums require special code that this helper does not supply');
-        return '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
+        String output =
+            '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
+        if (type.isNullable) {
+          output = '$value is NSNull ? nil : $output';
+        }
+        return output;
       } else if (type.baseName == 'Object') {
         return value + (type.isNullable ? '' : '!');
       } else if (type.baseName == 'int') {

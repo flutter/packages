@@ -236,9 +236,9 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoNullable(_:)')
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
 
-  // @ObjCSelector('echoNullableEnum:')
-  // @SwiftFunction('echoNullable(_:)')
-  // AnEnum? echoNullableEnum(AnEnum? anEnum);
+  @ObjCSelector('echoNullableEnum:')
+  @SwiftFunction('echoNullable(_:)')
+  AnEnum? echoNullableEnum(AnEnum? anEnum);
 
   // ========== Asynchronous method tests ==========
 

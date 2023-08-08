@@ -1719,6 +1719,47 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoNullableEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              std::optional<AnEnum> an_enum_arg;
+              if (!encodable_an_enum_arg.IsNull()) {
+                an_enum_arg = std::make_optional<AnEnum>(
+                    static_cast<AnEnum>(std::get<int>(encodable_an_enum_arg)));
+              }
+              ErrorOr<std::optional<AnEnum>> output = api->EchoNullableEnum(
+                  an_enum_arg ? &(*an_enum_arg) : nullptr);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              auto output_optional = std::move(output).TakeValue();
+              if (output_optional) {
+                wrapped.push_back(
+                    EncodableValue((int)std::move(output_optional).value()));
+              } else {
+                wrapped.push_back(EncodableValue());
+              }
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "noopAsync",
         &GetCodec());
     if (api != nullptr) {

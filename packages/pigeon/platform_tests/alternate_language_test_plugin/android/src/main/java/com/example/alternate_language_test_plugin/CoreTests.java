@@ -1060,6 +1060,9 @@ public class CoreTests {
     /** Returns the passed map, to test serialization and deserialization. */
     @Nullable
     Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap);
+
+    @Nullable
+    AnEnum echoNullableEnum(@Nullable AnEnum anEnum);
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
@@ -1847,6 +1850,31 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                try {
+                  AnEnum output = api.echoNullableEnum(anEnumArg);
+                  wrapped.add(0, output == null ? null : output.index);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync",
                 getCodec());
         if (api != null) {
@@ -2135,7 +2163,7 @@ public class CoreTests {
                 Result<AnEnum> resultCallback =
                     new Result<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result);
+                        wrapped.add(0, result.index);
                         reply.reply(wrapped);
                       }
 

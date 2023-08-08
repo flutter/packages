@@ -673,6 +673,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.nest(2, () {
           indent.write('(message, reply) -> ');
           indent.addScoped('{', '});', () {
+            String enumTag = '';
             final String returnType = method.returnType.isVoid
                 ? 'Void'
                 : _javaTypeForDartType(method.returnType);
@@ -706,12 +707,17 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             if (method.isAsynchronous) {
               final String resultValue =
                   method.returnType.isVoid ? 'null' : 'result';
+              if (isEnum(root, method.returnType)) {
+                enumTag = method.returnType.isNullable
+                    ? ' == null ? null : $resultValue.index'
+                    : '.index';
+              }
               const String resultName = 'resultCallback';
               indent.format('''
 Result<$returnType> $resultName =
 \t\tnew Result<$returnType>() {
 \t\t\tpublic void success($returnType result) {
-\t\t\t\twrapped.add(0, $resultValue);
+\t\t\t\twrapped.add(0, $resultValue$enumTag);
 \t\t\t\treply.reply(wrapped);
 \t\t\t}
 
@@ -734,9 +740,10 @@ Result<$returnType> $resultName =
                   indent.writeln('$call;');
                   indent.writeln('wrapped.add(0, null);');
                 } else {
-                  String enumTag = '';
                   if (isEnum(root, method.returnType)) {
-                    enumTag = '.index';
+                    enumTag = method.returnType.isNullable
+                        ? ' == null ? null : output.index'
+                        : '.index';
                   }
                   indent.writeln('$returnType output = $call;');
                   indent.writeln('wrapped.add(0, output$enumTag);');

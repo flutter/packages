@@ -979,7 +979,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                       argName: argName,
                       encodableArgName: encodableArgName,
                     );
-                    methodArgument.add(argName);
+                    final String unwrapEnum =
+                        isEnum(root, arg.type) && arg.type.isNullable
+                            ? ' ? &(*$argName) : nullptr'
+                            : '';
+                    methodArgument.add('$argName$unwrapEnum');
                   });
                 }
 
@@ -1207,6 +1211,10 @@ return EncodableValue(EncodableList{
     final String errorGetter;
 
     const String nullValue = 'EncodableValue()';
+    String enumPrefix = '';
+    if (isEnum(root, returnType)) {
+      enumPrefix = '(int) ';
+    }
     if (returnType.isVoid) {
       nonErrorPath = '${prefix}wrapped.push_back($nullValue);';
       errorCondition = 'output.has_value()';
@@ -1214,12 +1222,8 @@ return EncodableValue(EncodableList{
     } else {
       final HostDatatype hostType = getHostDatatype(returnType, root.classes,
           root.enums, _shortBaseCppTypeForBuiltinDartType);
-      String enumPrefix = '';
-      if (isEnum(root, returnType)) {
-        enumPrefix = '(int) ';
-      }
-      final String extractedValue =
-          '${enumPrefix}std::move(output).TakeValue()';
+
+      const String extractedValue = 'std::move(output).TakeValue()';
       final String wrapperType = hostType.isBuiltin || isEnum(root, returnType)
           ? 'EncodableValue'
           : 'CustomEncodableValue';
@@ -1229,13 +1233,13 @@ return EncodableValue(EncodableList{
         nonErrorPath = '''
 ${prefix}auto output_optional = $extractedValue;
 ${prefix}if (output_optional) {
-$prefix\twrapped.push_back($wrapperType(std::move(output_optional).value()));
+$prefix\twrapped.push_back($wrapperType(${enumPrefix}std::move(output_optional).value()));
 $prefix} else {
 $prefix\twrapped.push_back($nullValue);
 $prefix}''';
       } else {
         nonErrorPath =
-            '${prefix}wrapped.push_back($wrapperType($extractedValue));';
+            '${prefix}wrapped.push_back($wrapperType($enumPrefix$extractedValue));';
       }
       errorCondition = 'output.has_error()';
       errorGetter = 'error';
@@ -1337,8 +1341,16 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
         indent.writeln(
             'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
       } else if (hostType.isEnum) {
-        indent.writeln(
-            'const auto* $argName = &((${hostType.datatype})std::get<int>($encodableArgName));');
+        if (hostType.isNullable) {
+          indent.writeln('std::optional<${hostType.datatype}> $argName;');
+          indent.writeScoped('if (!$encodableArgName.IsNull()) {', '}', () {
+            indent.writeln(
+                '$argName = std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(std::get<int>($encodableArgName)));');
+          });
+        } else {
+          indent.writeln(
+              'const auto* $argName = &((${hostType.datatype})std::get<int>($encodableArgName));');
+        }
       } else {
         indent.writeln(
             'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName)));');

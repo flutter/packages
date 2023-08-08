@@ -575,11 +575,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         indent.writeln('reply.reply(wrapError(error))');
                       }, addTrailingNewline: false);
                       indent.addScoped(' else {', '}', () {
+                        final String enumTag =
+                            isEnum(root, method.returnType) ? '!!.raw' : '';
                         if (method.returnType.isVoid) {
                           indent.writeln('reply.reply(wrapResult(null))');
                         } else {
                           indent.writeln('val data = result.getOrNull()');
-                          indent.writeln('reply.reply(wrapResult(data))');
+                          indent
+                              .writeln('reply.reply(wrapResult(data$enumTag))');
                         }
                       });
                     });
@@ -593,7 +596,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                       } else {
                         String enumTag = '';
                         if (isEnum(root, method.returnType)) {
-                          enumTag = '.raw';
+                          final String safeUnwrap =
+                              method.returnType.isNullable ? '?' : '';
+                          enumTag = '$safeUnwrap.raw';
                         }
                         indent.writeln('wrapped = listOf<Any?>($call$enumTag)');
                       }
@@ -748,7 +753,7 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
   if (isEnum(root, type)) {
     final String forceUnwrap = type.isNullable ? '' : '!!';
     final String nullableConditionPrefix =
-        type.isNullable ? '$value == null ? null : ' : '';
+        type.isNullable ? 'if ($value == null) null else ' : '';
     return '$nullableConditionPrefix${_kotlinTypeForDartType(type)}.ofRaw($value as Int)$forceUnwrap';
   } else {
     // The StandardMessageCodec can give us [Integer, Long] for
