@@ -4,14 +4,8 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum { FVPCacheTypeLocal = 0, FVPCacheTypeRemote } FVPCacheType;
 
-@interface FVPCacheAction : NSObject
-
-- (instancetype)initWithActionType:(FVPCacheType)cacheType range:(NSRange)range;
-
-/*!
- * @property cacheType
+/**
  * FVPCacheTypeRemote and FVPCacheTypeLocal are cache optimization options.
  * FVPCacheTypeRemote acts as a local cache refresh action by setting the
  * NSURLRequestReloadIgnoringLocalAndRemoteCacheData flag. When this cache policy is used, it means
@@ -19,11 +13,26 @@ typedef enum { FVPCacheTypeLocal = 0, FVPCacheTypeRemote } FVPCacheType;
  * so far as the protocol allows. FVPCacheTypeLocal uses localCache. It does not validate the
  * relevance of it.
  */
+typedef enum { FVPCacheTypeLocal = 0, FVPCacheTypeRemote } FVPCacheType;
+
+@interface FVPCacheAction : NSObject
+
+/**
+ * Initializes and returns a instance using the provided cacheType and range.
+ *
+ *@param cacheType
+ *
+ *@param range, an range that specifies the range of data to be cached
+ */
+- (instancetype)initWithActionType:(FVPCacheType)cacheType range:(NSRange)range;
+
+/**
+ * @property cacheType
+ */
 @property(nonatomic) FVPCacheType cacheType;
 
-/*!
+/**
  * @property range
- * An NSRange that specifies the range of data to be cached.
  */
 @property(nonatomic) NSRange range;
 

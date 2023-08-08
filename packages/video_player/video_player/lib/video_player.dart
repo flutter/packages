@@ -266,9 +266,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// The URI for the video is given by the [dataSource] argument and must not be
   /// null.
-  /// **Android only**: The [maxCacheSize] option allows the caller to override
-  /// **Android only**: The [maxFileSize] option allows the caller to override
-  /// **iOS only**: The [enableCache] option allows the caller to override
+  /// The [videoPlayerOptions] option allows the caller to override the video player options
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
   ///
@@ -278,9 +276,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   VideoPlayerController.network(
     this.dataSource, {
     this.formatHint,
-    this.maxCacheSize,
-    this.maxFileSize,
-    this.enableCache,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
@@ -301,9 +296,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   VideoPlayerController.networkUrl(
     Uri url, {
     this.formatHint,
-    this.maxCacheSize,
-    this.maxFileSize,
-    this.enableCache,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
@@ -421,13 +413,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         break;
       case DataSourceType.network:
         dataSourceDescription = DataSource(
-            sourceType: DataSourceType.network,
-            uri: dataSource,
-            formatHint: formatHint,
-            httpHeaders: httpHeaders,
-            enableCache: enableCache,
-            maxCacheSize: maxCacheSize,
-            maxFileSize: maxFileSize);
+          sourceType: DataSourceType.network,
+          uri: dataSource,
+          formatHint: formatHint,
+          httpHeaders: httpHeaders,
+        );
         break;
       case DataSourceType.file:
         dataSourceDescription = DataSource(
@@ -449,7 +439,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           .setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
-    _textureId = (await _videoPlayerPlatform.create(dataSourceDescription)) ??
+    _textureId = (await _videoPlayerPlatform.create(
+            dataSourceDescription, videoPlayerOptions)) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();

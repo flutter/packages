@@ -1174,6 +1174,23 @@ void main() {
       expect(controller.videoPlayerOptions!.mixWithOthers, true);
     });
 
+    test('setVideoPlayerOptions', () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUrl(
+        _localhostUri,
+        videoPlayerOptions: VideoPlayerOptions(
+            mixWithOthers: true,
+            maxCacheSize: 1000,
+            maxFileSize: 100,
+            enableCache: true),
+      );
+
+      await controller.initialize();
+      expect(controller.videoPlayerOptions!.mixWithOthers, true);
+      expect(controller.videoPlayerOptions!.maxCacheSize, 1000);
+      expect(controller.videoPlayerOptions!.maxFileSize, 100);
+      expect(controller.videoPlayerOptions!.mixWithOthers, true);
+    });
+
     test('true allowBackgroundPlayback continues playback', () async {
       final VideoPlayerController controller = VideoPlayerController.networkUrl(
         _localhostUri,
@@ -1232,7 +1249,8 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   final Map<int, Duration> _positions = <int, Duration>{};
 
   @override
-  Future<int?> create(DataSource dataSource) async {
+  Future<int?> create(
+      DataSource dataSource, VideoPlayerOptions? videoPlayerOptions) async {
     calls.add('create');
     final StreamController<VideoEvent> stream = StreamController<VideoEvent>();
     streams[nextTextureId] = stream;
@@ -1311,6 +1329,12 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) async {
     calls.add('setMixWithOthers');
+  }
+
+  @override
+  Future<void> setVideoPlayerOptions(
+      VideoPlayerOptions videoPlayerOptions) async {
+    calls.add('setVideoPlayerOptions');
   }
 
   @override

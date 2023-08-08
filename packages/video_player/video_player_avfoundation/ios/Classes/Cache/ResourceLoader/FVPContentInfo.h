@@ -7,19 +7,19 @@
 @interface FVPContentInfo : NSObject <NSCoding>
 
 /**
- @property contentType
+ * @property contentType
  */
 @property(nonatomic, copy) NSString *contentType;
 /**
- @property byteRangeAccessSupported
+ * @property byteRangeAccessSupported
  */
 @property(nonatomic, assign) BOOL byteRangeAccessSupported;
 /**
- @property contentLength
+ * @property contentLength
  */
 @property(nonatomic, assign) unsigned long long contentLength;
 /**
- @property downloadedContentLength
+ * @property downloadedContentLength
  */
 @property(nonatomic) unsigned long long downloadedContentLength;
 

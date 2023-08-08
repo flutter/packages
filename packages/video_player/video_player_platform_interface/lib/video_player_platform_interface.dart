@@ -49,7 +49,8 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int?> create(DataSource dataSource) {
+  Future<int?> create(
+      DataSource dataSource, VideoPlayerOptions? videoPlayerOptions) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
@@ -138,16 +139,14 @@ class DataSource {
   ///
   /// The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  DataSource(
-      {required this.sourceType,
-      this.uri,
-      this.formatHint,
-      this.asset,
-      this.package,
-      this.httpHeaders = const <String, String>{},
-      this.maxCacheSize,
-      this.maxFileSize,
-      this.enableCache = false});
+  DataSource({
+    required this.sourceType,
+    this.uri,
+    this.formatHint,
+    this.asset,
+    this.package,
+    this.httpHeaders = const <String, String>{},
+  });
 
   /// The way in which the video was originally loaded.
   ///
@@ -160,24 +159,6 @@ class DataSource {
   /// This will be in different formats depending on the [DataSourceType] of
   /// the original video.
   final String? uri;
-
-  /// The URI to the video file.
-  ///
-  /// This will be in different formats depending on the [DataSourceType] of
-  /// the original video.
-  final int? maxCacheSize;
-
-  /// The URI to the video file.
-  ///
-  /// This will be in different formats depending on the [DataSourceType] of
-  /// the original video.
-  final int? maxFileSize;
-
-  /// Enable cache for media.
-  ///
-  /// This will be in different formats depending on the [DataSourceType] of
-  /// the original video.
-  final bool? enableCache;
 
   /// **Android only**. Will override the platform's generic file format
   /// detection with whatever is set here.
@@ -410,6 +391,9 @@ class VideoPlayerOptions {
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.webOptions,
+    this.maxCacheSize,
+    this.maxFileSize,
+    this.enableCache = false,
   });
 
   /// Set this to true to keep playing video in background, when app goes in background.
@@ -425,6 +409,24 @@ class VideoPlayerOptions {
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// The URI to the video file.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final int? maxCacheSize;
+
+  /// The URI to the video file.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final int? maxFileSize;
+
+  /// Enable cache for media.
+  ///
+  /// This will be in different formats depending on the [DataSourceType] of
+  /// the original video.
+  final bool? enableCache;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings

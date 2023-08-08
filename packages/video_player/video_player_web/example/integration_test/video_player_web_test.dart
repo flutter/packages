@@ -26,11 +26,11 @@ void main() {
       VideoPlayerPlatform.instance = VideoPlayerPlugin();
       textureId = VideoPlayerPlatform.instance
           .create(
-            DataSource(
-              sourceType: DataSourceType.network,
-              uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
-            ),
-          )
+              DataSource(
+                sourceType: DataSourceType.network,
+                uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
+              ),
+              null)
           .then((int? textureId) => textureId!);
     });
 
@@ -41,45 +41,45 @@ void main() {
     testWidgets('can create from network', (WidgetTester tester) async {
       expect(
           VideoPlayerPlatform.instance.create(
-            DataSource(
-              sourceType: DataSourceType.network,
-              uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
-            ),
-          ),
+              DataSource(
+                sourceType: DataSourceType.network,
+                uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
+              ),
+              null),
           completion(isNonZero));
     });
 
     testWidgets('can create from asset', (WidgetTester tester) async {
       expect(
           VideoPlayerPlatform.instance.create(
-            DataSource(
-              sourceType: DataSourceType.asset,
-              asset: 'videos/bee.mp4',
-              package: 'bee_vids',
-            ),
-          ),
+              DataSource(
+                sourceType: DataSourceType.asset,
+                asset: 'videos/bee.mp4',
+                package: 'bee_vids',
+              ),
+              null),
           completion(isNonZero));
     });
 
     testWidgets('cannot create from file', (WidgetTester tester) async {
       expect(
           VideoPlayerPlatform.instance.create(
-            DataSource(
-              sourceType: DataSourceType.file,
-              uri: '/videos/bee.mp4',
-            ),
-          ),
+              DataSource(
+                sourceType: DataSourceType.file,
+                uri: '/videos/bee.mp4',
+              ),
+              null),
           throwsUnimplementedError);
     });
 
     testWidgets('cannot create from content URI', (WidgetTester tester) async {
       expect(
           VideoPlayerPlatform.instance.create(
-            DataSource(
-              sourceType: DataSourceType.contentUri,
-              uri: 'content://video',
-            ),
-          ),
+              DataSource(
+                sourceType: DataSourceType.contentUri,
+                uri: 'content://video',
+              ),
+              null),
           throwsUnimplementedError);
     });
 
@@ -103,11 +103,11 @@ void main() {
     testWidgets('throws PlatformException when playing bad media',
         (WidgetTester tester) async {
       final int videoPlayerId = (await VideoPlayerPlatform.instance.create(
-        DataSource(
-          sourceType: DataSourceType.network,
-          uri: getUrlForAssetAsNetworkSource('assets/__non_existent.webm'),
-        ),
-      ))!;
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: getUrlForAssetAsNetworkSource('assets/__non_existent.webm'),
+          ),
+          null))!;
 
       final Stream<VideoEvent> eventStream =
           VideoPlayerPlatform.instance.videoEventsFor(videoPlayerId);
@@ -168,7 +168,6 @@ void main() {
       expect(VideoPlayerPlatform.instance.setMixWithOthers(true), completes);
       expect(VideoPlayerPlatform.instance.setMixWithOthers(false), completes);
     });
-
     testWidgets(
         'double call to play will emit a single isPlayingStateUpdate event',
         (WidgetTester tester) async {

@@ -5,6 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'mini_controller.dart';
 
@@ -171,10 +172,9 @@ class _BumbleBeeRemoteCacheVideoState
     super.initState();
 
     _controller = MiniController.network(
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-      maxCacheSize: 1600,
-      maxFileSize: 1000,
-    );
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+        videoPlayerOptions:
+            VideoPlayerOptions(maxCacheSize: 1500, maxFileSize: 1000));
 
     _controller.addListener(() {
       setState(() {});

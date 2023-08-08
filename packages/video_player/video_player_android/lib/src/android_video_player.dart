@@ -31,7 +31,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> create(DataSource dataSource) async {
+  Future<int?> create(
+      DataSource dataSource, VideoPlayerOptions? videoPlayerOptions) async {
     String? asset;
     String? packageName;
     String? uri;
@@ -47,8 +48,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         break;
       case DataSourceType.network:
         uri = dataSource.uri;
-        maxCacheSize = dataSource.maxCacheSize;
-        maxFileSize = dataSource.maxFileSize;
+        maxCacheSize = videoPlayerOptions?.maxCacheSize;
+        maxFileSize = videoPlayerOptions?.maxFileSize;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
         break;

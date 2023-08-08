@@ -7,7 +7,7 @@
 
 @protocol FVPResourceLoaderManagerDelegate;
 
-/*!
+/**
  the ResourceLoaderManager class manages the resource loading process for AVPlayer by utilizing
  ResourceLoader instances to handle loading of resources with custom schemes. It acts as a bridge
  between AVPlayer and the custom resource loading mechanism, allowing the AVPlayer to load media
@@ -18,13 +18,13 @@
 
 @property(nonatomic, weak) id<FVPResourceLoaderManagerDelegate> delegate;
 
-/*!
+/**
  cleans the cache
  */
 - (void)cleanCache;
 
-/*!
- cancels the loaders
+/**
+ * cancels the loaders
  */
 - (void)cancelLoaders;
 
@@ -32,8 +32,8 @@
 
 @protocol FVPResourceLoaderManagerDelegate <NSObject>
 
-/*!
- resourceLoaderManagerLoadURL
+/**
+ * playerItemWithURL
  */
 - (void)resourceLoaderManagerLoadURL:(NSURL *)url didFailWithError:(NSError *)error;
 
@@ -41,8 +41,8 @@
 
 @interface FVPResourceLoaderManager (Convenient)
 
-/*!
- assetURLWithURL
+/**
+ * resourceLoaderManagerLoadURL
  */
 + (NSURL *)assetURLWithURL:(NSURL *)url;
 /*!
