@@ -1,3 +1,7 @@
+## 10.1.6
+
+* Fixes generation failures when an output file is in a directory that doesn't already exist.
+
 ## 10.1.5
 
 * Fixes import in generated Dart test output when overriding package name.
