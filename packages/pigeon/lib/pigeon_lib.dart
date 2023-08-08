@@ -389,6 +389,7 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
     sink = stdout;
   } else {
     file = File(path.posix.join(basePath, output));
+    file.createSync(recursive: true);
     sink = file.openWrite();
   }
   return sink;
