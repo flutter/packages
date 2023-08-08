@@ -205,7 +205,7 @@ class VideoPlayer {
 
   /// Sets options
   Future<void> setOptions(VideoPlayerWebOptions options) async {
-    // incase called multiple times, reset options
+    // In case this method is called multiple times, reset options.
     _resetOptions();
 
     if (options.controls.enabled) {
