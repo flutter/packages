@@ -1,4 +1,4 @@
-## NEXT
+## 2.1.0
 
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 * Adds web options to customize control's list and displaying context menu
