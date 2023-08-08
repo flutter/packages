@@ -315,6 +315,39 @@ void main() {
     });
   });
 
+  test('skips if requested if "pub get" fails in the resolver', () async {
+    final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
+
+    final FakeProcessInfo failingPubGet = FakeProcessInfo(
+        MockProcess(
+            exitCode: 1,
+            stderr: 'So, because foo depends on both thing_one ^1.0.0 and '
+                'thing_two from path, version solving failed.'),
+        <String>['pub', 'get']);
+    processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
+      failingPubGet,
+      // The command re-runs failures when --skip-if-resolver-fails is passed
+      // to check the output, so provide the same failing outcome.
+      failingPubGet,
+    ];
+
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['analyze', '--skip-if-resolving-fails']);
+
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Skipping package due to pub resolution failure.'),
+      ]),
+    );
+    expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('flutter', const <String>['pub', 'get'], plugin.path),
+          ProcessCall('flutter', const <String>['pub', 'get'], plugin.path),
+        ]));
+  });
+
   test('fails if "pub get" fails', () async {
     createFakePlugin('foo', packagesDir);
 
