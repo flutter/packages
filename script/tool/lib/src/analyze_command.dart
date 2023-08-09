@@ -2,25 +2,23 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
+import 'dart:io' as io;
 
 import 'package:file/file.dart';
-import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 
-import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 /// A command to run Dart analysis on packages.
 class AnalyzeCommand extends PackageLoopingCommand {
   /// Creates a analysis command instance.
   AnalyzeCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-  }) : super(packagesDir, processRunner: processRunner, platform: platform) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+  }) {
     argParser.addMultiOption(_customAnalysisFlag,
         help:
             'Directories (comma separated) that are allowed to have their own '
@@ -38,12 +36,18 @@ class AnalyzeCommand extends PackageLoopingCommand {
     argParser.addFlag(_libOnlyFlag,
         help: 'Only analyze the lib/ directory of the main package, not the '
             'entire package.');
+    argParser.addFlag(_skipIfResolvingFailsFlag,
+        help: 'If resolution fails, skip the package. This is only '
+            'intended to be used with pathified analysis, where a resolver '
+            'failure indicates that no out-of-band failure can result anyway.',
+        hide: true);
   }
 
   static const String _customAnalysisFlag = 'custom-analysis';
   static const String _downgradeFlag = 'downgrade';
   static const String _libOnlyFlag = 'lib-only';
   static const String _analysisSdk = 'analysis-sdk';
+  static const String _skipIfResolvingFailsFlag = 'skip-if-resolving-fails';
 
   late String _dartBinaryPath;
 
@@ -138,6 +142,20 @@ class AnalyzeCommand extends PackageLoopingCommand {
               .pubspecFile
               .existsSync()) {
         if (!await _runPubCommand(packageToGet, 'get')) {
+          if (getBoolArg(_skipIfResolvingFailsFlag)) {
+            // Re-run, capturing output, to see if the failure was a resolver
+            // failure. (This is slightly inefficient, but this should be a
+            // very rare case.)
+            const String resolverFailureMessage = 'version solving failed';
+            final io.ProcessResult result = await processRunner.run(
+                flutterCommand, <String>['pub', 'get'],
+                workingDir: packageToGet.directory);
+            if ((result.stderr as String).contains(resolverFailureMessage) ||
+                (result.stdout as String).contains(resolverFailureMessage)) {
+              logWarning('Skipping package due to pub resolution failure.');
+              return PackageResult.skip('Resolution failed.');
+            }
+          }
           return PackageResult.fail(<String>['Unable to get dependencies']);
         }
       }

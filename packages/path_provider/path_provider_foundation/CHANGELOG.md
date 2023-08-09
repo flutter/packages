@@ -1,5 +1,10 @@
-## NEXT
+## 2.3.0
 
+* Adds getApplicationCachePath() for storing app-specific cache files.
+
+## 2.2.4
+
+* Updates to the latest version of `pigeon`.
 * Updates minimum supported macOS version to 10.14.
 
 ## 2.2.3

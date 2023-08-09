@@ -1,5 +1,10 @@
-## NEXT
+## 0.1.6
 
+* Added support for displaying an AppBar on any Breakpoint by introducing appBarBreakpoint
+
+## 0.1.5
+
+* Added support for Right-to-left (RTL) directionality.
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 

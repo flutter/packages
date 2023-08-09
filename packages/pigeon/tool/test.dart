@@ -57,7 +57,6 @@ ${parser.usage}''');
     const List<String> dartTests = <String>[
       dartUnitTests,
       flutterUnitTests,
-      mockHandlerTests,
       commandLineTests,
     ];
     const List<String> androidTests = <String>[
@@ -74,6 +73,7 @@ ${parser.usage}''');
       iOSSwiftIntegrationTests,
     ];
     const List<String> macOSTests = <String>[
+      macOSObjCIntegrationTests,
       macOSSwiftUnitTests,
       macOSSwiftIntegrationTests
     ];

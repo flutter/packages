@@ -678,6 +678,20 @@ class WKWebViewConfiguration extends NSObject {
     );
   }
 
+  /// Indicates whether the web view limits navigation to pages within the app’s domain.
+  ///
+  /// When navigation is limited, Javascript evaluation is unrestricted.
+  /// See https://webkit.org/blog/10882/app-bound-domains/
+  ///
+  /// Sets [WKWebViewConfiguration.limitsNavigationsToAppBoundDomains](https://developer.apple.com/documentation/webkit/wkwebviewconfiguration/3585117-limitsnavigationstoappbounddomai?language=objc).
+  Future<void> setLimitsNavigationsToAppBoundDomains(bool limit) {
+    return _webViewConfigurationApi
+        .setLimitsNavigationsToAppBoundDomainsForInstances(
+      this,
+      limit,
+    );
+  }
+
   /// The media types that require a user gesture to begin playing.
   ///
   /// Use [WKAudiovisualMediaType.none] to indicate that no user gestures are
@@ -1090,6 +1104,24 @@ class WKWebView extends UIView {
     return _webViewApi.evaluateJavaScriptForInstances(
       this,
       javaScriptString,
+    );
+  }
+
+  /// Enables debugging of web contents (HTML / CSS / JavaScript) in the
+  /// underlying WebView.
+  ///
+  /// This flag can be enabled in order to facilitate debugging of web layouts
+  /// and JavaScript code running inside WebViews. Please refer to [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview?language=objc).
+  /// documentation for the debugging guide.
+  ///
+  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
+  /// the default value is set to false.
+  ///
+  /// Defaults to true in previous versions.
+  Future<void> setInspectable(bool inspectable) {
+    return _webViewApi.setInspectableForInstances(
+      this,
+      inspectable,
     );
   }
 

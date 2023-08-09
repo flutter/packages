@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'src/messages.g.dart';
 
@@ -52,23 +53,50 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   }
 
   @override
-  Future<bool> clear() {
-    return clearWithPrefix(_defaultPrefix);
+  Future<bool> clear() async {
+    return clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
   }
 
   @override
   Future<bool> clearWithPrefix(String prefix) async {
-    return _api.clearWithPrefix(prefix);
+    return clearWithParameters(
+        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
   }
 
   @override
-  Future<Map<String, Object>> getAll() {
-    return getAllWithPrefix(_defaultPrefix);
+  Future<bool> clearWithParameters(ClearParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    return _api.clear(
+      filter.prefix,
+      filter.allowList?.toList(),
+    );
+  }
+
+  @override
+  Future<Map<String, Object>> getAll() async {
+    return getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: _defaultPrefix),
+      ),
+    );
   }
 
   @override
   Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    final Map<String?, Object?> data = await _api.getAllWithPrefix(prefix);
+    return getAllWithParameters(
+        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
+  }
+
+  @override
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) async {
+    final PreferencesFilter filter = parameters.filter;
+    final Map<String?, Object?> data =
+        await _api.getAll(filter.prefix, filter.allowList?.toList());
     return data.cast<String, Object>();
   }
 }

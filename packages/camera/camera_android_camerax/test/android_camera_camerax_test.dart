@@ -347,7 +347,7 @@ void main() {
     camera.liveCameraState = MockLiveCameraState();
     camera.imageAnalysis = MockImageAnalysis();
 
-    camera.dispose(3);
+    await camera.dispose(3);
 
     verify(camera.preview!.releaseFlutterSurfaceTexture());
     verify(camera.liveCameraState!.removeObservers());
@@ -689,7 +689,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       camera.recording = recording;
-      camera.pauseVideoRecording(0);
+      await camera.pauseVideoRecording(0);
       verify(recording.pause());
       verifyNoMoreInteractions(recording);
     });
@@ -698,7 +698,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
       camera.recording = recording;
-      camera.resumeVideoRecording(0);
+      await camera.resumeVideoRecording(0);
       verify(recording.resume());
       verifyNoMoreInteractions(recording);
     });
@@ -779,8 +779,6 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const String testPicturePath = 'test/absolute/path/to/picture';
 
-    camera.processCameraProvider = MockProcessCameraProvider();
-    camera.cameraSelector = MockCameraSelector();
     camera.imageCapture = MockImageCapture();
 
     when(camera.imageCapture!.takePicture())
@@ -789,6 +787,41 @@ void main() {
     final XFile imageFile = await camera.takePicture(3);
 
     expect(imageFile.path, equals(testPicturePath));
+  });
+
+  test('setFlashMode configures ImageCapture with expected flash mode',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 22;
+
+    camera.imageCapture = MockImageCapture();
+
+    for (final FlashMode flashMode in FlashMode.values) {
+      await camera.setFlashMode(cameraId, flashMode);
+
+      int? expectedFlashMode;
+      switch (flashMode) {
+        case FlashMode.off:
+          expectedFlashMode = ImageCapture.flashModeOff;
+          break;
+        case FlashMode.auto:
+          expectedFlashMode = ImageCapture.flashModeAuto;
+          break;
+        case FlashMode.always:
+          expectedFlashMode = ImageCapture.flashModeOn;
+          break;
+        case FlashMode.torch:
+          // TODO(camsim99): Test torch mode when implemented.
+          break;
+      }
+
+      if (expectedFlashMode == null) {
+        continue;
+      }
+
+      await camera.takePicture(cameraId);
+      verify(camera.imageCapture!.setFlashMode(expectedFlashMode));
+    }
   });
 
   test('getMinExposureOffset returns expected exposure offset', () async {
@@ -907,7 +940,47 @@ void main() {
   });
 
   test(
-      'onStreamedFrameAvaiable returns stream that responds expectedly to being listened to',
+      'onStreamedFrameAvailable emits CameraImageData when listened to after cancelation',
+      () async {
+    final FakeAndroidCameraCameraX camera =
+        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
+    const int cameraId = 22;
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.cameraSelector = MockCameraSelector();
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) => Future<Camera>.value(mockCamera));
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
+
+    final CameraImageData mockCameraImageData = MockCameraImageData();
+    final Stream<CameraImageData> imageStream =
+        camera.onStreamedFrameAvailable(cameraId);
+
+    // Listen to image stream.
+    final StreamSubscription<CameraImageData> imageStreamSubscription =
+        imageStream.listen((CameraImageData data) {});
+
+    // Cancel subscription to image stream.
+    await imageStreamSubscription.cancel();
+    final Stream<CameraImageData> imageStream2 =
+        camera.onStreamedFrameAvailable(cameraId);
+
+    // Listen to image stream again.
+    final StreamQueue<CameraImageData> streamQueue =
+        StreamQueue<CameraImageData>(imageStream2);
+    camera.cameraImageDataStreamController!.add(mockCameraImageData);
+
+    expect(await streamQueue.next, equals(mockCameraImageData));
+    await streamQueue.cancel();
+  });
+
+  test(
+      'onStreamedFrameAvailable returns stream that responds expectedly to being listened to',
       () async {
     final FakeAndroidCameraCameraX camera =
         FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
@@ -930,6 +1003,8 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = mockCameraSelector;
 
+    when(mockProcessCameraProvider.isBound(camera.mockImageAnalysis))
+        .thenAnswer((_) async => Future<bool>.value(false));
     when(mockProcessCameraProvider.bindToLifecycle(
             mockCameraSelector, <UseCase>[camera.mockImageAnalysis]))
         .thenAnswer((_) async => mockCamera);
@@ -956,7 +1031,9 @@ void main() {
     final Analyzer capturedAnalyzer =
         verify(camera.mockImageAnalysis.setAnalyzer(captureAny)).captured.single
             as Analyzer;
-    verify(mockProcessCameraProvider.bindToLifecycle(
+    await untilCalled(
+        mockProcessCameraProvider.isBound(camera.mockImageAnalysis));
+    await untilCalled(mockProcessCameraProvider.bindToLifecycle(
         mockCameraSelector, <UseCase>[camera.mockImageAnalysis]));
 
     await capturedAnalyzer.analyze(mockImageProxy);
@@ -974,11 +1051,11 @@ void main() {
     // Verify camera and cameraInfo were properly updated.
     expect(camera.camera, equals(mockCamera));
     expect(camera.cameraInfo, equals(mockCameraInfo));
-    onStreamedFrameAvailableSubscription.cancel();
+    await onStreamedFrameAvailableSubscription.cancel();
   });
 
   test(
-      'onStreamedFrameAvaiable returns stream that responds expectedly to being canceled',
+      'onStreamedFrameAvailable returns stream that responds expectedly to being canceled',
       () async {
     final FakeAndroidCameraCameraX camera =
         FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
@@ -1050,13 +1127,12 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  Preview createPreview(int targetRotation, ResolutionInfo? targetResolution) {
+  Preview createPreview(int targetRotation) {
     return testPreview;
   }
 
   @override
-  ImageCapture createImageCapture(
-      int? flashMode, ResolutionInfo? targetResolution) {
+  ImageCapture createImageCapture(int? flashMode) {
     return testImageCapture;
   }
 
@@ -1071,7 +1147,7 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  ImageAnalysis createImageAnalysis(ResolutionInfo? targetResolution) {
+  ImageAnalysis createImageAnalysis() {
     return mockImageAnalysis;
   }
 }

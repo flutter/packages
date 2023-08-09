@@ -5,10 +5,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/configuration.dart';
-import 'package:go_router/src/information_provider.dart';
-import 'package:go_router/src/match.dart';
-import 'package:go_router/src/parser.dart';
 
 RouteInformation createRouteInformation(String location, [Object? extra]) {
   return RouteInformation(
@@ -118,11 +114,8 @@ void main() {
     );
 
     expect(configuration.namedLocation('lowercase'), '/abc');
-    expect(configuration.namedLocation('LOWERCASE'), '/abc');
     expect(configuration.namedLocation('camelCase'), '/efg');
-    expect(configuration.namedLocation('camelcase'), '/efg');
     expect(configuration.namedLocation('snake_case'), '/hij');
-    expect(configuration.namedLocation('SNAKE_CASE'), '/hij');
 
     // With query parameters
     expect(configuration.namedLocation('lowercase'), '/abc');
@@ -201,7 +194,7 @@ void main() {
     expect(matchesObj.uri.toString(), '/def');
     expect(matchesObj.extra, isNull);
     expect(matchesObj.error!.toString(),
-        'Exception: no routes for location: /def');
+        'GoException: no routes for location: /def');
   });
 
   testWidgets(
@@ -225,7 +218,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (_, GoRouterState state) {
-        lastRedirectLocation = state.location;
+        lastRedirectLocation = state.uri.toString();
         return null;
       },
     );
@@ -294,7 +287,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (BuildContext context, GoRouterState state) {
-        if (state.location != '/123/family/345') {
+        if (state.uri.toString() != '/123/family/345') {
           return '/123/family/345';
         }
         return null;
@@ -384,7 +377,8 @@ void main() {
       GoRoute(
         path: '/abc',
         builder: (_, __) => const Placeholder(),
-        redirect: (BuildContext context, GoRouterState state) => state.location,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.uri.toString(),
       ),
     ];
     final GoRouteInformationParser parser = await createParser(

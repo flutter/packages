@@ -137,7 +137,11 @@ class FileUtils {
   }
 
   private static String getBaseName(String fileName) {
+    int lastDotIndex = fileName.lastIndexOf('.');
+    if (lastDotIndex < 0) {
+      return fileName;
+    }
     // Basename is everything before the last '.'.
-    return fileName.substring(0, fileName.lastIndexOf('.'));
+    return fileName.substring(0, lastDotIndex);
   }
 }

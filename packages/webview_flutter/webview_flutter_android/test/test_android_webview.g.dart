@@ -217,6 +217,7 @@ abstract class TestCookieManagerHostApi {
 
 class _TestWebViewHostApiCodec extends StandardMessageCodec {
   const _TestWebViewHostApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WebViewPoint) {
@@ -1708,6 +1709,58 @@ abstract class TestPermissionRequestHostApi {
           assert(arg_instanceId != null,
               'Argument for dev.flutter.pigeon.PermissionRequestHostApi.deny was null, expected non-null int.');
           api.deny(arg_instanceId!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `GeolocationPermissionsCallback`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+abstract class TestGeolocationPermissionsCallbackHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles Dart method `GeolocationPermissionsCallback.invoke`.
+  void invoke(int instanceId, String origin, bool allow, bool retain);
+
+  static void setup(TestGeolocationPermissionsCallbackHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke was null, expected non-null int.');
+          final String? arg_origin = (args[1] as String?);
+          assert(arg_origin != null,
+              'Argument for dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke was null, expected non-null String.');
+          final bool? arg_allow = (args[2] as bool?);
+          assert(arg_allow != null,
+              'Argument for dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke was null, expected non-null bool.');
+          final bool? arg_retain = (args[3] as bool?);
+          assert(arg_retain != null,
+              'Argument for dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke was null, expected non-null bool.');
+          api.invoke(arg_instanceId!, arg_origin!, arg_allow!, arg_retain!);
           return <Object?>[];
         });
       }

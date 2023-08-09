@@ -10,6 +10,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:path_provider_windows/path_provider_windows.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:shared_preferences_windows/shared_preferences_windows.dart';
 
 void main() {
@@ -99,6 +100,35 @@ void main() {
     expect(values, prefixTestValues);
   });
 
+  test('getAllWithParameters with Prefix', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+
+    final Map<String, Object> values = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(values, hasLength(5));
+    expect(values, prefixTestValues);
+  });
+
+  test('getAllWithParameters with Prefix with allow list', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+
+    final Map<String?, Object?> all = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.Bool'},
+        ),
+      ),
+    );
+    expect(all.length, 1);
+    expect(all['prefix.Bool'], prefixTestValues['prefix.Bool']);
+  });
+
   test('remove', () async {
     await writeTestFile('{"key1":"one","key2":2}');
     final SharedPreferencesWindows prefs = getPreferences();
@@ -154,6 +184,74 @@ void main() {
     final SharedPreferencesWindows prefs = getPreferences();
     await prefs.clearWithPrefix('');
     final Map<String, Object> noValues = await prefs.getAllWithPrefix('');
+    expect(noValues, hasLength(0));
+  });
+
+  test('clearWithParameters with Prefix', () async {
+    await writeTestFile(json.encode(flutterTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    final Map<String, Object> noValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(noValues, hasLength(0));
+
+    final Map<String, Object> values = await prefs.getAll();
+    expect(values, hasLength(5));
+    expect(values, flutterTestValues);
+  });
+
+  test('clearWithParameters with allow list', () async {
+    await writeTestFile(json.encode(prefixTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.StringList'},
+        ),
+      ),
+    );
+    final Map<String, Object> noValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(noValues, hasLength(4));
+  });
+
+  test('getAllWithNoPrefix', () async {
+    await writeTestFile(json.encode(allTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+
+    final Map<String, Object> values = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(values, hasLength(15));
+    expect(values, allTestValues);
+  });
+
+  test('clearWithNoPrefix', () async {
+    await writeTestFile(json.encode(flutterTestValues));
+    final SharedPreferencesWindows prefs = getPreferences();
+    await prefs.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    final Map<String, Object> noValues = await prefs.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
     expect(noValues, hasLength(0));
   });
 }

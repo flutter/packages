@@ -109,11 +109,53 @@ void main() {
           ]));
     });
 
-    test('fails if gradlew is missing', () async {
+    test('runs --config-only build if gradlew is missing', () async {
+      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir,
+          platformSupport: <String, PlatformDetails>{
+            platformAndroid: const PlatformDetails(PlatformSupport.inline)
+          });
+
+      final Directory androidDir =
+          plugin.getExamples().first.platformDirectory(FlutterPlatform.android);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['lint-android']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+            getFlutterCommand(mockPlatform),
+            const <String>['build', 'apk', '--config-only'],
+            plugin.getExamples().first.directory.path,
+          ),
+          ProcessCall(
+            androidDir.childFile('gradlew').path,
+            const <String>['plugin1:lintDebug'],
+            androidDir.path,
+          ),
+        ]),
+      );
+
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin1'),
+            contains('No issues found!'),
+          ]));
+    });
+
+    test('fails if gradlew generation fails', () async {
       createFakePlugin('plugin1', packagesDir,
           platformSupport: <String, PlatformDetails>{
             platformAndroid: const PlatformDetails(PlatformSupport.inline)
           });
+
+      processRunner
+              .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1)),
+      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -126,7 +168,7 @@ void main() {
           output,
           containsAllInOrder(
             <Matcher>[
-              contains('Build examples before linting'),
+              contains('Unable to configure Gradle project'),
             ],
           ));
     });

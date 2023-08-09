@@ -60,12 +60,28 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? suggestedName,
     String? confirmButtonText,
   }) async {
-    return _hostApi.displaySavePanel(SavePanelOptions(
+    final FileSaveLocation? location = await getSaveLocation(
+        acceptedTypeGroups: acceptedTypeGroups,
+        options: SaveDialogOptions(
+          initialDirectory: initialDirectory,
+          suggestedName: suggestedName,
+          confirmButtonText: confirmButtonText,
+        ));
+    return location?.path;
+  }
+
+  @override
+  Future<FileSaveLocation?> getSaveLocation({
+    List<XTypeGroup>? acceptedTypeGroups,
+    SaveDialogOptions options = const SaveDialogOptions(),
+  }) async {
+    final String? path = await _hostApi.displaySavePanel(SavePanelOptions(
       allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
-      directoryPath: initialDirectory,
-      nameFieldStringValue: suggestedName,
-      prompt: confirmButtonText,
+      directoryPath: options.initialDirectory,
+      nameFieldStringValue: options.suggestedName,
+      prompt: options.confirmButtonText,
     ));
+    return path == null ? null : FileSaveLocation(path);
   }
 
   @override

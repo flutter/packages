@@ -48,6 +48,7 @@ class WebKitWebViewControllerCreationParams
       PlaybackMediaTypes.video,
     },
     this.allowsInlineMediaPlayback = false,
+    this.limitsNavigationsToAppBoundDomains = false,
     @visibleForTesting InstanceManager? instanceManager,
   }) : _instanceManager = instanceManager ?? NSObject.globalInstanceManager {
     _configuration = webKitProxy.createWebViewConfiguration(
@@ -68,6 +69,8 @@ class WebKitWebViewControllerCreationParams
       );
     }
     _configuration.setAllowsInlineMediaPlayback(allowsInlineMediaPlayback);
+    _configuration.setLimitsNavigationsToAppBoundDomains(
+        limitsNavigationsToAppBoundDomains);
   }
 
   /// Constructs a [WebKitWebViewControllerCreationParams] using a
@@ -83,11 +86,14 @@ class WebKitWebViewControllerCreationParams
       PlaybackMediaTypes.video,
     },
     bool allowsInlineMediaPlayback = false,
+    bool limitsNavigationsToAppBoundDomains = false,
     @visibleForTesting InstanceManager? instanceManager,
   }) : this(
           webKitProxy: webKitProxy,
           mediaTypesRequiringUserAction: mediaTypesRequiringUserAction,
           allowsInlineMediaPlayback: allowsInlineMediaPlayback,
+          limitsNavigationsToAppBoundDomains:
+              limitsNavigationsToAppBoundDomains,
           instanceManager: instanceManager,
         );
 
@@ -103,6 +109,13 @@ class WebKitWebViewControllerCreationParams
   ///
   /// Defaults to false.
   final bool allowsInlineMediaPlayback;
+
+  /// Whether to limit navigation to configured domains.
+  ///
+  /// See https://webkit.org/blog/10882/app-bound-domains/
+  /// (Only available for iOS > 14.0)
+  /// Defaults to false.
+  final bool limitsNavigationsToAppBoundDomains;
 
   /// Handles constructing objects and calling static methods for the WebKit
   /// native library.
@@ -505,7 +518,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   // workaround could interfere with exposing support for custom scripts from
   // applications.
   Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
-    _webView.configuration.userContentController.removeAllUserScripts();
+    unawaited(
+      _webView.configuration.userContentController.removeAllUserScripts(),
+    );
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -530,6 +545,18 @@ class WebKitWebViewController extends PlatformWebViewController {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  /// Whether to enable tools for debugging the current WKWebView content.
+  ///
+  /// It needs to be activated in each WKWebView where you want to enable it.
+  ///
+  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
+  /// the default value is set to false.
+  ///
+  /// Defaults to true in previous versions.
+  Future<void> setInspectable(bool inspectable) {
+    return _webView.setInspectable(inspectable);
   }
 }
 
@@ -605,6 +632,21 @@ class WebKitWebViewWidgetCreationParams
   // Maintains instances used to communicate with the native objects they
   // represent.
   final InstanceManager _instanceManager;
+
+  @override
+  int get hashCode => Object.hash(
+        controller,
+        layoutDirection,
+        _instanceManager,
+      );
+
+  @override
+  bool operator ==(Object other) {
+    return other is WebKitWebViewWidgetCreationParams &&
+        controller == other.controller &&
+        layoutDirection == other.layoutDirection &&
+        _instanceManager == other._instanceManager;
+  }
 }
 
 /// An implementation of [PlatformWebViewWidget] with the WebKit api.
@@ -624,7 +666,9 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
   @override
   Widget build(BuildContext context) {
     return UiKitView(
-      key: _webKitParams.key,
+      // Setting a default key using `params` ensures the `UIKitView` recreates
+      // the PlatformView when changes are made.
+      key: _webKitParams.key ?? ObjectKey(params),
       viewType: 'plugins.flutter.io/webview',
       onPlatformViewCreated: (_) {},
       layoutDirection: params.layoutDirection,
@@ -638,10 +682,13 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
 
 /// An implementation of [WebResourceError] with the WebKit API.
 class WebKitWebResourceError extends WebResourceError {
-  WebKitWebResourceError._(this._nsError, {required bool isForMainFrame})
-      : super(
+  WebKitWebResourceError._(
+    this._nsError, {
+    required bool isForMainFrame,
+    required super.url,
+  }) : super(
           errorCode: _nsError.code,
-          description: _nsError.localizedDescription,
+          description: _nsError.localizedDescription ?? '',
           errorType: _toWebResourceErrorType(_nsError.code),
           isForMainFrame: isForMainFrame,
         );
@@ -739,14 +786,24 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       didFailNavigation: (WKWebView webView, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(error, isForMainFrame: true),
+            WebKitWebResourceError._(
+              error,
+              isForMainFrame: true,
+              url: error.userInfo[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringError] as String?,
+            ),
           );
         }
       },
       didFailProvisionalNavigation: (WKWebView webView, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(error, isForMainFrame: true),
+            WebKitWebResourceError._(
+              error,
+              isForMainFrame: true,
+              url: error.userInfo[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringError] as String?,
+            ),
           );
         }
       },
@@ -758,9 +815,9 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 code: WKErrorCode.webContentProcessTerminated,
                 // Value from https://developer.apple.com/documentation/webkit/wkerrordomain?language=objc.
                 domain: 'WKErrorDomain',
-                localizedDescription: '',
               ),
               isForMainFrame: true,
+              url: null,
             ),
           );
         }

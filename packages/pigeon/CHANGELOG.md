@@ -1,3 +1,32 @@
+## 10.1.6
+
+* Fixes generation failures when an output file is in a directory that doesn't already exist.
+
+## 10.1.5
+
+* Fixes import in generated Dart test output when overriding package name.
+
+## 10.1.4
+
+* Adds package name to method channel strings to avoid potential collisions between plugins.
+* Adds dartPackageName option to `pigeonOptions`.
+
+## 10.1.3
+
+* Adds generic `Object` field support to data classes.
+
+## 10.1.2
+
+* [swift] Fixes a crash when passing `null` for nested nullable classes. 
+
+## 10.1.1
+
+* Updates README to better reflect modern usage.
+
+## 10.1.0
+
+* [objc] Adds macOS support to facilitate code sharing with existing iOS plugins.
+
 ## 10.0.1
 
 * Requires `analyzer 5.13.0` and replaces use of deprecated APIs.

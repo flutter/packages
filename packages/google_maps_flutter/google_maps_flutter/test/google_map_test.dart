@@ -2,30 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'fake_maps_controllers.dart';
+import 'fake_google_maps_flutter_platform.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  final FakePlatformViewsController fakePlatformViewsController =
-      FakePlatformViewsController();
-
-  setUpAll(() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(
-          SystemChannels.platform_views,
-          fakePlatformViewsController.fakePlatformViewsMethodHandler,
-        );
-  });
+  late FakeGoogleMapsFlutterPlatform platform;
 
   setUp(() {
-    fakePlatformViewsController.reset();
+    platform = FakeGoogleMapsFlutterPlatform();
+    GoogleMapsFlutterPlatform.instance = platform;
   });
 
   testWidgets('Initial camera position', (WidgetTester tester) async {
@@ -38,10 +27,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.cameraPosition,
+    expect(map.widgetConfiguration.initialCameraPosition,
         const CameraPosition(target: LatLng(10.0, 15.0)));
   });
 
@@ -65,10 +53,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.cameraPosition,
+    expect(map.widgetConfiguration.initialCameraPosition,
         const CameraPosition(target: LatLng(10.0, 15.0)));
   });
 
@@ -83,10 +70,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.compassEnabled, false);
+    expect(map.mapConfiguration.compassEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -97,7 +83,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.compassEnabled, true);
+    expect(map.mapConfiguration.compassEnabled, true);
   });
 
   testWidgets('Can update mapToolbarEnabled', (WidgetTester tester) async {
@@ -111,10 +97,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.mapToolbarEnabled, false);
+    expect(map.mapConfiguration.mapToolbarEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -125,7 +110,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.mapToolbarEnabled, true);
+    expect(map.mapConfiguration.mapToolbarEnabled, true);
   });
 
   testWidgets('Can update cameraTargetBounds', (WidgetTester tester) async {
@@ -145,11 +130,10 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
     expect(
-        platformGoogleMap.cameraTargetBounds,
+        map.mapConfiguration.cameraTargetBounds,
         CameraTargetBounds(
           LatLngBounds(
             southwest: const LatLng(10.0, 20.0),
@@ -174,7 +158,7 @@ void main() {
     );
 
     expect(
-        platformGoogleMap.cameraTargetBounds,
+        map.mapConfiguration.cameraTargetBounds,
         CameraTargetBounds(
           LatLngBounds(
             southwest: const LatLng(16.0, 20.0),
@@ -194,10 +178,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.mapType, MapType.hybrid);
+    expect(map.mapConfiguration.mapType, MapType.hybrid);
 
     await tester.pumpWidget(
       const Directionality(
@@ -209,7 +192,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.mapType, MapType.satellite);
+    expect(map.mapConfiguration.mapType, MapType.satellite);
   });
 
   testWidgets('Can update minMaxZoom', (WidgetTester tester) async {
@@ -223,10 +206,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.minMaxZoomPreference,
+    expect(map.mapConfiguration.minMaxZoomPreference,
         const MinMaxZoomPreference(1.0, 3.0));
 
     await tester.pumpWidget(
@@ -238,8 +220,8 @@ void main() {
       ),
     );
 
-    expect(
-        platformGoogleMap.minMaxZoomPreference, MinMaxZoomPreference.unbounded);
+    expect(map.mapConfiguration.minMaxZoomPreference,
+        MinMaxZoomPreference.unbounded);
   });
 
   testWidgets('Can update rotateGesturesEnabled', (WidgetTester tester) async {
@@ -253,10 +235,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.rotateGesturesEnabled, false);
+    expect(map.mapConfiguration.rotateGesturesEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -267,7 +248,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.rotateGesturesEnabled, true);
+    expect(map.mapConfiguration.rotateGesturesEnabled, true);
   });
 
   testWidgets('Can update scrollGesturesEnabled', (WidgetTester tester) async {
@@ -281,10 +262,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.scrollGesturesEnabled, false);
+    expect(map.mapConfiguration.scrollGesturesEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -295,7 +275,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.scrollGesturesEnabled, true);
+    expect(map.mapConfiguration.scrollGesturesEnabled, true);
   });
 
   testWidgets('Can update tiltGesturesEnabled', (WidgetTester tester) async {
@@ -309,10 +289,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.tiltGesturesEnabled, false);
+    expect(map.mapConfiguration.tiltGesturesEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -323,7 +302,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.tiltGesturesEnabled, true);
+    expect(map.mapConfiguration.tiltGesturesEnabled, true);
   });
 
   testWidgets('Can update trackCameraPosition', (WidgetTester tester) async {
@@ -336,10 +315,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.trackCameraPosition, false);
+    expect(map.mapConfiguration.trackCameraPosition, false);
 
     await tester.pumpWidget(
       Directionality(
@@ -352,7 +330,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.trackCameraPosition, true);
+    expect(map.mapConfiguration.trackCameraPosition, true);
   });
 
   testWidgets('Can update zoomGesturesEnabled', (WidgetTester tester) async {
@@ -366,10 +344,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.zoomGesturesEnabled, false);
+    expect(map.mapConfiguration.zoomGesturesEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -380,7 +357,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.zoomGesturesEnabled, true);
+    expect(map.mapConfiguration.zoomGesturesEnabled, true);
   });
 
   testWidgets('Can update zoomControlsEnabled', (WidgetTester tester) async {
@@ -394,10 +371,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.zoomControlsEnabled, false);
+    expect(map.mapConfiguration.zoomControlsEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -408,7 +384,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.zoomControlsEnabled, true);
+    expect(map.mapConfiguration.zoomControlsEnabled, true);
   });
 
   testWidgets('Can update myLocationEnabled', (WidgetTester tester) async {
@@ -421,10 +397,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.myLocationEnabled, false);
+    expect(map.mapConfiguration.myLocationEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -436,7 +411,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.myLocationEnabled, true);
+    expect(map.mapConfiguration.myLocationEnabled, true);
   });
 
   testWidgets('Can update myLocationButtonEnabled',
@@ -450,10 +425,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.myLocationButtonEnabled, true);
+    expect(map.mapConfiguration.myLocationButtonEnabled, true);
 
     await tester.pumpWidget(
       const Directionality(
@@ -465,7 +439,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.myLocationButtonEnabled, false);
+    expect(map.mapConfiguration.myLocationButtonEnabled, false);
   });
 
   testWidgets('Is default padding 0', (WidgetTester tester) async {
@@ -478,10 +452,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.padding, <double>[0, 0, 0, 0]);
+    expect(map.mapConfiguration.padding, EdgeInsets.zero);
   });
 
   testWidgets('Can update padding', (WidgetTester tester) async {
@@ -494,10 +467,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.padding, <double>[0, 0, 0, 0]);
+    expect(map.mapConfiguration.padding, EdgeInsets.zero);
 
     await tester.pumpWidget(
       const Directionality(
@@ -509,7 +481,8 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.padding, <double>[20, 10, 40, 30]);
+    expect(map.mapConfiguration.padding,
+        const EdgeInsets.fromLTRB(10, 20, 30, 40));
 
     await tester.pumpWidget(
       const Directionality(
@@ -521,7 +494,8 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.padding, <double>[60, 50, 80, 70]);
+    expect(map.mapConfiguration.padding,
+        const EdgeInsets.fromLTRB(50, 60, 70, 80));
   });
 
   testWidgets('Can update traffic', (WidgetTester tester) async {
@@ -534,10 +508,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.trafficEnabled, false);
+    expect(map.mapConfiguration.trafficEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -549,7 +522,7 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.trafficEnabled, true);
+    expect(map.mapConfiguration.trafficEnabled, true);
   });
 
   testWidgets('Can update buildings', (WidgetTester tester) async {
@@ -563,10 +536,9 @@ void main() {
       ),
     );
 
-    final FakePlatformGoogleMap platformGoogleMap =
-        fakePlatformViewsController.lastCreatedView!;
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(platformGoogleMap.buildingsEnabled, false);
+    expect(map.mapConfiguration.buildingsEnabled, false);
 
     await tester.pumpWidget(
       const Directionality(
@@ -577,12 +549,6 @@ void main() {
       ),
     );
 
-    expect(platformGoogleMap.buildingsEnabled, true);
+    expect(map.mapConfiguration.buildingsEnabled, true);
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

@@ -104,6 +104,23 @@
       setAllowsInlineMediaPlayback:allow.boolValue];
 }
 
+- (void)setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:
+            (nonnull NSNumber *)identifier
+                                                                  isLimited:
+                                                                      (nonnull NSNumber *)limit
+                                                                      error:(FlutterError *_Nullable
+                                                                                 *_Nonnull)error {
+  if (@available(iOS 14, *)) {
+    [[self webViewConfigurationForIdentifier:identifier]
+        setLimitsNavigationsToAppBoundDomains:limit.boolValue];
+  } else {
+    *error = [FlutterError
+        errorWithCode:@"FWFUnsupportedVersionError"
+              message:@"setLimitsNavigationsToAppBoundDomains is only supported on versions 14+."
+              details:nil];
+  }
+}
+
 - (void)
     setMediaTypesRequiresUserActionForConfigurationWithIdentifier:(nonnull NSNumber *)identifier
                                                          forTypes:

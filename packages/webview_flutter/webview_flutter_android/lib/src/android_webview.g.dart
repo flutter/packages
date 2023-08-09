@@ -377,6 +377,7 @@ class CookieManagerHostApi {
 
 class _WebViewHostApiCodec extends StandardMessageCodec {
   const _WebViewHostApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WebViewPoint) {
@@ -1528,6 +1529,7 @@ class WebViewClientHostApi {
 
 class _WebViewClientFlutterApiCodec extends StandardMessageCodec {
   const _WebViewClientFlutterApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WebResourceErrorData) {
@@ -1990,6 +1992,13 @@ abstract class WebChromeClientFlutterApi {
   /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
   void onPermissionRequest(int instanceId, int requestInstanceId);
 
+  /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsShowPrompt`.
+  void onGeolocationPermissionsShowPrompt(
+      int instanceId, int paramsInstanceId, String origin);
+
+  /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`.
+  void onGeolocationPermissionsHidePrompt(int identifier);
+
   static void setup(WebChromeClientFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -2069,6 +2078,53 @@ abstract class WebChromeClientFlutterApi {
         });
       }
     }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null int.');
+          final int? arg_paramsInstanceId = (args[1] as int?);
+          assert(arg_paramsInstanceId != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null int.');
+          final String? arg_origin = (args[2] as String?);
+          assert(arg_origin != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsShowPrompt was null, expected non-null String.');
+          api.onGeolocationPermissionsShowPrompt(
+              arg_instanceId!, arg_paramsInstanceId!, arg_origin!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsHidePrompt',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsHidePrompt was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientFlutterApi.onGeolocationPermissionsHidePrompt was null, expected non-null int.');
+          api.onGeolocationPermissionsHidePrompt(arg_identifier!);
+          return;
+        });
+      }
+    }
   }
 }
 
@@ -2129,6 +2185,7 @@ class WebStorageHostApi {
 
 class _FileChooserParamsFlutterApiCodec extends StandardMessageCodec {
   const _FileChooserParamsFlutterApiCodec();
+
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is FileChooserModeEnumData) {
@@ -2295,6 +2352,88 @@ abstract class PermissionRequestFlutterApi {
           assert(arg_resources != null,
               'Argument for dev.flutter.pigeon.PermissionRequestFlutterApi.create was null, expected non-null List<String?>.');
           api.create(arg_instanceId!, arg_resources!);
+          return;
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `GeolocationPermissionsCallback`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+class GeolocationPermissionsCallbackHostApi {
+  /// Constructor for [GeolocationPermissionsCallbackHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  GeolocationPermissionsCallbackHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles Dart method `GeolocationPermissionsCallback.invoke`.
+  Future<void> invoke(int arg_instanceId, String arg_origin, bool arg_allow,
+      bool arg_retain) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.GeolocationPermissionsCallbackHostApi.invoke',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_instanceId, arg_origin, arg_allow, arg_retain])
+        as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+/// Flutter API for `GeolocationPermissionsCallback`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
+abstract class GeolocationPermissionsCallbackFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId);
+
+  static void setup(GeolocationPermissionsCallbackFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.GeolocationPermissionsCallbackFlutterApi.create',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.GeolocationPermissionsCallbackFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.GeolocationPermissionsCallbackFlutterApi.create was null, expected non-null int.');
+          api.create(arg_instanceId!);
           return;
         });
       }
