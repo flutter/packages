@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -15,9 +14,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
-import android.util.Size;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +26,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnit;
@@ -66,26 +64,18 @@ public class ImageCaptureTest {
     final ImageCapture.Builder mockImageCaptureBuilder = mock(ImageCapture.Builder.class);
     final Long imageCaptureIdentifier = 74L;
     final Long flashMode = Long.valueOf(ImageCapture.FLASH_MODE_ON);
-    final int targetResolutionWidth = 10;
-    final int targetResolutionHeight = 50;
-    final GeneratedCameraXLibrary.ResolutionInfo resolutionInfo =
-        new GeneratedCameraXLibrary.ResolutionInfo.Builder()
-            .setWidth(Long.valueOf(targetResolutionWidth))
-            .setHeight(Long.valueOf(targetResolutionHeight))
-            .build();
+    final ResolutionSelector mockResolutionSelector = mock(ResolutionSelector.class);
+    final long mockResolutionSelectorId = 77;
 
     imageCaptureHostApiImpl.cameraXProxy = mockCameraXProxy;
+    testInstanceManager.addDartCreatedInstance(mockResolutionSelector, mockResolutionSelectorId);
     when(mockCameraXProxy.createImageCaptureBuilder()).thenReturn(mockImageCaptureBuilder);
     when(mockImageCaptureBuilder.build()).thenReturn(mockImageCapture);
 
-    final ArgumentCaptor<Size> sizeCaptor = ArgumentCaptor.forClass(Size.class);
-
-    imageCaptureHostApiImpl.create(imageCaptureIdentifier, flashMode, resolutionInfo);
+    imageCaptureHostApiImpl.create(imageCaptureIdentifier, flashMode, mockResolutionSelectorId);
 
     verify(mockImageCaptureBuilder).setFlashMode(flashMode.intValue());
-    verify(mockImageCaptureBuilder).setTargetResolution(sizeCaptor.capture());
-    assertEquals(sizeCaptor.getValue().getWidth(), targetResolutionWidth);
-    assertEquals(sizeCaptor.getValue().getHeight(), targetResolutionHeight);
+    verify(mockImageCaptureBuilder).setResolutionSelector(mockResolutionSelector);
     verify(mockImageCaptureBuilder).build();
     verify(testInstanceManager).addDartCreatedInstance(mockImageCapture, imageCaptureIdentifier);
   }
