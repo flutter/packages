@@ -1279,5 +1279,71 @@ void main() {
         ),
       );
     });
+
+    testWidgets(
+        'PlatformView does not rebuild when creation params stay the same',
+        (WidgetTester tester) async {
+      final MockPlatformViewsServiceProxy mockPlatformViewsService =
+          MockPlatformViewsServiceProxy();
+
+      final AndroidWebViewController controller = createControllerWithMocks();
+
+      when(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      ).thenReturn(MockSurfaceAndroidViewController());
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: controller,
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: controller,
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verifyNever(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+    });
   });
 }
