@@ -707,7 +707,7 @@ void main() {
       // Let's scroll!
       verticalController.jumpTo(verticalController.position.maxScrollExtent);
       await tester.pump();
-      expect(verticalController.position.pixels, 4200.0);
+      expect(verticalController.position.pixels, 4400.0);
       expect(horizontalController.position.pixels, 0.0);
       expect(find.text('Row: 49 Column: 0'), findsOneWidget);
       expect(find.text('Row: 48 Column: 0'), findsOneWidget);
@@ -725,8 +725,8 @@ void main() {
       // Let's scroll some more!
       horizontalController.jumpTo(verticalController.position.maxScrollExtent);
       await tester.pump();
-      expect(verticalController.position.pixels, 4200.0);
-      expect(horizontalController.position.pixels, 4200.0);
+      expect(verticalController.position.pixels, 4400.0);
+      expect(horizontalController.position.pixels, 4400.0);
       expect(find.text('Row: 49 Column: 49'), findsOneWidget);
       expect(find.text('Row: 48 Column: 49'), findsOneWidget);
       expect(find.text('Row: 49 Column: 48'), findsOneWidget);
@@ -864,7 +864,7 @@ void main() {
       // Let's scroll!
       verticalController.jumpTo(verticalController.position.maxScrollExtent);
       await tester.pump();
-      expect(verticalController.position.pixels, 4200.0);
+      expect(verticalController.position.pixels, 4400.0);
       expect(horizontalController.position.pixels, 0.0);
       expect(find.text('Row: 49 Column: 0'), findsOneWidget);
       expect(find.text('Row: 48 Column: 0'), findsOneWidget);
@@ -882,8 +882,8 @@ void main() {
       // Let's scroll some more!
       horizontalController.jumpTo(verticalController.position.maxScrollExtent);
       await tester.pump();
-      expect(verticalController.position.pixels, 4200.0);
-      expect(horizontalController.position.pixels, 4200.0);
+      expect(verticalController.position.pixels, 4400.0);
+      expect(horizontalController.position.pixels, 4400.0);
       expect(find.text('Row: 49 Column: 49'), findsOneWidget);
       expect(find.text('Row: 48 Column: 49'), findsOneWidget);
       expect(find.text('Row: 49 Column: 48'), findsOneWidget);

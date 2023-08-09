@@ -504,7 +504,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       maxVerticalScrollExtent = math.max(
         0.0,
         _rowMetrics[lastRow]!.trailingOffset -
-            (viewportDimension.height + startOfPinnedRow),
+            viewportDimension.height + startOfPinnedRow,
       );
     }
 
@@ -520,7 +520,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       maxHorizontalScrollExtent = math.max(
         0.0,
         _columnMetrics[lastColumn]!.trailingOffset -
-            (viewportDimension.width + startOfPinnedColumn),
+            viewportDimension.width + startOfPinnedColumn,
       );
     }
 
