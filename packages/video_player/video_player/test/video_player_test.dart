@@ -88,16 +88,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   ) async {}
 
   @override
-  bool? enableCache;
-
-  @override
-  int? maxCacheSize;
-
-  @override
-  int? maxFileSize;
-
-  @override
-  Future<bool> isCacheSupportedForNetworkMedia(String url) async => false;
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async => false;
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -1321,7 +1312,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   @override
-  Future<bool> clearCache(int textureId) async {
+  Future<bool> clearCache() async {
     calls.add('clearCache');
     return true;
   }
@@ -1329,12 +1320,6 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) async {
     calls.add('setMixWithOthers');
-  }
-
-  @override
-  Future<void> setVideoPlayerOptions(
-      VideoPlayerOptions videoPlayerOptions) async {
-    calls.add('setVideoPlayerOptions');
   }
 
   @override

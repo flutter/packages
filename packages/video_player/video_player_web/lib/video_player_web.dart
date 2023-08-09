@@ -128,17 +128,17 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
     return _player(textureId).getPosition();
   }
 
-  /// Returns if cache is supported.
+  /// Returns true if cache is supported.
   @override
-  Future<bool> isCacheSupportedForNetworkMedia(String url) async {
-    // caching is by default supported by most browser. It is however a function of the browser.
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
+    // caching is by default supported by most browser. It is however a function of the browser, see web README.
     return false;
   }
 
   // Clears the cache.
   @override
-  Future<bool> clearCache(int textureId) async {
-    return _player(textureId).clearCache();
+  Future<bool> clearCache() async {
+    return true;
   }
 
   @override

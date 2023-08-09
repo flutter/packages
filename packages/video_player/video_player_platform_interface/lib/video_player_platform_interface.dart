@@ -80,13 +80,13 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Returns true if caching is supported for the mimetype of the network video url.
-  Future<bool> isCacheSupportedForNetworkMedia(String url) {
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) {
     throw UnimplementedError(
         'isCacheSupportedForNetworkMedia() has not been implemented.');
   }
 
   /// Clears the cached videos.
-  Future<bool> clearCache(int textureId) {
+  Future<bool> clearCache() {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 
@@ -391,8 +391,8 @@ class VideoPlayerOptions {
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.webOptions,
-    this.maxCacheSize,
-    this.maxFileSize,
+    this.maxCacheSize = 0,
+    this.maxFileSize = 0,
     this.enableCache = false,
   });
 
@@ -410,23 +410,26 @@ class VideoPlayerOptions {
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
 
-  /// The URI to the video file.
+  /// Enables caching,
+  /// All parameters are best-effort, and not all platforms will support all options.
   ///
-  /// This will be in different formats depending on the [DataSourceType] of
-  /// the original video.
-  final int? maxCacheSize;
+  /// [enableCache] true (enabled) or false (disabled), default (disabled).
+  /// Add [maxCacheSize] and [maxFileSize], default 0.
+  /// The developer can clear the cache using [clearCache].
+  /// The developer can check the support mimetype for cache on the platform by calling [isCacheSupportedForNetworkMedia].
+  /// Only enabled for supported mimetypes. For other mimetypes this setting is ignored.
+  /// Detection with whatever is set here.
+  final bool enableCache;
 
-  /// The URI to the video file.
-  ///
-  /// This will be in different formats depending on the [DataSourceType] of
-  /// the original video.
-  final int? maxFileSize;
+  /// Will set the size of the total cache. Default maxCacheSize is 0 (no cache enabled).
+  /// 1 * 1024 * 1024 will be 1MB and it will automatically remove oldest used files if the size is reached out.
+  /// Detection with whatever is set here.
+  final int maxCacheSize;
 
-  /// Enable cache for media.
-  ///
-  /// This will be in different formats depending on the [DataSourceType] of
-  /// the original video.
-  final bool? enableCache;
+  /// Will set the size of a cache for one file (uri). Default maxFileSize is 0 (no cache enabled).
+  /// 1 * 1024 * 1024 will be 1MB and it will automatically remove oldest used files if the size is reached out.
+  /// Detection with whatever is set here.
+  final int maxFileSize;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings

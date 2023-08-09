@@ -228,7 +228,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.mp4"];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.mp4"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -252,7 +252,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://storage.googleapis.com/exoplayer-test-media-1/flac/play.flac"];
+      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/flac/play.flac"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -276,7 +276,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -300,8 +300,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/"
-                  @"fileSequence0.aac"];
+      makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/fileSequence0.aac"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -325,8 +324,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear1/"
-                  @"fileSequence0.ts"];
+      makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear1/fileSequence0.ts"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -350,8 +348,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://storage.googleapis.com/exoplayer-test-media-1/mkv/"
-                  @"android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv"];
+      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -375,8 +372,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://storage.googleapis.com/exoplayer-test-media-1/gen-3/screens/"
-                  @"dash-vod-single-segment/video-vp9-360.webm"];
+      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/gen-3/screens/dash-vod-single-segment/video-vp9-360.webm"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -400,7 +396,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://storage.googleapis.com/exoplayer-test-media-0/play.mp3"];
+      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-0/play.mp3"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -424,7 +420,7 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUrl:@"https://storage.googleapis.com/exoplayer-test-media-1/ogg/play.ogg"];
+      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/ogg/play.ogg"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -447,9 +443,7 @@
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTClearCacheMessage *message = [FLTClearCacheMessage makeWithTextureId:@1];
-
-  [videoPlayerPlugin clearCache:message error:&error];
+  [videoPlayerPlugin clearCache:&error];
   XCTAssertNil(error);
 }
 

@@ -4,7 +4,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 /**
  * FVPCacheTypeRemote and FVPCacheTypeLocal are cache optimization options.
  * FVPCacheTypeRemote acts as a local cache refresh action by setting the
@@ -19,12 +18,8 @@ typedef enum { FVPCacheTypeLocal = 0, FVPCacheTypeRemote } FVPCacheType;
 
 /**
  * Initializes and returns a instance using the provided cacheType and range.
- *
- *@param cacheType
- *
- *@param range, an range that specifies the range of data to be cached
  */
-- (instancetype)initWithActionType:(FVPCacheType)cacheType range:(NSRange)range;
+- (instancetype)initWithCacheType:(FVPCacheType)cacheType range:(NSRange)range;
 
 /**
  * @property cacheType

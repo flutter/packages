@@ -30,18 +30,13 @@ class IsSupportedMessageResponse {
 }
 
 class IsCacheSupportedMessage {
-  IsCacheSupportedMessage(this.url);
-  String url;
+  IsCacheSupportedMessage(this.uri);
+  String uri;
 }
 
 class ClearCacheMessageResponse {
   ClearCacheMessageResponse(this.hasSucceeded);
   bool hasSucceeded;
-}
-
-class ClearCacheMessage {
-  ClearCacheMessage(this.textureId);
-  int textureId;
 }
 
 class VolumeMessage {
@@ -87,7 +82,7 @@ abstract class AndroidVideoPlayerApi {
   void setVolume(VolumeMessage msg);
   IsSupportedMessageResponse isCacheSupportedForNetworkMedia(
       IsCacheSupportedMessage msg);
-  ClearCacheMessageResponse clearCache(ClearCacheMessage msg);
+  ClearCacheMessageResponse clearCache();
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
   void play(TextureMessage msg);
   PositionMessage position(TextureMessage msg);

@@ -8,9 +8,9 @@
 @class FVPCacheAction;
 
 /**
- * responsible for managing the caching of content, particularly for a video player or media streaming
- * functionality. It implements methods for reading and writing data to a cache file, handling cache
- * fragments, managing cache actions, and tracking cache statistics.
+ * responsible for managing the caching of content, particularly for a video player or media
+ * streaming functionality. It implements methods for reading and writing data to a cache file,
+ * handling cache fragments, managing cache actions, and tracking cache statistics.
  */
 @interface FVPContentCacheWorker : NSObject
 
@@ -20,16 +20,7 @@
  * @property cacheConfiguration
  */
 @property(nonatomic, strong, readonly) FVPCacheConfiguration *cacheConfiguration;
-//
-///*!
-// @property setupError
-// error callback, returns error when setup fails
-// */
-//@property(nonatomic, strong, readonly) NSError *setupError;
-/**
- * @property setupError
- * error callback, returns error when setup fails
- */
+
 
 - (void)cacheData:(NSData *)data forRange:(NSRange)range error:(NSError **)error;
 
@@ -43,25 +34,25 @@
 - (NSArray<FVPCacheAction *> *)cachedDataActionsForRange:(NSRange)range;
 
 /**
- * This method retrieves cached data from the file for a given range. It reads the data from the cache
- * file using the file handle, based on the provided range.
+ * This method retrieves cached data from the file for a given range. It reads the data from the
+ * cache file using the file handle, based on the provided range.
  *
  * @param range of cached data actions
  */
 - (NSData *)cachedDataForRange:(NSRange)range error:(NSError **)error;
 
 /**
- * This method sets the content information for the cache, including the content length. It truncates
- * the cache file to the specified content length and saves the content information in the internal
- * cache configuration.
+ * This method sets the content information for the cache, including the content length. It
+ * truncates the cache file to the specified content length and saves the content information in the
+ * internal cache configuration.
  *
- * @param contentInfo 
+ * @param contentInfo holds content statistics
  */
 - (void)setContentInfo:(FVPContentInfo *)contentInfo error:(NSError **)error;
 
 /**
- * This method is used to save the current state of the cache to disk. It synchronizes the file handle
- * and saves the internal cache configuration.
+ * This method is used to save the current state of the cache to disk. It synchronizes the file
+ * handle and saves the internal cache configuration.
  */
 - (void)save;
 

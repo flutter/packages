@@ -19,7 +19,6 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   VolumeMessage? volumeMessage;
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
-  ClearCacheMessage? clearCacheMessage;
   IsCacheSupportedMessage? isCacheSupportedMessage;
 
   @override
@@ -97,9 +96,8 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  ClearCacheMessageResponse clearCache(ClearCacheMessage msg) {
+  ClearCacheMessageResponse clearCache() {
     log.add('clearCache');
-    clearCacheMessage = msg;
     return ClearCacheMessageResponse(hasSucceeded: true);
   }
 }
@@ -282,9 +280,9 @@ void main() {
     });
 
     test('clearCache', () async {
-      await player.clearCache(1);
+      final bool success = await player.clearCache();
       expect(log.log.last, 'clearCache');
-      expect(log.clearCacheMessage?.textureId, 1);
+      expect(success, true);
     });
 
     test('seekTo', () async {

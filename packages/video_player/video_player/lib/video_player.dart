@@ -349,21 +349,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// detection with whatever is set here.
   final VideoFormat? formatHint;
 
-  /// **iOS only**. Will set is caching is true (enabled) or false (disabled), default (disabled).
-  /// Currently only mimetypes: video/mp4 and audio/flac files can be cached. For other mimetypes this setting is ignored.
-  /// Detection with whatever is set here.
-  bool? enableCache;
-
-  /// **Android only**. Will set the size of the total cache. Default maxCacheSize is 0 (no cache enabled).
-  /// Currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
-  /// Detection with whatever is set here.
-  int? maxCacheSize;
-
-  /// **Android only**. Will set the size of a cache for one file. Default maxFileSize is 0 (no cache enabled).
-  /// Currently only mimetypes: video/mp4 files can be cached. For other mimetypes this setting is ignored.
-  /// Detection with whatever is set here.
-  int? maxFileSize;
-
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
   final DataSourceType dataSourceType;
@@ -563,11 +548,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   /// Returns if caching is supported for network media.
-  Future<bool> isCacheSupportedForNetworkMedia(String url) async {
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
     if (_isDisposedOrNotInitialized) {
       return false;
     }
-    return _videoPlayerPlatform.isCacheSupportedForNetworkMedia(url);
+    return _videoPlayerPlatform.isCacheSupportedForNetworkMedia(uri);
   }
 
   /// Clears the cache of the player, returns true if succeeded.
@@ -575,7 +560,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposedOrNotInitialized) {
       return false;
     }
-    return _videoPlayerPlatform.clearCache(_textureId);
+    return _videoPlayerPlatform.clearCache();
   }
 
   Future<void> _applyPlayPause() async {

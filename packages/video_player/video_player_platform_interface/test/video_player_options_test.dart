@@ -20,4 +20,47 @@ void main() {
       expect(options.mixWithOthers, false);
     },
   );
+  test(
+    'VideoPlayerOptions enableCache defaults to false',
+    () {
+      final VideoPlayerOptions options = VideoPlayerOptions();
+      expect(options.enableCache, false);
+    },
+  );
+  test(
+    'VideoPlayerOptions maxCacheSize defaults to 0',
+    () {
+      final VideoPlayerOptions options = VideoPlayerOptions();
+      expect(options.maxCacheSize, 0);
+    },
+  );
+  test(
+    'VideoPlayerOptions mixWithOthers defaults to 0',
+    () {
+      final VideoPlayerOptions options = VideoPlayerOptions();
+      expect(options.maxFileSize, 0);
+    },
+  );
+
+  test(
+    'VideoPlayerOptions enableCache to true',
+    () {
+      final VideoPlayerOptions options = VideoPlayerOptions(enableCache: true);
+      expect(options.enableCache, true);
+    },
+  );
+  test(
+    'VideoPlayerOptions maxCacheSize to 10',
+    () {
+      final VideoPlayerOptions options = VideoPlayerOptions(maxCacheSize: 10);
+      expect(options.maxCacheSize, 10);
+    },
+  );
+  test(
+    'VideoPlayerOptions mixWithOthers defaults to 15',
+    () {
+      final VideoPlayerOptions options = VideoPlayerOptions(maxFileSize: 15);
+      expect(options.maxFileSize, 15);
+    },
+  );
 }

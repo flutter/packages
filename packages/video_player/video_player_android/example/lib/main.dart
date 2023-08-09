@@ -33,6 +33,10 @@ class _App extends StatelessWidget {
                 icon: Icon(Icons.cloud),
                 text: 'Remote',
               ),
+              Tab(
+                icon: Icon(Icons.cloud),
+                text: 'Remote with cache',
+              ),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset'),
             ],
           ),

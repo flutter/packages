@@ -79,16 +79,15 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<bool> clearCache(int textureId) async {
-    final ClearCacheMessageResponse response =
-        await _api.clearCache(ClearCacheMessage(textureId: textureId));
+  Future<bool> clearCache() async {
+    final ClearCacheMessageResponse response = await _api.clearCache();
     return response.hasSucceeded;
   }
 
   @override
-  Future<bool> isCacheSupportedForNetworkMedia(String url) async {
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
     final IsSupportedMessageResponse response = await _api
-        .isCacheSupportedForNetworkMedia(IsCacheSupportedMessage(url: url));
+        .isCacheSupportedForNetworkMedia(IsCacheSupportedMessage(uri: uri));
     return response.isSupported;
   }
 

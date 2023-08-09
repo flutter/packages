@@ -6,7 +6,7 @@
 
 @implementation FVPCacheAction
 
-- (instancetype)initWithActionType:(FVPCacheType)cacheType range:(NSRange)range {
+- (instancetype)initWithCacheType:(FVPCacheType)cacheType range:(NSRange)range {
   self = [super init];
   if (self) {
     _cacheType = cacheType;
@@ -16,19 +16,20 @@
 }
 
 - (BOOL)isEqual:(FVPCacheAction *)object {
-    if (!NSEqualRanges(object.range, self.range)) {
-        return NO;
-    }
-    
-    if (object.cacheType != self.cacheType) {
-        return NO;
-    }
-    
-    return YES;
+  if (!NSEqualRanges(object.range, self.range)) {
+    return NO;
+  }
+
+  if (object.cacheType != self.cacheType) {
+    return NO;
+  }
+
+  return YES;
 }
 
 - (NSUInteger)hash {
-    return [[NSString stringWithFormat:@"%@%@", NSStringFromRange(self.range), @(self.cacheType)] hash];
+  return
+      [[NSString stringWithFormat:@"%@%@", NSStringFromRange(self.range), @(self.cacheType)] hash];
 }
 
 @end

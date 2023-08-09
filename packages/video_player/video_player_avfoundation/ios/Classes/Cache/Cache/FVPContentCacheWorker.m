@@ -64,8 +64,8 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
         _internalCacheConfiguration.url = url;
       }
     }
-//
-//    _setupError = error;
+    //
+    //    _setupError = error;
   }
   return self;
 }

@@ -32,7 +32,7 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
   self = [super init];
   if (self) {
     _url = url;
-      _cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:url error:error];
+    _cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:url error:error];
     _contentDownloader = [[FVPContentDownloader alloc] initWithURL:url cacheWorker:_cacheWorker];
     _pendingRequestWorkers = [NSMutableArray array];
   }

@@ -14,16 +14,16 @@
 /**
  * return configuration based on the provided filePath
  *
- * @param filepath of the configuration
+ * @param filePath of the configuration
  */
 + (NSString *)configurationFilePathForFilePath:(NSString *)filePath;
 
 /**
  * Creates and retrieves a CacheConfiguration object based on the provided filePath. It
- * attempts to unarchive a previously saved configuration from the file. If the file does not exist or
- * the unarchiving fails, a new CacheConfiguration object is created and returned.
+ * attempts to unarchive a previously saved configuration from the file. If the file does not exist
+ * or the unarchiving fails, a new CacheConfiguration object is created and returned.
  *
- * @param filePath
+ * @param filePath of the configuration
  */
 + (instancetype)configurationWithFilePath:(NSString *)filePath error:(NSError **)error;
 

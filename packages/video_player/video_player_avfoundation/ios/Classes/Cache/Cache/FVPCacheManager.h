@@ -15,18 +15,18 @@ extern NSString *FVPCacheFinishedErrorKey;
 
 /**
  * returns filepath for
- * @param file (content) url
+ * @param url  (content)
  */
 + (NSString *)cachedFilePathForURL:(NSURL *)url;
 
 /**
  * returns CacheConfiguration for
- * @param file (content) url
+ * @param url (content)
  */
 + (FVPCacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error;
 
 /**
- * removes all (downloading)files in cache directory
+ * removes all files in cache directory and all downloading (in progress) files.
  */
 + (void)cleanAllCacheWithError:(NSError **)error;
 

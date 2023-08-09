@@ -18,7 +18,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
-import io.flutter.plugins.videoplayer.Messages.ClearCacheMessage;
 import io.flutter.plugins.videoplayer.Messages.ClearCacheMessageResponse;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.plugins.videoplayer.Messages.IsCacheSupportedMessage;
@@ -185,7 +184,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @NonNull
-  public ClearCacheMessageResponse clearCache(@NonNull ClearCacheMessage msg) {
+  public ClearCacheMessageResponse clearCache() {
 
     boolean hasSucceeded = VideoCache.clearVideoCache(flutterState.applicationContext);
     ClearCacheMessageResponse response =
@@ -237,7 +236,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   @NonNull
   public IsSupportedMessageResponse isCacheSupportedForNetworkMedia(
       @NonNull IsCacheSupportedMessage arg) {
-    boolean isSupported = isCacheSupported(Uri.parse(arg.getUrl()));
+    boolean isSupported = isCacheSupported(Uri.parse(arg.getUri()));
     return new IsSupportedMessageResponse.Builder().setIsSupported(isSupported).build();
   }
 

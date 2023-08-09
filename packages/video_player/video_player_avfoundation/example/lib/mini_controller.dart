@@ -319,7 +319,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Clears the media cache of the player.
   void clearCache() {
-    _platform.clearCache(textureId);
+    _platform.clearCache();
   }
 
   /// Pauses the video.
@@ -364,8 +364,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   }
 
   /// Returns if cache is supported for network media.
-  Future<bool> isCacheSupportedForNetworkMedia(String url) async {
-    return _platform.isCacheSupportedForNetworkMedia(url);
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
+    return _platform.isCacheSupportedForNetworkMedia(uri);
   }
 
   /// Sets the video's current timestamp to be at [position].

@@ -36,19 +36,14 @@ class ClearCacheMessageResponse {
 }
 
 class IsCacheSupportedMessage {
-  IsCacheSupportedMessage(this.url);
-  String url;
+  IsCacheSupportedMessage(this.uri);
+  String uri;
 }
 
 class VolumeMessage {
   VolumeMessage(this.textureId, this.volume);
   int textureId;
   double volume;
-}
-
-class ClearCacheMessage {
-  ClearCacheMessage(this.textureId);
-  int textureId;
 }
 
 class PlaybackSpeedMessage {
@@ -88,8 +83,8 @@ abstract class AVFoundationVideoPlayerApi {
   void dispose(TextureMessage msg);
   @ObjCSelector('setLooping:')
   void setLooping(LoopingMessage msg);
-  @ObjCSelector('clearCache:')
-  ClearCacheMessageResponse clearCache(ClearCacheMessage msg);
+  @ObjCSelector('clearCache')
+  ClearCacheMessageResponse clearCache();
   @ObjCSelector('setVolume:')
   void setVolume(VolumeMessage msg);
   @ObjCSelector('isCacheSupportedForNetworkMedia:')
