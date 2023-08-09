@@ -68,8 +68,6 @@ class RouteBuilder {
   /// when the new route is pushed onto the navigator.
   ///
   /// Defaults to true.
-  ///
-  /// {@macro flutter.widgets.navigator.requestFocus}
   final bool requestFocus;
 
   /// NavigatorObserver used to receive notifications when navigating in between routes.
