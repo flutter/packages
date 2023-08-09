@@ -104,12 +104,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(allNullableTypesOne.aNullableObject,
         allNullableTypesTwo.aNullableObject);
-    // TODO(stuartmorgan): Fix and re-enable.
-    // See https://github.com/flutter/flutter/issues/118733
-    if (targetGenerator != TargetGenerator.objc) {
-      expect(
-          allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
-    }
+    expect(
+        allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
   }
 
   void compareAllClassesWrapper(

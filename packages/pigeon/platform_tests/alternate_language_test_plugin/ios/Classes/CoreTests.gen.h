@@ -80,9 +80,9 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
-                        aNullableEnum:(AnEnum)aNullableEnum
+                        aNullableEnum:(nullable AnEnumWrapper *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(id)aNullableObject;
+                      aNullableObject:(nullable id)aNullableObject;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -97,9 +97,9 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable)
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, strong, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
-@property(nonatomic, assign) AnEnum aNullableEnum;
+@property(nonatomic, strong, nullable) AnEnumWrapper *aNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
-@property(nonatomic, strong) id aNullableObject;
+@property(nonatomic, strong, nullable) id aNullableObject;
 @end
 
 /// A class for testing nested class handling.

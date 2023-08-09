@@ -156,9 +156,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
-                        aNullableEnum:(AnEnum)aNullableEnum
+                        aNullableEnum:(nullable AnEnumWrapper *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(id)aNullableObject {
+                      aNullableObject:(nullable id)aNullableObject {
   AllNullableTypes *pigeonResult = [[AllNullableTypes alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
   pigeonResult.aNullableInt = aNullableInt;
@@ -193,7 +193,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.aNullableEnum = [GetNullableObjectAtIndex(list, 13) integerValue];
+  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
+  AnEnumWrapper *aNullableEnum = aNullableEnumAsNumber == nil ? nil : [[AnEnumWrapper alloc] init];
+  if (aNullableEnum != nil) {
+    aNullableEnum.value = [aNullableEnumAsNumber integerValue];
+  }
+  pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
   pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
   return pigeonResult;
@@ -216,7 +221,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.nullableNestedList ?: [NSNull null]),
     (self.nullableMapWithAnnotations ?: [NSNull null]),
     (self.nullableMapWithObject ?: [NSNull null]),
-    @(self.aNullableEnum),
+    (self.aNullableEnum == nil ? [NSNull null]
+                               : [NSNumber numberWithInteger:self.aNullableEnum.value]),
     (self.aNullableString ?: [NSNull null]),
     (self.aNullableObject ?: [NSNull null]),
   ];
