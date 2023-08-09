@@ -49,7 +49,7 @@ void main() {
             enableJavaScript: false,
             enableDomStorage: false,
             universalLinksOnly: false,
-            headers: <String, String>{'my_header_key': 'my_header_value'}),
+            headers: <String, String>{}),
         true);
     await launcher.closeWebView();
     // Delay required to catch android side crashes in onDestroy.
@@ -59,8 +59,5 @@ void main() {
     // false positive pass if the test closes before an onDestroy crash.
     // See https://github.com/flutter/flutter/issues/126460 for more info.
     await Future<void>.delayed(const Duration(seconds: 5));
-
-    // sms:, tel:, and mailto: links may not be openable on every device, so
-    // aren't tested here.
   });
 }
