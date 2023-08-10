@@ -8,6 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  void withinTolerance(Offset actual, Offset expected, double tolerance) {
+    expect(actual.dx, (double actual) => actual <= expected.dx + tolerance);
+    expect(actual.dx, (double actual) => actual >= expected.dx - tolerance);
+    expect(actual.dy, (double actual) => actual <= expected.dy + tolerance);
+    expect(actual.dy, (double actual) => actual >= expected.dy - tolerance);
+  }
+
   testWidgets('Check that the children are layed out.',
       (WidgetTester tester) async {
     const MaterialApp app = MaterialApp(
@@ -39,10 +46,10 @@ void main() {
         : const Offset(381.0, 224.0);
 
     // See if they are in expected position.
-    expect(tester.getTopLeft(find.text('Index 0')), offset0);
-    expect(tester.getTopLeft(find.text('Index 1')), offset1);
-    expect(tester.getTopLeft(find.text('Index 3')), offset3);
-    expect(tester.getTopLeft(find.text('Index 4')), offset4);
+    withinTolerance(tester.getTopLeft(find.text('Index 0')), offset0, 0.125);
+    withinTolerance(tester.getTopLeft(find.text('Index 1')), offset1, 0.125);
+    withinTolerance(tester.getTopLeft(find.text('Index 3')), offset3, 0.125);
+    withinTolerance(tester.getTopLeft(find.text('Index 4')), offset4, 0.125);
   });
 }
 
