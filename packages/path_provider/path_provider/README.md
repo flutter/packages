@@ -35,6 +35,7 @@ Directories support by platform:
 | Application Support | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 | Application Library | ❌️ | ✔️ | ❌️ | ✔️ | ❌️ |
 | Application Documents | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Application Cache | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 | External Storage | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
 | External Cache Directories | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
 | External Storage Directories | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
