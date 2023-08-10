@@ -784,7 +784,9 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
     return PlatformViewLink(
       // Setting a default key using `params` ensures the `PlatformViewLink`
       // recreates the PlatformView when changes are made.
-      key: _androidParams.key ?? ObjectKey(params),
+      key: _androidParams.key ??
+          ValueKey<AndroidWebViewWidgetCreationParams>(
+              params as AndroidWebViewWidgetCreationParams),
       viewType: 'plugins.flutter.io/webview',
       surfaceFactory: (
         BuildContext context,

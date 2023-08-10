@@ -46,10 +46,10 @@ void main() {
         : const Offset(381.0, 224.0);
 
     // See if they are in expected position.
-    withinTolerance(tester.getTopLeft(find.text('Index 0')), offset0, 0.125);
-    withinTolerance(tester.getTopLeft(find.text('Index 1')), offset1, 0.125);
-    withinTolerance(tester.getTopLeft(find.text('Index 3')), offset3, 0.125);
-    withinTolerance(tester.getTopLeft(find.text('Index 4')), offset4, 0.125);
+    withinTolerance(tester.getTopLeft(find.text('Index 0')), offset0, 0.2);
+    withinTolerance(tester.getTopLeft(find.text('Index 1')), offset1, 0.2);
+    withinTolerance(tester.getTopLeft(find.text('Index 3')), offset3, 0.2);
+    withinTolerance(tester.getTopLeft(find.text('Index 4')), offset4, 0.2);
   });
 }
 

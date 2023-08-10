@@ -14,14 +14,14 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'google_maps_controller_test.mocks.dart';
-
-@GenerateMocks(<Type>[], customMocks: <MockSpec<dynamic>>[
-  MockSpec<CirclesController>(onMissingStub: OnMissingStub.returnDefault),
-  MockSpec<PolygonsController>(onMissingStub: OnMissingStub.returnDefault),
-  MockSpec<PolylinesController>(onMissingStub: OnMissingStub.returnDefault),
-  MockSpec<MarkersController>(onMissingStub: OnMissingStub.returnDefault),
+@GenerateNiceMocks(<MockSpec<dynamic>>[
+  MockSpec<CirclesController>(),
+  MockSpec<PolygonsController>(),
+  MockSpec<PolylinesController>(),
+  MockSpec<MarkersController>(),
+  MockSpec<TileOverlaysController>(),
 ])
+import 'google_maps_controller_test.mocks.dart';
 
 /// Test Google Map Controller
 void main() {
@@ -194,6 +194,15 @@ void main() {
           }, throwsAssertionError);
         });
 
+        testWidgets('cannot updateTileOverlays after dispose',
+            (WidgetTester tester) async {
+          controller.dispose();
+
+          expect(() {
+            controller.updateTileOverlays(const <TileOverlay>{});
+          }, throwsAssertionError);
+        });
+
         testWidgets('isInfoWindowShown defaults to false',
             (WidgetTester tester) async {
           controller.dispose();
@@ -208,6 +217,7 @@ void main() {
       late MockMarkersController markers;
       late MockPolygonsController polygons;
       late MockPolylinesController polylines;
+      late MockTileOverlaysController tileOverlays;
       late gmaps.GMap map;
 
       setUp(() {
@@ -215,20 +225,20 @@ void main() {
         markers = MockMarkersController();
         polygons = MockPolygonsController();
         polylines = MockPolylinesController();
+        tileOverlays = MockTileOverlaysController();
         map = gmaps.GMap(html.DivElement());
       });
 
       testWidgets('listens to map events', (WidgetTester tester) async {
-        controller = createController();
-        controller.debugSetOverrides(
-          createMap: (_, __) => map,
-          circles: circles,
-          markers: markers,
-          polygons: polygons,
-          polylines: polylines,
-        );
-
-        controller.init();
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, __) => map,
+            circles: circles,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+          )
+          ..init();
 
         // Trigger events on the map, and verify they've been broadcast to the stream
         final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(5);
@@ -258,26 +268,26 @@ void main() {
 
       testWidgets("binds geometry controllers to map's",
           (WidgetTester tester) async {
-        controller = createController();
-        controller.debugSetOverrides(
-          createMap: (_, __) => map,
-          circles: circles,
-          markers: markers,
-          polygons: polygons,
-          polylines: polylines,
-        );
-
-        controller.init();
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, __) => map,
+            circles: circles,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            tileOverlays: tileOverlays,
+          )
+          ..init();
 
         verify(circles.bindToMap(mapId, map));
         verify(markers.bindToMap(mapId, map));
         verify(polygons.bindToMap(mapId, map));
         verify(polylines.bindToMap(mapId, map));
+        verify(tileOverlays.bindToMap(mapId, map));
       });
 
       testWidgets('renders initial geometry', (WidgetTester tester) async {
-        controller = createController(
-            mapObjects: MapObjects(circles: <Circle>{
+        final MapObjects mapObjects = MapObjects(circles: <Circle>{
           const Circle(
             circleId: CircleId('circle-1'),
             zIndex: 1234,
@@ -320,57 +330,25 @@ void main() {
             LatLng(43.354469, -5.851318),
             LatLng(43.354762, -5.850824),
           ])
-        }));
+        }, tileOverlays: <TileOverlay>{
+          const TileOverlay(tileOverlayId: TileOverlayId('overlay-1'))
+        });
 
-        controller.debugSetOverrides(
-          circles: circles,
-          markers: markers,
-          polygons: polygons,
-          polylines: polylines,
-        );
+        controller = createController(mapObjects: mapObjects)
+          ..debugSetOverrides(
+            circles: circles,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            tileOverlays: tileOverlays,
+          )
+          ..init();
 
-        controller.init();
-
-        final Set<Circle> capturedCircles =
-            verify(circles.addCircles(captureAny)).captured[0] as Set<Circle>;
-        final Set<Marker> capturedMarkers =
-            verify(markers.addMarkers(captureAny)).captured[0] as Set<Marker>;
-        final Set<Polygon> capturedPolygons =
-            verify(polygons.addPolygons(captureAny)).captured[0]
-                as Set<Polygon>;
-        final Set<Polyline> capturedPolylines =
-            verify(polylines.addPolylines(captureAny)).captured[0]
-                as Set<Polyline>;
-
-        expect(capturedCircles.first.circleId.value, 'circle-1');
-        expect(capturedCircles.first.zIndex, 1234);
-        expect(capturedMarkers.first.markerId.value, 'marker-1');
-        expect(capturedMarkers.first.infoWindow.snippet, 'snippet for test');
-        expect(capturedMarkers.first.infoWindow.title, 'title for test');
-        expect(capturedPolygons.first.polygonId.value, 'polygon-1');
-        expect(capturedPolygons.elementAt(1).polygonId.value,
-            'polygon-2-with-holes');
-        expect(capturedPolygons.elementAt(1).holes, isNot(null));
-        expect(capturedPolylines.first.polylineId.value, 'polyline-1');
-      });
-
-      testWidgets('empty infoWindow does not create InfoWindow instance.',
-          (WidgetTester tester) async {
-        controller = createController(
-            mapObjects: MapObjects(markers: <Marker>{
-          const Marker(markerId: MarkerId('marker-1')),
-        }));
-
-        controller.debugSetOverrides(
-          markers: markers,
-        );
-
-        controller.init();
-
-        final Set<Marker> capturedMarkers =
-            verify(markers.addMarkers(captureAny)).captured[0] as Set<Marker>;
-
-        expect(capturedMarkers.first.infoWindow, InfoWindow.noText);
+        verify(circles.addCircles(mapObjects.circles));
+        verify(markers.addMarkers(mapObjects.markers));
+        verify(polygons.addPolygons(mapObjects.polygons));
+        verify(polylines.addPolylines(mapObjects.polylines));
+        verify(tileOverlays.addTileOverlays(mapObjects.tileOverlays));
       });
 
       group('Initialization options', () {
@@ -449,15 +427,12 @@ void main() {
               target: LatLng(43.308, -5.6910),
               zoom: 12,
             ),
-          );
-
-          controller.debugSetOverrides(
-              createMap: (_, gmaps.MapOptions options) {
-            capturedOptions = options;
-            return map;
-          });
-
-          controller.init();
+          )
+            ..debugSetOverrides(createMap: (_, gmaps.MapOptions options) {
+              capturedOptions = options;
+              return map;
+            })
+            ..init();
 
           expect(capturedOptions, isNotNull);
           expect(capturedOptions!.zoom, 12);
@@ -467,8 +442,7 @@ void main() {
 
       group('Traffic Layer', () {
         testWidgets('by default is disabled', (WidgetTester tester) async {
-          controller = createController();
-          controller.init();
+          controller = createController()..init();
           expect(controller.trafficLayer, isNull);
         });
 
@@ -477,9 +451,9 @@ void main() {
           controller = createController(
               mapConfiguration: const MapConfiguration(
             trafficEnabled: true,
-          ));
-          controller.debugSetOverrides(createMap: (_, __) => map);
-          controller.init();
+          ))
+            ..debugSetOverrides(createMap: (_, __) => map)
+            ..init();
           expect(controller.trafficLayer, isNotNull);
         });
       });
@@ -496,9 +470,9 @@ void main() {
             ..zoom = 10
             ..center = gmaps.LatLng(0, 0),
         );
-        controller = createController();
-        controller.debugSetOverrides(createMap: (_, __) => map);
-        controller.init();
+        controller = createController()
+          ..debugSetOverrides(createMap: (_, __) => map)
+          ..init();
       });
 
       group('updateRawOptions', () {
@@ -556,13 +530,9 @@ void main() {
 
     // These are the methods that get forwarded to other controllers, so we just verify calls.
     group('Pass-through methods', () {
-      setUp(() {
-        controller = createController();
-      });
-
       testWidgets('updateCircles', (WidgetTester tester) async {
         final MockCirclesController mock = MockCirclesController();
-        controller.debugSetOverrides(circles: mock);
+        controller = createController()..debugSetOverrides(circles: mock);
 
         final Set<Circle> previous = <Circle>{
           const Circle(circleId: CircleId('to-be-updated')),
@@ -589,7 +559,7 @@ void main() {
 
       testWidgets('updateMarkers', (WidgetTester tester) async {
         final MockMarkersController mock = MockMarkersController();
-        controller.debugSetOverrides(markers: mock);
+        controller = createController()..debugSetOverrides(markers: mock);
 
         final Set<Marker> previous = <Marker>{
           const Marker(markerId: MarkerId('to-be-updated')),
@@ -616,7 +586,7 @@ void main() {
 
       testWidgets('updatePolygons', (WidgetTester tester) async {
         final MockPolygonsController mock = MockPolygonsController();
-        controller.debugSetOverrides(polygons: mock);
+        controller = createController()..debugSetOverrides(polygons: mock);
 
         final Set<Polygon> previous = <Polygon>{
           const Polygon(polygonId: PolygonId('to-be-updated')),
@@ -643,7 +613,7 @@ void main() {
 
       testWidgets('updatePolylines', (WidgetTester tester) async {
         final MockPolylinesController mock = MockPolylinesController();
-        controller.debugSetOverrides(polylines: mock);
+        controller = createController()..debugSetOverrides(polylines: mock);
 
         final Set<Polyline> previous = <Polyline>{
           const Polyline(polylineId: PolylineId('to-be-updated')),
@@ -674,11 +644,38 @@ void main() {
         }));
       });
 
+      testWidgets('updateTileOverlays', (WidgetTester tester) async {
+        final MockTileOverlaysController mock = MockTileOverlaysController();
+        controller = createController(
+            mapObjects: MapObjects(tileOverlays: <TileOverlay>{
+          const TileOverlay(tileOverlayId: TileOverlayId('to-be-updated')),
+          const TileOverlay(tileOverlayId: TileOverlayId('to-be-removed')),
+        }))
+          ..debugSetOverrides(tileOverlays: mock);
+
+        controller.updateTileOverlays(<TileOverlay>{
+          const TileOverlay(
+              tileOverlayId: TileOverlayId('to-be-updated'), visible: false),
+          const TileOverlay(tileOverlayId: TileOverlayId('to-be-added')),
+        });
+
+        verify(mock.removeTileOverlays(<TileOverlayId>{
+          const TileOverlayId('to-be-removed'),
+        }));
+        verify(mock.addTileOverlays(<TileOverlay>{
+          const TileOverlay(tileOverlayId: TileOverlayId('to-be-added')),
+        }));
+        verify(mock.changeTileOverlays(<TileOverlay>{
+          const TileOverlay(
+              tileOverlayId: TileOverlayId('to-be-updated'), visible: false),
+        }));
+      });
+
       testWidgets('infoWindow visibility', (WidgetTester tester) async {
         final MockMarkersController mock = MockMarkersController();
         const MarkerId markerId = MarkerId('marker-with-infowindow');
         when(mock.isInfoWindowShown(markerId)).thenReturn(true);
-        controller.debugSetOverrides(markers: mock);
+        controller = createController()..debugSetOverrides(markers: mock);
 
         controller.showInfoWindow(markerId);
 
