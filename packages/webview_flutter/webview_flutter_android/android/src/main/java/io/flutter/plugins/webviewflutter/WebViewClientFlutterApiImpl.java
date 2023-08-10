@@ -6,6 +6,7 @@ package io.flutter.plugins.webviewflutter;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -228,6 +229,26 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     doUpdateVisitedHistory(
         getIdentifierForClient(webViewClient), webViewIdentifier, url, isReload, callback);
+  }
+
+  /** Passes arguments from {@link WebViewClient#onReceivedHttpAuthRequest} to Dart. */
+  public void onReceivedHttpAuthRequest(
+      @NonNull WebViewClient webViewClient,
+      @NonNull WebView webview,
+      @NonNull HttpAuthHandler httpAuthHandler,
+      @NonNull String host,
+      @NonNull String realm,
+      @NonNull Reply<Void> callback) {
+    new HttpAuthHandlerFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(httpAuthHandler, reply -> {});
+
+    onReceivedHttpAuthRequest(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webViewClient)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webview)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(httpAuthHandler)),
+        host,
+        realm,
+        callback);
   }
 
   private long getIdentifierForClient(WebViewClient webViewClient) {

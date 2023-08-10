@@ -1,3 +1,7 @@
+## 3.13.0
+
+* Adds support for `PlatformNavigationDelegate.setOnReceiveHttpBasicAuthRequest`.
+
 ## 3.12.0
 
 * Adds support for `PlatformWebViewController.getUserAgent`.

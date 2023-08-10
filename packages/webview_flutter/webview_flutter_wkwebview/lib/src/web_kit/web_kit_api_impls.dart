@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -903,6 +905,53 @@ class WKNavigationDelegateFlutterApiImpl
       instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
           as WKWebView,
     );
+  }
+
+  @override
+  Future<AuthenticationChallengeResponse> didReceiveAuthenticationChallenge(
+    int identifier,
+    int webViewIdentifier,
+    int challengeIdentifier,
+  ) async {
+    final void Function(
+      WKWebView webView,
+      NSUrlAuthenticationChallenge challenge,
+      void Function(
+        NSUrlSessionAuthChallengeDisposition disposition,
+        NSUrlCredential? credential,
+      ),
+    )? function = _getDelegate(identifier).didReceiveAuthenticationChallenge;
+
+    if (function == null) {
+      return AuthenticationChallengeResponse(
+        disposition: NSUrlSessionAuthChallengeDisposition.rejectProtectionSpace,
+      );
+    }
+
+    final Completer<AuthenticationChallengeResponse> responseCompleter =
+        Completer<AuthenticationChallengeResponse>();
+
+    function.call(
+      instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
+          as WKWebView,
+      instanceManager.getInstanceWithWeakReference(challengeIdentifier)!
+          as NSUrlAuthenticationChallenge,
+      (
+        NSUrlSessionAuthChallengeDisposition disposition,
+        NSUrlCredential? credential,
+      ) {
+        responseCompleter.complete(
+          AuthenticationChallengeResponse(
+            disposition: disposition,
+            credentialIdentifier: credential != null
+                ? instanceManager.getIdentifier(credential)
+                : null,
+          ),
+        );
+      },
+    );
+
+    return responseCompleter.future;
   }
 }
 

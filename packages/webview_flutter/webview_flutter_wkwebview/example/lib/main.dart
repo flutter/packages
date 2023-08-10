@@ -162,6 +162,11 @@ Page resource error:
           })
           ..setOnUrlChange((UrlChange change) {
             debugPrint('url change to ${change.url}');
+          })
+          ..setOnHttpBasicAuthRequest((HttpBasicAuthRequest request) {
+            debugPrint(
+                'HTTP basic auth request with host ${request.host} and realm ${request.realm}');
+            openDialog(request);
           }),
       )
       ..addJavaScriptChannel(JavaScriptChannelParams(
@@ -220,6 +225,60 @@ Page resource error:
       child: const Icon(Icons.favorite),
     );
   }
+
+  Future<void> openDialog(HttpBasicAuthRequest httpRequest) async {
+    final TextEditingController usernameTextController =
+        TextEditingController();
+    final TextEditingController passwordTextController =
+        TextEditingController();
+
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('${httpRequest.host}: ${httpRequest.realm}'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Username'),
+                  autofocus: true,
+                  controller: usernameTextController,
+                ),
+                TextField(
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  controller: passwordTextController,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            // Explicitly cancel the request on iOS as the OS does not emit new
+            // requests when a previous request is pending.
+            TextButton(
+              onPressed: () {
+                httpRequest.onCancel();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                httpRequest.onProceed(
+                  usernameTextController.text,
+                  passwordTextController.text,
+                );
+                Navigator.of(context).pop();
+              },
+              child: const Text('Authenticate'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 enum MenuOptions {
@@ -237,6 +296,7 @@ enum MenuOptions {
   transparentBackground,
   setCookie,
   logExample,
+  basicAuthentication,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -300,6 +360,9 @@ class SampleMenu extends StatelessWidget {
           case MenuOptions.logExample:
             _onLogExample();
             break;
+          case MenuOptions.basicAuthentication:
+            _basicAuthExample();
+            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -359,6 +422,10 @@ class SampleMenu extends StatelessWidget {
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.logExample,
           child: Text('Log example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.basicAuthentication,
+          child: Text('Basic Authentication Example'),
         ),
       ],
     );
@@ -517,6 +584,12 @@ class SampleMenu extends StatelessWidget {
     });
 
     return webViewController.loadHtmlString(kLogExamplePage);
+  }
+
+  Future<void> _basicAuthExample() {
+    return webViewController.loadRequest(LoadRequestParams(
+        uri: Uri.parse(
+            'https://www.httpwatch.com/httpgallery/authentication/#showExample10')));
   }
 }
 

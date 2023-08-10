@@ -377,6 +377,17 @@ class MockAndroidNavigationDelegate extends _i1.Mock
       ) as _i9.Future<void>);
 
   @override
+  _i9.Future<void> setOnHttpBasicAuthRequest(
+          _i3.HttpAuthRequestCallback? onHttpAuthRequest) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnHttpBasicAuthRequest,
+          [onHttpAuthRequest],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
   _i9.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -991,6 +1002,12 @@ class MockAndroidWebViewProxy extends _i1.Mock
     )? onReceivedError,
     void Function(
       _i2.WebView,
+      _i2.HttpAuthHandler,
+      String,
+      String,
+    )? onReceivedHttpAuthRequest,
+    void Function(
+      _i2.WebView,
       _i2.WebResourceRequest,
       _i2.WebResourceError,
     )? onReceivedRequestError,
@@ -1024,6 +1041,12 @@ class MockAndroidWebViewProxy extends _i1.Mock
             String,
             String,
           )? onReceivedError,
+          void Function(
+            _i2.WebView,
+            _i2.HttpAuthHandler,
+            String,
+            String,
+          )? onReceivedHttpAuthRequest,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
@@ -1064,6 +1087,12 @@ class MockAndroidWebViewProxy extends _i1.Mock
           )? onReceivedError,
           void Function(
             _i2.WebView,
+            _i2.HttpAuthHandler,
+            String,
+            String,
+          )? onReceivedHttpAuthRequest,
+          void Function(
+            _i2.WebView,
             _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
@@ -1100,6 +1129,12 @@ class MockAndroidWebViewProxy extends _i1.Mock
           String,
           String,
         )? onReceivedError,
+        void Function(
+          _i2.WebView,
+          _i2.HttpAuthHandler,
+          String,
+          String,
+        )? onReceivedHttpAuthRequest,
         void Function(
           _i2.WebView,
           _i2.WebResourceRequest,
