@@ -7,9 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_image/flutter_image.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+void main() {runApp(const MyApp());}
 
 
 class MyApp extends StatelessWidget {
