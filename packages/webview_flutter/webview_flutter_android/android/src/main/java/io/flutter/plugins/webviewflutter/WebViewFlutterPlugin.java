@@ -19,6 +19,7 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CustomViewCallb
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.DownloadListenerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.FlutterAssetManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.GeolocationPermissionsCallbackHostApi;
+import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.HttpAuthHandlerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.InstanceManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaObjectHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaScriptChannelHostApi;
@@ -144,6 +145,8 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
         new GeolocationPermissionsCallbackHostApiImpl(binaryMessenger, instanceManager));
     CustomViewCallbackHostApi.setup(
         binaryMessenger, new CustomViewCallbackHostApiImpl(binaryMessenger, instanceManager));
+    HttpAuthHandlerHostApi.setup(
+        binaryMessenger, new HttpAuthHandlerHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override

@@ -1,3 +1,7 @@
+## 3.10.0
+
+* Adds support for `PlatformNavigationDelegate.setOnReceiveHttpBasicAuthRequest`.<<<<<<< HEAD
+
 ## 3.9.2
 
 * Fixes error caused by calling `WKWebViewConfiguration.limitsNavigationsToAppBoundDomains` on
@@ -18,6 +22,7 @@
 ## 3.7.4
 
 * Adds pub topics to package metadata.
+
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 3.7.3

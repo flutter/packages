@@ -285,3 +285,36 @@ FWFWKMediaCaptureTypeData *FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType
 
   return nil;
 }
+
+NSURLSessionAuthChallengeDisposition
+FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(
+    FWFNSUrlSessionAuthChallengeDisposition value) {
+  switch (value) {
+    case FWFNSUrlSessionAuthChallengeDispositionUseCredential:
+      return NSURLSessionAuthChallengeUseCredential;
+    case FWFNSUrlSessionAuthChallengeDispositionPerformDefaultHandling:
+      return NSURLSessionAuthChallengePerformDefaultHandling;
+    case FWFNSUrlSessionAuthChallengeDispositionCancelAuthenticationChallenge:
+      return NSURLSessionAuthChallengeCancelAuthenticationChallenge;
+    case FWFNSUrlSessionAuthChallengeDispositionRejectProtectionSpace:
+      return NSURLSessionAuthChallengeRejectProtectionSpace;
+  }
+
+  return -1;
+}
+
+NSURLCredentialPersistence FWFNativeNSURLCredentialPersistenceFromFWFNSUrlCredentialPersistence(
+    FWFNSUrlCredentialPersistence value) {
+  switch (value) {
+    case FWFNSUrlCredentialPersistenceNone:
+      return NSURLCredentialPersistenceNone;
+    case FWFNSUrlCredentialPersistenceSession:
+      return NSURLCredentialPersistenceForSession;
+    case FWFNSUrlCredentialPersistencePermanent:
+      return NSURLCredentialPersistencePermanent;
+    case FWFNSUrlCredentialPersistenceSynchronizable:
+      return NSURLCredentialPersistenceSynchronizable;
+  }
+
+  return -1;
+}

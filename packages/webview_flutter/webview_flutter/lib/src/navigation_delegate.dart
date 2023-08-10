@@ -48,6 +48,7 @@ class NavigationDelegate {
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
     void Function(UrlChange change)? onUrlChange,
+    void Function(HttpBasicAuthRequest request)? onHttpBasicAuthRequest,
   }) : this.fromPlatformCreationParams(
           const PlatformNavigationDelegateCreationParams(),
           onNavigationRequest: onNavigationRequest,
@@ -56,6 +57,7 @@ class NavigationDelegate {
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
           onUrlChange: onUrlChange,
+          onHttpBasicAuthRequest: onHttpBasicAuthRequest,
         );
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
@@ -98,6 +100,7 @@ class NavigationDelegate {
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
     void Function(UrlChange change)? onUrlChange,
+    void Function(HttpBasicAuthRequest request)? onHttpBasicAuthRequest,
   }) : this.fromPlatform(
           PlatformNavigationDelegate(params),
           onNavigationRequest: onNavigationRequest,
@@ -106,6 +109,7 @@ class NavigationDelegate {
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
           onUrlChange: onUrlChange,
+          onHttpBasicAuthRequest: onHttpBasicAuthRequest,
         );
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
@@ -119,6 +123,7 @@ class NavigationDelegate {
     this.onProgress,
     this.onWebResourceError,
     void Function(UrlChange change)? onUrlChange,
+    this.onHttpBasicAuthRequest,
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
@@ -137,6 +142,9 @@ class NavigationDelegate {
     }
     if (onUrlChange != null) {
       platform.setOnUrlChange(onUrlChange);
+    }
+    if (onHttpBasicAuthRequest != null) {
+      platform.setOnHttpBasicAuthRequest(onHttpBasicAuthRequest!);
     }
   }
 
@@ -166,4 +174,7 @@ class NavigationDelegate {
 
   /// Invoked when a resource loading error occurred.
   final WebResourceErrorCallback? onWebResourceError;
+
+  /// Invoked when a resource required HTTP basic authentication.
+  final HttpAuthRequestCallback? onHttpBasicAuthRequest;
 }

@@ -1,3 +1,7 @@
+## 4.5.0
+
+* Adds support for HTTP basic authentication. See `NavigationDelegate(onReceivedHttpAuthRequest)`.
+
 ## 4.4.1
 
 * Exposes `JavaScriptLogLevel` from platform interface.

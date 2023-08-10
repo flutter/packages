@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Adds support for handling HTTP basic authentication requests. See `PlatformNavigationDelegate.setOnReceiveHttpBasicAuthRequest`.
+
 ## 2.6.0
 
 * Adds support to register a callback to intercept messages that are written to

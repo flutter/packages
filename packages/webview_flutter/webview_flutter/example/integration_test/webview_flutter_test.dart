@@ -32,6 +32,15 @@ Future<void> main() async {
       request.response.writeln('${request.headers}');
     } else if (request.uri.path == '/favicon.ico') {
       request.response.statusCode = HttpStatus.notFound;
+    } else if (request.uri.path == '/http-basic-authentication') {
+      final bool isAuthenticating = request.headers['Authorization'] != null;
+      if (isAuthenticating) {
+        request.response.writeln('Authorized');
+      } else {
+        request.response.headers
+            .add('WWW-Authenticate', 'Basic realm="Test realm"');
+        request.response.statusCode = HttpStatus.unauthorized;
+      }
     } else {
       fail('unexpected request: ${request.method} ${request.uri}');
     }
@@ -41,6 +50,7 @@ Future<void> main() async {
   final String primaryUrl = '$prefixUrl/hello.txt';
   final String secondaryUrl = '$prefixUrl/secondary.txt';
   final String headersUrl = '$prefixUrl/headers';
+  final String basicAuthUrl = '$prefixUrl/http-basic-authentication';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
@@ -49,12 +59,9 @@ Future<void> main() async {
     unawaited(controller.setNavigationDelegate(
       NavigationDelegate(onPageFinished: (_) => pageFinished.complete()),
     ));
-    unawaited(controller.loadRequest(Uri.parse(primaryUrl)));
-
     await tester.pumpWidget(WebViewWidget(controller: controller));
-
+    unawaited(controller.loadRequest(Uri.parse(primaryUrl)));
     await pageFinished.future;
-
     final String? currentUrl = await controller.currentUrl();
     expect(currentUrl, primaryUrl);
   });
@@ -760,6 +767,49 @@ Future<void> main() async {
       );
 
       await expectLater(urlChangeCompleter.future, completion(secondaryUrl));
+    });
+
+    testWidgets('can receive HTTP basic auth requests',
+        (WidgetTester tester) async {
+      final Completer<void> authRequested = Completer<void>();
+      final WebViewController controller = WebViewController();
+
+      unawaited(
+        controller.setNavigationDelegate(
+          NavigationDelegate(
+            onHttpBasicAuthRequest: (HttpBasicAuthRequest request) =>
+                authRequested.complete(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(WebViewWidget(controller: controller));
+
+      unawaited(controller.loadRequest(Uri.parse(basicAuthUrl)));
+
+      await expectLater(authRequested.future, completes);
+    });
+
+    testWidgets('can reply to HTTP basic auth requests',
+        (WidgetTester tester) async {
+      final WebViewController controller = WebViewController();
+      final Completer<void> pageFinished = Completer<void>();
+
+      unawaited(
+        controller.setNavigationDelegate(
+          NavigationDelegate(
+            onHttpBasicAuthRequest: (HttpBasicAuthRequest request) =>
+                request.onProceed('user', 'pass'),
+            onPageFinished: (_) => pageFinished.complete(),
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(WebViewWidget(controller: controller));
+
+      unawaited(controller.loadRequest(Uri.parse(basicAuthUrl)));
+
+      await expectLater(pageFinished.future, completes);
     });
   });
 

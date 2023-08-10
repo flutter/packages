@@ -87,6 +87,19 @@ void main() {
 
       verify(delegate.platform.setOnUrlChange(onUrlChange));
     });
+
+    test('onHttpBasicAuthRequest', () {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onHttpBasicAuthRequest(HttpBasicAuthRequest request) {}
+
+      final NavigationDelegate delegate = NavigationDelegate(
+        onHttpBasicAuthRequest: onHttpBasicAuthRequest,
+      );
+
+      verify(
+          delegate.platform.setOnHttpBasicAuthRequest(onHttpBasicAuthRequest));
+    });
   });
 }
 
