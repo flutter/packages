@@ -668,7 +668,9 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
     return UiKitView(
       // Setting a default key using `params` ensures the `UIKitView` recreates
       // the PlatformView when changes are made.
-      key: _webKitParams.key ?? ObjectKey(params),
+      key: _webKitParams.key ??
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+              params as WebKitWebViewWidgetCreationParams),
       viewType: 'plugins.flutter.io/webview',
       onPlatformViewCreated: (_) {},
       layoutDirection: params.layoutDirection,
