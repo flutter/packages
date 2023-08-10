@@ -9,10 +9,26 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   void withinTolerance(Offset actual, Offset expected, double tolerance) {
-    expect(actual.dx, (double actual) => actual <= expected.dx + tolerance);
-    expect(actual.dx, (double actual) => actual >= expected.dx - tolerance);
-    expect(actual.dy, (double actual) => actual <= expected.dy + tolerance);
-    expect(actual.dy, (double actual) => actual >= expected.dy - tolerance);
+    expect(
+      actual.dx,
+      (double actual) => actual <= expected.dx + tolerance,
+      reason: '${actual.dx} <= ${expected.dx + tolerance}',
+    );
+    expect(
+      actual.dx,
+      (double actual) => actual >= expected.dx - tolerance,
+      reason: '${actual.dx} >= ${expected.dx - tolerance}',
+    );
+    expect(
+      actual.dy,
+      (double actual) => actual <= expected.dy + tolerance,
+      reason: '${actual.dy} <= ${expected.dy + tolerance}',
+    );
+    expect(
+      actual.dy,
+      (double actual) => actual >= expected.dy - tolerance,
+      reason: '${actual.dy} >= ${expected.dy - tolerance}',
+    );
   }
 
   testWidgets('Check that the children are layed out.',
@@ -54,5 +70,5 @@ void main() {
 }
 
 double _getExpectedYOffset(double nonWeb) {
-  return kIsWeb ? nonWeb - 0.5 : nonWeb;
+  return nonWeb;
 }
