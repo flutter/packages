@@ -11,9 +11,9 @@ set(CMAKE_INSTALL_RPATH "$ORIGIN/lib")
 # Configure build options.
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set(CMAKE_BUILD_TYPE "Debug" CACHE
-          STRING "Flutter build mode" FORCE)
+    STRING "Flutter build mode" FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
-          "Debug" "Profile" "Release")
+    "Debug" "Profile" "Release")
 endif()
 
 # Compilation settings that should be applied to most targets.
@@ -37,10 +37,10 @@ add_definitions(-DAPPLICATION_ID="${APPLICATION_ID}")
 
 # Application build
 add_executable(${BINARY_NAME}
-        "main.cc"
-        "my_application.cc"
-        "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
-        )
+  "main.cc"
+  "my_application.cc"
+  "${FLUTTER_MANAGED_DIR}/generated_plugin_registrant.cc"
+)
 apply_standard_settings(${BINARY_NAME})
 target_link_libraries(${BINARY_NAME} PRIVATE flutter)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::GTK)
@@ -50,9 +50,9 @@ add_dependencies(${BINARY_NAME} flutter_assemble)
 # people trying to run the unbundled copy, put it in a subdirectory instead of
 # the default top-level location.
 set_target_properties(${BINARY_NAME}
-        PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/intermediates_do_not_run"
-        )
+  PROPERTIES
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/intermediates_do_not_run"
+)
 
 # Generated plugin build rules, which manage building the plugins and adding
 # them to the application.
@@ -86,8 +86,8 @@ install(FILES "${FLUTTER_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
 
 if(PLUGIN_BUNDLED_LIBRARIES)
   install(FILES "${PLUGIN_BUNDLED_LIBRARIES}"
-          DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
-          COMPONENT Runtime)
+    DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+    COMPONENT Runtime)
 endif()
 
 # Fully re-copy the assets directory on each build to avoid having stale files

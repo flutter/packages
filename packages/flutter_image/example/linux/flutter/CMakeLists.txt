@@ -73,12 +73,12 @@ add_dependencies(flutter flutter_assemble)
 # since currently there's no way to get a full input/output list from the
 # flutter tool.
 add_custom_command(
-        OUTPUT ${FLUTTER_LIBRARY} ${FLUTTER_LIBRARY_HEADERS}
-        ${CMAKE_CURRENT_BINARY_DIR}/_phony_
-        COMMAND ${CMAKE_COMMAND} -E env
-        ${FLUTTER_TOOL_ENVIRONMENT}
-        "${FLUTTER_ROOT}/packages/flutter_tools/bin/tool_backend.sh"
-        linux-x64 ${CMAKE_BUILD_TYPE}
+  OUTPUT ${FLUTTER_LIBRARY} ${FLUTTER_LIBRARY_HEADERS}
+    ${CMAKE_CURRENT_BINARY_DIR}/_phony_
+  COMMAND ${CMAKE_COMMAND} -E env
+    ${FLUTTER_TOOL_ENVIRONMENT}
+    "${FLUTTER_ROOT}/packages/flutter_tools/bin/tool_backend.sh"
+      linux-x64 ${CMAKE_BUILD_TYPE}
 )
 add_custom_target(flutter_assemble DEPENDS
   "${FLUTTER_LIBRARY}"
