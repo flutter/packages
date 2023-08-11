@@ -13,8 +13,11 @@ import 'test_suites.dart';
 
 /// Runs the given tests, printing status and exiting with failure if any of
 /// them fails.
-Future<void> runTests(List<String> testsToRun, {bool skipGen = false}) async {
-  if (!skipGen) {
+Future<void> runTests(
+  List<String> testsToRun, {
+  bool runGeneration = true,
+}) async {
+  if (runGeneration) {
     // Pre-generate the necessary common output files.
     // TODO(stuartmorgan): Consider making this conditional on the specific
     // tests being run, as not all of them need these files.
