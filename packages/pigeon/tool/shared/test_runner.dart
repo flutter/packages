@@ -13,17 +13,19 @@ import 'test_suites.dart';
 
 /// Runs the given tests, printing status and exiting with failure if any of
 /// them fails.
-Future<void> runTests(List<String> testsToRun) async {
+Future<void> runTests(List<String> testsToRun, {bool skipGen = false}) async {
   // Pre-generate the necessary common output files.
   // TODO(stuartmorgan): Consider making this conditional on the specific
   // tests being run, as not all of them need these files.
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
-  print('# Generating platform_test/ output...');
-  final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
-  if (generateExitCode == 0) {
-    print('Generation complete!');
-  } else {
-    print('Generation failed; see above for errors.');
+  if (!skipGen) {
+    print('# Generating platform_test/ output...');
+    final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
+    if (generateExitCode == 0) {
+      print('Generation complete!');
+    } else {
+      print('Generation failed; see above for errors.');
+    }
   }
 
   for (final String test in testsToRun) {
