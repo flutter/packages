@@ -388,19 +388,12 @@ Future<void> main() async {
                 return video.webkitDisplayingFullscreen;
               }
               function toggleFullScreen() {
-                LogChannel.postMessage("JavaScript: Running onClick");
                 let elem = document.getElementById("video");
 
                 if (!document.fullscreenElement) {
-                  LogChannel.postMessage("JavaScript: Showing fullscreen");
-                  elem.requestFullscreen().catch((err) => {
-                    LogChannel.postMessage("JavaScript: Error attempting to enable fullscreen mode: " + err.message + " (" + err.name + ")",);
-                  });
-                  LogChannel.postMessage("JavaScript: Shown fullscreen");
+                  elem.requestFullscreen();
                 } else {
-                  LogChannel.postMessage("JavaScript: Closing fullscreen");
                   document.exitFullscreen();
-                  LogChannel.postMessage("JavaScript: Closed fullscreen");
                 }
               }
             </script>
@@ -564,15 +557,6 @@ Future<void> main() async {
         fullscreenEntered.complete();
         onHideCustomView!();
       }));
-
-      unawaited(controller.addJavaScriptChannel(
-        JavaScriptChannelParams(
-          name: 'LogChannel',
-          onMessageReceived: (JavaScriptMessage message) {
-            print(message.message);
-          },
-        ),
-      ));
 
       await controller.loadRequest(
         LoadRequestParams(
