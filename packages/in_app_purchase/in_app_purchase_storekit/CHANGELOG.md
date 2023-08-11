@@ -1,3 +1,7 @@
+## 0.3.6+5
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.3.6+4
 
 * Removes obsolete null checks on non-nullable values.
