@@ -11,7 +11,6 @@ void main() {
   runApp(const MyApp());
 }
 
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -28,7 +27,8 @@ class NetworkImageWithRetryDemo extends StatefulWidget {
   const NetworkImageWithRetryDemo({super.key});
 
   @override
-  State<NetworkImageWithRetryDemo> createState() => _NetworkImageWithRetryDemoState();
+  State<NetworkImageWithRetryDemo> createState() =>
+      _NetworkImageWithRetryDemoState();
 }
 
 class _NetworkImageWithRetryDemoState extends State<NetworkImageWithRetryDemo> {
