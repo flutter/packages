@@ -62,7 +62,7 @@ class QualitySelector extends JavaObject {
 
   late final _QualitySelectorHostApiImpl _api;
 
-  /// Desired qualities for this selctor instance.
+  /// Desired qualities for this selector instance.
   final List<VideoQualityConstraint> qualityList;
 
   /// Desired fallback strategy for this selector instance.
