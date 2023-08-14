@@ -68,7 +68,7 @@ class QualitySelector extends JavaObject {
   /// Desired fallback strategy for this selector instance.
   final FallbackStrategy? fallbackStrategy;
 
-  /// Retrieves te corresponding resolution from the input [quality] for the
+  /// Retrieves the corresponding resolution from the input [quality] for the
   /// camera represented by [cameraInfo].
   static Future<ResolutionInfo> getResolution(
       CameraInfo cameraInfo, VideoQualityConstraint quality,
