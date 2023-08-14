@@ -1,3 +1,7 @@
+## 1.0.33
+
+* Updates androidx.fragment version to 1.6.1.
+
 ## 1.0.32
 
 * Fixes stale ignore: prefer_const_constructors.
