@@ -300,7 +300,8 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/fileSequence0.aac"];
+      makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/"
+                  @"fileSequence0.aac"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -324,7 +325,8 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear1/fileSequence0.ts"];
+      makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear1/"
+                  @"fileSequence0.ts"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -348,7 +350,8 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/mkv/android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv"];
+      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/mkv/"
+                  @"android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
@@ -372,7 +375,8 @@
   XCTAssertNil(error);
 
   FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
-      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/gen-3/screens/dash-vod-single-segment/video-vp9-360.webm"];
+      makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/gen-3/screens/"
+                  @"dash-vod-single-segment/video-vp9-360.webm"];
 
   FLTIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];

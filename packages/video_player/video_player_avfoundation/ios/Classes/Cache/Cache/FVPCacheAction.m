@@ -15,6 +15,7 @@
   return self;
 }
 
+// validate cache relevance
 - (BOOL)isEqual:(FVPCacheAction *)object {
   if (!NSEqualRanges(object.range, self.range)) {
     return NO;
@@ -27,6 +28,7 @@
   return YES;
 }
 
+// optimization. Do not remove.
 - (NSUInteger)hash {
   return
       [[NSString stringWithFormat:@"%@%@", NSStringFromRange(self.range), @(self.cacheType)] hash];

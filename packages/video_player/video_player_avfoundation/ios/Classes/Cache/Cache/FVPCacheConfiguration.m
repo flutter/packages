@@ -17,33 +17,32 @@ static NSString *kURLKey = @"kURLKey";
 @property(nonatomic, copy) NSString *filePath;
 @property(nonatomic, copy) NSString *fileName;
 @property(nonatomic, copy) NSArray<NSValue *> *internalCacheFragments;
-@property(nonatomic, copy) NSArray *downloadInfo;
+@property(nonatomic, copy) NSArray *downloadInfo;  //(NSArray of bytes and time)
 
 @end
 
 @implementation FVPCacheConfiguration
 
+// returns configuration or error
 + (instancetype)configurationWithFilePath:(NSString *)filePath error:(NSError **)error {
-  filePath = [self configurationFilePathForFilePath:filePath];
+  // filePath for the cache configuration filepath
+  filePath = [filePath stringByAppendingPathExtension:@".cache_configuration"];
+
+  // get the cache confguration
   NSData *data = [NSData dataWithContentsOfFile:filePath];
   FVPCacheConfiguration *configuration =
       [NSKeyedUnarchiver unarchivedObjectOfClass:[FVPCacheConfiguration class]
                                         fromData:data
                                            error:error];
-
+  // if there is no cache confguration, create a new one.
   if (!configuration) {
     configuration = [[FVPCacheConfiguration alloc] init];
     configuration.fileName = [filePath lastPathComponent];
   }
   configuration.filePath = filePath;
 
+  // Return the configuration that has been created or retrieved.
   return configuration;
-}
-
-// returns the file path with a ".mt_cfg" extension. It is used for saving and retrieving the
-// configuration file.
-+ (NSString *)configurationFilePathForFilePath:(NSString *)filePath {
-  return [filePath stringByAppendingPathExtension:@"mt_cfg"];
 }
 
 - (NSArray<NSValue *> *)internalCacheFragments {
@@ -53,6 +52,7 @@ static NSString *kURLKey = @"kURLKey";
   return _internalCacheFragments;
 }
 
+// returns or creates downloadInfo
 - (NSArray *)downloadInfo {
   if (!_downloadInfo) {
     _downloadInfo = [NSArray array];
@@ -105,6 +105,7 @@ static NSString *kURLKey = @"kURLKey";
 
 #pragma mark - Update
 
+// save the cache configuration, but cancel "in progress" save.
 - (void)save {
   [[self class] cancelPreviousPerformRequestsWithTarget:self
                                                selector:@selector(archiveData)
@@ -112,6 +113,7 @@ static NSString *kURLKey = @"kURLKey";
   [self performSelector:@selector(archiveData) withObject:nil afterDelay:1.0];
 }
 
+// save action, or print error.
 - (void)archiveData {
   @synchronized(self.internalCacheFragments) {
     NSError *error;
@@ -199,49 +201,11 @@ static NSString *kURLKey = @"kURLKey";
   }
 }
 
+// store donwloadInfo
 - (void)addDownloadedBytes:(long long)bytes spent:(NSTimeInterval)time {
   @synchronized(self.downloadInfo) {
     self.downloadInfo = [self.downloadInfo arrayByAddingObject:@[ @(bytes), @(time) ]];
   }
-}
-
-+ (BOOL)createAndSaveDownloadedConfigurationForURL:(NSURL *)url error:(NSError **)error {
-  NSString *filePath = [FVPCacheManager cachedFilePathForURL:url];
-  NSFileManager *fileManager = [NSFileManager defaultManager];
-  NSDictionary<NSFileAttributeKey, id> *attributes = [fileManager attributesOfItemAtPath:filePath
-                                                                                   error:error];
-  if (!attributes) {
-    return NO;
-  }
-
-  NSUInteger fileSize = (NSUInteger)attributes.fileSize;
-  NSRange range = NSMakeRange(0, fileSize);
-
-  FVPCacheConfiguration *configuration = [FVPCacheConfiguration configurationWithFilePath:filePath
-                                                                                    error:error];
-  configuration.url = url;
-
-  FVPContentInfo *contentInfo = [FVPContentInfo new];
-
-  NSString *fileExtension = [url pathExtension];
-  NSString *UTI = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(
-      kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, NULL);
-  NSString *contentType = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass(
-      (__bridge CFStringRef)UTI, kUTTagClassMIMEType);
-  if (!contentType) {
-    contentType = @"application/octet-stream";
-  }
-  contentInfo.contentType = contentType;
-
-  contentInfo.contentLength = fileSize;
-  contentInfo.byteRangeAccessSupported = YES;
-  contentInfo.downloadedContentLength = fileSize;
-  configuration.contentInfo = contentInfo;
-
-  [configuration addCacheFragment:range];
-  [configuration save];
-
-  return YES;
 }
 
 @end

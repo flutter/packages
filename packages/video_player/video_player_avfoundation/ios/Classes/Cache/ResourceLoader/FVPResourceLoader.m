@@ -25,6 +25,7 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
 @implementation FVPResourceLoader
 
 - (void)dealloc {
+  // cancel the contentDownloader
   [_contentDownloader cancel];
 }
 
@@ -32,7 +33,9 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
   self = [super init];
   if (self) {
     _url = url;
+    // create a content cache worker that is responsible for caching the downloaded content.
     _cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:url error:error];
+    //
     _contentDownloader = [[FVPContentDownloader alloc] initWithURL:url cacheWorker:_cacheWorker];
     _pendingRequestWorkers = [NSMutableArray array];
   }
@@ -71,6 +74,7 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
 - (void)cancel {
   [self.contentDownloader cancel];
   [self.pendingRequestWorkers removeAllObjects];
+  // Remove the url from the current downloading URL's NSSet.
 
   [[FVPContentDownloaderStatus shared] removeURL:self.url];
 }
@@ -84,6 +88,7 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
     [self.delegate resourceLoader:self didFailWithError:error];
   }
   if (self.pendingRequestWorkers.count == 0) {
+    // Remove the url from the current downloading URL's NSSet.
     [[FVPContentDownloaderStatus shared] removeURL:self.url];
   }
 }
@@ -91,22 +96,32 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
 #pragma mark - Helper
 
 - (void)startNoCacheWorkerWithRequest:(AVAssetResourceLoadingRequest *)request {
+  // add url to NSSet of downloadingUrls to keep track of urls that are currently downloading.
   [[FVPContentDownloaderStatus shared] addURL:self.url];
+
+  // create a new contentDownloader
   FVPContentDownloader *contentDownloader =
       [[FVPContentDownloader alloc] initWithURL:self.url cacheWorker:self.cacheWorker];
+
+  // Create a requestWorker from new excisting content downloader.
   FVPResourceLoadingRequestWorker *requestWorker =
       [[FVPResourceLoadingRequestWorker alloc] initWithContentDownloader:contentDownloader
                                                   resourceLoadingRequest:request];
+
   [self.pendingRequestWorkers addObject:requestWorker];
   requestWorker.delegate = self;
   [requestWorker startWork];
 }
 
 - (void)startWorkerWithRequest:(AVAssetResourceLoadingRequest *)request {
+  // add url to NSSet of downloadingUrls to keep track of urls that are currently downloading.
   [[FVPContentDownloaderStatus shared] addURL:self.url];
+
+  // Create a requestWorker from the excisting content downloader.
   FVPResourceLoadingRequestWorker *requestWorker =
       [[FVPResourceLoadingRequestWorker alloc] initWithContentDownloader:self.contentDownloader
                                                   resourceLoadingRequest:request];
+
   [self.pendingRequestWorkers addObject:requestWorker];
   requestWorker.delegate = self;
   [requestWorker startWork];

@@ -226,9 +226,14 @@ NS_INLINE UIViewController *rootViewController(void) {
   }
   AVPlayerItem *item;
   if (cacheEnabled.boolValue) {
-    NSLog(@"cache enabled %@", url);
+    // cache is enabled, start the resource loader manager to mage loading and caching content
+    // during playback. it is tied to the player. If a new player is created, a new
+    // resourceloadermanager for that player is created. If the player is deallocated, the
+    // resourceloadermanager for that player will be cleaned up by the garbage collector.
+    // NSLog(@"cache enabled %@", url);
     FVPResourceLoaderManager *resourceLoaderManager = [FVPResourceLoaderManager new];
     self.resourceLoaderManager = resourceLoaderManager;
+    //
     item = [resourceLoaderManager playerItemWithURL:url];
   } else {
     AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
@@ -717,8 +722,8 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (FLTClearCacheMessageResponse *)clearCache:(FlutterError *__autoreleasing *)error {
   //  [player.resourceLoaderManager cleanCache];
-  //  unsigned long long fileSize = [FVPCacheManager calculateCachedSizeWithError:nil];
-  //  NSLog(@"file cache size: %@", @(fileSize));
+  unsigned long long fileSize = [FVPCacheManager calculateCachedSizeWithError:nil];
+  NSLog(@"file cache size: %@", @(fileSize));
   NSError *error2;
   [FVPCacheManager cleanAllCacheWithError:&error2];
 

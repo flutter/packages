@@ -8,7 +8,7 @@
 @class FVPCacheAction;
 
 /**
- * responsible for managing the caching of content, particularly for a video player or media
+ * Responsible forcaching of content, particularly for a video player or media
  * streaming functionality. It implements methods for reading and writing data to a cache file,
  * handling cache fragments, managing cache actions, and tracking cache statistics.
  */
@@ -21,13 +21,12 @@
  */
 @property(nonatomic, strong, readonly) FVPCacheConfiguration *cacheConfiguration;
 
-
 - (void)cacheData:(NSData *)data forRange:(NSRange)range error:(NSError **)error;
 
 /**
  * Returns an array of CacheAction objects for a given range. It identifies the cached
- * fragments within the range and returns an array of CacheAction objects, representing local and
- * remote cache actions.
+ * fragments within the range and returns an array of CacheAction objects, representing refreshing
+ * cache actions.
  *
  * @param range of cached data actions
  */
@@ -57,13 +56,13 @@
 - (void)save;
 
 /**
- * startWritting and finishWritting are used to indicate the start and end of writing data to the
+ * startWritting is used to indicate the start of writing data to the
  * cache file. They keep track of the writing progress and time taken to write data.
  */
 - (void)startWritting;
 
 /**
- * startWritting and finishWritting are used to indicate the start and end of writing data to the
+ * finishWritting is used to indicate the end of writing data to the
  * cache file. They keep track of the writing progress and time taken to write data.
  */
 - (void)finishWritting;

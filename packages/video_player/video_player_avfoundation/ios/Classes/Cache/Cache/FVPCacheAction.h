@@ -5,19 +5,19 @@
 #import <Foundation/Foundation.h>
 
 /**
- * FVPCacheTypeRemote and FVPCacheTypeLocal are cache optimization options.
- * FVPCacheTypeRemote acts as a local cache refresh action by setting the
+ * FVPCacheTypeIgnoreLocal and FVPCacheTypeUseLocal are cache optimization options.
+ * FVPCacheTypeIgnoreLocal acts as a local cache refresh action by setting the
  * NSURLRequestReloadIgnoringLocalAndRemoteCacheData flag. When this cache policy is used, it means
  * Ignore local cache data, and instruct proxies and other intermediates to disregard their caches
- * so far as the protocol allows. FVPCacheTypeLocal uses localCache. It does not validate the
+ * so far as the protocol allows. FVPCacheTypeUseLocal uses localCache. It does not validate the
  * relevance of it.
  */
-typedef enum { FVPCacheTypeLocal = 0, FVPCacheTypeRemote } FVPCacheType;
+typedef enum { FVPCacheTypeUseLocal = 0, FVPCacheTypeIgnoreLocal } FVPCacheType;
 
 @interface FVPCacheAction : NSObject
 
 /**
- * Initializes and returns a instance using the provided cacheType and range.
+ * Returns a instance using the provided cacheType and range.
  */
 - (instancetype)initWithCacheType:(FVPCacheType)cacheType range:(NSRange)range;
 
@@ -27,7 +27,7 @@ typedef enum { FVPCacheTypeLocal = 0, FVPCacheTypeRemote } FVPCacheType;
 @property(nonatomic) FVPCacheType cacheType;
 
 /**
- * @property range
+ * @property range for a cache fragement
  */
 @property(nonatomic) NSRange range;
 

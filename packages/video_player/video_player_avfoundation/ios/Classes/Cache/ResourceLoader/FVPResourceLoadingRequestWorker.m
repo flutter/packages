@@ -29,7 +29,7 @@
     _contentDownloader.delegate = self;
     _request = request;
 
-    [self fullfillContentInfo];
+    [self storeMetaData];
   }
   return self;
 }
@@ -71,13 +71,15 @@
   return error;
 }
 
-// mThis method fulfills the content information in the
-// AVAssetResourceLoadingContentInformationRequest associated with the request. It checks if the
-// content information is missing and then fills it using the information from the
-// ContentDownloader.
-- (void)fullfillContentInfo {
+// When a response from the server is received it retrieved essential information
+// (contentInformationRequest) like content type and content length
+// (AVAssetResourceLoadingContentInformationRequest) from the request. It checks if the content
+// information is missing and then fills it using the information from the contentDownloader.
+- (void)storeMetaData {
+  // retrieves the metadata from the request
   AVAssetResourceLoadingContentInformationRequest *contentInformationRequest =
       self.request.contentInformationRequest;
+
   if (self.contentDownloader.info && !contentInformationRequest.contentType) {
     // Fullfill content information
     contentInformationRequest.contentType = self.contentDownloader.info.contentType;
@@ -89,12 +91,24 @@
 
 #pragma mark - FVPContentDownloaderDelegate
 
+/**
+ * @method         contentDownloader:didReceiveResponse
+ * @abstract       Starts storing essential meta data like e.g. content type and content length upon
+ * server response.
+ * @param          response
+ *                 An instance of NSURLResponse containing the reponse (with metadata
+ * AVAssetResourceLoadingContentInformationRequest).
+ */
 - (void)contentDownloader:(FVPContentDownloader *)downloader
        didReceiveResponse:(NSURLResponse *)response {
-  [self fullfillContentInfo];
+  // when a response has been received we can store essential metadata like e.g. content type and
+  // content length.
+  [self storeMetaData];
 }
 
 - (void)contentDownloader:(FVPContentDownloader *)downloader didReceiveData:(NSData *)data {
+  // when a response has been received we can store essential information like e.g. content type and
+  // content length.
   [self.request.dataRequest respondWithData:data];
 }
 

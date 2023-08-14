@@ -4,6 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
+// Information (metadata) of the content
 @interface FVPContentInfo : NSObject <NSCoding>
 
 /**

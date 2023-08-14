@@ -23,6 +23,7 @@ static NSString *kCacheScheme = @"FVPVideoPlayerCache:";
   return self;
 }
 
+//
 - (void)cleanCache {
   NSLog(@"Loaders: %@", self.loaders);
   [self.loaders removeAllObjects];

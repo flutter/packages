@@ -13,22 +13,22 @@
 + (instancetype)shared;
 
 /**
- * add url source to downloading
+ * Adds url source to downloadingUrls (NSSet of urls)
  */
 - (void)addURL:(NSURL *)url;
 
 /**
- * removes url source from downloading
+ * removes url source from downloadingUrls
  */
 - (void)removeURL:(NSURL *)url;
 
 /**
- * return YES if downloading the url source
+ * return YES if downloadingUrls contains the given url
  */
 - (BOOL)containsURL:(NSURL *)url;
 
 /**
- * return downloading urls
+ * return downloadingUrls set
  */
 - (NSSet *)urls;
 
@@ -43,12 +43,6 @@
  * url of video
  */
 @property(nonatomic, strong, readonly) NSURL *url;
-
-/**
- * @property delegate
- * ContentDownloaderDelegate
- */
-@property(nonatomic, weak) id<FVPContentDownloaderDelegate> delegate;
 
 /**
  * @property info
@@ -68,15 +62,16 @@
 - (void)downloadTaskFromOffset:(unsigned long long)fromOffset
                         length:(NSUInteger)length
                          toEnd:(BOOL)toEnd;
-/**
- * start download and sets the startToEnd property
- */
-- (void)downloadFromStartToEnd;
 
 /**
  * cancels downloading
  */
 - (void)cancel;
+
+/**
+ * ContentDownloaderDelegate
+ */
+@property(nonatomic, weak) id<FVPContentDownloaderDelegate> delegate;
 
 @end
 
@@ -85,7 +80,7 @@
 @optional
 
 /**
- * callback when received response
+ * callback when download request received response
  */
 - (void)contentDownloader:(FVPContentDownloader *)downloader
        didReceiveResponse:(NSURLResponse *)response;

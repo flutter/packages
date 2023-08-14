@@ -175,6 +175,7 @@ static NSInteger kBufferSize = 10 * 1024;
   [self processActions];
 }
 
+// Cancel NSURLSession
 - (void)cancel {
   if (_session) {
     [self.session invalidateAndCancel];
@@ -190,6 +191,8 @@ static NSInteger kBufferSize = 10 * 1024;
   return _sessionDelegateObject;
 }
 
+// returns the NSURLSession with a default configuration; a sessionDelegateObject and (our) download
+// queu.
 - (NSURLSession *)session {
   if (!_session) {
     NSURLSessionConfiguration *configuration =
@@ -214,7 +217,7 @@ static NSInteger kBufferSize = 10 * 1024;
   }
 
   // FVPCacheTypeLocal
-  if (action.cacheType == FVPCacheTypeLocal) {
+  if (action.cacheType == FVPCacheTypeUseLocal) {
     NSError *error;
     NSData *data = [self.cacheWorker cachedDataForRange:action.range error:&error];
     if (error) {
@@ -280,7 +283,7 @@ static NSInteger kBufferSize = 10 * 1024;
     didReceiveResponse:(NSURLResponse *)response
      completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler {
   NSString *mimeType = response.MIMEType;
-  // Only download video/audio data
+  // Only download video/audio data, else cancel the NSUrlSession
   if ([mimeType rangeOfString:@"video/"].location == NSNotFound &&
       [mimeType rangeOfString:@"audio/"].location == NSNotFound) {
     completionHandler(NSURLSessionResponseCancel);
@@ -369,6 +372,7 @@ static NSInteger kBufferSize = 10 * 1024;
 }
 
 - (void)addURL:(NSURL *)url {
+  // to prevent threading issues.
   @synchronized(self.downloadingURLS) {
     [self.downloadingURLS addObject:url];
   }
@@ -387,6 +391,7 @@ static NSInteger kBufferSize = 10 * 1024;
 }
 
 - (NSSet *)urls {
+  // returns a copy of the downloadingUrls.
   return [self.downloadingURLS copy];
 }
 
@@ -406,12 +411,13 @@ static NSInteger kBufferSize = 10 * 1024;
 
 @end
 
-// This class handles content downloading from a specified URL. It interacts with a
-// ContentCacheWorker for caching the downloaded content and uses an ActionWorker for handling the
-// downloading process.
+// This class handles content downloading from a URL. It interacts with a
+// FVPContentCacheWorker for caching the downloaded content and uses an FVPActionWorker for handling
+// the downloading process.
 @implementation FVPContentDownloader
 
 - (void)dealloc {
+  // Remove the url from the current downloading URL's NSSet.
   [[FVPContentDownloaderStatus shared] removeURL:self.url];
 }
 
@@ -421,7 +427,10 @@ static NSInteger kBufferSize = 10 * 1024;
     _saveToCache = YES;
     _url = url;
     _cacheWorker = cacheWorker;
+
     _info = _cacheWorker.cacheConfiguration.contentInfo;
+
+    // add url to NSSet of downloadingUrls to keep track of urls that are currently downloading.
     [[FVPContentDownloaderStatus shared] addURL:self.url];
   }
   return self;
@@ -448,21 +457,10 @@ static NSInteger kBufferSize = 10 * 1024;
   [self.actionWorker start];
 }
 
-- (void)downloadFromStartToEnd {
-  self.downloadToEnd = YES;
-  NSRange range = NSMakeRange(0, 2);
-  NSArray *actions = [self.cacheWorker cachedDataActionsForRange:range];
-
-  self.actionWorker = [[FVPActionWorker alloc] initWithActions:actions
-                                                           url:self.url
-                                                   cacheWorker:self.cacheWorker];
-  self.actionWorker.canSaveToCache = self.saveToCache;
-  self.actionWorker.delegate = self;
-  [self.actionWorker start];
-}
-
 - (void)cancel {
   self.actionWorker.delegate = nil;
+
+  // Remove the url from the current downloading URL's NSSet.
   [[FVPContentDownloaderStatus shared] removeURL:self.url];
   [self.actionWorker cancel];
   self.actionWorker = nil;
@@ -511,6 +509,8 @@ static NSInteger kBufferSize = 10 * 1024;
 }
 
 - (void)actionWorker:(FVPActionWorker *)actionWorker didFinishWithError:(NSError *)error {
+  // Remove the url from the current downloading URL's NSSet.
+
   [[FVPContentDownloaderStatus shared] removeURL:self.url];
 
   if (!error && self.downloadToEnd) {

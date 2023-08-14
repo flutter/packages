@@ -6,22 +6,15 @@
 #import "FVPContentInfo.h"
 
 /**
- * Provide functionality related to caching configuration and content download statistics. Let's go
- * through each class and its methods:
+ * The caching configuration keeps track of information related to the cache and content download
+ * statistics. This Configuration can be stored,updated and retrieved.
  */
 @interface FVPCacheConfiguration : NSObject <NSCopying>
 
 /**
- * return configuration based on the provided filePath
- *
- * @param filePath of the configuration
- */
-+ (NSString *)configurationFilePathForFilePath:(NSString *)filePath;
-
-/**
- * Creates and retrieves a CacheConfiguration object based on the provided filePath. It
+ * Instanciates a CacheConfiguration based on the provided url. It
  * attempts to unarchive a previously saved configuration from the file. If the file does not exist
- * or the unarchiving fails, a new CacheConfiguration object is created and returned.
+ * or the unarchiving fails, a new CacheConfiguration is created and returned.
  *
  * @param filePath of the configuration
  */
@@ -69,29 +62,14 @@
 /**
  * Adds a cache fragment to the internal cache fragments array. It efficiently
  * manages cache fragments, ensuring that overlapping fragments are combined, and new fragments are
- * nserted in the correct order.
- *
- * @param fragment cache
+ * inserted in the correct order.
  */
 - (void)addCacheFragment:(NSRange)fragment;
 
 /**
  * Adds downloaded bytes and time spent to the downloadInfo array. It tracks
  * download statistics for the content.
- *
- * @param bytes downloaded
- *
- * @param time spend
  */
 - (void)addDownloadedBytes:(long long)bytes spent:(NSTimeInterval)time;
-
-/**
- * Creates and saves a CacheConfiguration object with download
- * statistics for a given URL. It creates a new CacheConfiguration object, sets the content
- * information based on the provided URL, and saves it to disk.
- *
- * @param url of the content
- */
-+ (BOOL)createAndSaveDownloadedConfigurationForURL:(NSURL *)url error:(NSError **)error;
 
 @end

@@ -5,29 +5,25 @@
 #import <Foundation/Foundation.h>
 #import "FVPCacheConfiguration.h"
 
-extern NSString *FVPCacheConfigurationKey;
-extern NSString *FVPCacheFinishedErrorKey;
-
 /**
  * responsible for managing caching (directory) of content
  */
 @interface FVPCacheManager : NSObject
 
 /**
- * returns filepath for
- * @param url  (content)
+ * returns cache filepath for content url
  */
 + (NSString *)cachedFilePathForURL:(NSURL *)url;
-
-/**
- * returns CacheConfiguration for
- * @param url (content)
- */
-+ (FVPCacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error;
 
 /**
  * removes all files in cache directory and all downloading (in progress) files.
  */
 + (void)cleanAllCacheWithError:(NSError **)error;
+
+/**
+ * currently used for debugging pusposes. It returns the total size of the cache files. Size = 0
+ * when cache is empty
+ */
++ (unsigned long long)calculateCachedSizeWithError:(NSError **)error;
 
 @end

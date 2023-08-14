@@ -15,6 +15,7 @@
  * consumer of the resource loader about the progress and completion of resource loading.
  */
 
+// Video Url
 @property(nonatomic, strong, readonly) NSURL *url;
 @property(nonatomic, weak) id<FVPResourceLoaderDelegate> delegate;
 
@@ -22,7 +23,6 @@
 
 - (void)addRequest:(AVAssetResourceLoadingRequest *)request;
 - (void)removeRequest:(AVAssetResourceLoadingRequest *)request;
-
 - (void)cancel;
 
 @end
