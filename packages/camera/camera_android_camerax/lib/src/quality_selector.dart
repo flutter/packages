@@ -130,7 +130,7 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
             : instanceManager.getIdentifier(fallbackStrategy));
   }
 
-  /// Retrieves te corresponding resolution from the input [quality] for the
+  /// Retrieves the corresponding resolution from the input [quality] for the
   /// camera represented by [cameraInfo].
   Future<ResolutionInfo> getResolutionFromInstance(
       CameraInfo cameraInfo, VideoQualityConstraint quality) async {
