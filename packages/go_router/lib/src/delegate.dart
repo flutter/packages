@@ -154,7 +154,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   /// For use by the Router architecture as part of the RouterDelegate.
-  // This class avoid using async to make sure the route is processed
+  // This class avoids using async to make sure the route is processed
   // synchronously if possible.
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
@@ -179,7 +179,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         }
       }
       if (indexOfFirstDiff < currentConfiguration.matches.length) {
-        // Appends onExit future to the result future and return early if
         final List<GoRoute> exitingGoRoutes = currentConfiguration.matches
             .sublist(indexOfFirstDiff)
             .map<RouteBase>((RouteMatch match) => match.route)
@@ -199,6 +198,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return _setCurrentConfiguration(configuration);
   }
 
+  /// Calls [GoRoute.onExit] starting from the index
+  ///
+  /// The returned future resolves to true if all routes below the index all
+  /// return true. Otherwise, the returned future resolves to false.
   static Future<bool> _callOnExitStartsAt(int index,
       {required BuildContext navigatorContext, required List<GoRoute> routes}) {
     if (index < 0) {
@@ -209,6 +212,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       return _callOnExitStartsAt(index - 1,
           navigatorContext: navigatorContext, routes: routes);
     }
+
     Future<bool> handleOnExitResult(bool exit) {
       if (exit) {
         return _callOnExitStartsAt(index - 1,
