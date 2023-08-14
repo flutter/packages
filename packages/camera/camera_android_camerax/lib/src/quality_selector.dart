@@ -36,7 +36,7 @@ class QualitySelector extends JavaObject {
   /// Creates a [QualitySelector] with ordered desired qualities and fallback
   /// strategy, if specified.
   ///
-  /// The final quality will be seleced according to the order in which they are
+  /// The final quality will be selected according to the order in which they are
   /// specified.
   QualitySelector.fromOrderedList(
       {BinaryMessenger? binaryMessenger,
