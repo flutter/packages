@@ -1,6 +1,6 @@
 ## 10.2.0
 
-- Adds `onExit` to various RouteBases.
+- Adds `onExit` to GoRoute.
 
 ## 10.1.4
 
