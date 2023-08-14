@@ -1,3 +1,7 @@
+## 0.3.0+11
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.3.0+10
 
 * Bumps com.android.billingclient:billing from 6.0.0 to 6.0.1.

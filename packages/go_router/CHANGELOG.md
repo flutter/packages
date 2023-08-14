@@ -1,3 +1,7 @@
+## 10.1.0
+
+- Supports setting `requestFocus`.
+
 ## 10.0.0
 
 - **BREAKING CHANGE**:

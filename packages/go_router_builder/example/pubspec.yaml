@@ -6,6 +6,7 @@ environment:
   sdk: ">=2.18.0 <4.0.0"
 
 dependencies:
+  collection: ^1.15.0
   flutter:
     sdk: flutter
   go_router: ^10.0.0

@@ -389,6 +389,7 @@ IOSink? _openSink(String? output, {String basePath = ''}) {
     sink = stdout;
   } else {
     file = File(path.posix.join(basePath, output));
+    file.createSync(recursive: true);
     sink = file.openWrite();
   }
   return sink;
@@ -510,11 +511,16 @@ class DartTestGeneratorAdapter implements GeneratorAdapter {
       basePath: options.basePath ?? '',
     );
     const DartGenerator testGenerator = DartGenerator();
+    // The test code needs the actual package name of the Dart output, even if
+    // the package name has been overridden for other uses.
+    final String outputPackageName =
+        deducePackageName(options.dartOut ?? '') ?? options.getPackageName();
     testGenerator.generateTest(
       dartOptionsWithHeader,
       root,
       sink,
       dartPackageName: options.getPackageName(),
+      dartOutputPackageName: outputPackageName,
     );
   }
 

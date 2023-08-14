@@ -16,7 +16,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  path_provider_platform_interface: ^2.0.0
+  path_provider_platform_interface: ^2.1.0
 
 dev_dependencies:
   flutter_test:
