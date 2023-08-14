@@ -27,7 +27,6 @@ final GoRouter _router = GoRouter(
               context: context,
               builder: (_) {
                 return AlertDialog(
-                  title: const Text('Confirm'),
                   content: const Text('Are you sure to leave this page?'),
                   actions: <Widget>[
                     TextButton(

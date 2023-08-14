@@ -24,6 +24,7 @@ void main() {
     await tester.tap(find.byType(BackButton));
     await tester.pumpAndSettle();
 
+    expect(find.text('Are you sure to leave this page?'), findsOneWidget);
     await tester.tap(find.text('Confirm'));
     await tester.pumpAndSettle();
     expect(find.byType(example.HomeScreen), findsOneWidget);
