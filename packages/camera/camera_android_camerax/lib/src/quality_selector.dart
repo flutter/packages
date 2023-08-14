@@ -103,7 +103,7 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates an [QualitySelector] instance with the desired qualities and
+  /// Creates a [QualitySelector] instance with the desired qualities and
   /// fallback strategy specified.
   void createFromInstance(
       QualitySelector instance,
