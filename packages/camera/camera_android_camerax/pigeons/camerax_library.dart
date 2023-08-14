@@ -112,6 +112,8 @@ enum VideoQualityConstraint {
 }
 
 /// Fallback rules for selecting video resolution.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
 enum VideoResolutionFallbackRule {
   higherQualityOrLowerThan,
   higherQualityThan,

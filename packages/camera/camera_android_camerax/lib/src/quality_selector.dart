@@ -36,7 +36,7 @@ class QualitySelector extends JavaObject {
   /// Creates a [QualitySelector] with ordered desired qualities and fallback
   /// strategy, if specified.
   ///
-  /// The final quality will be seleced according to the order in which they are
+  /// The final quality will be selected according to the order in which they are
   /// specified.
   QualitySelector.fromOrderedList(
       {BinaryMessenger? binaryMessenger,
@@ -64,13 +64,13 @@ class QualitySelector extends JavaObject {
 
   late final _QualitySelectorHostApiImpl _api;
 
-  /// Desired qualities for this selctor instance.
+  /// Desired qualities for this selector instance.
   final List<VideoQualityConstraint> qualityList;
 
   /// Desired fallback strategy for this selector instance.
   final FallbackStrategy? fallbackStrategy;
 
-  /// Retrieves te corresponding resolution from the input [quality] for the
+  /// Retrieves the corresponding resolution from the input [quality] for the
   /// camera represented by [cameraInfo].
   static Future<ResolutionInfo> getResolution(
       CameraInfo cameraInfo, VideoQualityConstraint quality,
@@ -105,7 +105,7 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates an [QualitySelector] instance with the desired qualities and
+  /// Creates a [QualitySelector] instance with the desired qualities and
   /// fallback strategy specified.
   void createFromInstance(
       QualitySelector instance,
@@ -132,7 +132,7 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
             : instanceManager.getIdentifier(fallbackStrategy));
   }
 
-  /// Retrieves te corresponding resolution from the input [quality] for the
+  /// Retrieves the corresponding resolution from the input [quality] for the
   /// camera represented by [cameraInfo].
   Future<ResolutionInfo> getResolutionFromInstance(
       CameraInfo cameraInfo, VideoQualityConstraint quality) async {

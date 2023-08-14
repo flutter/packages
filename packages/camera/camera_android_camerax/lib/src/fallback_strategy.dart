@@ -70,7 +70,7 @@ class _FallbackStrategyHostApiImpl extends FallbackStrategyHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Creates an [FallbackStrategy] instance with the specified video [quality]
+  /// Creates a [FallbackStrategy] instance with the specified video [quality]
   /// and [fallbackRule].
   void createFromInstance(
       FallbackStrategy instance,
