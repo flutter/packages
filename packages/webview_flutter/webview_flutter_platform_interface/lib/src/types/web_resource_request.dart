@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [WebResourceRequest] to
 /// provide additional platform specific parameters.
 ///
@@ -34,7 +33,6 @@ import 'package:flutter/foundation.dart';
 ///   final Map<String, String> headers;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class WebResourceRequest {
   /// Used by the platform implementation to create a new [WebResourceRequest].

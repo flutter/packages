@@ -1,6 +1,6 @@
 ## 2.9.0
 
-* Adds `LoadRequestParams` and `WebResourceResponse` to `HttpResponseError`.
+* Adds `WebResourceRequest` and `WebResourceResponse` to `HttpResponseError`.
 
 ## 2.8.0
 

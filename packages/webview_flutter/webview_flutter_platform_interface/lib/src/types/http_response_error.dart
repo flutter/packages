@@ -40,13 +40,9 @@ import 'web_resource_response.dart';
 class HttpResponseError {
   /// Used by the platform implementation to create a new [HttpResponseError].
   const HttpResponseError({
-    required this.statusCode,
     this.request,
     this.response,
   });
-
-  /// The HTTP status code.
-  final int statusCode;
 
   /// The associated request.
   final WebResourceRequest? request;

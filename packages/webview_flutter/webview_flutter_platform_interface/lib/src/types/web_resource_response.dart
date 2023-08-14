@@ -41,11 +41,15 @@ class WebResourceResponse {
   /// Used by the platform implementation to create a new [WebResourceResponse].
   const WebResourceResponse({
     required this.request,
+    required this.statusCode,
     this.headers = const <String, String>{},
   });
 
   /// The request
   final WebResourceRequest request;
+
+  /// The HTTP status code.
+  final int statusCode;
 
   /// Headers for the request.
   final Map<String, String> headers;
