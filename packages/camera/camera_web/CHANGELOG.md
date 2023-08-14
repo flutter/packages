@@ -1,6 +1,10 @@
-## 0.3.2+1
+## 0.3.2+2
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
+## 0.3.2+1
+
+* Updates README to improve example of `Image` creation.
 
 ## 0.3.2
 

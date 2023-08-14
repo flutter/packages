@@ -1,6 +1,10 @@
-## 0.9.13+3
+## 0.9.13+4
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+* 
+## 0.9.13+3
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
 * Fixes unawaited_futures violations.
 
 ## 0.9.13+2

@@ -1,6 +1,10 @@
 ## 0.5.0+13
 
+<<<<<<< HEAD
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+=======
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+>>>>>>> upstream/main
 
 ## 0.5.0+12
 
