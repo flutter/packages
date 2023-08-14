@@ -1,6 +1,10 @@
-## 0.10.9
+## 0.10.8+7
 
 * Fixes video record crash on Android versions lower than 12.
+
+## 0.10.8+6
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
 
 ## 0.10.8+5
 

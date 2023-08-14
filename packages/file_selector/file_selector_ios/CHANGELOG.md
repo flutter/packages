@@ -1,3 +1,7 @@
+## NEXT
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.5.1+4
 
 * Updates references to the deprecated `macUTIs`.

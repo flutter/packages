@@ -3,49 +3,85 @@
 // found in the LICENSE file.
 
 import 'package:example/wrap_layout_example.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Check that the children are layed out.',
-      (WidgetTester tester) async {
+  testWidgets('Check wrap layout', (WidgetTester tester) async {
     const MaterialApp app = MaterialApp(
       home: WrapExample(),
     );
     await tester.pumpWidget(app);
     await tester.pumpAndSettle();
 
-    // See if there are children layed out.
-    expect(find.text('Index 0'), findsOneWidget);
-    expect(find.text('Index 1'), findsOneWidget);
-    expect(find.text('Index 2'), findsOneWidget);
-    expect(find.text('Index 3'), findsOneWidget);
-    expect(find.text('Index 4'), findsOneWidget);
+    // Validate which children are laid out.
+    for (int i = 0; i <= 12; i++) {
+      expect(find.text('Index $i'), findsOneWidget);
+    }
+    for (int i = 13; i < 19; i++) {
+      expect(find.text('Index $i'), findsNothing);
+    }
 
-    // Material 3 changes the expected layout positioning.
-    final bool usesMaterial3 = (app.theme ?? ThemeData.light()).useMaterial3;
-    final Offset offset0 = usesMaterial3
-        ? Offset(0.0, _getExpectedYOffset(91.0))
-        : const Offset(0.0, 103.0);
-    final Offset offset1 = usesMaterial3
-        ? Offset(65.0, _getExpectedYOffset(121.0))
-        : const Offset(66.0, 124.0);
-    final Offset offset3 = usesMaterial3
-        ? Offset(270.0, _getExpectedYOffset(171.0))
-        : const Offset(271.0, 174.0);
-    final Offset offset4 = usesMaterial3
-        ? Offset(380.0, _getExpectedYOffset(221.0))
-        : const Offset(381.0, 224.0);
+    // Validate with the position of the box, not the text.
+    Finder getContainer(String text) {
+      return find.ancestor(
+        of: find.text(text),
+        matching: find.byType(Container),
+      );
+    }
 
-    // See if they are in expected position.
-    expect(tester.getTopLeft(find.text('Index 0')), offset0);
-    expect(tester.getTopLeft(find.text('Index 1')), offset1);
-    expect(tester.getTopLeft(find.text('Index 3')), offset3);
-    expect(tester.getTopLeft(find.text('Index 4')), offset4);
+    // Validate layout position.
+    expect(
+      tester.getTopLeft(getContainer('Index 0')),
+      const Offset(0.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 1')),
+      const Offset(40.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 2')),
+      const Offset(190.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 3')),
+      const Offset(270.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 4')),
+      const Offset(370.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 5')),
+      const Offset(490.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 6')),
+      const Offset(690.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 7')),
+      const Offset(0.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 8')),
+      const Offset(150.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 9')),
+      const Offset(250.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 10')),
+      const Offset(350.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 11')),
+      const Offset(390.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 12')),
+      const Offset(590.0, 506.0),
+    );
   });
-}
-
-double _getExpectedYOffset(double nonWeb) {
-  return kIsWeb ? nonWeb - 0.5 : nonWeb;
 }
