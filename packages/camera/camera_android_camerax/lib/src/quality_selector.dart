@@ -43,7 +43,9 @@ class QualitySelector extends JavaObject {
       InstanceManager? instanceManager,
       required this.qualityList,
       this.fallbackStrategy})
-      : super.detached(
+      : assert(qualityList.isNotEmpty,
+            'Quality list specified must be non-empty.'),
+        super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = _QualitySelectorHostApiImpl(
@@ -135,8 +137,14 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
   Future<ResolutionInfo> getResolutionFromInstance(
       CameraInfo cameraInfo, VideoQualityConstraint quality) async {
     final int? cameraInfoIdentifier = instanceManager.getIdentifier(cameraInfo);
+
+    if (cameraInfoIdentifier == null) {
+      throw ArgumentError(
+          'The CameraInfo instance specified needs to be added to the InstanceManager instance in use.');
+    }
+
     final ResolutionInfo resolution =
-        await getResolution(cameraInfoIdentifier!, quality);
+        await getResolution(cameraInfoIdentifier, quality);
     return resolution;
   }
 }
