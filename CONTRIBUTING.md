@@ -18,7 +18,20 @@ Additional resources specific to the packages repository:
   [**PRs need tests**](https://github.com/flutter/flutter/wiki/Tree-hygiene#tests), so
   this is critical to read before submitting a plugin PR.
 
-## Notes
+### Code review processes and automation
+
+Each package has a code owner (specified in 
+[CODEOWNERS](https://github.com/flutter/packages/blob/main/CODEOWNERS));
+PRs will automatically be assigned to the appropriate code owners for review.
+Review is expected within a week or two (but preferred much quicker than that!).
+
+Code owners need to explicitly pick a
+[Flutter team member](https://github.com/flutter/flutter/wiki/Contributor-access)
+as their code reviewer for PRs that affect their package,
+usually someone who has contributed to the package before.
+
+For help, join the `#hackers-ecosystem` channel on our
+[Discord server](https://github.com/flutter/flutter/wiki/Chat).
 
 ### Style
 
