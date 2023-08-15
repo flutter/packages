@@ -1,3 +1,7 @@
+## 3.8.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `WebKitWebViewController.setConsoleLogCallback`.
+
 ## 3.7.3
 
 * Fixes bug where the `PlatformWebViewWidget` was rebuilt unnecessarily.
