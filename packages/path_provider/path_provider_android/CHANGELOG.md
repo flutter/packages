@@ -1,6 +1,6 @@
-## 2.1.1
+## 2.2.0
 
-- Added implementation of getDownloadsDirectory for Android
+* Adds implementation of getDownloadsDirectory for Android.
 
 ## 2.1.0
 

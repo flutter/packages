@@ -1,7 +1,3 @@
-## 2.1.1
-
-- Updated getDownloadsDirectory platform compatibility
-
 ## 2.1.0
 
 * Adds getApplicationCachePath() for storing app-specific cache files.
