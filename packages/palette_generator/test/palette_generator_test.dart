@@ -29,7 +29,7 @@ class FakeImageProvider extends ImageProvider<FakeImageProvider> {
 
   @override
   ImageStreamCompleter loadImage(
-    FakeImageProvider key, 
+    FakeImageProvider key,
     ImageDecoderCallback decode,
   ) {
     assert(key == this);
