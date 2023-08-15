@@ -28,7 +28,10 @@ class FakeImageProvider extends ImageProvider<FakeImageProvider> {
   }
 
   @override
-  ImageStreamCompleter loadImage(FakeImageProvider key, ImageDecoderCallback decode) {
+  ImageStreamCompleter loadImage(
+    FakeImageProvider key, 
+    ImageDecoderCallback decode,
+  ) {
     assert(key == this);
     return OneFrameImageStreamCompleter(
       SynchronousFuture<ImageInfo>(
