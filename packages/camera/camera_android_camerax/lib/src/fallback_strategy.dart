@@ -15,7 +15,7 @@ import 'java_object.dart';
 /// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
 @immutable
 class FallbackStrategy extends JavaObject {
-  /// Creates an [FallbackStrategy].
+  /// Creates a [FallbackStrategy].
   FallbackStrategy(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
