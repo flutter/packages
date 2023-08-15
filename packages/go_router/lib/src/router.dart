@@ -80,6 +80,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     int redirectLimit = 5,
     bool routerNeglect = false,
     String? initialLocation,
+    this.overridePlatformDefaultLocation = false,
     Object? initialExtra,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
@@ -90,6 +91,10 @@ class GoRouter implements RouterConfig<RouteMatchList> {
         assert(
           initialExtra == null || initialLocation != null,
           'initialLocation must be set in order to use initialExtra',
+        ),
+        assert(
+          overridePlatformDefaultLocation ? initialLocation != null : true,
+          'Initial location must be set to override platform default'
         ),
         assert(
             (onException == null ? 0 : 1) +
@@ -298,6 +303,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// The route information parser used by [GoRouter].
   @override
   late final GoRouteInformationParser routeInformationParser;
+
+  ///Defaults to [false], used to override platform default route mentioned
+  ///in MainActivity.kt.
+  ///If set to false, platform route will be used over `initialLocation`
+  ///set in `GoRouter` initialization.
+  ///See https://github.com/flutter/flutter/issues/132557
+  final bool overridePlatformDefaultLocation;
 
   /// Returns `true` if there is at least two or more route can be pop.
   bool canPop() => routerDelegate.canPop();
@@ -509,6 +521,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   String _effectiveInitialLocation(String? initialLocation) {
     final String platformDefault =
         WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+    if(overridePlatformDefaultLocation) {
+      ///can force null check as it's already verified by
+      ///asset() while initialization
+      return initialLocation!;
+    }
     if (initialLocation == null) {
       return platformDefault;
     } else if (platformDefault == '/') {
