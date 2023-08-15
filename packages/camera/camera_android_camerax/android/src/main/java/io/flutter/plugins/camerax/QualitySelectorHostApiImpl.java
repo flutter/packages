@@ -87,7 +87,7 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
   }
 
   /**
-   * Creates an {@link QualitySelector} instance with the quality list and {@link FallbackStrategy}
+   * Creates a {@link QualitySelector} instance with the quality list and {@link FallbackStrategy}
    * with the identifier specified.
    */
   @Override
