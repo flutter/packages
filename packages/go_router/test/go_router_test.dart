@@ -5,6 +5,7 @@
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties, unawaited_futures
 
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -4861,6 +4862,25 @@ void main() {
 
       expect(find.text('Screen B Detail'), findsOneWidget);
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
+    });
+  });
+
+  ///Regression tests for https://github.com/flutter/flutter/issues/132557
+  group('overridePlatformDefaultLocation', (){
+    test('No initial location provided', () {
+      expect( () => GoRouter(
+        overridePlatformDefaultLocation: true,
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/a',
+            builder: (BuildContext context, GoRouterState state) => const Placeholder(),
+          ),
+          GoRoute(
+            path: '/b',
+            builder: (BuildContext context, GoRouterState state) => const Placeholder(),
+          ),
+        ],
+      ), throwsA(const TypeMatcher<AssertionError>()));
     });
   });
 }
