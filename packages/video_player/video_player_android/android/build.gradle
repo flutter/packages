@@ -31,7 +31,7 @@ android {
     if (project.android.hasProperty("namespace")) {
         namespace 'io.flutter.plugins.videoplayer'
     }
-    compileSdkVersion 34
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 16
