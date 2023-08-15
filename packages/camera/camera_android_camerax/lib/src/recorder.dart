@@ -7,11 +7,9 @@ import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
-import 'fallback_strategy.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
 import 'pending_recording.dart';
-import 'quality_selector.dart';
 
 /// A dart wrapping of the CameraX Recorder class.
 ///
@@ -23,15 +21,14 @@ class Recorder extends JavaObject {
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       this.aspectRatio,
-      this.bitRate,
-      this.qualitySelector})
+      this.bitRate})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
     _api = RecorderHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, aspectRatio, bitRate, qualitySelector);
+    _api.createFromInstance(this, aspectRatio, bitRate);
   }
 
   /// Creates a [Recorder] that is not automatically attached to a native object
@@ -39,8 +36,7 @@ class Recorder extends JavaObject {
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
       this.aspectRatio,
-      this.bitRate,
-      this.qualitySelector})
+      this.bitRate})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -49,41 +45,13 @@ class Recorder extends JavaObject {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  /// Returns default [QualitySelector] for recordings.
-  ///
-  /// See https://developer.android.com/reference/androidx/camera/video/Recorder#DEFAULT_QUALITY_SELECTOR().
-  static QualitySelector getDefaultQualitySelector({
-    BinaryMessenger? binaryMessenger,
-    InstanceManager? instanceManager,
-  }) {
-    return QualitySelector.fromOrderedList(
-      binaryMessenger: binaryMessenger,
-      instanceManager: instanceManager,
-      qualityList: const <VideoQualityConstraint>[
-        VideoQualityConstraint.FHD,
-        VideoQualityConstraint.HD,
-        VideoQualityConstraint.SD
-      ],
-      fallbackStrategy: FallbackStrategy(
-          quality: VideoQualityConstraint.FHD,
-          fallbackRule: VideoResolutionFallbackRule.higherQualityOrLowerThan),
-    );
-  }
-
   late final RecorderHostApiImpl _api;
 
-  /// The video aspect ratio of this [Recorder].
+  /// The video aspect ratio of this Recorder.
   final int? aspectRatio;
 
   /// The intended video encoding bitrate for recording.
   final int? bitRate;
-
-  /// The [QualitySelector] of this [Recorder] used to select the resolution of
-  /// the recording depending on the resoutions supported by the camera.
-  ///
-  /// Default selector is that returned by [getDefaultQualitySelector], and it
-  /// is compatible with setting the aspect ratio.
-  final QualitySelector? qualitySelector;
 
   /// Prepare a recording that will be saved to a file.
   Future<PendingRecording> prepareRecording(String path) {
@@ -109,8 +77,7 @@ class RecorderHostApiImpl extends RecorderHostApi {
   late final InstanceManager instanceManager;
 
   /// Creates a [Recorder] with the provided aspect ratio and bitrate if specified.
-  void createFromInstance(Recorder instance, int? aspectRatio, int? bitRate,
-      QualitySelector? qualitySelector) {
+  void createFromInstance(Recorder instance, int? aspectRatio, int? bitRate) {
     int? identifier = instanceManager.getIdentifier(instance);
     identifier ??= instanceManager.addDartCreatedInstance(instance,
         onCopy: (Recorder original) {
@@ -118,16 +85,9 @@ class RecorderHostApiImpl extends RecorderHostApi {
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
           aspectRatio: aspectRatio,
-          bitRate: bitRate,
-          qualitySelector: qualitySelector);
+          bitRate: bitRate);
     });
-    create(
-        identifier,
-        aspectRatio,
-        bitRate,
-        qualitySelector == null
-            ? null
-            : instanceManager.getIdentifier(qualitySelector)!);
+    create(identifier, aspectRatio, bitRate);
   }
 
   /// Prepares a [Recording] using this recorder. The output file will be saved
