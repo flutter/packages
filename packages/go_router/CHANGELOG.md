@@ -1,3 +1,7 @@
+## 10.1.1
+
+- Optional parameter `overridePlatformDefaultLocation` to override initial route set/provided by platform.
+
 ## 10.1.0
 
 - Supports setting `requestFocus`.
