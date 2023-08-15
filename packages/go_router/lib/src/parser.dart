@@ -129,16 +129,21 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     if (configuration.isEmpty) {
       return null;
     }
+    final String location;
     if (GoRouter.optionURLReflectsImperativeAPIs &&
         configuration.matches.last is ImperativeRouteMatch) {
-      configuration =
-          (configuration.matches.last as ImperativeRouteMatch).matches;
+      location = (configuration.matches.last as ImperativeRouteMatch)
+          .matches
+          .uri
+          .toString();
+    } else {
+      location = configuration.uri.toString();
     }
     return RouteInformation(
       // TODO(chunhtai): remove this ignore and migrate the code
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
-      location: configuration.uri.toString(),
+      location: location,
       state: _routeMatchListCodec.encode(configuration),
     );
   }
