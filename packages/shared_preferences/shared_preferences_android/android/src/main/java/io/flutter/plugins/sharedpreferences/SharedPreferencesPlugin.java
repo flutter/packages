@@ -31,6 +31,7 @@ import java.util.Set;
 public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
   private static final String TAG = "SharedPreferencesPlugin";
   private static final String SHARED_PREFERENCES_NAME = "FlutterSharedPreferences";
+  private static final String SHARED_PREFERENCES_RESOURCE_NAME = "flutter_shared_pref_name";
   private static final String LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
   private static final String BIG_INTEGER_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy";
   private static final String DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu";
@@ -54,9 +55,18 @@ public class SharedPreferencesPlugin implements FlutterPlugin, SharedPreferences
     plugin.setUp(registrar.messenger(), registrar.context());
   }
 
+  private static String getResourceFromContext(Context context, String resName) {
+    final int stringRes = context.getResources().getIdentifier(resName, "string", context.getPackageName());
+    if (stringRes == 0) {
+      return SHARED_PREFERENCES_NAME;
+    }
+    return context.getString(stringRes);
+  }
+
   private void setUp(@NonNull BinaryMessenger messenger, @NonNull Context context) {
-    preferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
     try {
+      String resourceName = getResourceFromContext(context, SHARED_PREFERENCES_RESOURCE_NAME);
+      preferences = context.getSharedPreferences(resourceName, Context.MODE_PRIVATE);
       SharedPreferencesApi.setup(messenger, this);
     } catch (Exception ex) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex);
