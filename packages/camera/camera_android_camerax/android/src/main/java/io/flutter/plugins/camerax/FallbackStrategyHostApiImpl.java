@@ -70,8 +70,7 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
   }
 
   /**
-   * Creates a {@link FallbackStrategy} instance with the video quality and fallback rule
-   * specified.
+   * Creates a {@link FallbackStrategy} instance with the video quality and fallback rule specified.
    */
   @Override
   public void create(
