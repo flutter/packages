@@ -1,3 +1,7 @@
+## 2.1.1
+
+- Added implementation of getDownloadsDirectory for Android
+
 ## 2.1.0
 
 * Adds getApplicationCachePath() for storing app-specific cache files.

@@ -302,14 +302,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed: Platform.isAndroid || Platform.isIOS
-                        ? null
-                        : _requestDownloadsDirectory,
-                    child: Text(
-                      Platform.isAndroid || Platform.isIOS
-                          ? 'Downloads directory is unavailable'
-                          : 'Get Downloads Directory',
-                    ),
+                    onPressed: _requestDownloadsDirectory,
+                    child: const Text('Get Downloads Directory'),
                   ),
                 ),
                 FutureBuilder<Directory?>(
