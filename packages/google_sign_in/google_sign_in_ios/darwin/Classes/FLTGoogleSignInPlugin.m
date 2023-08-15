@@ -67,8 +67,7 @@ static FlutterError *getFlutterError(NSError *error) {
 // The plugin registrar, for querying views.
 @property(strong, nonnull) id<FlutterPluginRegistrar> registrar;
 
-// Redeclared as not a designated initializer.
-- (instancetype)init;
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 @end
 
@@ -83,19 +82,19 @@ static FlutterError *getFlutterError(NSError *error) {
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (instancetype)initWithRegistrar:NSObject<FlutterPluginRegistrar> *registrar {
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   return [self initWithSignIn:GIDSignIn.sharedInstance registrar:registrar];
 }
 
 - (instancetype)initWithSignIn:(GIDSignIn *)signIn
-                     registrar:NSObject<FlutterPluginRegistrar> *registrar {
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   return [self initWithSignIn:signIn
                     registrar:registrar
       googleServiceProperties:loadGoogleServiceInfo()];
 }
 
 - (instancetype)initWithSignIn:(GIDSignIn *)signIn
-                     registrar:NSObject<FlutterPluginRegistrar> *registrar
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties {
   self = [super init];
   if (self) {
@@ -233,13 +232,13 @@ static FlutterError *getFlutterError(NSError *error) {
   [self.signIn signInWithConfiguration:configuration
                       presentingWindow:self.registrar.view.window
                                   hint:hint
-                      additionalScopes:addditionalScopes
+                      additionalScopes:additionalScopes
                               callback:callback];
 #else
   [self.signIn signInWithConfiguration:configuration
               presentingViewController:[self topViewController]
                                   hint:hint
-                      additionalScopes:addditionalScopes
+                      additionalScopes:additionalScopes
                               callback:callback];
 #endif
 }

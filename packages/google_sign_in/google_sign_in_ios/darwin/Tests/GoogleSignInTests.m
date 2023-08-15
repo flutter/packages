@@ -32,7 +32,8 @@
   self.mockSignIn = mockSignIn;
 
   OCMStub(self.mockPluginRegistrar.messenger).andReturn(self.mockBinaryMessenger);
-  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:mockSignIn];
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:mockSignIn
+                                                    registrar:self.mockPluginRegistrar];
   [FLTGoogleSignInPlugin registerWithRegistrar:self.mockPluginRegistrar];
 }
 
@@ -99,6 +100,7 @@
 - (void)testInitNoClientIdError {
   // Init plugin without GoogleService-Info.plist.
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
+                                                    registrar:self.mockPluginRegistrar
                                       googleServiceProperties:nil];
 
   // init call does not provide a clientId.
@@ -154,6 +156,7 @@
 - (void)testInitDynamicClientIdNullDomain {
   // Init plugin without GoogleService-Info.plist.
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
+                                                    registrar:self.mockPluginRegistrar
                                       googleServiceProperties:nil];
 
   FlutterMethodCall *initMethodCall = [FlutterMethodCall

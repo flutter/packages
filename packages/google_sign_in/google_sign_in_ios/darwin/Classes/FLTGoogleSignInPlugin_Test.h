@@ -14,10 +14,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTGoogleSignInPlugin ()
 
 /// Inject @c GIDSignIn for testing.
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn;
+- (instancetype)initWithSignIn:(GIDSignIn *)signIn
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 /// Inject @c GIDSignIn and @c googleServiceProperties for testing.
 - (instancetype)initWithSignIn:(GIDSignIn *)signIn
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
     NS_DESIGNATED_INITIALIZER;
 

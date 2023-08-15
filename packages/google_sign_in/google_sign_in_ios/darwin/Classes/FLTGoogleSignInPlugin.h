@@ -9,4 +9,5 @@
 #endif
 
 @interface FLTGoogleSignInPlugin : NSObject <FlutterPlugin>
+- (instancetype)init NS_UNAVAILABLE;
 @end
