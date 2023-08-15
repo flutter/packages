@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Inject @c GIDSignIn and @c googleServiceProperties for testing.
 - (instancetype)initWithSignIn:(GIDSignIn *)signIn
-    withGoogleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
+       googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
     NS_DESIGNATED_INITIALIZER;
 
 @end

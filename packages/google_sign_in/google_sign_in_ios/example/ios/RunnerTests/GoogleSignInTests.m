@@ -99,7 +99,7 @@
 - (void)testInitNoClientIdError {
   // Init plugin without GoogleService-Info.plist.
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
-                                  withGoogleServiceProperties:nil];
+                                      googleServiceProperties:nil];
 
   // init call does not provide a clientId.
   FlutterMethodCall *initMethodCall = [FlutterMethodCall methodCallWithMethodName:@"init"
@@ -154,7 +154,7 @@
 - (void)testInitDynamicClientIdNullDomain {
   // Init plugin without GoogleService-Info.plist.
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
-                                  withGoogleServiceProperties:nil];
+                                      googleServiceProperties:nil];
 
   FlutterMethodCall *initMethodCall = [FlutterMethodCall
       methodCallWithMethodName:@"init"

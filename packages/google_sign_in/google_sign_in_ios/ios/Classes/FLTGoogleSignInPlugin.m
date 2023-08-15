@@ -64,6 +64,9 @@ static FlutterError *getFlutterError(NSError *error) {
 // The contents of GoogleService-Info.plist, if it exists.
 @property(strong, nullable) NSDictionary<NSString *, id> *googleServiceProperties;
 
+// The plugin registrar, for querying views.
+@property(strong, nonnull) id<FlutterPluginRegistrar> registrar;
+
 // Redeclared as not a designated initializer.
 - (instancetype)init;
 
@@ -75,24 +78,29 @@ static FlutterError *getFlutterError(NSError *error) {
   FlutterMethodChannel *channel =
       [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/google_sign_in_ios"
                                   binaryMessenger:[registrar messenger]];
-  FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc] init];
+  FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc] initWithRegistrar:registrar];
   [registrar addApplicationDelegate:instance];
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
-- (instancetype)init {
-  return [self initWithSignIn:GIDSignIn.sharedInstance];
-}
-
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn {
-  return [self initWithSignIn:signIn withGoogleServiceProperties:loadGoogleServiceInfo()];
+- (instancetype)initWithRegistrar:NSObject<FlutterPluginRegistrar> *registrar {
+  return [self initWithSignIn:GIDSignIn.sharedInstance registrar:registrar];
 }
 
 - (instancetype)initWithSignIn:(GIDSignIn *)signIn
-    withGoogleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties {
+                     registrar:NSObject<FlutterPluginRegistrar> *registrar {
+  return [self initWithSignIn:signIn
+                    registrar:registrar
+      googleServiceProperties:loadGoogleServiceInfo()];
+}
+
+- (instancetype)initWithSignIn:(GIDSignIn *)signIn
+                     registrar:NSObject<FlutterPluginRegistrar> *registrar
+       googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties {
   self = [super init];
   if (self) {
     _signIn = signIn;
+    _registrar = registrar;
     _googleServiceProperties = googleServiceProperties;
 
     // On the iOS simulator, we get "Broken pipe" errors after sign-in for some
@@ -135,13 +143,12 @@ static FlutterError *getFlutterError(NSError *error) {
                                             ?: [self configurationWithClientIdArgument:nil
                                                                 serverClientIdArgument:nil
                                                                   hostedDomainArgument:nil];
-      [self.signIn signInWithConfiguration:configuration
-                  presentingViewController:[self topViewController]
-                                      hint:nil
-                          additionalScopes:self.requestedScopes.allObjects
-                                  callback:^(GIDGoogleUser *user, NSError *error) {
-                                    [self didSignInForUser:user result:result withError:error];
-                                  }];
+      [self signInWithConfiguration:configuration
+                               hint:nil
+                   additionalScopes:self.requestedScopes.allObjects
+                           callback:^(GIDGoogleUser *user, NSError *error) {
+                             [self didSignInForUser:user result:result withError:error];
+                           }];
     } @catch (NSException *e) {
       result([FlutterError errorWithCode:@"google_sign_in" message:e.reason details:e.name]);
       [e raise];
@@ -201,23 +208,41 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
+#if TARGET_OS_IOS
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
   return [self.signIn handleURL:url];
 }
-
-#pragma mark - <GIDSignInUIDelegate> protocol
-
-- (void)signIn:(GIDSignIn *)signIn presentViewController:(UIViewController *)viewController {
-  UIViewController *rootViewController =
-      [UIApplication sharedApplication].delegate.window.rootViewController;
-  [rootViewController presentViewController:viewController animated:YES completion:nil];
+#else
+- (BOOL)handleOpenURLs:(NSArray<NSURL *> *)urls {
+  BOOL handled = NO;
+  for (NSURL *url in urls) {
+    handled || = [self.signIn handleURL:url];
+  }
+  return handled;
 }
-
-- (void)signIn:(GIDSignIn *)signIn dismissViewController:(UIViewController *)viewController {
-  [viewController dismissViewControllerAnimated:YES completion:nil];
-}
+#endif
 
 #pragma mark - private methods
+
+// Wraps the iOS and macOS sign in display methods.
+- (void)signInWithConfiguration:(GIDConfiguration *)configuration
+                           hint:(nullable NSString *)hint
+               additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+                       callback:(nullable GIDSignInCallback)callback {
+#if TARGET_OS_OSX
+  [self.signIn signInWithConfiguration:configuration
+                      presentingWindow:self.registrar.view.window
+                                  hint:hint
+                      additionalScopes:addditionalScopes
+                              callback:callback];
+#else
+  [self.signIn signInWithConfiguration:configuration
+              presentingViewController:[self topViewController]
+                                  hint:hint
+                      additionalScopes:addditionalScopes
+                              callback:callback];
+#endif
+}
 
 /// @return @c nil if GoogleService-Info.plist not found and clientId is not provided.
 - (GIDConfiguration *)configurationWithClientIdArgument:(id)clientIDArg
@@ -279,6 +304,8 @@ static FlutterError *getFlutterError(NSError *error) {
   result(error != nil ? getFlutterError(error) : account);
 }
 
+#if TARGET_OS_IOS
+
 - (UIViewController *)topViewController {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -316,4 +343,7 @@ static FlutterError *getFlutterError(NSError *error) {
   }
   return viewController;
 }
+
+#endif
+
 @end
