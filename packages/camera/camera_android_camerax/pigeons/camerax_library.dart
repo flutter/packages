@@ -96,6 +96,31 @@ class ExposureCompensationRange {
   int maxCompensation;
 }
 
+/// Video quality constraints that will be used by a QualitySelector to choose
+/// an appropriate video resolution.
+///
+/// These are pre-defined quality constants that are universally used for video.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/Quality.
+enum VideoQualityConstraint {
+  SD, // 480p
+  HD, // 720p
+  FHD, // 1080p
+  UHD, // 2160p
+  lowest,
+  highest,
+}
+
+/// Fallback rules for selecting video resolution.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
+enum VideoResolutionFallbackRule {
+  higherQualityOrLowerThan,
+  higherQualityThan,
+  lowerQualityOrHigherThan,
+  lowerQualityThan,
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -219,7 +244,8 @@ abstract class VideoCaptureFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestRecorderHostApi')
 abstract class RecorderHostApi {
-  void create(int identifier, int? aspectRatio, int? bitRate);
+  void create(
+      int identifier, int? aspectRatio, int? bitRate, int? qualitySelectorId);
 
   int getAspectRatio(int identifier);
 
@@ -371,4 +397,21 @@ abstract class ImageProxyFlutterApi {
 @FlutterApi()
 abstract class PlaneProxyFlutterApi {
   void create(int identifier, Uint8List buffer, int pixelStride, int rowStride);
+}
+
+@HostApi(dartHostTestHandler: 'TestQualitySelectorHostApi')
+abstract class QualitySelectorHostApi {
+  // TODO(camsim99): Change qualityList to List<VideoQualityConstraint> when
+  // enums are supported for collection types.
+  void create(int identifier, List<int> videoQualityConstraintIndexList,
+      int? fallbackStrategyId);
+
+  ResolutionInfo getResolution(
+      int cameraInfoId, VideoQualityConstraint quality);
+}
+
+@HostApi(dartHostTestHandler: 'TestFallbackStrategyHostApi')
+abstract class FallbackStrategyHostApi {
+  void create(int identifier, VideoQualityConstraint quality,
+      VideoResolutionFallbackRule fallbackRule);
 }
