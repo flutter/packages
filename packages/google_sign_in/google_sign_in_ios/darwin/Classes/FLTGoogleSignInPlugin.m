@@ -176,29 +176,26 @@ static FlutterError *getFlutterError(NSError *error) {
     NSSet<NSString *> *requestedScopes = self.requestedScopes;
 
     @try {
-      [self.signIn addScopes:requestedScopes.allObjects
-          presentingViewController:[self topViewController]
-                          callback:^(GIDGoogleUser *addedScopeUser, NSError *addedScopeError) {
-                            if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
-                                addedScopeError.code == kGIDSignInErrorCodeNoCurrentUser) {
-                              result([FlutterError errorWithCode:@"sign_in_required"
-                                                         message:@"No account to grant scopes."
-                                                         details:nil]);
-                            } else if ([addedScopeError.domain
-                                           isEqualToString:kGIDSignInErrorDomain] &&
-                                       addedScopeError.code ==
-                                           kGIDSignInErrorCodeScopesAlreadyGranted) {
-                              // Scopes already granted, report success.
-                              result(@YES);
-                            } else if (addedScopeUser == nil) {
-                              result(@NO);
-                            } else {
-                              NSSet<NSString *> *grantedScopes =
-                                  [NSSet setWithArray:addedScopeUser.grantedScopes];
-                              BOOL granted = [requestedScopes isSubsetOfSet:grantedScopes];
-                              result(@(granted));
-                            }
-                          }];
+      [self addScopes:requestedScopes.allObjects
+             callback:^(GIDGoogleUser *addedScopeUser, NSError *addedScopeError) {
+               if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
+                   addedScopeError.code == kGIDSignInErrorCodeNoCurrentUser) {
+                 result([FlutterError errorWithCode:@"sign_in_required"
+                                            message:@"No account to grant scopes."
+                                            details:nil]);
+               } else if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
+                          addedScopeError.code == kGIDSignInErrorCodeScopesAlreadyGranted) {
+                 // Scopes already granted, report success.
+                 result(@YES);
+               } else if (addedScopeUser == nil) {
+                 result(@NO);
+               } else {
+                 NSSet<NSString *> *grantedScopes =
+                     [NSSet setWithArray:addedScopeUser.grantedScopes];
+                 BOOL granted = [requestedScopes isSubsetOfSet:grantedScopes];
+                 result(@(granted));
+               }
+             }];
     } @catch (NSException *e) {
       result([FlutterError errorWithCode:@"request_scopes" message:e.reason details:e.name]);
     }
@@ -215,7 +212,7 @@ static FlutterError *getFlutterError(NSError *error) {
 - (BOOL)handleOpenURLs:(NSArray<NSURL *> *)urls {
   BOOL handled = NO;
   for (NSURL *url in urls) {
-    handled || = [self.signIn handleURL:url];
+    handled = handled || [self.signIn handleURL:url];
   }
   return handled;
 }
@@ -240,6 +237,17 @@ static FlutterError *getFlutterError(NSError *error) {
                                   hint:hint
                       additionalScopes:additionalScopes
                               callback:callback];
+#endif
+}
+
+// Wraps the iOS and macOS scope addition methods.
+- (void)addScopes:(NSArray<NSString *> *)scopes callback:(nullable GIDSignInCallback)callback {
+#if TARGET_OS_OSX
+  [self.signIn addScopes:scopes presentingWindow:self.registrar.view.window callback:callback];
+#else
+  [self.signIn addScopes:scopes
+      presentingViewController:[self topViewController]
+                      callback:callback];
 #endif
 }
 

@@ -2,7 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <TargetConditionals.h>
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
 @import Flutter;
+#endif
 
 @import XCTest;
 @import google_sign_in_ios;
@@ -137,8 +142,8 @@
   [self.plugin handleMethodCall:signInMethodCall
                          result:^(id r){
                          }];
-  OCMVerify([self.mockSignIn
-       signInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
+  OCMVerify([self configureMock:self.mockSignIn
+       forSignInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
          // Set in example app GoogleService-Info.plist.
          return
              [configuration.hostedDomain isEqualToString:@"example.com"] &&
@@ -147,7 +152,6 @@
                      @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com"] &&
              [configuration.serverClientID isEqualToString:@"YOUR_SERVER_CLIENT_ID"];
        }]
-      presentingViewController:[OCMArg isKindOfClass:[FlutterViewController class]]
                           hint:nil
               additionalScopes:OCMOCK_ANY
                       callback:OCMOCK_ANY]);
@@ -178,12 +182,11 @@
   [self.plugin handleMethodCall:signInMethodCall
                          result:^(id r){
                          }];
-  OCMVerify([self.mockSignIn
-       signInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
+  OCMVerify([self configureMock:self.mockSignIn
+       forSignInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
          return configuration.hostedDomain == nil &&
                 [configuration.clientID isEqualToString:@"mockClientId"];
        }]
-      presentingViewController:[OCMArg isKindOfClass:[FlutterViewController class]]
                           hint:nil
               additionalScopes:OCMOCK_ANY
                       callback:OCMOCK_ANY]);
@@ -212,12 +215,11 @@
   [self.plugin handleMethodCall:signInMethodCall
                          result:^(id r){
                          }];
-  OCMVerify([self.mockSignIn
-       signInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
+  OCMVerify([self configureMock:self.mockSignIn
+       forSignInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
          return configuration.hostedDomain == nil &&
                 [configuration.serverClientID isEqualToString:@"mockServerClientId"];
        }]
-      presentingViewController:[OCMArg isKindOfClass:[FlutterViewController class]]
                           hint:nil
               additionalScopes:OCMOCK_ANY
                       callback:OCMOCK_ANY]);
@@ -315,13 +317,12 @@
   OCMStub([mockUser userID]).andReturn(@"mockID");
   OCMStub([mockUser serverAuthCode]).andReturn(@"mockAuthCode");
 
-  [[self.mockSignIn expect]
-       signInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
+  [self configureMock:[self.mockSignIn expect]
+       forSignInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
          return [configuration.clientID
              isEqualToString:
                  @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com"];
        }]
-      presentingViewController:[OCMArg isKindOfClass:[FlutterViewController class]]
                           hint:nil
               additionalScopes:@[]
                       callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
@@ -362,9 +363,8 @@
   id mockUser = OCMClassMock([GIDGoogleUser class]);
   OCMStub([mockUser userID]).andReturn(@"mockID");
 
-  [[self.mockSignIn expect]
-       signInWithConfiguration:OCMOCK_ANY
-      presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn expect]
+       forSignInWithConfiguration:OCMOCK_ANY
                           hint:nil
               additionalScopes:[OCMArg checkWithBlock:^BOOL(NSArray<NSString *> *scopes) {
                 return [[NSSet setWithArray:scopes]
@@ -390,9 +390,8 @@
   id mockUser = OCMClassMock([GIDGoogleUser class]);
   OCMStub([mockUser userID]).andReturn(@"mockID");
 
-  [[self.mockSignIn stub]
-       signInWithConfiguration:OCMOCK_ANY
-      presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn stub]
+       forSignInWithConfiguration:OCMOCK_ANY
                           hint:nil
               additionalScopes:OCMOCK_ANY
                       callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
@@ -400,8 +399,7 @@
   NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
                                        code:kGIDSignInErrorCodeScopesAlreadyGranted
                                    userInfo:nil];
-  [[self.mockSignIn stub] addScopes:OCMOCK_ANY
-           presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn stub] forAddScopes:OCMOCK_ANY
                            callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
   FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
@@ -420,9 +418,8 @@
   NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
                                        code:kGIDSignInErrorCodeCanceled
                                    userInfo:nil];
-  [[self.mockSignIn stub]
-       signInWithConfiguration:OCMOCK_ANY
-      presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn stub]
+       forSignInWithConfiguration:OCMOCK_ANY
                           hint:nil
               additionalScopes:OCMOCK_ANY
                       callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
@@ -442,8 +439,7 @@
 - (void)testSignInException {
   FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
                                                                     arguments:nil];
-  OCMExpect([self.mockSignIn signInWithConfiguration:OCMOCK_ANY
-                            presentingViewController:OCMOCK_ANY
+  OCMExpect([self configureMock:self.mockSignIn forSignInWithConfiguration:OCMOCK_ANY
                                                 hint:OCMOCK_ANY
                                     additionalScopes:OCMOCK_ANY
                                             callback:OCMOCK_ANY])
@@ -588,8 +584,7 @@
   NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
                                        code:kGIDSignInErrorCodeNoCurrentUser
                                    userInfo:nil];
-  [[self.mockSignIn stub] addScopes:@[ @"mockScope1" ]
-           presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn stub] forAddScopes:@[ @"mockScope1" ]
                            callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
   FlutterMethodCall *methodCall =
@@ -609,8 +604,7 @@
   NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
                                        code:kGIDSignInErrorCodeScopesAlreadyGranted
                                    userInfo:nil];
-  [[self.mockSignIn stub] addScopes:@[ @"mockScope1" ]
-           presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn stub] forAddScopes:@[ @"mockScope1" ]
                            callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
   FlutterMethodCall *methodCall =
@@ -628,8 +622,7 @@
 
 - (void)testRequestScopesWithUnknownError {
   NSError *error = [NSError errorWithDomain:@"BogusDomain" code:42 userInfo:nil];
-  [[self.mockSignIn stub] addScopes:@[ @"mockScope1" ]
-           presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn stub] forAddScopes:@[ @"mockScope1" ]
                            callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
   FlutterMethodCall *methodCall =
@@ -648,7 +641,7 @@
 - (void)testRequestScopesException {
   FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
                                                                     arguments:nil];
-  OCMExpect([self.mockSignIn addScopes:@[] presentingViewController:OCMOCK_ANY callback:OCMOCK_ANY])
+  OCMExpect([self configureMock:self.mockSignIn forAddScopes:@[] callback:OCMOCK_ANY])
       .andThrow([NSException exceptionWithName:@"MockName" reason:@"MockReason" userInfo:nil]);
 
   [self.plugin handleMethodCall:methodCall
@@ -667,8 +660,7 @@
   // Only grant one of the two requested scopes.
   OCMStub(mockUser.grantedScopes).andReturn(@[ @"mockScope1" ]);
 
-  [[self.mockSignIn stub] addScopes:requestedScopes
-           presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn stub] forAddScopes:requestedScopes
                            callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
 
   FlutterMethodCall *methodCall =
@@ -710,13 +702,12 @@
                          }];
 
   // All four scopes are requested.
-  [[self.mockSignIn verify]
-                     addScopes:[OCMArg checkWithBlock:^BOOL(NSArray<NSString *> *scopes) {
+  [self configureMock:[self.mockSignIn verify]
+                     forAddScopes:[OCMArg checkWithBlock:^BOOL(NSArray<NSString *> *scopes) {
                        return [[NSSet setWithArray:scopes]
                            isEqualToSet:[NSSet setWithObjects:@"initial1", @"initial2",
                                                               @"addScope1", @"addScope2", nil]];
                      }]
-      presentingViewController:OCMOCK_ANY
                       callback:OCMOCK_ANY];
 }
 
@@ -728,8 +719,7 @@
   // Grant both of the requested scopes.
   OCMStub(mockUser.grantedScopes).andReturn(requestedScopes);
 
-  [[self.mockSignIn stub] addScopes:requestedScopes
-           presentingViewController:OCMOCK_ANY
+  [self configureMock:[self.mockSignIn stub] forAddScopes:requestedScopes
                            callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
 
   FlutterMethodCall *methodCall =
@@ -743,6 +733,38 @@
                            [expectation fulfill];
                          }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
+}
+
+#pragma mark - Utils
+
+- (void)configureMock:(id)mock forAddScopes:(NSArray<NSString *> *)scopes callback:(GIDSignInCallback)callback {
+#if TARGET_OS_OSX
+  [mock addScopes:scopes
+presentingWindow:OCMOCK_ANY
+         callback:callback];
+#else
+  [mock addScopes:scopes
+presentingViewController:OCMOCK_ANY
+         callback:callback];
+#endif
+}
+- (void)configureMock:(id)mock forSignInWithConfiguration:(GIDConfiguration *)configuration
+                 hint:( NSString *)hint
+     additionalScopes:( NSArray<NSString *> *)additionalScopes
+             callback:( GIDSignInCallback)callback {
+#if TARGET_OS_OSX
+  [mock signInWithConfiguration:configuration
+               presentingWindow:OCMOCK_ANY
+                           hint:hint
+               additionalScopes:additionalScopes
+                       callback:callback];
+#else
+  [mock signInWithConfiguration:configuration
+               presentingViewController:[OCMArg isKindOfClass:[FlutterViewController class]]
+                           hint:hint
+               additionalScopes:additionalScopes
+                       callback:callback];
+#endif
 }
 
 @end
