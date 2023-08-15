@@ -1,3 +1,7 @@
+## 4.3.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `WebViewController.setConsoleLogCallback`.
+
 ## 4.2.2
 
 * Fixes documentation typo.
