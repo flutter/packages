@@ -1,7 +1,7 @@
 ## 10.1.4
 
 - Fixes RouteInformationParser that does not restore full RouteMatchList if
-  optionURLReflectsImperativeAPIs is set.
+  the optionURLReflectsImperativeAPIs is set.
 
 ## 10.1.3
 
