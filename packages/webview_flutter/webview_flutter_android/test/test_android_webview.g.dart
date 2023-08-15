@@ -217,7 +217,6 @@ abstract class TestCookieManagerHostApi {
 
 class _TestWebViewHostApiCodec extends StandardMessageCodec {
   const _TestWebViewHostApiCodec();
-
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is WebViewPoint) {
@@ -1474,6 +1473,8 @@ abstract class TestWebChromeClientHostApi {
   void setSynchronousReturnValueForOnShowFileChooser(
       int instanceId, bool value);
 
+  void setSynchronousReturnValueForOnConsoleMessage(int instanceId, bool value);
+
   static void setup(TestWebChromeClientHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1520,6 +1521,33 @@ abstract class TestWebChromeClientHostApi {
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.WebChromeClientHostApi.setSynchronousReturnValueForOnShowFileChooser was null, expected non-null bool.');
           api.setSynchronousReturnValueForOnShowFileChooser(
+              arg_instanceId!, arg_value!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage was null, expected non-null int.');
+          final bool? arg_value = (args[1] as bool?);
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage was null, expected non-null bool.');
+          api.setSynchronousReturnValueForOnConsoleMessage(
               arg_instanceId!, arg_value!);
           return <Object?>[];
         });

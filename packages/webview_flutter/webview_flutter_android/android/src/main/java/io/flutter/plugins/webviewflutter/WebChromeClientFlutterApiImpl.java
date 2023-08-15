@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
+import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
@@ -25,6 +26,24 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
   private final WebViewFlutterApiImpl webViewFlutterApi;
+
+  private static GeneratedAndroidWebView.ConsoleMessageLevel toConsoleMessageLevel(
+      ConsoleMessage.MessageLevel level) {
+    switch (level) {
+      case TIP:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.TIP;
+      case LOG:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.LOG;
+      case WARNING:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.WARNING;
+      case ERROR:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.ERROR;
+      case DEBUG:
+        return GeneratedAndroidWebView.ConsoleMessageLevel.DEBUG;
+    }
+
+    return GeneratedAndroidWebView.ConsoleMessageLevel.UNKNOWN;
+  }
 
   /**
    * Creates a Flutter api that sends messages to Dart.
@@ -114,6 +133,21 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     super.onPermissionRequest(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(request)),
+        callback);
+  }
+
+  public void onConsoleMessage(
+      @NonNull WebChromeClient instance,
+      @NonNull ConsoleMessage message,
+      @NonNull Reply<Void> callback) {
+    super.onConsoleMessage(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        new GeneratedAndroidWebView.ConsoleMessage.Builder()
+            .setLineNumber((long) message.lineNumber())
+            .setMessage(message.message())
+            .setLevel(toConsoleMessageLevel(message.messageLevel()))
+            .setSourceId(message.sourceId())
+            .build(),
         callback);
   }
 

@@ -11,6 +11,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'android_proxy.dart';
 import 'android_webview.dart' as android_webview;
+import 'android_webview_api_impls.dart';
 import 'instance_manager.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
@@ -151,6 +152,40 @@ class AndroidWebViewController extends PlatformWebViewController {
         };
       },
     ),
+    onConsoleMessage: withWeakReferenceTo(
+      this,
+      (WeakReference<AndroidWebViewController> weakReference) {
+        return (android_webview.WebChromeClient webChromeClient,
+            android_webview.ConsoleMessage consoleMessage) async {
+          if (weakReference.target?._onConsoleLogCallback != null) {
+            JavaScriptLogLevel logLevel;
+            switch (consoleMessage.level) {
+              // Android maps `console.debug` to `MessageLevel.TIP`, it seems
+              // `MessageLevel.DEBUG` if not being used.
+              case ConsoleMessageLevel.debug:
+              case ConsoleMessageLevel.tip:
+                logLevel = JavaScriptLogLevel.debug;
+                break;
+              case ConsoleMessageLevel.error:
+                logLevel = JavaScriptLogLevel.error;
+                break;
+              case ConsoleMessageLevel.warning:
+                logLevel = JavaScriptLogLevel.warning;
+                break;
+              case ConsoleMessageLevel.unknown:
+              case ConsoleMessageLevel.log:
+                logLevel = JavaScriptLogLevel.log;
+                break;
+            }
+
+            _onConsoleLogCallback!(JavaScriptConsoleMessage(
+              level: logLevel,
+              message: consoleMessage.message,
+            ));
+          }
+        };
+      },
+    ),
     onPermissionRequest: withWeakReferenceTo(
       this,
       (WeakReference<AndroidWebViewController> weakReference) {
@@ -213,6 +248,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   OnGeolocationPermissionsHidePrompt? _onGeolocationPermissionsHidePrompt;
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
+
+  void Function(JavaScriptConsoleMessage consoleMessage)? _onConsoleLogCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -494,6 +531,18 @@ class AndroidWebViewController extends PlatformWebViewController {
   }) async {
     _onGeolocationPermissionsShowPrompt = onShowPrompt;
     _onGeolocationPermissionsHidePrompt = onHidePrompt;
+  }
+
+  /// Sets a callback that notifies the host application of any log messages
+  /// written to the JavaScript console.
+  @override
+  Future<void> setOnConsoleMessage(
+      void Function(JavaScriptConsoleMessage consoleMessage)
+          onConsoleMessage) async {
+    _onConsoleLogCallback = onConsoleMessage;
+
+    return _webChromeClient.setSynchronousReturnValueForOnConsoleMessage(
+        _onConsoleLogCallback != null);
   }
 }
 
