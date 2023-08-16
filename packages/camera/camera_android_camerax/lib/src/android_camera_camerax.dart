@@ -321,9 +321,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     cameraEventStreamController.add(CameraInitializedEvent(
         cameraId,
-        previewResolutionInfo.height
-            .toDouble(), // TODO(camsim99): Is this order right?
         previewResolutionInfo.width.toDouble(),
+        previewResolutionInfo.height.toDouble(),
         exposureMode,
         exposurePointSupported,
         focusMode,

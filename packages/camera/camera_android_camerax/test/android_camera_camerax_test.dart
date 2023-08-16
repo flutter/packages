@@ -329,9 +329,8 @@ void main() {
           expectedBoundSize = const Size(3840, 2160);
           break;
         case ResolutionPreset.max:
-          // TODO(camsim99): handle detached objects for tests
-          expectedResolutionStrategy = null;
-          // ResolutionStrategy.getHighestAvailableStrategy(detached: true);
+          expectedResolutionStrategy =
+              ResolutionStrategy.detachedHighestAvailableStrategy();
           break;
       }
 
