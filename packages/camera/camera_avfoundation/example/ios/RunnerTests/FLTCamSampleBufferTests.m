@@ -40,6 +40,8 @@
 
 - (void)testFirstAppendedSampleShouldBeVideo {
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+  CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
+  CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
 
   id connectionMock = OCMClassMock([AVCaptureConnection class]);
 
@@ -81,17 +83,18 @@
       }];
   [cam startVideoRecordingWithResult:result];
 
-  CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
-  CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
   [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
   [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
-  [cam captureOutput:cam.captureVideoOutput didOutputSampleBuffer:videoSample fromConnection:connectionMock];
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:videoSample
+             fromConnection:connectionMock];
   [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+
+  NSArray *expectedSamples = @[ @"video", @"audio" ];
+  XCTAssertEqualObjects(writtenSamples, expectedSamples, @"First appended sample must be video.");
+
   CFRelease(videoSample);
   CFRelease(audioSample);
-
-  NSArray *expectedSamples = @[@"video", @"audio"];
-  XCTAssertEqualObjects(writtenSamples, expectedSamples, @"First appended sample must be video.");
 }
 
 @end
