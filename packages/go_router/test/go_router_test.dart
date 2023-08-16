@@ -4865,21 +4865,25 @@ void main() {
   });
 
   ///Regression tests for https://github.com/flutter/flutter/issues/132557
-  group('overridePlatformDefaultLocation', (){
+  group('overridePlatformDefaultLocation', () {
     test('No initial location provided', () {
-      expect( () => GoRouter(
-        overridePlatformDefaultLocation: true,
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/a',
-            builder: (BuildContext context, GoRouterState state) => const Placeholder(),
-          ),
-          GoRoute(
-            path: '/b',
-            builder: (BuildContext context, GoRouterState state) => const Placeholder(),
-          ),
-        ],
-      ), throwsA(const TypeMatcher<AssertionError>()));
+      expect(
+          () => GoRouter(
+                overridePlatformDefaultLocation: true,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/a',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Placeholder(),
+                  ),
+                  GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Placeholder(),
+                  ),
+                ],
+              ),
+          throwsA(const TypeMatcher<AssertionError>()));
     });
   });
 }

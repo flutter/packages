@@ -93,10 +93,10 @@ class GoRouter implements RouterConfig<RouteMatchList> {
           'initialLocation must be set in order to use initialExtra',
         ),
         assert(
-          (overridePlatformDefaultLocation == true && initialLocation != null)
-              || (overridePlatformDefaultLocation == false),
-          'Initial location must be set to override platform default'
-        ),
+            (overridePlatformDefaultLocation == true &&
+                    initialLocation != null) ||
+                (overridePlatformDefaultLocation == false),
+            'Initial location must be set to override platform default'),
         assert(
             (onException == null ? 0 : 1) +
                     (errorPageBuilder == null ? 0 : 1) +
@@ -522,7 +522,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   String _effectiveInitialLocation(String? initialLocation) {
     final String platformDefault =
         WidgetsBinding.instance.platformDispatcher.defaultRouteName;
-    if(overridePlatformDefaultLocation) {
+    if (overridePlatformDefaultLocation) {
       ///can force null check as it's already verified by
       ///asset() while initialization
       return initialLocation!;
