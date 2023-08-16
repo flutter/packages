@@ -11,6 +11,7 @@ import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionSelectorHostApi;
+import java.util.Objects;
 
 /**
  * Host API implementation for {@link ResolutionSelector}.
@@ -46,8 +47,7 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public ResolutionSelectorHostApiImpl(
-      @NonNull InstanceManager instanceManager) {
+  public ResolutionSelectorHostApiImpl(@NonNull InstanceManager instanceManager) {
     this(instanceManager, new ResolutionSelectorProxy());
   }
 
@@ -59,15 +59,14 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
    */
   @VisibleForTesting
   ResolutionSelectorHostApiImpl(
-      @NonNull InstanceManager instanceManager,
-      @NonNull ResolutionSelectorProxy proxy) {
+      @NonNull InstanceManager instanceManager, @NonNull ResolutionSelectorProxy proxy) {
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }
 
   /**
-   * Creates a {@link ResolutionSelector} instance with the {@link ResolutionStrategy} and
-   * {@link AspectRatio} that have the identifiers specified if provided.
+   * Creates a {@link ResolutionSelector} instance with the {@link ResolutionStrategy} and {@link
+   * AspectRatio} that have the identifiers specified if provided.
    */
   @Override
   public void create(
@@ -78,10 +77,11 @@ public class ResolutionSelectorHostApiImpl implements ResolutionSelectorHostApi 
         proxy.create(
             resolutionStrategyIdentifier == null
                 ? null
-                : instanceManager.getInstance(resolutionStrategyIdentifier),
+                : Objects.requireNonNull(instanceManager.getInstance(resolutionStrategyIdentifier)),
             aspectRatioStrategyIdentifier == null
                 ? null
-                : instanceManager.getInstance(aspectRatioStrategyIdentifier)),
+                : Objects.requireNonNull(
+                    instanceManager.getInstance(aspectRatioStrategyIdentifier))),
         identifier);
   }
 }

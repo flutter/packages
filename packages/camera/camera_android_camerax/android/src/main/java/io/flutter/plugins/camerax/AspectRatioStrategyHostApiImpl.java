@@ -7,7 +7,6 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.AspectRatioStrategyHostApi;
 
 /**
@@ -32,29 +31,31 @@ public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostAp
   }
 
   /**
-   * Constructs a {@link AspectRatioStrategyHostApiImpl}.
+   * Constructs an {@link AspectRatioStrategyHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public AspectRatioStrategyHostApiImpl(
-      @NonNull InstanceManager instanceManager) {
+  public AspectRatioStrategyHostApiImpl(@NonNull InstanceManager instanceManager) {
     this(instanceManager, new AspectRatioStrategyProxy());
   }
 
   /**
-   * Constructs a {@link AspectRatioStrategyHostApiImpl}.
+   * Constructs an {@link AspectRatioStrategyHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for constructors and static method of {@link AspectRatioStrategy}
    */
   @VisibleForTesting
   AspectRatioStrategyHostApiImpl(
-      @NonNull InstanceManager instanceManager,
-      @NonNull AspectRatioStrategyProxy proxy) {
+      @NonNull InstanceManager instanceManager, @NonNull AspectRatioStrategyProxy proxy) {
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }
 
+  /**
+   * Creates an {@link AspectRatioStrategy} instance with the preferred aspect ratio and fallback
+   * rule specified.
+   */
   @Override
   public void create(
       @NonNull Long identifier, @NonNull Long preferredAspectRatio, @NonNull Long fallbackRule) {

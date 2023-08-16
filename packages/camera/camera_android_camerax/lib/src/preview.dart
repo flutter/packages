@@ -51,7 +51,7 @@ class Preview extends UseCase {
   /// Target resolution of the camera preview stream.
   ///
   /// If not set, this [UseCase] will default to the behavior described in:
-  /// https://developer.android.com/reference/androidx/camera/core/Preview.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector)
+  /// https://developer.android.com/reference/androidx/camera/core/Preview.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector).
   final ResolutionSelector? resolutionSelector;
 
   /// Sets the surface provider for the preview stream.

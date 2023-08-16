@@ -1,6 +1,24 @@
+## 0.5.0+16
+
+* Implements resolution configuration for all camera use cases.
+
+## 0.5.0+15
+
+* Explicitly removes `READ_EXTERNAL_STORAGE` permission that may otherwise be implied from `WRITE_EXTERNAL_STORAGE`.
+
+## 0.5.0+14
+
+* Wraps classes needed to implement resolution configuration for video recording.
+
+## 0.5.0+13
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.5.0+12
 
-* Implements resolution configuration for live camera preview, image capture, and image analysis use cases.
+* Wraps classes needed to implement resolution configuration for image capture, image analysis, and preview.
+* Removes usages of deprecated APIs for resolution configuration.
+* Bumps CameraX version to 1.3.0-beta01.
 
 ## 0.5.0+11
 

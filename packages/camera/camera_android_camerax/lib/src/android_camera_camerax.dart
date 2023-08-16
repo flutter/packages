@@ -240,6 +240,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
     processCameraProvider!.unbindAll();
 
+    // TODO(camsim99): Implement resolution configuration for UseCases
+    // configured here. https://github.com/flutter/flutter/issues/120462
+
     // Configure Preview instance.
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
@@ -247,10 +250,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.
-    imageCapture = createImageCapture();
-
-    // Configure ImageAnalysis instance. Defaults to YUV_420_888 image format.
-    imageAnalysis = createImageAnalysis();
+    imageCapture = createImageCapture(null);
 
     // Configure VideoCapture and Recorder instances.
     // TODO(gmackall): Enable video capture resolution configuration in createRecorder().
@@ -651,6 +651,9 @@ class AndroidCameraCameraX extends CameraPlatform {
         ? Analyzer.detached(analyze: analyze)
         : Analyzer(analyze: analyze);
 
+    // TODO(camsim99): Support resolution configuration.
+    // Defaults to YUV_420_888 image format.
+    imageAnalysis ??= createImageAnalysis();
     unawaited(imageAnalysis!.setAnalyzer(analyzer));
   }
 
@@ -807,8 +810,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         break;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
-        resolutionStrategy = ResolutionStrategy.getHighestAvailableStrategy(
-            detached: _shouldCreateDetachedObjectForTesting);
+        // TODO(camsim99): handle _shouldCreateDetachedObjectForTesting
+        resolutionStrategy = ResolutionStrategy.highestAvailableStrategy();
         break;
       case null:
         // If not preset is specified, default to CameraX's default behvaior
@@ -823,11 +826,12 @@ class AndroidCameraCameraX extends CameraPlatform {
           resolutionStrategy: resolutionStrategy);
     }
 
+    // TODO(camsim99): check boundSize logic here.
     resolutionStrategy ??=
-        ResolutionStrategy(boundSize: boundSize, fallbackRule: fallbackRule);
+        ResolutionStrategy(boundSize: boundSize!, fallbackRule: fallbackRule);
     return ResolutionSelector(
         resolutionStrategy: ResolutionStrategy(
-            boundSize: boundSize, fallbackRule: fallbackRule));
+            boundSize: boundSize!, fallbackRule: fallbackRule));
   }
 
   // Methods for calls that need to be tested:
@@ -863,16 +867,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// preset [ResolutionSelector].
   @visibleForTesting
   Preview createPreview(int targetRotation) {
-    return Preview(
-        targetRotation: targetRotation,
-        resolutionSelector: presetResolutionSelector);
+    return Preview(targetRotation: targetRotation);
   }
 
   /// Returns an [ImageCapture] configured with specified flash mode and
   /// the preset [ResolutionSelector].
   @visibleForTesting
-  ImageCapture createImageCapture() {
-    return ImageCapture(resolutionSelector: presetResolutionSelector);
+  ImageCapture createImageCapture(int? flashMode) {
+    return ImageCapture(targetFlashMode: flashMode);
   }
 
   /// Returns a [Recorder] for use in video capture.
@@ -890,6 +892,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns an [ImageAnalysis] configured with the preset [ResolutionSelector].
   @visibleForTesting
   ImageAnalysis createImageAnalysis() {
-    return ImageAnalysis(resolutionSelector: presetResolutionSelector);
+    return ImageAnalysis();
   }
 }

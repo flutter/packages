@@ -13,7 +13,6 @@ import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.core.content.ContextCompat;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ImageAnalysisHostApi;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.util.Objects;
 
 public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
@@ -41,8 +40,10 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
   @Override
   public void create(@NonNull Long identifier, @Nullable Long resolutionSelectorId) {
     ImageAnalysis.Builder imageAnalysisBuilder = cameraXProxy.createImageAnalysisBuilder();
-    ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
-    if (resolutionSelector != null) {
+
+    if (resolutionSelectorId != null) {
+      ResolutionSelector resolutionSelector =
+          Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
       imageAnalysisBuilder.setResolutionSelector(resolutionSelector);
     }
 

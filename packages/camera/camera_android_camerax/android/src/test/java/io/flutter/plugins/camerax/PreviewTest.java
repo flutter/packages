@@ -73,7 +73,8 @@ public class PreviewTest {
     when(mockCameraXProxy.createPreviewBuilder()).thenReturn(mockPreviewBuilder);
     when(mockPreviewBuilder.build()).thenReturn(mockPreview);
 
-    previewHostApi.create(previewIdentifier, Long.valueOf(targetRotation), mockResolutionSelectorId);
+    previewHostApi.create(
+        previewIdentifier, Long.valueOf(targetRotation), mockResolutionSelectorId);
 
     verify(mockPreviewBuilder).setTargetRotation(targetRotation);
     verify(mockPreviewBuilder).setResolutionSelector(mockResolutionSelector);

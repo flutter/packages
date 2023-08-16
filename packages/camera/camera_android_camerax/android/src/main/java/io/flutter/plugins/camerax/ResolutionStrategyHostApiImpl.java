@@ -37,8 +37,7 @@ public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi 
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public ResolutionStrategyHostApiImpl(
-      @NonNull InstanceManager instanceManager) {
+  public ResolutionStrategyHostApiImpl(@NonNull InstanceManager instanceManager) {
     this(instanceManager, new ResolutionStrategyProxy());
   }
 
@@ -50,15 +49,14 @@ public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi 
    */
   @VisibleForTesting
   ResolutionStrategyHostApiImpl(
-      @NonNull InstanceManager instanceManager,
-      @NonNull ResolutionStrategyProxy proxy) {
+      @NonNull InstanceManager instanceManager, @NonNull ResolutionStrategyProxy proxy) {
     this.instanceManager = instanceManager;
     this.proxy = proxy;
   }
 
   /**
-   * Creates a {@link ResolutionStrategy} instance with the {@link GeneratedCameraXLibrary.ResolutionInfo}
-   * bound size and {@code fallbackRule} if specified.
+   * Creates a {@link ResolutionStrategy} instance with the {@link
+   * GeneratedCameraXLibrary.ResolutionInfo} bound size and {@code fallbackRule} if specified.
    */
   @Override
   public void create(
@@ -67,18 +65,17 @@ public class ResolutionStrategyHostApiImpl implements ResolutionStrategyHostApi 
       @Nullable Long fallbackRule) {
     ResolutionStrategy resolutionStrategy;
     if (boundSize == null && fallbackRule == null) {
+      // Strategy that chooses the highest available resolution does not have a bound size or fallback rule.
       resolutionStrategy = ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY;
+    } else if (boundSize == null) {
+      throw new IllegalArgumentException(
+          "A bound size must be specified if a non-null fallback rule is specified to create a valid ResolutionStrategy.");
+    } else {
+      resolutionStrategy =
+          proxy.create(
+              new Size(boundSize.getWidth().intValue(), boundSize.getHeight().intValue()),
+              fallbackRule);
     }
-    else if (boundSize == null) {
-      throw new IllegalArgumentException("A bound size must be specified if a fallback rule is specified as non-null to create a valid ResolutionStrategy.");
-    }
-    else {
-      resolutionStrategy = proxy.create(
-        new Size(boundSize.getWidth().intValue(), boundSize.getHeight().intValue()),
-        fallbackRule);
-    }
-    instanceManager.addDartCreatedInstance(
-      resolutionStrategy,
-        identifier);
+    instanceManager.addDartCreatedInstance(resolutionStrategy, identifier);
   }
 }

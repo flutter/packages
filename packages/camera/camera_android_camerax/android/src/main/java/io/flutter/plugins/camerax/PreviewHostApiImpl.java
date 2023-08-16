@@ -39,17 +39,18 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   /** Creates a {@link Preview} with the target rotation and resolution if specified. */
   @Override
   public void create(
-      @NonNull Long identifier,
-      @Nullable Long rotation,
-      @Nullable Long resolutionSelectorId) {
+      @NonNull Long identifier, @Nullable Long rotation, @Nullable Long resolutionSelectorId) {
     Preview.Builder previewBuilder = cameraXProxy.createPreviewBuilder();
-    ResolutionSelector resolutionSelector = instanceManager.getInstance(resolutionSelectorId);
+
     if (rotation != null) {
       previewBuilder.setTargetRotation(rotation.intValue());
     }
-    if (resolutionSelector != null) {
+    if (resolutionSelectorId != null) {
+      ResolutionSelector resolutionSelector =
+          Objects.requireNonNull(instanceManager.getInstance(resolutionSelectorId));
       previewBuilder.setResolutionSelector(resolutionSelector);
     }
+
     Preview preview = previewBuilder.build();
     instanceManager.addDartCreatedInstance(preview, identifier);
   }

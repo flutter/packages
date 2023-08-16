@@ -63,7 +63,9 @@ public class ResolutionStrategyTest {
     final ResolutionStrategyHostApiImpl hostApi =
         new ResolutionStrategyHostApiImpl(instanceManager, mockProxy);
 
-    // We expect an exception to be thrown in fallbackRule is specified but bound size is not.
-    assertThrows(IllegalArgumentException.class, () -> hostApi.create(instanceIdentifier, null, fallbackRule));
+    // We expect an exception to be thrown if fallback rule is specified but bound size is not.
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> hostApi.create(instanceIdentifier, null, fallbackRule));
   }
 }

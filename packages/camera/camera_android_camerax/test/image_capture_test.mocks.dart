@@ -96,6 +96,7 @@ class MockTestInstanceManagerHostApi extends _i1.Mock
 /// A class which mocks [ResolutionSelector].
 ///
 /// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
 class MockResolutionSelector extends _i1.Mock
     implements _i4.ResolutionSelector {
   MockResolutionSelector() {

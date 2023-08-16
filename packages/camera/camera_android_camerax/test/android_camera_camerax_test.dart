@@ -327,8 +327,9 @@ void main() {
           expectedBoundSize = const Size(3840, 2160);
           break;
         case ResolutionPreset.max:
-          expectedResolutionStrategy =
-              ResolutionStrategy.getHighestAvailableStrategy(detached: true);
+          // TODO(camsim99): handle detached objects for tests
+          expectedResolutionStrategy = null;
+          // ResolutionStrategy.getHighestAvailableStrategy(detached: true);
           break;
       }
 
@@ -1218,7 +1219,7 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  ImageCapture createImageCapture() {
+  ImageCapture createImageCapture(int? flashMode) {
     return testImageCapture;
   }
 

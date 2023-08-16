@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart' show immutable;
 
 import 'aspect_ratio_strategy.dart';
 import 'camerax_library.g.dart';
@@ -14,6 +15,7 @@ import 'resolution_strategy.dart';
 /// UseCase.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/resolutionselector/ResolutionSelector.
+@immutable
 class ResolutionSelector extends JavaObject {
   /// Construct a [ResolutionSelector].
   ResolutionSelector({
