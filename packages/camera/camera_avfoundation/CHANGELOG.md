@@ -1,6 +1,6 @@
 ## 0.9.13+3
 
-* Ignore audio samples until the first video sample arrives.
+* Ignores audio samples until the first video sample arrives.
 * Fixes unawaited_futures violations.
 
 ## 0.9.13+2
