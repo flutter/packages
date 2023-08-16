@@ -1,3 +1,11 @@
+## 0.5.0+15
+
+* Explicitly removes `READ_EXTERNAL_STORAGE` permission that may otherwise be implied from `WRITE_EXTERNAL_STORAGE`.
+
+## 0.5.0+14
+
+* Wraps classes needed to implement resolution configuration for video recording.
+
 ## 0.5.0+13
 
 * Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
