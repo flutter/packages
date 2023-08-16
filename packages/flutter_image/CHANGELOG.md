@@ -1,6 +1,6 @@
 ## 4.1.7
 
-* Migrates deprecated `ImageProvider.load` to `ImageProvider.loadImage`.
+* Migrates deprecated `ImageProvider.load` to `ImageProvider.loadBuffer`.
 
 ## 4.1.6
 
