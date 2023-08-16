@@ -95,7 +95,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   }
 
   @override
-  ImageStreamCompleter loadImage(NetworkImageWithRetry key, ImageDecoderCallback decode) {
+  ImageStreamCompleter loadImage(
+      NetworkImageWithRetry key, ImageDecoderCallback decode) {
     return OneFrameImageStreamCompleter(_loadWithRetry(key, decode),
         informationCollector: () sync* {
       yield ErrorDescription('Image provider: $this');
@@ -123,8 +124,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   }
 
   Future<ImageInfo> _loadWithRetry(
-      NetworkImageWithRetry key,
-      ImageDecoderCallback decode) async {
+      NetworkImageWithRetry key, ImageDecoderCallback decode) async {
     assert(key == this);
 
     final Stopwatch stopwatch = Stopwatch()..start();
@@ -174,7 +174,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
           );
         }
 
-        final ui.Codec codec = await decode(await ui.ImmutableBuffer.fromUint8List(bytes));
+        final ui.Codec codec =
+            await decode(await ui.ImmutableBuffer.fromUint8List(bytes));
         final ui.Image image = (await codec.getNextFrame()).image;
         return ImageInfo(
           image: image,

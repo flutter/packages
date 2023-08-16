@@ -1,3 +1,7 @@
+## 4.1.7
+
+* Migrates deprecated `ImageProvider.load` to `ImageProvider.loadImage`.
+
 ## 4.1.6
 
 * Fixes unawaited_futures violations.
