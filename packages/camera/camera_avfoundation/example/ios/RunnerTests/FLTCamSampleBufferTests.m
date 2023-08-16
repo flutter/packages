@@ -11,41 +11,36 @@
 
 /// Includes test cases related to sample buffer handling for FLTCam class.
 @interface FLTCamSampleBufferTests : XCTestCase
-@property(readonly, nonatomic) dispatch_queue_t captureSessionQueue;
-@property(readonly, nonatomic) FLTCam *camera;
-@property(readonly, nonatomic) CMSampleBufferRef sampleBuffer;
+
 @end
 
 @implementation FLTCamSampleBufferTests
 
-- (void)setUp {
-  _captureSessionQueue = dispatch_queue_create("testing", NULL);
-  _camera = FLTCreateCamWithCaptureSessionQueue(_captureSessionQueue);
-  _sampleBuffer = FLTCreateTestSampleBuffer();
-}
-
-- (void)tearDown {
-  CFRelease(_sampleBuffer);
-}
-
 - (void)testSampleBufferCallbackQueueMustBeCaptureSessionQueue {
-  XCTAssertEqual(_captureSessionQueue, _camera.captureVideoOutput.sampleBufferCallbackQueue,
+  dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  XCTAssertEqual(captureSessionQueue, cam.captureVideoOutput.sampleBufferCallbackQueue,
                  @"Sample buffer callback queue must be the capture session queue.");
 }
 
 - (void)testCopyPixelBuffer {
-  CVPixelBufferRef capturedPixelBuffer = CMSampleBufferGetImageBuffer(_sampleBuffer);
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("test", NULL));
+  CMSampleBufferRef capturedSampleBuffer = FLTCreateTestSampleBuffer();
+  CVPixelBufferRef capturedPixelBuffer = CMSampleBufferGetImageBuffer(capturedSampleBuffer);
   // Mimic sample buffer callback when captured a new video sample
-  [_camera captureOutput:_camera.captureVideoOutput
-      didOutputSampleBuffer:_sampleBuffer
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:capturedSampleBuffer
              fromConnection:OCMClassMock([AVCaptureConnection class])];
-  CVPixelBufferRef deliveriedPixelBuffer = [_camera copyPixelBuffer];
+  CVPixelBufferRef deliveriedPixelBuffer = [cam copyPixelBuffer];
   XCTAssertEqual(deliveriedPixelBuffer, capturedPixelBuffer,
                  @"FLTCam must deliver the latest captured pixel buffer to copyPixelBuffer API.");
+  CFRelease(capturedSampleBuffer);
   CFRelease(deliveriedPixelBuffer);
 }
 
 - (void)testFirstAppendedSampleShouldBeVideo {
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+
   id connectionMock = OCMClassMock([AVCaptureConnection class]);
 
   id writerMock = OCMClassMock([AVAssetWriter class]);
@@ -60,7 +55,7 @@
     [invocation setReturnValue:&status];
   });
 
-  __block NSString *writtenSamples = @"";
+  __block NSArray *writtenSamples = @[];
 
   id videoMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
   OCMStub([videoMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
@@ -69,7 +64,7 @@
   OCMStub([videoMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
       .ignoringNonObjectArgs()
       .andDo(^(NSInvocation *invocation) {
-        writtenSamples = [writtenSamples stringByAppendingString:@"v"];
+        writtenSamples = [writtenSamples arrayByAddingObject:@"video"];
       });
 
   id audioMock = OCMClassMock([AVAssetWriterInput class]);
@@ -78,31 +73,25 @@
       .andReturn(audioMock);
   OCMStub([audioMock isReadyForMoreMediaData]).andReturn(YES);
   OCMStub([audioMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
-    writtenSamples = [writtenSamples stringByAppendingString:@"a"];
+    writtenSamples = [writtenSamples arrayByAddingObject:@"audio"];
   });
 
   FLTThreadSafeFlutterResult *result =
       [[FLTThreadSafeFlutterResult alloc] initWithResult:^(id result){
       }];
-  [_camera startVideoRecordingWithResult:result];
+  [cam startVideoRecordingWithResult:result];
 
-  char *samples = "aaavava";
+  CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
+  CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
+  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+  [cam captureOutput:cam.captureVideoOutput didOutputSampleBuffer:videoSample fromConnection:connectionMock];
+  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+  CFRelease(videoSample);
+  CFRelease(audioSample);
 
-  CMSampleBufferRef audioSampleBuffer = FLTCreateTestAudioSampleBuffer();
-  for (int i = 0; i < strlen(samples); i++) {
-    if (samples[i] == 'v') {
-      [_camera captureOutput:_camera.captureVideoOutput
-          didOutputSampleBuffer:_sampleBuffer
-                 fromConnection:connectionMock];
-    } else {
-      [_camera captureOutput:nil
-          didOutputSampleBuffer:audioSampleBuffer
-                 fromConnection:connectionMock];
-    }
-  }
-  CFRelease(audioSampleBuffer);
-
-  XCTAssertEqualObjects(writtenSamples, @"vava", @"First appended sample must be video.");
+  NSArray *expectedSamples = @[@"video", @"audio"];
+  XCTAssertEqualObjects(writtenSamples, expectedSamples, @"First appended sample must be video.");
 }
 
 @end
