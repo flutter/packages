@@ -1,7 +1,11 @@
 name: go_router
 description: A declarative router for Flutter based on Navigation 2 supporting
   deep linking, data-driven routes and more
+<<<<<<< HEAD
 version: 10.2.0
+=======
+version: 11.0.0
+>>>>>>> 7f4ea1fa0 ([go_router] Fixes the GoRouter.goBranch so that it doesn't reset extra to null if extra is not serializable.)
 repository: https://github.com/flutter/packages/tree/main/packages/go_router
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+go_router%22
 

@@ -2843,6 +2843,52 @@ void main() {
       expect(matches.pathParameters['pid'], pid);
     });
 
+    testWidgets('StatefulShellRoute preserve extra when switching branch',
+        (WidgetTester tester) async {
+      StatefulNavigationShell? routeState;
+      Object? latestExtra;
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder: (BuildContext context, GoRouterState state,
+              StatefulNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) {
+                      latestExtra = state.extra;
+                      return const DummyScreen();
+                    }),
+              ],
+            ),
+          ],
+        ),
+      ];
+      final Object expectedExtra = Object();
+
+      await createRouter(routes, tester,
+          initialLocation: '/b', initialExtra: expectedExtra);
+      expect(latestExtra, expectedExtra);
+      routeState!.goBranch(0);
+      await tester.pumpAndSettle();
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(latestExtra, expectedExtra);
+    });
+
     testWidgets('goNames should allow dynamics values for queryParams',
         (WidgetTester tester) async {
       const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{
