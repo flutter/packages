@@ -5,7 +5,6 @@
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties, unawaited_futures
 
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
