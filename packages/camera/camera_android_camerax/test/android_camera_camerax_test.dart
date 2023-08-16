@@ -23,8 +23,10 @@ import 'package:camera_android_camerax/src/pending_recording.dart';
 import 'package:camera_android_camerax/src/plane_proxy.dart';
 import 'package:camera_android_camerax/src/preview.dart';
 import 'package:camera_android_camerax/src/process_camera_provider.dart';
+import 'package:camera_android_camerax/src/quality_selector.dart';
 import 'package:camera_android_camerax/src/recorder.dart';
 import 'package:camera_android_camerax/src/recording.dart';
+import 'package:camera_android_camerax/src/resolution_selector.dart';
 import 'package:camera_android_camerax/src/resolution_strategy.dart';
 import 'package:camera_android_camerax/src/system_services.dart';
 import 'package:camera_android_camerax/src/use_case.dart';
@@ -1214,17 +1216,18 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  Preview createPreview(int targetRotation) {
+  Preview createPreview(
+      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
     return testPreview;
   }
 
   @override
-  ImageCapture createImageCapture(int? flashMode) {
+  ImageCapture createImageCapture(ResolutionSelector? resolutionSelector) {
     return testImageCapture;
   }
 
   @override
-  Recorder createRecorder() {
+  Recorder createRecorder(QualitySelector? qualitySelector) {
     return testRecorder;
   }
 
@@ -1234,7 +1237,7 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  ImageAnalysis createImageAnalysis() {
+  ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
     return testImageAnalysis;
   }
 }
