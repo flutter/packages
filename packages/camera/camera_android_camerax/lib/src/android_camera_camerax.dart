@@ -239,7 +239,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Start listening for device orientation changes preceding camera creation.
     startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, cameraDescription.sensorOrientation);
-    // Determine ResolutionSelector based on preset for camera UseCases.
+    // Determine ResolutionSelector and QualitySelector based on preset for
+    // camera UseCases.
     presetResolutionSelector =
         _getResolutionSelectorFromPreset(resolutionPreset);
     presetQualitySelector = _getQualitySelectorFromPreset(resolutionPreset);
@@ -320,7 +321,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     cameraEventStreamController.add(CameraInitializedEvent(
         cameraId,
-        previewResolutionInfo.height.toDouble(),
+        previewResolutionInfo.height
+            .toDouble(), // TODO(camsim99): Is this order right?
         previewResolutionInfo.width.toDouble(),
         exposureMode,
         exposurePointSupported,
@@ -665,7 +667,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         ? Analyzer.detached(analyze: analyze)
         : Analyzer(analyze: analyze);
 
-    unawaited(imageAnalysis!.setAnalyzer(analyzer));
+    await imageAnalysis!.setAnalyzer(analyzer);
   }
 
   /// Unbinds [useCase] from camera lifecycle controlled by the
@@ -795,7 +797,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns the [ResolutionSelector] that maps to the specified resolution
   /// preset for camera [UseCase]s.
   ///
-  /// If the specified [preset] is unavailable, the camera will fallback to the
+  /// If the specified [preset] is unavailable, the camera will fall back to the
   /// closest lower resolution available.
   ResolutionSelector? _getResolutionSelectorFromPreset(
       ResolutionPreset? preset) {
@@ -848,7 +850,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns the [QualitySelector] that maps to the specified resolution
   /// preset for the camera used only for video capture.
   ///
-  /// If the specified [preset] is unavailable, the camera will fallback to the
+  /// If the specified [preset] is unavailable, the camera will fall back to the
   /// closest lower resolution available.
   QualitySelector? _getQualitySelectorFromPreset(ResolutionPreset? preset) {
     VideoQualityConstraint? videoQuality;
@@ -878,9 +880,14 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // We will choose the next highest video quality if the one desired
     // is unavaiable.
-    final FallbackStrategy fallbackStrategy = FallbackStrategy(
-        quality: videoQuality,
-        fallbackRule: VideoResolutionFallbackRule.lowerQualityThan);
+    const VideoResolutionFallbackRule fallbackRule =
+        VideoResolutionFallbackRule.lowerQualityThan;
+    final FallbackStrategy fallbackStrategy =
+        _shouldCreateDetachedObjectForTesting
+            ? FallbackStrategy.detached(
+                quality: videoQuality, fallbackRule: fallbackRule)
+            : FallbackStrategy(
+                quality: videoQuality, fallbackRule: fallbackRule);
 
     return _shouldCreateDetachedObjectForTesting
         ? QualitySelector.detached(
@@ -920,7 +927,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns a [Preview] configured with the specified target rotation and
-  /// preset [ResolutionSelector].
+  /// specified [ResolutionSelector].
   @visibleForTesting
   Preview createPreview(
       {required int targetRotation, ResolutionSelector? resolutionSelector}) {
@@ -929,13 +936,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns an [ImageCapture] configured with specified flash mode and
-  /// the preset [ResolutionSelector].
+  /// the specified [ResolutionSelector].
   @visibleForTesting
   ImageCapture createImageCapture(ResolutionSelector? resolutionSelector) {
     return ImageCapture(resolutionSelector: resolutionSelector);
   }
 
-  /// Returns a [Recorder] for use in video capture.
+  /// Returns a [Recorder] for use in video capture configured with the
+  /// specified [QualitySelector].
   @visibleForTesting
   Recorder createRecorder(QualitySelector? qualitySelector) {
     return Recorder(qualitySelector: qualitySelector);
@@ -947,7 +955,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     return VideoCapture.withOutput(recorder);
   }
 
-  /// Returns an [ImageAnalysis] configured with the preset [ResolutionSelector].
+  /// Returns an [ImageAnalysis] configured with the specified
+  /// [ResolutionSelector].
   @visibleForTesting
   ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
     return ImageAnalysis(resolutionSelector: resolutionSelector);

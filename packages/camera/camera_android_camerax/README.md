@@ -24,16 +24,11 @@ dependencies:
 
 ## Missing features and limitations
 
-### Resolution configuration \[[Issue #120462][120462]\]
-
-Any specified `ResolutionPreset` wll go unused in favor of CameraX defaults and
-`onCameraResolutionChanged` is unimplemented.
-
 ### Locking/Unlocking capture orientation \[[Issue #125915][125915]\]
 
 `lockCaptureOrientation` & `unLockCaptureOrientation` are unimplemented.
 
-### Flash mode configuration \[[Issue #120715][120715]\]
+### Torch mode \[[Issue #120715][120715]\]
 
 Calling `setFlashMode` with mode `FlashMode.torch` currently does nothing.
 
