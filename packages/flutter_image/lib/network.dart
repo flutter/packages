@@ -18,7 +18,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 // Method signature for _loadWithRetry decode callbacks.
-typedef _SimpleDecoderCallback = Future<ui.Codec> Function(ui.ImmutableBuffer buffer);
+typedef _SimpleDecoderCallback = Future<ui.Codec> Function(
+    ui.ImmutableBuffer buffer);
 
 /// Fetches the image from the given URL, associating it with the given scale.
 ///
@@ -99,10 +100,12 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
 
   @override
   ImageStreamCompleter loadBuffer(
-      // TODO(cyanglaz): migrate to use the new APIs
-      // https://github.com/flutter/flutter/issues/105336
-      // ignore: deprecated_member_use
-      NetworkImageWithRetry key, DecoderBufferCallback decode) {
+    NetworkImageWithRetry key,
+    // TODO(cyanglaz): migrate to use the new APIs
+    // https://github.com/flutter/flutter/issues/105336
+    // ignore: deprecated_member_use
+    DecoderBufferCallback decode,
+  ) {
     return OneFrameImageStreamCompleter(_loadWithRetry(key, decode),
         informationCollector: () sync* {
       yield ErrorDescription('Image provider: $this');
