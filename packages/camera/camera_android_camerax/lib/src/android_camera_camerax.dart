@@ -120,17 +120,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraSelector? cameraSelector;
 
-  /// The [ResolutionSelector] that represents the resolution preset used to
-  /// create a camera that will be used for capturing still images, and image
-  /// analysis.
-  @visibleForTesting
-  ResolutionSelector? presetResolutionSelector;
-
-  /// The [QualitySelector] that represents the resolution preset used to
-  /// create a camera that will be used for recording video.
-  @visibleForTesting
-  QualitySelector? presetQualitySelector;
-
   /// The controller we need to broadcast the different camera events.
   ///
   /// It is a `broadcast` because multiple controllers will connect to
@@ -241,9 +230,10 @@ class AndroidCameraCameraX extends CameraPlatform {
         cameraIsFrontFacing, cameraDescription.sensorOrientation);
     // Determine ResolutionSelector and QualitySelector based on preset for
     // camera UseCases.
-    presetResolutionSelector =
+    final ResolutionSelector? presetResolutionSelector =
         _getResolutionSelectorFromPreset(resolutionPreset);
-    presetQualitySelector = _getQualitySelectorFromPreset(resolutionPreset);
+    final QualitySelector? presetQualitySelector =
+        _getQualitySelectorFromPreset(resolutionPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
@@ -262,7 +252,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis ??= createImageAnalysis(presetResolutionSelector);
+    imageAnalysis = createImageAnalysis(presetResolutionSelector);
 
     // Configure VideoCapture and Recorder instances.
     recorder = createRecorder(presetQualitySelector);

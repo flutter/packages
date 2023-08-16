@@ -14,6 +14,7 @@ import 'package:camera_android_camerax/src/camera_state.dart';
 import 'package:camera_android_camerax/src/camera_state_error.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
+import 'package:camera_android_camerax/src/fallback_strategy.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
 import 'package:camera_android_camerax/src/image_capture.dart';
 import 'package:camera_android_camerax/src/image_proxy.dart';
@@ -341,15 +342,110 @@ void main() {
           boundSize: expectedBoundSize,
           fallbackRule: ResolutionStrategy.fallbackRuleClosestLower);
 
-      expect(camera.presetResolutionSelector!.resolutionStrategy!.boundSize,
+      expect(camera.preview!.resolutionSelector!.resolutionStrategy!.boundSize,
           equals(expectedResolutionStrategy.boundSize));
-      expect(camera.presetResolutionSelector!.resolutionStrategy!.fallbackRule,
+      expect(
+          camera
+              .imageCapture!.resolutionSelector!.resolutionStrategy!.boundSize,
+          equals(expectedResolutionStrategy.boundSize));
+      expect(
+          camera
+              .imageAnalysis!.resolutionSelector!.resolutionStrategy!.boundSize,
+          equals(expectedResolutionStrategy.boundSize));
+      expect(
+          camera.preview!.resolutionSelector!.resolutionStrategy!.fallbackRule,
+          equals(expectedResolutionStrategy.fallbackRule));
+      expect(
+          camera.imageCapture!.resolutionSelector!.resolutionStrategy!
+              .fallbackRule,
+          equals(expectedResolutionStrategy.fallbackRule));
+      expect(
+          camera.imageAnalysis!.resolutionSelector!.resolutionStrategy!
+              .fallbackRule,
           equals(expectedResolutionStrategy.fallbackRule));
     }
 
-    // Test null case
+    // Test null case.
     await camera.createCamera(testCameraDescription, null);
-    expect(camera.presetResolutionSelector, isNull);
+    expect(camera.preview!.resolutionSelector, isNull);
+    expect(camera.imageCapture!.resolutionSelector, isNull);
+    expect(camera.imageAnalysis!.resolutionSelector, isNull);
+  });
+
+  test(
+      'createCamera properly sets preset resolution for video capture use case',
+      () async {
+    final FakeAndroidCameraCameraX camera =
+        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 90;
+    const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation);
+    const bool enableAudio = true;
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    when(mockProcessCameraProvider.bindToLifecycle(
+        camera.mockBackCameraSelector, <UseCase>[
+      camera.testPreview,
+      camera.testImageCapture,
+      camera.testImageAnalysis
+    ])).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    // Test non-null resolution presets.
+    for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+      await camera.createCamera(testCameraDescription, resolutionPreset,
+          enableAudio: enableAudio);
+
+      VideoQualityConstraint? expectedVideoQuality;
+      switch (resolutionPreset) {
+        case ResolutionPreset.low:
+        // 240p is not supported by CameraX.
+        case ResolutionPreset.medium:
+          expectedVideoQuality = VideoQualityConstraint.SD;
+          break;
+        case ResolutionPreset.high:
+          expectedVideoQuality = VideoQualityConstraint.HD;
+          break;
+        case ResolutionPreset.veryHigh:
+          expectedVideoQuality = VideoQualityConstraint.FHD;
+          break;
+        case ResolutionPreset.ultraHigh:
+          expectedVideoQuality = VideoQualityConstraint.UHD;
+          break;
+        case ResolutionPreset.max:
+          expectedVideoQuality = VideoQualityConstraint.highest;
+          break;
+      }
+
+      const VideoResolutionFallbackRule expectedFallbackRule =
+          VideoResolutionFallbackRule.lowerQualityThan;
+      final FallbackStrategy expectedFallbackStrategy =
+          FallbackStrategy.detached(
+              quality: expectedVideoQuality,
+              fallbackRule: expectedFallbackRule);
+
+      expect(camera.recorder!.qualitySelector!.qualityList,
+          equals(<VideoQualityConstraint>[expectedVideoQuality]));
+      expect(camera.recorder!.qualitySelector!.fallbackStrategy!.quality,
+          equals(expectedFallbackStrategy.quality));
+      expect(camera.recorder!.qualitySelector!.fallbackStrategy!.fallbackRule,
+          equals(expectedFallbackStrategy.fallbackRule));
+    }
+
+    // Test null case.
+    await camera.createCamera(testCameraDescription, null);
+    expect(camera.recorder!.qualitySelector, isNull);
   });
 
   test(
@@ -1217,16 +1313,19 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   @override
   Preview createPreview(
       {required int targetRotation, ResolutionSelector? resolutionSelector}) {
+    when(testPreview.resolutionSelector).thenReturn(resolutionSelector);
     return testPreview;
   }
 
   @override
   ImageCapture createImageCapture(ResolutionSelector? resolutionSelector) {
+    when(testImageCapture.resolutionSelector).thenReturn(resolutionSelector);
     return testImageCapture;
   }
 
   @override
   Recorder createRecorder(QualitySelector? qualitySelector) {
+    when(testRecorder.qualitySelector).thenReturn(qualitySelector);
     return testRecorder;
   }
 
@@ -1237,6 +1336,7 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
 
   @override
   ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
+    when(testImageAnalysis.resolutionSelector).thenReturn(resolutionSelector);
     return testImageAnalysis;
   }
 }
