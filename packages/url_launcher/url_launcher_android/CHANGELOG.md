@@ -1,3 +1,7 @@
+## 6.0.39
+
+* The fix addresses a "403 disallow_useragent" error during Google OAuth user authorization
+
 ## 6.0.38
 
 * Updates android implementation to support api 34 broadcast receiver requirements.
