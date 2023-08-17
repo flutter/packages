@@ -228,8 +228,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Start listening for device orientation changes preceding camera creation.
     startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, cameraDescription.sensorOrientation);
-    // Determine ResolutionSelector and QualitySelector based on preset for
-    // camera UseCases.
+    // Determine ResolutionSelector and QualitySelector based on
+    // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
         _getResolutionSelectorFromPreset(resolutionPreset);
     final QualitySelector? presetQualitySelector =
