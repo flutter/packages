@@ -20,5 +20,10 @@ dependencies:
     path: ../../../
   google_maps_flutter_platform_interface: ^2.2.1
 
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  stream_transform: ^2.0.0
+
 flutter:
   uses-material-design: true
