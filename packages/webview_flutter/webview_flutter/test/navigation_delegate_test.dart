@@ -14,6 +14,29 @@ import 'navigation_delegate_test.mocks.dart';
 @GenerateMocks(<Type>[WebViewPlatform, PlatformNavigationDelegate])
 void main() {
   group('NavigationDelegate', () {
+    test('clone', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      final NavigationDelegate delegate = NavigationDelegate();
+
+      final NavigationDelegate clone = NavigationDelegate(
+        onNavigationRequest: delegate.onNavigationRequest,
+        onPageStarted: delegate.onPageStarted,
+        onPageFinished: delegate.onPageFinished,
+        onProgress: delegate.onProgress,
+        onWebResourceError: delegate.onWebResourceError,
+        onUrlChange: delegate.onUrlChange,
+      );
+
+      // Assert that the callbacks of the clone are the same as those of the original delegate
+      expect(clone.onNavigationRequest, equals(delegate.onNavigationRequest));
+      expect(clone.onPageStarted, equals(delegate.onPageStarted));
+      expect(clone.onPageFinished, equals(delegate.onPageFinished));
+      expect(clone.onProgress, equals(delegate.onProgress));
+      expect(clone.onWebResourceError, equals(delegate.onWebResourceError));
+      expect(clone.onUrlChange, equals(delegate.onUrlChange));
+    });
+
     test('onNavigationRequest', () async {
       WebViewPlatform.instance = TestWebViewPlatform();
 
