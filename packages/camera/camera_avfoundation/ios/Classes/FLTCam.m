@@ -501,6 +501,7 @@ NSString *const errorMethod = @"error";
     }
 
     // ignore audio samples until the first video sample arrives to avoid black frames
+    // https://github.com/flutter/flutter/issues/57831
     if (_videoWriter.status != AVAssetWriterStatusWriting && output != _captureVideoOutput) {
       return;
     }

@@ -38,7 +38,7 @@
   CFRelease(deliveriedPixelBuffer);
 }
 
-- (void)testFirstAppendedSampleShouldBeVideo {
+- (void)testDidOutputSampleBufferIgnoreAudioSamplesBeforeVideoSamples {
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
   CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
