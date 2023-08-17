@@ -1,3 +1,7 @@
+## NEXT
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.9.3
 
 * Adds `getSaveLocation` and deprecates `getSavePath`.

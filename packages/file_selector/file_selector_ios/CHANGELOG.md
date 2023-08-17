@@ -1,3 +1,8 @@
+## 0.5.1+5
+
+* Fixes the behavior of no type groups to allow selecting any file.
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.5.1+4
 
 * Updates references to the deprecated `macUTIs`.

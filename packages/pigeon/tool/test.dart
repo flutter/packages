@@ -18,11 +18,14 @@ import 'shared/test_runner.dart';
 import 'shared/test_suites.dart';
 
 const String _testFlag = 'test';
+const String _noGen = 'no-generation';
 const String _listFlag = 'list';
 
 Future<void> main(List<String> args) async {
   final ArgParser parser = ArgParser()
     ..addMultiOption(_testFlag, abbr: 't', help: 'Only run specified tests.')
+    ..addFlag(_noGen,
+        abbr: 'g', help: 'Skips the generation step.', negatable: false)
     ..addFlag(_listFlag,
         negatable: false, abbr: 'l', help: 'List available tests.')
     ..addFlag('help',
@@ -105,5 +108,5 @@ ${parser.usage}''');
     }
   }
 
-  await runTests(testsToRun);
+  await runTests(testsToRun, runGeneration: !argResults.wasParsed(_noGen));
 }

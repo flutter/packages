@@ -1,3 +1,7 @@
+## 2.3.3
+
+* Updates Pigeon-generated code to avoid conflicts with `shared_preferences_ios`.
+
 ## 2.3.2
 
 * Updates to the latest version of `pigeon`.
