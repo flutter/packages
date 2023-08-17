@@ -50,7 +50,6 @@ const String windowsUnitTests = 'windows_unittests';
 const String windowsIntegrationTests = 'windows_integration_tests';
 const String dartUnitTests = 'dart_unittests';
 const String flutterUnitTests = 'flutter_unittests';
-const String mockHandlerTests = 'mock_handler_tests';
 const String commandLineTests = 'command_line_tests';
 
 const Map<String, TestInfo> testSuites = <String, TestInfo>{
@@ -101,9 +100,6 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
   macOSSwiftIntegrationTests: TestInfo(
       function: _runMacOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code on macOS.'),
-  mockHandlerTests: TestInfo(
-      function: _runMockHandlerTests,
-      description: 'Unit tests on generated Dart mock handler code.'),
   commandLineTests: TestInfo(
       function: _runCommandLineTests,
       description: 'Tests running pigeon with various command-line options.'),
@@ -187,21 +183,6 @@ Future<int> _runDartUnitTests() async {
   return exitCode;
 }
 
-/// Generates multiple dart files based on the jobs defined in [jobs] which is
-/// in the format of (key: input pigeon file path, value: output dart file
-/// path).
-Future<int> _generateDart(Map<String, String> jobs) async {
-  for (final MapEntry<String, String> job in jobs.entries) {
-    // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart
-    // blocked this (https://github.com/dart-lang/pub/pull/3285).
-    final int result = await runPigeon(input: job.key, dartOut: job.value);
-    if (result != 0) {
-      return result;
-    }
-  }
-  return 0;
-}
-
 Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
   final String messagePath = '$flutterUnitTestsPath/lib/message.gen.dart';
   final String messageTestPath = '$flutterUnitTestsPath/test/message_test.dart';
@@ -227,28 +208,7 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
 }
 
 Future<int> _runFlutterUnitTests() async {
-  // TODO(stuartmorgan): Migrate Dart unit tests to use the generated output in
-  // shared_test_plugin_code instead of having multiple copies of generation.
-  const String flutterUnitTestsPath =
-      'platform_tests/flutter_null_safe_unit_tests';
-  // Files from the pigeons/ directory to generate output for.
-  const List<String> inputPigeons = <String>[
-    'flutter_unittests',
-    'core_tests',
-    'primitive',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-  ];
-  final int generateCode = await _generateDart(<String, String>{
-    for (final String name in inputPigeons)
-      'pigeons/$name.dart': '$flutterUnitTestsPath/lib/$name.gen.dart'
-  });
-  if (generateCode != 0) {
-    return generateCode;
-  }
-
+  const String flutterUnitTestsPath = 'platform_tests/shared_test_plugin_code';
   final int analyzeCode = await _analyzeFlutterUnitTests(flutterUnitTestsPath);
   if (analyzeCode != 0) {
     return analyzeCode;
@@ -346,24 +306,6 @@ Future<int> _runIOSSwiftIntegrationTests() async {
   return _runMobileIntegrationTests('iOS', _testPluginRelativePath);
 }
 
-Future<int> _runMockHandlerTests() async {
-  const String unitTestsPath = './mock_handler_tester';
-  final int generateCode = await runPigeon(
-    input: './pigeons/message.dart',
-    dartOut: './mock_handler_tester/test/message.dart',
-    dartTestOut: './mock_handler_tester/test/test.dart',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
-
-  final int testCode = await runFlutterCommand(unitTestsPath, 'test');
-  if (testCode != 0) {
-    return testCode;
-  }
-  return 0;
-}
-
 Future<int> _runWindowsUnitTests() async {
   const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'windows');
@@ -423,6 +365,13 @@ Future<int> _runCommandLineTests() async {
       '--one_language',
       '--ast_out',
       tempOutput
+    ],
+    // Test writing a file in a directory that doesn't exist.
+    <String>[
+      '--input',
+      'pigeons/message.dart',
+      '--dart_out',
+      '$tempDir/subdirectory/does/not/exist/message.g.dart',
     ],
   ];
 

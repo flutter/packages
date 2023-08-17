@@ -407,7 +407,7 @@ public class CoreTests {
       Object aMap = list.get(9);
       pigeonResult.setAMap((Map<Object, Object>) aMap);
       Object anEnum = list.get(10);
-      pigeonResult.setAnEnum(anEnum == null ? null : AnEnum.values()[(int) anEnum]);
+      pigeonResult.setAnEnum(AnEnum.values()[(int) anEnum]);
       Object aString = list.get(11);
       pigeonResult.setAString((String) aString);
       Object anObject = list.get(12);
@@ -1115,6 +1115,8 @@ public class CoreTests {
     /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableMap(
         @Nullable Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+    /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+    void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull Result<AnEnum> result);
 
     void callFlutterNoop(@NonNull Result<Void> result);
 
@@ -1123,6 +1125,9 @@ public class CoreTests {
     void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result);
 
     void callFlutterEchoAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
+
+    void callFlutterEchoAllNullableTypes(
+        @Nullable AllNullableTypes everything, @NonNull Result<AllNullableTypes> result);
 
     void callFlutterSendMultipleNullableTypes(
         @Nullable Boolean aNullableBool,
@@ -1145,6 +1150,8 @@ public class CoreTests {
     void callFlutterEchoMap(
         @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
 
+    void callFlutterEchoEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result);
+
     void callFlutterEchoNullableBool(@Nullable Boolean aBool, @NonNull Result<Boolean> result);
 
     void callFlutterEchoNullableInt(@Nullable Long anInt, @NonNull Result<Long> result);
@@ -1160,6 +1167,8 @@ public class CoreTests {
 
     void callFlutterEchoNullableMap(
         @Nullable Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+
+    void callFlutterEchoNullableEnum(@Nullable AnEnum anEnum, @NonNull Result<AnEnum> result);
 
     /** The codec used by HostIntegrationCoreApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1524,7 +1533,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                AnEnum anEnumArg = AnEnum.values()[(int) args.get(0)];
                 try {
                   AnEnum output = api.echoEnum(anEnumArg);
                   wrapped.add(0, output.index);
@@ -2159,7 +2168,7 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                AnEnum anEnumArg = AnEnum.values()[(int) args.get(0)];
                 Result<AnEnum> resultCallback =
                     new Result<AnEnum>() {
                       public void success(AnEnum result) {
@@ -2581,6 +2590,37 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                Result<AnEnum> resultCallback =
+                    new Result<AnEnum>() {
+                      public void success(AnEnum result) {
+                        wrapped.add(0, result == null ? null : result.index);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncNullableEnum(anEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop",
                 getCodec());
         if (api != null) {
@@ -2690,6 +2730,37 @@ public class CoreTests {
                     };
 
                 api.callFlutterEchoAllTypes(everythingArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
+                Result<AllNullableTypes> resultCallback =
+                    new Result<AllNullableTypes>() {
+                      public void success(AllNullableTypes result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoAllNullableTypes(everythingArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -2954,6 +3025,37 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnEnum anEnumArg = AnEnum.values()[(int) args.get(0)];
+                Result<AnEnum> resultCallback =
+                    new Result<AnEnum>() {
+                      public void success(AnEnum result) {
+                        wrapped.add(0, result.index);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoEnum(anEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool",
                 getCodec());
         if (api != null) {
@@ -3168,6 +3270,37 @@ public class CoreTests {
           channel.setMessageHandler(null);
         }
       }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                Result<AnEnum> resultCallback =
+                    new Result<AnEnum>() {
+                      public void success(AnEnum result) {
+                        wrapped.add(0, result == null ? null : result.index);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.callFlutterEchoNullableEnum(anEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
 
@@ -3287,7 +3420,7 @@ public class CoreTests {
     }
     /** Returns the passed object, to test serialization and deserialization. */
     public void echoAllNullableTypes(
-        @NonNull AllNullableTypes everythingArg, @NonNull Reply<AllNullableTypes> callback) {
+        @Nullable AllNullableTypes everythingArg, @NonNull Reply<AllNullableTypes> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3431,6 +3564,21 @@ public class CoreTests {
             callback.reply(output);
           });
     }
+    /** Returns the passed enum to test serialization and deserialization. */
+    public void echoEnum(@NonNull AnEnum anEnumArg, @NonNull Reply<AnEnum> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(anEnumArg.index)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            AnEnum output = AnEnum.values()[(int) channelReply];
+            callback.reply(output);
+          });
+    }
     /** Returns the passed boolean, to test serialization and deserialization. */
     public void echoNullableBool(@Nullable Boolean aBoolArg, @NonNull Reply<Boolean> callback) {
       BasicMessageChannel<Object> channel =
@@ -3535,6 +3683,22 @@ public class CoreTests {
           channelReply -> {
             @SuppressWarnings("ConstantConditions")
             Map<String, Object> output = (Map<String, Object>) channelReply;
+            callback.reply(output);
+          });
+    }
+    /** Returns the passed enum to test serialization and deserialization. */
+    public void echoNullableEnum(@Nullable AnEnum anEnumArg, @NonNull Reply<AnEnum> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(
+              Collections.singletonList(anEnumArg == null ? null : anEnumArg.index)),
+          channelReply -> {
+            @SuppressWarnings("ConstantConditions")
+            AnEnum output = channelReply == null ? null : AnEnum.values()[(int) channelReply];
             callback.reply(output);
           });
     }

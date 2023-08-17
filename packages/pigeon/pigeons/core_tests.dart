@@ -374,11 +374,11 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsyncNullable(_:)')
   Map<String?, Object?>? echoAsyncNullableMap(Map<String?, Object?>? aMap);
 
-  // /// Returns the passed enum, to test asynchronous serialization and deserialization.
-  // @async
-  // @ObjCSelector('echoAsyncNullableEnum:')
-  // @SwiftFunction('echoAsyncNullable(_:)')
-  // AnEnum? echoAsyncNullableEnum(AnEnum? anEnum);
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableEnum:')
+  @SwiftFunction('echoAsyncNullable(_:)')
+  AnEnum? echoAsyncNullableEnum(AnEnum? anEnum);
 
   // ========== Flutter API test wrappers ==========
 
@@ -396,10 +396,11 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('callFlutterEcho(_:)')
   AllTypes callFlutterEchoAllTypes(AllTypes everything);
 
-  // TODO(stuartmorgan): Add callFlutterEchoAllNullableTypes and the associated
-  // test once either https://github.com/flutter/flutter/issues/116117 is fixed,
-  // or the problematic type is moved out of AllNullableTypes and into its own
-  // test, since the type mismatch breaks the second `encode` round.
+  @async
+  @ObjCSelector('callFlutterEchoAllNullableTypes:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  AllNullableTypes? callFlutterEchoAllNullableTypes(
+      AllNullableTypes? everything);
 
   @async
   @ObjCSelector('callFlutterSendMultipleNullableTypesABool:anInt:aString:')
@@ -442,10 +443,10 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('callFlutterEcho(_:)')
   Map<String?, Object?> callFlutterEchoMap(Map<String?, Object?> aMap);
 
-  // @async
-  // @ObjCSelector('callFlutterEchoEnum:')
-  // @SwiftFunction('callFlutterEcho(_:)')
-  // AnEnum callFlutterEchoEnum(AnEnum anEnum);
+  @async
+  @ObjCSelector('callFlutterEchoEnum:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  AnEnum callFlutterEchoEnum(AnEnum anEnum);
 
   @async
   @ObjCSelector('callFlutterEchoNullableBool:')
@@ -483,10 +484,10 @@ abstract class HostIntegrationCoreApi {
   Map<String?, Object?>? callFlutterEchoNullableMap(
       Map<String?, Object?>? aMap);
 
-  // @async
-  // @ObjCSelector('callFlutterEchoNullableEnum:')
-  // @SwiftFunction('callFlutterNullableEcho(_:)')
-  // AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+  @async
+  @ObjCSelector('callFlutterEchoNullableEnum:')
+  @SwiftFunction('callFlutterNullableEcho(_:)')
+  AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -511,7 +512,7 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
   @SwiftFunction('echoNullable(_:)')
-  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
   /// Returns passed in arguments of multiple types.
   ///
@@ -558,10 +559,10 @@ abstract class FlutterIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
 
-  // /// Returns the passed enum to test serialization and deserialization.
-  // @ObjCSelector('echoEnum:')
-  // @SwiftFunction('echo(_:)')
-  // AnEnum echoEnum(AnEnum anEnum);
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoEnum:')
+  @SwiftFunction('echo(_:)')
+  AnEnum echoEnum(AnEnum anEnum);
 
   // ========== Nullable argument/return type tests ==========
 
@@ -600,10 +601,10 @@ abstract class FlutterIntegrationCoreApi {
   @SwiftFunction('echoNullable(_:)')
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
 
-  // /// Returns the passed enum to test serialization and deserialization.
-  // @ObjCSelector('echoNullableEnum:')
-  // @SwiftFunction('echoNullable(_:)')
-  // AnEnum? echoNullableEnum(AnEnum? anEnum);
+  /// Returns the passed enum to test serialization and deserialization.
+  @ObjCSelector('echoNullableEnum:')
+  @SwiftFunction('echoNullable(_:)')
+  AnEnum? echoNullableEnum(AnEnum? anEnum);
 
   // ========== Async tests ==========
   // These are minimal since async FlutterApi only changes Dart generation.

@@ -6,10 +6,10 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_unit_tests/flutter_unittests.gen.dart';
-import 'package:flutter_unit_tests/nullable_returns.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_test_plugin_code/src/generated/flutter_unittests.gen.dart';
+import 'package:shared_test_plugin_code/src/generated/nullable_returns.gen.dart';
 
 import 'null_safe_test.mocks.dart';
 import 'test_util.dart';
@@ -53,7 +53,7 @@ void main() {
     completer.complete(Api.codec.encodeMessage(<Object>[reply]));
     final Future<ByteData?> sendResult = completer.future;
     when(mockMessenger.send(
-            'dev.flutter.pigeon.flutter_unit_tests.Api.search', any))
+            'dev.flutter.pigeon.pigeon_integration_tests.Api.search', any))
         .thenAnswer((Invocation realInvocation) => sendResult);
     final Api api = Api(binaryMessenger: mockMessenger);
     final FlutterSearchReply readReply = await api.search(request);
@@ -68,7 +68,7 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     echoOneArgument(
       mockMessenger,
-      'dev.flutter.pigeon.flutter_unit_tests.Api.echo',
+      'dev.flutter.pigeon.pigeon_integration_tests.Api.echo',
       Api.codec,
     );
     final Api api = Api(binaryMessenger: mockMessenger);
@@ -81,7 +81,7 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     echoOneArgument(
       mockMessenger,
-      'dev.flutter.pigeon.flutter_unit_tests.Api.anInt',
+      'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt',
       Api.codec,
     );
     final Api api = Api(binaryMessenger: mockMessenger);
@@ -91,7 +91,8 @@ void main() {
 
   test('return null to nonnull', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    const String channel = 'dev.flutter.pigeon.flutter_unit_tests.Api.anInt';
+    const String channel =
+        'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
       return Api.codec.encodeMessage(<Object?>[null]);
@@ -104,7 +105,7 @@ void main() {
   test('send null parameter', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     const String channel =
-        'dev.flutter.pigeon.flutter_unit_tests.NullableArgHostApi.doit';
+        'dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
       return Api.codec.encodeMessage(<Object?>[123]);
@@ -117,7 +118,7 @@ void main() {
   test('send null collection parameter', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     const String channel =
-        'dev.flutter.pigeon.flutter_unit_tests.NullableCollectionArgHostApi.doit';
+        'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
       return Api.codec.encodeMessage(<Object?>[
@@ -138,7 +139,7 @@ void main() {
 
     final Completer<int> resultCompleter = Completer<int>();
     binding.defaultBinaryMessenger.handlePlatformMessage(
-      'dev.flutter.pigeon.flutter_unit_tests.NullableArgFlutterApi.doit',
+      'dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit',
       NullableArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
         resultCompleter.complete(
@@ -162,7 +163,7 @@ void main() {
 
     final Completer<List<String?>> resultCompleter = Completer<List<String?>>();
     binding.defaultBinaryMessenger.handlePlatformMessage(
-      'dev.flutter.pigeon.flutter_unit_tests.NullableCollectionArgFlutterApi.doit',
+      'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit',
       NullableCollectionArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
         resultCompleter.complete(
@@ -182,7 +183,7 @@ void main() {
   test('receive null return', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     const String channel =
-        'dev.flutter.pigeon.flutter_unit_tests.NullableReturnHostApi.doit';
+        'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
       return NullableReturnHostApi.codec.encodeMessage(<Object?>[null]);
@@ -195,7 +196,7 @@ void main() {
   test('receive null collection return', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     const String channel =
-        'dev.flutter.pigeon.flutter_unit_tests.NullableCollectionReturnHostApi.doit';
+        'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
       return NullableCollectionReturnHostApi.codec
@@ -215,7 +216,7 @@ void main() {
 
     final Completer<int?> resultCompleter = Completer<int?>();
     unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
-      'dev.flutter.pigeon.flutter_unit_tests.NullableReturnFlutterApi.doit',
+      'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnFlutterApi.doit',
       NullableReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
         resultCompleter.complete(null);
@@ -238,7 +239,7 @@ void main() {
     final Completer<List<String?>?> resultCompleter =
         Completer<List<String?>?>();
     unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
-      'dev.flutter.pigeon.flutter_unit_tests.NullableCollectionReturnFlutterApi.doit',
+      'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnFlutterApi.doit',
       NullableCollectionReturnFlutterApi.codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
         resultCompleter.complete(null);

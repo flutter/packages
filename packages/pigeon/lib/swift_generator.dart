@@ -275,6 +275,17 @@ import FlutterMacOS
     required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
+
+    /// Returns an argument name that can be used in a context where it is possible to collide.
+    String getEnumSafeArgumentName(Root root, int count, NamedType argument) {
+      String enumTag = '';
+      if (isEnum(root, argument.type)) {
+        enumTag = argument.type.isNullable ? '?.rawValue' : '.rawValue';
+      }
+
+      return '${_getArgumentName(count, argument)}Arg$enumTag';
+    }
+
     final bool isCustomCodec = getCodecClasses(api, root).isNotEmpty;
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
@@ -327,7 +338,12 @@ import FlutterMacOS
           });
           final Iterable<String> argNames =
               indexMap(func.arguments, _getSafeArgumentName);
-          sendArgument = '[${argNames.join(', ')}] as [Any?]';
+          final Iterable<String> enumSafeArgNames = func.arguments
+              .asMap()
+              .entries
+              .map((MapEntry<int, NamedType> e) =>
+                  getEnumSafeArgumentName(root, e.key, e.value));
+          sendArgument = '[${enumSafeArgNames.join(', ')}] as [Any?]';
           final String argsSignature = map3(
               argTypes,
               argLabels,
@@ -503,8 +519,11 @@ import FlutterMacOS
                 indent.addScoped('{ result in', '}', () {
                   indent.write('switch result ');
                   indent.addScoped('{', '}', () {
-                    final String enumTag =
-                        isEnum(root, method.returnType) ? '.rawValue' : '';
+                    final String nullsafe =
+                        method.returnType.isNullable ? '?' : '';
+                    final String enumTag = isEnum(root, method.returnType)
+                        ? '$nullsafe.rawValue'
+                        : '';
                     indent.writeln('case .success$successVariableInit:');
                     indent.nest(1, () {
                       indent.writeln('reply(wrapResult($resultName$enumTag))');
@@ -653,7 +672,7 @@ import FlutterMacOS
         String output =
             '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
         if (type.isNullable) {
-          output = '$value is NSNull ? nil : $output';
+          output = '($value is NSNull || $value == nil) ? nil : $output';
         }
         return output;
       } else if (type.baseName == 'Object') {
@@ -662,7 +681,7 @@ import FlutterMacOS
         if (type.isNullable) {
           // Nullable ints need to check for NSNull, and Int32 before casting can be done safely.
           // This nested ternary is a necessary evil to avoid less efficient conversions.
-          return '$value is NSNull ? nil : ($value is Int64? ? $value as! Int64? : Int64($value as! Int32))';
+          return '($value is NSNull || $value == nil) ? nil : ($value is Int64? ? $value as! Int64? : Int64($value as! Int32))';
         } else {
           return '$value is Int64 ? $value as! Int64 : Int64($value as! Int32)';
         }

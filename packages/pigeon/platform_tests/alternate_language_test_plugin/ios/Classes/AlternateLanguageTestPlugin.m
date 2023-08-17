@@ -286,6 +286,12 @@
   completion(aMap, nil);
 }
 
+- (void)echoAsyncNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
+                   completion:
+                       (void (^)(AnEnumWrapper *_Nullable, FlutterError *_Nullable))completion {
+  completion(anEnumWrapped, nil);
+}
+
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   [self.flutterAPI noopWithCompletion:^(FlutterError *error) {
     completion(error);
@@ -384,6 +390,23 @@
                 }];
 }
 
+- (void)callFlutterEchoEnum:(AnEnum)anEnum
+                 completion:(void (^)(AnEnum, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoEnum:anEnum
+                 completion:^(AnEnum value, FlutterError *error) {
+                   completion(value, error);
+                 }];
+}
+
+- (void)callFlutterEchoAllNullableTypes:(nullable AllNullableTypes *)everything
+                             completion:(void (^)(AllNullableTypes *_Nullable,
+                                                  FlutterError *_Nullable))completion {
+  [self.flutterAPI echoAllNullableTypes:everything
+                             completion:^(AllNullableTypes *value, FlutterError *error) {
+                               completion(value, error);
+                             }];
+}
+
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
                          completion:
                              (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
@@ -445,6 +468,15 @@
                         completion:^(NSDictionary<NSString *, id> *value, FlutterError *error) {
                           completion(value, error);
                         }];
+}
+
+- (void)callFlutterEchoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
+                         completion:(void (^)(AnEnumWrapper *_Nullable,
+                                              FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableEnum:anEnumWrapped
+                         completion:^(AnEnumWrapper *value, FlutterError *error) {
+                           completion(value, error);
+                         }];
 }
 
 @end

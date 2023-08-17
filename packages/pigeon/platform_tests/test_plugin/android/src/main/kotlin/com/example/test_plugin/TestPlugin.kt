@@ -231,6 +231,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(aMap))
   }
 
+  override fun echoAsyncNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
+    callback(Result.success(anEnum))
+  }
+
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop() { callback(Result.success(Unit)) }
   }
@@ -287,6 +291,14 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.echoMap(aMap) { echo -> callback(Result.success(echo)) }
   }
 
+  override fun callFlutterEchoEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit) {
+    flutterApi!!.echoEnum(anEnum) { echo -> callback(Result.success(echo)) }
+  }
+
+  override fun callFlutterEchoAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit) {
+    flutterApi!!.echoAllNullableTypes(everything) { echo -> callback(Result.success(echo)) }
+  }
+
   override fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit) {
     flutterApi!!.echoNullableBool(aBool) { echo -> callback(Result.success(echo)) }
   }
@@ -313,6 +325,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
 
   override fun callFlutterEchoNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit) {
     flutterApi!!.echoNullableMap(aMap) { echo -> callback(Result.success(echo)) }
+  }
+
+  override fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
+    flutterApi!!.echoNullableEnum(anEnum) { echo -> callback(Result.success(echo)) }
   }
 
 }

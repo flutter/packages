@@ -411,7 +411,7 @@ $resultAt != null
                     final String leftHandSide = 'final $argType? $argName';
                     if (customEnumNames.contains(arg.type.baseName)) {
                       indent.writeln(
-                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count] as int];');
+                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
                     } else {
                       indent.writeln(
                           '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
@@ -442,10 +442,15 @@ $resultAt != null
                   } else {
                     indent.writeln('final $returnType output = $call;');
                   }
+
                   const String returnExpression = 'output';
+                  final String nullability =
+                      func.returnType.isNullable ? '?' : '';
+                  final String enumOutput =
+                      isEnum(root, func.returnType) ? '$nullability.index' : '';
                   final String returnStatement = isMockHandler
-                      ? 'return <Object?>[$returnExpression];'
-                      : 'return $returnExpression;';
+                      ? 'return <Object?>[$returnExpression$enumOutput];'
+                      : 'return $returnExpression$enumOutput;';
                   indent.writeln(returnStatement);
                 }
               });
@@ -613,6 +618,7 @@ if (replyList == null) {
     Root root,
     StringSink sink, {
     required String dartPackageName,
+    required String dartOutputPackageName,
   }) {
     final Indent indent = Indent(sink);
     final String sourceOutPath = generatorOptions.sourceOutPath ?? '';
@@ -634,7 +640,7 @@ if (replyList == null) {
     } else {
       final String path =
           relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
-      indent.writeln("import 'package:$dartPackageName/$path';");
+      indent.writeln("import 'package:$dartOutputPackageName/$path';");
     }
     for (final Api api in root.apis) {
       if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {

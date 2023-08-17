@@ -310,12 +310,19 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)echoAsyncNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
                   completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                        FlutterError *_Nullable))completion;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
+                   completion:
+                       (void (^)(AnEnumWrapper *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterEchoAllTypes:(AllTypes *)everything
                      completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterEchoAllNullableTypes:(nullable AllNullableTypes *)everything
+                             completion:(void (^)(AllNullableTypes *_Nullable,
+                                                  FlutterError *_Nullable))completion;
 - (void)callFlutterSendMultipleNullableTypesABool:(nullable NSNumber *)aNullableBool
                                             anInt:(nullable NSNumber *)aNullableInt
                                           aString:(nullable NSString *)aNullableString
@@ -337,6 +344,8 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)callFlutterEchoMap:(NSDictionary<NSString *, id> *)aMap
                 completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                      FlutterError *_Nullable))completion;
+- (void)callFlutterEchoEnum:(AnEnum)anEnum
+                 completion:(void (^)(AnEnum, FlutterError *_Nullable))completion;
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
                          completion:
                              (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -358,6 +367,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)callFlutterEchoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
                         completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                              FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
+                         completion:(void (^)(AnEnumWrapper *_Nullable,
+                                              FlutterError *_Nullable))completion;
 @end
 
 extern void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
@@ -381,7 +393,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoAllTypes:(AllTypes *)everything
           completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed object, to test serialization and deserialization.
-- (void)echoAllNullableTypes:(AllNullableTypes *)everything
+- (void)echoAllNullableTypes:(nullable AllNullableTypes *)everything
                   completion:
                       (void (^)(AllNullableTypes *_Nullable, FlutterError *_Nullable))completion;
 /// Returns passed in arguments of multiple types.
@@ -415,6 +427,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoMap:(NSDictionary<NSString *, id> *)aMap
      completion:
          (void (^)(NSDictionary<NSString *, id> *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed enum to test serialization and deserialization.
+- (void)echoEnum:(AnEnum)anEnum completion:(void (^)(AnEnum, FlutterError *_Nullable))completion;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (void)echoNullableBool:(nullable NSNumber *)aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -438,6 +452,9 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
 - (void)echoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
              completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                   FlutterError *_Nullable))completion;
+/// Returns the passed enum to test serialization and deserialization.
+- (void)echoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
+              completion:(void (^)(AnEnumWrapper *_Nullable, FlutterError *_Nullable))completion;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;

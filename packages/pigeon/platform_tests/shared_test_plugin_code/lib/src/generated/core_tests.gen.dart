@@ -1654,6 +1654,32 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnEnum?> echoAsyncNullableEnum(AnEnum? arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   Future<void> callFlutterNoop() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop',
@@ -1745,6 +1771,30 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (replyList[0] as AllTypes?)!;
+    }
+  }
+
+  Future<AllNullableTypes?> callFlutterEchoAllNullableTypes(
+      AllNullableTypes? arg_everything) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_everything]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as AllNullableTypes?);
     }
   }
 
@@ -1977,6 +2027,34 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AnEnum> callFlutterEchoEnum(AnEnum arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   Future<bool?> callFlutterEchoNullableBool(bool? arg_aBool) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool',
@@ -2140,6 +2218,31 @@ class HostIntegrationCoreApi {
       return (replyList[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
     }
   }
+
+  Future<AnEnum?> callFlutterEchoNullableEnum(AnEnum? arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
+    }
+  }
 }
 
 class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
@@ -2199,7 +2302,7 @@ abstract class FlutterIntegrationCoreApi {
   AllTypes echoAllTypes(AllTypes everything);
 
   /// Returns the passed object, to test serialization and deserialization.
-  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
   /// Returns passed in arguments of multiple types.
   ///
@@ -2228,6 +2331,9 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  AnEnum echoEnum(AnEnum anEnum);
+
   /// Returns the passed boolean, to test serialization and deserialization.
   bool? echoNullableBool(bool? aBool);
 
@@ -2248,6 +2354,9 @@ abstract class FlutterIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
+
+  /// Returns the passed enum to test serialization and deserialization.
+  AnEnum? echoNullableEnum(AnEnum? anEnum);
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
@@ -2337,10 +2446,8 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final AllNullableTypes? arg_everything =
               (args[0] as AllNullableTypes?);
-          assert(arg_everything != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes was null, expected non-null AllNullableTypes.');
-          final AllNullableTypes output =
-              api.echoAllNullableTypes(arg_everything!);
+          final AllNullableTypes? output =
+              api.echoAllNullableTypes(arg_everything);
           return output;
         });
       }
@@ -2510,6 +2617,27 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AnEnum? arg_anEnum =
+              args[0] == null ? null : AnEnum.values[args[0]! as int];
+          assert(arg_anEnum != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null, expected non-null AnEnum.');
+          final AnEnum output = api.echoEnum(arg_anEnum!);
+          return output.index;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool',
           codec,
           binaryMessenger: binaryMessenger);
@@ -2633,6 +2761,25 @@ abstract class FlutterIntegrationCoreApi {
               (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           final Map<String?, Object?>? output = api.echoNullableMap(arg_aMap);
           return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AnEnum? arg_anEnum =
+              args[0] == null ? null : AnEnum.values[args[0]! as int];
+          final AnEnum? output = api.echoNullableEnum(arg_anEnum);
+          return output?.index;
         });
       }
     }

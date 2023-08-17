@@ -135,8 +135,8 @@ struct AllNullableTypes {
 
   static func fromList(_ list: [Any?]) -> AllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(list[0])
-    let aNullableInt: Int64? = list[1] is NSNull ? nil : (list[1] is Int64? ? list[1] as! Int64? : Int64(list[1] as! Int32))
-    let aNullableInt64: Int64? = list[2] is NSNull ? nil : (list[2] is Int64? ? list[2] as! Int64? : Int64(list[2] as! Int32))
+    let aNullableInt: Int64? = (list[1] is NSNull || list[1] == nil) ? nil : (list[1] is Int64? ? list[1] as! Int64? : Int64(list[1] as! Int32))
+    let aNullableInt64: Int64? = (list[2] is NSNull || list[2] == nil) ? nil : (list[2] is Int64? ? list[2] as! Int64? : Int64(list[2] as! Int32))
     let aNullableDouble: Double? = nilOrValue(list[3])
     let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(list[4])
     let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(list[5])
@@ -408,10 +408,13 @@ protocol HostIntegrationCoreApi {
   func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  func echoAsyncNullable(_ anEnum: AnEnum?, completion: @escaping (Result<AnEnum?, Error>) -> Void)
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void)
   func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void)
+  func callFlutterEcho(_ everything: AllNullableTypes?, completion: @escaping (Result<AllNullableTypes?, Error>) -> Void)
   func callFlutterSendMultipleNullableTypes(aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?, completion: @escaping (Result<AllNullableTypes, Error>) -> Void)
   func callFlutterEcho(_ aBool: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
   func callFlutterEcho(_ anInt: Int64, completion: @escaping (Result<Int64, Error>) -> Void)
@@ -420,6 +423,7 @@ protocol HostIntegrationCoreApi {
   func callFlutterEcho(_ aList: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
   func callFlutterEcho(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
   func callFlutterEcho(_ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+  func callFlutterEcho(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void)
   func callFlutterEchoNullable(_ aBool: Bool?, completion: @escaping (Result<Bool?, Error>) -> Void)
   func callFlutterEchoNullable(_ anInt: Int64?, completion: @escaping (Result<Int64?, Error>) -> Void)
   func callFlutterEchoNullable(_ aDouble: Double?, completion: @escaping (Result<Double?, Error>) -> Void)
@@ -427,6 +431,7 @@ protocol HostIntegrationCoreApi {
   func callFlutterEchoNullable(_ aList: FlutterStandardTypedData?, completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   func callFlutterEchoNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   func callFlutterEchoNullable(_ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+  func callFlutterNullableEcho(_ anEnum: AnEnum?, completion: @escaping (Result<AnEnum?, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -724,7 +729,7 @@ class HostIntegrationCoreApiSetup {
       sendMultipleNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
-        let aNullableIntArg: Int64? = args[1] is NSNull ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
+        let aNullableIntArg: Int64? = (args[1] is NSNull || args[1] == nil) ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
         let aNullableStringArg: String? = nilOrValue(args[2])
         do {
           let result = try api.sendMultipleNullableTypes(aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg)
@@ -741,7 +746,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aNullableIntArg: Int64? = args[0] is NSNull ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))
+        let aNullableIntArg: Int64? = (args[0] is NSNull || args[0] == nil) ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))
         do {
           let result = try api.echo(aNullableIntArg)
           reply(wrapResult(result))
@@ -868,7 +873,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anEnumArg: AnEnum? = args[0] is NSNull ? nil : AnEnum(rawValue: args[0] as! Int)!
+        let anEnumArg: AnEnum? = (args[0] is NSNull || args[0] == nil) ? nil : AnEnum(rawValue: args[0] as! Int)!
         do {
           let result = try api.echoNullable(anEnumArg)
           reply(wrapResult(result?.rawValue))
@@ -1147,7 +1152,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anIntArg: Int64? = args[0] is NSNull ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))
+        let anIntArg: Int64? = (args[0] is NSNull || args[0] == nil) ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))
         api.echoAsyncNullable(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1286,6 +1291,24 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncNullableMapChannel.setMessageHandler(nil)
     }
+    /// Returns the passed enum, to test asynchronous serialization and deserialization.
+    let echoAsyncNullableEnumChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anEnumArg: AnEnum? = (args[0] is NSNull || args[0] == nil) ? nil : AnEnum(rawValue: args[0] as! Int)!
+        api.echoAsyncNullable(anEnumArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res?.rawValue))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoAsyncNullableEnumChannel.setMessageHandler(nil)
+    }
     let callFlutterNoopChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterNoopChannel.setMessageHandler { _, reply in
@@ -1348,12 +1371,29 @@ class HostIntegrationCoreApiSetup {
     } else {
       callFlutterEchoAllTypesChannel.setMessageHandler(nil)
     }
+    let callFlutterEchoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoAllNullableTypesChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let everythingArg: AllNullableTypes? = nilOrValue(args[0])
+        api.callFlutterEcho(everythingArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoAllNullableTypesChannel.setMessageHandler(nil)
+    }
     let callFlutterSendMultipleNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterSendMultipleNullableTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let aNullableBoolArg: Bool? = nilOrValue(args[0])
-        let aNullableIntArg: Int64? = args[1] is NSNull ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
+        let aNullableIntArg: Int64? = (args[1] is NSNull || args[1] == nil) ? nil : (args[1] is Int64? ? args[1] as! Int64? : Int64(args[1] as! Int32))
         let aNullableStringArg: String? = nilOrValue(args[2])
         api.callFlutterSendMultipleNullableTypes(aBool: aNullableBoolArg, anInt: aNullableIntArg, aString: aNullableStringArg) { result in
           switch result {
@@ -1486,6 +1526,23 @@ class HostIntegrationCoreApiSetup {
     } else {
       callFlutterEchoMapChannel.setMessageHandler(nil)
     }
+    let callFlutterEchoEnumChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoEnumChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anEnumArg = AnEnum(rawValue: args[0] as! Int)!
+        api.callFlutterEcho(anEnumArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res.rawValue))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoEnumChannel.setMessageHandler(nil)
+    }
     let callFlutterEchoNullableBoolChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
@@ -1507,7 +1564,7 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anIntArg: Int64? = args[0] is NSNull ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))
+        let anIntArg: Int64? = (args[0] is NSNull || args[0] == nil) ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))
         api.callFlutterEchoNullable(anIntArg) { result in
           switch result {
             case .success(let res):
@@ -1604,6 +1661,23 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       callFlutterEchoNullableMapChannel.setMessageHandler(nil)
+    }
+    let callFlutterEchoNullableEnumChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anEnumArg: AnEnum? = (args[0] is NSNull || args[0] == nil) ? nil : AnEnum(rawValue: args[0] as! Int)!
+        api.callFlutterNullableEcho(anEnumArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res?.rawValue))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      callFlutterEchoNullableEnumChannel.setMessageHandler(nil)
     }
   }
 }
@@ -1702,10 +1776,10 @@ class FlutterIntegrationCoreApi {
     }
   }
   /// Returns the passed object, to test serialization and deserialization.
-  func echoNullable(_ everythingArg: AllNullableTypes, completion: @escaping (AllNullableTypes) -> Void) {
+  func echoNullable(_ everythingArg: AllNullableTypes?, completion: @escaping (AllNullableTypes?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([everythingArg] as [Any?]) { response in
-      let result = response as! AllNullableTypes
+      let result: AllNullableTypes? = nilOrValue(response)
       completion(result)
     }
   }
@@ -1775,6 +1849,14 @@ class FlutterIntegrationCoreApi {
       completion(result)
     }
   }
+  /// Returns the passed enum to test serialization and deserialization.
+  func echo(_ anEnumArg: AnEnum, completion: @escaping (AnEnum) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([anEnumArg.rawValue] as [Any?]) { response in
+      let result = AnEnum(rawValue: response as! Int)!
+      completion(result)
+    }
+  }
   /// Returns the passed boolean, to test serialization and deserialization.
   func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Bool?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool", binaryMessenger: binaryMessenger, codec: codec)
@@ -1787,7 +1869,7 @@ class FlutterIntegrationCoreApi {
   func echoNullable(_ anIntArg: Int64?, completion: @escaping (Int64?) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anIntArg] as [Any?]) { response in
-      let result: Int64? = response is NSNull ? nil : (response is Int64? ? response as! Int64? : Int64(response as! Int32))
+      let result: Int64? = (response is NSNull || response == nil) ? nil : (response is Int64? ? response as! Int64? : Int64(response as! Int32))
       completion(result)
     }
   }
@@ -1828,6 +1910,14 @@ class FlutterIntegrationCoreApi {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aMapArg] as [Any?]) { response in
       let result: [String?: Any?]? = nilOrValue(response)
+      completion(result)
+    }
+  }
+  /// Returns the passed enum to test serialization and deserialization.
+  func echoNullable(_ anEnumArg: AnEnum?, completion: @escaping (AnEnum?) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([anEnumArg?.rawValue] as [Any?]) { response in
+      let result: AnEnum? = (response is NSNull || response == nil) ? nil : AnEnum(rawValue: response as! Int)!
       completion(result)
     }
   }

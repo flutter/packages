@@ -4,9 +4,9 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_unit_tests/primitive.gen.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_test_plugin_code/src/generated/primitive.gen.dart';
 
 import 'primitive_test.mocks.dart';
 import 'test_util.dart';
@@ -17,7 +17,7 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     echoOneArgument(
       mockMessenger,
-      'dev.flutter.pigeon.flutter_unit_tests.PrimitiveHostApi.anInt',
+      'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt',
       PrimitiveHostApi.codec,
     );
     final PrimitiveHostApi api =
@@ -30,7 +30,7 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     echoOneArgument(
       mockMessenger,
-      'dev.flutter.pigeon.flutter_unit_tests.PrimitiveHostApi.aBoolList',
+      'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBoolList',
       PrimitiveHostApi.codec,
     );
     final PrimitiveHostApi api =
@@ -44,7 +44,7 @@ void main() {
     final PrimitiveFlutterApi api = MockPrimitiveFlutterApi();
     when(api.aBoolList(<bool?>[true, false])).thenReturn(<bool?>[]);
     when(mockMessenger.setMessageHandler(
-            'dev.flutter.pigeon.flutter_unit_tests.PrimitiveFlutterApi.aBoolList',
+            'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList',
             any))
         .thenAnswer((Invocation realInvocation) {
       final MessageHandler? handler =
@@ -61,7 +61,7 @@ void main() {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     echoOneArgument(
       mockMessenger,
-      'dev.flutter.pigeon.flutter_unit_tests.PrimitiveHostApi.aStringIntMap',
+      'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aStringIntMap',
       PrimitiveHostApi.codec,
     );
     final PrimitiveHostApi api =

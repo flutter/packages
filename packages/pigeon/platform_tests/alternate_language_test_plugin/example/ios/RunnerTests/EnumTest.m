@@ -18,14 +18,16 @@
 
 - (void)testEcho {
   DataWithEnum *data = [[DataWithEnum alloc] init];
-  data.state = EnumStateError;
+  EnumStateWrapper *stateWrapper = [[EnumStateWrapper alloc] init];
+  stateWrapper.value = EnumStateError;
+  data.state = stateWrapper;
   EchoBinaryMessenger *binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:EnumApi2HostGetCodec()];
   EnumApi2Flutter *api = [[EnumApi2Flutter alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoData:data
       completion:^(DataWithEnum *_Nonnull result, FlutterError *_Nullable error) {
-        XCTAssertEqual(data.state, result.state);
+        XCTAssertEqual(data.state.value, result.state.value);
         [expectation fulfill];
       }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];

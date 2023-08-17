@@ -73,7 +73,8 @@ internal class AllDatatypesTest: TestCase() {
         var didCall = false
         api.echoAllNullableTypes(everything) {
             didCall = true
-            assertNull(it.aNullableBool)
+            assertNotNull(it)
+            assertNull(it!!.aNullableBool)
             assertNull(it.aNullableInt)
             assertNull(it.aNullableDouble)
             assertNull(it.aNullableString)

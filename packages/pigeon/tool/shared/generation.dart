@@ -60,6 +60,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     'background_platform_channels',
     'core_tests',
     'enum',
+    'flutter_unittests', // Only for Dart unit tests in shared_test_plugin_code
     'message',
     'multiple_arity',
     'non_null_fields',

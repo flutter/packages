@@ -382,7 +382,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.writeln('Object $fieldVariable = list.get($index);');
         if (customEnumNames.contains(field.type.baseName)) {
           indent.writeln(
-              '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName)});');
+              '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName, field.type.isNullable)});');
         } else {
           indent.writeln(
               '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
@@ -452,6 +452,17 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         }
       });
 
+      /// Returns an argument name that can be used in a context where it is possible to collide
+      /// and append `.index` to enums.
+      String getEnumSafeArgumentName(int count, NamedType argument) {
+        if (isEnum(root, argument.type)) {
+          return argument.type.isNullable
+              ? '${_getArgumentName(count, argument)}Arg == null ? null : ${_getArgumentName(count, argument)}Arg.index'
+              : '${_getArgumentName(count, argument)}Arg.index';
+        }
+        return '${_getArgumentName(count, argument)}Arg';
+      }
+
       for (final Method func in api.methods) {
         final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
@@ -469,12 +480,14 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
               .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
           final Iterable<String> argNames =
               indexMap(func.arguments, _getSafeArgumentName);
+          final Iterable<String> enumSafeArgNames =
+              indexMap(func.arguments, getEnumSafeArgumentName);
           if (func.arguments.length == 1) {
             sendArgument =
-                'new ArrayList<Object>(Collections.singletonList(${argNames.first}))';
+                'new ArrayList<Object>(Collections.singletonList(${enumSafeArgNames.first}))';
           } else {
             sendArgument =
-                'new ArrayList<Object>(Arrays.asList(${argNames.join(', ')}))';
+                'new ArrayList<Object>(Arrays.asList(${enumSafeArgNames.join(', ')}))';
           }
           final String argsSignature =
               map2(argTypes, argNames, (String x, String y) => '$x $y')
@@ -504,6 +517,14 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                 if (func.returnType.baseName == 'int') {
                   indent.writeln(
                       '$returnType $output = channelReply == null ? null : ((Number) channelReply).longValue();');
+                } else if (isEnum(root, func.returnType)) {
+                  if (func.returnType.isNullable) {
+                    indent.writeln(
+                        '$returnType $output = channelReply == null ? null : $returnType.values()[(int) channelReply];');
+                  } else {
+                    indent.writeln(
+                        '$returnType $output = $returnType.values()[(int) channelReply];');
+                  }
                 } else {
                   indent.writeln(
                       '$returnType $output = ${_cast('channelReply', javaType: returnType)};');
@@ -696,7 +717,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     : argName;
                 String accessor = 'args.get($index)';
                 if (isEnum(root, arg.type)) {
-                  accessor = _intToEnum(accessor, arg.type.baseName);
+                  accessor = _intToEnum(
+                      accessor, arg.type.baseName, arg.type.isNullable);
                 } else if (argType != 'Object') {
                   accessor = _cast(accessor, javaType: argType);
                 }
@@ -917,8 +939,9 @@ String _getCodecName(Api api) => '${api.name}Codec';
 
 /// Converts an expression that evaluates to an nullable int to an expression
 /// that evaluates to a nullable enum.
-String _intToEnum(String expression, String enumName) =>
-    '$expression == null ? null : $enumName.values()[(int) $expression]';
+String _intToEnum(String expression, String enumName, bool nullable) => nullable
+    ? '$expression == null ? null : $enumName.values()[(int) $expression]'
+    : '$enumName.values()[(int) $expression]';
 
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;

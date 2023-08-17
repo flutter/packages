@@ -282,10 +282,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               });
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
-              indent.addln('.let { ${_cast(listValue, type: field.type)} }');
+              indent.addln(
+                  '.let { ${_cast(root, listValue, type: field.type)} }');
             } else {
               indent.writeln(
-                  'val ${field.name} = ${_cast(listValue, type: field.type)}');
+                  'val ${field.name} = ${_cast(root, listValue, type: field.type)}');
             }
           } else {
             if (!hostDatatype.isBuiltin &&
@@ -298,10 +299,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
-              indent.addln('.let { ${_cast(listValue, type: field.type)} }');
+              indent.addln(
+                  '.let { ${_cast(root, listValue, type: field.type)} }');
             } else {
               indent.writeln(
-                  'val ${field.name} = ${_cast(listValue, type: field.type)}');
+                  'val ${field.name} = ${_cast(root, listValue, type: field.type)}');
             }
           }
         });
@@ -403,7 +405,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
           final Iterable<String> argNames =
               indexMap(func.arguments, _getSafeArgumentName);
-          sendArgument = 'listOf(${argNames.join(', ')})';
+          final Iterable<String> enumSafeArgNames = indexMap(
+              func.arguments,
+              (int count, NamedType type) =>
+                  _getEnumSafeArgumentName(root, count, type));
+          sendArgument = 'listOf(${enumSafeArgNames.join(', ')})';
           final String argsSignature = map2(argTypes, argNames,
               (String type, String name) => '$name: $type').join(', ');
           if (func.returnType.isVoid) {
@@ -425,8 +431,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             });
           } else {
             indent.addScoped('{', '}', () {
-              indent.writeln(
-                  'val result = ${_cast('it', type: func.returnType)}');
+              // nullable enums require special handling.
+              if (isEnum(root, func.returnType) && func.returnType.isNullable) {
+                indent.writeScoped('val result = (it as Int?)?.let {', '}', () {
+                  indent.writeln('${func.returnType.baseName}.ofRaw(it)');
+                });
+              } else {
+                indent.writeln(
+                    'val result = ${_cast(root, 'it', type: func.returnType)}');
+              }
               indent.writeln('callback(result)');
             });
           }
@@ -575,8 +588,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         indent.writeln('reply.reply(wrapError(error))');
                       }, addTrailingNewline: false);
                       indent.addScoped(' else {', '}', () {
-                        final String enumTag =
-                            isEnum(root, method.returnType) ? '!!.raw' : '';
+                        final String enumTagNullablePrefix =
+                            method.returnType.isNullable ? '?' : '!!';
+                        final String enumTag = isEnum(root, method.returnType)
+                            ? '$enumTagNullablePrefix.raw'
+                            : '';
                         if (method.returnType.isVoid) {
                           indent.writeln('reply.reply(wrapResult(null))');
                         } else {
@@ -745,6 +761,17 @@ String _getCodecName(Api api) => '${api.name}Codec';
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
 
+/// Returns an argument name that can be used in a context where it is possible to collide
+/// and append `.index` to enums.
+String _getEnumSafeArgumentName(Root root, int count, NamedType argument) {
+  if (isEnum(root, argument.type)) {
+    return argument.type.isNullable
+        ? '${_getArgumentName(count, argument)}Arg?.raw'
+        : '${_getArgumentName(count, argument)}Arg.raw';
+  }
+  return '${_getArgumentName(count, argument)}Arg';
+}
+
 /// Returns an argument name that can be used in a context where it is possible to collide.
 String _getSafeArgumentName(int count, NamedType argument) =>
     '${_getArgumentName(count, argument)}Arg';
@@ -760,9 +787,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // a Dart 'int'.  To keep things simple we just use 64bit
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
-      return '$value.let { ${_cast(value, type: type)} }';
+      return '$value.let { ${_cast(root, value, type: type)} }';
     } else {
-      return _cast(value, type: type);
+      return _cast(root, value, type: type);
     }
   }
 }
@@ -828,7 +855,7 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
 }
 
 /// Returns an expression to cast [variable] to [kotlinType].
-String _cast(String variable, {required TypeDeclaration type}) {
+String _cast(Root root, String variable, {required TypeDeclaration type}) {
   // Special-case Any, since no-op casts cause warnings.
   final String typeString = _kotlinTypeForDartType(type);
   if (type.isNullable && typeString == 'Any') {
@@ -836,6 +863,14 @@ String _cast(String variable, {required TypeDeclaration type}) {
   }
   if (typeString == 'Int' || typeString == 'Long') {
     return _castInt(type.isNullable);
+  }
+  if (isEnum(root, type)) {
+    if (type.isNullable) {
+      return '(list[13] as Int?)?.let {\n'
+          '        AnEnum.ofRaw(it)\n'
+          '      }';
+    }
+    return '${type.baseName}.ofRaw($variable as Int)!!';
   }
   return '$variable as ${_nullsafeKotlinTypeForDartType(type)}';
 }

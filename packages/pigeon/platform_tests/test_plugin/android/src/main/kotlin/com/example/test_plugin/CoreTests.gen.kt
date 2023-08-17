@@ -413,10 +413,13 @@ interface HostIntegrationCoreApi {
   fun echoAsyncNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
   /** Returns the passed map, to test asynchronous serialization and deserialization. */
   fun echoAsyncNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit)
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  fun echoAsyncNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
   fun callFlutterThrowError(callback: (Result<Any?>) -> Unit)
   fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit)
   fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
+  fun callFlutterEchoAllNullableTypes(everything: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit)
   fun callFlutterSendMultipleNullableTypes(aNullableBool: Boolean?, aNullableInt: Long?, aNullableString: String?, callback: (Result<AllNullableTypes>) -> Unit)
   fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit)
   fun callFlutterEchoInt(anInt: Long, callback: (Result<Long>) -> Unit)
@@ -425,6 +428,7 @@ interface HostIntegrationCoreApi {
   fun callFlutterEchoUint8List(aList: ByteArray, callback: (Result<ByteArray>) -> Unit)
   fun callFlutterEchoList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit)
   fun callFlutterEchoMap(aMap: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit)
+  fun callFlutterEchoEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit)
   fun callFlutterEchoNullableBool(aBool: Boolean?, callback: (Result<Boolean?>) -> Unit)
   fun callFlutterEchoNullableInt(anInt: Long?, callback: (Result<Long?>) -> Unit)
   fun callFlutterEchoNullableDouble(aDouble: Double?, callback: (Result<Double?>) -> Unit)
@@ -432,6 +436,7 @@ interface HostIntegrationCoreApi {
   fun callFlutterEchoNullableUint8List(aList: ByteArray?, callback: (Result<ByteArray?>) -> Unit)
   fun callFlutterEchoNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit)
   fun callFlutterEchoNullableMap(aMap: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit)
+  fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit)
 
   companion object {
     /** The codec used by HostIntegrationCoreApi. */
@@ -1392,6 +1397,26 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anEnumArg = if (args[0] == null) null else AnEnum.ofRaw(args[0] as Int)
+            api.echoAsyncNullableEnum(anEnumArg) { result: Result<AnEnum?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data?.raw))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1450,6 +1475,26 @@ interface HostIntegrationCoreApi {
             val args = message as List<Any?>
             val everythingArg = args[0] as AllTypes
             api.callFlutterEchoAllTypes(everythingArg) { result: Result<AllTypes> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllNullableTypes?
+            api.callFlutterEchoAllNullableTypes(everythingArg) { result: Result<AllNullableTypes?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1626,6 +1671,26 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anEnumArg = AnEnum.ofRaw(args[0] as Int)!!
+            api.callFlutterEchoEnum(anEnumArg) { result: Result<AnEnum> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data!!.raw))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -1765,6 +1830,26 @@ interface HostIntegrationCoreApi {
           channel.setMessageHandler(null)
         }
       }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anEnumArg = if (args[0] == null) null else AnEnum.ofRaw(args[0] as Int)
+            api.callFlutterEchoNullableEnum(anEnumArg) { result: Result<AnEnum?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data?.raw))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
     }
   }
 }
@@ -1866,10 +1951,10 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllNullableTypes(everythingArg: AllNullableTypes, callback: (AllNullableTypes) -> Unit) {
+  fun echoAllNullableTypes(everythingArg: AllNullableTypes?, callback: (AllNullableTypes?) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes", codec)
     channel.send(listOf(everythingArg)) {
-      val result = it as AllNullableTypes
+      val result = it as AllNullableTypes?
       callback(result)
     }
   }
@@ -1941,6 +2026,14 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
       callback(result)
     }
   }
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoEnum(anEnumArg: AnEnum, callback: (AnEnum) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum", codec)
+    channel.send(listOf(anEnumArg.raw)) {
+      val result = AnEnum.ofRaw(it as Int)!!
+      callback(result)
+    }
+  }
   /** Returns the passed boolean, to test serialization and deserialization. */
   fun echoNullableBool(aBoolArg: Boolean?, callback: (Boolean?) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool", codec)
@@ -1994,6 +2087,16 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap", codec)
     channel.send(listOf(aMapArg)) {
       val result = it as Map<String?, Any?>?
+      callback(result)
+    }
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoNullableEnum(anEnumArg: AnEnum?, callback: (AnEnum?) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum", codec)
+    channel.send(listOf(anEnumArg?.raw)) {
+      val result = (it as Int?)?.let {
+        AnEnum.ofRaw(it)
+      }
       callback(result)
     }
   }
