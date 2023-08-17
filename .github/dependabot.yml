@@ -713,6 +713,17 @@ updates:
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
   - package-ecosystem: "gradle"
+    directory: "/packages/two_dimensional_scrollables/example/android/app"
+    commit-message:
+      prefix: "[2D_scrollables]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+    - dependency-name: "*"
+      update-types: [ "version-update:semver-minor", "version-update:semver-patch" ]
+
+  - package-ecosystem: "gradle"
     directory: "/packages/url_launcher/url_launcher_android/android"
     commit-message:
       prefix: "[url_launcher]"
