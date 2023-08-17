@@ -1,6 +1,7 @@
-## NEXT
+## 4.2.3
 
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Exposed the `onUrlChange` on the `NavigationDelegate` so it can be cloned.
 
 ## 4.2.2
 
