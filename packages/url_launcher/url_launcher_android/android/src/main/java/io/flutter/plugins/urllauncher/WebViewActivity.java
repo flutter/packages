@@ -143,6 +143,8 @@ public class WebViewActivity extends Activity {
     webview.getSettings().setSupportMultipleWindows(true);
     webview.setWebChromeClient(new FlutterWebChromeClient());
 
+    webview.getSettings().setUserAgentString(System.getProperty("http.agent"));
+
     // Register receiver that may finish this Activity.
     ContextCompat.registerReceiver(
         this, broadcastReceiver, closeIntentFilter, ContextCompat.RECEIVER_EXPORTED);
