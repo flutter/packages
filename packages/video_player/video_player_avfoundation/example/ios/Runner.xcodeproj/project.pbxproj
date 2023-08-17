@@ -15,6 +15,16 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		B0F5C77B94E32FB72444AE9F /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 20721C28387E1F78689EC502 /* libPods-Runner.a */; };
+		B424B5FB2A8DFCC000F65AEE /* CacheActionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B5FA2A8DFCC000F65AEE /* CacheActionTests.m */; };
+		B424B5FD2A8DFCFC00F65AEE /* CacheConfigurationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B5FC2A8DFCFC00F65AEE /* CacheConfigurationTests.m */; };
+		B424B5FF2A8DFD0B00F65AEE /* CacheManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B5FE2A8DFD0B00F65AEE /* CacheManagerTests.m */; };
+		B424B6012A8DFD3100F65AEE /* CacheSessionManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B6002A8DFD3100F65AEE /* CacheSessionManagerTests.m */; };
+		B424B6032A8DFD4600F65AEE /* ContentCacheWorkerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B6022A8DFD4600F65AEE /* ContentCacheWorkerTests.m */; };
+		B424B6052A8DFD8900F65AEE /* ContentDownloaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B6042A8DFD8900F65AEE /* ContentDownloaderTests.m */; };
+		B424B6072A8DFD9E00F65AEE /* ContentInfoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B6062A8DFD9E00F65AEE /* ContentInfoTests.m */; };
+		B424B6092A8DFDB100F65AEE /* ResourceLoaderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B6082A8DFDB100F65AEE /* ResourceLoaderTests.m */; };
+		B424B60B2A8DFDC000F65AEE /* ResourceLoaderManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B60A2A8DFDC000F65AEE /* ResourceLoaderManagerTests.m */; };
+		B424B60D2A8DFDD300F65AEE /* ResourceLoaderRequestWorkerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B424B60C2A8DFDD300F65AEE /* ResourceLoaderRequestWorkerTests.m */; };
 		D182ECB59C06DBC7E2D5D913 /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BD232FD3BD3343A5F52AF50 /* libPods-RunnerTests.a */; };
 		F7151F2F26603EBD0028CB91 /* VideoPlayerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F2E26603EBD0028CB91 /* VideoPlayerUITests.m */; };
 		F7151F3D26603ECA0028CB91 /* VideoPlayerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F3C26603ECA0028CB91 /* VideoPlayerTests.m */; };
@@ -70,6 +80,16 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B15EC39F4617FE1082B18834 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		B424B5FA2A8DFCC000F65AEE /* CacheActionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CacheActionTests.m; sourceTree = "<group>"; };
+		B424B5FC2A8DFCFC00F65AEE /* CacheConfigurationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CacheConfigurationTests.m; sourceTree = "<group>"; };
+		B424B5FE2A8DFD0B00F65AEE /* CacheManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CacheManagerTests.m; sourceTree = "<group>"; };
+		B424B6002A8DFD3100F65AEE /* CacheSessionManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CacheSessionManagerTests.m; sourceTree = "<group>"; };
+		B424B6022A8DFD4600F65AEE /* ContentCacheWorkerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContentCacheWorkerTests.m; sourceTree = "<group>"; };
+		B424B6042A8DFD8900F65AEE /* ContentDownloaderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContentDownloaderTests.m; sourceTree = "<group>"; };
+		B424B6062A8DFD9E00F65AEE /* ContentInfoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ContentInfoTests.m; sourceTree = "<group>"; };
+		B424B6082A8DFDB100F65AEE /* ResourceLoaderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ResourceLoaderTests.m; sourceTree = "<group>"; };
+		B424B60A2A8DFDC000F65AEE /* ResourceLoaderManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ResourceLoaderManagerTests.m; sourceTree = "<group>"; };
+		B424B60C2A8DFDD300F65AEE /* ResourceLoaderRequestWorkerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ResourceLoaderRequestWorkerTests.m; sourceTree = "<group>"; };
 		C18C242FF01156F58C0DAF1C /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		F7151F2C26603EBD0028CB91 /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7151F2E26603EBD0028CB91 /* VideoPlayerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VideoPlayerUITests.m; sourceTree = "<group>"; };
@@ -198,6 +218,16 @@
 			children = (
 				F7151F3C26603ECA0028CB91 /* VideoPlayerTests.m */,
 				F7151F3E26603ECA0028CB91 /* Info.plist */,
+				B424B5FA2A8DFCC000F65AEE /* CacheActionTests.m */,
+				B424B5FC2A8DFCFC00F65AEE /* CacheConfigurationTests.m */,
+				B424B5FE2A8DFD0B00F65AEE /* CacheManagerTests.m */,
+				B424B6002A8DFD3100F65AEE /* CacheSessionManagerTests.m */,
+				B424B6022A8DFD4600F65AEE /* ContentCacheWorkerTests.m */,
+				B424B6042A8DFD8900F65AEE /* ContentDownloaderTests.m */,
+				B424B6062A8DFD9E00F65AEE /* ContentInfoTests.m */,
+				B424B6082A8DFDB100F65AEE /* ResourceLoaderTests.m */,
+				B424B60A2A8DFDC000F65AEE /* ResourceLoaderManagerTests.m */,
+				B424B60C2A8DFDD300F65AEE /* ResourceLoaderRequestWorkerTests.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -432,7 +462,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B424B6092A8DFDB100F65AEE /* ResourceLoaderTests.m in Sources */,
+				B424B6052A8DFD8900F65AEE /* ContentDownloaderTests.m in Sources */,
+				B424B6012A8DFD3100F65AEE /* CacheSessionManagerTests.m in Sources */,
+				B424B5FF2A8DFD0B00F65AEE /* CacheManagerTests.m in Sources */,
+				B424B6032A8DFD4600F65AEE /* ContentCacheWorkerTests.m in Sources */,
+				B424B5FB2A8DFCC000F65AEE /* CacheActionTests.m in Sources */,
+				B424B60B2A8DFDC000F65AEE /* ResourceLoaderManagerTests.m in Sources */,
+				B424B60D2A8DFDD300F65AEE /* ResourceLoaderRequestWorkerTests.m in Sources */,
+				B424B5FD2A8DFCFC00F65AEE /* CacheConfigurationTests.m in Sources */,
 				F7151F3D26603ECA0028CB91 /* VideoPlayerTests.m in Sources */,
+				B424B6072A8DFD9E00F65AEE /* ContentInfoTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -588,7 +628,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -609,7 +652,10 @@
 					"$(PROJECT_DIR)/Flutter",
 				);
 				INFOPLIST_FILE = Runner/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
@@ -624,7 +670,11 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -637,7 +687,11 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -652,7 +706,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -667,7 +725,11 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RunnerTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

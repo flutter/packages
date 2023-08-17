@@ -21,6 +21,11 @@
 + (void)cleanAllCacheWithError:(NSError **)error;
 
 /**
+ * currently used for testing pusposes. 
+ */
++ (void)setCacheDirectory:(NSString *)cacheDirectory;
+
+/**
  * currently used for debugging pusposes. It returns the total size of the cache files. Size = 0
  * when cache is empty
  */

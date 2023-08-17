@@ -13,7 +13,6 @@
 
 ## 2.4.7
 
-* Adds caching functionality for network video.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 * Adds iOS exception on incorrect asset path
 

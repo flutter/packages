@@ -141,11 +141,6 @@
 }
 
 - (void)testInitWithCache {
-  // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
-  // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
-  // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
-  // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
-  // for issue #1, and restore the correct width and height for issue #2.
   NSObject<FlutterPluginRegistry> *registry =
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
