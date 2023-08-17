@@ -1,6 +1,10 @@
 ## 2.5.0
 
 * Adds implementation for `cloudMapId` parameter to support cloud-based map styling.
+
+## 2.4.16
+
+* Removes old empty override methods.
 * Fixes unawaited_futures violations.
 
 ## 2.4.15

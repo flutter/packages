@@ -1,3 +1,7 @@
+## 6.0.38
+
+* Updates android implementation to support api 34 broadcast receiver requirements.
+
 ## 6.0.37
 
 * Sets android.defaults.buildfeatures.buildconfig to true for compatibility with AGP 8.0+.

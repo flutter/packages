@@ -1,3 +1,7 @@
+## 3.7.3
+
+* Fixes bug where the `PlatformWebViewWidget` was rebuilt unnecessarily.
+
 ## 3.7.2
 
 * Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller changes.
