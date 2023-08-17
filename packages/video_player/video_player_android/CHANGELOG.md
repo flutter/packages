@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.4.9
 
 * Bumps ExoPlayer version to 2.18.7.

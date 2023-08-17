@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.3.0
 
 * Adds `clearWithParameters` and `getAllWithParameters` methods.

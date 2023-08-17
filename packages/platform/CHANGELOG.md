@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 3.1.1
 
 * Transfers the package source from https://github.com/google/platform.dart to

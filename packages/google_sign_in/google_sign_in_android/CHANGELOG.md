@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 6.1.18
 
 * Updates play-services-auth version to 20.6.0.
