@@ -581,6 +581,13 @@ Future<void> main() async {
 
       await tester.pumpAndSettle();
 
+      // Due to security reasons, Chrome doesn't allow to programmatically 
+      // toggle a video to fullscreen unless the call is directly comming from 
+      // a user triggered event.
+      // The top half of the loaded web content contains a clickable div, which
+      // is tapped using the code below, triggering a user event. 
+      //
+      //The offset of 20 x 20 is choossen at random. 
       await tester.tapAt(const Offset(20, 20));
 
       await expectLater(fullscreenEntered.future, completes);
