@@ -38,7 +38,8 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
         @Nullable FallbackStrategy fallbackStrategy) {
       // Convert each index of VideoQualityConstraint to Quality.
       List<Quality> qualityList = new ArrayList<Quality>();
-      for (Long qualityIndex : videoQualityConstraintIndexList) {
+      for (int i = 0; i < videoQualityConstraintIndexList.size(); i++) {
+        int qualityIndex = ((Number) videoQualityConstraintIndexList.get(i)).intValue();
         qualityList.add(getQualityConstant(qualityIndex));
       }
 
@@ -59,8 +60,8 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
     }
 
     /** Converts from index of {@link VideoQualityConstraint} to {@link Quality}. */
-    private Quality getQualityConstant(@NonNull Long qualityIndex) {
-      VideoQualityConstraint quality = VideoQualityConstraint.values()[qualityIndex.intValue()];
+    private Quality getQualityConstant(@NonNull int qualityIndex) {
+      VideoQualityConstraint quality = VideoQualityConstraint.values()[qualityIndex];
       return getQualityFromVideoQualityConstraint(quality);
     }
   }
