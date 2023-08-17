@@ -26,6 +26,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     required List<NavigatorObserver> observers,
     required this.routerNeglect,
     String? restorationScopeId,
+    bool requestFocus = true,
   }) : _configuration = configuration {
     builder = RouteBuilder(
       configuration: configuration,
@@ -35,6 +36,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       restorationScopeId: restorationScopeId,
       observers: observers,
       onPopPageWithRouteMatch: _handlePopPageWithRouteMatch,
+      requestFocus: requestFocus,
     );
   }
 

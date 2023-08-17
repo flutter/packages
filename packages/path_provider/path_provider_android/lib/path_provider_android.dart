@@ -63,6 +63,11 @@ class PathProviderAndroid extends PathProviderPlatform {
   }
 
   @override
+  Future<String?> getApplicationCachePath() {
+    return _api.getApplicationCachePath();
+  }
+
+  @override
   Future<String?> getExternalStoragePath() {
     return _api.getExternalStoragePath();
   }

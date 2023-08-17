@@ -12,6 +12,7 @@ const String kTemporaryPath = 'temporaryPath';
 const String kApplicationSupportPath = 'applicationSupportPath';
 const String kLibraryPath = 'libraryPath';
 const String kApplicationDocumentsPath = 'applicationDocumentsPath';
+const String kApplicationCachePath = 'applicationCachePath';
 const String kExternalCachePaths = 'externalCachePaths';
 const String kExternalStoragePaths = 'externalStoragePaths';
 const String kDownloadsPath = 'downloadsPath';
@@ -22,6 +23,9 @@ class _Api implements TestPathProviderApi {
 
   @override
   String? getApplicationSupportPath() => kApplicationSupportPath;
+
+  @override
+  String? getApplicationCachePath() => kApplicationCachePath;
 
   @override
   List<String?> getExternalCachePaths() => <String>[kExternalCachePaths];
@@ -56,6 +60,11 @@ void main() {
     test('getApplicationSupportPath', () async {
       final String? path = await pathProvider.getApplicationSupportPath();
       expect(path, kApplicationSupportPath);
+    });
+
+    test('getApplicationCachePath', () async {
+      final String? path = await pathProvider.getApplicationCachePath();
+      expect(path, kApplicationCachePath);
     });
 
     test('getLibraryPath fails', () async {

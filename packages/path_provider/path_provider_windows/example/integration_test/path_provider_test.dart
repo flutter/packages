@@ -28,6 +28,12 @@ void main() {
     _verifySampleFile(result, 'applicationSupport');
   });
 
+  testWidgets('getApplicationCacheDirectory', (WidgetTester tester) async {
+    final PathProviderWindows provider = PathProviderWindows();
+    final String? result = await provider.getApplicationCachePath();
+    _verifySampleFile(result, 'applicationCache');
+  });
+
   testWidgets('getDownloadsDirectory', (WidgetTester tester) async {
     final PathProviderWindows provider = PathProviderWindows();
     final String? result = await provider.getDownloadsPath();

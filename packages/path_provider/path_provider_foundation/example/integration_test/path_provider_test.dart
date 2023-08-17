@@ -29,6 +29,12 @@ void main() {
     _verifySampleFile(result, 'applicationSupport');
   });
 
+  testWidgets('getApplicationCacheDirectory', (WidgetTester tester) async {
+    final PathProviderPlatform provider = PathProviderPlatform.instance;
+    final String? result = await provider.getApplicationCachePath();
+    _verifySampleFile(result, 'applicationCache');
+  });
+
   testWidgets('getLibraryDirectory', (WidgetTester tester) async {
     final PathProviderPlatform provider = PathProviderPlatform.instance;
     final String? result = await provider.getLibraryPath();

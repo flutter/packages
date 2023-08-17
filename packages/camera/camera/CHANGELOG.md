@@ -1,3 +1,7 @@
+## 0.10.5+3
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.10.5+2
 
 * Fixes unawaited_futures violations.

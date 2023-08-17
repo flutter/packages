@@ -1,3 +1,7 @@
+## 2.2.0
+
+* Adds getApplicationCachePath() for storing app-specific cache files.
+
 ## 2.1.11
 
 * Removes obsolete null checks on non-nullable values.

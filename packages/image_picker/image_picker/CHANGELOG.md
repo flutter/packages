@@ -1,3 +1,7 @@
+## 1.0.2
+
+* Adds compatibility with `image_picker_for_web` 3.0.
+
 ## 1.0.1
 
 * Rolls platform implementations to ensure that `pickMedia` and

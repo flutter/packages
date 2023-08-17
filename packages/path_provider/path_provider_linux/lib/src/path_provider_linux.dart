@@ -72,6 +72,16 @@ class PathProviderLinux extends PathProviderPlatform {
   }
 
   @override
+  Future<String?> getApplicationCachePath() async {
+    final Directory directory =
+        Directory(path.join(xdg.cacheHome.path, await _getId()));
+    if (!directory.existsSync()) {
+      await directory.create(recursive: true);
+    }
+    return directory.path;
+  }
+
+  @override
   Future<String?> getDownloadsPath() {
     return Future<String?>.value(xdg.getUserDirectory('DOWNLOAD')?.path);
   }

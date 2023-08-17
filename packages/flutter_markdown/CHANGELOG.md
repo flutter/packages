@@ -1,6 +1,7 @@
-## NEXT
+## 0.6.17+1
 
 * Deletes deprecated splash screen meta-data element.
+* Updates README to improve examples of using Markdown.
 
 ## 0.6.17
 
