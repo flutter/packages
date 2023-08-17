@@ -1009,7 +1009,7 @@ void main() {
       await expectLater(
         find.byType(TableView),
         matchesGoldenFile('goldens/tableSpanDecoration.defaultMainAxis.png'),
-        skip: !runGoldens,
+        skip: kIsWeb && !runGoldens,
       );
 
       // Switch main axis
@@ -1054,7 +1054,7 @@ void main() {
       await expectLater(
         find.byType(TableView),
         matchesGoldenFile('goldens/tableSpanDecoration.horizontalMainAxis.png'),
-        skip: !runGoldens,
+        skip: kIsWeb &&!runGoldens,
       );
     });
 
