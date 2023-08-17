@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.7.0
 
 * Adds an `Uri` typed factory method `VideoPlayerController.networkUrl` to avoid common mistakes with `String` URIs. The method

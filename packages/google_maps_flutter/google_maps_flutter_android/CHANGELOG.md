@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.4.16
 * Removes old empty override methods.
 * Fixes unawaited_futures violations.
