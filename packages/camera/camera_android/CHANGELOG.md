@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 0.10.8+6
 
 * Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.

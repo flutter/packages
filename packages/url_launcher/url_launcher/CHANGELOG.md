@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 6.1.12
 
 * Removes the use of `canLaunchUrl` in `Link`, to avoid issues on platforms where `canLaunchUrl` is unreliable or requires permissions.
