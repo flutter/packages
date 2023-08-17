@@ -118,7 +118,7 @@ class NavigationDelegate {
     this.onPageFinished,
     this.onProgress,
     this.onWebResourceError,
-    void Function(UrlChange change)? onUrlChange,
+    this.onUrlChange,
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
@@ -136,7 +136,7 @@ class NavigationDelegate {
       platform.setOnWebResourceError(onWebResourceError!);
     }
     if (onUrlChange != null) {
-      platform.setOnUrlChange(onUrlChange);
+      platform.setOnUrlChange(onUrlChange!);
     }
   }
 
@@ -166,4 +166,7 @@ class NavigationDelegate {
 
   /// Invoked when a resource loading error occurred.
   final WebResourceErrorCallback? onWebResourceError;
+
+  /// Invoked when the underlying web view changes to a new url.
+  final Function(UrlChange change)? onUrlChange;
 }
