@@ -1,3 +1,7 @@
+## 4.2.3
+
+* Updates code sample.
+
 ## 4.2.2
 
 * Fixes documentation typo.
