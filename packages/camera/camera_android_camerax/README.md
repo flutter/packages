@@ -24,6 +24,13 @@ dependencies:
 
 ## Missing features and limitations
 
+
+### 240p resolution configuration for video recording
+
+240p resolution configuration for video recording is unsupported by CameraX,
+and thus, the plugin will fall back to 480p if configured with a
+`ResolutionPreset`.
+
 ### Locking/Unlocking capture orientation \[[Issue #125915][125915]\]
 
 `lockCaptureOrientation` & `unLockCaptureOrientation` are unimplemented.
