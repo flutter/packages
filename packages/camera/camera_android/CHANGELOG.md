@@ -1,4 +1,4 @@
-## NEXT
+## 0.10.8+7
 
 * Fixes video record crash on Android versions lower than 12.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
