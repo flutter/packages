@@ -558,8 +558,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// widget must be hidden. After this call, web content will render in the
   /// original `WebViewWidget` again.
   Future<void> setCustomWidgetCallbacks({
-    OnShowCustomWidgetCallback? onShowCustomWidget,
-    OnHideCustomWidgetCallback? onHideCustomWidget,
+    required OnShowCustomWidgetCallback? onShowCustomWidget,
+    required OnHideCustomWidgetCallback? onHideCustomWidget,
   }) async {
     _onShowCustomWidgetCallback = onShowCustomWidget;
     _onHideCustomWidgetCallback = onHideCustomWidget;
