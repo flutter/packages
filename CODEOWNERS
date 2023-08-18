@@ -37,6 +37,7 @@ packages/quick_actions/**                                @bparrishMines
 packages/rfw/**                                          @Hixie
 packages/shared_preferences/**                           @tarrinneal
 packages/standard_message_codec/**                       @jonahwilliams
+packages/two_dimensional_scrollables/**                  @Piinks
 packages/url_launcher/**                                 @stuartmorgan
 packages/video_player/**                                 @tarrinneal
 packages/web_benchmarks/**                               @yjbanov

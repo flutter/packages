@@ -1,5 +1,6 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 * Removes obsolete null checks on non-nullable values.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.
