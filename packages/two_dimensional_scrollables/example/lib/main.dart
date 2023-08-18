@@ -89,6 +89,16 @@ class _TableExampleState extends State<TableExample> {
   }
 
   Widget _buildCell(BuildContext context, TableVicinity vicinity) {
+    if (vicinity.column >= 0 && vicinity.column <= 3 && vicinity.row == 0) {
+      // First cell will span 4 columns
+      return const TableViewCell(
+        columnMergeStart: 0,
+        columnMergeEnd: 3,
+        child: Center(
+          child: Text('Tile c: 0, r: 0'),
+        ),
+      );
+    }
     return Center(
       child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
     );
