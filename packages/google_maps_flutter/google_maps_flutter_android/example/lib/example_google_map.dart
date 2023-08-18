@@ -420,41 +420,41 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
       return;
     }
     final ExampleGoogleMapController controller = await _controller.future;
-    await controller._updateMapConfiguration(updates);
+    unawaited(controller._updateMapConfiguration(updates));
     _mapConfiguration = newConfig;
   }
 
   Future<void> _updateMarkers() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    await controller._updateMarkers(
-        MarkerUpdates.from(_markers.values.toSet(), widget.markers));
+    unawaited(controller._updateMarkers(
+        MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
     _markers = keyByMarkerId(widget.markers);
   }
 
   Future<void> _updatePolygons() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    await controller._updatePolygons(
-        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons));
+    unawaited(controller._updatePolygons(
+        PolygonUpdates.from(_polygons.values.toSet(), widget.polygons)));
     _polygons = keyByPolygonId(widget.polygons);
   }
 
   Future<void> _updatePolylines() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    await controller._updatePolylines(
-        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines));
+    unawaited(controller._updatePolylines(
+        PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
     _polylines = keyByPolylineId(widget.polylines);
   }
 
   Future<void> _updateCircles() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    await controller._updateCircles(
-        CircleUpdates.from(_circles.values.toSet(), widget.circles));
+    unawaited(controller._updateCircles(
+        CircleUpdates.from(_circles.values.toSet(), widget.circles)));
     _circles = keyByCircleId(widget.circles);
   }
 
   Future<void> _updateTileOverlays() async {
     final ExampleGoogleMapController controller = await _controller.future;
-    await controller._updateTileOverlays(widget.tileOverlays);
+    unawaited(controller._updateTileOverlays(widget.tileOverlays));
   }
 
   Future<void> onPlatformViewCreated(int id) async {
