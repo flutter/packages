@@ -587,7 +587,7 @@ Future<void> main() async {
       // The top half of the loaded web content contains a clickable div, which
       // is tapped using the code below, triggering a user event. 
       //
-      //The offset of 20 x 20 is choossen at random. 
+      // The offset of 20 x 20 is chosen at random.
       await tester.tapAt(const Offset(20, 20));
 
       await expectLater(fullscreenEntered.future, completes);
