@@ -701,9 +701,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               'columns',
             ));
             mergedColumnWidth = _columnMetrics[end]!.trailingOffset - _columnMetrics[start]!.leadingOffset;
-            print('mergedColumnWidth: $mergedColumnWidth');
             mergedXOffset = _columnMetrics[start]!.leadingOffset - horizontalOffset.pixels;
-            print('mergedXOffset: $mergedXOffset');
             for (int i = start; i <= end; i++) {
               occupiedByMergedCells.add(TableVicinity(column: i, row: row));
             }
@@ -714,10 +712,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             width: mergedColumnWidth ?? columnWidth,
             height: rowHeight,
           );
-          cell.layout(cellConstraints, parentUsesSize: true);
-          if (mergedColumnWidth != null) {
-            print(cell.size);
-          }
+          cell.layout(cellConstraints);
           cellParentData.layoutOffset = Offset(
             mergedXOffset ?? xPaintOffset,
             yPaintOffset,
@@ -1011,9 +1006,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           continue;
         }
         final TableViewParentData cellParentData = parentDataOf(cell);
-        if ((cellParentData.vicinity as TableVicinity).row == 0) {
-        print('cellParentData: $cellParentData');
-      }
         if (cellParentData.isVisible) {
           context.paintChild(cell, offset + cellParentData.paintOffset!);
         }
