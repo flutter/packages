@@ -1,6 +1,7 @@
 ## 3.10.0
 
-* Adds support for playing video in fullscreen.
+* Adds support for playing video in fullscreen. See
+  `AndroidWebViewController.setCustomWidgetCallbacks`.
 
 ## 3.9.3
 

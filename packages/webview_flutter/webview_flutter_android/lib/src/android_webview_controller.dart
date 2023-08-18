@@ -538,18 +538,19 @@ class AndroidWebViewController extends PlatformWebViewController {
   }
 
   /// Sets the callbacks that are invoked when the host application wants to
-  /// show or hide a custom view.
+  /// show or hide a custom widget.
   ///
   /// The most common use case these methods are invoked a video element wants
   /// to be displayed in fullscreen.
   ///
   /// The [onShowCustomWidget] notifies the host application that web content
-  /// from the specified origin wants to be displayed in a custom view. After
-  /// this call, web content will no longer be rendered in the WebViewWidget,
+  /// from the specified origin wants to be displayed in a custom widget. After
+  /// this call, web content will no longer be rendered in the `WebViewWidget`,
   /// but will instead be rendered in the custom widget.
   ///
   /// The [onHideCustomWidget] notifies the host application that the custom
-  /// view should be hidden.
+  /// widget must be hidden. After this call, web content will render in the
+  /// original `WebViewWidget` again.
   Future<void> setCustomWidgetCallbacks({
     OnShowCustomWidgetCallback? onShowCustomWidget,
     OnHideCustomWidgetCallback? onHideCustomWidget,
