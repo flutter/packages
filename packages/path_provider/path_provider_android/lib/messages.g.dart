@@ -166,7 +166,7 @@ class PathProviderApi {
     }
   }
 
-  Future<List<String?>> getExternalStoragePaths(
+  Future<List<String?>?> getExternalStoragePaths(
       StorageDirectory arg_directory) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.PathProviderApi.getExternalStoragePaths', codec,
@@ -184,13 +184,8 @@ class PathProviderApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<String?>();
+      return (replyList[0] as List<Object?>?)?.cast<String?>();
     }
   }
 }

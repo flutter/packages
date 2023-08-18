@@ -17,7 +17,16 @@ const String kExternalCachePaths = 'externalCachePaths';
 const String kExternalStoragePaths = 'externalStoragePaths';
 const String kDownloadsPath = 'downloadsPath';
 
+enum ExternalStoragePathsValueState { isNull, isEmpty, isNotEmpty }
+
 class _Api implements TestPathProviderApi {
+  _Api({
+    this.externalStoragePathsValueState =
+        ExternalStoragePathsValueState.isNotEmpty,
+  });
+
+  final ExternalStoragePathsValueState externalStoragePathsValueState;
+
   @override
   String? getApplicationDocumentsPath() => kApplicationDocumentsPath;
 
@@ -34,8 +43,16 @@ class _Api implements TestPathProviderApi {
   String? getExternalStoragePath() => kExternalStoragePaths;
 
   @override
-  List<String?> getExternalStoragePaths(messages.StorageDirectory directory) =>
-      <String>[kExternalStoragePaths];
+  List<String?>? getExternalStoragePaths(messages.StorageDirectory directory) {
+    switch (externalStoragePathsValueState) {
+      case ExternalStoragePathsValueState.isNotEmpty:
+        return <String?>[kExternalStoragePaths];
+      case ExternalStoragePathsValueState.isEmpty:
+        return <String?>[];
+      case ExternalStoragePathsValueState.isNull:
+        return null;
+    }
+  }
 
   @override
   String? getTemporaryPath() => kTemporaryPath;
@@ -101,6 +118,24 @@ void main() {
     test('getDownloadsPath succeeds', () async {
       final String? path = await pathProvider.getDownloadsPath();
       expect(path, kExternalStoragePaths);
+    });
+
+    test('getDownloadsPath fails with null', () async {
+      final PathProviderAndroid pathProvider = PathProviderAndroid();
+      TestPathProviderApi.setup(_Api(
+          externalStoragePathsValueState:
+              ExternalStoragePathsValueState.isNull));
+      final String? path = await pathProvider.getDownloadsPath();
+      expect(path, null);
+    });
+
+    test('getDownloadsPath fails with empty', () async {
+      final PathProviderAndroid pathProvider = PathProviderAndroid();
+      TestPathProviderApi.setup(_Api(
+          externalStoragePathsValueState:
+              ExternalStoragePathsValueState.isEmpty));
+      final String? path = await pathProvider.getDownloadsPath();
+      expect(path, null);
     });
   });
 }

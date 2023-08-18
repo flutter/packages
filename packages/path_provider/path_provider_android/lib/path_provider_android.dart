@@ -82,7 +82,7 @@ class PathProviderAndroid extends PathProviderPlatform {
     StorageDirectory? type,
   }) async {
     return (await _api.getExternalStoragePaths(_convertStorageDirectory(type)))
-        .cast<String>();
+        ?.cast<String>();
   }
 
   @override

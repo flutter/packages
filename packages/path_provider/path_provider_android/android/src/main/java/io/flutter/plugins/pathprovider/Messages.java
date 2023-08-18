@@ -93,7 +93,7 @@ public class Messages {
     @NonNull
     List<String> getExternalCachePaths();
 
-    @NonNull
+    @Nullable
     List<String> getExternalStoragePaths(@NonNull StorageDirectory directory);
 
     /** The codec used by PathProviderApi. */

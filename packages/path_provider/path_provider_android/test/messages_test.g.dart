@@ -30,7 +30,7 @@ abstract class TestPathProviderApi {
 
   List<String?> getExternalCachePaths();
 
-  List<String?> getExternalStoragePaths(StorageDirectory directory);
+  List<String?>? getExternalStoragePaths(StorageDirectory directory);
 
   static void setup(TestPathProviderApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -155,7 +155,7 @@ abstract class TestPathProviderApi {
               args[0] == null ? null : StorageDirectory.values[args[0] as int];
           assert(arg_directory != null,
               'Argument for dev.flutter.pigeon.PathProviderApi.getExternalStoragePaths was null, expected non-null StorageDirectory.');
-          final List<String?> output =
+          final List<String?>? output =
               api.getExternalStoragePaths(arg_directory!);
           return <Object?>[output];
         });
