@@ -101,8 +101,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   @override
   ImageStreamCompleter loadBuffer(
     NetworkImageWithRetry key,
-    // TODO(cyanglaz): migrate to use the new APIs
-    // https://github.com/flutter/flutter/issues/105336
+    // TODO(LongCatIsLooong): migrate to use new `loadImage` API.
+    // https://github.com/flutter/flutter/issues/132856
     // ignore: deprecated_member_use
     DecoderBufferCallback decode,
   ) {
