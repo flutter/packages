@@ -546,7 +546,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The [onShowCustomWidget] notifies the host application that web content
   /// from the specified origin wants to be displayed in a custom widget. After
   /// this call, web content will no longer be rendered in the `WebViewWidget`,
-  /// but will instead be rendered in the custom widget.
+  /// but will instead be rendered in the custom widget. The application may
+  /// explicitly exit fullscreen mode by invoking `onCustomWidgetHidden` in the
+  /// [onShowCustomWidget] callback (ex. when the user presses the back
+  /// button). However, this is generally not necessary as the web page will
+  /// often show its own UI to close out of fullscreen. Regardless of how the
+  /// WebView exits fullscreen mode, WebView will invoke [onHideCustomWidget],
+  /// signaling for the application to remove the custom widget.
   ///
   /// The [onHideCustomWidget] notifies the host application that the custom
   /// widget must be hidden. After this call, web content will render in the

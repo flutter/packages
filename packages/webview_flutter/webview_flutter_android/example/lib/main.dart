@@ -423,6 +423,7 @@ class SampleMenu extends StatelessWidget {
   Future<void> _onVideoExample(BuildContext context) {
     final AndroidWebViewController androidController =
         webViewController as AndroidWebViewController;
+    // #docregion fullscreen_example
     androidController.setCustomWidgetCallbacks(
       onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
         Navigator.of(context).push(MaterialPageRoute<void>(
@@ -434,6 +435,7 @@ class SampleMenu extends StatelessWidget {
         Navigator.of(context).pop();
       },
     );
+    // #enddocregion fullscreen_example
 
     return androidController.loadRequest(
       LoadRequestParams(
