@@ -27,6 +27,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  stream_transform: ^2.0.0
 
 flutter:
   uses-material-design: true
