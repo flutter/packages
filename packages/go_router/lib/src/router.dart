@@ -93,9 +93,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
           'initialLocation must be set in order to use initialExtra',
         ),
         assert(
-            (overridePlatformDefaultLocation == true &&
-                    initialLocation != null) ||
-                (overridePlatformDefaultLocation == false),
+          !overridePlatformDefaultLocation || initialLocation != null
+         ,
             'Initial location must be set to override platform default'),
         assert(
             (onException == null ? 0 : 1) +
