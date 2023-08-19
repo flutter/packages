@@ -1,6 +1,6 @@
 ## 10.1.1
 
-- Optional parameter `overridePlatformDefaultLocation` to override initial route set/provided by platform.
+- Adds optional parameter `overridePlatformDefaultLocation` to override initial route set by platform.
 
 ## 10.1.0
 
