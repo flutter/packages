@@ -305,11 +305,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
-  ///Defaults to [false], used to override platform default route mentioned
-  ///in MainActivity.kt.
-  ///If set to false, platform route will be used over `initialLocation`
-  ///set in `GoRouter` initialization.
-  ///See https://github.com/flutter/flutter/issues/132557
+  /// When set to [true], the route returned by `getInitialRoute` will take precedence over the
+  /// platform's default initial location. This allows developers to control the starting route
+  /// of the application independently of the platform.
+  ///
+  /// Setting this parameter to [false] (default) will allow the platform's default initial
+  /// location to be used. It's advisable to only set this to true if you explicitly want to
+  /// ignore the platform's default initial location.
   final bool overridePlatformDefaultLocation;
 
   /// Returns `true` if there is at least two or more route can be pop.
@@ -523,8 +525,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     final String platformDefault =
         WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     if (overridePlatformDefaultLocation) {
-      ///can force null check as it's already verified by
-      ///asset() while initialization
+      // can force null check as it's already verified by
+      // asset() while initialization
       return initialLocation!;
     }
     if (initialLocation == null) {
