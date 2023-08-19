@@ -2,6 +2,10 @@
 
 * Updates code sample.
 
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 4.2.2
 
 * Fixes documentation typo.
