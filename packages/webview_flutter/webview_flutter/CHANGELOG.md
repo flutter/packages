@@ -1,6 +1,6 @@
 ## 4.2.3
 
-* Updates code sample.
+* Fixes the code sample in the dartdocs for `WebViewController.addJavaScriptChannel`. 
 
 ## 4.2.2
 
