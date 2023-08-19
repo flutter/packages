@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 4.2.3
 
 * Fixes the code sample in the dartdocs for `WebViewController.addJavaScriptChannel`. 
