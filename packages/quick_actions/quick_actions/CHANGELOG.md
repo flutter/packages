@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 1.0.5
 
 * Updates iOS quick action documentation in README.
