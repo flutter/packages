@@ -1881,7 +1881,7 @@ double _getScale(String key, WidgetTester tester) {
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
     final ScaleTransition transition = widget as ScaleTransition;
-    return a * transition.scale.value;
+    return a * transition.animation.value;
   });
 }
 

@@ -308,7 +308,7 @@ void main() {
     FadeTransition fade = tester.firstWidget(find.byType(FadeTransition));
     ScaleTransition scale = tester.firstWidget(find.byType(ScaleTransition));
     expect(fade.opacity.value, equals(1.0));
-    expect(scale.scale.value, equals(1.0));
+    expect(scale.animation.value, equals(1.0));
 
     await tester.pumpWidget(
       PageTransitionSwitcher(
@@ -324,7 +324,7 @@ void main() {
     fade = tester.firstWidget(find.byType(FadeTransition));
     scale = tester.firstWidget(find.byType(ScaleTransition));
     expect(fade.opacity.value, equals(1.0));
-    expect(scale.scale.value, equals(1.0));
+    expect(scale.animation.value, equals(1.0));
     await tester.pumpAndSettle();
   });
 
@@ -353,7 +353,7 @@ void main() {
     FadeTransition fade = tester.firstWidget(find.byType(FadeTransition));
     ScaleTransition scale = tester.firstWidget(find.byType(ScaleTransition));
     expect(fade.opacity.value, equals(1.0));
-    expect(scale.scale.value, moreOrLessEquals(0.4));
+    expect(scale.animation.value, moreOrLessEquals(0.4));
     await tester.pumpAndSettle(); // finish transitions.
 
     await tester.pumpWidget(
@@ -369,7 +369,7 @@ void main() {
     fade = tester.firstWidget(find.byType(FadeTransition));
     scale = tester.firstWidget(find.byType(ScaleTransition));
     expect(fade.opacity.value, equals(0.5));
-    expect(scale.scale.value, equals(1.0));
+    expect(scale.animation.value, equals(1.0));
     await tester.pumpAndSettle();
   });
 
@@ -398,7 +398,7 @@ void main() {
     final ScaleTransition scale =
         tester.firstWidget(find.byType(ScaleTransition));
     expect(fade.opacity.value, equals(0.5));
-    expect(scale.scale.value, equals(1.0));
+    expect(scale.animation.value, equals(1.0));
 
     // Change the widget tree in the middle of the animation.
     await tester.pumpWidget(Container(color: const Color(0xffff0000)));
@@ -481,7 +481,7 @@ void main() {
     FadeTransition fade = tester.widget(find.byType(FadeTransition));
     ScaleTransition scale = tester.widget(find.byType(ScaleTransition));
     expect(fade.opacity.value, equals(1.0));
-    expect(scale.scale.value, equals(1.0));
+    expect(scale.animation.value, equals(1.0));
     expect(find.text('1'), findsOneWidget);
     expect(find.text('2'), findsNothing);
     await pumpChild(const Text('2'));
@@ -489,7 +489,7 @@ void main() {
     scale = tester.widget(find.byType(ScaleTransition));
     await tester.pump(const Duration(milliseconds: 20));
     expect(fade.opacity.value, equals(1.0));
-    expect(scale.scale.value, equals(1.0));
+    expect(scale.animation.value, equals(1.0));
     expect(find.text('1'), findsNothing);
     expect(find.text('2'), findsOneWidget);
   });
@@ -637,7 +637,7 @@ Map<Key, double> _getPrimaryAnimation(List<Key> keys, WidgetTester tester) {
         matching: find.byType(ScaleTransition),
       ),
     );
-    result[key] = transition.scale.value;
+    result[key] = transition.animation.value;
   }
   return result;
 }
