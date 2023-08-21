@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
 
   /// Returns the URL to load an asset from this example app as a network source.
   String getUrlForAssetAsNetworkSource(String assetKey) {
-    return 'https://github.com/flutter/packages/blob/main/packages/flutter_image/example/$assetKey?raw=true';
+    return 'https://github.com/flutter/packages/blob/2e1673307ff7454aff40b47024eaed49a9e77e81/packages/flutter_image/example/$assetKey?raw=true';
   }
 
   @override
