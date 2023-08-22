@@ -1594,13 +1594,13 @@ ${_argParser.usage}''';
 
     if (options.objcHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          objcOptions: options.objcOptions!.merge(ObjcOptions(
+          objcOptions: (options.objcOptions ?? ObjcOptions()).merge(ObjcOptions(
               headerIncludePath: path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          cppOptions: options.cppOptions!.merge(CppOptions(
+          cppOptions: (options.cppOptions ?? CppOptions()).merge(CppOptions(
               headerIncludePath: path.basename(options.cppHeaderOut!)))));
     }
 
