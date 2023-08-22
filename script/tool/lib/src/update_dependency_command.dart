@@ -127,7 +127,7 @@ ${response.httpResponse.body}
         printError('A version must be provided to update this dependency.');
         throw ToolExit(_exitNoTargetVersion);
       } else if (_targetAndroidDependency == 'gradle') {
-        final RegExp validGradleVersionPattern = RegExp(r'd((?:\d|\.)+)');
+        final RegExp validGradleVersionPattern = RegExp(r'((?:\d|\.)+)');
         if (!validGradleVersionPattern.hasMatch(version)) {
           printError(
               'A version with a valid format (maximum 2-3 numbers separated by period) must be provided.');
@@ -229,27 +229,45 @@ ${response.httpResponse.body}
     if (_targetAndroidDependency == 'gradle') {
       final Iterable<RepositoryPackage> packageExamples = package.getExamples();
       for (final RepositoryPackage example in packageExamples) {
-        final File gradleWrapperPropertiesFile = example.directory
+        if (!example.directory.childDirectory('android').existsSync()) {
+          // Example app does not run on Android.
+          return PackageResult.success();
+        }
+        File gradleWrapperPropertiesFile;
+        if (example.directory
             .childDirectory('android')
             .childDirectory('app')
             .childDirectory('gradle')
-            .childDirectory('wrapper')
-            .childFile('gradle-wrapper.properties');
+            .existsSync()) {
+          gradleWrapperPropertiesFile = example.directory
+              .childDirectory('android')
+              .childDirectory('app')
+              .childDirectory('gradle')
+              .childDirectory('wrapper')
+              .childFile('gradle-wrapper.properties');
+        } else {
+          gradleWrapperPropertiesFile = example.directory
+              .childDirectory('android')
+              .childDirectory('gradle')
+              .childDirectory('wrapper')
+              .childFile('gradle-wrapper.properties');
+        }
+
         final String gradleWrapperPropertiesContents =
             gradleWrapperPropertiesFile.readAsStringSync();
         final RegExp validGradleDistributionUrl =
             RegExp(r'^\s*distributionUrl\s*=\s*.*\.zip', multiLine: true);
-
         if (!validGradleDistributionUrl
             .hasMatch(gradleWrapperPropertiesContents)) {
           return PackageResult.fail(<String>[
             'Failed to update Gradle version in the example app for ${package.displayName}'
           ]);
         }
+
         final String newGradleWrapperPropertiesContents =
             gradleWrapperPropertiesContents.replaceFirst(
                 validGradleDistributionUrl,
-                '/distributions/gradle-$_targetVersion-all.zip');
+                'distributionUrl=https\://services.gradle.org/distributions/gradle-$_targetVersion-all.zip');
         gradleWrapperPropertiesFile
             .writeAsStringSync(newGradleWrapperPropertiesContents);
       }
