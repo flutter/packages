@@ -868,7 +868,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     // We will choose the next highest video quality if the one desired
-    // is unavaiable.
+    // is unavailable.
     const VideoResolutionFallbackRule fallbackRule =
         VideoResolutionFallbackRule.lowerQualityThan;
     final FallbackStrategy fallbackStrategy =
