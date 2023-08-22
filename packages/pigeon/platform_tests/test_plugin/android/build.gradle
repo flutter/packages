@@ -69,6 +69,6 @@ android {
 
     dependencies {
         testImplementation 'junit:junit:4.+'
-        testImplementation "io.mockk:mockk:1.13.5"
+        testImplementation "io.mockk:mockk:1.13.7"
     }
 }
