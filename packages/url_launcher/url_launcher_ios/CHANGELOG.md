@@ -1,5 +1,6 @@
-## NEXT
+## 6.1.5
 
+* Migrates unit tests, UI test, pigeon files, and the plugin from objc to swift
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 6.1.4
