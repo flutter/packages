@@ -862,7 +862,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         videoQuality = VideoQualityConstraint.highest;
         break;
       case null:
-        // If not preset is specified, default to CameraX's default behvaior
+        // If not preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
