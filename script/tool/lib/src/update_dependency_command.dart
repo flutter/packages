@@ -39,22 +39,30 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
       help: 'A pub package to update.',
     );
     argParser.addOption(
+      _androidDependency,
+      help:
+          'An Android dependency ("gradle" for example apps only supported currently) to update.',
+    );
+    argParser.addOption(
       _versionFlag,
       help: 'The version to update to.\n\n'
           '- For pub, defaults to the latest published version if not '
           'provided. This can be any constraint that pubspec.yaml allows; a '
           'specific version will be treated as the exact version for '
           'dependencies that are alread pinned, or a ^ range for those that '
-          'are unpinned.',
+          'are unpinned.\n'
+          '- For Android dependencies, a version must be provided.',
     );
   }
 
   static const String _pubPackageFlag = 'pub-package';
+  static const String _androidDependency = 'android-dependency';
   static const String _versionFlag = 'version';
 
   final PubVersionFinder _pubVersionFinder;
 
   late final String? _targetPubPackage;
+  late final String? _targetAndroidDependency;
   late final String _targetVersion;
 
   @override
@@ -72,7 +80,10 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    const Set<String> targetFlags = <String>{_pubPackageFlag};
+    const Set<String> targetFlags = <String>{
+      _pubPackageFlag,
+      _androidDependency
+    };
     final Set<String> passedTargetFlags =
         targetFlags.where((String flag) => argResults![flag] != null).toSet();
     if (passedTargetFlags.length != 1) {
@@ -80,6 +91,8 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
           'Exactly one of the target flags must be provided: (${targetFlags.join(', ')})');
       throw ToolExit(_exitIncorrectTargetDependency);
     }
+
+    // Setup for updating pub dependency.
     _targetPubPackage = getNullableStringArg(_pubPackageFlag);
     if (_targetPubPackage != null) {
       final String? version = getNullableStringArg(_versionFlag);
@@ -102,6 +115,30 @@ ${response.httpResponse.body}
         }
       } else {
         _targetVersion = version;
+        return;
+      }
+    }
+
+    // Setup for updating Android dependency.
+    _targetAndroidDependency = getNullableStringArg(_androidDependency);
+    if (_targetAndroidDependency != null) {
+      final String? version = getNullableStringArg(_versionFlag);
+      if (version == null) {
+        printError('A version must be provided to update this dependency.');
+        throw ToolExit(_exitNoTargetVersion);
+      } else if (_targetAndroidDependency == 'gradle') {
+        final RegExp validGradleVersionPattern = RegExp(r'd((?:\d|\.)+)');
+        if (!validGradleVersionPattern.hasMatch(version)) {
+          printError(
+              'A version with a valid format (maximum 2-3 numbers separated by period) must be provided.');
+          throw ToolExit(_exitNoTargetVersion);
+        }
+        _targetVersion = version;
+        return;
+      } else {
+        printError(
+            'Target Android dependency $_androidDependency is unrecognized');
+        throw ToolExit(_exitIncorrectTargetDependency);
       }
     }
   }
@@ -116,7 +153,11 @@ ${response.httpResponse.body}
     if (_targetPubPackage != null) {
       return _runForPubDependency(package, _targetPubPackage!);
     }
-    // TODO(stuartmorgan): Add othe dependency types here (e.g., maven).
+    if (_targetAndroidDependency != null) {
+      return _runForAndroidDependency(package);
+    }
+
+    // TODO(stuartmorgan): Add other dependency types here (e.g., maven).
 
     return PackageResult.fail();
   }
@@ -179,6 +220,44 @@ ${response.httpResponse.body}
     // do file generation.
 
     return PackageResult.success();
+  }
+
+  /// Handles all of the updates for [package] when the target dependency is
+  /// an Android dependency.
+  Future<PackageResult> _runForAndroidDependency(
+      RepositoryPackage package) async {
+    if (_targetAndroidDependency == 'gradle') {
+      final Iterable<RepositoryPackage> packageExamples = package.getExamples();
+      for (final RepositoryPackage example in packageExamples) {
+        final File gradleWrapperPropertiesFile = example.directory
+            .childDirectory('android')
+            .childDirectory('app')
+            .childDirectory('gradle')
+            .childDirectory('wrapper')
+            .childFile('gradle-wrapper.properties');
+        final String gradleWrapperPropertiesContents =
+            gradleWrapperPropertiesFile.readAsStringSync();
+        final RegExp validGradleDistributionUrl =
+            RegExp(r'^\s*distributionUrl\s*=\s*.*\.zip', multiLine: true);
+
+        if (!validGradleDistributionUrl
+            .hasMatch(gradleWrapperPropertiesContents)) {
+          return PackageResult.fail(<String>[
+            'Failed to update Gradle version in the example app for ${package.displayName}'
+          ]);
+        }
+        final String newGradleWrapperPropertiesContents =
+            gradleWrapperPropertiesContents.replaceFirst(
+                validGradleDistributionUrl,
+                '/distributions/gradle-$_targetVersion-all.zip');
+        gradleWrapperPropertiesFile
+            .writeAsStringSync(newGradleWrapperPropertiesContents);
+      }
+      return PackageResult.success();
+    }
+    return PackageResult.fail(<String>[
+      'Target Android dependency $_androidDependency is unrecognized'
+    ]);
   }
 
   /// Returns information about the current dependency of [package] on
