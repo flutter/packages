@@ -7,18 +7,20 @@ import Flutter
 public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
 
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let plugin = URLLauncherPlugin()
+        let plugin = URLLauncherPlugin(binaryMessenger: registrar.messenger())
         registrar.publish(plugin)
     }
 
     private var currentSession: URLLaunchSession?
     private let launcher: Launcher
 
-    init(launcher: Launcher = UIApplicationLauncher()) {
+    init(launcher: Launcher = UIApplicationLauncher(), binaryMessenger: FlutterBinaryMessenger) {
         self.launcher = launcher
+        super.init()
+        UrlLauncherApiSetup.setUp(binaryMessenger: binaryMessenger, api: self)
     }
 
-    func canLaunchUrl(url: String) throws -> Bool {
+    func canLaunchUrl(url: String) -> Bool {
         guard let url = URL(string: url) else { return false }
         return launcher.canOpenURL(url)
     }

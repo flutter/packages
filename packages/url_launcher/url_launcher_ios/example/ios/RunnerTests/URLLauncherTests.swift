@@ -128,3 +128,15 @@ class FakeLauncher: Launcher {
     completionHandler?(url.scheme == "good")
   }
 }
+
+class FakeFlutterBinaryMessenger: NSObject, FlutterBinaryMessenger {
+    func send(onChannel channel: String, message: Data?) { }
+
+    func send(onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil) { }
+
+    func setMessageHandlerOnChannel(_ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil) -> FlutterBinaryMessengerConnection {
+        123
+    }
+
+    func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) { }
+}
