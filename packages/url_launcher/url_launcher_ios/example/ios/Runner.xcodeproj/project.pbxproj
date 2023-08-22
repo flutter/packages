@@ -681,6 +681,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = Runner;
 			};
 			name = Debug;
@@ -698,6 +699,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = Runner;
 			};
 			name = Release;

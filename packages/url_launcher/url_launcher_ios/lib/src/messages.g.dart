@@ -54,8 +54,8 @@ class UrlLauncherApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UrlLauncherApi.launchUrl', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_url, arg_universalLinksOnly]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_url, arg_universalLinksOnly]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -81,8 +81,7 @@ class UrlLauncherApi {
   /// when it has loaded successfully.
   Future<bool> openUrlInSafariViewController(String arg_url) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UrlLauncherApi.openUrlInSafariViewController',
-        codec,
+        'dev.flutter.pigeon.UrlLauncherApi.openUrlInSafariViewController', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_url]) as List<Object?>?;
@@ -112,7 +111,8 @@ class UrlLauncherApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UrlLauncherApi.closeSafariViewController', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
