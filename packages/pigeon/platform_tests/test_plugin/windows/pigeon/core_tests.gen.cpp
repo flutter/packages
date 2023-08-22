@@ -4118,12 +4118,15 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
         std::unique_ptr<EncodableValue> response =
             GetCodec().DecodeMessage(reply, reply_size);
         const auto& encodable_return_value = *response;
-        std::optional<AnEnum> return_value;
+        AnEnum return_value;
         if (!encodable_return_value.IsNull()) {
-          return_value = std::make_optional<AnEnum>(
-              static_cast<AnEnum>(std::get<int>(encodable_return_value)));
+          return_value = (AnEnum)encodable_return_value.LongValue();
         }
-        on_success(return_value);
+        if (!encodable_return_value.IsNull()) {
+          on_success(&return_value);
+        } else {
+          on_success(nullptr);
+        }
       });
 }
 

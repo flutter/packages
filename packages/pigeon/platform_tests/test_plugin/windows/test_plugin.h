@@ -205,6 +205,12 @@ class TestPlugin : public flutter::Plugin,
           core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableMap>>
               reply)>
           result) override;
+  void EchoAsyncNullableEnum(
+      const core_tests_pigeontest::AnEnum* an_enum,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         std::optional<core_tests_pigeontest::AnEnum>>
+                             reply)>
+          result) override;
   void CallFlutterNoop(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
@@ -223,6 +229,12 @@ class TestPlugin : public flutter::Plugin,
       std::function<
           void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
                    reply)>
+          result) override;
+  void CallFlutterEchoAllNullableTypes(
+      const core_tests_pigeontest::AllNullableTypes* everything,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         std::optional<core_tests_pigeontest::AllNullableTypes>>
+                             reply)>
           result) override;
   void CallFlutterSendMultipleNullableTypes(
       const bool* a_nullable_bool, const int64_t* a_nullable_int,
@@ -262,6 +274,11 @@ class TestPlugin : public flutter::Plugin,
       std::function<
           void(core_tests_pigeontest::ErrorOr<flutter::EncodableMap> reply)>
           result) override;
+  void CallFlutterEchoEnum(
+      const core_tests_pigeontest::AnEnum& an_enum,
+      std::function<void(
+          core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnEnum> reply)>
+          result) override;
   void CallFlutterEchoNullableBool(
       const bool* a_bool,
       std::function<
@@ -299,6 +316,12 @@ class TestPlugin : public flutter::Plugin,
       std::function<void(
           core_tests_pigeontest::ErrorOr<std::optional<flutter::EncodableMap>>
               reply)>
+          result) override;
+  void CallFlutterEchoNullableEnum(
+      const core_tests_pigeontest::AnEnum* an_enum,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         std::optional<core_tests_pigeontest::AnEnum>>
+                             reply)>
           result) override;
 
  private:

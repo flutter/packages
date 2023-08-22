@@ -894,9 +894,20 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
               returnType,
               argName: successCallbackArgument,
               encodableArgName: encodedReplyName,
+              apiType: ApiType.flutter,
             );
           }
-          indent.writeln('on_success($successCallbackArgument);');
+          if (returnType.isEnum && returnType.isNullable) {
+            indent.writeScoped('if (!encodable_return_value.IsNull()) {', '}',
+                () {
+              indent.writeln('on_success(&$successCallbackArgument);');
+            }, addTrailingNewline: false);
+            indent.addScoped(' else {', '}', () {
+              indent.writeln('on_success(nullptr);');
+            });
+          } else {
+            indent.writeln('on_success($successCallbackArgument);');
+          }
         });
       });
     }
@@ -978,6 +989,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                       hostType,
                       argName: argName,
                       encodableArgName: encodableArgName,
+                      apiType: ApiType.host,
                     );
                     final String unwrapEnum =
                         isEnum(root, arg.type) && arg.type.isNullable
@@ -1320,6 +1332,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
     HostDatatype hostType, {
     required String argName,
     required String encodableArgName,
+    required ApiType apiType,
   }) {
     if (hostType.isNullable) {
       // Nullable arguments are always pointers, with nullptr corresponding to
@@ -1342,10 +1355,19 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
             'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
       } else if (hostType.isEnum) {
         if (hostType.isNullable) {
-          indent.writeln('std::optional<${hostType.datatype}> $argName;');
+          if (apiType == ApiType.flutter) {
+            indent.writeln('${hostType.datatype} $argName;');
+          } else {
+            indent.writeln('std::optional<${hostType.datatype}> $argName;');
+          }
           indent.writeScoped('if (!$encodableArgName.IsNull()) {', '}', () {
-            indent.writeln(
-                '$argName = std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(std::get<int>($encodableArgName)));');
+            if (apiType == ApiType.flutter) {
+              indent.writeln(
+                  'return_value = (${hostType.datatype})encodable_return_value.LongValue();');
+            } else {
+              indent.writeln(
+                  '$argName = std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(std::get<int>($encodableArgName)));');
+            }
           });
         } else {
           indent.writeln(

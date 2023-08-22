@@ -590,6 +590,15 @@ String? deducePackageName(String mainDartFile) {
   }
 }
 
+/// Enum to specify api type when generating code.
+enum ApiType {
+  /// Flutter api.
+  flutter,
+
+  /// Host api.
+  host,
+}
+
 /// Enum to specify which file will be generated for multi-file generators
 enum FileType {
   /// header file.

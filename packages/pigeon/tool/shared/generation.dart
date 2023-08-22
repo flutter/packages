@@ -245,7 +245,7 @@ Future<int> formatAllFiles({required String repositoryRoot}) {
         'format',
         '--packages=pigeon',
       ],
-      streamOutput: false,
+      streamOutput: true,
       workingDirectory: repositoryRoot,
       logFailure: true);
 }
