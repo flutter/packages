@@ -18,7 +18,7 @@ platform_properties:
         [
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
-  linux_android: # TODO(camsim99): Determine if we can bump android_sdk version here.
+  linux_android:
     properties:
       os: Ubuntu
       cores: "8"
