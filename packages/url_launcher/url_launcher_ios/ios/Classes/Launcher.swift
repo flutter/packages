@@ -9,7 +9,7 @@ protocol Launcher {
 
 class UIApplicationLauncher: Launcher {
     func canOpenURL(_ url: URL) -> Bool {
-        return UIApplication.shared.canOpenURL(url)
+        UIApplication.shared.canOpenURL(url)
     }
     
     func openURL(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any], completionHandler completion: ((Bool) -> Void)?) {
