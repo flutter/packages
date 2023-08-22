@@ -506,7 +506,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// Note that the preset resolution is used to configure the recording, but
   /// 240p ([ResolutionPreset.low]) is unsupported and will fallback to
-  /// configure the recording as the next highest avaialable quality.
+  /// configure the recording as the next highest available quality.
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
@@ -817,7 +817,7 @@ class AndroidCameraCameraX extends CameraPlatform {
             : ResolutionStrategy.highestAvailableStrategy();
         break;
       case null:
-        // If not preset is specified, default to CameraX's default behvaior
+        // If not preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
@@ -862,13 +862,13 @@ class AndroidCameraCameraX extends CameraPlatform {
         videoQuality = VideoQualityConstraint.highest;
         break;
       case null:
-        // If not preset is specified, default to CameraX's default behvaior
+        // If not preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
 
     // We will choose the next highest video quality if the one desired
-    // is unavaiable.
+    // is unavailable.
     const VideoResolutionFallbackRule fallbackRule =
         VideoResolutionFallbackRule.lowerQualityThan;
     final FallbackStrategy fallbackStrategy =
