@@ -2,6 +2,7 @@
 
 * Adds primitive enum support.
 * Fixes Objc nullable enums.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 10.1.6
 
