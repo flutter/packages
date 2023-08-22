@@ -1,6 +1,7 @@
 ## 0.1.7
 
-* Fix top padding for NavigationBar
+* Fix top padding for NavigationBar.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 0.1.6
 
