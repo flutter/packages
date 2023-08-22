@@ -67,7 +67,6 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     * @param url The invalid URL string
     * @return The error to return
     */
-    
     func invalidURLError(for url: String) -> Error {
         GeneralError(code: "argument_error", message: "Unable to parse URL", details: "Provided URL: \(url)")
     }
