@@ -3,8 +3,8 @@ description: Shared Dart code for the example apps.
 publish_to: none
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-  flutter: ">=3.3.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
 
 dependencies:
   cupertino_icons: ^1.0.5
@@ -19,6 +19,11 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../../../
   google_maps_flutter_platform_interface: ^2.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  stream_transform: ^2.0.0
 
 flutter:
   uses-material-design: true

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 6.1.4
 
 * Updates pigeon to fix warnings with clang 15.
