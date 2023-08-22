@@ -89,8 +89,11 @@ void main() {
         await controller.initialize();
         final bool presetExactlySupported =
             await testCaptureImageResolution(controller, preset.key);
-        expect(!(!previousPresetExactlySupported && presetExactlySupported),
-            isTrue,
+        // Ensures that if a lower resolution was used for previous (lower)
+        // resolution preset, then the current (higher) preset also is adjusted,
+        // as it demands a hgher resolution.
+        expect(
+            previousPresetExactlySupported || !presetExactlySupported, isTrue,
             reason:
                 'The camera took higher resolution pictures at a lower resolution.');
         previousPresetExactlySupported = presetExactlySupported;
@@ -120,9 +123,12 @@ void main() {
         }
 
         final bool presetExactlySupported = assertExpectedDimensions(
-            presetExpectedSizes[preset.key]!, controller.value.previewSize!);
-        expect(!(!previousPresetExactlySupported && presetExactlySupported),
-            isTrue,
+            preset.value, controller.value.previewSize!);
+        // Ensures that if a lower resolution was used for previous (lower)
+        // resolution preset, then the current (higher) preset also is adjusted,
+        // as it demands a hgher resolution.
+        expect(
+            previousPresetExactlySupported || !presetExactlySupported, isTrue,
             reason: 'The preview has a lower resolution than that specified.');
         previousPresetExactlySupported = presetExactlySupported;
         await controller.dispose();
@@ -152,10 +158,13 @@ void main() {
 
         final CameraImage image = await imageCompleter.future;
         final bool presetExactlySupported = assertExpectedDimensions(
-            presetExpectedSizes[preset.key]!,
+            preset.value,
             Size(image.height.toDouble(), image.width.toDouble()));
-        expect(!(!previousPresetExactlySupported && presetExactlySupported),
-            isTrue,
+        // Ensures that if a lower resolution was used for previous (lower)
+        // resolution preset, then the current (higher) preset also is adjusted,
+        // as it demands a hgher resolution.
+        expect(
+            previousPresetExactlySupported || !presetExactlySupported, isTrue,
             reason: 'The preview has a lower resolution than that specified.');
         previousPresetExactlySupported = presetExactlySupported;
 
