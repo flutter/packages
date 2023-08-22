@@ -27,8 +27,9 @@ Custom classes and nested datatypes are also supported.
 
 #### Enums
 
-Pigeon currently supports enum generation in class fields only.
-See issue: [87307](https://github.com/flutter/flutter/issues/87307).
+Pigeon now supports enums in all contexts.
+
+Note that nullable enums in Objective-C generated code will be wrapped in a class to allow for nullability.
 
 ### Synchronous and Asynchronous methods
 
