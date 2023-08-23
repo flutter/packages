@@ -48,7 +48,7 @@ class URLLauncherTests: XCTestCase {
 
         wait(for: [expectation], timeout: 1)
     }
-    
+
     func testLaunchFailure() {
         let expectation = XCTestExpectation(description: "completion called")
         plugin.launchUrl(url: "bad://url", universalLinksOnly: false) { result in
@@ -113,16 +113,16 @@ class URLLauncherTests: XCTestCase {
         wait(for: [expectation], timeout: 1)
         XCTAssertEqual(launcher.passedOptions?[.universalLinksOnly] as? Bool, true)
     }
-    
+
 }
 
 class FakeLauncher: Launcher {
   var passedOptions: [UIApplication.OpenExternalURLOptionsKey: Any]?
-  
+
   func canOpenURL(_ url: URL) -> Bool {
     return url.scheme == "good"
   }
-  
+
   func openURL(_ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any] = [:], completionHandler: ((Bool) -> Void)? = nil) {
     self.passedOptions = options
     completionHandler?(url.scheme == "good")
