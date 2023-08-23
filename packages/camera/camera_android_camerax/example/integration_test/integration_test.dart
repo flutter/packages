@@ -31,7 +31,7 @@ void main() {
     // Don't bother checking for max here since it could be anything.
   };
 
-  /// Verify that [actual] has dimensions that are at least as large as
+  /// Verify that [actual] has dimensions that are at most as large as
   /// [expectedSize]. Allows for a mismatch in portrait vs landscape. Returns
   /// whether the dimensions exactly match.
   bool assertExpectedDimensions(Size expectedSize, Size actual) {
