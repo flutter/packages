@@ -19,6 +19,7 @@ import 'common/repository_package.dart';
 
 const int _exitIncorrectTargetDependency = 3;
 const int _exitNoTargetVersion = 4;
+const int _exitInvalidTargetVersion = 5;
 
 /// A command to update a dependency in packages.
 ///
@@ -40,8 +41,9 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
     );
     argParser.addOption(
       _androidDependency,
-      help:
-          'An Android dependency ("gradle" for example apps only supported currently) to update.',
+      help: 'An Android dependency to update.\n\n'
+          'Supported dependencies:\n'
+          '- "gradle", to update Gradle version used in plugin example apps',
     );
     argParser.addOption(
       _versionFlag,
@@ -133,7 +135,7 @@ ${response.httpResponse.body}
         if (!isValidGradleVersion) {
           printError(
               'A version with a valid format (maximum 2-3 numbers separated by period) must be provided.');
-          throw ToolExit(_exitNoTargetVersion);
+          throw ToolExit(_exitInvalidTargetVersion);
         }
         _targetVersion = version;
         return;
