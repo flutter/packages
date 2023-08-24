@@ -11,6 +11,7 @@ import 'package:yaml/yaml.dart';
 import 'common/core.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to enforce pubspec conventions across the repository.
@@ -221,9 +222,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         passing = false;
       }
 
-      if (!(pubspec.topics?.isNotEmpty ?? false)) {
-        printError('${indentation}A published package should include "topics". '
-            'See https://dart.dev/tools/pub/pubspec#topics.');
+      final String? topicsError = _checkTopics(pubspec, package: package);
+      if (topicsError != null) {
+        printError('$indentation$topicsError');
         passing = false;
       }
 
@@ -327,6 +328,29 @@ class PubspecCheckCommand extends PackageLoopingCommand {
             ?.toString()
             .startsWith(_expectedIssueLinkFormat) ??
         false;
+  }
+
+  // Validates the "implements" keyword for a plugin, returning an error
+  // string if there are any issues.
+  String? _checkTopics(
+    Pubspec pubspec, {
+    required RepositoryPackage package,
+  }) {
+    final List<String> topics = pubspec.topics ?? <String>[];
+    if (topics.isEmpty) {
+      return 'A published package should include "topics". '
+          'See https://dart.dev/tools/pub/pubspec#topics.';
+    }
+    if (isFlutterPlugin(package) && package.isFederated) {
+      final String pluginName = package.directory.parent.basename;
+      // '_' isn't allowed in topics, so convert to '-'.
+      final String topicName = pluginName.replaceAll('_', '-');
+      if (!topics.contains(topicName)) {
+        return 'A federated plugin package should include its plugin name as '
+            'a topic. Add "$topicName" to the "topics" section.';
+      }
+    }
+    return null;
   }
 
   // Validates the "implements" keyword for a plugin, returning an error

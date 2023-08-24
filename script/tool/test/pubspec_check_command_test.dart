@@ -601,6 +601,38 @@ ${_topicsSection(<String>[])}
       );
     });
 
+    test('fails when federated plugin topics do not include plugin name',
+        () async {
+      final RepositoryPackage plugin = createFakePlugin(
+          'some_plugin_ios', packagesDir.childDirectory('some_plugin'),
+          examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'A federated plugin package should include its plugin name as a topic. '
+              'Add "some-plugin" to the "topics" section.'),
+        ]),
+      );
+    });
+
     test('fails when environment section is out of order', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
@@ -817,7 +849,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true, implementedPackage: 'plugin_a')}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
-${_topicsSection()}
+${_topicsSection(<String>['plugin-a'])}
 ''');
 
       final List<String> output =
@@ -924,7 +956,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
-${_topicsSection()}
+${_topicsSection(<String>['plugin-a'])}
 ''');
 
       final List<String> output =
@@ -955,7 +987,7 @@ ${_environmentSection()}
 ${_flutterSection(isPlugin: true)}
 ${_dependenciesSection()}
 ${_devDependenciesSection()}
-${_topicsSection()}
+${_topicsSection(<String>['plugin-a'])}
 ''');
 
       final List<String> output =
