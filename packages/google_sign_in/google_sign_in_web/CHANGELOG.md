@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 0.12.0+3
 
 * Fixes null cast error on accounts without picture or name details.

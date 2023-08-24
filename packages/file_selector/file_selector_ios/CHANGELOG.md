@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 0.5.1+5
 
 * Fixes the behavior of no type groups to allow selecting any file.

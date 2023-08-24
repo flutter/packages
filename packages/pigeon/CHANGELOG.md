@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 10.1.6
 
 * Fixes generation failures when an output file is in a directory that doesn't already exist.
