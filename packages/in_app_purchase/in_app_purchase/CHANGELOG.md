@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 3.1.8
+
+* Updates documentation on handling subscription price changes to match Android's billing client v5.
+
 ## 3.1.7
 
 * Fixes unawaited_futures violations.

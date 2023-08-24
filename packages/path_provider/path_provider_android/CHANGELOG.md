@@ -1,5 +1,10 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.1.0
+
+* Adds getApplicationCachePath() for storing app-specific cache files.
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
 
 ## 2.0.27

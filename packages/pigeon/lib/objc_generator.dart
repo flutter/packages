@@ -71,14 +71,26 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
 
   /// Generates Objc file of type specified in [generatorOptions]
   @override
-  void generate(OutputFileOptions<ObjcOptions> generatorOptions, Root root,
-      StringSink sink) {
+  void generate(
+    OutputFileOptions<ObjcOptions> generatorOptions,
+    Root root,
+    StringSink sink, {
+    required String dartPackageName,
+  }) {
     if (generatorOptions.fileType == FileType.header) {
-      const ObjcHeaderGenerator()
-          .generate(generatorOptions.languageOptions, root, sink);
+      const ObjcHeaderGenerator().generate(
+        generatorOptions.languageOptions,
+        root,
+        sink,
+        dartPackageName: dartPackageName,
+      );
     } else if (generatorOptions.fileType == FileType.source) {
-      const ObjcSourceGenerator()
-          .generate(generatorOptions.languageOptions, root, sink);
+      const ObjcSourceGenerator().generate(
+        generatorOptions.languageOptions,
+        root,
+        sink,
+        dartPackageName: dartPackageName,
+      );
     }
   }
 }
@@ -90,7 +102,11 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFilePrologue(
-      ObjcOptions generatorOptions, Root root, Indent indent) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -101,7 +117,11 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFileImports(
-      ObjcOptions generatorOptions, Root root, Indent indent) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.writeln('#import <Foundation/Foundation.h>');
     indent.newln();
 
@@ -115,7 +135,12 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeEnum(
-      ObjcOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Enum anEnum, {
+    required String dartPackageName,
+  }) {
     final String enumName = _className(generatorOptions.prefix, anEnum.name);
     indent.newln();
     addDocumentationComments(
@@ -135,19 +160,33 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeDataClasses(
-      ObjcOptions generatorOptions, Root root, Indent indent) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.newln();
     for (final Class klass in root.classes) {
       indent.writeln(
           '@class ${_className(generatorOptions.prefix, klass.name)};');
     }
     indent.newln();
-    super.writeDataClasses(generatorOptions, root, indent);
+    super.writeDataClasses(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
   }
 
   @override
   void writeDataClass(
-      ObjcOptions generatorOptions, Root root, Indent indent, Class klass) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass, {
+    required String dartPackageName,
+  }) {
     final List<Class> classes = root.classes;
     final List<Enum> enums = root.enums;
     final String? prefix = generatorOptions.prefix;
@@ -202,8 +241,9 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {}
+    Set<String> customEnumNames, {
+    required String dartPackageName,
+  }) {}
 
   @override
   void writeClassDecode(
@@ -212,12 +252,19 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {}
+    Set<String> customEnumNames, {
+    required String dartPackageName,
+  }) {}
 
   @override
-  void writeApis(ObjcOptions generatorOptions, Root root, Indent indent) {
-    super.writeApis(generatorOptions, root, indent);
+  void writeApis(
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    super.writeApis(generatorOptions, root, indent,
+        dartPackageName: dartPackageName);
     indent.writeln('NS_ASSUME_NONNULL_END');
   }
 
@@ -226,8 +273,9 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String dartPackageName,
+  }) {
     indent.writeln(
         '$_docCommentPrefix The codec used by ${_className(generatorOptions.prefix, api.name)}.');
     indent.writeln(
@@ -265,8 +313,9 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String dartPackageName,
+  }) {
     indent.writeln(
         '$_docCommentPrefix The codec used by ${_className(generatorOptions.prefix, api.name)}.');
     indent.writeln(
@@ -336,7 +385,11 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFilePrologue(
-      ObjcOptions generatorOptions, Root root, Indent indent) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -347,7 +400,11 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFileImports(
-      ObjcOptions generatorOptions, Root root, Indent indent) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.writeln('#import "${generatorOptions.headerIncludePath}"');
     indent.newln();
     indent.writeln('#if TARGET_OS_OSX');
@@ -365,7 +422,11 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeDataClasses(
-      ObjcOptions generatorOptions, Root root, Indent indent) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     _writeObjcSourceHelperFunctions(indent,
         hasHostApiMethods: root.apis.any((Api api) =>
             api.location == ApiLocation.host && api.methods.isNotEmpty));
@@ -374,12 +435,22 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
     }
     indent.newln();
-    super.writeDataClasses(generatorOptions, root, indent);
+    super.writeDataClasses(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
   }
 
   @override
   void writeDataClass(
-      ObjcOptions generatorOptions, Root root, Indent indent, Class klass) {
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass, {
+    required String dartPackageName,
+  }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -389,10 +460,24 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln('@implementation $className');
     _writeObjcSourceClassInitializer(generatorOptions, root, indent, klass,
         customClassNames, customEnumNames, className);
-    writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
-        customEnumNames);
-    writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
-        customEnumNames);
+    writeClassDecode(
+      generatorOptions,
+      root,
+      indent,
+      klass,
+      customClassNames,
+      customEnumNames,
+      dartPackageName: dartPackageName,
+    );
+    writeClassEncode(
+      generatorOptions,
+      root,
+      indent,
+      klass,
+      customClassNames,
+      customEnumNames,
+      dartPackageName: dartPackageName,
+    );
     indent.writeln('@end');
     indent.newln();
   }
@@ -404,8 +489,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String dartPackageName,
+  }) {
     indent.write('- (NSArray *)toList ');
     indent.addScoped('{', '}', () {
       indent.write('return');
@@ -425,8 +511,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String dartPackageName,
+  }) {
     final String className = _className(generatorOptions.prefix, klass.name);
     indent.write('+ ($className *)fromList:(NSArray *)list ');
     indent.addScoped('{', '}', () {
@@ -470,8 +557,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String dartPackageName,
+  }) {
     assert(api.location == ApiLocation.flutter);
     final String apiName = _className(generatorOptions.prefix, api.name);
 
@@ -483,7 +571,14 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.newln();
     _writeInitializer(indent);
     for (final Method func in api.methods) {
-      _writeMethod(generatorOptions, root, indent, api, func);
+      _writeMethod(
+        generatorOptions,
+        root,
+        indent,
+        api,
+        func,
+        dartPackageName: dartPackageName,
+      );
     }
     indent.writeln('@end');
     indent.newln();
@@ -494,8 +589,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api,
-  ) {
+    Api api, {
+    required String dartPackageName,
+  }) {
     assert(api.location == ApiLocation.host);
     final String apiName = _className(generatorOptions.prefix, api.name);
 
@@ -517,7 +613,14 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
                 'NSObject<FlutterTaskQueue> *$taskQueue = [binaryMessenger makeBackgroundTaskQueue];');
           }
           _writeChannelAllocation(
-              generatorOptions, indent, api, func, channelName, taskQueue);
+            generatorOptions,
+            indent,
+            api,
+            func,
+            channelName,
+            taskQueue,
+            dartPackageName: dartPackageName,
+          );
           indent.write('if (api) ');
           indent.addScoped('{', '}', () {
             _writeChannelApiBinding(
@@ -628,13 +731,21 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     });
   }
 
-  void _writeChannelAllocation(ObjcOptions generatorOptions, Indent indent,
-      Api api, Method func, String varName, String? taskQueue) {
+  void _writeChannelAllocation(
+    ObjcOptions generatorOptions,
+    Indent indent,
+    Api api,
+    Method func,
+    String varName,
+    String? taskQueue, {
+    required String dartPackageName,
+  }) {
     indent.writeln('FlutterBasicMessageChannel *$varName =');
     indent.nest(1, () {
       indent.writeln('[[FlutterBasicMessageChannel alloc]');
       indent.nest(1, () {
-        indent.writeln('initWithName:@"${makeChannelName(api, func)}"');
+        indent.writeln(
+            'initWithName:@"${makeChannelName(api, func, dartPackageName)}"');
         indent.writeln('binaryMessenger:binaryMessenger');
         indent.write('codec:');
         indent
@@ -806,8 +917,14 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     });
   }
 
-  void _writeMethod(ObjcOptions languageOptions, Root root, Indent indent,
-      Api api, Method func) {
+  void _writeMethod(
+    ObjcOptions languageOptions,
+    Root root,
+    Indent indent,
+    Api api,
+    Method func, {
+    required String dartPackageName,
+  }) {
     final _ObjcPtr returnType =
         _objcTypeForDartType(languageOptions.prefix, func.returnType);
     final String callbackType = _callbackForType(func.returnType, returnType);
@@ -836,7 +953,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
         indent.writeln('[FlutterBasicMessageChannel');
         indent.nest(1, () {
           indent.writeln(
-              'messageChannelWithName:@"${makeChannelName(api, func)}"');
+              'messageChannelWithName:@"${makeChannelName(api, func, dartPackageName)}"');
           indent.writeln('binaryMessenger:self.binaryMessenger');
           indent.write(
               'codec:${_getCodecGetterName(languageOptions.prefix, api.name)}()');

@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.4.0
+
+* Adds options for gesture handling and tilt controls on web.
+
 ## 2.3.1
 
 * Fixes a regression from 2.2.8 that could cause incorrect handling of a

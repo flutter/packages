@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.2+1
+
+* Updates README to improve example of `Image` creation.
+
+## 0.3.2
+
+* Changes `availableCameras` to not ask for the microphone permission.
+
 ## 0.3.1+4
 
 * Removes obsolete null checks on non-nullable values.

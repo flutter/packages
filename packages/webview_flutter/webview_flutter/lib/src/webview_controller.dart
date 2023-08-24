@@ -266,8 +266,8 @@ class WebViewController {
   /// ```dart
   /// final WebViewController controller = WebViewController();
   /// controller.addJavaScriptChannel(
-  ///   name: 'Print',
-  ///   onMessageReceived: (JavascriptMessage message) {
+  ///   'Print',
+  ///   onMessageReceived: (JavaScriptMessage message) {
   ///     print(message.message);
   ///   },
   /// );
