@@ -299,7 +299,8 @@ class RouteBuilder {
     }
     if (page != null) {
       registry[page] = state;
-      pagePopContext._addRouteMatchForPage(page, match);
+      // Insert the route match in reverse order.
+      pagePopContext._insertRouteMatchAtStartForPage(page, match);
     }
   }
 
@@ -574,7 +575,8 @@ class _PagePopContext {
   List<RouteMatch>? getRouteMatchesForPage(Page<Object?> page) =>
       _routeMatchesLookUp[page];
 
-  void _addRouteMatchForPage(Page<Object?> page, RouteMatch match) {
+  /// This is called in _buildRecursive to insert route matches in reverse order.
+  void _insertRouteMatchAtStartForPage(Page<Object?> page, RouteMatch match) {
     _routeMatchesLookUp
         .putIfAbsent(page, () => <RouteMatch>[])
         .insert(0, match);
