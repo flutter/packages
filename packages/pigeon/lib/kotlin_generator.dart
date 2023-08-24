@@ -283,10 +283,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
               indent.addln(
-                  '.let { ${_cast(root, listValue, type: field.type)} }');
+                  '.let { ${_cast(root, indent, listValue, type: field.type)} }');
             } else {
               indent.writeln(
-                  'val ${field.name} = ${_cast(root, listValue, type: field.type)}');
+                  'val ${field.name} = ${_cast(root, indent, listValue, type: field.type)}');
             }
           } else {
             if (!hostDatatype.isBuiltin &&
@@ -300,10 +300,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             } else if (isInt) {
               indent.write('val ${field.name} = $listValue');
               indent.addln(
-                  '.let { ${_cast(root, listValue, type: field.type)} }');
+                  '.let { ${_cast(root, indent, listValue, type: field.type)} }');
             } else {
               indent.writeln(
-                  'val ${field.name} = ${_cast(root, listValue, type: field.type)}');
+                  'val ${field.name} = ${_cast(root, indent, listValue, type: field.type)}');
             }
           }
         });
@@ -408,7 +408,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           final Iterable<String> enumSafeArgNames = indexMap(
               func.arguments,
               (int count, NamedType type) =>
-                  _getEnumSafeArgumentName(root, count, type));
+                  _getEnumSafeArgumentExpression(root, count, type));
           sendArgument = 'listOf(${enumSafeArgNames.join(', ')})';
           final String argsSignature = map2(argTypes, argNames,
               (String type, String name) => '$name: $type').join(', ');
@@ -431,14 +431,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             });
           } else {
             indent.addScoped('{', '}', () {
-              // nullable enums require special handling.
+              // Nullable enums require special handling.
               if (isEnum(root, func.returnType) && func.returnType.isNullable) {
                 indent.writeScoped('val result = (it as Int?)?.let {', '}', () {
                   indent.writeln('${func.returnType.baseName}.ofRaw(it)');
                 });
               } else {
                 indent.writeln(
-                    'val result = ${_cast(root, 'it', type: func.returnType)}');
+                    'val result = ${_cast(root, indent, 'it', type: func.returnType)}');
               }
               indent.writeln('callback(result)');
             });
@@ -569,7 +569,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                       final String argName = _getSafeArgumentName(index, arg);
                       final String argIndex = 'args[$index]';
                       indent.writeln(
-                          'val $argName = ${_castForceUnwrap(argIndex, arg.type, root)}');
+                          'val $argName = ${_castForceUnwrap(argIndex, arg.type, root, indent)}');
                       methodArguments.add(argName);
                     });
                   }
@@ -763,7 +763,8 @@ String _getArgumentName(int count, NamedType argument) =>
 
 /// Returns an argument name that can be used in a context where it is possible to collide
 /// and append `.index` to enums.
-String _getEnumSafeArgumentName(Root root, int count, NamedType argument) {
+String _getEnumSafeArgumentExpression(
+    Root root, int count, NamedType argument) {
   if (isEnum(root, argument.type)) {
     return argument.type.isNullable
         ? '${_getArgumentName(count, argument)}Arg?.raw'
@@ -776,7 +777,8 @@ String _getEnumSafeArgumentName(Root root, int count, NamedType argument) {
 String _getSafeArgumentName(int count, NamedType argument) =>
     '${_getArgumentName(count, argument)}Arg';
 
-String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
+String _castForceUnwrap(
+    String value, TypeDeclaration type, Root root, Indent indent) {
   if (isEnum(root, type)) {
     final String forceUnwrap = type.isNullable ? '' : '!!';
     final String nullableConditionPrefix =
@@ -787,9 +789,9 @@ String _castForceUnwrap(String value, TypeDeclaration type, Root root) {
     // a Dart 'int'.  To keep things simple we just use 64bit
     // longs in Pigeon with Kotlin.
     if (type.baseName == 'int') {
-      return '$value.let { ${_cast(root, value, type: type)} }';
+      return '$value.let { ${_cast(root, indent, value, type: type)} }';
     } else {
-      return _cast(root, value, type: type);
+      return _cast(root, indent, value, type: type);
     }
   }
 }
@@ -855,7 +857,8 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
 }
 
 /// Returns an expression to cast [variable] to [kotlinType].
-String _cast(Root root, String variable, {required TypeDeclaration type}) {
+String _cast(Root root, Indent indent, String variable,
+    {required TypeDeclaration type}) {
   // Special-case Any, since no-op casts cause warnings.
   final String typeString = _kotlinTypeForDartType(type);
   if (type.isNullable && typeString == 'Any') {
@@ -866,9 +869,9 @@ String _cast(Root root, String variable, {required TypeDeclaration type}) {
   }
   if (isEnum(root, type)) {
     if (type.isNullable) {
-      return '(list[13] as Int?)?.let {\n'
-          '        AnEnum.ofRaw(it)\n'
-          '      }';
+      return '($variable as Int?)?.let {\n'
+          '${indent.str}  $typeString.ofRaw(it)\n'
+          '${indent.str}}';
     }
     return '${type.baseName}.ofRaw($variable as Int)!!';
   }

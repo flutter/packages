@@ -16,10 +16,14 @@
 #error File requires ARC to be enabled.
 #endif
 
-@interface PGNCodeWrapper ()
-@end
-
-@implementation PGNCodeWrapper
+@implementation PGNCodeBox
+- (instancetype)initWithValue:(PGNCode)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
 @end
 
 static NSArray *wrapResult(id result, FlutterError *error) {

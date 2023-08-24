@@ -163,9 +163,9 @@
   return aNullableMap;
 }
 
-- (AnEnumWrapper *_Nullable)echoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
-                                       error:(FlutterError *_Nullable *_Nonnull)error {
-  return anEnumWrapped;
+- (AnEnumBox *_Nullable)echoNullableEnum:(nullable AnEnumBox *)AnEnumBoxed
+                                   error:(FlutterError *_Nullable *_Nonnull)error {
+  return AnEnumBoxed;
 }
 
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
@@ -286,10 +286,9 @@
   completion(aMap, nil);
 }
 
-- (void)echoAsyncNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
-                   completion:
-                       (void (^)(AnEnumWrapper *_Nullable, FlutterError *_Nullable))completion {
-  completion(anEnumWrapped, nil);
+- (void)echoAsyncNullableEnum:(nullable AnEnumBox *)AnEnumBoxed
+                   completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  completion(AnEnumBoxed, nil);
 }
 
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
@@ -470,11 +469,11 @@
                         }];
 }
 
-- (void)callFlutterEchoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
-                         completion:(void (^)(AnEnumWrapper *_Nullable,
-                                              FlutterError *_Nullable))completion {
-  [self.flutterAPI echoNullableEnum:anEnumWrapped
-                         completion:^(AnEnumWrapper *value, FlutterError *error) {
+- (void)callFlutterEchoNullableEnum:(nullable AnEnumBox *)AnEnumBoxed
+                         completion:
+                             (void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  [self.flutterAPI echoNullableEnum:AnEnumBoxed
+                         completion:^(AnEnumBox *value, FlutterError *error) {
                            completion(value, error);
                          }];
 }

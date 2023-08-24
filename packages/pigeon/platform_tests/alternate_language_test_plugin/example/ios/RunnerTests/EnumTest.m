@@ -18,9 +18,8 @@
 
 - (void)testEcho {
   DataWithEnum *data = [[DataWithEnum alloc] init];
-  EnumStateWrapper *stateWrapper = [[EnumStateWrapper alloc] init];
-  stateWrapper.value = EnumStateError;
-  data.state = stateWrapper;
+  EnumStateBox *stateBox = [[EnumStateBox alloc] initWithValue:EnumStateError];
+  data.state = stateBox;
   EchoBinaryMessenger *binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:EnumApi2HostGetCodec()];
   EnumApi2Flutter *api = [[EnumApi2Flutter alloc] initWithBinaryMessenger:binaryMessenger];

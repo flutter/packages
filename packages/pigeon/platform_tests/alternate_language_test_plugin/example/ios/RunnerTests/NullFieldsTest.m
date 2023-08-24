@@ -31,8 +31,8 @@
 - (void)testMakeWithValues {
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1];
 
-  NullFieldsSearchReplyTypeWrapper *typeWrapper = [[NullFieldsSearchReplyTypeWrapper alloc] init];
-  typeWrapper.value = NullFieldsSearchReplyTypeSuccess;
+  NullFieldsSearchReplyTypeBox *typeWrapper =
+      [[NullFieldsSearchReplyTypeBox alloc] initWithValue:NullFieldsSearchReplyTypeSuccess];
   NullFieldsSearchReply *reply = [NullFieldsSearchReply makeWithResult:@"result"
                                                                  error:@"error"
                                                                indices:@[ @1, @2, @3 ]
@@ -133,8 +133,8 @@
 }
 
 - (void)testReplyToListWithValuess {
-  NullFieldsSearchReplyTypeWrapper *typeWrapper = [[NullFieldsSearchReplyTypeWrapper alloc] init];
-  typeWrapper.value = NullFieldsSearchReplyTypeSuccess;
+  NullFieldsSearchReplyTypeBox *typeWrapper =
+      [[NullFieldsSearchReplyTypeBox alloc] initWithValue:NullFieldsSearchReplyTypeSuccess];
   NullFieldsSearchReply *reply = [NullFieldsSearchReply
       makeWithResult:@"result"
                error:@"error"
@@ -148,9 +148,8 @@
   XCTAssertEqualObjects(indices, list[2]);
   XCTAssertEqualObjects(@"hello", list[3][0]);
   NSNumber *typeNumber = list[4];
-  NullFieldsSearchReplyTypeWrapper *output = [[NullFieldsSearchReplyTypeWrapper alloc] init];
-
-  output.value = [typeNumber integerValue];
+  NullFieldsSearchReplyTypeBox *output =
+      [[NullFieldsSearchReplyTypeBox alloc] initWithValue:[typeNumber integerValue]];
 
   XCTAssertEqual(typeWrapper.value, output.value);
 }

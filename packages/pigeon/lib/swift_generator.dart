@@ -277,7 +277,8 @@ import FlutterMacOS
     assert(api.location == ApiLocation.flutter);
 
     /// Returns an argument name that can be used in a context where it is possible to collide.
-    String getEnumSafeArgumentName(Root root, int count, NamedType argument) {
+    String getEnumSafeArgumentExpression(
+        Root root, int count, NamedType argument) {
       String enumTag = '';
       if (isEnum(root, argument.type)) {
         enumTag = argument.type.isNullable ? '?.rawValue' : '.rawValue';
@@ -342,7 +343,7 @@ import FlutterMacOS
               .asMap()
               .entries
               .map((MapEntry<int, NamedType> e) =>
-                  getEnumSafeArgumentName(root, e.key, e.value));
+                  getEnumSafeArgumentExpression(root, e.key, e.value));
           sendArgument = '[${enumSafeArgNames.join(', ')}] as [Any?]';
           final String argsSignature = map3(
               argTypes,
@@ -672,7 +673,7 @@ import FlutterMacOS
         String output =
             '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
         if (type.isNullable) {
-          output = '($value is NSNull || $value == nil) ? nil : $output';
+          output = 'isNullish($value) ? nil : $output';
         }
         return output;
       } else if (type.baseName == 'Object') {
@@ -681,7 +682,7 @@ import FlutterMacOS
         if (type.isNullable) {
           // Nullable ints need to check for NSNull, and Int32 before casting can be done safely.
           // This nested ternary is a necessary evil to avoid less efficient conversions.
-          return '($value is NSNull || $value == nil) ? nil : ($value is Int64? ? $value as! Int64? : Int64($value as! Int32))';
+          return 'isNullish($value) ? nil : ($value is Int64? ? $value as! Int64? : Int64($value as! Int32))';
         } else {
           return '$value is Int64 ? $value as! Int64 : Int64($value as! Int32)';
         }
@@ -731,6 +732,14 @@ import FlutterMacOS
     }
   }
 
+  void _writeIsNullish(Indent indent) {
+    indent.newln();
+    indent.write('private func isNullish(_ value: Any?) -> Bool ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('return value is NSNull || value == nil');
+    });
+  }
+
   void _writeWrapResult(Indent indent) {
     indent.newln();
     indent.write('private func wrapResult(_ result: Any?) -> [Any?] ');
@@ -777,6 +786,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     Indent indent, {
     required String dartPackageName,
   }) {
+    _writeIsNullish(indent);
     _writeWrapResult(indent);
     _writeWrapError(indent);
     _writeNilOrValue(indent);

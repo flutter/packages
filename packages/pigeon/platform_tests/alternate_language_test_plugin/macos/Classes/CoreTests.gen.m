@@ -17,10 +17,14 @@
 #error File requires ARC to be enabled.
 #endif
 
-@interface AnEnumWrapper ()
-@end
-
-@implementation AnEnumWrapper
+@implementation AnEnumBox
+- (instancetype)initWithValue:(AnEnum)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
 @end
 
 static NSArray *wrapResult(id result, FlutterError *error) {
@@ -156,7 +160,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
-                        aNullableEnum:(nullable AnEnumWrapper *)aNullableEnum
+                        aNullableEnum:(nullable AnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject {
   AllNullableTypes *pigeonResult = [[AllNullableTypes alloc] init];
@@ -194,10 +198,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
   NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
-  AnEnumWrapper *aNullableEnum = aNullableEnumAsNumber == nil ? nil : [[AnEnumWrapper alloc] init];
-  if (aNullableEnum != nil) {
-    aNullableEnum.value = [aNullableEnumAsNumber integerValue];
-  }
+  AnEnumBox *aNullableEnum =
+      aNullableEnumAsNumber == nil
+          ? nil
+          : [[AnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
   pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
   pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
@@ -971,14 +975,13 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        AnEnumWrapper *arg_anEnum = arg_anEnumAsNumber == nil ? nil : [[AnEnumWrapper alloc] init];
-        if (arg_anEnum != nil) {
-          arg_anEnum.value = [arg_anEnumAsNumber integerValue];
-        }
+        AnEnumBox *arg_anEnum =
+            arg_anEnumAsNumber == nil
+                ? nil
+                : [[AnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
         FlutterError *error;
-        AnEnumWrapper *enumWrapper = [api echoNullableEnum:arg_anEnum error:&error];
-        NSNumber *output =
-            enumWrapper == nil ? nil : [NSNumber numberWithInteger:enumWrapper.value];
+        AnEnumBox *enumBox = [api echoNullableEnum:arg_anEnum error:&error];
+        NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1548,17 +1551,17 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        AnEnumWrapper *arg_anEnum = arg_anEnumAsNumber == nil ? nil : [[AnEnumWrapper alloc] init];
-        if (arg_anEnum != nil) {
-          arg_anEnum.value = [arg_anEnumAsNumber integerValue];
-        }
-        [api echoAsyncNullableEnum:arg_anEnum
-                        completion:^(AnEnumWrapper *_Nullable enumValue,
-                                     FlutterError *_Nullable error) {
-                          NSNumber *output =
-                              enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
-                          callback(wrapResult(output, error));
-                        }];
+        AnEnumBox *arg_anEnum =
+            arg_anEnumAsNumber == nil
+                ? nil
+                : [[AnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
+        [api
+            echoAsyncNullableEnum:arg_anEnum
+                       completion:^(AnEnumBox *_Nullable enumValue, FlutterError *_Nullable error) {
+                         NSNumber *output =
+                             enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
+                         callback(wrapResult(output, error));
+                       }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -2070,12 +2073,12 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        AnEnumWrapper *arg_anEnum = arg_anEnumAsNumber == nil ? nil : [[AnEnumWrapper alloc] init];
-        if (arg_anEnum != nil) {
-          arg_anEnum.value = [arg_anEnumAsNumber integerValue];
-        }
+        AnEnumBox *arg_anEnum =
+            arg_anEnumAsNumber == nil
+                ? nil
+                : [[AnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
         [api callFlutterEchoNullableEnum:arg_anEnum
-                              completion:^(AnEnumWrapper *_Nullable enumValue,
+                              completion:^(AnEnumBox *_Nullable enumValue,
                                            FlutterError *_Nullable error) {
                                 NSNumber *output =
                                     enumValue == nil ? nil
@@ -2443,8 +2446,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                    completion(output, nil);
                  }];
 }
-- (void)echoNullableEnum:(nullable AnEnumWrapper *)arg_anEnum
-              completion:(void (^)(AnEnumWrapper *_Nullable, FlutterError *_Nullable))completion {
+- (void)echoNullableEnum:(nullable AnEnumBox *)arg_anEnum
+              completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
       messageChannelWithName:
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum"
@@ -2454,11 +2457,10 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                                             : [NSNumber numberWithInteger:arg_anEnum.value] ]
                  reply:^(id reply) {
                    NSNumber *outputAsNumber = reply == [NSNull null] ? nil : reply;
-                   AnEnumWrapper *output =
-                       outputAsNumber == nil ? nil : [[AnEnumWrapper alloc] init];
-                   if (output != nil) {
-                     output.value = [outputAsNumber integerValue];
-                   }
+                   AnEnumBox *output =
+                       outputAsNumber == nil
+                           ? nil
+                           : [[AnEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
                    completion(output, nil);
                  }];
 }

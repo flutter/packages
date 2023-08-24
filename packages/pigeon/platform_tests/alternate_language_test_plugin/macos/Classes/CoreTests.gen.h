@@ -20,11 +20,10 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
   AnEnumThree = 2,
 };
 
-@class AnEnumWrapper;
-
-/// Wrapper for AnEnum to manage primitive and nullable use.
-@interface AnEnumWrapper : NSObject
+/// Wrapper for AnEnum to allow for nullability.
+@interface AnEnumBox : NSObject
 @property(nonatomic, assign) AnEnum value;
+- (instancetype)initWithValue:(AnEnum)value;
 @end
 
 @class AllTypes;
@@ -80,7 +79,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
-                        aNullableEnum:(nullable AnEnumWrapper *)aNullableEnum
+                        aNullableEnum:(nullable AnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
@@ -97,7 +96,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable)
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, strong, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
-@property(nonatomic, strong, nullable) AnEnumWrapper *aNullableEnum;
+@property(nonatomic, strong, nullable) AnEnumBox *aNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @end
@@ -236,8 +235,8 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (nullable NSDictionary<NSString *, id> *)echoNullableMap:
                                                (nullable NSDictionary<NSString *, id> *)aNullableMap
                                                      error:(FlutterError *_Nullable *_Nonnull)error;
-- (AnEnumWrapper *_Nullable)echoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
-                                       error:(FlutterError *_Nullable *_Nonnull)error;
+- (AnEnumBox *_Nullable)echoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
+                                   error:(FlutterError *_Nullable *_Nonnull)error;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;
@@ -311,9 +310,8 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                   completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                        FlutterError *_Nullable))completion;
 /// Returns the passed enum, to test asynchronous serialization and deserialization.
-- (void)echoAsyncNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
-                   completion:
-                       (void (^)(AnEnumWrapper *_Nullable, FlutterError *_Nullable))completion;
+- (void)echoAsyncNullableEnum:(nullable AnEnumBox *)anEnumBoxed
+                   completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;
@@ -367,9 +365,9 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 - (void)callFlutterEchoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
                         completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                              FlutterError *_Nullable))completion;
-- (void)callFlutterEchoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
-                         completion:(void (^)(AnEnumWrapper *_Nullable,
-                                              FlutterError *_Nullable))completion;
+- (void)callFlutterEchoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
+                         completion:
+                             (void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
@@ -453,8 +451,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
              completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                   FlutterError *_Nullable))completion;
 /// Returns the passed enum to test serialization and deserialization.
-- (void)echoNullableEnum:(nullable AnEnumWrapper *)anEnumWrapped
-              completion:(void (^)(AnEnumWrapper *_Nullable, FlutterError *_Nullable))completion;
+- (void)echoNullableEnum:(nullable AnEnumBox *)anEnumBoxed
+              completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic asynchronous calling.
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion;

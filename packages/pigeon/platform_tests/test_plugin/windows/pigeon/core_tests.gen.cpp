@@ -1728,11 +1728,15 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_an_enum_arg = args.at(0);
-              std::optional<AnEnum> an_enum_arg;
-              if (!encodable_an_enum_arg.IsNull()) {
-                an_enum_arg = std::make_optional<AnEnum>(
-                    static_cast<AnEnum>(std::get<int>(encodable_an_enum_arg)));
-              }
+              const int64_t an_enum_arg_value =
+                  encodable_an_enum_arg.IsNull()
+                      ? 0
+                      : encodable_an_enum_arg.LongValue();
+              const auto* an_enum_arg =
+                  encodable_an_enum_arg.IsNull()
+                      ? nullptr
+                      : std::make_optional<AnEnum>(static_cast<AnEnum>(
+                            std::get<int>(encodable_an_enum_arg)));
               ErrorOr<std::optional<AnEnum>> output = api->EchoNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr);
               if (output.has_error()) {
@@ -2636,11 +2640,15 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_an_enum_arg = args.at(0);
-              std::optional<AnEnum> an_enum_arg;
-              if (!encodable_an_enum_arg.IsNull()) {
-                an_enum_arg = std::make_optional<AnEnum>(
-                    static_cast<AnEnum>(std::get<int>(encodable_an_enum_arg)));
-              }
+              const int64_t an_enum_arg_value =
+                  encodable_an_enum_arg.IsNull()
+                      ? 0
+                      : encodable_an_enum_arg.LongValue();
+              const auto* an_enum_arg =
+                  encodable_an_enum_arg.IsNull()
+                      ? nullptr
+                      : std::make_optional<AnEnum>(static_cast<AnEnum>(
+                            std::get<int>(encodable_an_enum_arg)));
               api->EchoAsyncNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
@@ -3485,11 +3493,15 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_an_enum_arg = args.at(0);
-              std::optional<AnEnum> an_enum_arg;
-              if (!encodable_an_enum_arg.IsNull()) {
-                an_enum_arg = std::make_optional<AnEnum>(
-                    static_cast<AnEnum>(std::get<int>(encodable_an_enum_arg)));
-              }
+              const int64_t an_enum_arg_value =
+                  encodable_an_enum_arg.IsNull()
+                      ? 0
+                      : encodable_an_enum_arg.LongValue();
+              const auto* an_enum_arg =
+                  encodable_an_enum_arg.IsNull()
+                      ? nullptr
+                      : std::make_optional<AnEnum>(static_cast<AnEnum>(
+                            std::get<int>(encodable_an_enum_arg)));
               api->CallFlutterEchoNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
@@ -4111,23 +4123,21 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       an_enum_arg ? EncodableValue((int)(*an_enum_arg)) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
-        AnEnum return_value;
-        if (!encodable_return_value.IsNull()) {
-          return_value = (AnEnum)encodable_return_value.LongValue();
-        }
-        if (!encodable_return_value.IsNull()) {
-          on_success(&return_value);
-        } else {
-          on_success(nullptr);
-        }
-      });
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const int64_t return_value_value = encodable_return_value.IsNull()
+                                           ? 0
+                                           : encodable_return_value.LongValue();
+    const auto* return_value = encodable_return_value.IsNull()
+                                   ? nullptr
+                                   : (AnEnum)encodable_return_value.LongValue();
+    on_success(return_value);
+  });
 }
 
 void FlutterIntegrationCoreApi::NoopAsync(

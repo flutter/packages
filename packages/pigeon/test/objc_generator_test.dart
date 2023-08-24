@@ -165,7 +165,10 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
-    expect(code, contains('enum1.value = [enum1AsNumber integerValue];'));
+    expect(
+        code,
+        contains(
+            'Enum1Box *enum1 = enum1AsNumber == nil ? nil : [[Enum1Box alloc] initWithValue: [enum1AsNumber integerValue]];'));
   });
 
   test('primitive enum host', () {
@@ -295,10 +298,8 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            '@property(nonatomic, strong, nullable) Enum1Wrapper * enum1;'));
+    expect(code,
+        contains('@property(nonatomic, strong, nullable) Enum1Box * enum1;'));
   });
 
   test('gen one api header', () {

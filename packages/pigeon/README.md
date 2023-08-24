@@ -23,13 +23,9 @@ Currently pigeon supports generating:
 Pigeon uses the `StandardMessageCodec` so it supports 
 [any datatype platform channels support](https://flutter.dev/docs/development/platform-integration/platform-channels#codec).
 
-Custom classes and nested datatypes are also supported.
+Custom classes, nested datatypes, and enums are also supported. 
 
-#### Enums
-
-Pigeon now supports enums in all contexts.
-
-Note that nullable enums in Objective-C generated code will be wrapped in a class to allow for nullability.
+Nullable enums in Objective-C generated code will be wrapped in a class to allow for nullability.
 
 ### Synchronous and Asynchronous methods
 

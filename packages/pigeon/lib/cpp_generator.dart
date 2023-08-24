@@ -897,17 +897,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
               apiType: ApiType.flutter,
             );
           }
-          if (returnType.isEnum && returnType.isNullable) {
-            indent.writeScoped('if (!encodable_return_value.IsNull()) {', '}',
-                () {
-              indent.writeln('on_success(&$successCallbackArgument);');
-            }, addTrailingNewline: false);
-            indent.addScoped(' else {', '}', () {
-              indent.writeln('on_success(nullptr);');
-            });
-          } else {
-            indent.writeln('on_success($successCallbackArgument);');
-          }
+          indent.writeln('on_success($successCallbackArgument);');
         });
       });
     }
@@ -1355,20 +1345,16 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
             'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
       } else if (hostType.isEnum) {
         if (hostType.isNullable) {
+          final String valueVarName = '${argName}_value';
+          indent.writeln(
+              'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
           if (apiType == ApiType.flutter) {
-            indent.writeln('${hostType.datatype} $argName;');
+            indent.writeln(
+                'const auto* $argName = $encodableArgName.IsNull() ? nullptr : (${hostType.datatype})encodable_return_value.LongValue();');
           } else {
-            indent.writeln('std::optional<${hostType.datatype}> $argName;');
+            indent.writeln(
+                'const auto* $argName = $encodableArgName.IsNull() ? nullptr : std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(std::get<int>($encodableArgName)));');
           }
-          indent.writeScoped('if (!$encodableArgName.IsNull()) {', '}', () {
-            if (apiType == ApiType.flutter) {
-              indent.writeln(
-                  'return_value = (${hostType.datatype})encodable_return_value.LongValue();');
-            } else {
-              indent.writeln(
-                  '$argName = std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(std::get<int>($encodableArgName)));');
-            }
-          });
         } else {
           indent.writeln(
               'const auto* $argName = &((${hostType.datatype})std::get<int>($encodableArgName));');

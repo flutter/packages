@@ -446,11 +446,11 @@ $resultAt != null
                   const String returnExpression = 'output';
                   final String nullability =
                       func.returnType.isNullable ? '?' : '';
-                  final String enumOutput =
+                  final String valueExtraction =
                       isEnum(root, func.returnType) ? '$nullability.index' : '';
                   final String returnStatement = isMockHandler
-                      ? 'return <Object?>[$returnExpression$enumOutput];'
-                      : 'return $returnExpression$enumOutput;';
+                      ? 'return <Object?>[$returnExpression$valueExtraction];'
+                      : 'return $returnExpression$valueExtraction;';
                   indent.writeln(returnStatement);
                 }
               });
