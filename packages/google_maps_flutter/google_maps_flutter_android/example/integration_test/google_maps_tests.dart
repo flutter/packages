@@ -938,7 +938,7 @@ void googleMapsTests() {
 
     await tester.pumpAndSettle();
 
-    // TODO (mossmana): Adding this delay addresses 
+    // TODO(mossmana): Adding this delay addresses 
     // https://github.com/flutter/flutter/issues/131783. It may be related
     // to https://github.com/flutter/flutter/issues/54758 and should be
     // re-evaluated when that issue is fixed.
