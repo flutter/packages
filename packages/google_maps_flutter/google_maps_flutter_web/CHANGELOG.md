@@ -1,3 +1,8 @@
+## 0.5.4
+
+* Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 0.5.3
 
 * Initial support for custom overlays. [#98596](https://github.com/flutter/flutter/issues/98596).

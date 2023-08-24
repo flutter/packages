@@ -45,6 +45,7 @@ class RouteBuilder {
     required this.restorationScopeId,
     required this.observers,
     required this.onPopPageWithRouteMatch,
+    this.requestFocus = true,
   });
 
   /// Builder function for a go router with Navigator.
@@ -62,6 +63,12 @@ class RouteBuilder {
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
+
+  /// Whether or not the navigator created by this builder and it's new topmost route should request focus
+  /// when the new route is pushed onto the navigator.
+  ///
+  /// Defaults to true.
+  final bool requestFocus;
 
   /// NavigatorObserver used to receive notifications when navigating in between routes.
   /// changes.
@@ -137,6 +144,7 @@ class RouteBuilder {
         navigatorKey,
         observers: observers,
         restorationScopeId: restorationScopeId,
+        requestFocus: requestFocus,
       ),
     );
   }
@@ -258,7 +266,10 @@ class RouteBuilder {
 
         // Build the Navigator for this shell route
         Widget buildShellNavigator(
-            List<NavigatorObserver>? observers, String? restorationScopeId) {
+          List<NavigatorObserver>? observers,
+          String? restorationScopeId, {
+          bool requestFocus = true,
+        }) {
           return _buildNavigator(
             pagePopContext.onPopPage,
             keyToPages[shellNavigatorKey]!,
@@ -266,6 +277,7 @@ class RouteBuilder {
             observers: observers ?? const <NavigatorObserver>[],
             restorationScopeId: restorationScopeId,
             heroController: heroController,
+            requestFocus: requestFocus,
           );
         }
 
@@ -298,6 +310,7 @@ class RouteBuilder {
     List<NavigatorObserver> observers = const <NavigatorObserver>[],
     String? restorationScopeId,
     HeroController? heroController,
+    bool requestFocus = true,
   }) {
     final Widget navigator = Navigator(
       key: navigatorKey,
@@ -305,6 +318,7 @@ class RouteBuilder {
       pages: pages,
       observers: observers,
       onPopPage: onPopPage,
+      requestFocus: requestFocus,
     );
     if (heroController != null) {
       return HeroControllerScope(
