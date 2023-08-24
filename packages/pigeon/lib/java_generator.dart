@@ -454,7 +454,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
       /// Returns an argument name that can be used in a context where it is possible to collide
       /// and append `.index` to enums.
-      String getEnumSafeArgumentName(int count, NamedType argument) {
+      String getEnumSafeArgumentExpression(int count, NamedType argument) {
         if (isEnum(root, argument.type)) {
           return argument.type.isNullable
               ? '${_getArgumentName(count, argument)}Arg == null ? null : ${_getArgumentName(count, argument)}Arg.index'
@@ -481,7 +481,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           final Iterable<String> argNames =
               indexMap(func.arguments, _getSafeArgumentName);
           final Iterable<String> enumSafeArgNames =
-              indexMap(func.arguments, getEnumSafeArgumentName);
+              indexMap(func.arguments, getEnumSafeArgumentExpression);
           if (func.arguments.length == 1) {
             sendArgument =
                 'new ArrayList<Object>(Collections.singletonList(${enumSafeArgNames.first}))';

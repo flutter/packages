@@ -1350,10 +1350,10 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
               'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
           if (apiType == ApiType.flutter) {
             indent.writeln(
-                'const auto* $argName = $encodableArgName.IsNull() ? nullptr : (${hostType.datatype})encodable_return_value.LongValue();');
+                'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &(${hostType.datatype})$valueVarName;');
           } else {
             indent.writeln(
-                'const auto* $argName = $encodableArgName.IsNull() ? nullptr : std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(std::get<int>($encodableArgName)));');
+                'const std::optional<${hostType.datatype}> $argName = $encodableArgName.IsNull() ? std::optional<${hostType.datatype}>() : std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(${argName}_value));');
           }
         } else {
           indent.writeln(

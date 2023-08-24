@@ -1732,11 +1732,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                   encodable_an_enum_arg.IsNull()
                       ? 0
                       : encodable_an_enum_arg.LongValue();
-              const auto* an_enum_arg =
+              const std::optional<AnEnum> an_enum_arg =
                   encodable_an_enum_arg.IsNull()
-                      ? nullptr
-                      : std::make_optional<AnEnum>(static_cast<AnEnum>(
-                            std::get<int>(encodable_an_enum_arg)));
+                      ? std::optional<AnEnum>()
+                      : std::make_optional<AnEnum>(
+                            static_cast<AnEnum>(an_enum_arg_value));
               ErrorOr<std::optional<AnEnum>> output = api->EchoNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr);
               if (output.has_error()) {
@@ -2644,11 +2644,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                   encodable_an_enum_arg.IsNull()
                       ? 0
                       : encodable_an_enum_arg.LongValue();
-              const auto* an_enum_arg =
+              const std::optional<AnEnum> an_enum_arg =
                   encodable_an_enum_arg.IsNull()
-                      ? nullptr
-                      : std::make_optional<AnEnum>(static_cast<AnEnum>(
-                            std::get<int>(encodable_an_enum_arg)));
+                      ? std::optional<AnEnum>()
+                      : std::make_optional<AnEnum>(
+                            static_cast<AnEnum>(an_enum_arg_value));
               api->EchoAsyncNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
@@ -3497,11 +3497,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                   encodable_an_enum_arg.IsNull()
                       ? 0
                       : encodable_an_enum_arg.LongValue();
-              const auto* an_enum_arg =
+              const std::optional<AnEnum> an_enum_arg =
                   encodable_an_enum_arg.IsNull()
-                      ? nullptr
-                      : std::make_optional<AnEnum>(static_cast<AnEnum>(
-                            std::get<int>(encodable_an_enum_arg)));
+                      ? std::optional<AnEnum>()
+                      : std::make_optional<AnEnum>(
+                            static_cast<AnEnum>(an_enum_arg_value));
               api->CallFlutterEchoNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
@@ -4133,9 +4133,8 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
     const int64_t return_value_value = encodable_return_value.IsNull()
                                            ? 0
                                            : encodable_return_value.LongValue();
-    const auto* return_value = encodable_return_value.IsNull()
-                                   ? nullptr
-                                   : (AnEnum)encodable_return_value.LongValue();
+    const auto* return_value =
+        encodable_return_value.IsNull() ? nullptr : &(AnEnum)return_value_value;
     on_success(return_value);
   });
 }
