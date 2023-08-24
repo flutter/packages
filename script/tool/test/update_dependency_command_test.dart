@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Ignores escape characters used in testing gradle-wrapper.properties file
+// formats.
+// ignore_for_file: unnecessary_string_escapes
+
 import 'dart:convert';
 
 import 'package:args/command_runner.dart';
@@ -78,6 +82,9 @@ dev_dependencies:
       ]),
     );
   });
+
+  // TODO(camsim99): Add test case
+  test('throws if multiple dependency specified', () async {});
 
   group('pub dependencies', () {
     test('throws if no version is given for an unpublished target', () async {
@@ -582,6 +589,198 @@ dev_dependencies:
           contains('Failed to update mocks'),
         ]),
       );
+    });
+  });
+
+  group('Android dependencies', () {
+    test('throws if Android dependency unrecognized', () async {
+      const String testDependency = 'testDependency';
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--android-dependency',
+        testDependency,
+        '--version',
+        '8.3.1',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Target Android dependency $testDependency is unrecognized.'),
+        ]),
+      );
+    });
+
+    test(
+        'throws if Android dependency is "gradle" but version format is invalid',
+        () async {
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--android-dependency',
+        'gradle',
+        '--version',
+        '83',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'A version with a valid format (maximum 2-3 numbers separated by period) must be provided.'),
+        ]),
+      );
+    });
+
+    test('skips if example app does not run on Android', () async {
+      final RepositoryPackage package =
+          createFakePlugin('fake_plugin', packagesDir);
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--packages',
+        package.displayName,
+        '--android-dependency',
+        'gradle',
+        '--version',
+        '8.8.8',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('SKIPPING: Example app does not run on Android.'),
+        ]),
+      );
+    });
+
+    test(
+        'throws if wrapper does not have distribution URL with expected format',
+        () async {
+      final RepositoryPackage package = createFakePlugin(
+          'fake_plugin', packagesDir, extraFiles: <String>[
+        'example/android/app/gradle/wrapper/gradle-wrapper.properties'
+      ]);
+
+      final File gradleWrapperPropertiesFile = package.directory
+          .childDirectory('example')
+          .childDirectory('android')
+          .childDirectory('app')
+          .childDirectory('gradle')
+          .childDirectory('wrapper')
+          .childFile('gradle-wrapper.properties');
+
+      gradleWrapperPropertiesFile.writeAsStringSync('''
+How is it even possible that I didn't specify a Gradle distribution?
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--packages',
+        package.displayName,
+        '--android-dependency',
+        'gradle',
+        '--version',
+        '8.8.8',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Failed to update Gradle version in the example app for ${package.displayName}'),
+        ]),
+      );
+    });
+
+    test('succeeds if example app has android/app directory', () async {
+      final RepositoryPackage package = createFakePlugin(
+          'fake_plugin', packagesDir, extraFiles: <String>[
+        'example/android/app/gradle/wrapper/gradle-wrapper.properties'
+      ]);
+      const String newGradleVersion = '8.8.8';
+
+      final File gradleWrapperPropertiesFile = package.directory
+          .childDirectory('example')
+          .childDirectory('android')
+          .childDirectory('app')
+          .childDirectory('gradle')
+          .childDirectory('wrapper')
+          .childFile('gradle-wrapper.properties');
+
+      gradleWrapperPropertiesFile.writeAsStringSync('''
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
+''');
+
+      await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--packages',
+        package.displayName,
+        '--android-dependency',
+        'gradle',
+        '--version',
+        newGradleVersion,
+      ]);
+
+      final String updatedGradleWrapperPropertiesContents =
+          gradleWrapperPropertiesFile.readAsStringSync();
+      expect(updatedGradleWrapperPropertiesContents.contains(newGradleVersion),
+          isTrue);
+    });
+
+    test('succeeds if example app does not have android/gradle directory',
+        () async {
+      final RepositoryPackage package = createFakePlugin(
+          'fake_plugin', packagesDir, extraFiles: <String>[
+        'example/android/gradle/wrapper/gradle-wrapper.properties'
+      ]);
+      const String newGradleVersion = '9.9';
+
+      final File gradleWrapperPropertiesFile = package.directory
+          .childDirectory('example')
+          .childDirectory('android')
+          .childDirectory('gradle')
+          .childDirectory('wrapper')
+          .childFile('gradle-wrapper.properties');
+
+      gradleWrapperPropertiesFile.writeAsStringSync('''
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
+''');
+
+      await runCapturingPrint(runner, <String>[
+        'update-dependency',
+        '--packages',
+        package.displayName,
+        '--android-dependency',
+        'gradle',
+        '--version',
+        newGradleVersion,
+      ]);
+
+      final String updatedGradleWrapperPropertiesContents =
+          gradleWrapperPropertiesFile.readAsStringSync();
+      expect(updatedGradleWrapperPropertiesContents.contains(newGradleVersion),
+          isTrue);
     });
   });
 }

@@ -127,8 +127,10 @@ ${response.httpResponse.body}
         printError('A version must be provided to update this dependency.');
         throw ToolExit(_exitNoTargetVersion);
       } else if (_targetAndroidDependency == 'gradle') {
-        final RegExp validGradleVersionPattern = RegExp(r'((?:\d|\.)+)');
-        if (!validGradleVersionPattern.hasMatch(version)) {
+        final RegExp validGradleVersionPattern = RegExp(r'(\d(\.\d){1,2})');
+        final bool isValidGradleVersion =
+            validGradleVersionPattern.stringMatch(version) == version;
+        if (!isValidGradleVersion) {
           printError(
               'A version with a valid format (maximum 2-3 numbers separated by period) must be provided.');
           throw ToolExit(_exitNoTargetVersion);
@@ -137,7 +139,7 @@ ${response.httpResponse.body}
         return;
       } else {
         printError(
-            'Target Android dependency $_androidDependency is unrecognized');
+            'Target Android dependency $_targetAndroidDependency is unrecognized.');
         throw ToolExit(_exitIncorrectTargetDependency);
       }
     }
@@ -230,8 +232,7 @@ ${response.httpResponse.body}
       final Iterable<RepositoryPackage> packageExamples = package.getExamples();
       for (final RepositoryPackage example in packageExamples) {
         if (!example.directory.childDirectory('android').existsSync()) {
-          // Example app does not run on Android.
-          return PackageResult.success();
+          return PackageResult.skip('Example app does not run on Android.');
         }
         File gradleWrapperPropertiesFile;
         if (example.directory
@@ -267,6 +268,7 @@ ${response.httpResponse.body}
         final String newGradleWrapperPropertiesContents =
             gradleWrapperPropertiesContents.replaceFirst(
                 validGradleDistributionUrl,
+                // ignore: unnecessary_string_escapes
                 'distributionUrl=https\://services.gradle.org/distributions/gradle-$_targetVersion-all.zip');
         gradleWrapperPropertiesFile
             .writeAsStringSync(newGradleWrapperPropertiesContents);
