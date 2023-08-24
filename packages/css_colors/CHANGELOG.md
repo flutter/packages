@@ -1,13 +1,9 @@
-## NEXT
+## 1.1.2
 
+- Updates the `Color` documentation link in the README.
 - Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 - Aligns Dart and Flutter SDK constraints.
 - Updates package description.
- 
-
-## 1.1.2
-
-- Update the Color class's official documentation URL
 
 ## 1.1.1
 
