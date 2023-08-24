@@ -58,6 +58,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     'flutter:',
     'dependencies:',
     'dev_dependencies:',
+    'topics:',
     'false_secrets:',
   ];
 
@@ -66,6 +67,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     'dependencies:',
     'dev_dependencies:',
     'flutter:',
+    'topics:',
     'false_secrets:',
   ];
 
@@ -216,6 +218,12 @@ class PubspecCheckCommand extends PackageLoopingCommand {
             '${indentation}A package should have an "issue_tracker" link to a '
             'search for open flutter/flutter bugs with the relevant label:\n'
             '${indentation * 2}$_expectedIssueLinkFormat<package label>');
+        passing = false;
+      }
+
+      if (!(pubspec.topics?.isNotEmpty ?? false)) {
+        printError('${indentation}A published package should include "topics". '
+            'See https://dart.dev/tools/pub/pubspec#topics.');
         passing = false;
       }
 
