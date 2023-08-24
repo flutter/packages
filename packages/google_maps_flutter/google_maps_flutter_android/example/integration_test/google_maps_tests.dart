@@ -936,26 +936,26 @@ void googleMapsTests() {
     final ExampleGoogleMapController controller =
         await controllerCompleter.future;
 
+    await tester.pumpAndSettle();
+
+    // TODO (mossmana): Adding this delay addresses 
+    // https://github.com/flutter/flutter/issues/131783. It may be related
+    // to https://github.com/flutter/flutter/issues/54758 and should be
+    // re-evaluated when that issue is fixed.
+    await Future<void>.delayed(const Duration(seconds: 1));
+
     bool iwVisibleStatus =
         await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
 
     await controller.showMarkerInfoWindow(marker.markerId);
-    // The Maps SDK doesn't always return true for whether it is shown
-    // immediately after showing it, so wait for it to report as shown.
-    iwVisibleStatus = await waitForValueMatchingPredicate<bool>(
-            tester,
-            () => controller.isMarkerInfoWindowShown(marker.markerId),
-            (bool visible) => visible) ??
-        false;
+    iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, true);
 
     await controller.hideMarkerInfoWindow(marker.markerId);
     iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
-  },
-      // TODO(camsim99): Fix https://github.com/flutter/flutter/issues/131783.
-      skip: true);
+  });
 
   testWidgets('fromAssetImage', (WidgetTester tester) async {
     const double pixelRatio = 2;
