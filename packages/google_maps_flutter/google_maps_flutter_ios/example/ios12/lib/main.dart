@@ -7,6 +7,7 @@ import 'package:maps_example_dart/animate_camera.dart';
 import 'package:maps_example_dart/lite_mode.dart';
 import 'package:maps_example_dart/map_click.dart';
 import 'package:maps_example_dart/map_coordinates.dart';
+import 'package:maps_example_dart/map_map_id.dart';
 import 'package:maps_example_dart/map_ui.dart';
 import 'package:maps_example_dart/maps_demo.dart';
 import 'package:maps_example_dart/marker_icons.dart';
@@ -39,5 +40,6 @@ void main() {
     SnapshotPage(),
     LiteModePage(),
     TileOverlayPage(),
+    MapIdPage(),
   ])));
 }
