@@ -1,5 +1,6 @@
-## NEXT
+## 2.4.1
 
+* Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 2.4.0
