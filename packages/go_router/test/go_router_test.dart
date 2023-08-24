@@ -317,15 +317,18 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
-          pageBuilder: (_, __) =>  const MaterialPage<Object>(child: HomeScreen()),
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: HomeScreen()),
         ),
         GoRoute(
           path: '/page1',
-          pageBuilder: (_, __) => const MaterialPage<Object>(child: Page1Screen()),
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page1Screen()),
         ),
         GoRoute(
           path: '/page2',
-          pageBuilder: (_, __) => const MaterialPage<Object>(child: Page2Screen()),
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page2Screen()),
         ),
       ];
       final GoRouter router =

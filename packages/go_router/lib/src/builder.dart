@@ -575,14 +575,16 @@ class _PagePopContext {
       _routeMatchesLookUp[page];
 
   void _addRouteMatchForPage(Page<Object?> page, RouteMatch match) {
-    _routeMatchesLookUp.putIfAbsent(page, () => <RouteMatch>[]).insert(0, match);
+    _routeMatchesLookUp
+        .putIfAbsent(page, () => <RouteMatch>[])
+        .insert(0, match);
   }
 
   /// Function used as [Navigator.onPopPage] callback when creating Navigators.
   ///
   /// This function forwards to [onPopPageWithRouteMatch], including the
   /// [RouteMatch] associated with the popped route.
-  /// 
+  ///
   /// This assumes always pop the last route match for the page.
   bool onPopPage(Route<dynamic> route, dynamic result) {
     final Page<Object?> page = route.settings as Page<Object?>;
