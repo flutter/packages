@@ -172,7 +172,7 @@ class RouteBuilder {
 
       // Every Page should have a corresponding RouteMatch.
       assert(keyToPage.values.flattened.every((Page<Object?> page) =>
-          pagePopContext.getRouteMatchForPage(page) != null));
+          pagePopContext.getRouteMatchesForPage(page) != null));
     }
 
     /// Clean up previous cache to prevent memory leak, making sure any nested
@@ -299,7 +299,7 @@ class RouteBuilder {
     }
     if (page != null) {
       registry[page] = state;
-      pagePopContext._setRouteMatchForPage(page, match);
+      pagePopContext._addRouteMatchForPage(page, match);
     }
   }
 
@@ -561,8 +561,8 @@ typedef _PageBuilderForAppType = Page<void> Function({
 class _PagePopContext {
   _PagePopContext._(this.onPopPageWithRouteMatch);
 
-  final Map<Page<dynamic>, RouteMatch> _routeMatchLookUp =
-      <Page<Object?>, RouteMatch>{};
+  final Map<Page<dynamic>, List<RouteMatch>> _routeMatchesLookUp =
+      <Page<Object?>, List<RouteMatch>>{};
 
   /// On pop page callback that includes the associated [RouteMatch].
   final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
@@ -571,18 +571,25 @@ class _PagePopContext {
   ///
   /// The [Page] must have been previously built via the [RouteBuilder] that
   /// created this [PagePopContext]; otherwise, this method returns null.
-  RouteMatch? getRouteMatchForPage(Page<Object?> page) =>
-      _routeMatchLookUp[page];
+  List<RouteMatch>? getRouteMatchesForPage(Page<Object?> page) =>
+      _routeMatchesLookUp[page];
 
-  void _setRouteMatchForPage(Page<Object?> page, RouteMatch match) =>
-      _routeMatchLookUp[page] = match;
+  void _addRouteMatchForPage(Page<Object?> page, RouteMatch match) {
+    _routeMatchesLookUp.putIfAbsent(page, () => <RouteMatch>[]).insert(0, match);
+  }
 
   /// Function used as [Navigator.onPopPage] callback when creating Navigators.
   ///
   /// This function forwards to [onPopPageWithRouteMatch], including the
   /// [RouteMatch] associated with the popped route.
+  /// 
+  /// This assumes always pop the last route match for the page.
   bool onPopPage(Route<dynamic> route, dynamic result) {
     final Page<Object?> page = route.settings as Page<Object?>;
-    return onPopPageWithRouteMatch(route, result, _routeMatchLookUp[page]);
+
+    final RouteMatch match = _routeMatchesLookUp[page]!.last;
+    _routeMatchesLookUp[page]!.removeLast();
+
+    return onPopPageWithRouteMatch(route, result, match);
   }
 }
