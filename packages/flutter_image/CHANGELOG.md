@@ -1,6 +1,7 @@
-## NEXT
+## 4.1.7
 
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Migrates deprecated `ImageProvider.load` to `ImageProvider.loadBuffer`.
 
 ## 4.1.6
 
