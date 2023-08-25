@@ -552,7 +552,9 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// button). However, this is generally not necessary as the web page will
   /// often show its own UI to close out of fullscreen. Regardless of how the
   /// WebView exits fullscreen mode, WebView will invoke [onHideCustomWidget],
-  /// signaling for the application to remove the custom widget.
+  /// signaling for the application to remove the custom widget. If this value
+  /// is not set a default handler will be set when the controller is passed to
+  /// an `AndroidWebViewWidget`.
   ///
   /// The [onHideCustomWidget] notifies the host application that the custom
   /// widget must be hidden. After this call, web content will render in the
@@ -875,6 +877,7 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
         );
       },
       onCreatePlatformView: (PlatformViewCreationParams params) {
+        _trySetDefaultOnShowCustomWidgetCallbacks(context);
         return _initAndroidView(
           params,
           displayWithHybridComposition:
@@ -889,6 +892,28 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
           ..create();
       },
     );
+  }
+
+  // Attempt to handle custom views with a default implementation if it has not
+  // been set.
+  void _trySetDefaultOnShowCustomWidgetCallbacks(BuildContext context) {
+    final AndroidWebViewController controller =
+        _androidParams.controller as AndroidWebViewController;
+
+    if (controller._onShowCustomWidgetCallback == null) {
+      controller.setCustomWidgetCallbacks(
+        onShowCustomWidget:
+            (Widget widget, OnHideCustomWidgetCallback callback) {
+          Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (BuildContext context) => widget,
+            fullscreenDialog: true,
+          ));
+        },
+        onHideCustomWidget: () {
+          Navigator.of(context).pop();
+        },
+      );
+    }
   }
 }
 
