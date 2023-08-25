@@ -6,6 +6,7 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
@@ -108,7 +109,8 @@ class MapIdBodyState extends State<MapIdBody> {
               'Press to use specified map Id',
             ),
           )),
-      if (Platform.isAndroid &&
+      if (!kIsWeb &&
+          Platform.isAndroid &&
           _initializedRenderer != AndroidMapRenderer.latest)
         Padding(
           padding: const EdgeInsets.all(10.0),

@@ -414,19 +414,18 @@ void runTests() {
       final Completer<int> mapIdCompleter = Completer<int>();
       final Key key = GlobalKey();
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: GoogleMap(
-            key: key,
-            initialCameraPosition: kInitialCameraPosition,
-            onMapCreated: (GoogleMapController controller) {
-              mapIdCompleter.complete(controller.mapId);
-            },
-            cloudMapId: kCloudMapId,
-          ),
+      await pumpMap(
+        tester,
+        GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            mapIdCompleter.complete(controller.mapId);
+          },
+          cloudMapId: kCloudMapId,
         ),
       );
+      await tester.pumpAndSettle();
 
       // Await mapIdCompleter to finish to make sure map can be created with cloudMapId
       await mapIdCompleter.future;
