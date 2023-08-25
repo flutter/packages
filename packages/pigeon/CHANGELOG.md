@@ -2,7 +2,8 @@
 
 * Adds primitive enum support.
 * Fixes Objective-C nullable enums.
-* **Breaking Change** Changes all nullable enums on Objective-C to be wrapped in custom classes.
+* **Breaking Change** Changes all nullable enums in Objective-C to be wrapped in custom classes.
+* **Breaking Change** Changes all enums names in Objective-C to have class prefix.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 10.1.6
