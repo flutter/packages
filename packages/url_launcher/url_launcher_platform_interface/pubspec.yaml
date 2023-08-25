@@ -21,6 +21,7 @@ dev_dependencies:
   mockito: 5.4.1
 
 topics:
+  - links
   - os-integration
   - url-launcher
   - urls

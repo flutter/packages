@@ -28,6 +28,7 @@ dev_dependencies:
     sdk: flutter
 
 topics:
+  - links
   - os-integration
   - url-launcher
   - urls

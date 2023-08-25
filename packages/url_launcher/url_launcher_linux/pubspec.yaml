@@ -27,6 +27,7 @@ dev_dependencies:
   test: ^1.16.3
 
 topics:
+  - links
   - os-integration
   - url-launcher
   - urls
