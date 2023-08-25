@@ -30,3 +30,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   pigeon: ^10.1.6
+
+topics:
+  - persistence
+  - shared-preferences
+  - storage

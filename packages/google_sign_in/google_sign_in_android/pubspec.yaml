@@ -31,6 +31,10 @@ dev_dependencies:
   mockito: 5.4.1
   pigeon: ^10.1.0
 
+topics:
+  - authentication
+  - google-sign-in
+
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/android/app/google-services.json

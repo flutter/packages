@@ -29,3 +29,6 @@ dev_dependencies:
   async: ^2.5.0
   flutter_test:
     sdk: flutter
+
+topics:
+  - camera

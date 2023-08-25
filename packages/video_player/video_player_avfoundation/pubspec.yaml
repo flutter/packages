@@ -25,3 +25,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   pigeon: ^9.2.4
+
+topics:
+  - video
+  - video-player

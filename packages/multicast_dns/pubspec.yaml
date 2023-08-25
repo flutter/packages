@@ -12,3 +12,8 @@ dependencies:
 
 dev_dependencies:
   test: "^1.16.5"
+
+topics:
+  - bonjour
+  - mdns
+  - network

@@ -9,3 +9,8 @@ environment:
 
 dev_dependencies:
   test: ^1.16.0
+
+topics:
+  - decode
+  - encode
+  - interop

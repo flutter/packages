@@ -23,3 +23,8 @@ dev_dependencies:
     sdk: flutter
   io: ^1.0.4
   path: ^1.8.2
+
+topics:
+  - deep-linking
+  - go-router
+  - navigation

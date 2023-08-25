@@ -26,3 +26,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   pigeon: ^9.2.3
+
+topics:
+  - persistence
+  - shared-preferences
+  - storage

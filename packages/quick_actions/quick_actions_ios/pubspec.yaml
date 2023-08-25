@@ -27,3 +27,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   plugin_platform_interface: ^2.1.2
+
+topics:
+  - quick-actions
+  - os-integration

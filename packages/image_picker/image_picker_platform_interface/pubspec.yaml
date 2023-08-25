@@ -20,3 +20,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+topics:
+  - image-picker
+  - files
+  - file-selection

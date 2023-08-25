@@ -40,3 +40,8 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+
+topics:
+  - persistence
+  - shared-preferences
+  - storage

@@ -21,3 +21,7 @@ dev_dependencies:
   fake_async: ^1.2.0
   mockito: 5.4.1
   test: ^1.17.11
+
+topics:
+  - ci
+  - metrics

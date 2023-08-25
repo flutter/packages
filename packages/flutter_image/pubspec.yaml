@@ -18,3 +18,7 @@ dev_dependencies:
     sdk: flutter
   quiver: ^3.0.0
   test: any
+
+topics:
+  - image
+  - network

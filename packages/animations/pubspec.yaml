@@ -17,6 +17,10 @@ dev_dependencies:
     sdk: flutter
   vector_math: ^2.1.0
 
+topics:
+  - animation
+  - ui
+
 screenshots:
   - description: 'Examples of the container transform pattern.'
     path: example/screenshots/container_transform_lineup.webp

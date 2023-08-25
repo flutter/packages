@@ -10,3 +10,6 @@ environment:
 dependencies:
   lints: ^2.0.0
   # Code is not allowed in this package. Do not add any dependencies or dev_dependencies.
+
+topics:
+  - lints

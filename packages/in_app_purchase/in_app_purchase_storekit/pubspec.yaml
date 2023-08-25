@@ -32,3 +32,7 @@ dev_dependencies:
     sdk: flutter
   json_serializable: ^6.0.0
   test: ^1.16.0
+
+topics:
+  - in-app-purchase
+  - payment

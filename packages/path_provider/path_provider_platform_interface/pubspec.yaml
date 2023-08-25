@@ -19,3 +19,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+topics:
+  - files
+  - path-provider
+  - paths

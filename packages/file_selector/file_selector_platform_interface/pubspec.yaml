@@ -21,3 +21,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test: ^1.16.3
+
+topics:
+  - files
+  - file-selection
+  - file-selector

@@ -13,3 +13,8 @@ flutter:
     - family: CupertinoIcons
       fonts:
         - asset: assets/CupertinoIcons.ttf
+
+topics:
+  - assets
+  - icons
+  - ui

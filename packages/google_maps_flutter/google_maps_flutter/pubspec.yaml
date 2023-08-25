@@ -32,6 +32,11 @@ dev_dependencies:
   plugin_platform_interface: ^2.0.0
   stream_transform: ^2.0.0
 
+topics:
+  - google-maps
+  - google-maps-flutter
+  - map
+
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/web/index.html

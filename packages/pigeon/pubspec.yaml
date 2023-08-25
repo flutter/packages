@@ -17,3 +17,8 @@ dependencies:
 
 dev_dependencies:
   test: ^1.11.1
+
+topics:
+  - codegen
+  - interop
+  - platform-channels

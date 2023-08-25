@@ -28,3 +28,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.1
+
+topics:
+  - html
+  - webview
+  - webview-flutter

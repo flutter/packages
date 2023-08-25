@@ -11,3 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+topics:
+  - color
+  - css
+  - ui

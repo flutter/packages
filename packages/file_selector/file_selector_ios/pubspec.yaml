@@ -27,3 +27,8 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.1
   pigeon: ^9.2.4
+
+topics:
+  - files
+  - file-selection
+  - file-selector
