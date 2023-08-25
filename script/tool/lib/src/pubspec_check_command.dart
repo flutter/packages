@@ -60,6 +60,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     'dependencies:',
     'dev_dependencies:',
     'topics:',
+    'screenshots:',
     'false_secrets:',
   ];
 
@@ -69,6 +70,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     'dev_dependencies:',
     'flutter:',
     'topics:',
+    'screenshots:',
     'false_secrets:',
   ];
 
