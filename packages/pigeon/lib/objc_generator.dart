@@ -141,7 +141,8 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     Enum anEnum, {
     required String dartPackageName,
   }) {
-    final String enumName = _className(generatorOptions.prefix, anEnum.name);
+    final String enumName =
+        _enumName(anEnum.name, prefix: generatorOptions.prefix);
     indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -159,13 +160,11 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     _writeEnumWrapper(indent, enumName);
   }
 
-  void _writeEnumWrapper(
-    Indent indent,
-    String enumName,
-  ) {
+  void _writeEnumWrapper(Indent indent, String enumName) {
     indent.newln();
     indent.writeln('/// Wrapper for $enumName to allow for nullability.');
-    indent.writeln('@interface ${_enumBoxer(enumName)} : NSObject');
+    indent.writeln(
+        '@interface ${_enumName(enumName, prefix: '', box: true)} : NSObject');
     indent.writeln('@property(nonatomic, assign) $enumName value;');
     indent.writeln('- (instancetype)initWithValue:($enumName)value;');
     indent.writeln('@end');
@@ -235,7 +234,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
           enums,
           (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
           customResolver: customEnumNames.contains(field.type.baseName)
-              ? (String x) => _className(prefix, x)
+              ? (String x) => _enumName(x, prefix: prefix)
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
       addDocumentationComments(
@@ -248,7 +247,10 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       }
       final String nullability = field.type.isNullable ? ', nullable' : '';
       final String fieldType = isEnum(root, field.type) && field.type.isNullable
-          ? _enumBoxer(hostDatatype.datatype, suffix: ' *')
+          ? _enumName(field.type.baseName,
+              suffix: ' *',
+              prefix: generatorOptions.prefix,
+              box: field.type.isNullable)
           : hostDatatype.datatype;
       indent.writeln(
           '@property(nonatomic, $propertyType$nullability) $fieldType ${field.name};');
@@ -358,17 +360,18 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       String? lastArgName;
       String? lastArgType;
       String? returnType;
+      final String enumReturnType = _enumName(
+        returnTypeName.baseName,
+        suffix: func.returnType.isNullable ? ' *_Nullable' : '',
+        prefix: generatorOptions.prefix,
+        box: func.returnType.isNullable,
+      );
       if (func.isAsynchronous) {
         returnType = 'void';
         lastArgName = 'completion';
         if (func.returnType.isVoid) {
           lastArgType = 'void (^)(FlutterError *_Nullable)';
         } else if (isEnum(root, func.returnType)) {
-          final String enumReturnType = func.returnType.isNullable
-              ? _enumBoxer(
-                  _className(generatorOptions.prefix, returnTypeName.baseName),
-                  suffix: ' *_Nullable')
-              : returnTypeName.baseName;
           lastArgType = 'void (^)($enumReturnType, FlutterError *_Nullable)';
         } else {
           lastArgType =
@@ -378,11 +381,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         if (func.returnType.isVoid) {
           returnType = 'void';
         } else if (isEnum(root, func.returnType)) {
-          returnType = func.returnType.isNullable
-              ? _enumBoxer(
-                  _className(generatorOptions.prefix, returnTypeName.baseName),
-                  suffix: ' *_Nullable')
-              : returnTypeName.baseName;
+          returnType = enumReturnType;
         } else {
           returnType = 'nullable ${returnTypeName.withPtr.trim()}';
         }
@@ -469,10 +468,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Enum anEnum, {
     required String dartPackageName,
   }) {
-    final String enumName = _className(generatorOptions.prefix, anEnum.name);
+    final String enumName =
+        _enumName(anEnum.name, prefix: generatorOptions.prefix);
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
-    indent.writeln('@implementation ${_enumBoxer(enumName)}');
+    indent.writeln(
+        '@implementation ${_enumName(enumName, prefix: '', box: true)}');
     indent.writeScoped('- (instancetype)initWithValue:($enumName)value {', '}',
         () {
       indent.writeln('self = [super init];');
@@ -592,7 +593,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             indent.writeln(
                 'NSNumber *${field.name}AsNumber = GetNullableObjectAtIndex(list, $index);');
             indent.writeln(
-                '${_enumBoxer(_className(generatorOptions.prefix, field.type.baseName), suffix: ' *')}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumBoxer(_className(generatorOptions.prefix, field.type.baseName))} alloc] initWithValue: [${field.name}AsNumber integerValue]];');
+                '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue: [${field.name}AsNumber integerValue]];');
             indent.writeln('$resultName.${field.name} = ${field.name};');
           } else {
             indent.writeln(
@@ -723,7 +724,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             indent.writeln(
                 'NSNumber *${argName}AsNumber = GetNullableObjectAtIndex(args, $count);');
             indent.writeln(
-                '${_enumBoxer(className, suffix: ' *')}$argName = ${argName}AsNumber == nil ? nil : [[${_enumBoxer(className)} alloc] initWithValue: [${argName}AsNumber integerValue]];');
+                '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue: [${argName}AsNumber integerValue]];');
           } else {
             indent.writeln(
                 '$className $argName = [GetNullableObjectAtIndex(args, $count) integerValue];');
@@ -765,7 +766,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         if (isEnum(root, func.returnType)) {
           if (func.returnType.isNullable) {
             returnTypeString =
-                '${_enumBoxer(_className(generatorOptions.prefix, returnType.baseName), suffix: ' *_Nullable')} enumValue';
+                '${_enumName(returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
           } else {
             returnTypeString = '${returnType.baseName} enumValue';
           }
@@ -801,7 +802,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         if (isEnum(root, func.returnType)) {
           if (func.returnType.isNullable) {
             indent.writeln(
-                '${_enumBoxer(_className(generatorOptions.prefix, func.returnType.baseName), suffix: ' *')} enumBox = $call;');
+                '${_enumName(func.returnType.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)} enumBox = $call;');
             indent.writeln(
                 'NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];');
           } else {
@@ -1113,7 +1114,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
               indent.writeln(
                   'NSNumber *outputAsNumber = reply == [NSNull null] ? nil : reply;');
               indent.writeln(
-                  '${_enumBoxer(returnType.baseName, suffix: ' *')}output = outputAsNumber == nil ? nil : [[${_enumBoxer(returnType.baseName)} alloc] initWithValue: [outputAsNumber integerValue]];');
+                  '${_enumName(returnType.baseName, suffix: ' *', prefix: languageOptions.prefix, box: true)}output = outputAsNumber == nil ? nil : [[${_enumName(returnType.baseName, prefix: languageOptions.prefix, box: true)} alloc] initWithValue: [outputAsNumber integerValue]];');
             } else {
               indent.writeln(
                   '${returnType.baseName} output = [reply integerValue];');
@@ -1159,8 +1160,8 @@ void _writeObjcSourceClassInitializerDeclaration(
           (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
           customResolver: customEnumNames.contains(field.type.baseName)
               ? (String x) => field.type.isNullable
-                  ? _enumBoxer(_className(prefix, x), suffix: ' *')
-                  : _className(prefix, x)
+                  ? _enumName(x, suffix: ' *', prefix: prefix, box: true)
+                  : _enumName(x, prefix: prefix)
               : (String x) => '${_className(prefix, x)} *');
       final String nullable = field.type.isNullable ? 'nullable ' : '';
       printer('$label:($nullable${hostDatatype.datatype})${field.name}');
@@ -1168,9 +1169,9 @@ void _writeObjcSourceClassInitializerDeclaration(
   });
 }
 
-String _enumBoxer(String name, {String suffix = ''}) {
-  return '${name}Box$suffix';
-}
+String _enumName(String name,
+        {required String? prefix, String suffix = '', bool box = false}) =>
+    '${prefix ?? ''}$name${box ? 'Box' : ''}$suffix';
 
 /// Calculates the ObjC class name, possibly prefixed.
 String _className(String? prefix, String className) {
@@ -1188,9 +1189,9 @@ String _callbackForType(
     return 'void (^)(FlutterError *_Nullable)';
   } else if (isEnum(root, type)) {
     if (type.isNullable) {
-      return 'void (^)(${_enumBoxer(_className(options.prefix, objcType.baseName), suffix: ' *_Nullable')}, FlutterError *_Nullable)';
+      return 'void (^)(${_enumName(objcType.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
     }
-    return 'void (^)(${objcType.baseName}, FlutterError *_Nullable)';
+    return 'void (^)(${_enumName(objcType.baseName, prefix: options.prefix)}, FlutterError *_Nullable)';
   } else {
     return 'void (^)(${objcType.withPtr}_Nullable, FlutterError *_Nullable)';
   }
@@ -1345,10 +1346,7 @@ String _makeObjcSignature({
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
       if (isEnum(arg.type)) {
-        final String enumName = _className(options.prefix, arg.type.baseName);
-        return arg.type.isNullable
-            ? 'nullable ${_enumBoxer(_className(options.prefix, enumName), suffix: ' *')}'
-            : enumName;
+        return '${arg.type.isNullable ? 'nullable ' : ''}${_enumName(arg.type.baseName, suffix: arg.type.isNullable ? ' *' : '', prefix: options.prefix, box: arg.type.isNullable)}';
       } else {
         final String nullable = arg.type.isNullable ? 'nullable ' : '';
         final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
