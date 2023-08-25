@@ -1353,7 +1353,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
                 'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &(${hostType.datatype})$valueVarName;');
           } else {
             indent.writeln(
-                'const std::optional<${hostType.datatype}> $argName = $encodableArgName.IsNull() ? std::optional<${hostType.datatype}>() : std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(${argName}_value));');
+                'const auto $argName = $encodableArgName.IsNull() ? std::nullopt : std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(${argName}_value));');
           }
         } else {
           indent.writeln(
