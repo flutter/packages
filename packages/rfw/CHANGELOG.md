@@ -1,3 +1,7 @@
+## 1.0.13
+
+* Adds pub topics to package metadata.
+
 ## 1.0.12
 
 * Improves web compatibility.
