@@ -158,7 +158,7 @@ encourage the community to build packages that implement
 
 Since the macOS implementation uses `file_selector`, you will need to
 add a filesystem access
-[entitlement][https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox]:
+[entitlement][3]:
 ```xml
   <key>com.apple.security.files.user-selected.read-only</key>
   <true/>
@@ -205,3 +205,4 @@ plugin's own `PickedFile` instances. The previous methods were supported through
 
 [1]: https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
 [2]: https://developer.android.com/guide/components/activities/tasks-and-back-stack
+[3]: https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox
