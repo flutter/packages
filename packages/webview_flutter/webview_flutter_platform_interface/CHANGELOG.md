@@ -1,6 +1,14 @@
-## 2.5.0
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.6.0
 
 * Adds support to track content offset changes. See `PlatformWebViewController.setOnContentOffsetChanged`.
+
+## 2.5.0
+
+* Adds support to retrieve the user agent. See `PlatformWebViewController.getUserAgent`.
 
 ## 2.4.0
 

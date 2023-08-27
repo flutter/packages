@@ -29,8 +29,8 @@
 }
 
 - (void)scrollViewDidScrollForDelegate:(FWFScrollViewDelegate *)instance
-                             uiScrollView:(UIScrollView *)scrollView
-                               completion:(void (^)(FlutterError *_Nullable))completion {
+                          uiScrollView:(UIScrollView *)scrollView
+                            completion:(void (^)(FlutterError *_Nullable))completion {
   [self scrollViewDidScrollWithIdentifier:@([self identifierForDelegate:instance])
                    uiScrollViewIdentifier:@([self.instanceManager
                                               identifierWithStrongReferenceForInstance:scrollView])
@@ -53,10 +53,10 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
   [self.scrollViewDelegateAPI scrollViewDidScrollForDelegate:self
-                                                   uiScrollView:scrollView
-                                                     completion:^(FlutterError *error) {
-                                                       NSAssert(!error, @"%@", error);
-                                                     }];
+                                                uiScrollView:scrollView
+                                                  completion:^(FlutterError *error) {
+                                                    NSAssert(!error, @"%@", error);
+                                                  }];
 }
 @end
 

@@ -271,7 +271,14 @@ abstract class PlatformWebViewController extends PlatformInterface {
     );
   }
 
-  /// Toggle the listener for content offset changes. Set to null to stop listening.
+  /// Gets the value used for the HTTP `User-Agent:` request header.
+  Future<String?> getUserAgent() {
+    throw UnimplementedError(
+      'getUserAgent is not implemented on the current platform',
+    );
+  }
+
+  /// Set the listener for content offset changes.
   Future<void> setOnContentOffsetChanged(
       void Function(ContentOffsetChange contentOffsetChange)? onOffsetChange) {
     throw UnimplementedError(

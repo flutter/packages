@@ -1,3 +1,12 @@
+## 0.10.8+7
+
+* Fixes video record crash on Android versions lower than 12.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.10.8+6
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.10.8+5
 
 * Provides a default exposure point if null.

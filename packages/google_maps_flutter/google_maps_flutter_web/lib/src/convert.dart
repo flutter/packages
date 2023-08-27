@@ -82,6 +82,8 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
   options.styles = styles;
 
+  options.mapId = configuration.cloudMapId;
+
   return options;
 }
 

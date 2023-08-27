@@ -43,7 +43,7 @@ void main() {
     test('', 'Expected symbol "{" but found <EOF> at line 1 column 0.');
     test('}', 'Expected symbol "{" but found } at line 1 column 1.');
     test('1', 'Expected symbol "{" but found 1 at line 1 column 1.');
-    test('1.0', 'Expected symbol "{" but found 1.0 at line 1 column 3.');
+    test('1.2', 'Expected symbol "{" but found 1.2 at line 1 column 3.');
     test('a', 'Expected symbol "{" but found a at line 1 column 1.');
     test('"a"', 'Expected symbol "{" but found "a" at line 1 column 3.');
     test('&', 'Unexpected character U+0026 ("&") at line 1 column 1.');

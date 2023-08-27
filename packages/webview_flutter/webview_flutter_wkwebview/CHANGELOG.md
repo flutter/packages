@@ -1,6 +1,14 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 3.8.0
 
 * Adds support for `setOnContentOffsetChanged` method to the `WebKitWebViewController`.
+
+## 3.7.3
+
+* Fixes bug where the `PlatformWebViewWidget` was rebuilt unnecessarily.
 
 ## 3.7.2
 
