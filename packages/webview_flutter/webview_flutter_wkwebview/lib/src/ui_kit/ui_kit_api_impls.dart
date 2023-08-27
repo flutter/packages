@@ -76,7 +76,7 @@ class UIScrollViewHostApiImpl extends UIScrollViewHostApi {
     );
   }
 
-  /// Calls [setContentOffset] with the ids of the provided object instances.
+  /// Calls [setDelegate] with the ids of the provided object instances.
   Future<void> setDelegateForInstances(
     UIScrollView instance,
     UIScrollViewDelegate? delegate,
@@ -146,9 +146,8 @@ class UIScrollViewDelegateFlutterApiImpl
         _getDelegate(identifier).scrollViewDidScroll;
     final UIScrollView? uiScrollView = instanceManager
         .getInstanceWithWeakReference(uiScrollViewIdentifier) as UIScrollView?;
-    if (uiScrollView != null && callback != null) {
-      callback.call(uiScrollView);
-    }
+    assert(uiScrollView != null && callback != null);
+    callback!.call(uiScrollView!);
   }
 }
 

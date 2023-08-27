@@ -33,7 +33,6 @@
                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   WKWebView *webView =
       (WKWebView *)[self.instanceManager instanceForIdentifier:webViewIdentifier.longValue];
-  NSLog(@"UISCRILLVI ID %@", identifier);
   [self.instanceManager addDartCreatedInstance:webView.scrollView
                                 withIdentifier:identifier.longValue];
 }
@@ -65,8 +64,6 @@
 - (void)setDelegateForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
                 uiScrollViewDelegateIdentifier:(NSNumber *)uiScrollViewDelegateIdentifier
                                          error:(FlutterError *_Nullable *_Nonnull)error {
-  NSLog(@"UISCRILL ID %@", identifier);
-  NSLog(@"UISCRILLDELEGATE ID %@", uiScrollViewDelegateIdentifier);
   [[self scrollViewForIdentifier:identifier]
       setDelegate:(FWFScrollViewDelegate *)[self.instanceManager
                       instanceForIdentifier:uiScrollViewDelegateIdentifier.longValue]];

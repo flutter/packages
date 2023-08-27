@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Implementation of WKUIScrollViewDelegate for FWFUIScrollViewDelegateHostApiImpl.
  */
 @interface FWFScrollViewDelegate : FWFObject <UIScrollViewDelegate>
-@property(readonly, nonnull, nonatomic) FWFScrollViewDelegateFlutterApiImpl *ScrollViewDelegateAPI;
+@property(readonly, nonnull, nonatomic) FWFScrollViewDelegateFlutterApiImpl *scrollViewDelegateAPI;
 
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;

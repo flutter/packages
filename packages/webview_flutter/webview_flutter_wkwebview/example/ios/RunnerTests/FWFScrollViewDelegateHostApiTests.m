@@ -66,7 +66,7 @@
   FWFScrollViewDelegateFlutterApiImpl *mockFlutterAPI =
       [self mockFlutterApiWithManager:instanceManager];
 
-  OCMStub([mockDelegate ScrollViewDelegateAPI]).andReturn(mockFlutterAPI);
+  OCMStub([mockDelegate scrollViewDelegateAPI]).andReturn(mockFlutterAPI);
   UIScrollView *scrollView = [[UIScrollView alloc] init];
 
   [instanceManager addDartCreatedInstance:scrollView withIdentifier:1];

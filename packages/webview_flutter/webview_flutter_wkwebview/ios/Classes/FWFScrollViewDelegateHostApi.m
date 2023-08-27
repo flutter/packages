@@ -28,12 +28,7 @@
   return [self.instanceManager identifierWithStrongReferenceForInstance:instance];
 }
 
-- (void)onCreateUIScrollViewForDelegate:(FWFScrollViewDelegate *)instance
-                           uiScrollView:(UIScrollView *)scrollView {
-  scrollView.delegate = instance;
-}
-
-- (void)_onScrollViewDidScrollForDelegate:(FWFScrollViewDelegate *)instance
+- (void)scrollViewDidScrollForDelegate:(FWFScrollViewDelegate *)instance
                              uiScrollView:(UIScrollView *)scrollView
                                completion:(void (^)(FlutterError *_Nullable))completion {
   [self scrollViewDidScrollWithIdentifier:@([self identifierForDelegate:instance])
@@ -49,7 +44,7 @@
                         instanceManager:(FWFInstanceManager *)instanceManager {
   self = [super initWithBinaryMessenger:binaryMessenger instanceManager:instanceManager];
   if (self) {
-    _ScrollViewDelegateAPI =
+    _scrollViewDelegateAPI =
         [[FWFScrollViewDelegateFlutterApiImpl alloc] initWithBinaryMessenger:binaryMessenger
                                                              instanceManager:instanceManager];
   }
@@ -57,7 +52,7 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-  [self.ScrollViewDelegateAPI _onScrollViewDidScrollForDelegate:self
+  [self.scrollViewDelegateAPI scrollViewDidScrollForDelegate:self
                                                    uiScrollView:scrollView
                                                      completion:^(FlutterError *error) {
                                                        NSAssert(!error, @"%@", error);
