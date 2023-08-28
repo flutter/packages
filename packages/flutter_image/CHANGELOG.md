@@ -1,3 +1,7 @@
+## 4.1.8
+
+* Adds example app
+ 
 ## 4.1.7
 
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.

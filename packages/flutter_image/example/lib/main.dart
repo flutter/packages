@@ -56,7 +56,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -97,7 +96,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           SizedBox(height: 16),
           Image(
-            image: NetworkImageWithRetry('https://docs.flutter.dev/assets/images/dash/Dashatars.png'),
+            image: NetworkImageWithRetry(
+                'https://docs.flutter.dev/assets/images/dash/Dashatars.png'),
           ),
         ],
       ),
