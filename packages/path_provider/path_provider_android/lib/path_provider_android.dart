@@ -81,14 +81,20 @@ class PathProviderAndroid extends PathProviderPlatform {
   Future<List<String>?> getExternalStoragePaths({
     StorageDirectory? type,
   }) async {
-    return (await _api.getExternalStoragePaths(_convertStorageDirectory(type)))
-        ?.cast<String>();
+    return _getExternalStoragePaths(type: type);
   }
 
   @override
   Future<String?> getDownloadsPath() async {
-    final List<String>? paths =
-        await getExternalStoragePaths(type: StorageDirectory.downloads);
-    return (paths != null && paths.isNotEmpty) ? paths.first : null;
+    final List<String> paths =
+        await _getExternalStoragePaths(type: StorageDirectory.downloads);
+    return paths.isNotEmpty ? paths.first : null;
+  }
+
+  Future<List<String>> _getExternalStoragePaths({
+    StorageDirectory? type,
+  }) async {
+    return (await _api.getExternalStoragePaths(_convertStorageDirectory(type)))
+        .cast<String>();
   }
 }

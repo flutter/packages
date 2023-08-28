@@ -17,7 +17,7 @@ const String kExternalCachePaths = 'externalCachePaths';
 const String kExternalStoragePaths = 'externalStoragePaths';
 const String kDownloadsPath = 'downloadsPath';
 
-enum ExternalStoragePathsValueState { isNull, isEmpty, isNotEmpty }
+enum ExternalStoragePathsValueState { isEmpty, isNotEmpty }
 
 class _Api implements TestPathProviderApi {
   _Api({
@@ -43,14 +43,12 @@ class _Api implements TestPathProviderApi {
   String? getExternalStoragePath() => kExternalStoragePaths;
 
   @override
-  List<String?>? getExternalStoragePaths(messages.StorageDirectory directory) {
+  List<String?> getExternalStoragePaths(messages.StorageDirectory directory) {
     switch (externalStoragePathsValueState) {
       case ExternalStoragePathsValueState.isNotEmpty:
         return <String?>[kExternalStoragePaths];
       case ExternalStoragePathsValueState.isEmpty:
         return <String?>[];
-      case ExternalStoragePathsValueState.isNull:
-        return null;
     }
   }
 
@@ -118,17 +116,6 @@ void main() {
     test('getDownloadsPath succeeds', () async {
       final String? path = await pathProvider.getDownloadsPath();
       expect(path, kExternalStoragePaths);
-    });
-
-    test(
-        'getDownloadsPath returns null, when getExternalStoragePaths returns '
-        'null', () async {
-      final PathProviderAndroid pathProvider = PathProviderAndroid();
-      TestPathProviderApi.setup(_Api(
-          externalStoragePathsValueState:
-              ExternalStoragePathsValueState.isNull));
-      final String? path = await pathProvider.getDownloadsPath();
-      expect(path, null);
     });
 
     test(
