@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '10.1.6';
+const String pigeonVersion = '11.0.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -176,6 +176,7 @@ class HostDatatype {
     required this.datatype,
     required this.isBuiltin,
     required this.isNullable,
+    required this.isEnum,
   });
 
   /// The [String] that can be printed into host code to represent the type.
@@ -186,6 +187,9 @@ class HostDatatype {
 
   /// `true` if the type corresponds to a nullable Dart datatype.
   final bool isNullable;
+
+  /// `true if the type is a custom enum.
+  final bool isEnum;
 }
 
 /// Calculates the [HostDatatype] for the provided [NamedType].
@@ -226,20 +230,32 @@ HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
           ? customResolver(type.baseName)
           : type.baseName;
       return HostDatatype(
-          datatype: customName, isBuiltin: false, isNullable: type.isNullable);
+        datatype: customName,
+        isBuiltin: false,
+        isNullable: type.isNullable,
+        isEnum: false,
+      );
     } else if (enums.map((Enum x) => x.name).contains(type.baseName)) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
       return HostDatatype(
-          datatype: customName, isBuiltin: false, isNullable: type.isNullable);
+        datatype: customName,
+        isBuiltin: false,
+        isNullable: type.isNullable,
+        isEnum: true,
+      );
     } else {
       throw Exception(
           'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"');
     }
   } else {
     return HostDatatype(
-        datatype: datatype, isBuiltin: true, isNullable: type.isNullable);
+      datatype: datatype,
+      isBuiltin: true,
+      isNullable: type.isNullable,
+      isEnum: false,
+    );
   }
 }
 
@@ -572,6 +588,15 @@ String? deducePackageName(String mainDartFile) {
   } catch (_) {
     return null;
   }
+}
+
+/// Enum to specify api type when generating code.
+enum ApiType {
+  /// Flutter api.
+  flutter,
+
+  /// Host api.
+  host,
 }
 
 /// Enum to specify which file will be generated for multi-file generators
