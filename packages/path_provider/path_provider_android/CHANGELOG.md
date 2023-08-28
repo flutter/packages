@@ -1,6 +1,6 @@
 ## 2.2.0
 
-* Adds implementation of getDownloadsDirectory.
+* Adds implementation of `getDownloadsDirectory()`.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 2.1.0

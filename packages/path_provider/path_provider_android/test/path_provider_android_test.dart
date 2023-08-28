@@ -120,7 +120,9 @@ void main() {
       expect(path, kExternalStoragePaths);
     });
 
-    test('getDownloadsPath fails with null', () async {
+    test(
+        'getDownloadsPath returns null, when getExternalStoragePaths returns '
+        'null', () async {
       final PathProviderAndroid pathProvider = PathProviderAndroid();
       TestPathProviderApi.setup(_Api(
           externalStoragePathsValueState:
@@ -129,7 +131,9 @@ void main() {
       expect(path, null);
     });
 
-    test('getDownloadsPath fails with empty', () async {
+    test(
+        'getDownloadsPath returns null, when getExternalStoragePaths returns '
+        'an empty list', () async {
       final PathProviderAndroid pathProvider = PathProviderAndroid();
       TestPathProviderApi.setup(_Api(
           externalStoragePathsValueState:
