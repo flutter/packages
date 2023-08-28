@@ -22,3 +22,4 @@ topics:
   - codegen
   - interop
   - platform-channels
+  - plugin-development
