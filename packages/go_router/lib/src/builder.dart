@@ -562,6 +562,8 @@ typedef _PageBuilderForAppType = Page<void> Function({
 class _PagePopContext {
   _PagePopContext._(this.onPopPageWithRouteMatch);
 
+  /// A page can be mapped to a RouteMatch list, such as a const page being
+  /// pushed multiple times.
   final Map<Page<dynamic>, List<RouteMatch>> _routeMatchesLookUp =
       <Page<Object?>, List<RouteMatch>>{};
 
