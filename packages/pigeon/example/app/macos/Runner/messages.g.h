@@ -18,6 +18,12 @@ typedef NS_ENUM(NSUInteger, PGNCode) {
   PGNCodeTwo = 1,
 };
 
+/// Wrapper for PGNCode to allow for nullability.
+@interface PGNCodeBox : NSObject
+@property(nonatomic, assign) PGNCode value;
+- (instancetype)initWithValue:(PGNCode)value;
+@end
+
 @class PGNMessageData;
 
 @interface PGNMessageData : NSObject
