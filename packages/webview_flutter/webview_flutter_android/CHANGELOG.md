@@ -1,6 +1,6 @@
 ## 3.13.0
 
-* Adds support for `PlatformNavigationDelegate.setOnReceiveHttpBasicAuthRequest`.
+* Adds support for `PlatformNavigationDelegate.setOnReceiveHttpAuthRequest`.
 
 ## 3.12.0
 

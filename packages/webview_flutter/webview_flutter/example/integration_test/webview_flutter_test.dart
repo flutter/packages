@@ -17,6 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 Future<void> main() async {
@@ -777,7 +778,7 @@ Future<void> main() async {
       unawaited(
         controller.setNavigationDelegate(
           NavigationDelegate(
-            onHttpBasicAuthRequest: (HttpBasicAuthRequest request) =>
+            onHttpAuthRequest: (HttpAuthRequest request) =>
                 authRequested.complete(),
           ),
         ),
@@ -798,8 +799,9 @@ Future<void> main() async {
       unawaited(
         controller.setNavigationDelegate(
           NavigationDelegate(
-            onHttpBasicAuthRequest: (HttpBasicAuthRequest request) =>
-                request.onProceed('user', 'pass'),
+            onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
+              const WebViewCredential(user: 'user', password: 'password'),
+            ),
             onPageFinished: (_) => pageFinished.complete(),
           ),
         ),

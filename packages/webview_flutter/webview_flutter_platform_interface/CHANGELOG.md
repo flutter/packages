@@ -1,6 +1,6 @@
 ## 2.7.0
 
-* Adds support for handling HTTP basic authentication requests. See `PlatformNavigationDelegate.setOnReceiveHttpBasicAuthRequest`.
+* Adds support for handling HTTP basic authentication requests. See `PlatformNavigationDelegate.setOnReceiveHttpAuthRequest`.
 
 ## 2.6.0
 

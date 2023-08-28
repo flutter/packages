@@ -6,7 +6,7 @@ library webview_flutter;
 
 export 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     show
-        HttpBasicAuthRequest,
+        HttpAuthRequest,
         JavaScriptConsoleMessage,
         JavaScriptLogLevel,
         JavaScriptMessage,

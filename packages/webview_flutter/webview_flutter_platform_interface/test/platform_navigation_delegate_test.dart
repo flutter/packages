@@ -151,8 +151,7 @@ void main() {
             const PlatformNavigationDelegateCreationParams());
 
     expect(
-      () => callbackDelegate
-          .setOnHttpBasicAuthRequest((HttpBasicAuthRequest request) {}),
+      () => callbackDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {}),
       throwsUnimplementedError,
     );
   });

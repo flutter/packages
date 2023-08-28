@@ -48,7 +48,7 @@ class NavigationDelegate {
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
     void Function(UrlChange change)? onUrlChange,
-    void Function(HttpBasicAuthRequest request)? onHttpBasicAuthRequest,
+    void Function(HttpAuthRequest request)? onHttpAuthRequest,
   }) : this.fromPlatformCreationParams(
           const PlatformNavigationDelegateCreationParams(),
           onNavigationRequest: onNavigationRequest,
@@ -57,7 +57,7 @@ class NavigationDelegate {
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
           onUrlChange: onUrlChange,
-          onHttpBasicAuthRequest: onHttpBasicAuthRequest,
+          onHttpAuthRequest: onHttpAuthRequest,
         );
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
@@ -100,7 +100,7 @@ class NavigationDelegate {
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
     void Function(UrlChange change)? onUrlChange,
-    void Function(HttpBasicAuthRequest request)? onHttpBasicAuthRequest,
+    void Function(HttpAuthRequest request)? onHttpAuthRequest,
   }) : this.fromPlatform(
           PlatformNavigationDelegate(params),
           onNavigationRequest: onNavigationRequest,
@@ -109,7 +109,7 @@ class NavigationDelegate {
           onProgress: onProgress,
           onWebResourceError: onWebResourceError,
           onUrlChange: onUrlChange,
-          onHttpBasicAuthRequest: onHttpBasicAuthRequest,
+          onHttpAuthRequest: onHttpAuthRequest,
         );
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
@@ -123,7 +123,7 @@ class NavigationDelegate {
     this.onProgress,
     this.onWebResourceError,
     void Function(UrlChange change)? onUrlChange,
-    this.onHttpBasicAuthRequest,
+    this.onHttpAuthRequest,
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
@@ -143,8 +143,8 @@ class NavigationDelegate {
     if (onUrlChange != null) {
       platform.setOnUrlChange(onUrlChange);
     }
-    if (onHttpBasicAuthRequest != null) {
-      platform.setOnHttpBasicAuthRequest(onHttpBasicAuthRequest!);
+    if (onHttpAuthRequest != null) {
+      platform.setOnHttpAuthRequest(onHttpAuthRequest!);
     }
   }
 
@@ -175,6 +175,6 @@ class NavigationDelegate {
   /// Invoked when a resource loading error occurred.
   final WebResourceErrorCallback? onWebResourceError;
 
-  /// Invoked when a resource required HTTP basic authentication.
-  final HttpAuthRequestCallback? onHttpBasicAuthRequest;
+  /// Invoked when a resource required HTTP authentication.
+  final HttpAuthRequestCallback? onHttpAuthRequest;
 }

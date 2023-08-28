@@ -1274,11 +1274,11 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         String host,
         String realm,
       ) {
-        final void Function(HttpBasicAuthRequest)? callback =
+        final void Function(HttpAuthRequest)? callback =
             weakThis.target?._onHttpAuthRequest;
         if (callback != null) {
           callback(
-            HttpBasicAuthRequest(
+            HttpAuthRequest(
               onProceed: httpAuthHandler.proceed,
               onCancel: httpAuthHandler.cancel,
               host: host,
@@ -1432,7 +1432,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   }
 
   @override
-  Future<void> setOnHttpBasicAuthRequest(
+  Future<void> setOnHttpAuthRequest(
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;

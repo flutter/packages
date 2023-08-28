@@ -32,7 +32,7 @@ typedef UrlChangeCallback = void Function(UrlChange change);
 
 /// Signature for callbacks that notify the host application of an
 /// authentication request.
-typedef HttpAuthRequestCallback = void Function(HttpBasicAuthRequest request);
+typedef HttpAuthRequestCallback = void Function(HttpAuthRequest request);
 
 /// An interface defining navigation events that occur on the native platform.
 ///
@@ -138,10 +138,9 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
   }
 
   /// Invoked when the web view is requesting authentication.
-  Future<void> setOnHttpBasicAuthRequest(
-      HttpAuthRequestCallback onHttpAuthRequest) {
+  Future<void> setOnHttpAuthRequest(HttpAuthRequestCallback onHttpAuthRequest) {
     throw UnimplementedError(
-      'setOnHttpBasicAuthRequest is not implemented on the current platform.',
+      'setOnHttpAuthRequest is not implemented on the current platform.',
     );
   }
 }

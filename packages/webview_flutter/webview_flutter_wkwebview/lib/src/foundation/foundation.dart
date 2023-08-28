@@ -477,9 +477,20 @@ class NSUrlProtectionSpace extends NSObject {
   }
 }
 
-/// Use HTTP basic authentication for this protection space.
-const String urlAuthenticationMethodHTTPBasic =
-    'NSURLAuthenticationMethodHTTPBasic';
+/// The authentication method used by the receiver.
+class NSUrlAuthenticationMethod {
+  /// Use the default authentication method for a protocol.
+  static const String default_ = 'NSURLAuthenticationMethodDefault';
+
+  /// Use HTML form authentication for this protection space.
+  static const String htmlForm = 'NSURLAuthenticationMethodHTMLForm';
+
+  /// Use HTTP basic authentication for this protection space.
+  static const String httpBasic = 'NSURLAuthenticationMethodHTTPBasic';
+
+  /// Use HTTP digest authentication for this protection space.
+  static const String httpDigest = 'NSURLAuthenticationMethodHTTPDigest';
+}
 
 /// A challenge from a server requiring authentication from the client.
 ///
