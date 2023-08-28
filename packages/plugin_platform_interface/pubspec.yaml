@@ -29,4 +29,4 @@ dev_dependencies:
 
 topics:
   - federation
-  - plugins
+  - plugin-development
