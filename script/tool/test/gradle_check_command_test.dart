@@ -96,7 +96,7 @@ apply plugin: 'com.android.library'
 ${includeLanguageVersion ? javaSection : ''}
 android {
 ${includeNamespace ? namespace : ''}
-    compileSdkVersion 34
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 30
