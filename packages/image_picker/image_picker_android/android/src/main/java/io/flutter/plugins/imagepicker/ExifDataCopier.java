@@ -15,6 +15,7 @@ class ExifDataCopier {
       ExifInterface oldExif = new ExifInterface(filePathOri);
       ExifInterface newExif = new ExifInterface(filePathDest);
 
+      @SuppressWarnings("deprecation")
       List<String> attributes =
           Arrays.asList(
               ExifInterface.TAG_IMAGE_DESCRIPTION,
