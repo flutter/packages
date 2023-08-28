@@ -474,8 +474,7 @@ void main() {
 
       String? callbackHost;
       String? callbackRealm;
-      androidNavigationDelegate
-          .setOnHttpBasicAuthRequest((HttpBasicAuthRequest request) {
+      androidNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
         callbackHost = request.host;
         callbackRealm = request.realm;
       });

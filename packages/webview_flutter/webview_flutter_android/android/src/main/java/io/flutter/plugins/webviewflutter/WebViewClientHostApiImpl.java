@@ -186,7 +186,7 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
       flutterApi.doUpdateVisitedHistory(this, view, url, isReload, reply -> {});
     }
 
-    // Handles an HTTP Basic Authentication request.
+    // Handles an HTTP authentication request.
     //
     // This callback is invoked when the WebView encounters a website requiring HTTP authentication.
     // [host] and [realm] are provided for matching against stored credentials, if any.

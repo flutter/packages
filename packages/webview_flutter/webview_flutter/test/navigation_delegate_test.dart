@@ -88,17 +88,16 @@ void main() {
       verify(delegate.platform.setOnUrlChange(onUrlChange));
     });
 
-    test('onHttpBasicAuthRequest', () {
+    test('onHttpAuthRequest', () {
       WebViewPlatform.instance = TestWebViewPlatform();
 
-      void onHttpBasicAuthRequest(HttpBasicAuthRequest request) {}
+      void onHttpAuthRequest(HttpAuthRequest request) {}
 
       final NavigationDelegate delegate = NavigationDelegate(
-        onHttpBasicAuthRequest: onHttpBasicAuthRequest,
+        onHttpAuthRequest: onHttpAuthRequest,
       );
 
-      verify(
-          delegate.platform.setOnHttpBasicAuthRequest(onHttpBasicAuthRequest));
+      verify(delegate.platform.setOnHttpAuthRequest(onHttpAuthRequest));
     });
   });
 }

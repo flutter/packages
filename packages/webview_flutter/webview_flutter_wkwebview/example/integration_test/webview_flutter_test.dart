@@ -1148,8 +1148,8 @@ Future<void> main() async {
         PlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
     );
-    await navigationDelegate.setOnHttpBasicAuthRequest(
-        (HttpBasicAuthRequest request) => authRequested.complete());
+    await navigationDelegate.setOnHttpAuthRequest(
+        (HttpAuthRequest request) => authRequested.complete());
     await controller.setPlatformNavigationDelegate(navigationDelegate);
 
     // Clear cache so that the auth request is always received and we don't get
@@ -1185,8 +1185,10 @@ Future<void> main() async {
       const PlatformNavigationDelegateCreationParams(),
     );
     await navigationDelegate.setOnPageFinished((_) => pageFinished.complete());
-    await navigationDelegate.setOnHttpBasicAuthRequest(
-      (HttpBasicAuthRequest request) => request.onProceed('user', 'pass'),
+    await navigationDelegate.setOnHttpAuthRequest(
+      (HttpAuthRequest request) => request.onProceed(
+        const WebViewCredential(user: 'user', password: 'password'),
+      ),
     );
     await controller.setPlatformNavigationDelegate(navigationDelegate);
 

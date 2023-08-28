@@ -957,21 +957,21 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         ) completionHandler,
       ) {
         if (challenge.protectionSpace.authenticationMethod ==
-            urlAuthenticationMethodHTTPBasic) {
-          final void Function(HttpBasicAuthRequest)? callback =
+            NSUrlAuthenticationMethod.httpBasic) {
+          final void Function(HttpAuthRequest)? callback =
               weakThis.target?._onHttpAuthRequest;
           final String? host = challenge.protectionSpace.host;
           final String? realm = challenge.protectionSpace.realm;
 
           if (callback != null && host != null && realm != null) {
             callback(
-              HttpBasicAuthRequest(
-                onProceed: (String username, String password) {
+              HttpAuthRequest(
+                onProceed: (WebViewCredential credential) {
                   return completionHandler(
                     NSUrlSessionAuthChallengeDisposition.useCredential,
                     NSUrlCredential.withUser(
-                      user: username,
-                      password: password,
+                      user: credential.user,
+                      password: credential.password,
                       persistence: NSUrlCredentialPersistence.session,
                     ),
                   );
@@ -1045,7 +1045,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   }
 
   @override
-  Future<void> setOnHttpBasicAuthRequest(
+  Future<void> setOnHttpAuthRequest(
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;

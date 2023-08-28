@@ -162,9 +162,9 @@ Page resource error:
           ..setOnUrlChange((UrlChange change) {
             debugPrint('url change to ${change.url}');
           })
-          ..setOnHttpBasicAuthRequest((HttpBasicAuthRequest request) {
+          ..setOnHttpAuthRequest((HttpAuthRequest request) {
             debugPrint(
-                'HTTP basic auth request with host ${request.host} and realm ${request.realm}');
+                'HTTP basic auth request with host ${request.host} and realm ${request.realm ?? '-'}');
             openDialog(request);
           }),
       )
@@ -227,7 +227,7 @@ Page resource error:
     );
   }
 
-  Future<void> openDialog(HttpBasicAuthRequest httpRequest) async {
+  Future<void> openDialog(HttpAuthRequest httpRequest) async {
     final TextEditingController usernameTextController =
         TextEditingController();
     final TextEditingController passwordTextController =
@@ -237,7 +237,7 @@ Page resource error:
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('${httpRequest.host}: ${httpRequest.realm}'),
+          title: Text('${httpRequest.host}: ${httpRequest.realm ?? '-'}'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -256,8 +256,10 @@ Page resource error:
             TextButton(
               onPressed: () {
                 httpRequest.onProceed(
-                  usernameTextController.text,
-                  passwordTextController.text,
+                  WebViewCredential(
+                    user: usernameTextController.text,
+                    password: passwordTextController.text,
+                  ),
                 );
                 Navigator.of(context).pop();
               },

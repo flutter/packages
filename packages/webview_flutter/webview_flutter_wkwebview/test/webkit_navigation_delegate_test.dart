@@ -229,8 +229,7 @@ void main() {
       String? callbackHost;
       String? callbackRealm;
 
-      iosNavigationDelegate
-          .setOnHttpBasicAuthRequest((HttpBasicAuthRequest request) {
+      iosNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
         callbackHost = request.host;
         callbackRealm = request.realm;
       });
@@ -245,7 +244,7 @@ void main() {
             protectionSpace: NSUrlProtectionSpace.detached(
               host: expectedHost,
               realm: expectedRealm,
-              authenticationMethod: urlAuthenticationMethodHTTPBasic,
+              authenticationMethod: NSUrlAuthenticationMethod.httpBasic,
             ),
           ),
           (NSUrlSessionAuthChallengeDisposition disposition,
