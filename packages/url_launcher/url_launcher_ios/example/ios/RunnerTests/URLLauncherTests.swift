@@ -7,7 +7,7 @@ import XCTest
 
 @testable import url_launcher_ios
 
-class URLLauncherTests: XCTestCase {
+final private class URLLauncherTests: XCTestCase {
   var plugin: URLLauncherPlugin!
   var launcher: FakeLauncher!
 
@@ -116,7 +116,7 @@ class URLLauncherTests: XCTestCase {
 
 }
 
-class FakeLauncher: Launcher {
+final fileprivate class FakeLauncher: Launcher {
   var passedOptions: [UIApplication.OpenExternalURLOptionsKey: Any]?
 
   func canOpenURL(_ url: URL) -> Bool {
@@ -132,7 +132,7 @@ class FakeLauncher: Launcher {
   }
 }
 
-class FakeFlutterBinaryMessenger: NSObject, FlutterBinaryMessenger {
+final fileprivate class FakeFlutterBinaryMessenger: NSObject, FlutterBinaryMessenger {
   func send(onChannel channel: String, message: Data?) {}
 
   func send(
