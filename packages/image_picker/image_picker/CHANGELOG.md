@@ -1,5 +1,6 @@
-## NEXT
+## 1.0.3
 
+* Updates README to fix broken link.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 1.0.2
