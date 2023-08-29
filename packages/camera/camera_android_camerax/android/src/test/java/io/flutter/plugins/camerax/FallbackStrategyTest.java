@@ -72,10 +72,7 @@ public class FallbackStrategyTest {
               convertedQuality = Quality.HIGHEST;
               break;
             default:
-              fail(
-                  "The VideoQuality "
-                      + videoQuality.toString()
-                      + "is unhandled by this test.");
+              fail("The VideoQuality " + videoQuality.toString() + "is unhandled by this test.");
           }
           // Set Quality as final local variable to avoid error about using non-final (or effecitvely final) local variables in lambda expressions.
           final Quality expectedQuality = convertedQuality;

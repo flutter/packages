@@ -49,9 +49,8 @@ public class QualitySelectorTest {
   @Test
   public void hostApiCreate_createsExpectedQualitySelectorWhenOneQualitySpecified() {
     final VideoQualityData expectedVideoQualityData =
-         new VideoQualityData.Builder().setQuality(VideoQuality.UHD).build();
-    final List<VideoQualityData> videoQualityDataList =
-        Arrays.asList(expectedVideoQualityData);
+        new VideoQualityData.Builder().setQuality(VideoQuality.UHD).build();
+    final List<VideoQualityData> videoQualityDataList = Arrays.asList(expectedVideoQualityData);
     final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
     final long fallbackStrategyIdentifier = 9;
     final QualitySelectorHostApiImpl hostApi = new QualitySelectorHostApiImpl(instanceManager);
@@ -89,11 +88,9 @@ public class QualitySelectorTest {
   public void hostApiCreate_createsExpectedQualitySelectorWhenOrderedListOfQualitiesSpecified() {
     final List<VideoQualityData> videoQualityDataList =
         Arrays.asList(
-          new VideoQualityData.Builder().setQuality(VideoQuality.UHD).build(),
-          new VideoQualityData.Builder().setQuality(VideoQuality.HIGHEST).build()
-            );
-    final List<Quality> expectedVideoQualityList =
-        Arrays.asList(Quality.UHD, Quality.HIGHEST);
+            new VideoQualityData.Builder().setQuality(VideoQuality.UHD).build(),
+            new VideoQualityData.Builder().setQuality(VideoQuality.HIGHEST).build());
+    final List<Quality> expectedVideoQualityList = Arrays.asList(Quality.UHD, Quality.HIGHEST);
     final FallbackStrategy mockFallbackStrategy = mock(FallbackStrategy.class);
     final long fallbackStrategyIdentifier = 9;
     final QualitySelectorHostApiImpl hostApi = new QualitySelectorHostApiImpl(instanceManager);
@@ -107,9 +104,7 @@ public class QualitySelectorTest {
               (Answer<QualitySelector>) invocation -> mockQualitySelectorWithoutFallbackStrategy);
       mockedQualitySelector
           .when(
-              () ->
-                  QualitySelector.fromOrderedList(
-                      expectedVideoQualityList, mockFallbackStrategy))
+              () -> QualitySelector.fromOrderedList(expectedVideoQualityList, mockFallbackStrategy))
           .thenAnswer(
               (Answer<QualitySelector>) invocation -> mockQualitySelectorWithFallbackStrategy);
 
@@ -145,8 +140,7 @@ public class QualitySelectorTest {
           .when(() -> QualitySelector.getResolution(mockCameraInfo, Quality.FHD))
           .thenAnswer((Answer<Size>) invocation -> sizeResult);
 
-      final ResolutionInfo result =
-          hostApi.getResolution(cameraInfoIdentifier, videoQuality);
+      final ResolutionInfo result = hostApi.getResolution(cameraInfoIdentifier, videoQuality);
 
       assertEquals(result.getWidth(), Long.valueOf(sizeResult.getWidth()));
       assertEquals(result.getHeight(), Long.valueOf(sizeResult.getHeight()));

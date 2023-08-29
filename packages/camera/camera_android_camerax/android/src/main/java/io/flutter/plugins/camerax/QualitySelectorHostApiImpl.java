@@ -11,10 +11,10 @@ import androidx.annotation.VisibleForTesting;
 import androidx.camera.video.FallbackStrategy;
 import androidx.camera.video.Quality;
 import androidx.camera.video.QualitySelector;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQuality;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityData;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.QualitySelectorHostApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQuality;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -120,8 +120,7 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
    * Converts the specified {@link VideoQuality to a {@link Quality} that is understood
    * by CameraX.
    */
-  public static @NonNull Quality getQualityFromVideoQuality(
-      @NonNull VideoQuality videoQuality) {
+  public static @NonNull Quality getQualityFromVideoQuality(@NonNull VideoQuality videoQuality) {
     switch (videoQuality) {
       case SD:
         return Quality.SD;
@@ -137,8 +136,6 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
         return Quality.HIGHEST;
     }
     throw new IllegalArgumentException(
-        "VideoQuality "
-            + videoQuality
-            + " is unhandled by QualitySelectorHostApiImpl.");
+        "VideoQuality " + videoQuality + " is unhandled by QualitySelectorHostApiImpl.");
   }
 }

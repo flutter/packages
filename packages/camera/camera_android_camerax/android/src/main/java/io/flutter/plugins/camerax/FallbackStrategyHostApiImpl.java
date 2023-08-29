@@ -28,10 +28,8 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
   public static class FallbackStrategyProxy {
     /** Creates an instance of {@link FallbackStrategy}. */
     public @NonNull FallbackStrategy create(
-        @NonNull VideoQuality videoQuality,
-        @NonNull VideoResolutionFallbackRule fallbackRule) {
-      Quality quality =
-          QualitySelectorHostApiImpl.getQualityFromVideoQuality(videoQuality);
+        @NonNull VideoQuality videoQuality, @NonNull VideoResolutionFallbackRule fallbackRule) {
+      Quality quality = QualitySelectorHostApiImpl.getQualityFromVideoQuality(videoQuality);
 
       switch (fallbackRule) {
         case HIGHER_QUALITY_OR_LOWER_THAN:
@@ -77,7 +75,6 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
       @NonNull Long identifier,
       @NonNull VideoQuality videoQuality,
       @NonNull VideoResolutionFallbackRule fallbackRule) {
-    instanceManager.addDartCreatedInstance(
-        proxy.create(videoQuality, fallbackRule), identifier);
+    instanceManager.addDartCreatedInstance(proxy.create(videoQuality, fallbackRule), identifier);
   }
 }

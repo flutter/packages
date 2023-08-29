@@ -435,8 +435,7 @@ void main() {
               quality: expectedVideoQuality,
               fallbackRule: expectedFallbackRule);
 
-      expect(camera.recorder!.qualitySelector!.qualityList.length,
-          equals(1));
+      expect(camera.recorder!.qualitySelector!.qualityList.length, equals(1));
       expect(camera.recorder!.qualitySelector!.qualityList.first.quality,
           equals(expectedVideoQuality));
       expect(camera.recorder!.qualitySelector!.fallbackStrategy!.quality,
