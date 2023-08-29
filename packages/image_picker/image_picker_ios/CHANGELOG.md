@@ -1,3 +1,7 @@
+## 0.8.8+2
+
+* Adds pub topics to package metadata.
+
 ## 0.8.8+1
 
 * Fixes exception when canceling pickMultipleMedia.
