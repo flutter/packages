@@ -1,3 +1,7 @@
+## 1.0.13
+
+* Block comments in RFW's text format. (`/*...*/`)
+
 ## 1.0.12
 
 * Improves web compatibility.
