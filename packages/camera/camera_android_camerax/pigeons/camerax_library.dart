@@ -102,13 +102,55 @@ class ExposureCompensationRange {
 /// These are pre-defined quality constants that are universally used for video.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/Quality.
-enum VideoQualityConstraint {
-  SD, // 480p
-  HD, // 720p
-  FHD, // 1080p
-  UHD, // 2160p
-  lowest,
-  highest,
+// enum VideoQualityConstraint {
+//   SD, // 480p
+//   HD, // 720p
+//   FHD, // 1080p
+//   UHD, // 2160p
+//   lowest,
+//   highest,
+// }
+
+/// Video quality constraints that will be used by a QualitySelector to choose
+/// an appropriate video resolution.
+///
+/// These are pre-defined quality constants that are universally used for video.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/Quality.
+class VideoQualityConstraint {
+  VideoQualityConstraint({required this.quality});
+
+  int quality;
+
+  /// Lowest avaialble video quality.
+  ///
+  /// Maps to hhttps://developer.android.com/reference/android/media/CamcorderProfile#QUALITY_LOW.
+  static const int lowest = 0;
+
+  /// 480p video quality.
+  ///
+  /// Maps to https://developer.android.com/reference/android/media/CamcorderProfile#QUALITY_480P.
+  static const int SD = 4;
+
+  /// 720p video quality.
+  ///
+  /// Maps to https://developer.android.com/reference/android/media/CamcorderProfile#QUALITY_720P.
+  static const int HD = 5;
+
+  /// 1080p video quality.
+  ///
+  /// Maps to https://developer.android.com/reference/android/media/CamcorderProfile#QUALITY_1080P.
+  static const int FHD = 6;
+
+  /// 2160p video quality.
+  ///
+  /// Maps to https://developer.android.com/reference/android/media/CamcorderProfile#QUALITY_2160P.
+  static const int UHD = 8;
+
+  /// Highest available video quality.
+  ///
+  /// Maps to https://developer.android.com/reference/android/media/CamcorderProfile#QUALITY_HIGH.
+  static const int highest = 1;
 }
 
 /// Fallback rules for selecting video resolution.
