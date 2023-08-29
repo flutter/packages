@@ -1,5 +1,13 @@
-## NEXT
+## 11.0.1
 
+* Adds pub topics to package metadata.
+
+## 11.0.0
+
+* Adds primitive enum support.
+* Fixes Objective-C nullable enums.
+* **Breaking Change** Changes all nullable enums in Objective-C to be wrapped in custom classes.
+* **Breaking Change** Changes all enums names in Objective-C to have class prefix.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 10.1.6
@@ -21,7 +29,7 @@
 
 ## 10.1.2
 
-* [swift] Fixes a crash when passing `null` for nested nullable classes. 
+* [swift] Fixes a crash when passing `null` for nested nullable classes.
 
 ## 10.1.1
 
@@ -38,10 +46,10 @@
 ## 10.0.0
 
 * [swift] Avoids using `Any` to represent `Optional` in Swift.
-* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be 
+* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be
   translated into `[Any?]` (rather than `[Any]`) in Swift.
-* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be 
-  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`) in Swift. 
+* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be
+  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`) in Swift.
 * Adds an example application that uses Pigeon directly, rather than in a plugin.
 
 ## 9.2.5
@@ -91,7 +99,7 @@
 ## 9.1.1
 
 * [swift] Removes experimental tags.
-* [kotin] Removes experimental tags.
+* [kotlin] Removes experimental tags.
 
 ## 9.1.0
 
