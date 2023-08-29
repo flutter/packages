@@ -1,9 +1,14 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_image/network.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
 ///
 class MyApp extends StatelessWidget {
   /// Entry point of your app
@@ -37,6 +42,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 /// This is a stateful widget
 class MyHomePage extends StatefulWidget {
   ///Entry point of stateful widget
