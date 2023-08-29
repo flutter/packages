@@ -981,6 +981,13 @@ update `test_coverage/bin/test_coverage.dart` with the appropriate
 expectations to prevent future coverage regressions. (That program is
 run by `run_tests.sh`.)
 
+To run the tests, use `flutter test`.
+
+To run the web tests, use `flutter test --platform=chrome`. If there
+is code that only runs on the web target, mark each such line by
+ending it with the string `// dead code on VM target`. This will
+exclude that line from the coverage calculation.
+
 Golden tests are only run against the Flutter master channel and only
 run on Linux, since minor rendering differences are expected on
 different platforms and on different versions of Flutter.
