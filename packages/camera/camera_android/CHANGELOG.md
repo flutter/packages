@@ -1,3 +1,7 @@
+## 0.10.8+8
+
+* Updates compileSdkVersion to 34.
+
 ## 0.10.8+7
 
 * Fixes video record crash on Android versions lower than 12.
