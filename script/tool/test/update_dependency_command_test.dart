@@ -83,8 +83,26 @@ dev_dependencies:
     );
   });
 
-  // TODO(camsim99): Add test case
-  test('throws if multiple dependency specified', () async {});
+  test('throws if multiple dependencies specified', () async {
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'update-dependency',
+      '--pub-package',
+      'target_package',
+      '--android-dependency',
+      'androidDependency'
+    ], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Exactly one of the target flags must be provided:'),
+      ]),
+    );
+  });
 
   group('pub dependencies', () {
     test('throws if no version is given for an unpublished target', () async {
