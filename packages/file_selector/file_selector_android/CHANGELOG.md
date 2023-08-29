@@ -1,3 +1,7 @@
+## 0.5.0+4
+
+* Updates compileSdkVersion to 34.
+
 ## 0.5.0+3
 
 * Adds pub topics to package metadata.

@@ -1,3 +1,7 @@
+## 2.5.2
+
+* Updates plugin and example compileSdkVersions to 34.
+
 ## 2.5.1
 
 * Adds pub topics to package metadata.

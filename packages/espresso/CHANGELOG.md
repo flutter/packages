@@ -1,3 +1,7 @@
+## 0.3.0+7
+
+* Updates Android compileSdkVersion to 34.
+
 ## 0.3.0+6
 
 * Adds pub topics to package metadata.

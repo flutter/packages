@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates `alternate_language_test_plugin` and `test_plugin` Android compileSdkVersions to 34.
+ 
 ## 11.0.1
 
 * Adds pub topics to package metadata.
