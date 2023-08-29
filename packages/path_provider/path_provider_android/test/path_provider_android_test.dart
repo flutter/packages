@@ -39,11 +39,7 @@ class _Api implements TestPathProviderApi {
 
   @override
   List<String?> getExternalStoragePaths(messages.StorageDirectory directory) {
-    if (returnsExternalStoragePaths) {
-      return <String?>[kExternalStoragePaths];
-    } else {
-      return <String?>[];
-    }
+    return <String?>[if (returnsExternalStoragePaths) kExternalStoragePaths];
   }
 
   @override
