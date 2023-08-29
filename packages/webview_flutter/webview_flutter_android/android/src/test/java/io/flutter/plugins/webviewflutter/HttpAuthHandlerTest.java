@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 import android.webkit.HttpAuthHandler;
-
+import io.flutter.plugin.common.BinaryMessenger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,8 +16,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-
-import io.flutter.plugin.common.BinaryMessenger;
 
 public class HttpAuthHandlerTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -40,7 +38,8 @@ public class HttpAuthHandlerTest {
 
   @Test
   public void proceed() {
-    final HttpAuthHandlerHostApiImpl hostApi = new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
+    final HttpAuthHandlerHostApiImpl hostApi =
+        new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 65L;
     final String username = "username";
     final String password = "password";
@@ -53,7 +52,8 @@ public class HttpAuthHandlerTest {
 
   @Test
   public void cancel() {
-    final HttpAuthHandlerHostApiImpl hostApi = new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
+    final HttpAuthHandlerHostApiImpl hostApi =
+        new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 65L;
     instanceManager.addDartCreatedInstance(mockAuthHandler, instanceIdentifier);
 
@@ -64,7 +64,8 @@ public class HttpAuthHandlerTest {
 
   @Test
   public void useHttpAuthUsernamePassword() {
-    final HttpAuthHandlerHostApiImpl hostApi = new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
+    final HttpAuthHandlerHostApiImpl hostApi =
+        new HttpAuthHandlerHostApiImpl(mockBinaryMessenger, instanceManager);
     final long instanceIdentifier = 65L;
     instanceManager.addDartCreatedInstance(mockAuthHandler, instanceIdentifier);
 
