@@ -685,6 +685,8 @@ void main() {
       verifyNoMoreInteractions(mockPendingRecording);
     });
 
+    // TODO(camsim99): Add test for startVideoCapture
+
     test('pauseVideoRecording pauses the recording', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
