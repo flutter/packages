@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 // Ignores escape characters used in testing gradle-wrapper.properties file
-// formats.
+// contents.
 // ignore_for_file: unnecessary_string_escapes
 
 import 'dart:convert';
@@ -705,7 +705,8 @@ How is it even possible that I didn't specify a Gradle distribution?
       );
     });
 
-    test('succeeds if example app has android/app directory', () async {
+    test('succeeds if example app has android/app/gradle directory structure',
+        () async {
       final RepositoryPackage package = createFakePlugin(
           'fake_plugin', packagesDir, extraFiles: <String>[
         'example/android/app/gradle/wrapper/gradle-wrapper.properties'
@@ -744,7 +745,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
           isTrue);
     });
 
-    test('succeeds if example app does not have android/gradle directory',
+    test('succeeds if example app has android/gradle directory structure',
         () async {
       final RepositoryPackage package = createFakePlugin(
           'fake_plugin', packagesDir, extraFiles: <String>[

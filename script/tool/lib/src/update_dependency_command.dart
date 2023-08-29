@@ -236,25 +236,20 @@ ${response.httpResponse.body}
         if (!example.directory.childDirectory('android').existsSync()) {
           return PackageResult.skip('Example app does not run on Android.');
         }
-        File gradleWrapperPropertiesFile;
-        if (example.directory
-            .childDirectory('android')
+
+        Directory gradleWrapperPropertiesDirectory =
+            example.directory.childDirectory('android');
+        if (gradleWrapperPropertiesDirectory
             .childDirectory('app')
-            .childDirectory('gradle')
             .existsSync()) {
-          gradleWrapperPropertiesFile = example.directory
-              .childDirectory('android')
-              .childDirectory('app')
-              .childDirectory('gradle')
-              .childDirectory('wrapper')
-              .childFile('gradle-wrapper.properties');
-        } else {
-          gradleWrapperPropertiesFile = example.directory
-              .childDirectory('android')
-              .childDirectory('gradle')
-              .childDirectory('wrapper')
-              .childFile('gradle-wrapper.properties');
+          gradleWrapperPropertiesDirectory =
+              gradleWrapperPropertiesDirectory.childDirectory('app');
         }
+        final File gradleWrapperPropertiesFile =
+            gradleWrapperPropertiesDirectory
+                .childDirectory('gradle')
+                .childDirectory('wrapper')
+                .childFile('gradle-wrapper.properties');
 
         final String gradleWrapperPropertiesContents =
             gradleWrapperPropertiesFile.readAsStringSync();
@@ -278,7 +273,7 @@ ${response.httpResponse.body}
       return PackageResult.success();
     }
     return PackageResult.fail(<String>[
-      'Target Android dependency $_androidDependency is unrecognized'
+      'Target Android dependency $_androidDependency is unrecognized.'
     ]);
   }
 
