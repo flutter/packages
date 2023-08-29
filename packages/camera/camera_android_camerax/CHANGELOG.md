@@ -1,8 +1,9 @@
-## 0.5.0+16
+## 0.5.0+17
+
+* Implements resolution configuration for all camera use cases.
 
 * Adds pub topics to package metadata.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
-* Implements resolution configuration for all camera use cases.
 
 ## 0.5.0+15
 
