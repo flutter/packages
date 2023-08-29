@@ -1,3 +1,7 @@
+## 4.2.4
+
+* Adds pub topics to package metadata.
+
 ## 4.2.3
 
 * Fixes the code sample in the dartdocs for `WebViewController.addJavaScriptChannel`.
