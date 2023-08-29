@@ -1365,10 +1365,10 @@ class _TestQualitySelectorHostApiCodec extends StandardMessageCodec {
   const _TestQualitySelectorHostApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is QualityData) {
+    if (value is ResolutionInfo) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is ResolutionInfo) {
+    } else if (value is VideoQualityData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else {
@@ -1380,9 +1380,9 @@ class _TestQualitySelectorHostApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return QualityData.decode(readValue(buffer)!);
-      case 129: 
         return ResolutionInfo.decode(readValue(buffer)!);
+      case 129: 
+        return VideoQualityData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1393,9 +1393,9 @@ abstract class TestQualitySelectorHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = _TestQualitySelectorHostApiCodec();
 
-  void create(int identifier, List<QualityData?> videoQualityConstraintIndexList, int? fallbackStrategyId);
+  void create(int identifier, List<VideoQualityData?> videoQualityDataList, int? fallbackStrategyId);
 
-  ResolutionInfo getResolution(int cameraInfoId, Quality quality);
+  ResolutionInfo getResolution(int cameraInfoId, VideoQuality quality);
 
   static void setup(TestQualitySelectorHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -1412,11 +1412,11 @@ abstract class TestQualitySelectorHostApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.QualitySelectorHostApi.create was null, expected non-null int.');
-          final List<QualityData?>? arg_videoQualityConstraintIndexList = (args[1] as List<Object?>?)?.cast<QualityData?>();
-          assert(arg_videoQualityConstraintIndexList != null,
-              'Argument for dev.flutter.pigeon.QualitySelectorHostApi.create was null, expected non-null List<QualityData?>.');
+          final List<VideoQualityData?>? arg_videoQualityDataList = (args[1] as List<Object?>?)?.cast<VideoQualityData?>();
+          assert(arg_videoQualityDataList != null,
+              'Argument for dev.flutter.pigeon.QualitySelectorHostApi.create was null, expected non-null List<VideoQualityData?>.');
           final int? arg_fallbackStrategyId = (args[2] as int?);
-          api.create(arg_identifier!, arg_videoQualityConstraintIndexList!, arg_fallbackStrategyId);
+          api.create(arg_identifier!, arg_videoQualityDataList!, arg_fallbackStrategyId);
           return <Object?>[];
         });
       }
@@ -1435,9 +1435,9 @@ abstract class TestQualitySelectorHostApi {
           final int? arg_cameraInfoId = (args[0] as int?);
           assert(arg_cameraInfoId != null,
               'Argument for dev.flutter.pigeon.QualitySelectorHostApi.getResolution was null, expected non-null int.');
-          final Quality? arg_quality = args[1] == null ? null : Quality.values[args[1] as int];
+          final VideoQuality? arg_quality = args[1] == null ? null : VideoQuality.values[args[1] as int];
           assert(arg_quality != null,
-              'Argument for dev.flutter.pigeon.QualitySelectorHostApi.getResolution was null, expected non-null Quality.');
+              'Argument for dev.flutter.pigeon.QualitySelectorHostApi.getResolution was null, expected non-null VideoQuality.');
           final ResolutionInfo output = api.getResolution(arg_cameraInfoId!, arg_quality!);
           return <Object?>[output];
         });
@@ -1450,7 +1450,7 @@ abstract class TestFallbackStrategyHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void create(int identifier, Quality quality, VideoResolutionFallbackRule fallbackRule);
+  void create(int identifier, VideoQuality quality, VideoResolutionFallbackRule fallbackRule);
 
   static void setup(TestFallbackStrategyHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -1467,9 +1467,9 @@ abstract class TestFallbackStrategyHostApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.FallbackStrategyHostApi.create was null, expected non-null int.');
-          final Quality? arg_quality = args[1] == null ? null : Quality.values[args[1] as int];
+          final VideoQuality? arg_quality = args[1] == null ? null : VideoQuality.values[args[1] as int];
           assert(arg_quality != null,
-              'Argument for dev.flutter.pigeon.FallbackStrategyHostApi.create was null, expected non-null Quality.');
+              'Argument for dev.flutter.pigeon.FallbackStrategyHostApi.create was null, expected non-null VideoQuality.');
           final VideoResolutionFallbackRule? arg_fallbackRule = args[2] == null ? null : VideoResolutionFallbackRule.values[args[2] as int];
           assert(arg_fallbackRule != null,
               'Argument for dev.flutter.pigeon.FallbackStrategyHostApi.create was null, expected non-null VideoResolutionFallbackRule.');

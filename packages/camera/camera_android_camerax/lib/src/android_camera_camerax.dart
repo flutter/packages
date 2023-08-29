@@ -842,24 +842,24 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// If the specified [preset] is unavailable, the camera will fall back to the
   /// closest lower resolution available.
   QualitySelector? _getQualitySelectorFromPreset(ResolutionPreset? preset) {
-    VideoQualityConstraint? videoQuality;
+    VideoQuality? videoQuality;
     switch (preset) {
       case ResolutionPreset.low:
       // 240p is not supported by CameraX.
       case ResolutionPreset.medium:
-        videoQuality = VideoQualityConstraint.SD;
+        videoQuality = VideoQuality.SD;
         break;
       case ResolutionPreset.high:
-        videoQuality = VideoQualityConstraint.HD;
+        videoQuality = VideoQuality.HD;
         break;
       case ResolutionPreset.veryHigh:
-        videoQuality = VideoQualityConstraint.FHD;
+        videoQuality = VideoQuality.FHD;
         break;
       case ResolutionPreset.ultraHigh:
-        videoQuality = VideoQualityConstraint.UHD;
+        videoQuality = VideoQuality.UHD;
         break;
       case ResolutionPreset.max:
-        videoQuality = VideoQualityConstraint.highest;
+        videoQuality = VideoQuality.highest;
         break;
       case null:
         // If not preset is specified, default to CameraX's default behavior
@@ -879,11 +879,12 @@ class AndroidCameraCameraX extends CameraPlatform {
                 quality: videoQuality, fallbackRule: fallbackRule);
 
     return _shouldCreateDetachedObjectForTesting
-        ? QualitySelector.detached(
-            qualityList: <VideoQualityConstraint>[videoQuality],
-            fallbackStrategy: fallbackStrategy)
+        ? QualitySelector.detached(qualityList: <VideoQualityData>[
+            VideoQualityData(quality: videoQuality)
+          ], fallbackStrategy: fallbackStrategy)
         : QualitySelector.from(
-            quality: videoQuality, fallbackStrategy: fallbackStrategy);
+            quality: VideoQualityData(quality: videoQuality),
+            fallbackStrategy: fallbackStrategy);
   }
 
   // Methods for calls that need to be tested:

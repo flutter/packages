@@ -116,7 +116,7 @@ public class GeneratedCameraXLibrary {
    *
    * See https://developer.android.com/reference/androidx/camera/video/Quality.
    */
-  public enum Quality {
+  public enum VideoQuality {
     SD(0),
     HD(1),
     FHD(2),
@@ -126,7 +126,7 @@ public class GeneratedCameraXLibrary {
 
     final int index;
 
-    private Quality(final int index) {
+    private VideoQuality(final int index) {
       this.index = index;
     }
   }
@@ -471,14 +471,14 @@ public class GeneratedCameraXLibrary {
    *
    * Generated class from Pigeon that represents data sent in messages.
    */
-  public static final class QualityData {
-    private @NonNull Quality quality;
+  public static final class VideoQualityData {
+    private @NonNull VideoQuality quality;
 
-    public @NonNull Quality getQuality() {
+    public @NonNull VideoQuality getQuality() {
       return quality;
     }
 
-    public void setQuality(@NonNull Quality setterArg) {
+    public void setQuality(@NonNull VideoQuality setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"quality\" is null.");
       }
@@ -486,19 +486,19 @@ public class GeneratedCameraXLibrary {
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
-    QualityData() {}
+    VideoQualityData() {}
 
     public static final class Builder {
 
-      private @Nullable Quality quality;
+      private @Nullable VideoQuality quality;
 
-      public @NonNull Builder setQuality(@NonNull Quality setterArg) {
+      public @NonNull Builder setQuality(@NonNull VideoQuality setterArg) {
         this.quality = setterArg;
         return this;
       }
 
-      public @NonNull QualityData build() {
-        QualityData pigeonReturn = new QualityData();
+      public @NonNull VideoQualityData build() {
+        VideoQualityData pigeonReturn = new VideoQualityData();
         pigeonReturn.setQuality(quality);
         return pigeonReturn;
       }
@@ -511,10 +511,10 @@ public class GeneratedCameraXLibrary {
       return toListResult;
     }
 
-    static @NonNull QualityData fromList(@NonNull ArrayList<Object> list) {
-      QualityData pigeonResult = new QualityData();
+    static @NonNull VideoQualityData fromList(@NonNull ArrayList<Object> list) {
+      VideoQualityData pigeonResult = new VideoQualityData();
       Object quality = list.get(0);
-      pigeonResult.setQuality(quality == null ? null : Quality.values()[(int) quality]);
+      pigeonResult.setQuality(quality == null ? null : VideoQuality.values()[(int) quality]);
       return pigeonResult;
     }
   }
@@ -2823,9 +2823,9 @@ public class GeneratedCameraXLibrary {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return QualityData.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
           return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
+          return VideoQualityData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -2833,12 +2833,12 @@ public class GeneratedCameraXLibrary {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof QualityData) {
+      if (value instanceof ResolutionInfo) {
         stream.write(128);
-        writeValue(stream, ((QualityData) value).toList());
-      } else if (value instanceof ResolutionInfo) {
-        stream.write(129);
         writeValue(stream, ((ResolutionInfo) value).toList());
+      } else if (value instanceof VideoQualityData) {
+        stream.write(129);
+        writeValue(stream, ((VideoQualityData) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -2848,10 +2848,10 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface QualitySelectorHostApi {
 
-    void create(@NonNull Long identifier, @NonNull List<QualityData> videoQualityConstraintIndexList, @Nullable Long fallbackStrategyId);
+    void create(@NonNull Long identifier, @NonNull List<VideoQualityData> videoQualityDataList, @Nullable Long fallbackStrategyId);
 
     @NonNull 
-    ResolutionInfo getResolution(@NonNull Long cameraInfoId, @NonNull Quality quality);
+    ResolutionInfo getResolution(@NonNull Long cameraInfoId, @NonNull VideoQuality quality);
 
     /** The codec used by QualitySelectorHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -2869,10 +2869,10 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                List<QualityData> videoQualityConstraintIndexListArg = (List<QualityData>) args.get(1);
+                List<VideoQualityData> videoQualityDataListArg = (List<VideoQualityData>) args.get(1);
                 Number fallbackStrategyIdArg = (Number) args.get(2);
                 try {
-                  api.create((identifierArg == null) ? null : identifierArg.longValue(), videoQualityConstraintIndexListArg, (fallbackStrategyIdArg == null) ? null : fallbackStrategyIdArg.longValue());
+                  api.create((identifierArg == null) ? null : identifierArg.longValue(), videoQualityDataListArg, (fallbackStrategyIdArg == null) ? null : fallbackStrategyIdArg.longValue());
                   wrapped.add(0, null);
                 }
  catch (Throwable exception) {
@@ -2895,7 +2895,7 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number cameraInfoIdArg = (Number) args.get(0);
-                Quality qualityArg = args.get(1) == null ? null : Quality.values()[(int) args.get(1)];
+                VideoQuality qualityArg = args.get(1) == null ? null : VideoQuality.values()[(int) args.get(1)];
                 try {
                   ResolutionInfo output = api.getResolution((cameraInfoIdArg == null) ? null : cameraInfoIdArg.longValue(), qualityArg);
                   wrapped.add(0, output);
@@ -2915,7 +2915,7 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface FallbackStrategyHostApi {
 
-    void create(@NonNull Long identifier, @NonNull Quality quality, @NonNull VideoResolutionFallbackRule fallbackRule);
+    void create(@NonNull Long identifier, @NonNull VideoQuality quality, @NonNull VideoResolutionFallbackRule fallbackRule);
 
     /** The codec used by FallbackStrategyHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -2933,7 +2933,7 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                Quality qualityArg = args.get(1) == null ? null : Quality.values()[(int) args.get(1)];
+                VideoQuality qualityArg = args.get(1) == null ? null : VideoQuality.values()[(int) args.get(1)];
                 VideoResolutionFallbackRule fallbackRuleArg = args.get(2) == null ? null : VideoResolutionFallbackRule.values()[(int) args.get(2)];
                 try {
                   api.create((identifierArg == null) ? null : identifierArg.longValue(), qualityArg, fallbackRuleArg);

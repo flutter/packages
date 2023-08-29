@@ -407,24 +407,24 @@ void main() {
       await camera.createCamera(testCameraDescription, resolutionPreset,
           enableAudio: enableAudio);
 
-      VideoQualityConstraint? expectedVideoQuality;
+      VideoQuality? expectedVideoQuality;
       switch (resolutionPreset) {
         case ResolutionPreset.low:
         // 240p is not supported by CameraX.
         case ResolutionPreset.medium:
-          expectedVideoQuality = VideoQualityConstraint.SD;
+          expectedVideoQuality = VideoQuality.SD;
           break;
         case ResolutionPreset.high:
-          expectedVideoQuality = VideoQualityConstraint.HD;
+          expectedVideoQuality = VideoQuality.HD;
           break;
         case ResolutionPreset.veryHigh:
-          expectedVideoQuality = VideoQualityConstraint.FHD;
+          expectedVideoQuality = VideoQuality.FHD;
           break;
         case ResolutionPreset.ultraHigh:
-          expectedVideoQuality = VideoQualityConstraint.UHD;
+          expectedVideoQuality = VideoQuality.UHD;
           break;
         case ResolutionPreset.max:
-          expectedVideoQuality = VideoQualityConstraint.highest;
+          expectedVideoQuality = VideoQuality.highest;
           break;
       }
 
@@ -435,8 +435,10 @@ void main() {
               quality: expectedVideoQuality,
               fallbackRule: expectedFallbackRule);
 
-      expect(camera.recorder!.qualitySelector!.qualityList,
-          equals(<VideoQualityConstraint>[expectedVideoQuality]));
+      expect(camera.recorder!.qualitySelector!.qualityList.length,
+          equals(1));
+      expect(camera.recorder!.qualitySelector!.qualityList.first.quality,
+          equals(expectedVideoQuality));
       expect(camera.recorder!.qualitySelector!.fallbackStrategy!.quality,
           equals(expectedFallbackStrategy.quality));
       expect(camera.recorder!.qualitySelector!.fallbackStrategy!.fallbackRule,
