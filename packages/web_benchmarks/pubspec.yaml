@@ -2,7 +2,7 @@ name: web_benchmarks
 description: A benchmark harness for performance-testing Flutter apps in Chrome.
 repository: https://github.com/flutter/packages/tree/main/packages/web_benchmarks
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+web_benchmarks%22
-version: 0.1.0+5
+version: 0.1.0+6
 
 environment:
   sdk: ">=2.19.0 <4.0.0"
@@ -21,3 +21,7 @@ dependencies:
   shelf_static: ^1.1.0
   test: ^1.19.5
   webkit_inspection_protocol: ^1.0.0
+
+topics:
+  - benchmarking
+  - performance
