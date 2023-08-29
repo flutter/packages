@@ -1,6 +1,11 @@
-## NEXT
+## 10.1.2
 
-* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Adds pub topics to package metadata.
+
+## 10.1.1
+
+- Fixes mapping from `Page` to `RouteMatch`s. 
+- Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 10.1.0
 
