@@ -1,5 +1,10 @@
-## NEXT
+## 0.1.7+1
 
+* Adds pub topics to package metadata.
+
+## 0.1.7
+
+* Fix top padding for NavigationBar.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 0.1.6
@@ -15,7 +20,7 @@
 ## 0.1.4
 
 * Use Material 3 NavigationBar instead of BottomNavigationBar
- 
+
 ## 0.1.3
 
 * Fixes `groupAlignment` property not available in `standardNavigationRail` - [flutter/flutter#121994](https://github.com/flutter/flutter/issues/121994)
