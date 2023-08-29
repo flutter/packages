@@ -1,3 +1,7 @@
+## 10.1.2
+
+* Adds pub topics to package metadata.
+
 ## 10.1.1
 
 - Fixes mapping from `Page` to `RouteMatch`s. 
