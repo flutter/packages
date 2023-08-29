@@ -4,8 +4,9 @@ import 'package:flutter_image/network.dart';
 void main() {
   runApp(const MyApp());
 }
-
+///
 class MyApp extends StatelessWidget {
+  /// Entry point of your app
   const MyApp({super.key});
 
   // This widget is the root of your application.
@@ -36,8 +37,9 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
+/// This is a stateful widget
 class MyHomePage extends StatefulWidget {
+  ///Entry point of stateful widget
   const MyHomePage({super.key, required this.title});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -49,6 +51,7 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
+  /// title which will be provided while build
   final String title;
 
   @override
@@ -89,7 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
         // action in the IDE, or press "p" in the console), to see the
         // wireframe for each widget.
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Text(
             'Loading Images using NetworkImageWithRetry from flutter_image.',
