@@ -26,7 +26,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace 'io.flutter.plugins.googlemapsexample'
-    compileSdkVersion flutter.compileSdkVersion
+    // TODO(camsim99): Replace with Flutter compileSdkVersion constant (flutter.compileSdkVersion) when bumped to 34.
+    compileSdkVersion 34
 
 
     defaultConfig {
