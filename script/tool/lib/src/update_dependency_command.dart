@@ -241,6 +241,7 @@ ${response.httpResponse.body}
             example.directory.childDirectory('android');
         if (gradleWrapperPropertiesDirectory
             .childDirectory('app')
+            .childDirectory('gradle')
             .existsSync()) {
           gradleWrapperPropertiesDirectory =
               gradleWrapperPropertiesDirectory.childDirectory('app');
