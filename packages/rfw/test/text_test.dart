@@ -143,6 +143,10 @@ void main() {
     test('{ "a": /', 'Unexpected end of file inside comment delimiter at line 1 column 8.');
     test('{ "a": /.', 'Unexpected character U+002E (".") inside comment delimiter at line 1 column 9.');
     test('{ "a": //', 'Unexpected <EOF> at line 1 column 9.');
+    test('{ "a": /*', 'Unexpected end of file in block comment at line 1 column 9.');
+    test('{ "a": /*/', 'Unexpected end of file in block comment at line 1 column 10.');
+    test('{ "a": /**', 'Unexpected end of file in block comment at line 1 column 10.');
+    test('{ "a": /* *', 'Unexpected end of file in block comment at line 1 column 11.');
   });
 
   testWidgets('valid values in parseDataFile', (WidgetTester tester) async {
@@ -228,6 +232,9 @@ void main() {
     expect(parseDataFile('{ "a": \'\\uDDDD\' }'), <String, Object?>{ 'a': '\u{dddd}' });
     expect(parseDataFile('{ "a": \'\\uEEEE\' }'), <String, Object?>{ 'a': '\u{eeee}' });
     expect(parseDataFile('{ "a": \'\\uFFFF\' }'), <String, Object?>{ 'a': '\u{ffff}' });
+    expect(parseDataFile('{ "a": /**/ "1" }'), <String, Object?>{ 'a': '1' });
+    expect(parseDataFile('{ "a": /* */ "1" }'), <String, Object?>{ 'a': '1' });
+    expect(parseDataFile('{ "a": /*\n*/ "1" }'), <String, Object?>{ 'a': '1' });
   });
 
   testWidgets('error handling in parseLibraryFile', (WidgetTester tester) async {
@@ -294,6 +301,7 @@ void main() {
   });
 
   testWidgets('parseLibraryFile: references', (WidgetTester tester) async {
+    expect(parseLibraryFile('widget a = b(c:data.11234567890."e");').toString(), 'widget a = b({c: data.11234567890.e});');
     expect(parseLibraryFile('widget a = b(c: [...for d in []: d]);').toString(), 'widget a = b({c: [...for loop in []: loop0.]});');
     expect(parseLibraryFile('widget a = b(c:args.foo.bar);').toString(), 'widget a = b({c: args.foo.bar});');
     expect(parseLibraryFile('widget a = b(c:data.foo.bar);').toString(), 'widget a = b({c: data.foo.bar});');

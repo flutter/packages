@@ -1,3 +1,7 @@
+## 11.0.1
+
+* Adds pub topics to package metadata.
+
 ## 11.0.0
 
 * Adds primitive enum support.
@@ -25,7 +29,7 @@
 
 ## 10.1.2
 
-* [swift] Fixes a crash when passing `null` for nested nullable classes. 
+* [swift] Fixes a crash when passing `null` for nested nullable classes.
 
 ## 10.1.1
 
@@ -42,10 +46,10 @@
 ## 10.0.0
 
 * [swift] Avoids using `Any` to represent `Optional` in Swift.
-* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be 
+* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be
   translated into `[Any?]` (rather than `[Any]`) in Swift.
-* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be 
-  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`) in Swift. 
+* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be
+  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`) in Swift.
 * Adds an example application that uses Pigeon directly, rather than in a plugin.
 
 ## 9.2.5
