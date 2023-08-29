@@ -1,6 +1,7 @@
-## NEXT
+## 0.12.0+4
 
-* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 2.19.
 
 ## 0.12.0+3
 

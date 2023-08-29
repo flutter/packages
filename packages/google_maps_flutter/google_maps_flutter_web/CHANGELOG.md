@@ -1,3 +1,8 @@
+## 0.5.4+1
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 2.19.
+
 ## 0.5.4
 
 * Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
