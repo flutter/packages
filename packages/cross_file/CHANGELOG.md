@@ -2,7 +2,7 @@
 
 * Adds pub topics to package metadata.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
-* Improved documentation about ignored parameters in IO module.
+* Improves documentation about ignored parameters in IO implementation.
 
 ## 0.3.3+4
 

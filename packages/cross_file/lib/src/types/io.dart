@@ -19,12 +19,10 @@ class XFile extends XFileBase {
   /// [XFile.fromData].
   ///
   /// [name] is ignored; the parameter exists only to match the web version of
-  /// the constructor. **You should avoid using this parameter because it will
-  /// be likely removed in the future releases.**
+  /// the constructor.
   ///
   /// [length] is ignored; the parameter exists only to match the web version of
-  /// the constructor. **You should avoid using this parameter because it will
-  /// be likely removed in the future releases.**
+  /// the constructor.
   ///
   // ignore: use_super_parameters
   XFile(
@@ -43,8 +41,7 @@ class XFile extends XFileBase {
   /// Construct an CrossFile from its data
   ///
   /// [name] is ignored; the parameter exists only to match the web version of
-  /// the constructor. **You should avoid using this parameter because it will
-  /// be likely removed in the future releases.**
+  /// the constructor.
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,
