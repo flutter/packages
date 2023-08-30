@@ -109,6 +109,8 @@ public class QuickActionsTest {
     device.wait(Until.hasObject(By.descContains(appReadySentinel)), 2000);
     AtomicReference<QuickActionsTestActivity> currentActivity = new AtomicReference<>();
     scenario.onActivity(currentActivity::set);
+    
+    device.wait(Until.hasObject(By.descContains(firstShortcut.getId() + appReadySentinel)), 2000);
 
     // Assert
     Assert.assertTrue(
