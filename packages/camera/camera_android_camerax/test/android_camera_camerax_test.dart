@@ -598,9 +598,9 @@ void main() {
 
   group('video recording', () {
     test(
-        'startVideoRecording binds video capture use case and starts the recording',
+        'startVideoCapture binds video capture use case and starts the recording',
         () async {
-      //Set up mocks and constants.
+      // Set up mocks and constants.
       final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
       camera.processCameraProvider = MockProcessCameraProvider();
       camera.cameraSelector = MockCameraSelector();
@@ -628,7 +628,7 @@ void main() {
               camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
           .thenAnswer((_) async => camera.camera!);
 
-      await camera.startVideoRecording(cameraId);
+      await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
       verify(camera.processCameraProvider!.bindToLifecycle(
           camera.cameraSelector!, <UseCase>[camera.videoCapture!]));
@@ -637,7 +637,7 @@ void main() {
     });
 
     test(
-        'startVideoRecording binds video capture use case and starts the recording'
+        'startVideoCapturing binds video capture use case and starts the recording'
         ' on first call, and does nothing on second call', () async {
       // Set up mocks and constants.
       final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
@@ -667,14 +667,14 @@ void main() {
               camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
           .thenAnswer((_) async => camera.camera!);
 
-      await camera.startVideoRecording(cameraId);
+      await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
       verify(camera.processCameraProvider!.bindToLifecycle(
           camera.cameraSelector!, <UseCase>[camera.videoCapture!]));
       expect(camera.pendingRecording, equals(mockPendingRecording));
       expect(camera.recording, mockRecording);
 
-      await camera.startVideoRecording(cameraId);
+      await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       // Verify that each of these calls happened only once.
       verify(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
           .called(1);
@@ -689,7 +689,8 @@ void main() {
         'startVideoCapturing called with stream options starts image streaming',
         () async {
       // Set up mocks and constants.
-      final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
+      final FakeAndroidCameraCameraX camera =
+          FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
       final MockProcessCameraProvider mockProcessCameraProvider =
           MockProcessCameraProvider();
       camera.processCameraProvider = mockProcessCameraProvider;

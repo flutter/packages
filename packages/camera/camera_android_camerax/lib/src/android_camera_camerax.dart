@@ -490,6 +490,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Configures and starts a video recording. Returns silently without doing
   /// anything if there is currently an active recording.
+  ///
+  /// This method is deprecated in favour of [startVideoCapturing].
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
