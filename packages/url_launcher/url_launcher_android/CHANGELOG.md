@@ -1,3 +1,8 @@
+## 6.0.39
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 6.0.38
 
 * Updates android implementation to support api 34 broadcast receiver requirements.

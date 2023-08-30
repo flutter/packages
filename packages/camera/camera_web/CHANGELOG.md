@@ -1,3 +1,8 @@
+## 0.3.2+2
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 0.3.2+1
 
 * Updates README to improve example of `Image` creation.

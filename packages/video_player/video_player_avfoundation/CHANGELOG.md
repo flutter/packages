@@ -2,6 +2,11 @@
 
 * Adds caching functionality for network video.
 
+## 2.4.10
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.4.9
 
 * Fixes the iOS crash when using multiple players on the same screen.
