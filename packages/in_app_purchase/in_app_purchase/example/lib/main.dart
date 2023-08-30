@@ -496,7 +496,7 @@ class _MyAppState extends State<_MyApp> {
 /// Example implementation of the
 /// [`SKPaymentQueueDelegate`](https://developer.apple.com/documentation/storekit/skpaymentqueuedelegate?language=objc).
 ///
-/// The payment queue delegate can be implementated to provide information
+/// The payment queue delegate can be implemented to provide information
 /// needed to complete transactions.
 class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
   @override
