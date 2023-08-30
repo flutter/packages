@@ -4,13 +4,13 @@
 
 import 'dart:convert';
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/cupertino.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'content_type.dart';
 import 'http_request_factory.dart';
-import 'shims/dart_ui.dart' as ui;
 
 /// An implementation of [PlatformWebViewControllerCreationParams] using Flutter
 /// for Web API.
@@ -115,7 +115,7 @@ class WebWebViewWidget extends PlatformWebViewWidget {
       : super.implementation(params) {
     final WebWebViewController controller =
         params.controller as WebWebViewController;
-    ui.platformViewRegistry.registerViewFactory(
+    ui_web.platformViewRegistry.registerViewFactory(
       controller._webWebViewParams.iFrame.id,
       (int viewId) => controller._webWebViewParams.iFrame,
     );
