@@ -1,3 +1,7 @@
+## 0.5.0+18
+
+* Implements `startVideoCapturing`.
+
 ## 0.5.0+16
 
 * Adds pub topics to package metadata.
