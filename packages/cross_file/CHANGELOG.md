@@ -1,4 +1,4 @@
-## NEXT
+## 0.3.3+6
 
 * Improves documentation about ignored parameters in IO implementation.
 
