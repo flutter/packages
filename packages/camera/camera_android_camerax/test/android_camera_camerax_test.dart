@@ -598,7 +598,7 @@ void main() {
 
   group('video recording', () {
     test(
-        'startVideoCapture binds video capture use case and starts the recording',
+        'startVideoCapturing binds video capture use case and starts the recording',
         () async {
       // Set up mocks and constants.
       final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
