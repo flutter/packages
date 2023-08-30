@@ -31,7 +31,7 @@ android {
     if (project.android.hasProperty("namespace")) {
         namespace 'io.flutter.plugins.camera'
     }
-    compileSdkVersion 34
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 21
