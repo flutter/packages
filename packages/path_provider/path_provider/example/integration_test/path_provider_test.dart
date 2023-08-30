@@ -108,6 +108,7 @@ void main() {
 
 /// Verify a file called [name] in [directory] by recreating it with test
 /// contents when necessary.
+// TODO(camsim99): Make this use an in-memory file system instead of writing to disk.
 void _verifySampleFile(Directory? directory, String name) {
   expect(directory, isNotNull);
   if (directory == null) {
