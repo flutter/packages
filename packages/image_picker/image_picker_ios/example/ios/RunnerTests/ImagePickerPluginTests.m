@@ -360,6 +360,20 @@
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
+- (void)testPluginMediaPathConvertsNilToEmptyList {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
+  plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
+      initWithResult:^(NSArray<NSString *> *_Nullable result, FlutterError *_Nullable error) {
+        XCTAssertEqualObjects(result, @[]);
+        [resultExpectation fulfill];
+      }];
+  [plugin sendCallResultWithSavedPathList:nil];
+
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
 - (void)testPluginMediaPathHasItem {
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
   NSArray *pathList = @[ @"test" ];
