@@ -5,12 +5,12 @@
 import 'dart:async';
 import 'dart:html' as html;
 import 'dart:ui';
+import 'dart:ui_web' as ui_web;
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 
 import 'camera_service.dart';
-import 'shims/dart_ui.dart' as ui;
 import 'types/types.dart';
 
 String _getViewType(int cameraId) => 'plugins.flutter.io/camera_$cameraId';
@@ -168,7 +168,7 @@ class Camera {
       ..style.setProperty('object-fit', 'cover')
       ..append(videoElement);
 
-    ui.platformViewRegistry.registerViewFactory(
+    ui_web.platformViewRegistry.registerViewFactory(
       _getViewType(textureId),
       (_) => divElement,
     );
