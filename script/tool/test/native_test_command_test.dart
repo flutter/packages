@@ -2109,6 +2109,42 @@ public class FlutterActivityTest {
             ]));
       });
 
+      test('falls back to x64 unit tests if arm64 is not built', () async {
+        const String x64TestBinaryRelativePath =
+            'build/windows/x64/Debug/bar/plugin_test.exe';
+        final RepositoryPackage plugin =
+            createFakePlugin('plugin', packagesDir, extraFiles: <String>[
+          'example/$x64TestBinaryRelativePath',
+        ], platformSupport: <String, PlatformDetails>{
+          platformWindows: const PlatformDetails(PlatformSupport.inline),
+        });
+        _createFakeCMakeCache(plugin, mockPlatform, _archDirX64);
+
+        final File testBinary = childFileWithSubcomponents(plugin.directory,
+            <String>['example', ...x64TestBinaryRelativePath.split('/')]);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'native-test',
+          '--windows',
+          '--no-integration',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running plugin_test.exe...'),
+            contains('No issues found!'),
+          ]),
+        );
+
+        expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              getWindowsBuildCall(plugin, _archDirX64),
+              ProcessCall(testBinary.path, const <String>[], null),
+            ]));
+      });
+
       test('only runs debug unit tests', () async {
         const String debugTestBinaryRelativePath =
             'build/windows/arm64/Debug/bar/plugin_test.exe';

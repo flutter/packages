@@ -4,7 +4,6 @@
 
 // ignore_for_file: avoid_print
 
-import 'dart:ffi';
 import 'dart:io' show File, Directory;
 
 import 'package:meta/meta.dart';
@@ -314,20 +313,27 @@ Future<int> _runWindowsUnitTests() async {
     return compileCode;
   }
 
-  // Depending on the Flutter version, the build output path is different.
-  // Check for the new location first, and fall back to the old location, to
-  // support running against both stable and master.
+  // Depending on the Flutter version, the build output path is different. To
+  // handle both master and stable, and to future-proof against the changes
+  // that will happen in https://github.com/flutter/flutter/issues/129807
+  // - Try arm64, to future-proof against arm64 support.
+  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts
+  //   running newer versions of Flutter.
+  // - Fall back to the pre-arch path, to support running against stable.
   // TODO(stuartmorgan): Remove all this when these tests no longer need to
-  // support Flutter 3.13, and just construct the version of the path with the
-  // architecture.
+  // support a version of Flutter without
+  // https://github.com/flutter/flutter/issues/129807, and just construct the
+  // version of the path with the current architecture.
   const String buildDirBase = '$examplePath/build/windows';
   const String buildRelativeBinaryPath =
       'plugins/test_plugin/Debug/test_plugin_test.exe';
-  final String arch = Abi.current() == Abi.windowsArm64 ? 'arm64' : 'x64';
-  final String newPath = '$buildDirBase/$arch/$buildRelativeBinaryPath';
+  const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
+  const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
   const String oldPath = '$buildDirBase/$buildRelativeBinaryPath';
-  if (File(newPath).existsSync()) {
-    return runProcess(newPath, <String>[]);
+  if (File(arm64Path).existsSync()) {
+    return runProcess(arm64Path, <String>[]);
+  } else if (File(x64Path).existsSync()) {
+    return runProcess(x64Path, <String>[]);
   } else {
     return runProcess(oldPath, <String>[]);
   }
