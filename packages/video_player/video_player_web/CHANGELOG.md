@@ -1,3 +1,8 @@
+## 2.0.18
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
 ## 2.0.17
 
 * Adds pub topics to package metadata.
