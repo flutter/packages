@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ffi';
+
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
+import 'package:path/path.dart';
 
 import 'common/cmake.dart';
 import 'common/core.dart';
@@ -41,7 +44,9 @@ class NativeTestCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
-  }) : _xcode = Xcode(processRunner: processRunner, log: true) {
+    Abi? abi,
+  })  : _abi = abi ?? Abi.current(),
+        _xcode = Xcode(processRunner: processRunner, log: true) {
     argParser.addOption(
       _iOSDestinationFlag,
       help: 'Specify the destination when running iOS tests.\n'
@@ -62,6 +67,9 @@ class NativeTestCommand extends PackageLoopingCommand {
     argParser.addFlag(_integrationTestFlag,
         help: 'Runs native integration (UI) tests', defaultsTo: true);
   }
+
+  // The ABI of the host.
+  final Abi _abi;
 
   // The device destination flags for iOS tests.
   List<String> _iOSDestinationFlags = <String>[];
@@ -548,9 +556,10 @@ this command.
         isTestBinary: isTestBinary);
   }
 
-  /// Finds every file in the [buildDirectoryName] subdirectory of [plugin]'s
-  /// build directory for which [isTestBinary] is true, and runs all of them,
-  /// returning the overall result.
+  /// Finds every file in the relevant (based on [platformName], [buildMode],
+  /// and [arch]) subdirectory of [plugin]'s build directory for which
+  /// [isTestBinary] is true, and runs all of them, returning the overall
+  /// result.
   ///
   /// The binaries are assumed to be Google Test test binaries, thus returning
   /// zero for success and non-zero for failure.
@@ -563,11 +572,30 @@ this command.
     final List<File> testBinaries = <File>[];
     bool hasMissingBuild = false;
     bool buildFailed = false;
+    String? arch;
+    if (platform.isWindows) {
+      arch = _abi == Abi.windowsX64 ? 'x64' : 'arm64';
+    } else if (platform.isLinux) {
+      // TODO(stuartmorgan): Support arm64 if that ever becomes a supported
+      // CI configuration for the repository.
+      arch = 'x64';
+    }
     for (final RepositoryPackage example in plugin.getExamples()) {
-      final CMakeProject project = CMakeProject(example.directory,
+      CMakeProject project = CMakeProject(example.directory,
           buildMode: buildMode,
           processRunner: processRunner,
-          platform: platform);
+          platform: platform,
+          arch: arch);
+      if (platform.isWindows && !project.isConfigured()) {
+        // Check again without the arch subdirectory, since 3.13 doesn't
+        // have it yet.
+        // TODO(stuartmorgan): Remove this once Flutter 3.13 is no longer
+        // supported by the main repository CI.
+        project = CMakeProject(example.directory,
+            buildMode: buildMode,
+            processRunner: processRunner,
+            platform: platform);
+      }
       if (!project.isConfigured()) {
         printError('ERROR: Run "flutter build" on ${example.displayName}, '
             'or run this tool\'s "build-examples" command, for the target '
