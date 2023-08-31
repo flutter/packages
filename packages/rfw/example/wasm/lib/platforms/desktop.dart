@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -13,11 +17,14 @@ import 'platform.dart';
 class NetworkImplementation extends Network {
   @override
   Future<Uint8List> get(String url) async {
-    final DateTime expiryDate = DateTime.now().subtract(const Duration(hours: 6));
+    final DateTime expiryDate =
+        DateTime.now().subtract(const Duration(hours: 6));
     final Directory home = await getApplicationSupportDirectory();
     final Uri uri = Uri.parse(url);
-    final File interfaceFile = File(path.join(home.path, 'cache', uri.pathSegments.last));
-    if (!interfaceFile.existsSync() || interfaceFile.lastModifiedSync().isBefore(expiryDate)) {
+    final File interfaceFile =
+        File(path.join(home.path, 'cache', uri.pathSegments.last));
+    if (!interfaceFile.existsSync() ||
+        interfaceFile.lastModifiedSync().isBefore(expiryDate)) {
       final HttpClientResponse client =
           await (await HttpClient().getUrl(Uri.parse(url))).close();
       final Uint8List bytes = Uint8List.fromList(

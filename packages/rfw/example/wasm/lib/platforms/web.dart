@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:js_interop';
 import 'dart:typed_data';
 
@@ -42,7 +46,8 @@ class WasmImplementation extends Wasm {
   T callFunction<T>(String name, [List<Object?>? arguments]) {
     // The Wasm exports object contains the JSFunction objects that can be
     // called directly via the js_util helper function.
-    Object? result = callMethod(_wasmExports, name, arguments ?? const <Object>[]);
+    Object? result =
+        callMethod(_wasmExports, name, arguments ?? const <Object>[]);
 
     // On web, even if the Wasm function returns an int, JS interop will turn
     // it into a double, which makes cross-platform APIs inconsistent. Convert

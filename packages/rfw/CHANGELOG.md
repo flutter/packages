@@ -1,3 +1,6 @@
+## 1.0.16
+* Add a wasm web example
+
 ## 1.0.15
 
 * Updates README.md to point to the CONTRIBUTING.md file.
