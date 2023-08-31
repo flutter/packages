@@ -39,11 +39,13 @@ class NetworkImplementation extends Network {
 }
 
 class WasmImplementation extends Wasm {
+  WasmImplementation({required Network network}) : super(network: network);
+
   late final WasmInstance _wasmInstance;
 
   @override
   Future<void> loadModule(String url) async {
-    final wasmBytes = await NetworkImplementation().get(url);
+    final wasmBytes = await network.get(url);
     _wasmInstance = WasmModule(wasmBytes).builder().build();
   }
 

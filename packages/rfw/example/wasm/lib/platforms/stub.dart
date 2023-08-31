@@ -14,6 +14,8 @@ class NetworkImplementation extends Network {
 }
 
 class WasmImplementation extends Wasm {
+  WasmImplementation({required Network network}) : super(network: network);
+
   @override
   Future<void> loadModule(String url) async {
     throw UnimplementedError();

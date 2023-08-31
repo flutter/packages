@@ -16,28 +16,25 @@ import 'platform.dart';
 class NetworkImplementation extends Network {
   @override
   Future<Uint8List> get(String url) async {
-    return (await _loadByteBuffer(url)).asUint8List();
-  }
-
-  static Future<ByteBuffer> _loadByteBuffer(String url) async {
-    final Response response =
-        await promiseToFuture<Response>(window.fetch(url.toJS));
-    return await promiseToFuture(response.arrayBuffer());
+    Response response = await promiseToFuture<Response>(window.fetch(url.toJS));
+    ByteBuffer byteBuffer = await promiseToFuture(response.arrayBuffer());
+    return byteBuffer.asUint8List();
   }
 }
 
 class WasmImplementation extends Wasm {
+  WasmImplementation({required Network network}) : super(network: network);
+
   // This is this object https://developer.mozilla.org/en-US/docs/WebAssembly/JavaScript_interface/Instance/exports
   // which contains the Wasm memory and functions.
   late final JSObject _wasmExports;
 
   @override
   Future<void> loadModule(String url) async {
-    final ByteBuffer wasmByteBuffer =
-        await NetworkImplementation._loadByteBuffer(url);
+    final Uint8List wasmBytes = await network.get(url);
     final Instance wasmInstance =
         (await promiseToFuture<WebAssemblyInstantiatedSource>(
-                WebAssembly.instantiate(wasmByteBuffer.toJS)))
+                WebAssembly.instantiate(wasmBytes.toJS)))
             .instance;
     _wasmExports = wasmInstance.exports;
   }

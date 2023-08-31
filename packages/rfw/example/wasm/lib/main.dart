@@ -56,7 +56,7 @@ class _ExampleState extends State<Example> {
     // These produce platform specific implementations for network fetching
     // and Wasm loading and calling.
     _network = NetworkImplementation();
-    _wasm = WasmImplementation();
+    _wasm = WasmImplementation(network: _network);
 
     _loadRfwAndWasm();
   }
