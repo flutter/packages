@@ -39,12 +39,14 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
       _pubPackageFlag,
       help: 'A pub package to update.',
     );
-    argParser.addOption(
-      _androidDependency,
-      help: 'An Android dependency to update.\n\n'
-          'Supported dependencies:\n'
-          '- "gradle", to update Gradle version used in plugin example apps',
-    );
+    argParser.addOption(_androidDependency,
+        help: 'An Android dependency to update.',
+        allowed: <String>[
+          'gradle',
+        ],
+        allowedHelp: <String, String>{
+          'gradle': 'Updates Gradle version used in plugin example apps.',
+        });
     argParser.addOption(
       _versionFlag,
       help: 'The version to update to.\n\n'
@@ -129,7 +131,7 @@ ${response.httpResponse.body}
         printError('A version must be provided to update this dependency.');
         throw ToolExit(_exitNoTargetVersion);
       } else if (_targetAndroidDependency == 'gradle') {
-        final RegExp validGradleVersionPattern = RegExp(r'(\d(\.\d){1,2})');
+        final RegExp validGradleVersionPattern = RegExp(r'^\d+(?:\.\d+){1,2}$');
         final bool isValidGradleVersion =
             validGradleVersionPattern.stringMatch(version) == version;
         if (!isValidGradleVersion) {
@@ -140,6 +142,7 @@ ${response.httpResponse.body}
         _targetVersion = version;
         return;
       } else {
+        // TODO(camsim99): Add other supported Android dependencies like the Android SDK and AGP.
         printError(
             'Target Android dependency $_targetAndroidDependency is unrecognized.');
         throw ToolExit(_exitIncorrectTargetDependency);
@@ -231,14 +234,17 @@ ${response.httpResponse.body}
   Future<PackageResult> _runForAndroidDependency(
       RepositoryPackage package) async {
     if (_targetAndroidDependency == 'gradle') {
+      print('${indentation}Updating examples running on Android...');
       final Iterable<RepositoryPackage> packageExamples = package.getExamples();
+      bool updateRanForExamples = false;
       for (final RepositoryPackage example in packageExamples) {
-        if (!example.directory.childDirectory('android').existsSync()) {
-          return PackageResult.skip('Example app does not run on Android.');
+        if (!example.platformDirectory(FlutterPlatform.android).existsSync()) {
+          continue;
         }
 
+        updateRanForExamples = true;
         Directory gradleWrapperPropertiesDirectory =
-            example.directory.childDirectory('android');
+            example.platformDirectory(FlutterPlatform.android);
         if (gradleWrapperPropertiesDirectory
             .childDirectory('app')
             .childDirectory('gradle')
@@ -259,19 +265,23 @@ ${response.httpResponse.body}
         if (!validGradleDistributionUrl
             .hasMatch(gradleWrapperPropertiesContents)) {
           return PackageResult.fail(<String>[
-            'Failed to update Gradle version in the example app for ${package.displayName}'
+            'Unable to find a "distributionUrl" entry to update for ${package.displayName}'
           ]);
         }
 
+        print('${indentation}Updating to "$_targetVersion"');
         final String newGradleWrapperPropertiesContents =
             gradleWrapperPropertiesContents.replaceFirst(
                 validGradleDistributionUrl,
-                // ignore: unnecessary_string_escapes
-                'distributionUrl=https\://services.gradle.org/distributions/gradle-$_targetVersion-all.zip');
+                'distributionUrl=https\\://services.gradle.org/distributions/gradle-$_targetVersion-all.zip');
+        // TODO(camsim99): Validate current AGP version is compatible with
+        // target Gradle version: ????ISSUE LINK?????
         gradleWrapperPropertiesFile
             .writeAsStringSync(newGradleWrapperPropertiesContents);
       }
-      return PackageResult.success();
+      return updateRanForExamples
+          ? PackageResult.success()
+          : PackageResult.skip('Example app does not run on Android.');
     }
     return PackageResult.fail(<String>[
       'Target Android dependency $_androidDependency is unrecognized.'

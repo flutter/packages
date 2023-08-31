@@ -2,10 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Ignores escape characters used in testing gradle-wrapper.properties file
-// contents.
-// ignore_for_file: unnecessary_string_escapes
-
 import 'dart:convert';
 
 import 'package:args/command_runner.dart';
@@ -739,7 +735,7 @@ How is it even possible that I didn't specify a Gradle distribution?
           .childDirectory('wrapper')
           .childFile('gradle-wrapper.properties');
 
-      gradleWrapperPropertiesFile.writeAsStringSync('''
+      gradleWrapperPropertiesFile.writeAsStringSync(r'''
 distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
 zipStoreBase=GRADLE_USER_HOME
@@ -778,7 +774,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
           .childDirectory('wrapper')
           .childFile('gradle-wrapper.properties');
 
-      gradleWrapperPropertiesFile.writeAsStringSync('''
+      gradleWrapperPropertiesFile.writeAsStringSync(r'''
 distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
 zipStoreBase=GRADLE_USER_HOME
