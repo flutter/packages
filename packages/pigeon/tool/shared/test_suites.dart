@@ -320,12 +320,12 @@ Future<int> _runWindowsUnitTests() async {
   // TODO(stuartmorgan): Remove all this when these tests no longer need to
   // support Flutter 3.13, and just construct the version of the path with the
   // architecture.
-  final String buildDirBase = '$examplePath/build/windows';
+  const String buildDirBase = '$examplePath/build/windows';
   const String buildRelativeBinaryPath =
       'plugins/test_plugin/Debug/test_plugin_test.exe';
   final String arch = Abi.current() == Abi.windowsArm64 ? 'arm64' : 'x64';
   final String newPath = '$buildDirBase/$arch/$buildRelativeBinaryPath';
-  final String oldPath = '$buildDirBase/$buildRelativeBinaryPath';
+  const String oldPath = '$buildDirBase/$buildRelativeBinaryPath';
   if (File(newPath).existsSync()) {
     return runProcess(newPath, <String>[]);
   } else {
