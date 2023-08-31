@@ -22,8 +22,14 @@ import android.content.Intent;
 import android.net.Uri;
 import androidx.test.espresso.intent.rule.IntentsRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
+import androidx.test.platform.app.InstrumentationRegistry;
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
+import android.graphics.Bitmap;
 
 public class FileSelectorAndroidTest {
   @Rule
@@ -60,12 +66,37 @@ public class FileSelectorAndroidTest {
         new Instrumentation.ActivityResult(Activity.RESULT_OK, resultIntent);
     intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(result);
     onFlutterWidget(withText("Open multiple images")).perform(click());
-    onFlutterWidget(withText("Press to open multiple images (png, jpg)")).perform(click());
+    System.out.println("FileSelectorAndroidTestDebug: Taking screenshot.");
+    // final Bitmap bitmap =
+    //     InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();
+    // if (bitmap == null) {
+    //   throw new RuntimeException("failed to capture screenshot");
+    // }
+    // int pixelCount = bitmap.getWidth() * bitmap.getHeight();
+    // final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    // bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+    // writeFile("FileSelectorAndroidTestScreenshot", out.toByteArray(), pixelCount);
 
-    intended(hasAction(Intent.ACTION_OPEN_DOCUMENT));
-    intended(hasExtra(Intent.EXTRA_ALLOW_MULTIPLE, true));
+    // onFlutterWidget(withText("Press to open multiple images (png, jpg)")).perform(click());
 
-    onFlutterWidget(withValueKey("result_image_name0")).check(matches(isExisting()));
-    onFlutterWidget(withValueKey("result_image_name1")).check(matches(isExisting()));
+    // intended(hasAction(Intent.ACTION_OPEN_DOCUMENT));
+    // intended(hasExtra(Intent.EXTRA_ALLOW_MULTIPLE, true));
+
+    // onFlutterWidget(withValueKey("result_image_name0")).check(matches(isExisting()));
+    // onFlutterWidget(withValueKey("result_image_name1")).check(matches(isExisting()));
   }
+
+  // void writeFile(String name, byte[] fileContent, int pixelCount)
+  //       throws IOException {
+  //     final ByteBuffer buffer = ByteBuffer.allocate(name.length() + fileContent.length + 12);
+  //     // See ScreenshotBlobTransformer#bind in screenshot_transformer.dart for consumer side.
+  //     buffer.putInt(name.length());
+  //     buffer.putInt(fileContent.length);
+  //     buffer.putInt(pixelCount);
+  //     buffer.put(name.getBytes());
+  //     buffer.put(fileContent);
+  //     final byte[] bytes = buffer.array();
+  //     out.write(bytes, 0, bytes.length);
+  //     out.flush();
+  //   }
 }

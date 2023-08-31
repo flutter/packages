@@ -6,6 +6,7 @@ package io.flutter.plugins.quickactionsexample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.nonNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
