@@ -11,7 +11,7 @@ import 'package:meta/meta.dart';
 import 'package:path/path.dart' as path;
 
 // From errno definitions.
-const int _noSuchFileError = 2;
+const int _noSuchFileError = 3;
 
 /// An override function used by the tests to override the environment variable
 /// lookups using [xdgEnvironmentOverride].
