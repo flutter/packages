@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../demos/basic_markdown_demo.dart';
 import '../demos/centered_header_demo.dart';
 import '../demos/extended_emoji_demo.dart';
+import '../demos/markdown_body_shrink_wrap_demo.dart';
 import '../demos/minimal_markdown_demo.dart';
 import '../demos/original_demo.dart';
 import '../demos/subscript_syntax_demo.dart';
@@ -16,7 +17,7 @@ import '../shared/markdown_demo_widget.dart';
 // ignore_for_file: public_member_api_docs
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({super.key});
 
   static const String routeName = '/homeScreen';
 
@@ -28,6 +29,7 @@ class HomeScreen extends StatelessWidget {
     const ExtendedEmojiDemo(),
     OriginalMarkdownDemo(),
     const CenteredHeaderDemo(),
+    const MarkdownBodyShrinkWrapDemo(),
   ];
 
   @override
@@ -42,7 +44,8 @@ class HomeScreen extends StatelessWidget {
           color: Colors.black12,
           child: ListView(
             children: <Widget>[
-              for (MarkdownDemoWidget demo in _demos) DemoCard(widget: demo),
+              for (final MarkdownDemoWidget demo in _demos)
+                DemoCard(widget: demo),
             ],
           ),
         ),

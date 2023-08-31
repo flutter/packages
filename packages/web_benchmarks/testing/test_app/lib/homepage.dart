@@ -8,12 +8,12 @@ const ValueKey<String> textKey = ValueKey<String>('textKey');
 const ValueKey<String> aboutPageKey = ValueKey<String>('aboutPageKey');
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key key, this.title}) : super(key: key);
+  const HomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   const Text('You have pushed the button this many times:'),
                   Text(
                     '$_counter',
-                    style: Theme.of(context).textTheme.headline4,
+                    style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ],
               );
@@ -63,11 +63,10 @@ class _HomePageState extends State<HomePage> {
                     elevation: 8,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Text(
                           'Line $index',
-                          style: Theme.of(context).textTheme.headline5,
+                          style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         Expanded(child: Container()),
                         const Icon(Icons.camera),

@@ -1,0 +1,37 @@
+RouteBase get $defaultValueRoute => GoRouteData.$route(
+      path: '/default-value-route',
+      factory: $DefaultValueRouteExtension._fromState,
+    );
+
+extension $DefaultValueRouteExtension on DefaultValueRoute {
+  static DefaultValueRoute _fromState(GoRouterState state) => DefaultValueRoute(
+        param:
+            _$convertMapValue('param', state.uri.queryParameters, int.parse) ??
+                0,
+      );
+
+  String get location => GoRouteData.$location(
+        '/default-value-route',
+        queryParams: {
+          if (param != 0) 'param': param.toString(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}

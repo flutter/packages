@@ -2,10 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -404,7 +406,7 @@ void defineTests() {
         );
 
         // Link is treated as ordinary text.
-        expectInvalidLink('[link](<foo&gt;)');
+        expectInvalidLink('[link](<foo>)');
         expect(linkTapResults, isNull);
       },
     );
@@ -628,7 +630,7 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo\bar'));
+        expectLinkTap(linkTapResults, const MarkdownLink('link', 'foo%08ar'));
       },
     );
 
@@ -650,7 +652,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(
-            linkTapResults, const MarkdownLink('link', 'foo%20b&auml;'));
+            linkTapResults, const MarkdownLink('link', 'foo%20b%C3%A4'));
       },
     );
 
@@ -702,7 +704,7 @@ void defineTests() {
       // Example 513b from GFM.
       'link title in single quotes',
       (WidgetTester tester) async {
-        const String data = '[link](/url \'title\')';
+        const String data = "[link](/url 'title')";
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
           boilerplate(
@@ -760,7 +762,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(linkTapResults,
-            const MarkdownLink('link', '/url', 'title %22&quot;'));
+            const MarkdownLink('link', '/url', 'title &quot;&quot;'));
       },
     );
 
@@ -782,7 +784,7 @@ void defineTests() {
 
         expectValidLink('link');
         expectLinkTap(linkTapResults,
-            const MarkdownLink('link', '/url\u{C2A0}%22title%22'));
+            const MarkdownLink('link', '/url%EC%8A%A0%22title%22'));
       },
     );
 
@@ -825,8 +827,10 @@ void defineTests() {
         );
 
         expectValidLink('link');
-        expectLinkTap(linkTapResults,
-            const MarkdownLink('link', '/url', 'title %22and%22 title'));
+        expectLinkTap(
+          linkTapResults,
+          const MarkdownLink('link', '/url', 'title &quot;and&quot; title'),
+        );
       },
     );
 
@@ -1144,8 +1148,13 @@ void defineTests() {
         final Finder imageFinder = find.byType(Image);
         expect(imageFinder, findsOneWidget);
         final Image image = imageFinder.evaluate().first.widget as Image;
-        final FileImage fi = image.image as FileImage;
-        expect(fi.file.path, equals('uri3'));
+        if (kIsWeb) {
+          final NetworkImage fi = image.image as NetworkImage;
+          expect(fi.url.endsWith('uri3'), true);
+        } else {
+          final FileImage fi = image.image as FileImage;
+          expect(fi.file.path, equals('uri3'));
+        }
         expect(linkTapResults, isNull);
       },
     );
@@ -1202,7 +1211,7 @@ void defineTests() {
 
     testWidgets(
       // Example 531 from GFM.
-      'brackets that aren\'t part of links do not take precedence',
+      "brackets that aren't part of links do not take precedence",
       (WidgetTester tester) async {
         const String data = '*foo [bar* baz]';
         await tester.pumpWidget(

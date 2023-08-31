@@ -202,7 +202,7 @@ void main() {
       );
     '''));
     await tester.pump();
-    expect(tester.getTopLeft(find.byType(SizedBox)), const Offset(0.0, 0.0));
+    expect(tester.getTopLeft(find.byType(SizedBox)), Offset.zero);
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;

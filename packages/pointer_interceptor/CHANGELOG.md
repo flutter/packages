@@ -1,3 +1,33 @@
+## 0.9.3+6
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 0.9.3+5
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Aligns Dart and Flutter SDK constraints.
+
+##  0.9.3+4
+
+* Removes const keyword from PointerInterceptor's constructor.
+* Updates minimum Flutter version to 3.0.
+
+## 0.9.3+3
+
+* Fixes lint warnings.
+
+## 0.9.3+2
+
+* (Temporarily) helps tests introduced in prior version to pass in `stable`.
+  (This will be removed when `master` rolls to `stable`)
+* Updates README to reference the correct github URL.
+
+## 0.9.3+1
+
+* Updates example code and integration tests to accomodate hit-testing changes in the Flutter web engine.
+
 ## 0.9.3
 
 * Require minimal version of flutter SDK to be `2.10`

@@ -168,13 +168,13 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// The [duration], [reverse], and [transitionBuilder] parameters
   /// must not be null.
   const PageTransitionSwitcher({
-    Key? key,
+    super.key,
     this.duration = const Duration(milliseconds: 300),
     this.reverse = false,
     required this.transitionBuilder,
     this.layoutBuilder = defaultLayoutBuilder,
     this.child,
-  }) : super(key: key);
+  });
 
   /// The current child widget to display.
   ///
@@ -265,13 +265,13 @@ class PageTransitionSwitcher extends StatefulWidget {
   /// signature.
   static Widget defaultLayoutBuilder(List<Widget> entries) {
     return Stack(
-      children: entries,
       alignment: Alignment.center,
+      children: entries,
     );
   }
 
   @override
-  _PageTransitionSwitcherState createState() => _PageTransitionSwitcherState();
+  State<PageTransitionSwitcher> createState() => _PageTransitionSwitcherState();
 }
 
 class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>

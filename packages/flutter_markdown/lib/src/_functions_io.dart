@@ -60,12 +60,14 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
           MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
       break;
     case MarkdownStyleSheetBaseTheme.material:
+    // ignore: no_default_cases
     default:
       result = MarkdownStyleSheet.fromTheme(Theme.of(context));
   }
 
   return result.copyWith(
-    textScaleFactor: MediaQuery.textScaleFactorOf(context),
+    textScaleFactor:
+        MediaQuery.textScaleFactorOf(context), // ignore: deprecated_member_use
   );
 };
 

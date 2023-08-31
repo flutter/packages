@@ -17,6 +17,7 @@ class XFile extends XFileBase {
   /// [bytes] is ignored; the parameter exists only to match the web version of
   /// the constructor. To construct a dart:io XFile from bytes, use
   /// [XFile.fromData].
+  // ignore: use_super_parameters
   XFile(
     String path, {
     String? mimeType,

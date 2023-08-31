@@ -8,12 +8,11 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'dart:ui' show Color, ImageByteFormat;
 
 import 'package:collection/collection.dart'
-    show PriorityQueue, HeapPriorityQueue;
+    show HeapPriorityQueue, PriorityQueue;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 
@@ -190,10 +189,9 @@ class PaletteGenerator with Diagnosticable {
     ],
     List<PaletteTarget> targets = const <PaletteTarget>[],
   }) async {
-    final ByteData? imageData =
-        await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    final ByteData? imageData = await image.toByteData();
     if (imageData == null) {
-      throw 'Failed to encode the image.';
+      throw StateError('Failed to encode the image.');
     }
 
     return PaletteGenerator.fromByteData(
@@ -516,7 +514,6 @@ class PaletteTarget with Diagnosticable {
   static const double _targetLightLightness = 0.74;
 
   static const double _minNormalLightness = 0.3;
-  static const double _targetNormalLightness = 0.5;
   static const double _maxNormalLightness = 0.7;
 
   static const double _targetMutedSaturation = 0.3;
@@ -546,7 +543,6 @@ class PaletteTarget with Diagnosticable {
   /// One of the base set of `targets` for [PaletteGenerator.fromImage], in [baseTargets].
   static final PaletteTarget vibrant = PaletteTarget(
     minimumLightness: _minNormalLightness,
-    targetLightness: _targetNormalLightness,
     maximumLightness: _maxNormalLightness,
     minimumSaturation: _minVibrantSaturation,
     targetSaturation: _targetVibrantSaturation,
@@ -580,7 +576,6 @@ class PaletteTarget with Diagnosticable {
   /// One of the base set of `targets` for [PaletteGenerator.fromImage], in [baseTargets].
   static final PaletteTarget muted = PaletteTarget(
     minimumLightness: _minNormalLightness,
-    targetLightness: _targetNormalLightness,
     maximumLightness: _maxNormalLightness,
     targetSaturation: _targetMutedSaturation,
     maximumSaturation: _maxMutedSaturation,
@@ -634,7 +629,7 @@ class PaletteTarget with Diagnosticable {
 
   @override
   int get hashCode {
-    return hashValues(
+    return Object.hash(
       minimumSaturation,
       targetSaturation,
       maximumSaturation,
@@ -852,9 +847,7 @@ class PaletteColor with Diagnosticable {
   }
 
   @override
-  int get hashCode {
-    return hashValues(color, population);
-  }
+  int get hashCode => Object.hash(color, population);
 
   @override
   bool operator ==(Object other) {
@@ -883,18 +876,18 @@ typedef PaletteFilter = bool Function(HSLColor color);
 /// See also:
 ///  * [PaletteGenerator], a class for selecting color palettes from images.
 bool avoidRedBlackWhitePaletteFilter(HSLColor color) {
-  bool _isBlack(HSLColor hslColor) {
-    const double _blackMaxLightness = 0.05;
-    return hslColor.lightness <= _blackMaxLightness;
+  bool isBlack(HSLColor hslColor) {
+    const double blackMaxLightness = 0.05;
+    return hslColor.lightness <= blackMaxLightness;
   }
 
-  bool _isWhite(HSLColor hslColor) {
-    const double _whiteMinLightness = 0.95;
-    return hslColor.lightness >= _whiteMinLightness;
+  bool isWhite(HSLColor hslColor) {
+    const double whiteMinLightness = 0.95;
+    return hslColor.lightness >= whiteMinLightness;
   }
 
   // Returns true if the color is close to the red side of the I line.
-  bool _isNearRedILine(HSLColor hslColor) {
+  bool isNearRedILine(HSLColor hslColor) {
     const double redLineMinHue = 10.0;
     const double redLineMaxHue = 37.0;
     const double redLineMaxSaturation = 0.82;
@@ -903,7 +896,7 @@ bool avoidRedBlackWhitePaletteFilter(HSLColor color) {
         hslColor.saturation <= redLineMaxSaturation;
   }
 
-  return !_isWhite(color) && !_isBlack(color) && !_isNearRedILine(color);
+  return !isWhite(color) && !isBlack(color) && !isNearRedILine(color);
 }
 
 enum _ColorComponent {

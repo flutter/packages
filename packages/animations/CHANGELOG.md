@@ -1,3 +1,28 @@
+## 2.0.8
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.0.7
+* Updates screenshots to use webp compressed animations
+
+## 2.0.6
+* Adds screenshots to pubspec.yaml
+
+## 2.0.5
+* Update `OpenContainer` to use `Visibility` widget internally instead of `Opacity`.
+* Update `OpenContainer` to use `FadeTransition` instead of animating an `Opacity`
+  widget internally.
+
+## 2.0.4
+
+* Updates text theme parameters to avoid deprecation issues.
+* Fixes lint warnings.
+
+## 2.0.3
+* Updates for non-nullable bindings.
+
 ## 2.0.2
 * Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`. 
 

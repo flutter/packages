@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
+// ignore_for_file: avoid_implementing_value_types
+
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -90,7 +93,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
 /// accompanying Markdown element builder object to handle subscript tags.
 class SubscriptSyntaxDemo extends StatelessWidget
     implements MarkdownDemoWidget {
-  const SubscriptSyntaxDemo({Key? key}) : super(key: key);
+  const SubscriptSyntaxDemo({super.key});
 
   static const String _title = 'Subscript Syntax Demo';
 

@@ -23,6 +23,7 @@ generators with that AST.
 * [java_generator.dart](./lib/java_generator.dart) - The Java code generator.
 * [objc_generator.dart](./lib/objc_generator.dart) - The Objective-C code
   generator (header and source files).
+* [cpp_generator.dart](./lib/cpp_generator.dart) - The C++ code generator.
 * [generator_tools.dart](./lib/generator_tools.dart) - Shared code between generators.
 * [pigeon_cl.dart](./lib/pigeon_cl.dart) - The top-level function executed by
   the command line tool in [bin/][./bin].
@@ -33,7 +34,8 @@ generators with that AST.
 
 ## Testing Overview
 
-Pigeon has 3 types of tests, you'll find them all in [run_tests.sh](./run_tests.sh).
+Pigeon has 3 types of tests, you'll find them all in
+[test.dart](./tool/test.dart).
 
 * Unit tests - These are the fastest tests that are just typical unit tests,
   they may be generating code and checking it against a regular expression to
@@ -53,7 +55,6 @@ This is what the temporary generated code that the _PigeonIsolate_ executes
 looks like (see [State Diagram](#state-diagram)):
 
 ```dart
-@dart = 2.12
 import 'path/to/supplied/pigeon/file.dart'
 import 'dart:io';
 import 'dart:isolate';

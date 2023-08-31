@@ -11,7 +11,7 @@ import '../shared/markdown_extensions.dart';
 // ignore_for_file: public_member_api_docs
 
 class DemoScreen extends StatelessWidget {
-  const DemoScreen({Key? key, required this.child}) : super(key: key);
+  const DemoScreen({super.key, required this.child});
 
   static const String routeName = '/demoScreen';
 
@@ -30,7 +30,7 @@ class DemoScreen extends StatelessWidget {
             indicatorPadding: const EdgeInsets.only(bottom: 8),
             indicatorSize: TabBarIndicatorSize.label,
             tabs: <Widget>[
-              for (String label in _tabLabels) Tab(text: label),
+              for (final String label in _tabLabels) Tab(text: label),
             ],
           ),
         ),
@@ -47,7 +47,7 @@ class DemoScreen extends StatelessWidget {
 }
 
 class DemoFormattedView extends StatelessWidget {
-  const DemoFormattedView({Key? key, required this.child}) : super(key: key);
+  const DemoFormattedView({super.key, required this.child});
 
   final Widget? child;
 
@@ -64,7 +64,7 @@ class DemoFormattedView extends StatelessWidget {
 }
 
 class DemoRawDataView extends StatelessWidget {
-  const DemoRawDataView({Key? key, required this.data}) : super(key: key);
+  const DemoRawDataView({super.key, required this.data});
 
   final Future<String> data;
 
@@ -82,7 +82,7 @@ class DemoRawDataView extends StatelessWidget {
                 softWrap: true,
                 style: Theme.of(context)
                     .primaryTextTheme
-                    .bodyText1!
+                    .bodyLarge!
                     .copyWith(fontFamily: 'Roboto Mono', color: Colors.black),
               ),
             ),
@@ -96,7 +96,7 @@ class DemoRawDataView extends StatelessWidget {
 }
 
 class DemoNotesView extends StatelessWidget {
-  const DemoNotesView({Key? key, required this.notes}) : super(key: key);
+  const DemoNotesView({super.key, required this.notes});
 
   final Future<String> notes;
 
@@ -109,7 +109,7 @@ class DemoNotesView extends StatelessWidget {
     String? href,
     String title,
   ) async {
-    showDialog<Widget>(
+    await showDialog<Widget>(
       context: context,
       builder: (BuildContext context) =>
           _createDialog(context, text, href, title),
@@ -129,22 +129,22 @@ class DemoNotesView extends StatelessWidget {
             children: <Widget>[
               Text(
                 'See the following link for more information:',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link text: $text',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link destination: $href',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link title: $title',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),

@@ -248,8 +248,8 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       alignment: ArgumentDecoders.alignment(source, ['alignment']) ?? Alignment.center,
       widthFactor: source.v<double>(['widthFactor']),
       heightFactor: source.v<double>(['heightFactor']),
-      child: source.optionalChild(['child']),
       onEnd: source.voidHandler(['onEnd']),
+      child: source.optionalChild(['child']),
     );
   },
 
@@ -302,9 +302,9 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       margin: ArgumentDecoders.edgeInsets(source, ['margin']),
       transform: ArgumentDecoders.matrix(source, ['transform']),
       transformAlignment: ArgumentDecoders.alignment(source, ['transformAlignment']),
-      child: source.optionalChild(['child']),
       clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
       onEnd: source.voidHandler(['onEnd']),
+      child: source.optionalChild(['child']),
     );
   },
 
@@ -319,8 +319,8 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       maxLines: source.v<int>(['maxLines']),
       textWidthBasis: ArgumentDecoders.enumValue<TextWidthBasis>(TextWidthBasis.values, source, ['textWidthBasis']) ?? TextWidthBasis.parent,
       textHeightBehavior: ArgumentDecoders.textHeightBehavior(source, ['textHeightBehavior']),
-      child: source.child(['child']),
       onEnd: source.voidHandler(['onEnd']),
+      child: source.child(['child']),
     );
   },
 
@@ -496,8 +496,8 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       duration: ArgumentDecoders.duration(source, ['duration'], context),
       curve: ArgumentDecoders.curve(source, ['curve'], context),
       padding: ArgumentDecoders.edgeInsets(source, ['padding']) ?? EdgeInsets.zero,
-      child: source.optionalChild(['child']),
       onEnd: source.voidHandler(['onEnd']),
+      child: source.optionalChild(['child']),
     );
   },
 
@@ -520,8 +520,8 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       bottom: source.v<double>(['bottom']),
       width: source.v<double>(['width']),
       height: source.v<double>(['height']),
-      child: source.child(['child']),
       onEnd: source.voidHandler(['onEnd']),
+      child: source.child(['child']),
     );
   },
 
@@ -532,11 +532,13 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       turns: source.v<double>(['turns']) ?? 0.0,
       alignment: (ArgumentDecoders.alignment(source, ['alignment']) ?? Alignment.center).resolve(Directionality.of(context)),
       filterQuality: ArgumentDecoders.enumValue<FilterQuality>(FilterQuality.values, source, ['filterQuality']),
-      child: source.optionalChild(['child']),
       onEnd: source.voidHandler(['onEnd']),
+      child: source.optionalChild(['child']),
     );
   },
 
+  // The "#docregion" pragma below makes this accessible from the README.md file.
+  // #docregion Row
   'Row': (BuildContext context, DataSource source) {
     return Row(
       mainAxisAlignment: ArgumentDecoders.enumValue<MainAxisAlignment>(MainAxisAlignment.values, source, ['mainAxisAlignment']) ?? MainAxisAlignment.start,
@@ -548,6 +550,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       children: source.childList(['children']),
     );
   },
+  // #enddocregion Row
 
   'SafeArea': (BuildContext context, DataSource source) {
     return SafeArea(
@@ -568,8 +571,8 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       scale: source.v<double>(['scale']) ?? 1.0,
       alignment: (ArgumentDecoders.alignment(source, ['alignment']) ?? Alignment.center).resolve(Directionality.of(context)),
       filterQuality: ArgumentDecoders.enumValue<FilterQuality>(FilterQuality.values, source, ['filterQuality']),
-      child: source.optionalChild(['child']),
       onEnd: source.voidHandler(['onEnd']),
+      child: source.optionalChild(['child']),
     );
   },
 
@@ -579,13 +582,13 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       reverse: source.v<bool>(['reverse']) ?? false,
       padding: ArgumentDecoders.edgeInsets(source, ['padding']),
       primary: source.v<bool>(['primary']) ?? true,
-      // ScrollPhysics? physics,
-      // ScrollController? controller,
-      child: source.optionalChild(['child']),
       dragStartBehavior: ArgumentDecoders.enumValue<DragStartBehavior>(DragStartBehavior.values, source, ['dragStartBehavior']) ?? DragStartBehavior.start,
       clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.hardEdge,
       restorationId: source.v<String>(['restorationId']),
       keyboardDismissBehavior: ArgumentDecoders.enumValue<ScrollViewKeyboardDismissBehavior>(ScrollViewKeyboardDismissBehavior.values, source, ['keyboardDismissBehavior']) ?? ScrollViewKeyboardDismissBehavior.manual,
+      // ScrollPhysics? physics,
+      // ScrollController? controller,
+      child: source.optionalChild(['child']),
     );
   },
 
@@ -644,7 +647,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       locale: ArgumentDecoders.locale(source, ['locale']),
       softWrap: source.v<bool>(['softWrap']),
       overflow: ArgumentDecoders.enumValue<TextOverflow>(TextOverflow.values, source, ['overflow']),
-      textScaleFactor: source.v<double>(['textScaleFactor']),
+      textScaleFactor: source.v<double>(['textScaleFactor']),  // ignore: deprecated_member_use
       maxLines: source.v<int>(['maxLines']),
       semanticsLabel: source.v<String>(['semanticsLabel']),
       textWidthBasis: ArgumentDecoders.enumValue<TextWidthBasis>(TextWidthBasis.values, source, ['textWidthBasis']),

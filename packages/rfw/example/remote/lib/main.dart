@@ -11,14 +11,14 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:rfw/rfw.dart';
 
-const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/master/packages/rfw/example/remote/remote_widget_libraries';
+const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/remote/remote_widget_libraries';
 
 void main() {
   runApp(const MaterialApp(home: Example()));
 }
 
 class Example extends StatefulWidget {
-  const Example({Key? key}) : super(key: key);
+  const Example({super.key});
 
   @override
   State<Example> createState() => _ExampleState();
@@ -65,7 +65,7 @@ class _ExampleState extends State<Example> {
         FlutterError.reportError(FlutterErrorDetails(exception: e, stack: stack));
       }
     }
-    print('Fetching: $urlPrefix/$nextFile');
+    print('Fetching: $urlPrefix/$nextFile'); // ignore: avoid_print
     final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse('$urlPrefix/$nextFile'))).close();
     await currentFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
     await settingsFile.writeAsString(nextFile);
@@ -87,13 +87,13 @@ class _ExampleState extends State<Example> {
         },
       );
     } else {
-      result = Material(
+      result = const Material(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const <Widget>[
+              children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 100.0), child: Text('REMOTE', textAlign: TextAlign.center, style: TextStyle(letterSpacing: 12.0))),
                 Expanded(child: DecoratedBox(decoration: FlutterLogoDecoration(style: FlutterLogoStyle.horizontal))),
                 Padding(padding: EdgeInsets.only(left: 100.0), child: Text('WIDGETS', textAlign: TextAlign.center, style: TextStyle(letterSpacing: 12.0))),

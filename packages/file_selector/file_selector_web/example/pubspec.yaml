@@ -1,0 +1,19 @@
+name: file_selector_web_integration_tests
+publish_to: none
+
+environment:
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
+
+dependencies:
+  file_selector_platform_interface: ^2.6.0
+  file_selector_web:
+    path: ../
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter

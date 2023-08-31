@@ -54,12 +54,18 @@ documents, respectively. GitHub Web adds header ID and emoji support. The
 Using the Markdown widget is simple, just pass in the source markdown as a
 string:
 
-    Markdown(data: markdownSource);
+<?code-excerpt "example/lib/readme_excerpts.dart (CreateMarkdown)"?>
+```dart
+const Markdown(data: markdownSource);
+```
 
 If you do not want the padding or scrolling behavior, use the MarkdownBody
 instead:
 
-    MarkdownBody(data: markdownSource);
+<?code-excerpt "example/lib/readme_excerpts.dart (CreateMarkdownBody)"?>
+```dart
+const MarkdownBody(data: markdownSource);
+```
 
 By default, Markdown uses the formatting from the current material design theme,
 but it's possible to create your own custom styling. Use the MarkdownStyle class
@@ -79,12 +85,13 @@ formatted output of the Markdown widget. For example, in the following Markdown
 widget constructor, a text string with a smiley face emoji is passed in as the
 source Markdown data.
 
-```
+<?code-excerpt "example/lib/readme_excerpts.dart (CreateMarkdownWithEmoji)"?>
+```dart
 Markdown(
-    controller: controller,
-    selectable: true,
-    data: 'Insert emoji here😀 ',
-)
+  controller: controller,
+  selectable: true,
+  data: 'Insert emoji here😀 ',
+);
 ```
 
 The resulting Markdown widget will contain a single line of text with the
@@ -100,18 +107,22 @@ auto-links, and strike-through. To include the inline emoji tag syntax
 while maintaining the default GitHub flavored Markdown behavior, define
 an extension set that combines EmojiSyntax with ExtensionSet.gitHubFlavored.
 
-```
+<?code-excerpt "example/lib/readme_excerpts.dart (CreateMarkdownWithEmojiExtension)"?>
+```dart
 import 'package:markdown/markdown.dart' as md;
-
-Markdown(
+// ···
+  Markdown(
     controller: controller,
     selectable: true,
     data: 'Insert emoji :smiley: here',
     extensionSet: md.ExtensionSet(
       md.ExtensionSet.gitHubFlavored.blockSyntaxes,
-      [md.EmojiSyntax(), ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes],
+      <md.InlineSyntax>[
+        md.EmojiSyntax(),
+        ...md.ExtensionSet.gitHubFlavored.inlineSyntaxes
+      ],
     ),
-)
+  );
 ```
 
 ## Image Support

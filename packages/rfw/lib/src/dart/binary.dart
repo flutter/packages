@@ -245,6 +245,18 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   ([SetStateHandler.stateReference]), followed by the tagged value to which
 ///   to set that state entry ([SetStateHandler.value]).
 ///
+/// ## Limitations
+///
+/// JavaScript does not have a native integer type; all numbers are stored as
+/// [double]s. Data loss may therefore occur when handling integers that cannot
+/// be completely represented as a [binary64] floating point number.
+///
+/// Integers are used for two purposes in this format; as a length, for which it
+/// is extremely unlikely that numbers above 2^53 would be practical anyway, and
+/// for representing integer literals. Thus, when using RFW with JavaScript
+/// environments, it is recommended to use [double]s instead of [int]s whenever
+/// possible, to avoid accidental data loss.
+///
 /// See also:
 ///
 ///  * [encodeLibraryBlob], which encodes this format.
@@ -263,6 +275,10 @@ RemoteWidgetLibrary decodeLibraryBlob(Uint8List bytes) {
 
 // endianess used by this format
 const Endian _blobEndian = Endian.little;
+
+// whether we can use 64 bit APIs on this platform
+// (on JS, we can only use 32 bit APIs and integers only go up to ~2^53)
+const bool _has64Bits = 0x1000000000000000 + 1 != 0x1000000000000000; // 2^60
 
 // magic signatures
 const int _msFalse = 0x00;
@@ -316,7 +332,14 @@ class _BlobDecoder {
   int _readInt64() {
     final int byteOffset = _cursor;
     _advance('int64', 8);
-    return bytes.getInt64(byteOffset, _blobEndian);
+    if (_has64Bits) {
+      return bytes.getInt64(byteOffset, _blobEndian);
+    }
+    // We use multiplication rather than bit shifts because << truncates to 32 bits when compiled to JS:
+    // https://dart.dev/guides/language/numbers#bitwise-operations
+    final int a = bytes.getUint32(byteOffset, _blobEndian); // dead code on VM target
+    final int b = bytes.getInt32(byteOffset + 4, _blobEndian); // dead code on VM target
+    return a + (b * 0x100000000); // dead code on VM target
   }
 
   double _readBinary64() {
@@ -516,12 +539,24 @@ class _BlobEncoder {
   final BytesBuilder bytes = BytesBuilder(); // copying builder -- we repeatedly add _scratchOut after changing it
 
   void _writeInt64(int value) {
-    _scratchIn.setInt64(0, value, _blobEndian);
+    if (_has64Bits) {
+      _scratchIn.setInt64(0, value, _blobEndian);
+    } else {
+      // We use division rather than bit shifts because >> truncates to 32 bits when compiled to JS:
+      // https://dart.dev/guides/language/numbers#bitwise-operations
+      if (value >= 0) { // dead code on VM target
+        _scratchIn.setInt32(0, value, _blobEndian); // dead code on VM target
+        _scratchIn.setInt32(4, value ~/ 0x100000000, _blobEndian); // dead code on VM target
+      } else {
+        _scratchIn.setInt32(0, value, _blobEndian); // dead code on VM target
+        _scratchIn.setInt32(4, -((-value) ~/ 0x100000000 + 1), _blobEndian); // dead code on VM target
+      }
+    }
     bytes.add(_scratchOut);
   }
 
   void _writeString(String value) {
-    final Uint8List buffer = utf8.encode(value) as Uint8List;
+    final Uint8List buffer = const Utf8Encoder().convert(value);
     _writeInt64(buffer.length);
     bytes.add(buffer);
   }
@@ -551,7 +586,7 @@ class _BlobEncoder {
       bytes.addByte(_msFalse);
     } else if (value == true) {
       bytes.addByte(_msTrue);
-    } else if (value is double) {
+    } else if (value is double && value is! int) { // When compiled to JS, a Number can be both.
       bytes.addByte(_msBinary64);
       _scratchIn.setFloat64(0, value, _blobEndian);
       bytes.add(_scratchOut);

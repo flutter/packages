@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'utils.dart';
 
 void main() => defineTests();
@@ -93,9 +94,9 @@ void defineTests() {
           'Item 2',
           '3.',
           'Item 3',
-          '10.',
+          '4.',
           'Item 10',
-          '11.',
+          '5.',
           'Item 11'
         ]);
       },
@@ -181,6 +182,56 @@ void defineTests() {
           'false',
           'Item 2',
         ]);
+      },
+    );
+  });
+
+  group('fitContent', () {
+    testWidgets(
+      'uses maximum width when false',
+      (WidgetTester tester) async {
+        const String data = '- Foo\n- Bar';
+
+        await tester.pumpWidget(
+          boilerplate(
+            const Column(
+              children: <Widget>[
+                MarkdownBody(fitContent: false, data: data),
+              ],
+            ),
+          ),
+        );
+
+        final double screenWidth =
+            find.byType(Column).evaluate().first.size!.width;
+        final double markdownBodyWidth =
+            find.byType(MarkdownBody).evaluate().single.size!.width;
+
+        expect(markdownBodyWidth, equals(screenWidth));
+      },
+    );
+
+    testWidgets(
+      'uses minimum width when true',
+      (WidgetTester tester) async {
+        const String data = '- Foo\n- Bar';
+
+        await tester.pumpWidget(
+          boilerplate(
+            const Column(
+              children: <Widget>[
+                MarkdownBody(data: data),
+              ],
+            ),
+          ),
+        );
+
+        final double screenWidth =
+            find.byType(Column).evaluate().first.size!.width;
+        final double markdownBodyWidth =
+            find.byType(MarkdownBody).evaluate().single.size!.width;
+
+        expect(markdownBodyWidth, lessThan(screenWidth));
       },
     );
   });

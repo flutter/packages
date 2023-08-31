@@ -135,7 +135,7 @@ void defineTests() {
       (WidgetTester tester) async {
         final ThemeData theme = ThemeData.dark().copyWith(
           textTheme: const TextTheme(
-            bodyText2: TextStyle(fontSize: 12.0),
+            bodyMedium: TextStyle(fontSize: 12.0),
           ),
         );
 
@@ -145,60 +145,60 @@ void defineTests() {
         expect(style.a!.color, Colors.blue);
 
         // p
-        expect(style.p, theme.textTheme.bodyText2);
+        expect(style.p, theme.textTheme.bodyMedium);
 
         // code
-        expect(style.code!.color, theme.textTheme.bodyText2!.color);
+        expect(style.code!.color, theme.textTheme.bodyMedium!.color);
         expect(
-            style.code!.fontSize, theme.textTheme.bodyText2!.fontSize! * 0.85);
+            style.code!.fontSize, theme.textTheme.bodyMedium!.fontSize! * 0.85);
         expect(style.code!.fontFamily, 'monospace');
         expect(style.code!.backgroundColor, theme.cardColor);
 
         // H1
-        expect(style.h1, theme.textTheme.headline5);
+        expect(style.h1, theme.textTheme.headlineSmall);
 
         // H2
-        expect(style.h2, theme.textTheme.headline6);
+        expect(style.h2, theme.textTheme.titleLarge);
 
         // H3
-        expect(style.h3, theme.textTheme.subtitle1);
+        expect(style.h3, theme.textTheme.titleMedium);
 
         // H4
-        expect(style.h4, theme.textTheme.bodyText1);
+        expect(style.h4, theme.textTheme.bodyLarge);
 
         // H5
-        expect(style.h5, theme.textTheme.bodyText1);
+        expect(style.h5, theme.textTheme.bodyLarge);
 
         // H6
-        expect(style.h6, theme.textTheme.bodyText1);
+        expect(style.h6, theme.textTheme.bodyLarge);
 
         // em
         expect(style.em!.fontStyle, FontStyle.italic);
-        expect(style.em!.color, theme.textTheme.bodyText2!.color);
+        expect(style.em!.color, theme.textTheme.bodyMedium!.color);
 
         // strong
         expect(style.strong!.fontWeight, FontWeight.bold);
-        expect(style.strong!.color, theme.textTheme.bodyText2!.color);
+        expect(style.strong!.color, theme.textTheme.bodyMedium!.color);
 
         // del
         expect(style.del!.decoration, TextDecoration.lineThrough);
-        expect(style.del!.color, theme.textTheme.bodyText2!.color);
+        expect(style.del!.color, theme.textTheme.bodyMedium!.color);
 
         // blockqoute
-        expect(style.blockquote, theme.textTheme.bodyText2);
+        expect(style.blockquote, theme.textTheme.bodyMedium);
 
         // img
-        expect(style.img, theme.textTheme.bodyText2);
+        expect(style.img, theme.textTheme.bodyMedium);
 
         // checkbox
         expect(style.checkbox!.color, theme.primaryColor);
-        expect(style.checkbox!.fontSize, theme.textTheme.bodyText2!.fontSize);
+        expect(style.checkbox!.fontSize, theme.textTheme.bodyMedium!.fontSize);
 
         // tableHead
         expect(style.tableHead!.fontWeight, FontWeight.w600);
 
         // tableBody
-        expect(style.tableBody, theme.textTheme.bodyText2);
+        expect(style.tableBody, theme.textTheme.bodyMedium);
       },
     );
 
@@ -216,7 +216,7 @@ void defineTests() {
         final MarkdownStyleSheet merged = style1.merge(style2);
         expect(merged.p!.color, Colors.red);
         expect(merged.blockquote!.fontSize, 16);
-        expect(merged.blockquote!.color, theme.textTheme.bodyText2!.color);
+        expect(merged.blockquote!.color, theme.textTheme.bodyMedium!.color);
       },
     );
 
@@ -317,9 +317,11 @@ void defineTests() {
           styleSheet: style,
         )));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(
+          find.byType(MarkdownBody),
+          tester,
+        );
         expectWidgetTypes(widgets, <Type>[
-          Directionality,
           MarkdownBody,
           Column,
           Padding,

@@ -98,10 +98,10 @@ class _ModalRoute<T> extends PopupRoute<T> {
     required _ModalTransitionBuilder transitionBuilder,
     required this.builder,
     RouteSettings? routeSettings,
-    ui.ImageFilter? filter,
+    super.filter,
   })  : assert(!barrierDismissible || barrierLabel != null),
         _transitionBuilder = transitionBuilder,
-        super(filter: filter, settings: routeSettings);
+        super(settings: routeSettings);
 
   @override
   final Color? barrierColor;
@@ -131,6 +131,8 @@ class _ModalRoute<T> extends PopupRoute<T> {
   ) {
     final ThemeData theme = Theme.of(context);
     return Semantics(
+      scopesRoute: true,
+      explicitChildNodes: true,
       child: SafeArea(
         child: Builder(
           builder: (BuildContext context) {
@@ -139,8 +141,6 @@ class _ModalRoute<T> extends PopupRoute<T> {
           },
         ),
       ),
-      scopesRoute: true,
-      explicitChildNodes: true,
     );
   }
 

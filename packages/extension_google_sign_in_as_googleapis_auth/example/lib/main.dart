@@ -19,7 +19,7 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
 void main() {
   runApp(
     const MaterialApp(
-      title: 'Google Sign In',
+      title: 'Google Sign In + googleapis',
       home: SignInDemo(),
     ),
   );
@@ -28,7 +28,7 @@ void main() {
 /// The main widget of this demo.
 class SignInDemo extends StatefulWidget {
   /// Creates the main widget of this demo.
-  const SignInDemo({Key? key}) : super(key: key);
+  const SignInDemo({super.key});
 
   @override
   State createState() => SignInDemoState();
@@ -100,7 +100,7 @@ class SignInDemoState extends State<SignInDemo> {
     try {
       await _googleSignIn.signIn();
     } catch (error) {
-      print(error);
+      print(error); // ignore: avoid_print
     }
   }
 
@@ -122,12 +122,12 @@ class SignInDemoState extends State<SignInDemo> {
           const Text('Signed in successfully.'),
           Text(_contactText),
           ElevatedButton(
-            child: const Text('SIGN OUT'),
             onPressed: _handleSignOut,
+            child: const Text('SIGN OUT'),
           ),
           ElevatedButton(
-            child: const Text('REFRESH'),
             onPressed: _handleGetContact,
+            child: const Text('REFRESH'),
           ),
         ],
       );
@@ -137,8 +137,8 @@ class SignInDemoState extends State<SignInDemo> {
         children: <Widget>[
           const Text('You are not currently signed in.'),
           ElevatedButton(
-            child: const Text('SIGN IN'),
             onPressed: _handleSignIn,
+            child: const Text('SIGN IN'),
           ),
         ],
       );
@@ -149,7 +149,7 @@ class SignInDemoState extends State<SignInDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Google Sign In'),
+          title: const Text('Google Sign In + googleapis'),
         ),
         body: ConstrainedBox(
           constraints: const BoxConstraints.expand(),

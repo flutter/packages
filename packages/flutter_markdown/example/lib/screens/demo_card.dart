@@ -9,7 +9,7 @@ import '../shared/markdown_demo_widget.dart';
 // ignore_for_file: public_member_api_docs
 
 class DemoCard extends StatelessWidget {
-  const DemoCard({Key? key, required this.widget}) : super(key: key);
+  const DemoCard({super.key, required this.widget});
 
   final MarkdownDemoWidget widget;
 
@@ -37,14 +37,14 @@ class DemoCard extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       widget.title,
-                      style: Theme.of(context).primaryTextTheme.headline5,
+                      style: Theme.of(context).primaryTextTheme.headlineSmall,
                     ),
                     const SizedBox(
                       height: 6,
                     ),
                     Text(
                       widget.description,
-                      style: Theme.of(context).primaryTextTheme.bodyText1,
+                      style: Theme.of(context).primaryTextTheme.bodyLarge,
                     ),
                   ],
                 ),

@@ -1,5 +1,17 @@
+## 1.0.6
+
+* Adds pub topics to package metadata.
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Aligns Dart and Flutter SDK constraints.
+
+## 1.0.5
+
+* Updates README to reference correct URL.
+
 ## 1.0.4
-* Update README to link to API docs.
+
+* Updates README to link to API docs.
 
 ## 1.0.3
 * Source moved to flutter/packages.

@@ -1,3 +1,37 @@
+## 2.0.11
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.0.10
+
+* Adds compatibility with `http` 1.0.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Aligns Dart and Flutter SDK constraints.
+
+## 2.0.9
+
+* Makes the extension compatible with `google_sign_in` version `^5.0.0` and `^6.0.0`.
+* Fixes a small typo in the code (`oath` -> `oauth`).
+* Updates example app to use `google_sign_in: ^6.0.0`.
+
+## 2.0.8
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+* Updates minimum Flutter version to 3.0.
+
+## 2.0.7
+
+* Fixes lint warnings.
+
+## 2.0.6
+
+* Drops support for Flutter <2.8.
+
+## 2.0.5
+
+* Updates README to reference the correct github URL.
+
 ## 2.0.4
 
 * Update example with the latest changes from `google_sign_in`, so it builds again on Android. [#89301](https://github.com/flutter/flutter/issues/89301).

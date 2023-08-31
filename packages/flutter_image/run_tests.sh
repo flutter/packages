@@ -9,7 +9,6 @@ set -e
 set -x
 
 flutter packages get
-flutter analyze lib/ test/
 
 dart test/network_test_server.dart &
 SERVER_PID=$!

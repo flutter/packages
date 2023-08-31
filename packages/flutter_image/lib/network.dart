@@ -12,11 +12,14 @@ library network;
 import 'dart:async';
 import 'dart:io' as io;
 import 'dart:math' as math;
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
+// Method signature for _loadWithRetry decode callbacks.
+typedef _SimpleDecoderCallback = Future<ui.Codec> Function(
+    ui.ImmutableBuffer buffer);
 
 /// Fetches the image from the given URL, associating it with the given scale.
 ///
@@ -96,7 +99,13 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   }
 
   @override
-  ImageStreamCompleter load(NetworkImageWithRetry key, DecoderCallback decode) {
+  ImageStreamCompleter loadBuffer(
+    NetworkImageWithRetry key,
+    // TODO(LongCatIsLooong): migrate to use new `loadImage` API.
+    // https://github.com/flutter/flutter/issues/132856
+    // ignore: deprecated_member_use
+    DecoderBufferCallback decode,
+  ) {
     return OneFrameImageStreamCompleter(_loadWithRetry(key, decode),
         informationCollector: () sync* {
       yield ErrorDescription('Image provider: $this');
@@ -124,7 +133,7 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   }
 
   Future<ImageInfo> _loadWithRetry(
-      NetworkImageWithRetry key, DecoderCallback decode) async {
+      NetworkImageWithRetry key, _SimpleDecoderCallback decode) async {
     assert(key == this);
 
     final Stopwatch stopwatch = Stopwatch()..start();
@@ -174,14 +183,15 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
           );
         }
 
-        final ui.Codec codec = await decode(bytes);
+        final ui.Codec codec =
+            await decode(await ui.ImmutableBuffer.fromUint8List(bytes));
         final ui.Image image = (await codec.getNextFrame()).image;
         return ImageInfo(
           image: image,
           scale: key.scale,
         );
       } catch (error) {
-        request?.close();
+        await request?.close();
         lastFailure = error is FetchFailure
             ? error
             : FetchFailure._(
@@ -204,8 +214,8 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
       FlutterError.onError!(FlutterErrorDetails(
         exception: lastFailure!,
         library: 'package:flutter_image',
-        context:
-            ErrorDescription('$runtimeType failed to load ${instructions.uri}'),
+        context: ErrorDescription(
+            '${objectRuntimeType(this, 'NetworkImageWithRetry')} failed to load ${instructions.uri}'),
       ));
     }
 
@@ -217,15 +227,17 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    final NetworkImageWithRetry typedOther = other;
-    return url == typedOther.url && scale == typedOther.scale;
+    return other is NetworkImageWithRetry &&
+        url == other.url &&
+        scale == other.scale;
   }
 
   @override
-  int get hashCode => hashValues(url, scale);
+  int get hashCode => Object.hash(url, scale);
 
   @override
-  String toString() => '$runtimeType("$url", scale: $scale)';
+  String toString() =>
+      '${objectRuntimeType(this, 'NetworkImageWithRetry')}("$url", scale: $scale)';
 }
 
 /// This function is called to get [FetchInstructions] to fetch an image.
@@ -284,7 +296,7 @@ class FetchInstructions {
 
   @override
   String toString() {
-    return '$runtimeType(\n'
+    return '${objectRuntimeType(this, 'FetchInstructions')}(\n'
         '  shouldGiveUp: $shouldGiveUp\n'
         '  timeout: $timeout\n'
         '  uri: $uri\n'
@@ -321,7 +333,7 @@ class FetchFailure implements Exception {
 
   @override
   String toString() {
-    return '$runtimeType(\n'
+    return '${objectRuntimeType(this, 'FetchFailure')}(\n'
         '  attemptCount: $attemptCount\n'
         '  httpStatusCode: $httpStatusCode\n'
         '  totalDuration: $totalDuration\n'

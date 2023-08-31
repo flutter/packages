@@ -7,6 +7,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show objectRuntimeType;
+
 import '../dart/model.dart';
 
 /// Signature for the callback passed to [DynamicContent.subscribe].
@@ -188,7 +190,7 @@ class DynamicContent {
   }
 
   @override
-  String toString() => '$runtimeType($_root)';
+  String toString() => '${objectRuntimeType(this, 'DynamicContent')}($_root)';
 }
 
 // Node in the [DynamicContent] tree. This should contain no [BlobNode]s.

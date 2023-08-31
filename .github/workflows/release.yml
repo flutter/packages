@@ -20,33 +20,44 @@ jobs:
       # Github Actions don't support templates so it is hard to share this snippet with another action
       # If we eventually need to use this in more workflow, we could create a shell script that contains this
       # snippet.
+      #
+      # This uses a pinned version of Flutter rather than `stable` so that it is
+      # not subject to out-of-band failures when new releases happen. It does
+      # not use the auto-rolled pin because there's no way for the autoroller
+      # to test the actual release flow, so changes would still show up in
+      # post-submit. A manually-rolled pin means that any changes here must be
+      # made deliberately, so that the person updating it knows to watch the
+      # next actual auto-release to ensure that it works, and knows to revert
+      # the change if it doesn't.
       run: |
         cd $HOME
-        git clone https://github.com/flutter/flutter.git --depth 1 -b stable _flutter
+        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.13.0 _flutter
         echo "$HOME/_flutter/bin" >> $GITHUB_PATH
         cd $GITHUB_WORKSPACE
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
+      uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools
-      run: dart pub global activate flutter_plugin_tools 0.8.1
+      run: dart pub get
+      working-directory: ${{ github.workspace }}/script/tool
 
-    # # This workflow should be the last to run. So wait for all the other tests to succeed.
+    # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@752bfae19aef55dab12a00bc36d48acc46b77e9d
+      uses: lewagon/wait-on-check-action@e106e5c43e8ca1edea6383a39a01c5ca495fd812
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 180 # seconds
         allowed-conclusions: success,neutral
+        # verbose:true will produce too many logs that hang github actions web UI.
+        verbose: false
 
     - name: run release
       run: |
         git config --global user.name ${{ secrets.USER_NAME }}
         git config --global user.email ${{ secrets.USER_EMAIL }}
-        dart pub global run flutter_plugin_tools publish-plugin --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
+        dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
       env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}
-

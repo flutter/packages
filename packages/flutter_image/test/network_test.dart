@@ -85,7 +85,7 @@ void main() {
       });
 
       test('retries 6 times then gives up', () async {
-        final dynamic maxAttemptCountReached = expectAsync0(() {});
+        final VoidCallback maxAttemptCountReached = expectAsync0(() {});
 
         int attemptCount = 0;
         Future<void> onAttempt() async {
@@ -104,7 +104,7 @@ void main() {
             Timer.run(onAttempt);
             return fakeAsync.run((FakeAsync fakeAsync) {
               return NetworkImageWithRetry.defaultFetchStrategy(uri, failure);
-            });
+            }) as Future<FetchInstructions>;
           },
         );
 
@@ -126,7 +126,7 @@ void main() {
             Timer.run(onAttempt);
             return fakeAsync.run((FakeAsync fakeAsync) {
               return NetworkImageWithRetry.defaultFetchStrategy(uri, failure);
-            });
+            }) as Future<FetchInstructions>;
           },
         );
 
@@ -140,9 +140,12 @@ void assertThatImageLoadingFails(
   NetworkImageWithRetry subject,
   List<FlutterErrorDetails> errorLog,
 ) {
-  final ImageStreamCompleter completer = subject.load(
+  final ImageStreamCompleter completer = subject.loadBuffer(
     subject,
-    _ambiguate(PaintingBinding.instance)!.instantiateImageCodec,
+    // TODO(LongCatIsLooong): migrate to use new `instantiateImageCodecWithSize` API.
+    // https://github.com/flutter/flutter/issues/132856
+    // ignore: deprecated_member_use
+    PaintingBinding.instance.instantiateImageCodecFromBuffer,
   );
   completer.addListener(ImageStreamListener(
     (ImageInfo image, bool synchronousCall) {},
@@ -157,9 +160,12 @@ void assertThatImageLoadingFails(
 void assertThatImageLoadingSucceeds(
   NetworkImageWithRetry subject,
 ) {
-  final ImageStreamCompleter completer = subject.load(
+  final ImageStreamCompleter completer = subject.loadBuffer(
     subject,
-    _ambiguate(PaintingBinding.instance)!.instantiateImageCodec,
+    // TODO(LongCatIsLooong): migrate to use new `instantiateImageCodecWithSize` API.
+    // https://github.com/flutter/flutter/issues/132856
+    // ignore: deprecated_member_use
+    PaintingBinding.instance.instantiateImageCodecFromBuffer,
   );
   completer.addListener(ImageStreamListener(
     expectAsync2((ImageInfo image, bool synchronousCall) {
@@ -168,11 +174,3 @@ void assertThatImageLoadingSucceeds(
     }),
   ));
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-// TODO(ianh): Remove this once the relevant APIs have shipped to stable.
-// See https://github.com/flutter/flutter/issues/64830
-T? _ambiguate<T>(T? value) => value;

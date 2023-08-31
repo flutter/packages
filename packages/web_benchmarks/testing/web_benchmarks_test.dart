@@ -30,14 +30,14 @@ Future<void> main() async {
           'noise',
         ]) {
           expect(
-            taskResult.scores[benchmarkName].where((BenchmarkScore score) =>
+            taskResult.scores[benchmarkName]!.where((BenchmarkScore score) =>
                 score.metric == '$metricName.$valueName'),
             hasLength(1),
           );
         }
       }
       expect(
-        taskResult.scores[benchmarkName].where(
+        taskResult.scores[benchmarkName]!.where(
             (BenchmarkScore score) => score.metric == 'totalUiFrame.average'),
         hasLength(1),
       );

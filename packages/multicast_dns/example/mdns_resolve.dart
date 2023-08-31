@@ -5,6 +5,8 @@
 // Example script to illustrate how to use the mdns package to lookup names
 // on the local network.
 
+// ignore_for_file: avoid_print
+
 import 'package:multicast_dns/multicast_dns.dart';
 
 Future<void> main(List<String> args) async {

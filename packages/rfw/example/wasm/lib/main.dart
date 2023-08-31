@@ -14,7 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:rfw/rfw.dart';
 import 'package:wasm/wasm.dart';
 
-const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/master/packages/rfw/example/wasm/logic';
+const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
 
 const String interfaceUrl = '$urlPrefix/calculator.rfw';
 const String logicUrl = '$urlPrefix/calculator.wasm';
@@ -24,7 +24,7 @@ void main() {
 }
 
 class Example extends StatefulWidget {
-  const Example({Key? key}) : super(key: key);
+  const Example({super.key});
 
   @override
   State<Example> createState() => _ExampleState();
@@ -38,7 +38,7 @@ class _ExampleState extends State<Example> {
   @override
   void initState() {
     super.initState();
-    _ambiguate(RendererBinding.instance)!.deferFirstFrame();
+    RendererBinding.instance.deferFirstFrame();
     _runtime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
     _loadLogic();
   }
@@ -60,9 +60,9 @@ class _ExampleState extends State<Example> {
     }
     _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(await interfaceFile.readAsBytes()));
     _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
-    _dataFetcher = _logic.lookupFunction('value');
+    _dataFetcher = _logic.lookupFunction('value') as WasmFunction;
     _updateData();
-    setState(() { _ambiguate(RendererBinding.instance)!.allowFirstFrame(); });
+    setState(() { RendererBinding.instance.allowFirstFrame(); });
   }
 
   void _updateData() {
@@ -71,32 +71,26 @@ class _ExampleState extends State<Example> {
   }
 
   List<Object?> _asList(Object? value) {
-    if (value is List<Object?>)
+    if (value is List<Object?>) {
       return value;
+    }
     return const <Object?>[];
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_ambiguate(RendererBinding.instance)!.sendFramesToEngine)
+    if (!RendererBinding.instance.sendFramesToEngine) {
       return const SizedBox.shrink();
+    }
     return RemoteWidget(
       runtime: _runtime,
       data: _data,
       widget: const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
       onEvent: (String name, DynamicMap arguments) {
-        final WasmFunction function = _logic.lookupFunction(name);
+        final WasmFunction function = _logic.lookupFunction(name) as WasmFunction;
         function.apply(_asList(arguments['arguments']));
         _updateData();
       },
     );
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-// TODO(ianh): Remove this once the relevant APIs have shipped to stable.
-// See https://github.com/flutter/flutter/issues/64830
-T? _ambiguate<T>(T? value) => value;

@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
-/// A mock authentication service
+/// A mock authentication service.
 class BookstoreAuth extends ChangeNotifier {
   bool _signedIn = false;
 
@@ -34,10 +34,10 @@ class BookstoreAuth extends ChangeNotifier {
 class BookstoreAuthScope extends InheritedNotifier<BookstoreAuth> {
   /// Creates a [BookstoreAuthScope].
   const BookstoreAuthScope({
-    required BookstoreAuth notifier,
-    required Widget child,
-    Key? key,
-  }) : super(key: key, notifier: notifier, child: child);
+    required BookstoreAuth super.notifier,
+    required super.child,
+    super.key,
+  });
 
   /// Gets the [BookstoreAuth] above the context.
   static BookstoreAuth of(BuildContext context) => context

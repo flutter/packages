@@ -23,7 +23,7 @@ void main() => runApp(Bookstore());
 /// The book store view.
 class Bookstore extends StatelessWidget {
   /// Creates a [Bookstore].
-  Bookstore({Key? key}) : super(key: key);
+  Bookstore({super.key});
 
   final ValueKey<String> _scaffoldKey = const ValueKey<String>('App scaffold');
 
@@ -31,8 +31,7 @@ class Bookstore extends StatelessWidget {
   Widget build(BuildContext context) => BookstoreAuthScope(
         notifier: _auth,
         child: MaterialApp.router(
-          routerDelegate: _router.routerDelegate,
-          routeInformationParser: _router.routeInformationParser,
+          routerConfig: _router,
         ),
       );
 
@@ -42,7 +41,7 @@ class Bookstore extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        redirect: (_) => '/books',
+        redirect: (_, __) => '/books',
       ),
       GoRoute(
         path: '/signin',
@@ -59,12 +58,12 @@ class Bookstore extends StatelessWidget {
       ),
       GoRoute(
         path: '/books',
-        redirect: (_) => '/books/popular',
+        redirect: (_, __) => '/books/popular',
       ),
       GoRoute(
         path: '/book/:bookId',
-        redirect: (GoRouterState state) =>
-            '/books/all/${state.params['bookId']}',
+        redirect: (BuildContext context, GoRouterState state) =>
+            '/books/all/${state.pathParameters['bookId']}',
       ),
       GoRoute(
         path: '/books/:kind(new|all|popular)',
@@ -73,14 +72,14 @@ class Bookstore extends StatelessWidget {
           key: _scaffoldKey,
           child: BookstoreScaffold(
             selectedTab: ScaffoldTab.books,
-            child: BooksScreen(state.params['kind']!),
+            child: BooksScreen(state.pathParameters['kind']!),
           ),
         ),
         routes: <GoRoute>[
           GoRoute(
             path: ':bookId',
             builder: (BuildContext context, GoRouterState state) {
-              final String bookId = state.params['bookId']!;
+              final String bookId = state.pathParameters['bookId']!;
               final Book? selectedBook = libraryInstance.allBooks
                   .firstWhereOrNull((Book b) => b.id.toString() == bookId);
 
@@ -91,8 +90,8 @@ class Bookstore extends StatelessWidget {
       ),
       GoRoute(
         path: '/author/:authorId',
-        redirect: (GoRouterState state) =>
-            '/authors/${state.params['authorId']}',
+        redirect: (BuildContext context, GoRouterState state) =>
+            '/authors/${state.pathParameters['authorId']}',
       ),
       GoRoute(
         path: '/authors',
@@ -108,7 +107,7 @@ class Bookstore extends StatelessWidget {
           GoRoute(
             path: ':authorId',
             builder: (BuildContext context, GoRouterState state) {
-              final int authorId = int.parse(state.params['authorId']!);
+              final int authorId = int.parse(state.pathParameters['authorId']!);
               final Author? selectedAuthor = libraryInstance.allAuthors
                   .firstWhereOrNull((Author a) => a.id == authorId);
 
@@ -134,9 +133,9 @@ class Bookstore extends StatelessWidget {
     debugLogDiagnostics: true,
   );
 
-  String? _guard(GoRouterState state) {
+  String? _guard(BuildContext context, GoRouterState state) {
     final bool signedIn = _auth.signedIn;
-    final bool signingIn = state.subloc == '/signin';
+    final bool signingIn = state.matchedLocation == '/signin';
 
     // Go to /signin if the user is not signed in
     if (!signedIn && !signingIn) {
@@ -156,10 +155,9 @@ class Bookstore extends StatelessWidget {
 class FadeTransitionPage extends CustomTransitionPage<void> {
   /// Creates a [FadeTransitionPage].
   FadeTransitionPage({
-    required LocalKey key,
-    required Widget child,
+    required LocalKey super.key,
+    required super.child,
   }) : super(
-            key: key,
             transitionsBuilder: (BuildContext context,
                     Animation<double> animation,
                     Animation<double> secondaryAnimation,
@@ -167,8 +165,7 @@ class FadeTransitionPage extends CustomTransitionPage<void> {
                 FadeTransition(
                   opacity: animation.drive(_curveTween),
                   child: child,
-                ),
-            child: child);
+                ));
 
   static final CurveTween _curveTween = CurveTween(curve: Curves.easeIn);
 }

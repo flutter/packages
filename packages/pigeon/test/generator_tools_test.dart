@@ -80,7 +80,6 @@ void main() {
               ],
             ),
             name: '',
-            offset: null,
           )
         ],
         returnType:
@@ -113,7 +112,6 @@ void main() {
           NamedType(
             type: const TypeDeclaration(baseName: 'Output', isNullable: false),
             name: '',
-            offset: null,
           )
         ],
         returnType: const TypeDeclaration(
@@ -151,12 +149,10 @@ void main() {
           NamedType(
             type: const TypeDeclaration(baseName: 'Foo', isNullable: false),
             name: '',
-            offset: null,
           ),
           NamedType(
             type: const TypeDeclaration(baseName: 'Bar', isNullable: false),
             name: '',
-            offset: null,
           ),
         ],
         returnType: const TypeDeclaration(
@@ -199,7 +195,6 @@ void main() {
                     ])),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: false,
         )
       ])
     ], classes: <Class>[
@@ -248,7 +243,6 @@ void main() {
                       ])),
             ],
             returnType: const TypeDeclaration.voidDeclaration(),
-            isAsynchronous: false,
           )
         ],
       ),
@@ -284,7 +278,6 @@ void main() {
                       isNullable: false, baseName: 'Foo')),
             ],
             returnType: const TypeDeclaration.voidDeclaration(),
-            isAsynchronous: false,
           )
         ],
       ),
@@ -301,7 +294,6 @@ void main() {
                       isNullable: false, baseName: 'Foo')),
             ],
             returnType: const TypeDeclaration.voidDeclaration(),
-            isAsynchronous: false,
           )
         ],
       )
@@ -320,5 +312,12 @@ void main() {
             .where((EnumeratedClass element) => element.name == 'Foo')
             .length,
         1);
+  });
+
+  test('deduces package name successfully', () {
+    final String? dartPackageName =
+        deducePackageName('./pigeons/core_tests.dart');
+
+    expect(dartPackageName, 'pigeon');
   });
 }

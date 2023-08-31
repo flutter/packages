@@ -2,17 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:meta/meta.dart';
-
 /// A single benchmark score value collected from the benchmark.
 class BenchmarkScore {
   /// Creates a benchmark score.
   ///
   /// [metric] and [value] must not be null.
   BenchmarkScore({
-    @required this.metric,
-    @required this.value,
-  }) : assert(metric != null && value != null);
+    required this.metric,
+    required this.value,
+  });
 
   /// The name of the metric that this score is categorized under.
   ///

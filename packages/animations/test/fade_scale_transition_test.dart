@@ -20,7 +20,6 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return const _FlutterLogoModal();
                       },
@@ -52,7 +51,6 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -120,7 +118,6 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -185,7 +182,6 @@ void main() {
                   onPressed: () {
                     showModal<void>(
                       context: context,
-                      configuration: const FadeScaleTransitionConfiguration(),
                       builder: (BuildContext context) {
                         return _FlutterLogoModal(key: key);
                       },
@@ -286,8 +282,6 @@ void main() {
                       onPressed: () {
                         showModal<void>(
                           context: context,
-                          configuration:
-                              const FadeScaleTransitionConfiguration(),
                           builder: (BuildContext context) {
                             return _FlutterLogoModal(
                               key: topKey,
@@ -472,9 +466,9 @@ double _getScale(GlobalKey key, WidgetTester tester) {
 
 class _FlutterLogoModal extends StatefulWidget {
   const _FlutterLogoModal({
-    Key? key,
+    super.key,
     this.name,
-  }) : super(key: key);
+  });
 
   final String? name;
 

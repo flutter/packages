@@ -22,14 +22,14 @@ class XFile extends XFileBase {
   /// `path` of the file doesn't match what the user sees when selecting it
   /// (like in web)
   XFile(
-    String path, {
+    String super.path, {
     String? mimeType,
     String? name,
     int? length,
     Uint8List? bytes,
     DateTime? lastModified,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  }) : super(path) {
+  }) {
     throw UnimplementedError(
         'CrossFile is not available in your current platform.');
   }

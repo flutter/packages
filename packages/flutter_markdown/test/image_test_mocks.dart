@@ -21,7 +21,7 @@ MockHttpClient createMockImageHttpClient(SecurityContext? _) {
   final MockHttpClientResponse response = MockHttpClientResponse();
   final MockHttpHeaders headers = MockHttpHeaders();
 
-  final List<int> _transparentImage = getTestImageData();
+  final List<int> transparentImage = getTestImageData();
 
   when(client.getUrl(any))
       .thenAnswer((_) => Future<MockHttpClientRequest>.value(request));
@@ -33,7 +33,7 @@ MockHttpClient createMockImageHttpClient(SecurityContext? _) {
 
   when(client.autoUncompress = any).thenAnswer((_) => null);
 
-  when(response.contentLength).thenReturn(_transparentImage.length);
+  when(response.contentLength).thenReturn(transparentImage.length);
 
   when(response.statusCode).thenReturn(HttpStatus.ok);
 
@@ -43,14 +43,16 @@ MockHttpClient createMockImageHttpClient(SecurityContext? _) {
   // Define an image stream that streams the mock test image for all
   // image tests that request an image.
   StreamSubscription<List<int>> imageStream(Invocation invocation) {
-    final void Function(List<int>)? onData = invocation.positionalArguments[0];
-    final void Function()? onDone = invocation.namedArguments[#onDone];
+    final void Function(List<int>)? onData =
+        invocation.positionalArguments[0] as Function(List<int>)?;
+    final void Function()? onDone =
+        invocation.namedArguments[#onDone] as Function()?;
     final void Function(Object, [StackTrace?])? onError =
-        invocation.namedArguments[#onError];
-    final bool? cancelOnError = invocation.namedArguments[#cancelOnError];
+        invocation.namedArguments[#onError] as Function(Object, [StackTrace?])?;
+    final bool? cancelOnError =
+        invocation.namedArguments[#cancelOnError] as bool?;
 
-    return Stream<List<int>>.fromIterable(<List<int>>[_transparentImage])
-        .listen(
+    return Stream<List<int>>.fromIterable(<List<int>>[transparentImage]).listen(
       onData,
       onError: onError,
       onDone: onDone,
@@ -94,6 +96,7 @@ List<int> getTestImageData() {
 /// Define the "fake" data types to be used in mock data type definitions. These
 /// fake data types are important in the definition of the return values of the
 /// properties and methods of the mock data types for null safety.
+// ignore: avoid_implementing_value_types
 class _FakeDuration extends Fake implements Duration {}
 
 class _FakeHttpClientRequest extends Fake implements HttpClientRequest {}
@@ -106,8 +109,8 @@ class _FakeHttpClientResponse extends Fake implements HttpClientResponse {}
 
 class _FakeSocket extends Fake implements Socket {}
 
-class _FakeStreamSubscription<T> extends Fake implements StreamSubscription<T> {
-}
+class _FakeStreamSubscription<T> extends Fake
+    implements StreamSubscription<T> {}
 
 /// A class which mocks [HttpClient].
 ///
@@ -123,8 +126,8 @@ class MockHttpClient extends Mock implements HttpClient {
           returnValue: _FakeDuration()) as Duration;
 
   @override
-  set idleTimeout(Duration? _idleTimeout) =>
-      super.noSuchMethod(Invocation.setter(#idleTimeout, _idleTimeout));
+  set idleTimeout(Duration? idleTimeout) =>
+      super.noSuchMethod(Invocation.setter(#idleTimeout, idleTimeout));
 
   @override
   bool get autoUncompress =>
@@ -132,8 +135,8 @@ class MockHttpClient extends Mock implements HttpClient {
           as bool;
 
   @override
-  set autoUncompress(bool? _autoUncompress) =>
-      super.noSuchMethod(Invocation.setter(#autoUncompress, _autoUncompress));
+  set autoUncompress(bool? autoUncompress) =>
+      super.noSuchMethod(Invocation.setter(#autoUncompress, autoUncompress));
 
   @override
   Future<HttpClientRequest> open(
@@ -259,8 +262,8 @@ class MockHttpClientRequest extends Mock implements HttpClientRequest {
           returnValue: false) as bool;
 
   @override
-  set persistentConnection(bool? _persistentConnection) => super.noSuchMethod(
-      Invocation.setter(#persistentConnection, _persistentConnection));
+  set persistentConnection(bool? persistentConnection) => super.noSuchMethod(
+      Invocation.setter(#persistentConnection, persistentConnection));
 
   @override
   bool get followRedirects => super
@@ -268,8 +271,8 @@ class MockHttpClientRequest extends Mock implements HttpClientRequest {
       as bool;
 
   @override
-  set followRedirects(bool? _followRedirects) =>
-      super.noSuchMethod(Invocation.setter(#followRedirects, _followRedirects));
+  set followRedirects(bool? followRedirects) =>
+      super.noSuchMethod(Invocation.setter(#followRedirects, followRedirects));
 
   @override
   int get maxRedirects =>
@@ -277,8 +280,8 @@ class MockHttpClientRequest extends Mock implements HttpClientRequest {
           as int;
 
   @override
-  set maxRedirects(int? _maxRedirects) =>
-      super.noSuchMethod(Invocation.setter(#maxRedirects, _maxRedirects));
+  set maxRedirects(int? maxRedirects) =>
+      super.noSuchMethod(Invocation.setter(#maxRedirects, maxRedirects));
 
   @override
   int get contentLength =>
@@ -286,8 +289,8 @@ class MockHttpClientRequest extends Mock implements HttpClientRequest {
           as int;
 
   @override
-  set contentLength(int? _contentLength) =>
-      super.noSuchMethod(Invocation.setter(#contentLength, _contentLength));
+  set contentLength(int? contentLength) =>
+      super.noSuchMethod(Invocation.setter(#contentLength, contentLength));
 
   @override
   bool get bufferOutput =>
@@ -295,8 +298,8 @@ class MockHttpClientRequest extends Mock implements HttpClientRequest {
           as bool;
 
   @override
-  set bufferOutput(bool? _bufferOutput) =>
-      super.noSuchMethod(Invocation.setter(#bufferOutput, _bufferOutput));
+  set bufferOutput(bool? bufferOutput) =>
+      super.noSuchMethod(Invocation.setter(#bufferOutput, bufferOutput));
 
   @override
   String get method =>
@@ -345,16 +348,17 @@ class MockHttpClientResponse extends Mock implements HttpClientResponse {
   StreamSubscription<List<int>> listen(void Function(List<int> event)? onData,
           {Function? onError, void Function()? onDone, bool? cancelOnError}) =>
       super.noSuchMethod(
-          Invocation.method(
-            #listen,
-            <Object?>[onData],
-            <Symbol, Object?>{
-              #onError: onError,
-              #onDone: onDone,
-              #cancelOnError: cancelOnError
-            },
-          ),
-          returnValue: _FakeStreamSubscription<List<int>>());
+              Invocation.method(
+                #listen,
+                <Object?>[onData],
+                <Symbol, Object?>{
+                  #onError: onError,
+                  #onDone: onDone,
+                  #cancelOnError: cancelOnError
+                },
+              ),
+              returnValue: _FakeStreamSubscription<List<int>>())
+          as StreamSubscription<List<int>>;
 
   @override
   int get statusCode =>
@@ -428,8 +432,8 @@ class MockHttpHeaders extends Mock implements HttpHeaders {
           as int;
 
   @override
-  set contentLength(int? _contentLength) =>
-      super.noSuchMethod(Invocation.setter(#contentLength, _contentLength));
+  set contentLength(int? contentLength) =>
+      super.noSuchMethod(Invocation.setter(#contentLength, contentLength));
 
   @override
   bool get persistentConnection =>
@@ -437,8 +441,8 @@ class MockHttpHeaders extends Mock implements HttpHeaders {
           returnValue: false) as bool;
 
   @override
-  set persistentConnection(bool? _persistentConnection) => super.noSuchMethod(
-      Invocation.setter(#persistentConnection, _persistentConnection));
+  set persistentConnection(bool? persistentConnection) => super.noSuchMethod(
+      Invocation.setter(#persistentConnection, persistentConnection));
 
   @override
   bool get chunkedTransferEncoding =>
@@ -446,9 +450,9 @@ class MockHttpHeaders extends Mock implements HttpHeaders {
           returnValue: false) as bool;
 
   @override
-  set chunkedTransferEncoding(bool? _chunkedTransferEncoding) =>
-      super.noSuchMethod(Invocation.setter(
-          #chunkedTransferEncoding, _chunkedTransferEncoding));
+  set chunkedTransferEncoding(bool? chunkedTransferEncoding) =>
+      super.noSuchMethod(
+          Invocation.setter(#chunkedTransferEncoding, chunkedTransferEncoding));
 
   @override
   List<String>? operator [](String? name) =>

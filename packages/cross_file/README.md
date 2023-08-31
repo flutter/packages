@@ -43,3 +43,22 @@ programmatically.
 [![Data on Global support for Blob constructing](https://caniuse.bitsofco.de/image/blobbuilder.png)](https://caniuse.com/blobbuilder)
 
 [![Data on Global support for Blob URLs](https://caniuse.bitsofco.de/image/bloburls.png)](https://caniuse.com/bloburls)
+
+## Testing
+
+This package supports both web and native platforms. Unit tests need to be split
+in two separate suites (because native code cannot use `dart:html`, and web code
+cannot use `dart:io`).
+
+When adding new features, it is likely that tests need to be added for both the
+native and web platforms.
+
+### Native tests
+
+Tests for native platforms are located in the `x_file_io_test.dart`. Tests can
+be run  with `dart test`.
+
+### Web tests
+
+Tests for the web platform live in the `x_file_html_test.dart`. They can be run
+with `dart test -p chrome`.

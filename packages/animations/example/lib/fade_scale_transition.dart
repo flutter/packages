@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 /// The demo page for [FadeScaleTransition].
 class FadeScaleTransitionDemo extends StatefulWidget {
   /// Creates the demo page for [FadeScaleTransition].
-  const FadeScaleTransitionDemo({Key? key}) : super(key: key);
+  const FadeScaleTransitionDemo({super.key});
 
   @override
-  _FadeScaleTransitionDemoState createState() =>
+  State<FadeScaleTransitionDemo> createState() =>
       _FadeScaleTransitionDemoState();
 }
 

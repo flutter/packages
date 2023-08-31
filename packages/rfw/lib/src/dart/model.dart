@@ -256,7 +256,7 @@ class ArgsReference extends Reference {
   /// Wraps the given [parts] as an [ArgsReference].
   ///
   /// The [parts] must not be mutated after the object is created.
-  const ArgsReference(List<Object> parts): super(parts);
+  const ArgsReference(super.parts);
 
   /// Binds the arguments reference to a specific set of arguments.
   ///
@@ -304,7 +304,7 @@ class DataReference extends Reference {
   /// Wraps the given [parts] as a [DataReference].
   ///
   /// The [parts] must not be mutated after the object is created.
-  const DataReference(List<Object> parts): super(parts);
+  const DataReference(super.parts);
 
   /// Creates a new [DataRefererence] that indexes even deeper than this one.
   ///
@@ -433,7 +433,7 @@ abstract class AnyStateReference extends Reference {
   /// const constructors so that they can be used in const expressions.
   ///
   /// The [parts] must not be mutated after the object is created.
-  const AnyStateReference(List<Object> parts): super(parts);
+  const AnyStateReference(super.parts);
 }
 
 /// Unbound reference to remote widget's state.
@@ -443,7 +443,7 @@ class StateReference extends AnyStateReference {
   /// Wraps the given [parts] as a [StateReference].
   ///
   /// The [parts] must not be mutated after the object is created.
-  const StateReference(List<Object> parts): super(parts);
+  const StateReference(super.parts);
 
   /// Binds the state reference to a specific widget (identified by depth).
   ///

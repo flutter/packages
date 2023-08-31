@@ -5,10 +5,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
+
+import 'package:yaml/yaml.dart' as yaml;
+
 import 'ast.dart';
 
-/// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '2.0.3';
+/// The current version of pigeon.
+///
+/// This must match the version in pubspec.yaml.
+const String pigeonVersion = '11.0.1';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -36,9 +41,7 @@ class Indent {
   String get newline {
     if (debugGenerators) {
       final List<String> frames = StackTrace.current.toString().split('\n');
-      return ' //' +
-          frames.firstWhere((String x) => x.contains('_generator.dart')) +
-          '\n';
+      return ' //${frames.firstWhere((String x) => x.contains('_generator.dart'))}\n';
     } else {
       return '\n';
     }
@@ -73,27 +76,32 @@ class Indent {
     for (int i = 0; i < lines.length; ++i) {
       final String line = lines[i];
       if (i == 0 && !leadingSpace) {
-        addln(line.replaceAll('\t', tab));
-      } else if (i == lines.length - 1 && !trailingNewline) {
+        add(line.replaceAll('\t', tab));
+      } else if (line.isNotEmpty) {
         write(line.replaceAll('\t', tab));
-      } else {
-        writeln(line.replaceAll('\t', tab));
+      }
+      if (trailingNewline || i < lines.length - 1) {
+        addln('');
       }
     }
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented.
-  void scoped(
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented.
+  void addScoped(
     String? begin,
     String? end,
     Function func, {
     bool addTrailingNewline = true,
+    int nestCount = 1,
   }) {
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
     if (begin != null) {
       _sink.write(begin + newline);
     }
-    nest(1, func);
+    nest(nestCount, func);
     if (end != null) {
       _sink.write(str() + end);
       if (addTrailingNewline) {
@@ -102,22 +110,25 @@ class Indent {
     }
   }
 
-  /// Like `scoped` but writes the current indentation level.
+  /// Like `addScoped` but writes the current indentation level.
   void writeScoped(
     String? begin,
     String end,
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    scoped(str() + (begin ?? ''), end, func,
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
+    addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented by the given amount.
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented by the given amount.
   void nest(int count, Function func) {
     inc(count);
-    func();
+    func(); // ignore: avoid_dynamic_calls
     dec(count);
   }
 
@@ -144,11 +155,18 @@ class Indent {
   void add(String text) {
     _sink.write(text);
   }
+
+  /// Adds [lines] number of newlines.
+  void newln([int lines = 1]) {
+    for (; lines > 0; lines--) {
+      _sink.write(newline);
+    }
+  }
 }
 
 /// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func) {
-  return 'dev.flutter.pigeon.${api.name}.${func.name}';
+String makeChannelName(Api api, Method func, String dartPackageName) {
+  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
 }
 
 /// Represents the mapping of a Dart datatype to a Host datatype.
@@ -157,6 +175,8 @@ class HostDatatype {
   HostDatatype({
     required this.datatype,
     required this.isBuiltin,
+    required this.isNullable,
+    required this.isEnum,
   });
 
   /// The [String] that can be printed into host code to represent the type.
@@ -164,42 +184,100 @@ class HostDatatype {
 
   /// `true` if the host datatype is something builtin.
   final bool isBuiltin;
+
+  /// `true` if the type corresponds to a nullable Dart datatype.
+  final bool isNullable;
+
+  /// `true if the type is a custom enum.
+  final bool isEnum;
 }
 
-/// Calculates the [HostDatatype] for the provided [NamedType].  It will check
-/// the field against [classes], the list of custom classes, to check if it is a
-/// builtin type. [builtinResolver] will return the host datatype for the Dart
-/// datatype for builtin types.  [customResolver] can modify the datatype of
-/// custom types.
-HostDatatype getHostDatatype(NamedType field, List<Class> classes,
-    List<Enum> enums, String? Function(NamedType) builtinResolver,
+/// Calculates the [HostDatatype] for the provided [NamedType].
+///
+/// It will check the field against [classes], the list of custom classes, to
+/// check if it is a builtin type. [builtinResolver] will return the host
+/// datatype for the Dart datatype for builtin types.
+///
+/// [customResolver] can modify the datatype of custom types.
+HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
+    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  final String? datatype = builtinResolver(field);
+  return _getHostDatatype(field.type, classes, enums, builtinResolver,
+      customResolver: customResolver, fieldName: field.name);
+}
+
+/// Calculates the [HostDatatype] for the provided [TypeDeclaration].
+///
+/// It will check the field against [classes], the list of custom classes, to
+/// check if it is a builtin type. [builtinResolver] will return the host
+/// datatype for the Dart datatype for builtin types.
+///
+/// [customResolver] can modify the datatype of custom types.
+HostDatatype getHostDatatype(TypeDeclaration type, List<Class> classes,
+    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+    {String Function(String)? customResolver}) {
+  return _getHostDatatype(type, classes, enums, builtinResolver,
+      customResolver: customResolver);
+}
+
+HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
+    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+    {String Function(String)? customResolver, String? fieldName}) {
+  final String? datatype = builtinResolver(type);
   if (datatype == null) {
-    if (classes.map((Class x) => x.name).contains(field.type.baseName)) {
+    if (classes.map((Class x) => x.name).contains(type.baseName)) {
       final String customName = customResolver != null
-          ? customResolver(field.type.baseName)
-          : field.type.baseName;
-      return HostDatatype(datatype: customName, isBuiltin: false);
-    } else if (enums.map((Enum x) => x.name).contains(field.type.baseName)) {
+          ? customResolver(type.baseName)
+          : type.baseName;
+      return HostDatatype(
+        datatype: customName,
+        isBuiltin: false,
+        isNullable: type.isNullable,
+        isEnum: false,
+      );
+    } else if (enums.map((Enum x) => x.name).contains(type.baseName)) {
       final String customName = customResolver != null
-          ? customResolver(field.type.baseName)
-          : field.type.baseName;
-      return HostDatatype(datatype: customName, isBuiltin: false);
+          ? customResolver(type.baseName)
+          : type.baseName;
+      return HostDatatype(
+        datatype: customName,
+        isBuiltin: false,
+        isNullable: type.isNullable,
+        isEnum: true,
+      );
     } else {
       throw Exception(
-          'unrecognized datatype for field:"${field.name}" of type:"${field.type.baseName}"');
+          'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"');
     }
   } else {
-    return HostDatatype(datatype: datatype, isBuiltin: true);
+    return HostDatatype(
+      datatype: datatype,
+      isBuiltin: true,
+      isNullable: type.isNullable,
+      isEnum: false,
+    );
   }
 }
 
+/// Whether or not to include the version in the generated warning.
+///
+/// This is a global rather than an option because it's only intended to be
+/// used internally, to avoid churn in Pigeon test files.
+bool includeVersionInGeneratedWarning = true;
+
 /// Warning printed at the top of all generated code.
+@Deprecated('Use getGeneratedCodeWarning() instead')
 const String generatedCodeWarning =
     'Autogenerated from Pigeon (v$pigeonVersion), do not edit directly.';
 
-/// String to be printed after `generatedCodeWarning`.
+/// Warning printed at the top of all generated code.
+String getGeneratedCodeWarning() {
+  final String versionString =
+      includeVersionInGeneratedWarning ? ' (v$pigeonVersion)' : '';
+  return 'Autogenerated from Pigeon$versionString, do not edit directly.';
+}
+
+/// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
 /// Collection of keys used in dictionaries across generators.
@@ -233,9 +311,10 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   }
 }
 
-/// Recursively merges [modification] into [base].  In other words, whenever
-/// there is a conflict over the value of a key path, [modification]'s value for
-/// that key path is selected.
+/// Recursively merges [modification] into [base].
+///
+/// In other words, whenever there is a conflict over the value of a key path,
+/// [modification]'s value for that key path is selected.
 Map<String, Object> mergeMaps(
   Map<String, Object> base,
   Map<String, Object> modification,
@@ -391,10 +470,157 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
   if (sortedNames.length > maxCustomClassesPerApi) {
     throw Exception(
-        'Pigeon doesn\'t support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.');
+        "Pigeon doesn't support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.");
   }
   for (final String name in sortedNames) {
     yield EnumeratedClass(name, enumeration);
     enumeration += 1;
   }
+}
+
+/// Returns true if the [TypeDeclaration] represents an enum.
+bool isEnum(Root root, TypeDeclaration type) =>
+    root.enums.map((Enum e) => e.name).contains(type.baseName);
+
+/// Describes how to format a document comment.
+class DocumentCommentSpecification {
+  /// Constructor for [DocumentationCommentSpecification]
+  const DocumentCommentSpecification(
+    this.openCommentToken, {
+    this.closeCommentToken = '',
+    this.blockContinuationToken = '',
+  });
+
+  /// Token that represents the open symbol for a documentation comment.
+  final String openCommentToken;
+
+  /// Token that represents the closing symbol for a documentation comment.
+  final String closeCommentToken;
+
+  /// Token that represents the continuation symbol for a block of documentation comments.
+  final String blockContinuationToken;
+}
+
+/// Formats documentation comments and adds them to current Indent.
+///
+/// The [comments] list is meant for comments written in the input dart file.
+/// The [generatorComments] list is meant for comments added by the generators.
+/// Include white space for all tokens when called, no assumptions are made.
+void addDocumentationComments(
+  Indent indent,
+  List<String> comments,
+  DocumentCommentSpecification commentSpec, {
+  List<String> generatorComments = const <String>[],
+}) {
+  final List<String> allComments = <String>[
+    ...comments,
+    if (comments.isNotEmpty && generatorComments.isNotEmpty) '',
+    ...generatorComments,
+  ];
+  String currentLineOpenToken = commentSpec.openCommentToken;
+  if (allComments.length > 1) {
+    if (commentSpec.closeCommentToken != '') {
+      indent.writeln(commentSpec.openCommentToken);
+      currentLineOpenToken = commentSpec.blockContinuationToken;
+    }
+    for (String line in allComments) {
+      if (line.isNotEmpty && line[0] != ' ') {
+        line = ' $line';
+      }
+      indent.writeln(
+        '$currentLineOpenToken$line',
+      );
+    }
+    if (commentSpec.closeCommentToken != '') {
+      indent.writeln(commentSpec.closeCommentToken);
+    }
+  } else if (allComments.length == 1) {
+    indent.writeln(
+      '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
+    );
+  }
+}
+
+/// Returns an ordered list of fields to provide consistent serialization order.
+Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+  // This returns the fields in the order they are declared in the pigeon file.
+  return klass.fields;
+}
+
+/// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
+/// parent directory and returns its path.
+String? _findPubspecPath(String dartFilePath) {
+  try {
+    Directory dir = File(dartFilePath).parent;
+    String? pubspecPath;
+    while (pubspecPath == null) {
+      if (dir.existsSync()) {
+        final Iterable<String> pubspecPaths = dir
+            .listSync()
+            .map((FileSystemEntity e) => e.path)
+            .where((String path) => path.endsWith('pubspec.yaml'));
+        if (pubspecPaths.isNotEmpty) {
+          pubspecPath = pubspecPaths.first;
+        } else {
+          dir = dir.parent;
+        }
+      } else {
+        break;
+      }
+    }
+    return pubspecPath;
+  } catch (ex) {
+    return null;
+  }
+}
+
+/// Given the path of a Dart file, [mainDartFile], the name of the package will
+/// be deduced by locating and parsing its associated pubspec.yaml.
+String? deducePackageName(String mainDartFile) {
+  final String? pubspecPath = _findPubspecPath(mainDartFile);
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  try {
+    final String text = File(pubspecPath).readAsStringSync();
+    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'] as String?;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Enum to specify api type when generating code.
+enum ApiType {
+  /// Flutter api.
+  flutter,
+
+  /// Host api.
+  host,
+}
+
+/// Enum to specify which file will be generated for multi-file generators
+enum FileType {
+  /// header file.
+  header,
+
+  /// source file.
+  source,
+
+  /// file type is not applicable.
+  na,
+}
+
+/// Options for [Generator]s that have multiple output file types.
+///
+/// Specifies which file to write as well as wraps all language options.
+class OutputFileOptions<T> {
+  /// Constructor.
+  OutputFileOptions({required this.fileType, required this.languageOptions});
+
+  /// To specify which file type should be created.
+  FileType fileType;
+
+  /// Options for specified language across all file types.
+  T languageOptions;
 }

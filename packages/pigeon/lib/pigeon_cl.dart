@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'package:pigeon/pigeon_lib.dart';
+import 'pigeon_lib.dart';
 
 /// This is the main entrypoint for the command-line tool.  [args] are the
-/// commmand line arguments and there is an optional [packageConfig] to
-/// accomodate users that want to integrate pigeon with other build systems.
+/// command line arguments and there is an optional [packageConfig] to
+/// accommodate users that want to integrate pigeon with other build systems.
 /// [sdkPath] for specifying an optional Dart SDK path.
 Future<int> runCommandLine(List<String> args,
     {Uri? packageConfig, String? sdkPath}) async {

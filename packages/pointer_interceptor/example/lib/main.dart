@@ -4,11 +4,10 @@
 
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-
-import 'src/shim/dart_ui.dart' as ui;
 
 const String _htmlElementViewType = '_htmlElementViewType';
 const double _videoWidth = 640;
@@ -42,7 +41,7 @@ html.Element htmlElement = html.DivElement()
 //       ..style.border = 'none';
 
 void main() {
-  ui.platformViewRegistry.registerViewFactory(
+  ui_web.platformViewRegistry.registerViewFactory(
     _htmlElementViewType,
     (int viewId) => htmlElement,
   );
@@ -53,7 +52,7 @@ void main() {
 /// Main app
 class MyApp extends StatelessWidget {
   /// Creates main app.
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -67,10 +66,10 @@ class MyApp extends StatelessWidget {
 /// First page
 class MyHomePage extends StatefulWidget {
   /// Creates first page.
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -116,6 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 alignment: Alignment.center,
                 children: <Widget>[
                   HtmlElement(
+                    key: const ValueKey<String>('background-widget'),
                     onClick: () {
                       _clickedOn('html-element');
                     },
@@ -134,7 +134,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         intercepting: false,
                         child: ElevatedButton(
                           key: const Key('wrapped-transparent-button'),
-                          child: const Text('Never calls onPressed'),
+                          child:
+                              const Text('Never calls onPressed transparent'),
                           onPressed: () {
                             _clickedOn('wrapped-transparent-button');
                           },
@@ -200,10 +201,10 @@ class _MyHomePageState extends State<MyHomePage> {
 /// Initialize the videoPlayer, then render the corresponding view...
 class HtmlElement extends StatelessWidget {
   /// Constructor
-  const HtmlElement({Key? key, required this.onClick}) : super(key: key);
+  const HtmlElement({super.key, required this.onClick});
 
   /// A function to run when the element is clicked
-  final Function onClick;
+  final VoidCallback onClick;
 
   @override
   Widget build(BuildContext context) {

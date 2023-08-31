@@ -2,11 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-import '../shared/dropdown_menu.dart';
+import '../shared/dropdown_menu.dart' as dropdown;
 import '../shared/markdown_demo_widget.dart';
 import '../shared/markdown_extensions.dart';
 
@@ -43,8 +45,10 @@ Since GitHub Flavored is the default extension set, it is the initial setting
 for the formatted Markdown view in the demo.
 """;
 
+// TODO(goderbauer): Restructure the examples to avoid this ignore, https://github.com/flutter/flutter/issues/110208.
+// ignore: avoid_implementing_value_types
 class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
-  const BasicMarkdownDemo({Key? key}) : super(key: key);
+  const BasicMarkdownDemo({super.key});
 
   static const String _title = 'Basic Markdown Demo';
 
@@ -63,7 +67,7 @@ class BasicMarkdownDemo extends StatefulWidget implements MarkdownDemoWidget {
   Future<String> get notes => Future<String>.value(_notes);
 
   @override
-  _BasicMarkdownDemoState createState() => _BasicMarkdownDemoState();
+  State<BasicMarkdownDemo> createState() => _BasicMarkdownDemoState();
 }
 
 class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
@@ -83,7 +87,7 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
         if (snapshot.connectionState == ConnectionState.done) {
           return Column(
             children: <Widget>[
-              DropdownMenu<MarkdownExtensionSet>(
+              dropdown.DropdownMenu<MarkdownExtensionSet>(
                 items: _menuItems,
                 label: 'Extension Set:',
                 initialValue: _extensionSet,
@@ -123,11 +127,11 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
     String? href,
     String title,
   ) async {
-    showDialog<Widget>(
+    unawaited(showDialog<Widget>(
       context: context,
       builder: (BuildContext context) =>
           _createDialog(context, text, href, title),
-    );
+    ));
   }
 
   Widget _createDialog(
@@ -139,22 +143,22 @@ class _BasicMarkdownDemoState extends State<BasicMarkdownDemo> {
             children: <Widget>[
               Text(
                 'See the following link for more information:',
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link text: $text',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link destination: $href',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 8),
               Text(
                 'Link title: $title',
-                style: Theme.of(context).textTheme.bodyText2,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
           ),

@@ -73,7 +73,7 @@ void defineTests() {
         expect(styledTextParts[0].text, 'this is a link: ');
         expect(
           styledTextParts[0].style!.color,
-          theme.textTheme.bodyText2!.color,
+          theme.textTheme.bodyMedium!.color,
         );
 
         /// Markdown guide
@@ -84,7 +84,7 @@ void defineTests() {
         expect(styledTextParts[2].text, ' and this is ');
         expect(
           styledTextParts[2].style!.color,
-          theme.textTheme.bodyText2!.color,
+          theme.textTheme.bodyMedium!.color,
         );
 
         /// bold
@@ -95,7 +95,7 @@ void defineTests() {
         expect(styledTextParts[4].text, ' and ');
         expect(
           styledTextParts[4].style!.color,
-          theme.textTheme.bodyText2!.color,
+          theme.textTheme.bodyMedium!.color,
         );
 
         /// italic

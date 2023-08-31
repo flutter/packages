@@ -53,7 +53,7 @@ abstract class XFileBase {
     throw UnimplementedError('.length() has not been implemented.');
   }
 
-  /// Synchronously read the entire file contents as a string using the given [Encoding].
+  /// Asynchronously read the entire file contents as a string using the given [Encoding].
   ///
   /// By default, `encoding` is [utf8].
   ///
@@ -62,7 +62,7 @@ abstract class XFileBase {
     throw UnimplementedError('readAsString() has not been implemented.');
   }
 
-  /// Synchronously read the entire file contents as a list of bytes.
+  /// Asynchronously read the entire file contents as a list of bytes.
   ///
   /// Throws Exception if the operation fails.
   Future<Uint8List> readAsBytes() {
@@ -82,6 +82,6 @@ abstract class XFileBase {
 
   /// Get the last-modified time for the CrossFile
   Future<DateTime> lastModified() {
-    throw UnimplementedError('openRead() has not been implemented.');
+    throw UnimplementedError('lastModified() has not been implemented.');
   }
 }

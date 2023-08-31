@@ -20,7 +20,7 @@ class RemoteWidget extends StatefulWidget {
   /// Inserts the specified [widget] into the tree.
   ///
   /// The [onEvent] argument is optional. When omitted, events are discarded.
-  const RemoteWidget({ Key? key, required this.runtime, required this.widget, required this.data, this.onEvent }) : super(key: key);
+  const RemoteWidget({ super.key, required this.runtime, required this.widget, required this.data, this.onEvent });
 
   /// The [Runtime] to use to render the widget specified by [widget].
   ///
@@ -57,7 +57,7 @@ class RemoteWidget extends StatefulWidget {
   final RemoteEventHandler? onEvent;
 
   @override
-  _RemoteWidgetState createState() => _RemoteWidgetState();
+  State<RemoteWidget> createState() => _RemoteWidgetState();
 }
 
 class _RemoteWidgetState extends State<RemoteWidget> {

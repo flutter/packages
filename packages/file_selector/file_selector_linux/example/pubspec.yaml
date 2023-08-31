@@ -1,0 +1,22 @@
+name: file_selector_linux_example
+description: Local testbed for Linux file_selector implementation.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
+
+dependencies:
+  file_selector_linux:
+    path: ../
+  file_selector_platform_interface: ^2.6.0
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

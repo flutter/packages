@@ -743,7 +743,7 @@ class _CurriedSwitch extends _CurriedWidget {
 }
 
 class _Widget extends StatefulWidget {
-  const _Widget({ Key? key, required this.curriedWidget, required this.data, required this.remoteEventTarget, required this.states }) : super(key: key);
+  const _Widget({ required this.curriedWidget, required this.data, required this.remoteEventTarget, required this.states });
 
   final _CurriedWidget curriedWidget;
 
@@ -1075,7 +1075,7 @@ class _Key {
   }
 
   @override
-  int get hashCode => hashValues(section, hashList(parts));
+  int get hashCode => Object.hash(section, Object.hashAll(parts));
 }
 
 class _Subscription {
