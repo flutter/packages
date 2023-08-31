@@ -4,6 +4,7 @@
 
 // ignore_for_file: avoid_print
 
+import 'dart:ffi';
 import 'dart:io' show File, Directory;
 
 import 'package:meta/meta.dart';
@@ -313,9 +314,23 @@ Future<int> _runWindowsUnitTests() async {
     return compileCode;
   }
 
-  return runProcess(
-      '$examplePath/build/windows/plugins/test_plugin/Debug/test_plugin_test.exe',
-      <String>[]);
+  // Depending on the Flutter version, the build output path is different.
+  // Check for the new location first, and fall back to the old location, to
+  // support running against both stable and master.
+  // TODO(stuartmorgan): Remove all this when these tests no longer need to
+  // support Flutter 3.13, and just construct the version of the path with the
+  // architecture.
+  final String buildDirBase = '$examplePath/build/windows';
+  const String buildRelativeBinaryPath =
+      'plugins/test_plugin/Debug/test_plugin_test.exe';
+  final String arch = Abi.current() == Abi.windowsArm64 ? 'arm64' : 'x64';
+  final String newPath = '$buildDirBase/$arch/$buildRelativeBinaryPath';
+  final String oldPath = '$buildDirBase/$buildRelativeBinaryPath';
+  if (File(newPath).existsSync()) {
+    return runProcess(newPath, <String>[]);
+  } else {
+    return runProcess(oldPath, <String>[]);
+  }
 }
 
 Future<int> _runWindowsIntegrationTests() async {
