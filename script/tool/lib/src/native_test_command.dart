@@ -6,7 +6,6 @@ import 'dart:ffi';
 
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
-import 'package:path/path.dart';
 
 import 'common/cmake.dart';
 import 'common/core.dart';
