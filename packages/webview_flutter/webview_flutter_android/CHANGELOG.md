@@ -1,3 +1,7 @@
+## 3.9.5
+
+* Updates pigeon to 11 and removes unneeded enum wrappers.
+
 ## 3.9.4
 
 * Adds pub topics to package metadata.
