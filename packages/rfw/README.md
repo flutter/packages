@@ -15,7 +15,7 @@ as a golden test).
 
 The set of widgets supported by this package is somewhat arbitrary.
 PRs that add new widgets from Flutter's default widget libraries
-(`widgets`, `material`, and`cupertino`) are welcome.
+(`widgets`, `material`, and `cupertino`) are welcome.
 
 There are some known theoretical performance limitations with the
 package's current implementation, but so far nobody has reported
