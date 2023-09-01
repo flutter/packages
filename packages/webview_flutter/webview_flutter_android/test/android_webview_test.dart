@@ -1085,7 +1085,7 @@ void main() {
         0,
         false,
         const <String>['my', 'list'],
-        FileChooserModeEnumData(value: FileChooserMode.openMultiple),
+        FileChooserMode.openMultiple,
         'filenameHint',
       );
 
