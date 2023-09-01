@@ -214,24 +214,24 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
       ),
     );
 
-    webView.setUIDelegate(uiDelegate);
+    unawaited(webView.setUIDelegate(uiDelegate));
 
     await addJavascriptChannels(params.javascriptChannelNames);
 
-    webView.setNavigationDelegate(navigationDelegate);
+    unawaited(webView.setNavigationDelegate(navigationDelegate));
 
     if (params.userAgent != null) {
-      webView.setCustomUserAgent(params.userAgent);
+      unawaited(webView.setCustomUserAgent(params.userAgent));
     }
 
     if (params.webSettings != null) {
-      updateSettings(params.webSettings!);
+      unawaited(updateSettings(params.webSettings!));
     }
 
     if (params.backgroundColor != null) {
-      webView.setOpaque(false);
-      webView.setBackgroundColor(Colors.transparent);
-      webView.scrollView.setBackgroundColor(params.backgroundColor);
+      unawaited(webView.setOpaque(false));
+      unawaited(webView.setBackgroundColor(Colors.transparent));
+      unawaited(webView.scrollView.setBackgroundColor(params.backgroundColor));
     }
 
     if (params.initialUrl != null) {
@@ -379,8 +379,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<String?> currentUrl() => webView.getUrl();
 
   @override
-  Future<void> scrollTo(int x, int y) async {
-    webView.scrollView.setContentOffset(Point<double>(
+  Future<void> scrollTo(int x, int y) {
+    return webView.scrollView.setContentOffset(Point<double>(
       x.toDouble(),
       y.toDouble(),
     ));
@@ -550,7 +550,9 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<void> _resetUserScripts({
     Set<String> removedJavaScriptChannels = const <String>{},
   }) async {
-    webView.configuration.userContentController.removeAllUserScripts();
+    unawaited(
+      webView.configuration.userContentController.removeAllUserScripts(),
+    );
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -594,7 +596,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     return WebResourceError(
       errorCode: error.code,
       domain: error.domain,
-      description: error.localizedDescription,
+      description: error.localizedDescription ?? '',
       errorType: errorType,
     );
   }

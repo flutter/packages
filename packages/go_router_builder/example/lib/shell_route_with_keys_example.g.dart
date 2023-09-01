@@ -13,8 +13,8 @@ List<RouteBase> get $appRoutes => [
     ];
 
 RouteBase get $myShellRouteData => ShellRouteData.$route(
-      factory: $MyShellRouteDataExtension._fromState,
       navigatorKey: MyShellRouteData.$navigatorKey,
+      factory: $MyShellRouteDataExtension._fromState,
       routes: [
         GoRouteData.$route(
           path: '/home',
@@ -26,8 +26,8 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: ':id',
-              factory: $UserRouteDataExtension._fromState,
               parentNavigatorKey: UserRouteData.$parentNavigatorKey,
+              factory: $UserRouteDataExtension._fromState,
             ),
           ],
         ),

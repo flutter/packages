@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#106316)
-// ignore: unnecessary_import
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -1027,14 +1025,14 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
     int instanceId,
     bool isCaptureEnabled,
     List<String?> acceptTypes,
-    FileChooserModeEnumData mode,
+    FileChooserMode mode,
     String? filenameHint,
   ) {
     instanceManager.addHostCreatedInstance(
       FileChooserParams.detached(
         isCaptureEnabled: isCaptureEnabled,
         acceptTypes: acceptTypes.cast(),
-        mode: mode.value,
+        mode: mode,
         filenameHint: filenameHint,
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,

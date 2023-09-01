@@ -1,3 +1,8 @@
+## 2.5.2
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.5.1
 
 * Removes obsolete null checks on non-nullable values.

@@ -11,8 +11,9 @@ import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
+import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -28,12 +29,11 @@ const int _exitNoTargetVersion = 4;
 class UpdateDependencyCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
   UpdateDependencyCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
+    super.packagesDir, {
+    super.processRunner,
     http.Client? httpClient,
-  })  : _pubVersionFinder =
-            PubVersionFinder(httpClient: httpClient ?? http.Client()),
-        super(packagesDir, processRunner: processRunner) {
+  }) : _pubVersionFinder =
+            PubVersionFinder(httpClient: httpClient ?? http.Client()) {
     argParser.addOption(
       _pubPackageFlag,
       help: 'A pub package to update.',
@@ -239,11 +239,9 @@ ${response.httpResponse.body}
     }
 
     print('${indentation}Running pub get...');
-    final io.ProcessResult getResult = await processRunner
-        .run('dart', <String>['pub', 'get'], workingDir: package.directory);
-    if (getResult.exitCode != 0) {
-      printError('dart pub get failed (${getResult.exitCode}):\n'
-          '${getResult.stdout}\n${getResult.stderr}\n');
+    if (!await runPubGet(package, processRunner, platform,
+        streamOutput: false)) {
+      printError('${indentation}Fetching dependencies failed');
       return false;
     }
 
@@ -273,11 +271,9 @@ ${response.httpResponse.body}
     }
 
     print('${indentation}Running pub get...');
-    final io.ProcessResult getResult = await processRunner
-        .run('dart', <String>['pub', 'get'], workingDir: package.directory);
-    if (getResult.exitCode != 0) {
-      printError('dart pub get failed (${getResult.exitCode}):\n'
-          '${getResult.stdout}\n${getResult.stderr}\n');
+    if (!await runPubGet(package, processRunner, platform,
+        streamOutput: false)) {
+      printError('${indentation}Fetching dependencies failed');
       return false;
     }
 

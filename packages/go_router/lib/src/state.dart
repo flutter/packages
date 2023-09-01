@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'misc/errors.dart';
@@ -15,22 +16,20 @@ class GoRouterState {
   /// Default constructor for creating route state during routing.
   const GoRouterState(
     this._configuration, {
-    required this.location,
+    required this.uri,
     required this.matchedLocation,
     this.name,
     this.path,
     required this.fullPath,
     required this.pathParameters,
-    required this.queryParameters,
-    required this.queryParametersAll,
     this.extra,
     this.error,
     required this.pageKey,
   });
   final RouteConfiguration _configuration;
 
-  /// The full location of the route, e.g. /family/f2/person/p1
-  final String location;
+  /// The full uri of the route, e.g. /family/f2/person/p1?filter=name#fragment
+  final Uri uri;
 
   /// The matched location until this point.
   ///
@@ -61,13 +60,6 @@ class GoRouterState {
 
   /// The parameters for this match, e.g. {'fid': 'f2'}
   final Map<String, String> pathParameters;
-
-  /// The query parameters for the location, e.g. {'from': '/family/f2'}
-  final Map<String, String> queryParameters;
-
-  /// The query parameters for the location,
-  /// e.g. `{'q1': ['v1'], 'q2': ['v2', 'v3']}`
-  final Map<String, List<String>> queryParametersAll;
 
   /// An extra object to pass along with the navigation.
   final Object? extra;
@@ -149,14 +141,12 @@ class GoRouterState {
   @override
   bool operator ==(Object other) {
     return other is GoRouterState &&
-        other.location == location &&
+        other.uri == uri &&
         other.matchedLocation == matchedLocation &&
         other.name == name &&
         other.path == path &&
         other.fullPath == fullPath &&
         other.pathParameters == pathParameters &&
-        other.queryParameters == queryParameters &&
-        other.queryParametersAll == queryParametersAll &&
         other.extra == extra &&
         other.error == error &&
         other.pageKey == pageKey;
@@ -164,23 +154,23 @@ class GoRouterState {
 
   @override
   int get hashCode => Object.hash(
-      location,
-      matchedLocation,
-      name,
-      path,
-      fullPath,
-      pathParameters,
-      queryParameters,
-      queryParametersAll,
-      extra,
-      error,
-      pageKey);
+        uri,
+        matchedLocation,
+        name,
+        path,
+        fullPath,
+        pathParameters,
+        extra,
+        error,
+        pageKey,
+      );
 }
 
 /// An inherited widget to host a [GoRouterStateRegistry] for the subtree.
 ///
 /// Should not be used directly, consider using [GoRouterState.of] to access
 /// [GoRouterState] from the context.
+@internal
 class GoRouterStateRegistryScope
     extends InheritedNotifier<GoRouterStateRegistry> {
   /// Creates a GoRouterStateRegistryScope.
@@ -195,6 +185,7 @@ class GoRouterStateRegistryScope
 ///
 /// Should not be used directly, consider using [GoRouterState.of] to access
 /// [GoRouterState] from the context.
+@internal
 class GoRouterStateRegistry extends ChangeNotifier {
   /// creates a [GoRouterStateRegistry].
   GoRouterStateRegistry();

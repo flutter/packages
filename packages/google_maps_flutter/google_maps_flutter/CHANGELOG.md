@@ -1,6 +1,18 @@
+## 2.6.0
+* Adds support for heatmap layers.
+
+## 2.5.0
+
+* Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
+
+## 2.4.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.4.0
 
-* Adds support for heatmap layers.
+* Adds options for gesture handling and tilt controls on web.
 
 ## 2.3.1
 

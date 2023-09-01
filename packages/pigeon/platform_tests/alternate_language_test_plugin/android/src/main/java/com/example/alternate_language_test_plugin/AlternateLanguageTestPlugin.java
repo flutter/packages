@@ -6,9 +6,10 @@ package com.example.alternate_language_test_plugin;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.example.alternate_language_test_plugin.CoreTests.AllClassesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
-import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AnEnum;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.Result;
@@ -100,16 +101,25 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @Nullable String extractNestedNullableString(@NonNull AllNullableTypesWrapper wrapper) {
-    return wrapper.getValues().getANullableString();
+  public @NonNull AllClassesWrapper echoClassWrapper(@NonNull AllClassesWrapper wrapper) {
+    return wrapper;
   }
 
   @Override
-  public @NonNull AllNullableTypesWrapper createNestedNullableString(
-      @Nullable String nullableString) {
+  public @NonNull AnEnum echoEnum(@NonNull AnEnum anEnum) {
+    return anEnum;
+  }
+
+  @Override
+  public @Nullable String extractNestedNullableString(@NonNull AllClassesWrapper wrapper) {
+    return wrapper.getAllNullableTypes().getANullableString();
+  }
+
+  @Override
+  public @NonNull AllClassesWrapper createNestedNullableString(@Nullable String nullableString) {
     AllNullableTypes innerObject =
         new AllNullableTypes.Builder().setANullableString(nullableString).build();
-    return new AllNullableTypesWrapper.Builder().setValues(innerObject).build();
+    return new AllClassesWrapper.Builder().setAllNullableTypes(innerObject).build();
   }
 
   @Override
@@ -164,6 +174,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public @Nullable Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap) {
     return aNullableMap;
+  }
+
+  @Override
+  public @Nullable AnEnum echoNullableEnum(@Nullable AnEnum anEnum) {
+    return anEnum;
   }
 
   @Override
@@ -239,6 +254,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void echoAsyncEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result) {
+    result.success(anEnum);
+  }
+
+  @Override
   public void echoAsyncNullableInt(@Nullable Long anInt, @NonNull Result<Long> result) {
     result.success(anInt);
   }
@@ -282,6 +302,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull Result<AnEnum> result) {
+    result.success(anEnum);
+  }
+
+  @Override
   public void callFlutterNoop(@NonNull Result<Void> result) {
     flutterApi.noop(
         new FlutterIntegrationCoreApi.Reply<Void>() {
@@ -322,6 +347,18 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
         everything,
         new FlutterIntegrationCoreApi.Reply<AllTypes>() {
           public void reply(AllTypes value) {
+            result.success(value);
+          }
+        });
+  }
+
+  @Override
+  public void callFlutterEchoAllNullableTypes(
+      @Nullable AllNullableTypes everything, @NonNull Result<AllNullableTypes> result) {
+    flutterApi.echoAllNullableTypes(
+        everything,
+        new FlutterIntegrationCoreApi.Reply<AllNullableTypes>() {
+          public void reply(AllNullableTypes value) {
             result.success(value);
           }
         });
@@ -424,6 +461,17 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void callFlutterEchoEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result) {
+    flutterApi.echoEnum(
+        anEnum,
+        new FlutterIntegrationCoreApi.Reply<AnEnum>() {
+          public void reply(AnEnum value) {
+            result.success(value);
+          }
+        });
+  }
+
+  @Override
   public void callFlutterEchoNullableBool(
       @Nullable Boolean aBool, @NonNull Result<Boolean> result) {
     flutterApi.echoNullableBool(
@@ -501,6 +549,17 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
         aMap,
         new FlutterIntegrationCoreApi.Reply<Map<String, Object>>() {
           public void reply(Map<String, Object> value) {
+            result.success(value);
+          }
+        });
+  }
+
+  @Override
+  public void callFlutterEchoNullableEnum(@Nullable AnEnum anEnum, @NonNull Result<AnEnum> result) {
+    flutterApi.echoNullableEnum(
+        anEnum,
+        new FlutterIntegrationCoreApi.Reply<AnEnum>() {
+          public void reply(AnEnum value) {
             result.success(value);
           }
         });

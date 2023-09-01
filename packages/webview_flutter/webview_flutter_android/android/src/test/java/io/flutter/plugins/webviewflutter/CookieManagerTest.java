@@ -15,7 +15,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.webviewflutter.utils.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -75,13 +74,15 @@ public class CookieManagerTest {
   @SuppressWarnings({"rawtypes", "unchecked"})
   @Test
   public void clearCookies() {
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.LOLLIPOP);
-
     final long instanceIdentifier = 0;
     instanceManager.addDartCreatedInstance(mockCookieManager, instanceIdentifier);
 
     final CookieManagerHostApiImpl hostApi =
-        new CookieManagerHostApiImpl(mockBinaryMessenger, instanceManager);
+        new CookieManagerHostApiImpl(
+            mockBinaryMessenger,
+            instanceManager,
+            new CookieManagerHostApiImpl.CookieManagerProxy(),
+            (int version) -> version <= Build.VERSION_CODES.LOLLIPOP);
 
     final Boolean[] successResult = new Boolean[1];
     hostApi.removeAllCookies(
@@ -108,8 +109,6 @@ public class CookieManagerTest {
 
   @Test
   public void setAcceptThirdPartyCookies() {
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", Build.VERSION_CODES.LOLLIPOP);
-
     final WebView mockWebView = mock(WebView.class);
     final long webViewIdentifier = 4;
     instanceManager.addDartCreatedInstance(mockWebView, webViewIdentifier);
@@ -120,7 +119,11 @@ public class CookieManagerTest {
     instanceManager.addDartCreatedInstance(mockCookieManager, instanceIdentifier);
 
     final CookieManagerHostApiImpl hostApi =
-        new CookieManagerHostApiImpl(mockBinaryMessenger, instanceManager);
+        new CookieManagerHostApiImpl(
+            mockBinaryMessenger,
+            instanceManager,
+            new CookieManagerHostApiImpl.CookieManagerProxy(),
+            (int version) -> version <= Build.VERSION_CODES.LOLLIPOP);
 
     hostApi.setAcceptThirdPartyCookies(instanceIdentifier, webViewIdentifier, accept);
 

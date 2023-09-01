@@ -518,7 +518,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   // workaround could interfere with exposing support for custom scripts from
   // applications.
   Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
-    _webView.configuration.userContentController.removeAllUserScripts();
+    unawaited(
+      _webView.configuration.userContentController.removeAllUserScripts(),
+    );
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)
@@ -630,6 +632,21 @@ class WebKitWebViewWidgetCreationParams
   // Maintains instances used to communicate with the native objects they
   // represent.
   final InstanceManager _instanceManager;
+
+  @override
+  int get hashCode => Object.hash(
+        controller,
+        layoutDirection,
+        _instanceManager,
+      );
+
+  @override
+  bool operator ==(Object other) {
+    return other is WebKitWebViewWidgetCreationParams &&
+        controller == other.controller &&
+        layoutDirection == other.layoutDirection &&
+        _instanceManager == other._instanceManager;
+  }
 }
 
 /// An implementation of [PlatformWebViewWidget] with the WebKit api.
@@ -649,7 +666,11 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
   @override
   Widget build(BuildContext context) {
     return UiKitView(
-      key: _webKitParams.key,
+      // Setting a default key using `params` ensures the `UIKitView` recreates
+      // the PlatformView when changes are made.
+      key: _webKitParams.key ??
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+              params as WebKitWebViewWidgetCreationParams),
       viewType: 'plugins.flutter.io/webview',
       onPlatformViewCreated: (_) {},
       layoutDirection: params.layoutDirection,
@@ -663,10 +684,13 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
 
 /// An implementation of [WebResourceError] with the WebKit API.
 class WebKitWebResourceError extends WebResourceError {
-  WebKitWebResourceError._(this._nsError, {required bool isForMainFrame})
-      : super(
+  WebKitWebResourceError._(
+    this._nsError, {
+    required bool isForMainFrame,
+    required super.url,
+  }) : super(
           errorCode: _nsError.code,
-          description: _nsError.localizedDescription,
+          description: _nsError.localizedDescription ?? '',
           errorType: _toWebResourceErrorType(_nsError.code),
           isForMainFrame: isForMainFrame,
         );
@@ -764,14 +788,24 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       didFailNavigation: (WKWebView webView, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(error, isForMainFrame: true),
+            WebKitWebResourceError._(
+              error,
+              isForMainFrame: true,
+              url: error.userInfo[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringError] as String?,
+            ),
           );
         }
       },
       didFailProvisionalNavigation: (WKWebView webView, NSError error) {
         if (weakThis.target?._onWebResourceError != null) {
           weakThis.target!._onWebResourceError!(
-            WebKitWebResourceError._(error, isForMainFrame: true),
+            WebKitWebResourceError._(
+              error,
+              isForMainFrame: true,
+              url: error.userInfo[NSErrorUserInfoKey
+                  .NSURLErrorFailingURLStringError] as String?,
+            ),
           );
         }
       },
@@ -783,9 +817,9 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 code: WKErrorCode.webContentProcessTerminated,
                 // Value from https://developer.apple.com/documentation/webkit/wkerrordomain?language=objc.
                 domain: 'WKErrorDomain',
-                localizedDescription: '',
               ),
               isForMainFrame: true,
+              url: null,
             ),
           );
         }

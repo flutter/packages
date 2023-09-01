@@ -14,6 +14,7 @@ import 'package:yaml/yaml.dart';
 
 import 'core.dart';
 import 'git_version_finder.dart';
+import 'output_utils.dart';
 import 'process_runner.dart';
 import 'repository_package.dart';
 
@@ -42,6 +43,10 @@ abstract class PackageCommand extends Command<void> {
     this.platform = const LocalPlatform(),
     GitDir? gitDir,
   }) : _gitDir = gitDir {
+    thirdPartyPackagesDir = packagesDir.parent
+        .childDirectory('third_party')
+        .childDirectory('packages');
+
     argParser.addMultiOption(
       _packagesArg,
       help:
@@ -135,6 +140,9 @@ abstract class PackageCommand extends Command<void> {
 
   /// The directory containing the packages.
   final Directory packagesDir;
+
+  /// The directory containing packages wrapping third-party code.
+  late Directory thirdPartyPackagesDir;
 
   /// The process runner.
   ///
@@ -412,14 +420,10 @@ abstract class PackageCommand extends Command<void> {
       packages = <String>{currentPackageName};
     }
 
-    final Directory thirdPartyPackagesDirectory = packagesDir.parent
-        .childDirectory('third_party')
-        .childDirectory('packages');
-
     final Set<String> excludedPackageNames = getExcludedPackageNames();
     for (final Directory dir in <Directory>[
       packagesDir,
-      if (thirdPartyPackagesDirectory.existsSync()) thirdPartyPackagesDirectory,
+      if (thirdPartyPackagesDir.existsSync()) thirdPartyPackagesDir,
     ]) {
       await for (final FileSystemEntity entity
           in dir.list(followLinks: false)) {
@@ -595,7 +599,15 @@ abstract class PackageCommand extends Command<void> {
     // ... and then check whether it has an enclosing package.
     final RepositoryPackage package = RepositoryPackage(currentDir);
     final RepositoryPackage? enclosingPackage = package.getEnclosingPackage();
-    return (enclosingPackage ?? package).directory.basename;
+    final RepositoryPackage rootPackage = enclosingPackage ?? package;
+    final String name = rootPackage.directory.basename;
+    // For an app-facing package in a federated plugin, return the fully
+    // qualified name, since returning just the name will cause the entire
+    // group to run.
+    if (rootPackage.directory.parent.basename == name) {
+      return '$name/$name';
+    }
+    return name;
   }
 
   // Returns true if the current checkout is on an ancestor of [branch].

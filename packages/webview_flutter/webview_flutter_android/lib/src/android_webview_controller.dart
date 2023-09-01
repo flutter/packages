@@ -120,10 +120,10 @@ class AndroidWebViewController extends PlatformWebViewController {
           final GeolocationPermissionsResponse response = await onShowPrompt(
             GeolocationPermissionsRequestParams(origin: origin),
           );
-          callback.invoke(origin, response.allow, response.retain);
+          return callback.invoke(origin, response.allow, response.retain);
         } else {
           // default don't allow
-          callback.invoke(origin, false, false);
+          return callback.invoke(origin, false, false);
         }
       };
     }),
@@ -338,9 +338,11 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setPlatformNavigationDelegate(
       covariant AndroidNavigationDelegate handler) async {
     _currentNavigationDelegate = handler;
-    handler.setOnLoadRequest(loadRequest);
-    _webView.setWebViewClient(handler.androidWebViewClient);
-    _webView.setDownloadListener(handler.androidDownloadListener);
+    await Future.wait(<Future<void>>[
+      handler.setOnLoadRequest(loadRequest),
+      _webView.setWebViewClient(handler.androidWebViewClient),
+      _webView.setDownloadListener(handler.androidDownloadListener),
+    ]);
   }
 
   @override
@@ -742,6 +744,25 @@ class AndroidWebViewWidgetCreationParams
   ///
   /// Defaults to false.
   final bool displayWithHybridComposition;
+
+  @override
+  int get hashCode => Object.hash(
+        controller,
+        layoutDirection,
+        displayWithHybridComposition,
+        platformViewsServiceProxy,
+        instanceManager,
+      );
+
+  @override
+  bool operator ==(Object other) {
+    return other is AndroidWebViewWidgetCreationParams &&
+        controller == other.controller &&
+        layoutDirection == other.layoutDirection &&
+        displayWithHybridComposition == other.displayWithHybridComposition &&
+        platformViewsServiceProxy == other.platformViewsServiceProxy &&
+        instanceManager == other.instanceManager;
+  }
 }
 
 /// An implementation of [PlatformWebViewWidget] with the Android WebView API.
@@ -761,7 +782,11 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
   @override
   Widget build(BuildContext context) {
     return PlatformViewLink(
-      key: _androidParams.key,
+      // Setting a default key using `params` ensures the `PlatformViewLink`
+      // recreates the PlatformView when changes are made.
+      key: _androidParams.key ??
+          ValueKey<AndroidWebViewWidgetCreationParams>(
+              params as AndroidWebViewWidgetCreationParams),
       viewType: 'plugins.flutter.io/webview',
       surfaceFactory: (
         BuildContext context,
@@ -823,12 +848,14 @@ class AndroidWebResourceError extends WebResourceError {
     required super.errorCode,
     required super.description,
     super.isForMainFrame,
-    this.failingUrl,
-  }) : super(
+    super.url,
+  })  : failingUrl = url,
+        super(
           errorType: _errorCodeToErrorType(errorCode),
         );
 
   /// Gets the URL for which the failing resource request was made.
+  @Deprecated('Please use `url`.')
   final String? failingUrl;
 
   static WebResourceErrorType? _errorCodeToErrorType(int errorCode) {
@@ -952,7 +979,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidWebResourceError._(
             errorCode: error.errorCode,
             description: error.description,
-            failingUrl: request.url,
+            url: request.url,
             isForMainFrame: request.isForMainFrame,
           ));
         }
@@ -969,7 +996,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidWebResourceError._(
             errorCode: errorCode,
             description: description,
-            failingUrl: failingUrl,
+            url: failingUrl,
             isForMainFrame: true,
           ));
         }
@@ -1103,7 +1130,8 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     NavigationRequestCallback onNavigationRequest,
   ) async {
     _onNavigationRequest = onNavigationRequest;
-    _webViewClient.setSynchronousReturnValueForShouldOverrideUrlLoading(true);
+    return _webViewClient
+        .setSynchronousReturnValueForShouldOverrideUrlLoading(true);
   }
 
   @override

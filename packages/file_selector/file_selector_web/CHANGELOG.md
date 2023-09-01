@@ -1,3 +1,14 @@
+## 0.9.2+1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.9.2
+
+* Adds and propagates `cancel` event on file selection.
+* Changes `openFile` to return `null` when no files are selected/selection is canceled,
+  as in other platforms.
+
 ## 0.9.1
 
 * Adds `getSaveLocation` and deprecates `getSavePath`.

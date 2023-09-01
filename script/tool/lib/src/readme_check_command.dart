@@ -3,13 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
-import 'package:platform/platform.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
 import 'common/repository_package.dart';
 
 const String _instructionWikiUrl =
@@ -19,16 +17,11 @@ const String _instructionWikiUrl =
 class ReadmeCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the README check command.
   ReadmeCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        ) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addFlag(_requireExcerptsArg,
         help: 'Require that Dart code blocks be managed by code-excerpt.');
   }
@@ -179,20 +172,6 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
       errorSummary = 'Missing language identifier for code block';
     }
 
-    // If any blocks use code excerpts, make sure excerpting is configured
-    // for the package.
-    if (readmeLines.any((String line) => line.startsWith(excerptTagStart))) {
-      const String buildRunnerConfigFile = 'build.excerpt.yaml';
-      if (!mainPackage.getExamples().any((RepositoryPackage example) =>
-          example.directory.childFile(buildRunnerConfigFile).existsSync())) {
-        printError('code-excerpt tag found, but the package is not configured '
-            'for excerpting. Follow the instructions at\n'
-            '$_instructionWikiUrl\n'
-            'for setting up a build.excerpt.yaml file.');
-        errorSummary ??= 'Missing code-excerpt configuration';
-      }
-    }
-
     if (missingExcerptLines.isNotEmpty) {
       for (final int lineNumber in missingExcerptLines) {
         printError('${indentation}Dart code block at line $lineNumber is not '
@@ -200,8 +179,7 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
       }
       printError(
           '\n${indentation}For each block listed above, add <?code-excerpt ...> '
-          'tag on the previous line, and ensure that a build.excerpt.yaml is '
-          'configured for the source example as explained at\n'
+          'tag on the previous line, as explained at\n'
           '$_instructionWikiUrl');
       errorSummary ??= 'Missing code-excerpt management for code block';
     }

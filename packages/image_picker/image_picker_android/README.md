@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/image_picker_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 # image\_picker\_android
 

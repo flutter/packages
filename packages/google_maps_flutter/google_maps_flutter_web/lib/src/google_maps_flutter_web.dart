@@ -104,7 +104,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
   }) async {
-    return; // Noop for now!
+    _map(mapId).updateTileOverlays(newTileOverlays);
   }
 
   @override
@@ -112,7 +112,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     TileOverlayId tileOverlayId, {
     required int mapId,
   }) async {
-    return; // Noop for now!
+    _map(mapId).clearTileCache(tileOverlayId);
   }
 
   /// Applies the given `cameraUpdate` to the current viewport (with animation).

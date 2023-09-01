@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -256,6 +257,30 @@ void main() {
     expect(testDouble, 3.14);
   });
 
+  test('allowList only gets allowed items', () async {
+    const Set<String> allowList = <String>{'stringKey', 'boolKey'};
+
+    SharedPreferences.resetStatic();
+    SharedPreferences.setPrefix('', allowList: allowList);
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.setString('stringKey', 'test');
+    await prefs.setBool('boolKey', true);
+    await prefs.setDouble('doubleKey', 3.14);
+
+    await prefs.reload();
+
+    final String? testString = prefs.getString('stringKey');
+    expect(testString, 'test');
+
+    final bool? testBool = prefs.getBool('boolKey');
+    expect(testBool, true);
+
+    final double? testDouble = prefs.getDouble('doubleKey');
+    expect(testDouble, null);
+  });
+
   test('using reload after setPrefix properly reloads the cache', () async {
     const String newPrefix = 'newPrefix';
 
@@ -274,7 +299,7 @@ void main() {
     expect(testStrings, 'test');
   });
 
-  test('unimplemented errors in withPrefix methods are updated', () async {
+  test('unimplemented errors in withParameters methods are updated', () async {
     final UnimplementedSharedPreferencesStore localStore =
         UnimplementedSharedPreferencesStore();
     SharedPreferencesStorePlatform.instance = localStore;
@@ -294,7 +319,7 @@ void main() {
             "Shared Preferences doesn't yet support the setPrefix method"));
   });
 
-  test('non-Unimplemented errors pass through withPrefix methods correctly',
+  test('non-Unimplemented errors pass through withParameters methods correctly',
       () async {
     final ThrowingSharedPreferencesStore localStore =
         ThrowingSharedPreferencesStore();
@@ -327,16 +352,22 @@ class FakeSharedPreferencesStore extends SharedPreferencesStorePlatform {
   }
 
   @override
+  Future<bool> clearWithParameters(ClearParameters parameters) {
+    log.add(const MethodCall('clearWithParameters'));
+    return backend.clearWithParameters(parameters);
+  }
+
+  @override
   Future<Map<String, Object>> getAll() {
     log.add(const MethodCall('getAll'));
     return backend.getAll();
   }
 
   @override
-  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
-    log.add(const MethodCall('getAllWithPrefix'));
-    // ignore: deprecated_member_use
-    return backend.getAllWithPrefix(prefix);
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) {
+    log.add(const MethodCall('getAllWithParameters'));
+    return backend.getAllWithParameters(parameters);
   }
 
   @override
@@ -406,7 +437,8 @@ class ThrowingSharedPreferencesStore extends SharedPreferencesStorePlatform {
   }
 
   @override
-  Future<Map<String, Object>> getAllWithPrefix(String prefix) {
+  Future<Map<String, Object>> getAllWithParameters(
+      GetAllParameters parameters) {
     throw StateError('State Error');
   }
 }

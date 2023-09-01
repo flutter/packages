@@ -1,6 +1,6 @@
 # Google Maps for Flutter
 
-<?code-excerpt path-base="excerpts/packages/google_maps_flutter_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/google_maps_flutter.svg)](https://pub.dev/packages/google_maps_flutter)
 
@@ -60,6 +60,11 @@ This means that app will only be available for users that run Android SDK 20 or 
 The Android implementation supports multiple
 [platform view display modes](https://flutter.dev/docs/development/platform-integration/platform-views).
 For details, see [the Android README](https://pub.dev/packages/google_maps_flutter_android#display-mode).
+
+#### Cloud-based map styling
+
+Cloud-based map styling works on Android only if `AndroidMapRenderer.latest` map renderer has been initialized.
+For details, see [the Android README](https://pub.dev/packages/google_maps_flutter_android#map-renderer).
 
 ### iOS
 
