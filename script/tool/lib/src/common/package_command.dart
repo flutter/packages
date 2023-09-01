@@ -43,6 +43,10 @@ abstract class PackageCommand extends Command<void> {
     this.platform = const LocalPlatform(),
     GitDir? gitDir,
   }) : _gitDir = gitDir {
+    thirdPartyPackagesDir = packagesDir.parent
+        .childDirectory('third_party')
+        .childDirectory('packages');
+
     argParser.addMultiOption(
       _packagesArg,
       help:
@@ -136,6 +140,9 @@ abstract class PackageCommand extends Command<void> {
 
   /// The directory containing the packages.
   final Directory packagesDir;
+
+  /// The directory containing packages wrapping third-party code.
+  late Directory thirdPartyPackagesDir;
 
   /// The process runner.
   ///
@@ -413,14 +420,10 @@ abstract class PackageCommand extends Command<void> {
       packages = <String>{currentPackageName};
     }
 
-    final Directory thirdPartyPackagesDirectory = packagesDir.parent
-        .childDirectory('third_party')
-        .childDirectory('packages');
-
     final Set<String> excludedPackageNames = getExcludedPackageNames();
     for (final Directory dir in <Directory>[
       packagesDir,
-      if (thirdPartyPackagesDirectory.existsSync()) thirdPartyPackagesDirectory,
+      if (thirdPartyPackagesDir.existsSync()) thirdPartyPackagesDir,
     ]) {
       await for (final FileSystemEntity entity
           in dir.list(followLinks: false)) {
