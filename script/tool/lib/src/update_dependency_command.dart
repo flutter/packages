@@ -265,7 +265,7 @@ ${response.httpResponse.body}
         if (!validGradleDistributionUrl
             .hasMatch(gradleWrapperPropertiesContents)) {
           return PackageResult.fail(<String>[
-            'Unable to find a "distributionUrl" entry to update for ${package.displayName}'
+            'Unable to find a "distributionUrl" entry to update for ${package.displayName}.'
           ]);
         }
 
@@ -274,8 +274,8 @@ ${response.httpResponse.body}
             gradleWrapperPropertiesContents.replaceFirst(
                 validGradleDistributionUrl,
                 'distributionUrl=https\\://services.gradle.org/distributions/gradle-$_targetVersion-all.zip');
-        // TODO(camsim99): Validate current AGP version is compatible with
-        // target Gradle version: ????ISSUE LINK?????
+        // TODO(camsim99): Validate current AGP version against target Gradle
+        // version: https://github.com/flutter/flutter/issues/133887.
         gradleWrapperPropertiesFile
             .writeAsStringSync(newGradleWrapperPropertiesContents);
       }
