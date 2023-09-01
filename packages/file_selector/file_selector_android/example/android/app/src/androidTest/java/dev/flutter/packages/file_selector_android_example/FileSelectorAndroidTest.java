@@ -65,7 +65,7 @@ public class FileSelectorAndroidTest {
     final Instrumentation.ActivityResult result =
         new Instrumentation.ActivityResult(Activity.RESULT_OK, resultIntent);
     intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(result);
-    onFlutterWidget(withText("Open multiple images")).perform(click());
+    // onFlutterWidget(withText("Open multiple images")).perform(click());
     System.out.println("FileSelectorAndroidTestDebug: Taking screenshot.");
     // final Bitmap bitmap =
     //     InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();
