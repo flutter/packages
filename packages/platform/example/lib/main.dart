@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs
 import 'package:flutter/material.dart';
 import 'package:platform/platform.dart';
 
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const platform = LocalPlatform();
+    const LocalPlatform platform = LocalPlatform();
     return MaterialApp(
       title: 'Platform Example',
       home: Scaffold(
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 FormatDetails(
                   title: 'Operating System:',
                   value: platform.operatingSystem,
@@ -124,7 +125,7 @@ class FormatDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         Text(
           title,
           style: Theme.of(context).textTheme.titleLarge,
