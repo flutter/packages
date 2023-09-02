@@ -630,7 +630,13 @@ public class ImagePickerDelegate
 
   private void handleChooseImageResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_OK && data != null) {
-      String path = fileUtils.getPathFromUri(activity, data.getData());
+      String path;
+      if (data.getData() != null) {
+        path = fileUtils.getPathFromUri(activity, data.getData());
+      } else {
+        Uri uri = data.getClipData().getItemAt(0).getUri();
+        path = fileUtils.getPathFromUri(activity, uri);
+      }
       handleImageResult(path, false);
       return;
     }
