@@ -1,3 +1,7 @@
+## 3.1.3
+
+* Adding example app
+
 ## 3.1.2
 
 * Adds pub topics to package metadata.
