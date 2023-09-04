@@ -10,6 +10,18 @@ import java.util.Arrays;
 import java.util.List;
 
 class ExifDataCopier {
+  /**
+   * Copies all exif data not related to image structure and orientation tag. Data not related to
+   * image structure consists of category II (Shooting condition related metadata) and category III
+   * (Metadata storing other information) tags. Category I tags are not copied because they may be
+   * invalidated as a result of resizing. The exception is the orientation tag which is known to not
+   * be invalidated and is crucial for proper display of the image.
+   *
+   * <p>The categories mentioned refer to standard "CIPA DC-008-Translation-2012 Exchangeable image
+   * file format for digital still cameras: Exif Version 2.3"
+   * https://www.cipa.jp/std/documents/e/DC-008-2012_E.pdf. Version 2.3 has been chosen because
+   * {@code ExifInterface} is based on it.
+   */
   void copyExif(ExifInterface oldExif, ExifInterface newExif) throws IOException {
     @SuppressWarnings("deprecation")
     List<String> attributes =
