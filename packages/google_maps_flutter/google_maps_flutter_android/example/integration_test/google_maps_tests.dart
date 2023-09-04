@@ -17,6 +17,7 @@ const LatLng _kInitialMapCenter = LatLng(0, 0);
 const double _kInitialZoomLevel = 5;
 const CameraPosition _kInitialCameraPosition =
     CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
+const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
 void googleMapsTests() {
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
@@ -470,17 +471,11 @@ void googleMapsTests() {
     final Rect rect = tester.getRect(find.byKey(key));
     expect(
         coordinate.x,
-        ((rect.center.dx - rect.topLeft.dx) *
-                // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
-                // ignore: deprecated_member_use
-                tester.binding.window.devicePixelRatio)
+        ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
             .round());
     expect(
         coordinate.y,
-        ((rect.center.dy - rect.topLeft.dy) *
-                // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
-                // ignore: deprecated_member_use
-                tester.binding.window.devicePixelRatio)
+        ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
             .round());
     await tester.binding.setSurfaceSize(null);
   });
@@ -958,7 +953,9 @@ void googleMapsTests() {
     await controller.hideMarkerInfoWindow(marker.markerId);
     iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
-  });
+  },
+      // TODO(camsim99): Fix https://github.com/flutter/flutter/issues/131783.
+      skip: true);
 
   testWidgets('fromAssetImage', (WidgetTester tester) async {
     const double pixelRatio = 2;
@@ -1180,6 +1177,32 @@ void googleMapsTests() {
           await inspector.getTileOverlayInfo(tileOverlay1.mapsId, mapId: mapId);
 
       expect(tileOverlayInfo1, isNull);
+    },
+  );
+
+  testWidgets(
+    'testCloudMapId',
+    (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ExampleGoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            onMapCreated: (ExampleGoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+            cloudMapId: _kCloudMapId,
+          ),
+        ),
+      );
+
+      // Await mapIdCompleter to finish to make sure map can be created with styledMapId
+      // Styled map
+      await mapIdCompleter.future;
     },
   );
 }

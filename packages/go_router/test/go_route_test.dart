@@ -155,4 +155,127 @@ void main() {
     expect(find.text('Screen D'), findsOneWidget);
     expect(find.text('Screen C'), findsOneWidget);
   });
+
+  test('ShellRoute parent navigator key throw if not match', () async {
+    final GlobalKey<NavigatorState> key1 = GlobalKey<NavigatorState>();
+    final GlobalKey<NavigatorState> key2 = GlobalKey<NavigatorState>();
+    bool hasError = false;
+    try {
+      ShellRoute(
+        navigatorKey: key1,
+        builder: (_, __, Widget child) => child,
+        routes: <RouteBase>[
+          ShellRoute(
+            parentNavigatorKey: key2,
+            builder: (_, __, Widget child) => child,
+            routes: <RouteBase>[
+              GoRoute(
+                path: '1',
+                builder: (_, __) => const Text('/route/1'),
+              ),
+            ],
+          ),
+        ],
+      );
+    } on AssertionError catch (_) {
+      hasError = true;
+    }
+    expect(hasError, isTrue);
+  });
+
+  group('Redirect only GoRoute', () {
+    testWidgets('can redirect to subroute', (WidgetTester tester) async {
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Text('home'),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'route',
+                redirect: (_, __) => '/route/1',
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '1',
+                    builder: (_, __) => const Text('/route/1'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+        tester,
+      );
+      expect(find.text('home'), findsOneWidget);
+
+      router.go('/route');
+      await tester.pumpAndSettle();
+      // Should redirect to /route/1 without error.
+      expect(find.text('/route/1'), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+      // Should go back directly to home page.
+      expect(find.text('home'), findsOneWidget);
+    });
+
+    testWidgets('throw if redirect to itself.', (WidgetTester tester) async {
+      final GoRouter router = await createRouter(
+        <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Text('home'),
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'route',
+                redirect: (_, __) => '/route',
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '1',
+                    builder: (_, __) => const Text('/route/1'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+        tester,
+      );
+      expect(find.text('home'), findsOneWidget);
+
+      router.go('/route');
+      await tester.pumpAndSettle();
+      // Should redirect to /route/1 without error.
+      expect(tester.takeException(), isAssertionError);
+    });
+
+    testWidgets('throw if sub route does not conform with parent navigator key',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> key1 = GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> key2 = GlobalKey<NavigatorState>();
+      bool hasError = false;
+      try {
+        ShellRoute(
+          navigatorKey: key1,
+          builder: (_, __, Widget child) => child,
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              redirect: (_, __) => '/route',
+              routes: <RouteBase>[
+                GoRoute(
+                  parentNavigatorKey: key2,
+                  path: 'route',
+                  builder: (_, __) => const Text('/route/1'),
+                ),
+              ],
+            ),
+          ],
+        );
+      } on AssertionError catch (_) {
+        hasError = true;
+      }
+      expect(hasError, isTrue);
+    });
+  });
 }

@@ -1,3 +1,15 @@
+## 3.0.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 3.0.0
+
+* **BREAKING CHANGE:** Removes all code and tests mentioning `PickedFile`.
+* Listens to `cancel` event on file selection. When the selection is canceled:
+  * `Future<XFile?>` methods return `null`
+  * `Future<List<XFile>>` methods return an empty list.
+
 ## 2.2.0
 
 * Adds `getMedia` method.

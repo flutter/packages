@@ -8,10 +8,12 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
+import 'route.dart';
 
 /// An matched result by matching a [RouteBase] against a location.
 ///
@@ -75,7 +77,7 @@ class RouteMatch {
   /// for example:
   ///
   /// uri = '/family/f2/person/p2'
-  /// route = GoRoute('/family/:id)
+  /// route = GoRoute('/family/:id')
   ///
   /// matchedLocation = '/family/f2'
   final String matchedLocation;
@@ -263,8 +265,11 @@ class RouteMatchList {
     assert(index != -1);
     newMatches.removeRange(index, newMatches.length);
 
-    // Also pop ShellRoutes when there are no subsequent route matches
-    while (newMatches.isNotEmpty && newMatches.last.route is ShellRouteBase) {
+    // Also pop ShellRoutes that have no subsequent route matches and GoRoutes
+    // that only have redirect.
+    while (newMatches.isNotEmpty &&
+        (newMatches.last.route is ShellRouteBase ||
+            (newMatches.last.route as GoRoute).redirectOnly)) {
       newMatches.removeLast();
     }
     // Removing ImperativeRouteMatch should not change uri and pathParameters.
@@ -352,6 +357,7 @@ class RouteMatchList {
 /// suitable for using with [StandardMessageCodec].
 ///
 /// The primary use of this class is for state restoration.
+@internal
 class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
   /// Creates a new [RouteMatchListCodec] object.
   RouteMatchListCodec(RouteConfiguration configuration)

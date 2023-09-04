@@ -7,26 +7,81 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Check that the children are layed out.',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: WrapExample(),
-      ),
+  testWidgets('Check wrap layout', (WidgetTester tester) async {
+    const MaterialApp app = MaterialApp(
+      home: WrapExample(),
     );
+    await tester.pumpWidget(app);
     await tester.pumpAndSettle();
 
-    // See if there are children layed out.
-    expect(find.text('Index 0'), findsOneWidget);
-    expect(find.text('Index 1'), findsOneWidget);
-    expect(find.text('Index 2'), findsOneWidget);
-    expect(find.text('Index 3'), findsOneWidget);
-    expect(find.text('Index 4'), findsOneWidget);
+    // Validate which children are laid out.
+    for (int i = 0; i <= 12; i++) {
+      expect(find.text('Index $i'), findsOneWidget);
+    }
+    for (int i = 13; i < 19; i++) {
+      expect(find.text('Index $i'), findsNothing);
+    }
 
-    // See if they are in expected position.
-    expect(tester.getTopLeft(find.text('Index 0')), const Offset(0.0, 103.0));
-    expect(tester.getTopLeft(find.text('Index 1')), const Offset(66.0, 124.0));
-    expect(tester.getTopLeft(find.text('Index 3')), const Offset(271.0, 174.0));
-    expect(tester.getTopLeft(find.text('Index 4')), const Offset(381.0, 224.0));
+    // Validate with the position of the box, not the text.
+    Finder getContainer(String text) {
+      return find.ancestor(
+        of: find.text(text),
+        matching: find.byType(Container),
+      );
+    }
+
+    // Validate layout position.
+    expect(
+      tester.getTopLeft(getContainer('Index 0')),
+      const Offset(0.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 1')),
+      const Offset(40.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 2')),
+      const Offset(190.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 3')),
+      const Offset(270.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 4')),
+      const Offset(370.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 5')),
+      const Offset(490.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 6')),
+      const Offset(690.0, 56.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 7')),
+      const Offset(0.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 8')),
+      const Offset(150.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 9')),
+      const Offset(250.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 10')),
+      const Offset(350.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 11')),
+      const Offset(390.0, 506.0),
+    );
+    expect(
+      tester.getTopLeft(getContainer('Index 12')),
+      const Offset(590.0, 506.0),
+    );
   });
 }

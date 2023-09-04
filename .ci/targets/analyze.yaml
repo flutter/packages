@@ -1,8 +1,13 @@
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
   - name: analyze repo tools
     script: .ci/scripts/analyze_repo_tools.sh
+  - name: download Dart deps
+    script: script/tool_runner.sh
+    args: ["fetch-deps"]
+    infra_step: true
   - name: analyze
     script: script/tool_runner.sh
     # DO NOT change the custom-analysis argument here without changing the Dart repo.
@@ -12,4 +17,4 @@ tasks:
     # the changes won't break analysis of other packages in the respository
     # that depend on it.
   - name: analyze - pathified
-    script: .ci/scripts/pathified_analyze.sh
+    script: .ci/scripts/analyze_pathified.sh

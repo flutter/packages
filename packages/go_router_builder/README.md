@@ -8,12 +8,12 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^7.0.0
+  go_router: ^9.0.3
 
 dev_dependencies:
   # ...along with your other dev-dependencies
   build_runner: ^2.0.0
-  go_router_builder: ^2.0.0
+  go_router_builder: ^2.3.0
 ```
 
 ### Source code
@@ -379,3 +379,9 @@ class MyGoRouteData extends GoRouteData {
 ```
 
 An example is available [here](https://github.com/flutter/packages/blob/main/packages/go_router_builder/example/lib/shell_route_with_keys_example.dart).
+
+## Run tests
+
+To run unit tests, run command `dart tool/run_tests.dart` from `packages/go_router_builder/`.
+
+To run tests in examples, run `flutter test` from `packages/go_router_builder/example`.

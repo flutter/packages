@@ -1,3 +1,16 @@
+## 1.0.12
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.11
+
+* Removes the dependency on `package:equatable`.
+
+## 1.0.10
+
+* Adds retry logic when removing a `GcsLock` file lock in case of failure.
+
 ## 1.0.9
 
 * Adds compatibility with `http` 1.0.

@@ -29,14 +29,14 @@ class FileSelectorWeb extends FileSelectorPlatform {
   }
 
   @override
-  Future<XFile> openFile({
+  Future<XFile?> openFile({
     List<XTypeGroup>? acceptedTypeGroups,
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
     final List<XFile> files =
         await _openFiles(acceptedTypeGroups: acceptedTypeGroups);
-    return files.first;
+    return files.isNotEmpty ? files.first : null;
   }
 
   @override

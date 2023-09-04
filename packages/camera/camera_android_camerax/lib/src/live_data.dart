@@ -18,6 +18,7 @@ import 'zoom_state.dart';
 /// Android Activity to which this plugin is attached.
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
+@immutable
 class LiveData<T extends Object> extends JavaObject {
   /// Constructs a [LiveData] that is not automatically attached to a native object.
   LiveData.detached({this.binaryMessenger, this.instanceManager})

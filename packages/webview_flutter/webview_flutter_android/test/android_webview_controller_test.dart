@@ -608,7 +608,7 @@ void main() {
         mockWebChromeClient.setSynchronousReturnValueForOnShowFileChooser(true),
       );
 
-      onShowFileChooserCallback(
+      await onShowFileChooserCallback(
         android_webview.WebView.detached(),
         android_webview.FileChooserParams.detached(
           isCaptureEnabled: false,
@@ -670,7 +670,7 @@ void main() {
       bool isAllow = false;
 
       late final GeolocationPermissionsResponse response;
-      controller.setGeolocationPermissionsPromptCallbacks(
+      await controller.setGeolocationPermissionsPromptCallbacks(
         onShowPrompt: (GeolocationPermissionsRequestParams request) async {
           isAllow = request.origin == allowOrigin;
           response =
@@ -720,7 +720,7 @@ void main() {
       await controller.setOnPlatformPermissionRequest(
         (PlatformWebViewPermissionRequest request) async {
           permissionRequest = request;
-          request.grant();
+          await request.grant();
         },
       );
 
@@ -1207,6 +1207,135 @@ void main() {
 
       verify(
         mockPlatformViewsService.initExpensiveAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+    });
+
+    testWidgets('PlatformView is recreated when the controller changes',
+        (WidgetTester tester) async {
+      final MockPlatformViewsServiceProxy mockPlatformViewsService =
+          MockPlatformViewsServiceProxy();
+
+      when(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      ).thenReturn(MockSurfaceAndroidViewController());
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: createControllerWithMocks(),
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: createControllerWithMocks(),
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+    });
+
+    testWidgets(
+        'PlatformView does not rebuild when creation params stay the same',
+        (WidgetTester tester) async {
+      final MockPlatformViewsServiceProxy mockPlatformViewsService =
+          MockPlatformViewsServiceProxy();
+
+      final AndroidWebViewController controller = createControllerWithMocks();
+
+      when(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      ).thenReturn(MockSurfaceAndroidViewController());
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: controller,
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: controller,
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verifyNever(
+        mockPlatformViewsService.initSurfaceAndroidView(
           id: anyNamed('id'),
           viewType: anyNamed('viewType'),
           layoutDirection: anyNamed('layoutDirection'),

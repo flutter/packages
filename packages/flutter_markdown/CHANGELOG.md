@@ -1,5 +1,25 @@
-## NEXT
+## 0.6.17+2
 
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.6.17+1
+
+* Deletes deprecated splash screen meta-data element.
+* Updates README to improve examples of using Markdown.
+
+## 0.6.17
+
+* Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
+  the parent text's `TextStyle`.
+  
+## 0.6.16
+
+* Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
+
+## 0.6.15+1
+
+* Fixes 'The Scrollbar's ScrollController has no ScrollPosition attached' exception when scrolling scrollable code blocks.
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 

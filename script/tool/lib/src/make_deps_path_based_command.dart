@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -12,6 +11,7 @@ import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
 import 'common/git_version_finder.dart';
+import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/repository_package.dart';
 
@@ -28,9 +28,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   /// Creates an instance of the command to convert selected dependencies to
   /// path-based.
   MakeDepsPathBasedCommand(
-    Directory packagesDir, {
-    GitDir? gitDir,
-  }) : super(packagesDir, gitDir: gitDir) {
+    super.packagesDir, {
+    super.gitDir,
+  }) {
     argParser.addMultiOption(_targetDependenciesArg,
         help:
             'The names of the packages to convert to path-based dependencies.\n'
@@ -122,6 +122,13 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         targets[packageName] = RepositoryPackage(appFacingCandidate.existsSync()
             ? appFacingCandidate
             : topLevelCandidate);
+        continue;
+      }
+      // Check for a match in the third-party packages directory.
+      final Directory thirdPartyCandidate =
+          thirdPartyPackagesDir.childDirectory(packageName);
+      if (thirdPartyCandidate.existsSync()) {
+        targets[packageName] = RepositoryPackage(thirdPartyCandidate);
         continue;
       }
       // If there is no packages/<packageName> directory, then either the
