@@ -157,13 +157,19 @@ void main() {
 
       // Act & Assert
       expect(
-        () => cameraPlatform.createCamera(
+        () => cameraPlatform.createCameraWithSettings(
           const CameraDescription(
             name: 'back',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
         ),
         throwsUnimplementedError,
       );
