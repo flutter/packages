@@ -1,3 +1,8 @@
+## 2.4.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.4.0
 
 * Adds options for gesture handling and tilt controls on web.

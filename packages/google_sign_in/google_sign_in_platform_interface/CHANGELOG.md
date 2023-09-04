@@ -1,3 +1,8 @@
+## 2.4.2
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.4.1
 
 * Clarifies `canAccessScopes` method documentation.

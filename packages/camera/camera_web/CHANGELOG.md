@@ -1,6 +1,16 @@
-## 0.3.2+2
+## 0.3.2+4
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
+## 0.3.2+3
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 0.3.2+2
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 0.3.2+1
 

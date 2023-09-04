@@ -1,6 +1,11 @@
-## 0.2.1+8
+## 0.2.1+9
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
+## 0.2.1+8
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 0.2.1+7
 

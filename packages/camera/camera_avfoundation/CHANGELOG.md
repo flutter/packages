@@ -1,7 +1,12 @@
-## 0.9.13+4
+## 0.9.13+5
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
-* 
+
+## 0.9.13+4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 0.9.13+3
 
 * Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.

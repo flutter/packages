@@ -1,3 +1,12 @@
+## 3.9.5
+
+* Updates pigeon to 11 and removes unneeded enum wrappers.
+
+## 3.9.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 3.9.3
 
 * Fixes bug where the `PlatformWebViewWidget` was rebuilt unnecessarily.
