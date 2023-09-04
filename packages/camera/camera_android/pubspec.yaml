@@ -30,7 +30,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-<<<<<<< HEAD
 # TODO: for PR
 
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
@@ -39,7 +38,6 @@ dependency_overrides:
 
   camera_platform_interface: 
     path: ../../camera/camera_platform_interface
-=======
+
 topics:
   - camera
->>>>>>> upstream/main

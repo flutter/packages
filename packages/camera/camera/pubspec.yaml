@@ -38,7 +38,6 @@ dev_dependencies:
   plugin_platform_interface: ^2.0.0
   video_player: ^2.0.0
 
-<<<<<<< HEAD
 # TODO: for PR
 
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
@@ -53,7 +52,6 @@ dependency_overrides:
     path: ../../camera/camera_platform_interface
   camera_web: 
     path: ../../camera/camera_web
-=======
+
 topics:
   - camera
->>>>>>> upstream/main

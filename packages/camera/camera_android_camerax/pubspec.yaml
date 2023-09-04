@@ -35,7 +35,6 @@ dev_dependencies:
   mockito: 5.4.1
   pigeon: ^9.1.0
 
-<<<<<<< HEAD
 # TODO: for PR
 
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
@@ -44,7 +43,6 @@ dependency_overrides:
 
   camera_platform_interface: 
     path: ../../camera/camera_platform_interface
-=======
+
 topics:
   - camera
->>>>>>> upstream/main
