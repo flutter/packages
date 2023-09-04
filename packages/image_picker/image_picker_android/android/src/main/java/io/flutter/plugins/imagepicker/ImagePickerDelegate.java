@@ -631,10 +631,10 @@ public class ImagePickerDelegate
   private void handleChooseImageResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_OK && data != null) {
       String path;
-      if (data.getData() != null) {
+      if (data.getData() != null) { // On Android 10 devices using Android Photo Picker, the Uri from getData() could be null.
         path = fileUtils.getPathFromUri(activity, data.getData());
       } else {
-        Uri uri = data.getClipData().getItemAt(0).getUri();
+        Uri uri = data.getClipData().getItemAt(0).getUri(); // Get the file Uri from ClipData
         path = fileUtils.getPathFromUri(activity, uri);
       }
       handleImageResult(path, false);
