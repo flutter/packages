@@ -112,14 +112,21 @@ public class QuickActionsTest {
     scenario.onActivity(currentActivity::set);
 
     // Assert
+    Assert.assertNotNull(device.wait(Until.hasObject(By.descContains(appReadySentinel)), 5000));
+        Assert.assertTrue(
+        "AppShortcut 2:" + firstShortcut.getId() + " does not launch the correct activity",
+        // We can only find the shortcut type in content description while inspecting it in Ui
+        // Automator Viewer.
+        device.hasObject(By.descContains(appReadySentinel)));
+            Assert.assertEquals(initialActivity.get(), currentActivity.get());
+
     Assert.assertTrue(
-        "AppShortcut:" + firstShortcut.getId() + " does not launch the correct activity",
+        "AppShortcut 1:" + firstShortcut.getId() + " does not launch the correct activity",
         // We can only find the shortcut type in content description while inspecting it in Ui
         // Automator Viewer.
         device.hasObject(By.descContains(firstShortcut.getId() + appReadySentinel)));
     // This is Android SingleTop behavior in which Android does not destroy the initial activity and
     // launch a new activity.
-    Assert.assertEquals(initialActivity.get(), currentActivity.get());
   }
 
   private void ensureAllAppShortcutsAreCreated() {
