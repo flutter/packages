@@ -123,7 +123,7 @@ class IosPlatformImages {
     loadInfo.then((Map<String, dynamic>? map) {
       if (map == null) {
         scaleCompleter.completeError(
-          Exception("Image couldn't be found: $name"),
+          Exception("Scale couldn't be found to load image: $name"),
         );
         bytesCompleter.completeError(
           Exception("Image couldn't be found: $name"),
