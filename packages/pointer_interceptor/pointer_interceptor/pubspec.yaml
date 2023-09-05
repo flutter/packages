@@ -8,9 +8,24 @@ environment:
   sdk: ">=3.1.0 <4.0.0"
   flutter: ">=3.13.0"
 
+flutter:
+  plugin:
+    implements: pointer_interceptor_platform_interface
+    platforms:
+      web:
+        pluginClass: PointerInterceptorPlugin
+        fileName: src/web.dart
+
 dependencies:
   flutter:
     sdk: flutter
+  pointer_interceptor_platform_interface:
+    path: ../pointer_interceptor_platform_interface
+  flutter_web_plugins:
+    sdk: flutter
+
+  # flutter_web_plugins:
+  #   sdk: flutter
 
 dev_dependencies:
   flutter_test:
