@@ -415,3 +415,8 @@ abstract class FallbackStrategyHostApi {
   void create(int identifier, VideoQualityConstraint quality,
       VideoResolutionFallbackRule fallbackRule);
 }
+
+@HostApi(dartHostTestHandler: 'TestCameraControlHostApi')
+abstract class CameraControlHostApi {
+  void setZoomRatio(int identifier, double ratio);
+}
