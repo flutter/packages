@@ -6,7 +6,6 @@ package io.flutter.plugins.quickactionsexample;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import android.content.Context;
@@ -100,40 +99,26 @@ public class QuickActionsTest {
             .filter(s -> s.getId().equals(firstShortcut.getId()))
             .findFirst()
             .get();
-    Intent dynamicShortcutIntent = dynamicShortcut.getIntent();
+    Intent dynamicShortcutIntent = dynamicShortcut.getIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     AtomicReference<QuickActionsTestActivity> initialActivity = new AtomicReference<>();
     scenario.onActivity(initialActivity::set);
     String appReadySentinel = " has launched";
 
     // Act
     context.startActivity(dynamicShortcutIntent);
-            Assert.assertTrue(
-        "AppShortcut 2:" + firstShortcut.getId() + " does not launch the correct activity",
-        // We can only find the shortcut type in content description while inspecting it in Ui
-        // Automator Viewer.
-        device.hasObject(By.descContains(appReadySentinel)));
-    // Assert.assertNotNull(device.wait(Until.hasObject(By.descContains(appReadySentinel)), 5000)); not useful
+    device.wait(Until.hasObject(By.descContains(appReadySentinel)), 2000);
     AtomicReference<QuickActionsTestActivity> currentActivity = new AtomicReference<>();
     scenario.onActivity(currentActivity::set);
 
     // Assert
-    // Assert.assertNotNull(device.wait(Until.hasObject(By.descContains(appReadySentinel)), 5000)); not useful
-        Assert.assertTrue(
-        "AppShortcut 2:" + firstShortcut.getId() + " does not launch the correct activity",
-        // We can only find the shortcut type in content description while inspecting it in Ui
-        // Automator Viewer.
-        device.hasObject(By.descContains(appReadySentinel)));
-            Assert.assertEquals(initialActivity.get(), currentActivity.get());
-
     Assert.assertTrue(
-        "AppShortcut 1:" + firstShortcut.getId() + " does not launch the correct activity",
+        "AppShortcut:" + firstShortcut.getId() + " does not launch the correct activity",
         // We can only find the shortcut type in content description while inspecting it in Ui
         // Automator Viewer.
         device.hasObject(By.descContains(firstShortcut.getId() + appReadySentinel)));
     // This is Android SingleTop behavior in which Android does not destroy the initial activity and
     // launch a new activity.
-            Assert.assertEquals(initialActivity.get(), currentActivity.get());
-
+    Assert.assertEquals(initialActivity.get(), currentActivity.get());
   }
 
   private void ensureAllAppShortcutsAreCreated() {
