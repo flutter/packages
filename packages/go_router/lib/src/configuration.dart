@@ -270,6 +270,10 @@ class RouteConfiguration {
 
   /// Finds the routes that matched the given URL.
   RouteMatchList findMatch(String location, {Object? extra}) {
+    if (location.isEmpty) {
+      return _errorRouteMatchList(
+          Uri.parse(""), GoException('Empty route'));
+    }
     final Uri uri = Uri.parse(canonicalUri(location));
 
     final Map<String, String> pathParameters = <String, String>{};
