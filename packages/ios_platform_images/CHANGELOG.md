@@ -1,3 +1,7 @@
+## 0.3.0
+
+* Migrate objC to Swift.
+
 ## 0.2.2+2
 
 * Adds pub topics to package metadata.
