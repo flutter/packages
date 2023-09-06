@@ -16,46 +16,70 @@ class IosPlatformImagesTests: XCTestCase {
     mockChannel = MockMethodChannel()
   }
 
-  func testImageLoading() {
+  func testHandleMethodCall_loadImage() {
+
+    let name = "flutter"
+
+    let call = FlutterMethodCall(methodName: "loadImage", arguments: [name])
+
+    let mockChannel = MockMethodChannel()
+
     let plugin = IosPlatformImagesPlugin(channel: mockChannel)
 
-    mockChannel.invokeMethodStub = { method, arguments in
+    let resultExpectation = expectation(description: "result block must be called.")
 
-      if method == "loadImage" {
-        let imageData: [String: Any] = [
-          "scale": 2.0,
-          "data": FlutterStandardTypedData(bytes: [UInt8(0), UInt8(1), UInt8(2)]),
-        ]
-        plugin.handleLoadImage(
-          arguments as! FlutterMethodCall,
-          { result in
-            result(imageData)
-          })
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+      plugin.handle(call) { result in
+        let result = result as? [String: Any]
+        XCTAssertNotNil(result)
+
       }
+      resultExpectation.fulfill()
     }
 
-    let image = UIImage.flutterImage(withName: "testImage.png")
+    XCTWaiter().wait(for: [resultExpectation], timeout: 2)
 
-    XCTAssertNotNil(image)
   }
 
-  func testResolveURL() {
+  func testHandleMethodCall_loadImage_notFound() {
+    let name = "testImage"
+
+    let call = FlutterMethodCall(methodName: "loadImage", arguments: [name])
+
+    let mockChannel = MockMethodChannel()
+
     let plugin = IosPlatformImagesPlugin(channel: mockChannel)
 
-    mockChannel.invokeMethodStub = { method, arguments in
+    let resultExpectation = expectation(description: "result block must be called.")
 
-      if method == "resolveURL" {
-        let url = "https://example.com/testImage.png"
-        plugin.handleResolveURL(
-          arguments as! FlutterMethodCall,
-          { result in
-            result(url)
-          })
+    DispatchQueue.main.asyncAfter(deadline: .now()) {
+      plugin.handle(call) { result in
+        XCTAssertNil(result)
+        resultExpectation.fulfill()
       }
     }
 
-    let resolvedURL = IosPlatformImages.resolveURL("testImage.png")
+    XCTWaiter().wait(for: [resultExpectation], timeout: 1)
+  }
 
-    XCTAssertEqual(resolvedURL, "https://example.com/testImage.png")
+  func testHandleMethodCall_resolveURL_notFound() {
+    let name = "testFile"
+
+    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [name])
+
+    let mockChannel = MockMethodChannel()
+
+    let plugin = IosPlatformImagesPlugin(channel: mockChannel)
+
+    let resultExpectation = expectation(description: "result block must be called.")
+
+    DispatchQueue.main.asyncAfter(deadline: .now()) {
+      plugin.handle(call) { result in
+        XCTAssertNil(result)
+        resultExpectation.fulfill()
+      }
+    }
+
+    XCTWaiter().wait(for: [resultExpectation], timeout: 1)
   }
 }

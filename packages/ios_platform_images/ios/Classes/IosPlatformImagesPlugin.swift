@@ -5,29 +5,35 @@
 import Flutter
 import Foundation
 
-public class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
+public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
+
+  private let channel: MethodChannel
+
+  init(channel: MethodChannel) {
+    self.channel = channel
+  }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(
       name: "plugins.flutter.io/ios_platform_images",
       binaryMessenger: registrar.messenger())
 
-    let plugin = IosPlatformImagesPlugin()
-    registrar.addMethodCallDelegate(plugin, channel: channel)
+    let instance = IosPlatformImagesPlugin(channel: channel)
+    registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "loadImage":
-      handleLoadImage(call, result)
+      loadImage(call, result)
     case "resolveURL":
-      handleResolveURL(call, result)
+      resolveURL(call, result)
     default:
       result(FlutterMethodNotImplemented)
     }
   }
 
-  private func handleLoadImage(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+  private func loadImage(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
     guard let name = call.arguments as? String,
       let image = UIImage(named: name),
       let data = image.pngData()
@@ -44,16 +50,17 @@ public class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
     result(imageResult)
   }
 
-  private func handleResolveURL(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-    guard let args = call.arguments as? [Any],
-      let name = args.first as? String,
-      let extensionOrNil = args.dropFirst().first as? String?,
-      let url = Bundle.main.url(forResource: name, withExtension: extensionOrNil)
-    else {
-      result(nil)
-      return
-    }
+  private func resolveURL(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    if let args = call.arguments as? [String?] {
+      let name = args[0]
 
-    result(url.absoluteString)
+      if let url = Bundle.main.url(forResource: name, withExtension: nil) {
+        result(url.absoluteString)
+      } else {
+        result(nil)
+      }
+    } else {
+      result(nil)
+    }
   }
 }
