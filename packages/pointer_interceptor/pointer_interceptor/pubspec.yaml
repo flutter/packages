@@ -15,6 +15,9 @@ flutter:
       web:
         pluginClass: PointerInterceptorPlugin
         fileName: src/web.dart
+      ios:
+        pluginClass: PointerInterceptorPlugin
+        fileName: src/mobile.dart
 
 dependencies:
   flutter:
