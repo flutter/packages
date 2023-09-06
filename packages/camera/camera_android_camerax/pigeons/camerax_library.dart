@@ -192,6 +192,8 @@ abstract class ProcessCameraProviderFlutterApi {
 @HostApi(dartHostTestHandler: 'TestCameraHostApi')
 abstract class CameraHostApi {
   int getCameraInfo(int identifier);
+
+  int getCameraControl(int identifier);
 }
 
 @FlutterApi()
@@ -418,5 +420,11 @@ abstract class FallbackStrategyHostApi {
 
 @HostApi(dartHostTestHandler: 'TestCameraControlHostApi')
 abstract class CameraControlHostApi {
+  @async
   void setZoomRatio(int identifier, double ratio);
+}
+
+@FlutterApi()
+abstract class CameraControlFlutterApi {
+  void create(int identifier);
 }

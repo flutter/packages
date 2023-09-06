@@ -107,6 +107,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, new FallbackStrategyHostApiImpl(instanceManager));
     GeneratedCameraXLibrary.QualitySelectorHostApi.setup(
         binaryMessenger, new QualitySelectorHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.CameraControlHostApi.setup(
+        binaryMessenger, new CameraControlHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override

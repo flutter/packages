@@ -4,6 +4,7 @@
 
 import 'analyzer.dart';
 import 'camera.dart';
+import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
@@ -26,27 +27,27 @@ import 'zoom_state.dart';
 /// Handles initialization of Flutter APIs for the Android CameraX library.
 class AndroidCameraXCameraFlutterApis {
   /// Creates a [AndroidCameraXCameraFlutterApis].
-  AndroidCameraXCameraFlutterApis({
-    JavaObjectFlutterApiImpl? javaObjectFlutterApiImpl,
-    CameraFlutterApiImpl? cameraFlutterApiImpl,
-    CameraInfoFlutterApiImpl? cameraInfoFlutterApiImpl,
-    CameraSelectorFlutterApiImpl? cameraSelectorFlutterApiImpl,
-    ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApiImpl,
-    SystemServicesFlutterApiImpl? systemServicesFlutterApiImpl,
-    CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
-    CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
-    PendingRecordingFlutterApiImpl? pendingRecordingFlutterApiImpl,
-    RecordingFlutterApiImpl? recordingFlutterApiImpl,
-    RecorderFlutterApiImpl? recorderFlutterApiImpl,
-    VideoCaptureFlutterApiImpl? videoCaptureFlutterApiImpl,
-    ExposureStateFlutterApiImpl? exposureStateFlutterApiImpl,
-    ZoomStateFlutterApiImpl? zoomStateFlutterApiImpl,
-    LiveDataFlutterApiImpl? liveDataFlutterApiImpl,
-    ObserverFlutterApiImpl? observerFlutterApiImpl,
-    ImageProxyFlutterApiImpl? imageProxyFlutterApiImpl,
-    PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
-    AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
-  }) {
+  AndroidCameraXCameraFlutterApis(
+      {JavaObjectFlutterApiImpl? javaObjectFlutterApiImpl,
+      CameraFlutterApiImpl? cameraFlutterApiImpl,
+      CameraInfoFlutterApiImpl? cameraInfoFlutterApiImpl,
+      CameraSelectorFlutterApiImpl? cameraSelectorFlutterApiImpl,
+      ProcessCameraProviderFlutterApiImpl? processCameraProviderFlutterApiImpl,
+      SystemServicesFlutterApiImpl? systemServicesFlutterApiImpl,
+      CameraStateErrorFlutterApiImpl? cameraStateErrorFlutterApiImpl,
+      CameraStateFlutterApiImpl? cameraStateFlutterApiImpl,
+      PendingRecordingFlutterApiImpl? pendingRecordingFlutterApiImpl,
+      RecordingFlutterApiImpl? recordingFlutterApiImpl,
+      RecorderFlutterApiImpl? recorderFlutterApiImpl,
+      VideoCaptureFlutterApiImpl? videoCaptureFlutterApiImpl,
+      ExposureStateFlutterApiImpl? exposureStateFlutterApiImpl,
+      ZoomStateFlutterApiImpl? zoomStateFlutterApiImpl,
+      LiveDataFlutterApiImpl? liveDataFlutterApiImpl,
+      ObserverFlutterApiImpl? observerFlutterApiImpl,
+      ImageProxyFlutterApiImpl? imageProxyFlutterApiImpl,
+      PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
+      AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
+      CameraControlFlutterApiImpl? cameraControlFlutterApiImpl}) {
     this.javaObjectFlutterApiImpl =
         javaObjectFlutterApiImpl ?? JavaObjectFlutterApiImpl();
     this.cameraInfoFlutterApiImpl =
@@ -85,6 +86,8 @@ class AndroidCameraXCameraFlutterApis {
         imageProxyFlutterApiImpl ?? ImageProxyFlutterApiImpl();
     this.planeProxyFlutterApiImpl =
         planeProxyFlutterApiImpl ?? PlaneProxyFlutterApiImpl();
+    this.cameraControlFlutterApiImpl =
+        cameraControlFlutterApiImpl ?? CameraControlFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -153,6 +156,9 @@ class AndroidCameraXCameraFlutterApis {
   /// Flutter Api implementation for [PlaneProxy].
   late final PlaneProxyFlutterApiImpl planeProxyFlutterApiImpl;
 
+  /// Flutter Api implementation for [CameraControl].
+  late final CameraControlFlutterApiImpl cameraControlFlutterApiImpl;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -176,6 +182,7 @@ class AndroidCameraXCameraFlutterApis {
       PlaneProxyFlutterApi.setup(planeProxyFlutterApiImpl);
       LiveDataFlutterApi.setup(liveDataFlutterApiImpl);
       ObserverFlutterApi.setup(observerFlutterApiImpl);
+      CameraControlFlutterApi.setup(cameraControlFlutterApiImpl);
       _haveBeenSetUp = true;
     }
   }

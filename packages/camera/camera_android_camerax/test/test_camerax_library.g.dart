@@ -362,6 +362,8 @@ abstract class TestCameraHostApi {
 
   int getCameraInfo(int identifier);
 
+  int getCameraControl(int identifier);
+
   static void setup(TestCameraHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -378,6 +380,25 @@ abstract class TestCameraHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.CameraHostApi.getCameraInfo was null, expected non-null int.');
           final int output = api.getCameraInfo(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraHostApi.getCameraControl', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.CameraHostApi.getCameraControl was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraHostApi.getCameraControl was null, expected non-null int.');
+          final int output = api.getCameraControl(arg_identifier!);
           return <Object?>[output];
         });
       }
@@ -1480,7 +1501,7 @@ abstract class TestCameraControlHostApi {
   static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void setZoomRatio(int identifier, double ratio);
+  Future<void> setZoomRatio(int identifier, double ratio);
 
   static void setup(TestCameraControlHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -1500,7 +1521,7 @@ abstract class TestCameraControlHostApi {
           final double? arg_ratio = (args[1] as double?);
           assert(arg_ratio != null,
               'Argument for dev.flutter.pigeon.CameraControlHostApi.setZoomRatio was null, expected non-null double.');
-          api.setZoomRatio(arg_identifier!, arg_ratio!);
+          await api.setZoomRatio(arg_identifier!, arg_ratio!);
           return <Object?>[];
         });
       }
