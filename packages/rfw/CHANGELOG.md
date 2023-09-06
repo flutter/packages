@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates README.md with information about golden testing.
+
 ## 1.0.14
 
 * Adds pub topics to package metadata.
