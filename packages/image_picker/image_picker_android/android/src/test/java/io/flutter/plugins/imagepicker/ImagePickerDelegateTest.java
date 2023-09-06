@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -129,6 +130,12 @@ public class ImagePickerDelegateTest {
 
     Uri mockUri = mock(Uri.class);
     when(mockIntent.getData()).thenReturn(mockUri);
+
+    ClipData mockClipData = mock(ClipData.class);
+    ClipData.Item mockItem = mock(ClipData.Item.class);
+    when(mockItem.getUri()).thenReturn(mockUri);
+    when(mockClipData.getItemAt(0)).thenReturn(mockItem);
+    when(mockIntent.getClipData()).thenReturn(mockClipData);
   }
 
   @After
@@ -429,6 +436,31 @@ public class ImagePickerDelegateTest {
 
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals("originalPath", pathListCapture.getValue().get(0));
+    verifyNoMoreInteractions(mockResult);
+  }
+
+  @Test
+  public void
+  onActivityResult_whenImagePickedFromGallery_nullUriFromGetData_andNoResizeNeeded_finishesWithImagePath() {
+    when(mockIntent.getData()).thenReturn(null);
+
+    Mockito.doAnswer(
+                    invocation -> {
+                      ((Runnable) invocation.getArgument(0)).run();
+                      return null;
+                    })
+            .when(mockExecutor)
+            .execute(any(Runnable.class));
+    ImagePickerDelegate delegate =
+            createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
+
+    delegate.onActivityResult(
+            ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
