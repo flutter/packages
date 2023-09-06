@@ -65,12 +65,6 @@
 
 @end
 
-#if TARGET_OS_OSX
-// TODO(stuartmorgan): Remove this and the ifdefs below once `publish` exists in the engine. See
-// https://github.com/flutter/flutter/issues/124721.
-FWFInstanceManager *sInstanceManager = nil;
-#endif
-
 @implementation FLTWebViewFlutterPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
@@ -129,21 +123,11 @@ FWFInstanceManager *sInstanceManager = nil;
   FWFWebViewFactory *webviewFactory = [[FWFWebViewFactory alloc] initWithManager:instanceManager];
   [registrar registerViewFactory:webviewFactory withId:@"plugins.flutter.io/webview"];
 
-#if TARGET_OS_IOS
   // InstanceManager is published so that a strong reference is maintained.
   [registrar publish:instanceManager];
-#else
-  // TODO(stuartmorgan): See comment above and https://github.com/flutter/flutter/issues/124721.
-  sInstanceManager = instanceManager;
-#endif
 }
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-#if TARGET_OS_IOS
   [registrar publish:[NSNull null]];
-#else
-  // TODO(stuartmorgan): See comment above and https://github.com/flutter/flutter/issues/124721.
-  sInstanceManager = nil;
-#endif
 }
 @end
