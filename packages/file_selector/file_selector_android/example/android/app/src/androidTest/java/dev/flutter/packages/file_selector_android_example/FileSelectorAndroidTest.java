@@ -70,7 +70,7 @@ public class FileSelectorAndroidTest {
     int pixelCount = bitmap.getWidth() * bitmap.getHeight();
     try {
       // final FileOutputStream out = new FileOutputStream(new File("file_selector_android_test.png"));
-    final FileOutputStream out = new FileOutputStream(new File(System.getEnv("FLUTTER_LOGS_DIR") + "/file_selector_android_test.png"));
+    final FileOutputStream out = new FileOutputStream(new File(System.getenv("FLUTTER_LOGS_DIR") + "/file_selector_android_test.png"));
       bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
     } catch (Exception e) {
       System.out.println("Oops!");
