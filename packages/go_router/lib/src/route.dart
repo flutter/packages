@@ -55,10 +55,12 @@ typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
 
 /// Signature for functions used to build Navigators
 typedef NavigatorBuilder = Widget Function(
-    GlobalKey<NavigatorState> navigatorKey,
-    List<NavigatorObserver>? observers,
-    String? restorationScopeId,
-    );
+  GlobalKey<NavigatorState> navigatorKey,
+  List<NavigatorObserver>? observers,
+  String? restorationScopeId, {
+  bool requestFocus,
+  RouteMatchList? preloadedNavigatorMatches,
+});
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
@@ -437,12 +439,6 @@ abstract class ShellRouteBase extends RouteBase {
   /// immediate sub-route of this shell route.
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute);
 
-  /// Returns the locations for any [Navigator]s of this shell route that are
-  /// eligible for preloading.
-  Map<GlobalKey<NavigatorState>, RouteMatchList> preloadableNavigatorLocations(
-          RouteConfiguration routeConfiguration) =>
-      <GlobalKey<NavigatorState>, RouteMatchList>{};
-
   /// Returns the keys for the [Navigator]s associated with this shell route.
   Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
       <GlobalKey<NavigatorState>>[];
@@ -464,7 +460,6 @@ class ShellRouteContext {
     required this.routerState,
     required this.navigatorKey,
     required this.routeMatchList,
-    required this.preloadedMatchLists,
     required this.navigatorBuilder,
   });
 
@@ -481,10 +476,6 @@ class ShellRouteContext {
   /// The route match list representing the location of the current [Navigator]
   /// within the associated [route].
   final RouteMatchList routeMatchList;
-
-  /// The route match lists representing the locations of any additional
-  /// preloaded [Navigator]s within the associated [route].
-  final Map<GlobalKey<NavigatorState>, RouteMatchList> preloadedMatchLists;
 
   /// Function used to build the [Navigator] for the current route.
   final NavigatorBuilder navigatorBuilder;
@@ -765,7 +756,7 @@ class StatefulShellRoute extends ShellRouteBase {
         assert(_debugValidateParentNavigatorKeys(branches)),
         assert(_debugValidateRestorationScopeIds(restorationScopeId, branches)),
         _preloadableBranches = branches
-            .where((StatefulShellBranch b) => b._shouldPreload)
+            .where((StatefulShellBranch b) => b.preload)
             .toList(growable: false),
         super._(routes: _routes(branches));
 
@@ -881,38 +872,44 @@ class StatefulShellRoute extends ShellRouteBase {
   }
 
   @override
-  Map<GlobalKey<NavigatorState>, RouteMatchList> preloadableNavigatorLocations(
-      RouteConfiguration routeConfiguration) {
-    // Return quickly if there are no preloadable branches.
-    if (_preloadableBranches.isEmpty) {
-      return <GlobalKey<NavigatorState>, RouteMatchList>{};
-    }
+  Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
+      branches.map((StatefulShellBranch b) => b.navigatorKey);
 
-    final Map<GlobalKey<NavigatorState>, RouteMatchList> preloadable =
-        <GlobalKey<NavigatorState>, RouteMatchList>{};
+  StatefulNavigationShell _createShell(
+      BuildContext context, ShellRouteContext shellRouteContext) {
+    final GoRouter router = GoRouter.of(context);
+    final List<_PreloadedStatefulShellBranch> preloadData =
+        _preloadBranches(shellRouteContext, router);
+    return StatefulNavigationShell._(
+      shellRouteContext: shellRouteContext,
+      router: router,
+      containerBuilder: navigatorContainerBuilder,
+      preloadedBranches: preloadData,
+    );
+  }
+
+  List<_PreloadedStatefulShellBranch> _preloadBranches(
+      ShellRouteContext shellRouteContext, GoRouter router) {
+    final List<_PreloadedStatefulShellBranch> preloadData =
+        <_PreloadedStatefulShellBranch>[];
     final StatefulNavigationShellState? shellState =
         _shellStateKey.currentState;
 
     for (final StatefulShellBranch branch in _preloadableBranches) {
       final bool loaded = shellState?._isBranchLoaded(branch) ?? false;
       if (!loaded) {
-        preloadable[branch.navigatorKey] = routeConfiguration.findMatch(
-            branch._effectiveInitialBranchLocation(routeConfiguration));
+        final RouteMatchList matchList = router.configuration.findMatch(
+            branch._effectiveInitialBranchLocation(router.configuration));
+        final Widget navigator = shellRouteContext.navigatorBuilder(
+            branch.navigatorKey, branch.observers, branch.restorationScopeId,
+            preloadedNavigatorMatches: matchList);
+        preloadData
+            .add(_PreloadedStatefulShellBranch(branch, matchList, navigator));
       }
     }
-    return preloadable;
+
+    return preloadData;
   }
-
-  @override
-  Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
-      branches.map((StatefulShellBranch b) => b.navigatorKey);
-
-  StatefulNavigationShell _createShell(
-          BuildContext context, ShellRouteContext shellRouteContext) =>
-      StatefulNavigationShell(
-          shellRouteContext: shellRouteContext,
-          router: GoRouter.of(context),
-          containerBuilder: navigatorContainerBuilder);
 
   static Widget _indexedStackContainerBuilder(BuildContext context,
       StatefulNavigationShell navigationShell, List<Widget> children) {
@@ -964,6 +961,15 @@ class StatefulShellRoute extends ShellRouteBase {
   }
 }
 
+/// Data structure used for preloading a [StatefulShellBranch].
+class _PreloadedStatefulShellBranch {
+  _PreloadedStatefulShellBranch(this.branch, this.matchList, this.navigator);
+
+  final StatefulShellBranch branch;
+  final RouteMatchList matchList;
+  final Widget navigator;
+}
+
 /// Representation of a separate branch in a stateful navigation tree, used to
 /// configure [StatefulShellRoute].
 ///
@@ -988,7 +994,7 @@ class StatefulShellBranch {
     this.initialLocation,
     this.restorationScopeId,
     this.observers,
-    this.lazy = true,
+    this.preload = false,
   }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
     assert(() {
       ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
@@ -1026,10 +1032,10 @@ class StatefulShellBranch {
   final List<NavigatorObserver>? observers;
 
   /// Whether this route branch should be loaded only when navigating to it for
-  /// the first time (the default behavior, i.e. 'true'), or if it should be
+  /// the first time (the default behavior, i.e. 'false'), or if it should be
   /// eagerly loaded (preloaded).
   ///
-  /// If this property is false, the branch will be loaded immediately when the
+  /// If this property is true, the branch will be loaded immediately when the
   /// associated [StatefulShellRoute] is visited for the first time. In that
   /// case, the branch will be preloaded by navigating to the initial location
   /// (see [initialLocation]).
@@ -1039,7 +1045,7 @@ class StatefulShellBranch {
   /// preparing the UI for animated transitions etc. Care must be taken to
   /// **keep the preloading to an absolute minimum** to avoid any unnecessary
   /// resource use.
-  final bool lazy;
+  final bool preload;
 
   /// The default route of this branch, i.e. the first descendant [GoRoute].
   ///
@@ -1047,8 +1053,6 @@ class StatefulShellBranch {
   /// an [initialLocation] has not been provided.
   GoRoute? get defaultRoute =>
       RouteBase.routesRecursively(routes).whereType<GoRoute>().firstOrNull;
-
-  bool get _shouldPreload => !lazy;
 
   String _effectiveInitialBranchLocation(
       RouteConfiguration routeConfiguration) {
@@ -1088,12 +1092,25 @@ typedef ShellNavigationContainerBuilder = Widget Function(BuildContext context,
 /// ```
 class StatefulNavigationShell extends StatefulWidget {
   /// Constructs an [StatefulNavigationShell].
+  // TODO(tolo): There shouldn't be a need for a public constructor on StatefulNavigationShell, consider removing it (technically a breaking change).
   StatefulNavigationShell({
+    required ShellRouteContext shellRouteContext,
+    required GoRouter router,
+    required ShellNavigationContainerBuilder containerBuilder,
+  }) : this._(
+            shellRouteContext: shellRouteContext,
+            router: router,
+            containerBuilder: containerBuilder,
+            preloadedBranches: <_PreloadedStatefulShellBranch>[]);
+
+  StatefulNavigationShell._({
     required this.shellRouteContext,
     required GoRouter router,
     required this.containerBuilder,
+    required List<_PreloadedStatefulShellBranch> preloadedBranches,
   })  : assert(shellRouteContext.route is StatefulShellRoute),
         _router = router,
+        _preloadedBranches = preloadedBranches,
         currentIndex = _indexOfBranchNavigatorKey(
             shellRouteContext.route as StatefulShellRoute,
             shellRouteContext.navigatorKey),
@@ -1104,6 +1121,8 @@ class StatefulNavigationShell extends StatefulWidget {
   /// The ShellRouteContext responsible for building the Navigator for the
   /// current [StatefulShellBranch].
   final ShellRouteContext shellRouteContext;
+
+  final List<_PreloadedStatefulShellBranch> _preloadedBranches;
 
   final GoRouter _router;
 
@@ -1253,6 +1272,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   void _updateCurrentBranchStateFromWidget() {
+    _preloadBranches();
+
     final StatefulShellBranch branch = route.branches[widget.currentIndex];
     final ShellRouteContext shellRouteContext = widget.shellRouteContext;
     final RouteMatchList currentBranchLocation =
@@ -1273,21 +1294,14 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
           shellRouteContext.navigatorBuilder(
               branch.navigatorKey, branch.observers, branch.restorationScopeId);
     }
-
-    _preloadBranches();
   }
 
   void _preloadBranches() {
-    final ShellRouteContext shellRouteContext = widget.shellRouteContext;
-    final Map<GlobalKey<NavigatorState>, RouteMatchList> preloadedMatchLists =
-        shellRouteContext.preloadedMatchLists;
-    for (final StatefulShellBranch branch in route.branches) {
-      final RouteMatchList? matches = preloadedMatchLists[branch.navigatorKey];
-      if (matches != null && !_isBranchLoaded(branch)) {
-        _branchLocation(branch, false).value = matches;
-        _branchNavigators[branch.navigatorKey] =
-            shellRouteContext.navigatorBuilder(branch.navigatorKey,
-                branch.observers, branch.restorationScopeId);
+    for (final _PreloadedStatefulShellBranch preloaded
+        in widget._preloadedBranches) {
+      if (!_isBranchLoaded(preloaded.branch)) {
+        _branchLocation(preloaded.branch, false).value = preloaded.matchList;
+        _branchNavigators[preloaded.branch.navigatorKey] = preloaded.navigator;
       }
     }
   }

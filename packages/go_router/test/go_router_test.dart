@@ -3931,7 +3931,7 @@ void main() {
           builder: mockStackedShellBuilder,
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
-              lazy: false,
+              preload: true,
               routes: <RouteBase>[
                 GoRoute(
                   path: '/c',
@@ -3941,7 +3941,7 @@ void main() {
               ],
             ),
             StatefulShellBranch(
-              lazy: false,
+              preload: true,
               routes: <RouteBase>[
                 GoRoute(
                   path: '/d',
@@ -3951,7 +3951,7 @@ void main() {
               ],
             ),
             StatefulShellBranch(
-              lazy: false,
+              preload: true,
               initialLocation: '/e/details',
               routes: <RouteBase>[
                 GoRoute(
@@ -4007,19 +4007,19 @@ void main() {
           builder: mockStackedShellBuilder,
           branches: <StatefulShellBranch>[
             StatefulShellBranch(
-              lazy: false,
+              preload: true,
               routes: <RouteBase>[
                 StatefulShellRoute.indexedStack(
                   builder: mockStackedShellBuilder,
                   branches: <StatefulShellBranch>[
-                    StatefulShellBranch(lazy: false, routes: <RouteBase>[
+                    StatefulShellBranch(preload: true, routes: <RouteBase>[
                       GoRoute(
                         path: '/a',
                         builder: (BuildContext context, GoRouterState state) =>
                             DummyStatefulWidget(key: statefulWidgetKeyA),
                       ),
                     ]),
-                    StatefulShellBranch(lazy: false, routes: <RouteBase>[
+                    StatefulShellBranch(preload: true, routes: <RouteBase>[
                       GoRoute(
                         path: '/b',
                         builder: (BuildContext context, GoRouterState state) =>
@@ -4031,7 +4031,7 @@ void main() {
               ],
             ),
             StatefulShellBranch(
-              lazy: false,
+              preload: true,
               routes: <RouteBase>[
                 GoRoute(
                   path: '/c',
