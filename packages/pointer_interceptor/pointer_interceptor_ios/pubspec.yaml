@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  pointer_interceptor_platform_interface:
+    path: ../pointer_interceptor_platform_interface
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +24,4 @@ flutter:
     platforms:
       ios:
         pluginClass: PointerInterceptorIosPlugin
+        dartPluginClass: PointerInterceptorPlugin

@@ -16,14 +16,15 @@ flutter:
         pluginClass: PointerInterceptorPlugin
         fileName: src/web.dart
       ios:
-        pluginClass: PointerInterceptorPlugin
-        fileName: src/mobile.dart
+        default_package: pointer_interceptor_ios
 
 dependencies:
   flutter:
     sdk: flutter
   pointer_interceptor_platform_interface:
     path: ../pointer_interceptor_platform_interface
+  pointer_interceptor_ios:
+    path: ../pointer_interceptor_ios
   flutter_web_plugins:
     sdk: flutter
 
