@@ -7,13 +7,7 @@
 
 @implementation FWFAssetManager
 - (NSString *)lookupKeyForAsset:(NSString *)asset {
-#if TARGET_OS_IOS
   return [FlutterDartProject lookupKeyForAsset:asset];
-#else
-  // TODO(stuartmorgan): Remove this stub once https://github.com/flutter/flutter/issues/47681
-  // is fixed.
-  return nil;
-#endif
 }
 @end
 
