@@ -109,7 +109,13 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   PHPickerConfiguration *config =
       [[PHPickerConfiguration alloc] initWithPhotoLibrary:PHPhotoLibrary.sharedPhotoLibrary];
   config.selectionLimit = context.maxImageCount;
-  config.filter = [PHPickerFilter imagesFilter];
+  if (context.includeVideo) {
+    config.filter = [PHPickerFilter anyFilterMatchingSubfilters:@[
+      [PHPickerFilter imagesFilter], [PHPickerFilter videosFilter]
+    ]];
+  } else {
+    config.filter = [PHPickerFilter imagesFilter];
+  }
 
   _pickerViewController = [[PHPickerViewController alloc] initWithConfiguration:config];
   _pickerViewController.delegate = self;
@@ -128,7 +134,12 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   UIImagePickerController *imagePickerController = [self createImagePickerController];
   imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
   imagePickerController.delegate = self;
-  imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage ];
+  if (context.includeVideo) {
+    imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage, (NSString *)kUTTypeMovie ];
+
+  } else {
+    imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage ];
+  }
   self.callContext = context;
 
   switch (source.type) {
@@ -162,7 +173,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   [self cancelInProgressCall];
   FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
       initWithResult:^void(NSArray<NSString *> *paths, FlutterError *error) {
-        if (paths && paths.count != 1) {
+        if (paths.count > 1) {
           completion(nil, [FlutterError errorWithCode:@"invalid_result"
                                               message:@"Incorrect number of return paths provided"
                                               details:nil]);
@@ -206,13 +217,36 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
 }
 
+- (void)pickMediaWithMediaSelectionOptions:(nonnull FLTMediaSelectionOptions *)mediaSelectionOptions
+                                completion:(nonnull void (^)(NSArray<NSString *> *_Nullable,
+                                                             FlutterError *_Nullable))completion {
+  FLTImagePickerMethodCallContext *context =
+      [[FLTImagePickerMethodCallContext alloc] initWithResult:completion];
+  context.maxSize = [mediaSelectionOptions maxSize];
+  context.imageQuality = [mediaSelectionOptions imageQuality];
+  context.requestFullMetadata = [mediaSelectionOptions requestFullMetadata];
+  context.includeVideo = YES;
+  if (![[mediaSelectionOptions allowMultiple] boolValue]) {
+    context.maxImageCount = 1;
+  }
+
+  if (@available(iOS 14, *)) {
+    [self launchPHPickerWithContext:context];
+  } else {
+    // Camera is ignored for gallery mode, so the value here is arbitrary.
+    [self launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  }
+}
+
 - (void)pickVideoWithSource:(nonnull FLTSourceSpecification *)source
                 maxDuration:(nullable NSNumber *)maxDurationSeconds
                  completion:
                      (nonnull void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
       initWithResult:^void(NSArray<NSString *> *paths, FlutterError *error) {
-        if (paths && paths.count != 1) {
+        if (paths.count > 1) {
           completion(nil, [FlutterError errorWithCode:@"invalid_result"
                                               message:@"Incorrect number of return paths provided"
                                               details:nil]);
@@ -538,25 +572,16 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
   if (videoURL != nil) {
     if (@available(iOS 13.0, *)) {
-      NSString *fileName = [videoURL lastPathComponent];
-      NSURL *destination =
-          [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:fileName]];
-
-      if ([[NSFileManager defaultManager] isReadableFileAtPath:[videoURL path]]) {
-        NSError *error;
-        if (![[videoURL path] isEqualToString:[destination path]]) {
-          [[NSFileManager defaultManager] copyItemAtURL:videoURL toURL:destination error:&error];
-
-          if (error) {
-            [self sendCallResultWithError:[FlutterError
-                                              errorWithCode:@"flutter_image_picker_copy_video_error"
-                                                    message:@"Could not cache the video file."
-                                                    details:nil]];
-            return;
-          }
-        }
-        videoURL = destination;
+      NSURL *destination = [FLTImagePickerPhotoAssetUtil saveVideoFromURL:videoURL];
+      if (destination == nil) {
+        [self sendCallResultWithError:[FlutterError
+                                          errorWithCode:@"flutter_image_picker_copy_video_error"
+                                                message:@"Could not cache the video file."
+                                                details:nil]];
+        return;
       }
+
+      videoURL = destination;
     }
     [self sendCallResultWithSavedPathList:@[ videoURL.path ]];
   } else {
@@ -662,7 +687,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                                                      message:@"pathList's items should not be null"
                                                      details:nil]);
   } else {
-    self.callContext.result(pathList, nil);
+    self.callContext.result(pathList ?: [NSArray array], nil);
   }
   self.callContext = nil;
 }

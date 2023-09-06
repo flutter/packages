@@ -1,3 +1,20 @@
+## 6.1.19
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 6.1.18
+
+* Updates play-services-auth version to 20.6.0.
+
+## 6.1.17
+
+* Converts method channels to Pigeon.
+
+## 6.1.16
+
+* Updates Guava to version 32.0.1.
+
 ## 6.1.15
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.

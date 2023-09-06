@@ -1,6 +1,12 @@
-## NEXT
+## 6.2.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 6.2.0
 
 * Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Adds web options to customize control's list and displaying context menu.
 
 ## 6.1.0
 

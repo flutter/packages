@@ -92,12 +92,17 @@ void main() {
         const NSError(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
-          localizedDescription: 'my desc',
+          userInfo: <String, Object?>{
+            NSErrorUserInfoKey.NSURLErrorFailingURLStringError:
+                'www.flutter.dev',
+            NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+          },
         ),
       );
 
       expect(callbackError.description, 'my desc');
       expect(callbackError.errorCode, WKErrorCode.webViewInvalidated);
+      expect(callbackError.url, 'www.flutter.dev');
       expect(callbackError.domain, 'domain');
       expect(callbackError.errorType, WebResourceErrorType.webViewInvalidated);
       expect(callbackError.isForMainFrame, true);
@@ -126,11 +131,16 @@ void main() {
         const NSError(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
-          localizedDescription: 'my desc',
+          userInfo: <String, Object?>{
+            NSErrorUserInfoKey.NSURLErrorFailingURLStringError:
+                'www.flutter.dev',
+            NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
+          },
         ),
       );
 
       expect(callbackError.description, 'my desc');
+      expect(callbackError.url, 'www.flutter.dev');
       expect(callbackError.errorCode, WKErrorCode.webViewInvalidated);
       expect(callbackError.domain, 'domain');
       expect(callbackError.errorType, WebResourceErrorType.webViewInvalidated);

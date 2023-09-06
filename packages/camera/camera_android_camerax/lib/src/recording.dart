@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
@@ -12,6 +13,7 @@ import 'java_object.dart';
 /// Wraps a CameraX recording class.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/Recording.
+@immutable
 class Recording extends JavaObject {
   /// Constructs a detached [Recording]
   Recording.detached(
@@ -67,22 +69,22 @@ class RecordingHostApiImpl extends RecordingHostApi {
 
   /// Closes the specified recording instance.
   Future<void> closeFromInstance(Recording recording) async {
-    close(instanceManager.getIdentifier(recording)!);
+    await close(instanceManager.getIdentifier(recording)!);
   }
 
   /// Pauses the specified recording instance if active.
   Future<void> pauseFromInstance(Recording recording) async {
-    pause(instanceManager.getIdentifier(recording)!);
+    await pause(instanceManager.getIdentifier(recording)!);
   }
 
   /// Resumes the specified recording instance if paused.
   Future<void> resumeFromInstance(Recording recording) async {
-    resume(instanceManager.getIdentifier(recording)!);
+    await resume(instanceManager.getIdentifier(recording)!);
   }
 
   /// Stops the specified recording instance, as if calling closeFromInstance().
   Future<void> stopFromInstance(Recording recording) async {
-    stop(instanceManager.getIdentifier(recording)!);
+    await stop(instanceManager.getIdentifier(recording)!);
   }
 }
 

@@ -18,6 +18,8 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'android_navigation_delegate_test.dart';
 import 'android_webview_controller_test.mocks.dart';
+import 'android_webview_test.mocks.dart'
+    show MockTestGeolocationPermissionsCallbackHostApi;
 import 'test_android_webview.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
@@ -55,6 +57,10 @@ void main() {
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
       )? onShowFileChooser,
+      android_webview.GeolocationPermissionsShowPrompt?
+          onGeolocationPermissionsShowPrompt,
+      android_webview.GeolocationPermissionsHidePrompt?
+          onGeolocationPermissionsHidePrompt,
       void Function(
         android_webview.WebChromeClient instance,
         android_webview.PermissionRequest request,
@@ -73,18 +79,25 @@ void main() {
             androidWebStorage: mockWebStorage ?? MockWebStorage(),
             androidWebViewProxy: AndroidWebViewProxy(
               createAndroidWebChromeClient: createWebChromeClient ??
-                  ({
-                    void Function(android_webview.WebView, int)?
-                        onProgressChanged,
-                    Future<List<String>> Function(
-                      android_webview.WebView webView,
-                      android_webview.FileChooserParams params,
-                    )? onShowFileChooser,
-                    void Function(
-                      android_webview.WebChromeClient instance,
-                      android_webview.PermissionRequest request,
-                    )? onPermissionRequest,
-                  }) =>
+                  (
+                          {void Function(android_webview.WebView, int)?
+                              onProgressChanged,
+                          Future<List<String>> Function(
+                            android_webview.WebView webView,
+                            android_webview.FileChooserParams params,
+                          )? onShowFileChooser,
+                          void Function(
+                            android_webview.WebChromeClient instance,
+                            android_webview.PermissionRequest request,
+                          )? onPermissionRequest,
+                          Future<void> Function(
+                            String origin,
+                            android_webview.GeolocationPermissionsCallback
+                                callback,
+                          )? onGeolocationPermissionsShowPrompt,
+                          void Function(
+                                  android_webview.WebChromeClient instance)?
+                              onGeolocationPermissionsHidePrompt}) =>
                       MockWebChromeClient(),
               createAndroidWebView: () => nonNullMockWebView,
               createAndroidWebViewClient: ({
@@ -574,6 +587,8 @@ void main() {
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
           )? onShowFileChooser,
+          dynamic onGeolocationPermissionsShowPrompt,
+          dynamic onGeolocationPermissionsHidePrompt,
           dynamic onPermissionRequest,
         }) {
           onShowFileChooserCallback = onShowFileChooser!;
@@ -593,7 +608,7 @@ void main() {
         mockWebChromeClient.setSynchronousReturnValueForOnShowFileChooser(true),
       );
 
-      onShowFileChooserCallback(
+      await onShowFileChooserCallback(
         android_webview.WebView.detached(),
         android_webview.FileChooserParams.detached(
           isCaptureEnabled: false,
@@ -609,6 +624,75 @@ void main() {
       expect(fileSelectorParams.mode, FileSelectorMode.open);
     });
 
+    test('setGeolocationPermissionsPromptCallbacks', () async {
+      final MockTestGeolocationPermissionsCallbackHostApi mockApi =
+          MockTestGeolocationPermissionsCallbackHostApi();
+      TestGeolocationPermissionsCallbackHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final android_webview.GeolocationPermissionsCallback testCallback =
+          android_webview.GeolocationPermissionsCallback.detached(
+        instanceManager: instanceManager,
+      );
+
+      const int instanceIdentifier = 0;
+      instanceManager.addHostCreatedInstance(testCallback, instanceIdentifier);
+
+      late final Future<void> Function(String origin,
+              android_webview.GeolocationPermissionsCallback callback)
+          onGeoPermissionHandle;
+      late final void Function(android_webview.WebChromeClient instance)
+          onGeoPermissionHidePromptHandle;
+
+      final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        createWebChromeClient: ({
+          dynamic onProgressChanged,
+          dynamic onShowFileChooser,
+          Future<void> Function(String origin,
+                  android_webview.GeolocationPermissionsCallback callback)?
+              onGeolocationPermissionsShowPrompt,
+          void Function(android_webview.WebChromeClient instance)?
+              onGeolocationPermissionsHidePrompt,
+          dynamic onPermissionRequest,
+        }) {
+          onGeoPermissionHandle = onGeolocationPermissionsShowPrompt!;
+          onGeoPermissionHidePromptHandle = onGeolocationPermissionsHidePrompt!;
+          return mockWebChromeClient;
+        },
+      );
+
+      String testValue = 'origin';
+      const String allowOrigin = 'https://www.allow.com';
+      bool isAllow = false;
+
+      late final GeolocationPermissionsResponse response;
+      await controller.setGeolocationPermissionsPromptCallbacks(
+        onShowPrompt: (GeolocationPermissionsRequestParams request) async {
+          isAllow = request.origin == allowOrigin;
+          response =
+              GeolocationPermissionsResponse(allow: isAllow, retain: isAllow);
+          return response;
+        },
+        onHidePrompt: () {
+          testValue = 'changed';
+        },
+      );
+
+      await onGeoPermissionHandle(
+        allowOrigin,
+        testCallback,
+      );
+
+      expect(isAllow, true);
+
+      onGeoPermissionHidePromptHandle(mockWebChromeClient);
+      expect(testValue, 'changed');
+    });
+
     test('setOnPlatformPermissionRequest', () async {
       late final void Function(
         android_webview.WebChromeClient instance,
@@ -620,6 +704,8 @@ void main() {
         createWebChromeClient: ({
           dynamic onProgressChanged,
           dynamic onShowFileChooser,
+          dynamic onGeolocationPermissionsShowPrompt,
+          dynamic onGeolocationPermissionsHidePrompt,
           void Function(
             android_webview.WebChromeClient instance,
             android_webview.PermissionRequest request,
@@ -634,7 +720,7 @@ void main() {
       await controller.setOnPlatformPermissionRequest(
         (PlatformWebViewPermissionRequest request) async {
           permissionRequest = request;
-          request.grant();
+          await request.grant();
         },
       );
 
@@ -670,6 +756,8 @@ void main() {
         createWebChromeClient: ({
           dynamic onProgressChanged,
           dynamic onShowFileChooser,
+          dynamic onGeolocationPermissionsShowPrompt,
+          dynamic onGeolocationPermissionsHidePrompt,
           void Function(
             android_webview.WebChromeClient instance,
             android_webview.PermissionRequest request,
@@ -1119,6 +1207,135 @@ void main() {
 
       verify(
         mockPlatformViewsService.initExpensiveAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+    });
+
+    testWidgets('PlatformView is recreated when the controller changes',
+        (WidgetTester tester) async {
+      final MockPlatformViewsServiceProxy mockPlatformViewsService =
+          MockPlatformViewsServiceProxy();
+
+      when(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      ).thenReturn(MockSurfaceAndroidViewController());
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: createControllerWithMocks(),
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: createControllerWithMocks(),
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+    });
+
+    testWidgets(
+        'PlatformView does not rebuild when creation params stay the same',
+        (WidgetTester tester) async {
+      final MockPlatformViewsServiceProxy mockPlatformViewsService =
+          MockPlatformViewsServiceProxy();
+
+      final AndroidWebViewController controller = createControllerWithMocks();
+
+      when(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      ).thenReturn(MockSurfaceAndroidViewController());
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: controller,
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verify(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return AndroidWebViewWidget(
+            AndroidWebViewWidgetCreationParams(
+              controller: controller,
+              platformViewsServiceProxy: mockPlatformViewsService,
+            ),
+          ).build(context);
+        },
+      ));
+      await tester.pumpAndSettle();
+
+      verifyNever(
+        mockPlatformViewsService.initSurfaceAndroidView(
           id: anyNamed('id'),
           viewType: anyNamed('viewType'),
           layoutDirection: anyNamed('layoutDirection'),

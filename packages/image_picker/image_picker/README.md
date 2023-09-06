@@ -1,5 +1,5 @@
 # Image Picker plugin for Flutter
-<?code-excerpt path-base="excerpts/packages/image_picker_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/image_picker.svg)](https://pub.dev/packages/image_picker)
 
@@ -8,7 +8,7 @@ and taking new pictures with the camera.
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 21+ | iOS 11+ | Any   | 10.14+ | [See `image_picker_for_web`][1] | Windows 10+ |
+| **Support** | SDK 21+ | iOS 11+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
 ## Installation
 
@@ -59,7 +59,7 @@ When under high memory pressure the Android system may kill the MainActivity of
 the application using the image_picker. On Android the image_picker makes use
 of the default `Intent.ACTION_GET_CONTENT` or `MediaStore.ACTION_IMAGE_CAPTURE`
 intents. This means that while the intent is executing the source application
-is moved to the background and becomes eligable for cleanup when the system is
+is moved to the background and becomes eligible for cleanup when the system is
 low on memory. When the intent finishes executing, Android will restart the
 application. Since the data is never returned to the original call use the
 `ImagePicker.retrieveLostData()` method to retrieve the lost data. For example:
@@ -104,7 +104,7 @@ functionality.
 
 Launching the image picker from an `Activity` with `launchMode: singleInstance`
 will always return `RESULT_CANCELED`.
-In this launch mode, new activities are created in a separate [Task][2].
+In this launch mode, new activities are created in a separate [Task](https://developer.android.com/guide/components/activities/tasks-and-back-stack).
 As activities cannot communicate between tasks, the image picker activity cannot
 send back its eventual result to the calling activity.
 To work around this problem, consider using `launchMode: singleTask` instead.
@@ -122,7 +122,7 @@ implementations allow delegating to a camera handler by setting a
 `cameraDelegate` before using `image_picker`, such as in `main()`:
 
 <?code-excerpt "readme_excerpts.dart (CameraDelegate)"?>
-``` dart
+```dart
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 // ···
 class MyCameraDelegate extends ImagePickerCameraDelegate {
@@ -158,7 +158,7 @@ encourage the community to build packages that implement
 
 Since the macOS implementation uses `file_selector`, you will need to
 add a filesystem access
-[entitlement][https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox]:
+[entitlement](https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox):
 ```xml
   <key>com.apple.security.files.user-selected.read-only</key>
   <true/>
@@ -167,7 +167,7 @@ add a filesystem access
 ### Example
 
 <?code-excerpt "readme_excerpts.dart (Pick)"?>
-``` dart
+```dart
 final ImagePicker picker = ImagePicker();
 // Pick an image.
 final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -180,17 +180,19 @@ final XFile? galleryVideo =
 final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
 // Pick multiple images.
 final List<XFile> images = await picker.pickMultiImage();
+// Pick singe image or video.
+final XFile? media = await picker.pickMedia();
+// Pick multiple images and videos.
+final List<XFile> medias = await picker.pickMultipleMedia();
 ```
 
-## Migrating to 0.8.2+
+## Migrating to 1.0
 
-Starting with version **0.8.2** of the image_picker plugin, new methods have
-been added for picking files that return `XFile` instances (from the
+Starting with version 0.8.2 of the image_picker plugin, new methods were
+added that return `XFile` instances (from the
 [cross_file](https://pub.dev/packages/cross_file) package) rather than the
-plugin's own `PickedFile` instances. While the previous methods still exist, it
-is already recommended to start migrating over to their new equivalents.
-Eventually, `PickedFile` and the methods that return instances of it will be
-deprecated and removed.
+plugin's own `PickedFile` instances. The previous methods were supported through
+0.8.9, and removed in 1.0.0.
 
 #### Call the new methods
 
@@ -200,6 +202,3 @@ deprecated and removed.
 | `List<PickedFile> images = await _picker.getMultiImage(...)` | `List<XFile> images = await _picker.pickMultiImage(...)` |
 | `PickedFile video = await _picker.getVideo(...)` | `XFile video = await _picker.pickVideo(...)` |
 | `LostData response = await _picker.getLostData()` | `LostDataResponse response = await _picker.retrieveLostData()` |
-
-[1]: https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform
-[2]: https://developer.android.com/guide/components/activities/tasks-and-back-stack

@@ -3,16 +3,15 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
-import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
+import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
-import 'common/process_runner.dart';
+import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 /// A command to enforce pubspec conventions across the repository.
@@ -23,16 +22,11 @@ import 'common/repository_package.dart';
 class PubspecCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the version check command.
   PubspecCheckCommand(
-    Directory packagesDir, {
-    ProcessRunner processRunner = const ProcessRunner(),
-    Platform platform = const LocalPlatform(),
-    GitDir? gitDir,
-  }) : super(
-          packagesDir,
-          processRunner: processRunner,
-          platform: platform,
-          gitDir: gitDir,
-        ) {
+    super.packagesDir, {
+    super.processRunner,
+    super.platform,
+    super.gitDir,
+  }) {
     argParser.addOption(
       _minMinFlutterVersionFlag,
       help:
@@ -65,6 +59,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     'flutter:',
     'dependencies:',
     'dev_dependencies:',
+    'topics:',
+    'screenshots:',
     'false_secrets:',
   ];
 
@@ -73,6 +69,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     'dependencies:',
     'dev_dependencies:',
     'flutter:',
+    'topics:',
+    'screenshots:',
     'false_secrets:',
   ];
 
@@ -90,6 +88,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   final String name = 'pubspec-check';
 
   @override
+  List<String> get aliases => <String>['check-pubspec'];
+
+  @override
   final String description =
       'Checks that pubspecs follow repository conventions.';
 
@@ -104,8 +105,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   Future<void> initializeRun() async {
     // Find all local, published packages.
     for (final File pubspecFile in (await packagesDir.parent
-        .list(recursive: true, followLinks: false)
-        .toList())
+            .list(recursive: true, followLinks: false)
+            .toList())
         .whereType<File>()
         .where((File entity) => p.basename(entity.path) == 'pubspec.yaml')) {
       final Pubspec? pubspec = _tryParsePubspec(pubspecFile.readAsStringSync());
@@ -223,6 +224,12 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         passing = false;
       }
 
+      final String? topicsError = _checkTopics(pubspec, package: package);
+      if (topicsError != null) {
+        printError('$indentation$topicsError');
+        passing = false;
+      }
+
       // Don't check descriptions for federated package components other than
       // the app-facing package, since they are unlisted, and are expected to
       // have short descriptions.
@@ -323,6 +330,29 @@ class PubspecCheckCommand extends PackageLoopingCommand {
             ?.toString()
             .startsWith(_expectedIssueLinkFormat) ??
         false;
+  }
+
+  // Validates the "implements" keyword for a plugin, returning an error
+  // string if there are any issues.
+  String? _checkTopics(
+    Pubspec pubspec, {
+    required RepositoryPackage package,
+  }) {
+    final List<String> topics = pubspec.topics ?? <String>[];
+    if (topics.isEmpty) {
+      return 'A published package should include "topics". '
+          'See https://dart.dev/tools/pub/pubspec#topics.';
+    }
+    if (isFlutterPlugin(package) && package.isFederated) {
+      final String pluginName = package.directory.parent.basename;
+      // '_' isn't allowed in topics, so convert to '-'.
+      final String topicName = pluginName.replaceAll('_', '-');
+      if (!topics.contains(topicName)) {
+        return 'A federated plugin package should include its plugin name as '
+            'a topic. Add "$topicName" to the "topics" section.';
+      }
+    }
+    return null;
   }
 
   // Validates the "implements" keyword for a plugin, returning an error

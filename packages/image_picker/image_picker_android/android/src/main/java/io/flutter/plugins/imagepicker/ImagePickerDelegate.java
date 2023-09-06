@@ -79,6 +79,7 @@ public class ImagePickerDelegate
   @VisibleForTesting static final int REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA = 2343;
   @VisibleForTesting static final int REQUEST_CAMERA_IMAGE_PERMISSION = 2345;
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY = 2346;
+  @VisibleForTesting static final int REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY = 2347;
 
   @VisibleForTesting static final int REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY = 2352;
   @VisibleForTesting static final int REQUEST_CODE_TAKE_VIDEO_WITH_CAMERA = 2353;
@@ -279,6 +280,52 @@ public class ImagePickerDelegate
     return result.build();
   }
 
+  public void chooseMediaFromGallery(
+      @NonNull Messages.MediaSelectionOptions options,
+      @NonNull Messages.GeneralOptions generalOptions,
+      @NonNull Messages.Result<List<String>> result) {
+    if (!setPendingOptionsAndResult(options.getImageSelectionOptions(), null, result)) {
+      finishWithAlreadyActiveError(result);
+      return;
+    }
+
+    launchPickMediaFromGalleryIntent(generalOptions);
+  }
+
+  private void launchPickMediaFromGalleryIntent(Messages.GeneralOptions generalOptions) {
+    Intent pickMediaIntent;
+    if (generalOptions.getUsePhotoPicker() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      if (generalOptions.getAllowMultiple()) {
+        pickMediaIntent =
+            new ActivityResultContracts.PickMultipleVisualMedia()
+                .createIntent(
+                    activity,
+                    new PickVisualMediaRequest.Builder()
+                        .setMediaType(
+                            ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
+                        .build());
+      } else {
+        pickMediaIntent =
+            new ActivityResultContracts.PickVisualMedia()
+                .createIntent(
+                    activity,
+                    new PickVisualMediaRequest.Builder()
+                        .setMediaType(
+                            ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
+                        .build());
+      }
+    } else {
+      pickMediaIntent = new Intent(Intent.ACTION_GET_CONTENT);
+      pickMediaIntent.setType("*/*");
+      String[] mimeTypes = {"video/*", "image/*"};
+      pickMediaIntent.putExtra("CONTENT_TYPE", mimeTypes);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        pickMediaIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, generalOptions.getAllowMultiple());
+      }
+    }
+    activity.startActivityForResult(pickMediaIntent, REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY);
+  }
+
   public void chooseVideoFromGallery(
       @NonNull VideoSelectionOptions options,
       boolean usePhotoPicker,
@@ -291,9 +338,9 @@ public class ImagePickerDelegate
     launchPickVideoFromGalleryIntent(usePhotoPicker);
   }
 
-  private void launchPickVideoFromGalleryIntent(Boolean useAndroidPhotoPicker) {
+  private void launchPickVideoFromGalleryIntent(Boolean usePhotoPicker) {
     Intent pickVideoIntent;
-    if (useAndroidPhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       pickVideoIntent =
           new ActivityResultContracts.PickVisualMedia()
               .createIntent(
@@ -389,9 +436,9 @@ public class ImagePickerDelegate
     launchMultiPickImageFromGalleryIntent(usePhotoPicker);
   }
 
-  private void launchPickImageFromGalleryIntent(Boolean useAndroidPhotoPicker) {
+  private void launchPickImageFromGalleryIntent(Boolean usePhotoPicker) {
     Intent pickImageIntent;
-    if (useAndroidPhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       pickImageIntent =
           new ActivityResultContracts.PickVisualMedia()
               .createIntent(
@@ -406,9 +453,9 @@ public class ImagePickerDelegate
     activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY);
   }
 
-  private void launchMultiPickImageFromGalleryIntent(Boolean useAndroidPhotoPicker) {
+  private void launchMultiPickImageFromGalleryIntent(Boolean usePhotoPicker) {
     Intent pickMultiImageIntent;
-    if (useAndroidPhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       pickMultiImageIntent =
           new ActivityResultContracts.PickMultipleVisualMedia()
               .createIntent(
@@ -563,6 +610,9 @@ public class ImagePickerDelegate
       case REQUEST_CODE_TAKE_IMAGE_WITH_CAMERA:
         handlerRunnable = () -> handleCaptureImageResult(resultCode);
         break;
+      case REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY:
+        handlerRunnable = () -> handleChooseMediaResult(resultCode, data);
+        break;
       case REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY:
         handlerRunnable = () -> handleChooseVideoResult(resultCode, data);
         break;
@@ -589,17 +639,59 @@ public class ImagePickerDelegate
     finishWithSuccess(null);
   }
 
-  private void handleChooseMultiImageResult(int resultCode, Intent intent) {
+  public class MediaPath {
+    public MediaPath(@NonNull String path, @Nullable String mimeType) {
+      this.path = path;
+      this.mimeType = mimeType;
+    }
+
+    final String path;
+    final String mimeType;
+
+    public @NonNull String getPath() {
+      return path;
+    }
+
+    public @Nullable String getMimeType() {
+      return mimeType;
+    }
+  }
+
+  private void handleChooseMediaResult(int resultCode, Intent intent) {
     if (resultCode == Activity.RESULT_OK && intent != null) {
-      ArrayList<String> paths = new ArrayList<>();
+      ArrayList<MediaPath> paths = new ArrayList<>();
       if (intent.getClipData() != null) {
         for (int i = 0; i < intent.getClipData().getItemCount(); i++) {
-          paths.add(fileUtils.getPathFromUri(activity, intent.getClipData().getItemAt(i).getUri()));
+          Uri uri = intent.getClipData().getItemAt(i).getUri();
+          String path = fileUtils.getPathFromUri(activity, uri);
+          String mimeType = activity.getContentResolver().getType(uri);
+          paths.add(new MediaPath(path, mimeType));
         }
       } else {
-        paths.add(fileUtils.getPathFromUri(activity, intent.getData()));
+        paths.add(new MediaPath(fileUtils.getPathFromUri(activity, intent.getData()), null));
       }
-      handleMultiImageResult(paths);
+      handleMediaResult(paths);
+      return;
+    }
+
+    // User cancelled choosing a picture.
+    finishWithSuccess(null);
+  }
+
+  private void handleChooseMultiImageResult(int resultCode, Intent intent) {
+    if (resultCode == Activity.RESULT_OK && intent != null) {
+      ArrayList<MediaPath> paths = new ArrayList<>();
+      if (intent.getClipData() != null) {
+        for (int i = 0; i < intent.getClipData().getItemCount(); i++) {
+          paths.add(
+              new MediaPath(
+                  fileUtils.getPathFromUri(activity, intent.getClipData().getItemAt(i).getUri()),
+                  null));
+        }
+      } else {
+        paths.add(new MediaPath(fileUtils.getPathFromUri(activity, intent.getData()), null));
+      }
+      handleMediaResult(paths);
       return;
     }
 
@@ -649,26 +741,6 @@ public class ImagePickerDelegate
     finishWithSuccess(null);
   }
 
-  private void handleMultiImageResult(ArrayList<String> paths) {
-    ImageSelectionOptions localImageOptions = null;
-    synchronized (pendingCallStateLock) {
-      if (pendingCallState != null) {
-        localImageOptions = pendingCallState.imageOptions;
-      }
-    }
-
-    if (localImageOptions != null) {
-      ArrayList<String> finalPath = new ArrayList<>();
-      for (int i = 0; i < paths.size(); i++) {
-        String finalImagePath = getResizedImagePath(paths.get(i), localImageOptions);
-        finalPath.add(i, finalImagePath);
-      }
-      finishWithListSuccess(finalPath);
-    } else {
-      finishWithListSuccess(paths);
-    }
-  }
-
   void handleImageResult(String path, boolean shouldDeleteOriginalIfScaled) {
     ImageSelectionOptions localImageOptions = null;
     synchronized (pendingCallStateLock) {
@@ -679,7 +751,7 @@ public class ImagePickerDelegate
 
     if (localImageOptions != null) {
       String finalImagePath = getResizedImagePath(path, localImageOptions);
-      //delete original file if scaled
+      // Delete original file if scaled.
       if (finalImagePath != null && !finalImagePath.equals(path) && shouldDeleteOriginalIfScaled) {
         new File(path).delete();
       }
@@ -697,7 +769,34 @@ public class ImagePickerDelegate
         outputOptions.getQuality().intValue());
   }
 
-  void handleVideoResult(String path) {
+  private void handleMediaResult(@NonNull ArrayList<MediaPath> paths) {
+    ImageSelectionOptions localImageOptions = null;
+    synchronized (pendingCallStateLock) {
+      if (pendingCallState != null) {
+        localImageOptions = pendingCallState.imageOptions;
+      }
+    }
+
+    ArrayList<String> finalPaths = new ArrayList<>();
+    if (localImageOptions != null) {
+      for (int i = 0; i < paths.size(); i++) {
+        MediaPath path = paths.get(i);
+        String finalPath = path.path;
+        if (path.mimeType == null || !path.mimeType.startsWith("video/")) {
+          finalPath = getResizedImagePath(path.path, localImageOptions);
+        }
+        finalPaths.add(finalPath);
+      }
+      finishWithListSuccess(finalPaths);
+    } else {
+      for (int i = 0; i < paths.size(); i++) {
+        finalPaths.add(paths.get(i).path);
+      }
+      finishWithListSuccess(finalPaths);
+    }
+  }
+
+  private void handleVideoResult(String path) {
     finishWithSuccess(path);
   }
 

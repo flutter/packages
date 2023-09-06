@@ -1,7 +1,17 @@
-## NEXT
+## 1.0.34
+
+* Updates pigeon to 11.0.0 and removes enum wrappers.
+
+## 1.0.33
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.32
 
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates androidx.fragment version to 1.6.0.
 
 ## 1.0.31
 

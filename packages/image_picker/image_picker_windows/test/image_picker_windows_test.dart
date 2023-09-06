@@ -128,6 +128,41 @@ void main() {
             plugin.getVideo(source: ImageSource.camera), throwsStateError);
       });
     });
+
+    group('media', () {
+      test('getMedia passes the accepted type groups correctly', () async {
+        await plugin.getMedia(options: const MediaOptions(allowMultiple: true));
+
+        final VerificationResult result = verify(
+            mockFileSelectorPlatform.openFiles(
+                acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups')));
+        expect(capturedTypeGroups(result)[0].extensions, <String>[
+          ...ImagePickerWindows.imageFormats,
+          ...ImagePickerWindows.videoFormats
+        ]);
+      });
+
+      test('multiple media handles an empty path response gracefully',
+          () async {
+        expect(
+            await plugin.getMedia(
+              options: const MediaOptions(
+                allowMultiple: true,
+              ),
+            ),
+            <String>[]);
+      });
+
+      test('single media handles an empty path response gracefully', () async {
+        expect(
+            await plugin.getMedia(
+              options: const MediaOptions(
+                allowMultiple: false,
+              ),
+            ),
+            <String>[]);
+      });
+    });
   });
 }
 

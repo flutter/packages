@@ -48,9 +48,13 @@ public class AsyncTest {
     HostSmallApi.setup(binaryMessenger, api);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
-    verify(binaryMessenger).setMessageHandler(eq("dev.flutter.pigeon.HostSmallApi.echo"), any());
     verify(binaryMessenger)
-        .setMessageHandler(eq("dev.flutter.pigeon.HostSmallApi.voidVoid"), handler.capture());
+        .setMessageHandler(
+            eq("dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo"), any());
+    verify(binaryMessenger)
+        .setMessageHandler(
+            eq("dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid"),
+            handler.capture());
     MessageCodec<Object> codec = HostSmallApi.getCodec();
     ByteBuffer message = codec.encodeMessage(null);
     Boolean[] didCall = {false};
@@ -75,9 +79,13 @@ public class AsyncTest {
     HostSmallApi.setup(binaryMessenger, api);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
-    verify(binaryMessenger).setMessageHandler(eq("dev.flutter.pigeon.HostSmallApi.echo"), any());
     verify(binaryMessenger)
-        .setMessageHandler(eq("dev.flutter.pigeon.HostSmallApi.voidVoid"), handler.capture());
+        .setMessageHandler(
+            eq("dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo"), any());
+    verify(binaryMessenger)
+        .setMessageHandler(
+            eq("dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid"),
+            handler.capture());
     MessageCodec<Object> codec = HostSmallApi.getCodec();
     ByteBuffer message = codec.encodeMessage(null);
     Boolean[] didCall = {false};

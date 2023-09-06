@@ -1,3 +1,28 @@
+## 0.8.7+5
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.8.7+4
+
+* Updates the example to use the latest versions of the platform interface APIs.
+
+## 0.8.7+3
+
+* Bumps androidx.activity:activity from 1.7.1 to 1.7.2.
+
+## 0.8.7+2
+
+* Fixes a crash case when picking an image with a display name that does not contain a period.
+
+## 0.8.7+1
+
+* Bumps org.jetbrains.kotlin:kotlin-bom from 1.8.21 to 1.8.22.
+
+## 0.8.7
+
+* Adds `getMedia` method.
+
 ## 0.8.6+20
 
 * Bumps androidx.activity:activity from 1.7.0 to 1.7.1.

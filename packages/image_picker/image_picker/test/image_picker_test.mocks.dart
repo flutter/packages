@@ -165,6 +165,16 @@ class MockImagePickerPlatform extends _i1.Mock
         returnValue: _i4.Future<List<_i5.XFile>?>.value(),
       ) as _i4.Future<List<_i5.XFile>?>);
   @override
+  _i4.Future<List<_i5.XFile>> getMedia({required _i2.MediaOptions? options}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMedia,
+          [],
+          {#options: options},
+        ),
+        returnValue: _i4.Future<List<_i5.XFile>>.value(<_i5.XFile>[]),
+      ) as _i4.Future<List<_i5.XFile>>);
+  @override
   _i4.Future<_i5.XFile?> getVideo({
     required _i2.ImageSource? source,
     _i2.CameraDevice? preferredCameraDevice = _i2.CameraDevice.rear,

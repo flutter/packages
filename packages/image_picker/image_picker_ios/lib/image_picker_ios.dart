@@ -88,7 +88,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    final List<dynamic>? paths = await _pickMultiImageAsPath(
+    final List<dynamic> paths = await _pickMultiImageAsPath(
       options: MultiImagePickerOptions(
         imageOptions: ImageOptions(
           maxWidth: maxWidth,
@@ -97,7 +97,9 @@ class ImagePickerIOS extends ImagePickerPlatform {
         ),
       ),
     );
-    if (paths == null) {
+    // Convert an empty list to a null return since that was the legacy behavior
+    // of this method.
+    if (paths.isEmpty) {
       return null;
     }
 
@@ -108,15 +110,11 @@ class ImagePickerIOS extends ImagePickerPlatform {
   Future<List<XFile>> getMultiImageWithOptions({
     MultiImagePickerOptions options = const MultiImagePickerOptions(),
   }) async {
-    final List<String>? paths = await _pickMultiImageAsPath(options: options);
-    if (paths == null) {
-      return <XFile>[];
-    }
-
+    final List<String> paths = await _pickMultiImageAsPath(options: options);
     return paths.map((String path) => XFile(path)).toList();
   }
 
-  Future<List<String>?> _pickMultiImageAsPath({
+  Future<List<String>> _pickMultiImageAsPath({
     MultiImagePickerOptions options = const MultiImagePickerOptions(),
   }) async {
     final int? imageQuality = options.imageOptions.imageQuality;
@@ -141,7 +139,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
             MaxSize(width: maxWidth, height: maxHeight),
             imageQuality,
             options.imageOptions.requestFullMetadata))
-        ?.cast<String>();
+        .cast<String>();
   }
 
   Future<String?> _pickImageAsPath({
@@ -172,6 +170,51 @@ class ImagePickerIOS extends ImagePickerPlatform {
       MaxSize(width: maxWidth, height: maxHeight),
       imageQuality,
       options.requestFullMetadata,
+    );
+  }
+
+  @override
+  Future<List<XFile>> getMedia({
+    required MediaOptions options,
+  }) async {
+    final MediaSelectionOptions mediaSelectionOptions =
+        _mediaOptionsToMediaSelectionOptions(options);
+
+    return (await _hostApi.pickMedia(mediaSelectionOptions))
+        .map((String? path) => XFile(path!))
+        .toList();
+  }
+
+  MaxSize _imageOptionsToMaxSizeWithValidation(ImageOptions imageOptions) {
+    final double? maxHeight = imageOptions.maxHeight;
+    final double? maxWidth = imageOptions.maxWidth;
+    final int? imageQuality = imageOptions.imageQuality;
+
+    if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
+      throw ArgumentError.value(
+          imageQuality, 'imageQuality', 'must be between 0 and 100');
+    }
+
+    if (maxWidth != null && maxWidth < 0) {
+      throw ArgumentError.value(maxWidth, 'maxWidth', 'cannot be negative');
+    }
+
+    if (maxHeight != null && maxHeight < 0) {
+      throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
+    }
+
+    return MaxSize(width: maxWidth, height: maxHeight);
+  }
+
+  MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(
+      MediaOptions mediaOptions) {
+    final MaxSize maxSize =
+        _imageOptionsToMaxSizeWithValidation(mediaOptions.imageOptions);
+    return MediaSelectionOptions(
+      maxSize: maxSize,
+      imageQuality: mediaOptions.imageOptions.imageQuality,
+      requestFullMetadata: mediaOptions.imageOptions.requestFullMetadata,
+      allowMultiple: mediaOptions.allowMultiple,
     );
   }
 
@@ -227,7 +270,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    final List<String>? paths = await _pickMultiImageAsPath(
+    final List<String> paths = await _pickMultiImageAsPath(
       options: MultiImagePickerOptions(
         imageOptions: ImageOptions(
           maxWidth: maxWidth,
@@ -236,7 +279,9 @@ class ImagePickerIOS extends ImagePickerPlatform {
         ),
       ),
     );
-    if (paths == null) {
+    // Convert an empty list to a null return since that was the legacy behavior
+    // of this method.
+    if (paths.isEmpty) {
       return null;
     }
 

@@ -58,14 +58,9 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Home Screen')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () => context.go('/details'),
-              child: const Text('Go to the Details screen'),
-            ),
-          ],
+        child: ElevatedButton(
+          onPressed: () => context.go('/details'),
+          child: const Text('Go to the Details screen'),
         ),
       ),
     );
@@ -82,14 +77,9 @@ class DetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Details Screen')),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <ElevatedButton>[
-            ElevatedButton(
-              onPressed: () => context.go('/'),
-              child: const Text('Go back to the Home screen'),
-            ),
-          ],
+        child: ElevatedButton(
+          onPressed: () => context.go('/'),
+          child: const Text('Go back to the Home screen'),
         ),
       ),
     );

@@ -47,7 +47,7 @@
   CGPoint point = [[self scrollViewForIdentifier:identifier] contentOffset];
   return @[ @(point.x), @(point.y) ];
 #else
-  return @[@(0), @(0)];
+  return @[ @(0), @(0) ];
 #endif
 }
 

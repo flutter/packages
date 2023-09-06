@@ -78,9 +78,9 @@ public class MediaRecorderBuilderTest {
   public void build_shouldSetValuesInCorrectOrderWhenAudioIsDisabled() throws IOException {
     EncoderProfiles recorderProfile = mock(EncoderProfiles.class);
     List<EncoderProfiles.VideoProfile> mockVideoProfiles =
-        List.of(mock(EncoderProfiles.VideoProfile.class));
+        List.of(getEmptyEncoderProfilesVideoProfile());
     List<EncoderProfiles.AudioProfile> mockAudioProfiles =
-        List.of(mock(EncoderProfiles.AudioProfile.class));
+        List.of(getEmptyEncoderProfilesAudioProfile());
     MediaRecorderBuilder.MediaRecorderFactory mockFactory =
         mock(MediaRecorderBuilder.MediaRecorderFactory.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
@@ -172,9 +172,9 @@ public class MediaRecorderBuilderTest {
   public void build_shouldSetValuesInCorrectOrderWhenAudioIsEnabled() throws IOException {
     EncoderProfiles recorderProfile = mock(EncoderProfiles.class);
     List<EncoderProfiles.VideoProfile> mockVideoProfiles =
-        List.of(mock(EncoderProfiles.VideoProfile.class));
+        List.of(getEmptyEncoderProfilesVideoProfile());
     List<EncoderProfiles.AudioProfile> mockAudioProfiles =
-        List.of(mock(EncoderProfiles.AudioProfile.class));
+        List.of(getEmptyEncoderProfilesAudioProfile());
     MediaRecorderBuilder.MediaRecorderFactory mockFactory =
         mock(MediaRecorderBuilder.MediaRecorderFactory.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
@@ -219,6 +219,34 @@ public class MediaRecorderBuilderTest {
 
       constructor.setAccessible(true);
       return constructor.newInstance(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    } catch (Exception ignored) {
+    }
+
+    return null;
+  }
+
+  private EncoderProfiles.VideoProfile getEmptyEncoderProfilesVideoProfile() {
+    try {
+      Constructor<EncoderProfiles.VideoProfile> constructor =
+          EncoderProfiles.VideoProfile.class.getDeclaredConstructor(
+              int.class, int.class, int.class, int.class, int.class, int.class);
+
+      constructor.setAccessible(true);
+      return constructor.newInstance(0, 0, 0, 0, 0, 0);
+    } catch (Exception ignored) {
+    }
+
+    return null;
+  }
+
+  private EncoderProfiles.AudioProfile getEmptyEncoderProfilesAudioProfile() {
+    try {
+      Constructor<EncoderProfiles.AudioProfile> constructor =
+          EncoderProfiles.AudioProfile.class.getDeclaredConstructor(
+              int.class, int.class, int.class, int.class, int.class);
+
+      constructor.setAccessible(true);
+      return constructor.newInstance(0, 0, 0, 0, 0);
     } catch (Exception ignored) {
     }
 

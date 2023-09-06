@@ -1,3 +1,12 @@
+## 2.6.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.6.0
+
+* Adds `getSaveLocation` and deprecates `getSavePath`.
+
 ## 2.5.1
 
 * Adds compatibility with `http` 1.0.

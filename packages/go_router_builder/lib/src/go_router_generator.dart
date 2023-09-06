@@ -16,15 +16,16 @@ const String _routeDataUrl = 'package:go_router/src/route_data.dart';
 const Map<String, String> _annotations = <String, String>{
   'TypedGoRoute': 'GoRouteData',
   'TypedShellRoute': 'ShellRouteData',
+  'TypedStatefulShellBranch': 'StatefulShellBranchData',
+  'TypedStatefulShellRoute': 'StatefulShellRouteData',
 };
 
 /// A [Generator] for classes annotated with a typed go route annotation.
-class GoRouterGenerator extends GeneratorForAnnotation<void> {
+class GoRouterGenerator extends Generator {
   /// Creates a new instance of [GoRouterGenerator].
   const GoRouterGenerator();
 
-  @override
-  TypeChecker get typeChecker => TypeChecker.any(
+  TypeChecker get _typeChecker => TypeChecker.any(
         _annotations.keys.map((String annotation) =>
             TypeChecker.fromUrl('$_routeDataUrl#$annotation')),
       );
@@ -34,11 +35,7 @@ class GoRouterGenerator extends GeneratorForAnnotation<void> {
     final Set<String> values = <String>{};
     final Set<String> getters = <String>{};
 
-    for (final String annotation in _annotations.keys) {
-      final TypeChecker typeChecker =
-          TypeChecker.fromUrl('$_routeDataUrl#$annotation');
-      _generateForAnnotation(library, typeChecker, buildStep, values, getters);
-    }
+    generateForAnnotation(library, values, getters);
 
     if (values.isEmpty) {
       return '';
@@ -54,19 +51,20 @@ ${getters.map((String e) => "$e,").join('\n')}
     ].join('\n\n');
   }
 
-  void _generateForAnnotation(
+  /// Generates code for the `library` based on annotation.
+  ///
+  /// This public method is for testing purposes and should not be called
+  /// directly.
+  void generateForAnnotation(
     LibraryReader library,
-    TypeChecker typeChecker,
-    BuildStep buildStep,
     Set<String> values,
     Set<String> getters,
   ) {
     for (final AnnotatedElement annotatedElement
-        in library.annotatedWith(typeChecker)) {
-      final InfoIterable generatedValue = generateForAnnotatedElement(
+        in library.annotatedWith(_typeChecker)) {
+      final InfoIterable generatedValue = _generateForAnnotatedElement(
         annotatedElement.element,
         annotatedElement.annotation,
-        buildStep,
       );
       getters.add(generatedValue.routeGetterName);
       for (final String value in generatedValue) {
@@ -76,11 +74,9 @@ ${getters.map((String e) => "$e,").join('\n')}
     }
   }
 
-  @override
-  InfoIterable generateForAnnotatedElement(
+  InfoIterable _generateForAnnotatedElement(
     Element element,
     ConstantReader annotation,
-    BuildStep buildStep,
   ) {
     final String typedAnnotation =
         annotation.objectValue.type!.getDisplayString(withNullability: false);
@@ -105,6 +101,7 @@ ${getters.map((String e) => "$e,").join('\n')}
       );
     }
 
-    return RouteConfig.fromAnnotation(annotation, element).generateMembers();
+    return RouteBaseConfig.fromAnnotation(annotation, element)
+        .generateMembers();
   }
 }

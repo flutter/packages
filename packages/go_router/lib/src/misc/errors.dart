@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../match.dart';
-
 /// Thrown when [GoRouter] is used incorrectly.
 class GoError extends Error {
   /// Constructs a [GoError]
@@ -16,23 +14,14 @@ class GoError extends Error {
   String toString() => 'GoError: $message';
 }
 
-/// A configuration error detected while processing redirects.
-class RedirectionError extends Error implements UnsupportedError {
-  /// RedirectionError constructor.
-  RedirectionError(this.message, this.matches, this.location);
+/// Thrown when [GoRouter] can not handle a user request.
+class GoException implements Exception {
+  /// Creates an exception with message describing the reason.
+  GoException(this.message);
 
-  /// The matches that were found while processing redirects.
-  final List<RouteMatchList> matches;
-
-  @override
+  /// The reason that causes this exception.
   final String message;
 
-  /// The location that was originally navigated to, before redirection began.
-  final Uri location;
-
   @override
-  String toString() => '${super.toString()} ${<String>[
-        ...matches
-            .map((RouteMatchList routeMatches) => routeMatches.uri.toString()),
-      ].join(' => ')}';
+  String toString() => 'GoException: $message';
 }
