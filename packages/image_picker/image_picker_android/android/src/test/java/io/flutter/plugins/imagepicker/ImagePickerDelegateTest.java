@@ -446,21 +446,21 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-  onActivityResult_whenImagePickedFromGallery_nullUriFromGetData_andNoResizeNeeded_finishesWithImagePath() {
+      onActivityResult_whenImagePickedFromGallery_nullUriFromGetData_andNoResizeNeeded_finishesWithImagePath() {
     when(mockIntent.getData()).thenReturn(null);
 
     Mockito.doAnswer(
-                    invocation -> {
-                      ((Runnable) invocation.getArgument(0)).run();
-                      return null;
-                    })
-            .when(mockExecutor)
-            .execute(any(Runnable.class));
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
     ImagePickerDelegate delegate =
-            createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
-            ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
