@@ -103,8 +103,10 @@
   FWFWKUIDelegateHostApiSetup(registrar.messenger, [[FWFUIDelegateHostApiImpl alloc]
                                                        initWithBinaryMessenger:registrar.messenger
                                                                instanceManager:instanceManager]);
+#if TARGET_OS_IOS
   FWFUIViewHostApiSetup(registrar.messenger,
                         [[FWFUIViewHostApiImpl alloc] initWithInstanceManager:instanceManager]);
+#endif
   FWFWKUserContentControllerHostApiSetup(
       registrar.messenger,
       [[FWFUserContentControllerHostApiImpl alloc] initWithInstanceManager:instanceManager]);

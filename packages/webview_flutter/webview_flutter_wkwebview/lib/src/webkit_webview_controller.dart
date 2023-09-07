@@ -481,8 +481,9 @@ class WebKitWebViewController extends PlatformWebViewController {
         webView.scrollView.setBackgroundColor(color),
       ]);
     } else {
-      // TODO(stuartmorgan): Verify that this works.
-      return webView.setBackgroundColor(color);
+      // TODO(stuartmorgan): Implement background color support.
+      throw UnimplementedError(
+          'Background color is not yet supported on macOS.');
     }
   }
 

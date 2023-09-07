@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Using directory structure to remove platform-specific files doesn't work
+// well with umbrella headers and module maps, so just no-op the file for
+// other platforms instead.
+#if TARGET_OS_IOS
+
 #import "FWFUIViewHostApi.h"
 
 @interface FWFUIViewHostApiImpl ()
@@ -18,16 +23,13 @@
   return self;
 }
 
-#if TARGET_OS_IOS
 - (UIView *)viewForIdentifier:(NSNumber *)identifier {
   return (UIView *)[self.instanceManager instanceForIdentifier:identifier.longValue];
 }
-#endif
 
 - (void)setBackgroundColorForViewWithIdentifier:(nonnull NSNumber *)identifier
                                         toValue:(nullable NSNumber *)color
                                           error:(FlutterError *_Nullable *_Nonnull)error {
-#if TARGET_OS_IOS
   if (color == nil) {
     [[self viewForIdentifier:identifier] setBackgroundColor:nil];
   }
@@ -37,14 +39,13 @@
                                           blue:(colorInt & 0xff) / 255.0
                                          alpha:(colorInt >> 24 & 0xff) / 255.0];
   [[self viewForIdentifier:identifier] setBackgroundColor:colorObject];
-#endif
 }
 
 - (void)setOpaqueForViewWithIdentifier:(nonnull NSNumber *)identifier
                               isOpaque:(nonnull NSNumber *)opaque
                                  error:(FlutterError *_Nullable *_Nonnull)error {
-#if TARGET_OS_IOS
   [[self viewForIdentifier:identifier] setOpaque:opaque.boolValue];
-#endif
 }
 @end
+
+#endif
