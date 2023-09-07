@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Implementation of WKWebView that can be used as a FlutterPlatformView.
  */
 @interface FWFWebView : WKWebView
+// The macOS platform view API doesn't have a FlutterPlatformView abstraction,
+// and uses NSView directly.
 #if TARGET_OS_IOS
                         <FlutterPlatformView>
 #endif

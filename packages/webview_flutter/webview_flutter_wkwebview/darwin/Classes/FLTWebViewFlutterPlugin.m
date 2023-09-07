@@ -40,6 +40,8 @@
   return [FlutterStandardMessageCodec sharedInstance];
 }
 
+// The FlutterPlatformViewFactory protocol is slightly different on iOS and
+// macOS.
 #if TARGET_OS_IOS
 
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
