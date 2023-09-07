@@ -389,7 +389,7 @@ void main() {
   });
 
   test(
-      'Default implementation of setConsoleLogCallback should throw unimplemented error',
+      'Default implementation of setOnConsoleMessage should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
