@@ -817,7 +817,7 @@ class AndroidCameraCameraX extends CameraPlatform {
             : ResolutionStrategy.highestAvailableStrategy();
         break;
       case null:
-        // If not preset is specified, default to CameraX's default behavior
+        // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
@@ -862,7 +862,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         videoQuality = VideoQuality.highest;
         break;
       case null:
-        // If not preset is specified, default to CameraX's default behavior
+        // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
