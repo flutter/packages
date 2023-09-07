@@ -27,4 +27,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.1
-  pigeon: ^9.2.4
+  pigeon: ^11.0.0
+
+topics:
+  - html
+  - webview
+  - webview-flutter
