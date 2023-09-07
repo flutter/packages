@@ -271,6 +271,13 @@ abstract class PlatformWebViewController extends PlatformInterface {
     );
   }
 
+  /// Gets the value used for the HTTP `User-Agent:` request header.
+  Future<String?> getUserAgent() {
+    throw UnimplementedError(
+      'getUserAgent is not implemented on the current platform',
+    );
+  }
+
   /// Sets a callback that notifies the host application of any console messages
   /// written to the JavaScript console.
   Future<void> setOnConsoleMessage(

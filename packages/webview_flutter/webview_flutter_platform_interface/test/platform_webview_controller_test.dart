@@ -389,6 +389,19 @@ void main() {
   });
 
   test(
+      'Default implementation of getUserAgent should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.getUserAgent(),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
       'Default implementation of setOnConsoleMessage should throw unimplemented error',
       () {
     final PlatformWebViewController controller =

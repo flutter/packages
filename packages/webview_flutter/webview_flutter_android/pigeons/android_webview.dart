@@ -57,12 +57,6 @@ enum FileChooserMode {
   save,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class FileChooserModeEnumData {
-  late FileChooserMode value;
-}
-
 class WebResourceRequestData {
   WebResourceRequestData(
     this.url,
@@ -393,7 +387,7 @@ abstract class FileChooserParamsFlutterApi {
     int instanceId,
     bool isCaptureEnabled,
     List<String> acceptTypes,
-    FileChooserModeEnumData mode,
+    FileChooserMode mode,
     String? filenameHint,
   );
 }

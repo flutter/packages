@@ -4,7 +4,7 @@
 
 import 'dart:async';
 import 'dart:html' as html;
-import 'dart:ui' as ui;
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart' show visibleForTesting, kDebugMode;
 import 'package:flutter/material.dart';
@@ -172,8 +172,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   // Register a factory for the Button HtmlElementView.
   void _registerButtonFactory() {
-    // ignore: avoid_dynamic_calls, undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
+    ui_web.platformViewRegistry.registerViewFactory(
       'gsi_login_button',
       (int viewId) {
         final DomElement element = createDomElement('div');

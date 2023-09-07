@@ -1,3 +1,12 @@
+## 1.0.4
+
+* Updates README to fix broken link.
+
+## 1.0.3
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 1.0.2
 
 * Adds compatibility with `image_picker_for_web` 3.0.
