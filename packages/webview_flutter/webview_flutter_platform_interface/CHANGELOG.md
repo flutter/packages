@@ -1,7 +1,7 @@
 ## 2.5.0
 
 * Adds support to register a callback to intercept messages that are written to
-  the JavaScript console. See `PlatformWebViewController.setConsoleLogCallback`.
+  the JavaScript console. See `PlatformWebViewController.setOnConsoleMessage`.
 
 ## 2.4.0
 
