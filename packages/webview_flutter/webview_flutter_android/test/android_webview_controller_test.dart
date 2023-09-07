@@ -1311,6 +1311,76 @@ void main() {
       );
     });
 
+    testWidgets('default handling of custom views',
+        (WidgetTester tester) async {
+      final MockWebChromeClient mockWebChromeClient = MockWebChromeClient();
+
+      void Function(
+              android_webview.WebChromeClient instance,
+              android_webview.View view,
+              android_webview.CustomViewCallback callback)?
+          onShowCustomViewCallback;
+
+      final AndroidWebViewController controller = createControllerWithMocks(
+        createWebChromeClient: ({
+          dynamic onProgressChanged,
+          dynamic onShowFileChooser,
+          dynamic onGeolocationPermissionsShowPrompt,
+          dynamic onGeolocationPermissionsHidePrompt,
+          dynamic onPermissionRequest,
+          void Function(
+                  android_webview.WebChromeClient instance,
+                  android_webview.View view,
+                  android_webview.CustomViewCallback callback)?
+              onShowCustomView,
+          dynamic onHideCustomView,
+        }) {
+          onShowCustomViewCallback = onShowCustomView;
+          return mockWebChromeClient;
+        },
+      );
+
+      final MockPlatformViewsServiceProxy mockPlatformViewsService =
+          MockPlatformViewsServiceProxy();
+
+      when(
+        mockPlatformViewsService.initSurfaceAndroidView(
+          id: anyNamed('id'),
+          viewType: anyNamed('viewType'),
+          layoutDirection: anyNamed('layoutDirection'),
+          creationParams: anyNamed('creationParams'),
+          creationParamsCodec: anyNamed('creationParamsCodec'),
+          onFocus: anyNamed('onFocus'),
+        ),
+      ).thenReturn(MockSurfaceAndroidViewController());
+
+      final AndroidWebViewWidget webViewWidget = AndroidWebViewWidget(
+        AndroidWebViewWidgetCreationParams(
+          key: const Key('test_web_view'),
+          controller: controller,
+          platformViewsServiceProxy: mockPlatformViewsService,
+        ),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (BuildContext context) => webViewWidget.build(context),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      onShowCustomViewCallback!(
+        MockWebChromeClient(),
+        android_webview.WebView.detached(),
+        android_webview.CustomViewCallback.detached(),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AndroidCustomViewWidget), findsOneWidget);
+    });
+
     testWidgets('PlatformView is recreated when the controller changes',
         (WidgetTester tester) async {
       final MockPlatformViewsServiceProxy mockPlatformViewsService =

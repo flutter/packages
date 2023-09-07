@@ -553,9 +553,9 @@ Future<void> main() async {
       unawaited(controller.setCustomWidgetCallbacks(onHideCustomWidget: () {
         fullscreenExited.complete();
       }, onShowCustomWidget:
-          (Widget webView, void Function()? onHideCustomView) {
+          (Widget webView, void Function() onHideCustomView) {
         fullscreenEntered.complete();
-        onHideCustomView!();
+        onHideCustomView();
       }));
 
       await controller.loadRequest(
@@ -582,61 +582,7 @@ Future<void> main() async {
       await tester.pumpAndSettle();
 
       // Due to security reasons, Chrome doesn't allow to programmatically
-      // toggle a video to fullscreen unless the call is directly comming from
-      // a user triggered event.
-      // The top half of the loaded web content contains a clickable div, which
-      // is tapped using the code below, triggering a user event.
-      //
-      // The offset of 20 x 20 is chosen at random.
-      await tester.tapAt(const Offset(20, 20));
-
-      await expectLater(fullscreenEntered.future, completes);
-      await expectLater(fullscreenExited.future, completes);
-    });
-
-    testWidgets(
-        'Video plays fullscreen without setting `setCustomWidgetCallbacks`',
-        (WidgetTester tester) async {
-      final Completer<void> fullscreenEntered = Completer<void>();
-      final Completer<void> fullscreenExited = Completer<void>();
-      final Completer<void> pageLoaded = Completer<void>();
-
-      final AndroidWebViewController controller = AndroidWebViewController(
-        const PlatformWebViewControllerCreationParams(),
-      );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
-      final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
-        const PlatformNavigationDelegateCreationParams(),
-      );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
-
-      await controller.loadRequest(
-        LoadRequestParams(
-          uri: Uri.parse(
-            'data:text/html;charset=utf-8;base64,$videoTestBase64',
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(Builder(
-        builder: (BuildContext context) {
-          return PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(
-              key: const Key('webview_widget'),
-              controller: controller,
-            ),
-          ).build(context);
-        },
-      ));
-
-      await pageLoaded.future;
-
-      await tester.pumpAndSettle();
-
-      // Due to security reasons, Chrome doesn't allow to programmatically
-      // toggle a video to fullscreen unless the call is directly comming from
+      // toggle a video to fullscreen unless the call is directly coming from
       // a user triggered event.
       // The top half of the loaded web content contains a clickable div, which
       // is tapped using the code below, triggering a user event.

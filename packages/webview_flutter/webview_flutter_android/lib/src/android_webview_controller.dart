@@ -859,6 +859,7 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
 
   @override
   Widget build(BuildContext context) {
+    _trySetDefaultOnShowCustomWidgetCallbacks(context);
     return PlatformViewLink(
       // Setting a default key using `params` ensures the `PlatformViewLink`
       // recreates the PlatformView when changes are made.
@@ -877,7 +878,6 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
         );
       },
       onCreatePlatformView: (PlatformViewCreationParams params) {
-        _trySetDefaultOnShowCustomWidgetCallbacks(context);
         return _initAndroidView(
           params,
           displayWithHybridComposition:
