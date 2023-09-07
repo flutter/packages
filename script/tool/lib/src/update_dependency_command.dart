@@ -234,7 +234,6 @@ ${response.httpResponse.body}
   Future<PackageResult> _runForAndroidDependency(
       RepositoryPackage package) async {
     if (_targetAndroidDependency == 'gradle') {
-      print('${indentation}Updating examples running on Android...');
       final Iterable<RepositoryPackage> packageExamples = package.getExamples();
       bool updateRanForExamples = false;
       for (final RepositoryPackage example in packageExamples) {
@@ -269,7 +268,8 @@ ${response.httpResponse.body}
           ]);
         }
 
-        print('${indentation}Updating to "$_targetVersion"');
+        print(
+            '${indentation}Updating ${getRelativePosixPath(example.directory, from: package.directory)} to "$_targetVersion"');
         final String newGradleWrapperPropertiesContents =
             gradleWrapperPropertiesContents.replaceFirst(
                 validGradleDistributionUrl,
@@ -281,7 +281,7 @@ ${response.httpResponse.body}
       }
       return updateRanForExamples
           ? PackageResult.success()
-          : PackageResult.skip('Example app does not run on Android.');
+          : PackageResult.skip('No example apps run on Android.');
     }
     return PackageResult.fail(<String>[
       'Target Android dependency $_androidDependency is unrecognized.'
