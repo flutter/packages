@@ -276,7 +276,7 @@ abstract class PlatformWebViewController extends PlatformInterface {
   Future<void> setOnConsoleMessage(
       void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage) {
     throw UnimplementedError(
-      'setConsoleLogCallback is not implemented on the current platform',
+      'setOnConsoleMessage is not implemented on the current platform',
     );
   }
 }
