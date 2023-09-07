@@ -400,6 +400,20 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test(
+      'Default implementation of setOnConsoleMessage should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () =>
+          controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {}),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform
