@@ -647,7 +647,7 @@ dev_dependencies:
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('SKIPPING: Example app does not run on Android.'),
+            contains('SKIPPING: No example apps run on Android.'),
           ]),
         );
       });
