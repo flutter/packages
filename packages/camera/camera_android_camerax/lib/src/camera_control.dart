@@ -31,13 +31,9 @@ class CameraControl extends JavaObject {
 
   late final _CameraControlHostApiImpl _api;
 
-  /// Sets zoom of related [Camera] by ratio.
-  ///
-  /// Ratio should be between what the `minZoomRatio` and `maxZoomRatio` of the
-  /// [ZoomState] of the [CameraInfo] instance that is retrievable from the same
-  /// Camera] instance; otherwise, an error will be thrown.
-  Future<void> setZoomRatio(double ratio) async {
-    return _api.setZoomRatioFromInstance(this, ratio);
+  /// Enables or disables the torch of related [Camera] instance.
+  Future<void> enableTorch(bool torch) async {
+    return _api.enableTorchFromInstance(this, torch);
   }
 }
 
@@ -62,11 +58,11 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Sets zoom of specified [CameraControl] instance by ratio.
-  Future<void> setZoomRatioFromInstance(
-      CameraControl instance, double ratio) async {
+  /// Enables or disables the torch for the specified [CameraControl] instance.
+  Future<void> enableTorchFromInstance(
+      CameraControl instance, bool torch) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
-    await setZoomRatio(identifier, ratio);
+    await enableTorch(identifier, torch);
   }
 }
 

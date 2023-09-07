@@ -11,6 +11,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
 import 'camera.dart';
+import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
@@ -106,6 +107,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The flash mode currently configured for [imageCapture].
   int? _currentFlashMode;
+
+  /// Whether or not torch flash mode has been enabled for the [camera].
+  bool torchEnabled = false;
 
   /// The [ImageAnalysis] instance that can be configured to analyze individual
   /// frames.
@@ -466,6 +470,14 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Sets the flash mode for the selected camera.
   @override
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    CameraControl? cameraControl;
+    // Turn off torch mode if it is enabled and not being redundantly set.
+    if (mode != FlashMode.torch && torchEnabled) {
+      cameraControl = await camera!.getCameraControl();
+      await cameraControl.enableTorch(false);
+      torchEnabled = false;
+    }
+
     switch (mode) {
       case FlashMode.off:
         _currentFlashMode = ImageCapture.flashModeOff;
@@ -477,7 +489,14 @@ class AndroidCameraCameraX extends CameraPlatform {
         _currentFlashMode = ImageCapture.flashModeOn;
         break;
       case FlashMode.torch:
-        // TODO(camsim99): Implement torch mode when CameraControl is wrapped.
+        _currentFlashMode = null;
+        if (torchEnabled) {
+          // Torch mode enabled already.
+          return;
+        }
+        cameraControl = await camera!.getCameraControl();
+        await cameraControl.enableTorch(true);
+        torchEnabled = true;
         break;
     }
   }

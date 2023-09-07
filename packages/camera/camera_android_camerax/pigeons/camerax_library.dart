@@ -421,7 +421,7 @@ abstract class FallbackStrategyHostApi {
 @HostApi(dartHostTestHandler: 'TestCameraControlHostApi')
 abstract class CameraControlHostApi {
   @async
-  void setZoomRatio(int identifier, double ratio);
+  void enableTorch(int identifier, bool torch);
 }
 
 @FlutterApi()

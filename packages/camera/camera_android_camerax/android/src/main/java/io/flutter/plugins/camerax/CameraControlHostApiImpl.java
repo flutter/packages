@@ -7,9 +7,9 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraControl;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraControlHostApi;
 
 /**
@@ -22,30 +22,35 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
   private final CameraControlProxy proxy;
+  private final SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
   @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public SystemServicesFlutterApiImpl systemServicesFlutterApi; 
 
   /** Proxy for constructors and static method of {@link CameraControl}. */
   @VisibleForTesting
   public static class CameraControlProxy {
 
-    /** Sets the zoom ratio of the specified {@link CameraControl} instance. */
+    /** Enables or disables the torch of the specified {@link CameraControl} instance. */
     @NonNull
-    public void setZoom(
-        @NonNull CameraControl cameraControl, @NonNull Double ratio, @NonNull Result<Void> result) {
-        float ratioAsFloat = ratio.floatValue();
-        ListenableFuture<Void> setZoomRatioFuture = cameraControl.setZoomRatio(ratioAsFloat);
+    public void enableTorch(
+        @NonNull CameraControl cameraControl,
+        @NonNull Boolean torch,
+        @NonNull Result<Void> result) {
+      ListenableFuture<Void> enableTorchFuture = cameraControl.enableTorch(torch);
 
-        Futures.addCallback(setZoomRatioFuture, new FutureCallback<Void>() {
-        public void onSuccess() {
-            result.succes();
-        }
-        public void onFailure(Throwable t) {
-            // throw error
-        }
-        }, ContextCompat.getMainExecutor(context),
-        );
+      Futures.addCallback(
+          enableTorchFuture,
+          new FutureCallback<Void>() {
+            public void onSuccess() {
+              result.succes();
+            }
+
+            public void onFailure(Throwable t) {
+              systemServicesFlutterApi.sendCameraError(
+                  "Unable to change the torch state: " + t.getMessage(), reply -> {});
+            }
+          },
+          ContextCompat.getMainExecutor(context));
     }
   }
 
@@ -54,7 +59,8 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public CameraControlHostApiImpl(@NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
+  public CameraControlHostApiImpl(
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this(instanceManager, new CameraControlProxy());
   }
 
@@ -67,19 +73,19 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    */
   @VisibleForTesting
   CameraControlHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager, @NonNull CameraControlProxy proxy) {
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull InstanceManager instanceManager,
+      @NonNull CameraControlProxy proxy) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.proxy = proxy;
     systemServicesFlutterApi = cameraXProxy.createSystemServicesFlutterApiImpl(binaryMessenger);
   }
 
-  /**
-   * Creates an {@link CameraControl} instance with the preferred aspect ratio and fallback
-   * rule specified.
-   */
   @Override
-  public void void setZoomRatio(@NonNull Long identifier, @NonNull Double ratio, @NonNull Result<Void> result){
-    proxy.setZoomRatio(Objects.requireNonNull(instanceManager.getInstance(identifier)), ratio, result);
+  public void enableTorch(
+      @NonNull Long identifier, @NonNull Boolean torch, @NonNull Result<Void> result) {
+    proxy.enableTorch(
+        Objects.requireNonNull(instanceManager.getInstance(identifier)), torch, result);
   }
 }

@@ -54,9 +54,7 @@ public class CameraHostApiImpl implements CameraHostApi {
     return instanceManager.getIdentifierForStrongReference(cameraControl);
   }
 
-  /**
-   * Retrieives the {@link Camera} instance associated with the specified {@code identifier}.
-   */
+  /** Retrieives the {@link Camera} instance associated with the specified {@code identifier}. */
   private Camera getCameraInstance(@NonNull Long identifier) {
     return (Camera) Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
