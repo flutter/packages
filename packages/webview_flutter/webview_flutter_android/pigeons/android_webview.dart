@@ -447,7 +447,7 @@ abstract class FileChooserParamsFlutterApi {
     int instanceId,
     bool isCaptureEnabled,
     List<String> acceptTypes,
-    FileChooserModeEnumData mode,
+    FileChooserMode mode,
     String? filenameHint,
   );
 }
