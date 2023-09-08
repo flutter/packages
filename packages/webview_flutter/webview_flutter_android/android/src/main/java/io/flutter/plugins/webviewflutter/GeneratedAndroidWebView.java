@@ -2602,6 +2602,33 @@ public class GeneratedAndroidWebView {
           new ArrayList<Object>(Arrays.asList(instanceIdArg, requestInstanceIdArg)),
           channelReply -> callback.reply(null));
     }
+    /** Callback to Dart function `WebChromeClient.onShowCustomView`. */
+    public void onShowCustomView(
+        @NonNull Long instanceIdArg,
+        @NonNull Long viewIdentifierArg,
+        @NonNull Long callbackIdentifierArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onShowCustomView",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(
+              Arrays.asList(instanceIdArg, viewIdentifierArg, callbackIdentifierArg)),
+          channelReply -> callback.reply(null));
+    }
+    /** Callback to Dart function `WebChromeClient.onHideCustomView`. */
+    public void onHideCustomView(@NonNull Long instanceIdArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onHideCustomView",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(instanceIdArg)),
+          channelReply -> callback.reply(null));
+    }
     /** Callback to Dart function `WebChromeClient.onGeolocationPermissionsShowPrompt`. */
     public void onGeolocationPermissionsShowPrompt(
         @NonNull Long instanceIdArg,
@@ -2864,6 +2891,137 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, resourcesArg)),
+          channelReply -> callback.reply(null));
+    }
+  }
+  /**
+   * Host API for `CustomViewCallback`.
+   *
+   * <p>This class may handle instantiating and adding native object instances that are attached to
+   * a Dart instance or handle method calls on the associated native class or an instance of the
+   * class.
+   *
+   * <p>See
+   * https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface CustomViewCallbackHostApi {
+    /** Handles Dart method `CustomViewCallback.onCustomViewHidden`. */
+    void onCustomViewHidden(@NonNull Long identifier);
+
+    /** The codec used by CustomViewCallbackHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `CustomViewCallbackHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable CustomViewCallbackHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.CustomViewCallbackHostApi.onCustomViewHidden",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                try {
+                  api.onCustomViewHidden(
+                      (identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /**
+   * Flutter API for `CustomViewCallback`.
+   *
+   * <p>This class may handle instantiating and adding Dart instances that are attached to a native
+   * instance or receiving callback methods from an overridden native class.
+   *
+   * <p>See
+   * https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+   *
+   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   */
+  public static class CustomViewCallbackFlutterApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public CustomViewCallbackFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    @SuppressWarnings("UnknownNullness")
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by CustomViewCallbackFlutterApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /** Create a new Dart instance and add it to the `InstanceManager`. */
+    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.CustomViewCallbackFlutterApi.create",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          channelReply -> callback.reply(null));
+    }
+  }
+  /**
+   * Flutter API for `View`.
+   *
+   * <p>This class may handle instantiating and adding Dart instances that are attached to a native
+   * instance or receiving callback methods from an overridden native class.
+   *
+   * <p>See https://developer.android.com/reference/android/view/View.
+   *
+   * <p>Generated class from Pigeon that represents Flutter messages that can be called from Java.
+   */
+  public static class ViewFlutterApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public ViewFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    @SuppressWarnings("UnknownNullness")
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by ViewFlutterApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /** Create a new Dart instance and add it to the `InstanceManager`. */
+    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.ViewFlutterApi.create",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(identifierArg)),
           channelReply -> callback.reply(null));
     }
   }
