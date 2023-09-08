@@ -130,12 +130,6 @@ public class ImagePickerDelegateTest {
 
     Uri mockUri = mock(Uri.class);
     when(mockIntent.getData()).thenReturn(mockUri);
-
-    ClipData mockClipData = mock(ClipData.class);
-    ClipData.Item mockItem = mock(ClipData.Item.class);
-    when(mockItem.getUri()).thenReturn(mockUri);
-    when(mockClipData.getItemAt(0)).thenReturn(mockItem);
-    when(mockIntent.getClipData()).thenReturn(mockClipData);
   }
 
   @After
@@ -447,6 +441,14 @@ public class ImagePickerDelegateTest {
   @Test
   public void
       onActivityResult_whenImagePickedFromGallery_nullUriFromGetData_andNoResizeNeeded_finishesWithImagePath() {
+    ClipData mockClipData = mock(ClipData.class);
+    ClipData.Item mockItem = mock(ClipData.Item.class);
+    Uri mockUri = mock(Uri.class);
+    when(mockItem.getUri()).thenReturn(mockUri);
+    when(mockClipData.getItemCount()).thenReturn(1);
+    when(mockClipData.getItemAt(0)).thenReturn(mockItem);
+    when(mockIntent.getClipData()).thenReturn(mockClipData);
+
     when(mockIntent.getData()).thenReturn(null);
 
     Mockito.doAnswer(
