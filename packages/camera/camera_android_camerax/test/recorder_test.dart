@@ -84,16 +84,21 @@ void main() {
 
       final QualitySelector defaultQualitySelector =
           Recorder.getDefaultQualitySelector();
+      final List<VideoQuality> expectedVideoQualities = <VideoQuality>[
+        VideoQuality.FHD,
+        VideoQuality.HD,
+        VideoQuality.SD
+      ];
 
-      expect(
-          defaultQualitySelector.qualityList,
-          equals(const <VideoQualityConstraint>[
-            VideoQualityConstraint.FHD,
-            VideoQualityConstraint.HD,
-            VideoQualityConstraint.SD
-          ]));
+      expect(defaultQualitySelector.qualityList.length, equals(3));
+      for (int i = 0; i < 3; i++) {
+        final VideoQuality currentVideoQuality =
+            defaultQualitySelector.qualityList[i].quality;
+        expect(currentVideoQuality, equals(expectedVideoQualities[i]));
+      }
+
       expect(defaultQualitySelector.fallbackStrategy!.quality,
-          equals(VideoQualityConstraint.FHD));
+          equals(VideoQuality.FHD));
       expect(defaultQualitySelector.fallbackStrategy!.fallbackRule,
           equals(VideoResolutionFallbackRule.higherQualityOrLowerThan));
 
