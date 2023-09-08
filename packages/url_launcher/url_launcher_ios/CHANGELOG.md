@@ -1,7 +1,3 @@
-## NEXT
-
-* Migrates unit tests and UI test from objc to swift
-
 ## 6.1.5
 
 * Adds pub topics to package metadata.
