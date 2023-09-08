@@ -1,6 +1,6 @@
 ## 0.8.7+6
 
-* Fix NullPointerException on Android 10 devices when using Android Photo Picker
+* Fixes NullPointerException on Android 10 devices when using Android Photo Picker.
 
 ## 0.8.7+5
 
