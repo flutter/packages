@@ -1025,14 +1025,14 @@ class FileChooserParamsFlutterApiImpl extends FileChooserParamsFlutterApi {
     int instanceId,
     bool isCaptureEnabled,
     List<String?> acceptTypes,
-    FileChooserModeEnumData mode,
+    FileChooserMode mode,
     String? filenameHint,
   ) {
     instanceManager.addHostCreatedInstance(
       FileChooserParams.detached(
         isCaptureEnabled: isCaptureEnabled,
         acceptTypes: acceptTypes.cast(),
-        mode: mode.value,
+        mode: mode,
         filenameHint: filenameHint,
         binaryMessenger: binaryMessenger,
         instanceManager: instanceManager,
