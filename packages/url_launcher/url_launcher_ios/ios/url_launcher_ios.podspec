@@ -16,8 +16,8 @@ A Flutter plugin for making the underlying platform (Android or iOS) launch a UR
   s.swift_version = '5.0'
   s.source_files = 'Classes/**/*'
   s.xcconfig = {
-        'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
-          'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+      'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+      'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
   s.dependency 'Flutter'
   s.platform = :ios, '11.0'
