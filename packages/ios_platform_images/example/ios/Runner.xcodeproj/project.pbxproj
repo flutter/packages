@@ -51,6 +51,7 @@
 		0EF1CD9A3A3064B5289EF22E /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		3153765C2AAA95AD009694AF /* libios_platform_images.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libios_platform_images.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		31DC4A1F2AA8BBEB00781E88 /* MockMethodChannel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = MockMethodChannel.swift; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		4B56C310C5932F84CD6C17AC /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
@@ -165,6 +166,7 @@
 		DBEBA2309FD49D5C34798105 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3153765C2AAA95AD009694AF /* libios_platform_images.a */,
 				0A79FBC35316559720A400F3 /* libPods-Runner.a */,
 				B3AED97A07CBBABEE7CAECBB /* libPods-RunnerTests.a */,
 			);

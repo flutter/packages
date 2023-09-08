@@ -8,20 +8,26 @@ import UIKit
 
 extension UIImage {
   static func flutterImage(withName name: String) -> UIImage? {
-    let components = name.components(separatedBy: "/")
-    guard let filename = components.last else {
-      return nil
-    }
-    let path = components.dropLast().joined(separator: "/")
+    let imageName = (name as NSString).lastPathComponent
+    let path = (name as NSString).deletingLastPathComponent
+    let screenScale = UIScreen.main.scale
 
-    for screenScale in stride(from: UIScreen.main.scale, to: 1, by: -1) {
-      let key = FlutterDartProject.lookupKey(forAsset: "\(path)/\(screenScale)0x/\(filename)")
-      if let image = UIImage(named: key, in: Bundle.main, compatibleWith: nil) {
-        return image
+    var scaledImage: UIImage?
+
+    // Search for a scaled image in the bundle
+    // The image name may be suffixed with a scale factor, e.g. @2x
+    // If a scaled image is not found, search for standard image
+
+    for scale in stride(from: Int(screenScale), through: 1, by: -1) {
+      let scaledName = imageName.replacingOccurrences(of: ".", with: "@\(scale)x.")
+      let scaledPath = "\(path)/\(scaledName)"
+      if let image = UIImage(named: scaledPath, in: Bundle.main, compatibleWith: nil) {
+        scaledImage = image
+        break  // Exit the loop if a scaled image is found
       }
     }
 
-    let key = FlutterDartProject.lookupKey(forAsset: name)
-    return UIImage(named: key, in: Bundle.main, compatibleWith: nil)
+    // If a scaled image is not found return the standard image if it exists
+    return scaledImage ?? UIImage(named: imageName, in: Bundle.main, compatibleWith: nil)
   }
 }

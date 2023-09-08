@@ -17,7 +17,6 @@ class IosPlatformImagesTests: XCTestCase {
   }
 
   func testHandleMethodCall_loadImage() {
-
     let name = "flutter"
 
     let call = FlutterMethodCall(methodName: "loadImage", arguments: [name])
@@ -28,21 +27,24 @@ class IosPlatformImagesTests: XCTestCase {
 
     let resultExpectation = expectation(description: "result block must be called.")
 
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-      plugin.handle(call) { result in
-        let result = result as? [String: Any]
-        XCTAssertNotNil(result)
+    plugin.handle(call) { result in
+      let result = result as? [String: Any]
+      XCTAssertNotNil(result)
+      
+      let scale = result?["scale"] as? CGFloat
+      let data = result?["data"] as? FlutterStandardTypedData
 
-      }
+      XCTAssertNotNil(scale)
+      XCTAssertNotNil(data)
+
       resultExpectation.fulfill()
     }
 
-    XCTWaiter().wait(for: [resultExpectation], timeout: 2)
-
+    waitForExpectations(timeout: 2, handler: nil)
   }
 
   func testHandleMethodCall_loadImage_notFound() {
-    let name = "testImage"
+    let name = "flutterNotFound"
 
     let call = FlutterMethodCall(methodName: "loadImage", arguments: [name])
 
@@ -52,18 +54,18 @@ class IosPlatformImagesTests: XCTestCase {
 
     let resultExpectation = expectation(description: "result block must be called.")
 
-    DispatchQueue.main.asyncAfter(deadline: .now()) {
-      plugin.handle(call) { result in
-        XCTAssertNil(result)
-        resultExpectation.fulfill()
-      }
+    plugin.handle(call) { result in
+      let result = result as? [String: Any]
+
+      XCTAssertNil(result)
+      resultExpectation.fulfill()
     }
 
-    XCTWaiter().wait(for: [resultExpectation], timeout: 1)
+    waitForExpectations(timeout: 2, handler: nil)
   }
 
-  func testHandleMethodCall_resolveURL_notFound() {
-    let name = "testFile"
+  func testHandleMethodCall_resolveURL() {
+    let name = "textfile"
 
     let call = FlutterMethodCall(methodName: "resolveURL", arguments: [name])
 
@@ -73,13 +75,33 @@ class IosPlatformImagesTests: XCTestCase {
 
     let resultExpectation = expectation(description: "result block must be called.")
 
-    DispatchQueue.main.asyncAfter(deadline: .now()) {
-      plugin.handle(call) { result in
-        XCTAssertNil(result)
-        resultExpectation.fulfill()
-      }
+    plugin.handle(call) { result in
+      let result = result as? String
+      XCTAssertNotNil(result)
+      XCTAssertEqual(result?.components(separatedBy: "/").last, name)
+      resultExpectation.fulfill()
     }
 
-    XCTWaiter().wait(for: [resultExpectation], timeout: 1)
+    waitForExpectations(timeout: 1, handler: nil)
   }
+
+  func testHandleMethodCall_resolveURL_notFound() {
+    let name = "notFound"
+
+    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [name])
+
+    let mockChannel = MockMethodChannel()
+
+    let plugin = IosPlatformImagesPlugin(channel: mockChannel)
+
+    let resultExpectation = expectation(description: "result block must be called.")
+
+    plugin.handle(call) { result in
+      XCTAssertNil(result)
+      resultExpectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 1, handler: nil)
+  }
+
 }
