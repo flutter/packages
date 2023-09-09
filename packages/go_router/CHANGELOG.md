@@ -1,3 +1,7 @@
+## 10.1.3
+
+- Fixes a bug where the known routes and initial route were logged even when `debugLogDiagnostics` was set to `false`.
+
 ## 10.1.2
 
 * Adds pub topics to package metadata.
