@@ -12,6 +12,7 @@ import 'package:logging/logging.dart';
 @visibleForTesting
 final Logger logger = Logger('GoRouter');
 
+/// Whether or not the logging is enabled.
 bool _enabled = false;
 
 /// Logs the message if logging is enabled.
