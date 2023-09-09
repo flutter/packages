@@ -25,10 +25,7 @@ Run `logic/build.sh` to rebuild the Wasm file.
 
 ## Running on the web
 
-To use the binary encoding scheme from RFW (optional, but performance
-optimizing), int64 is needed, but not supported in dart2js. Therefore,
-in addition to the dynamically downloaded Wasm module, the web client
-application itself needs to be compiled in dart2wasm as well.
+The example on the web can be run in both dart2js and dart2wasm modes.
 
 To run the web app in Wasm,
 

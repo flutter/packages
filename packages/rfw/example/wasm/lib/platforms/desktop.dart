@@ -32,9 +32,9 @@ class NetworkImplementation extends Network {
       interfaceFile.createSync(recursive: true);
       await interfaceFile.writeAsBytes(bytes);
       return bytes;
-    } else {
-      return interfaceFile.readAsBytesSync();
     }
+
+    return interfaceFile.readAsBytesSync();
   }
 }
 

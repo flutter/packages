@@ -12,9 +12,9 @@ abstract class Network {
 
 /// Platform agnostic API for loading Wasm modules and calling Wasm functions.
 abstract class Wasm {
-  final Network network;
-
   Wasm({required this.network});
+
+  final Network network;
 
   Future<void> loadModule(String url);
   T callFunction<T>(String name, [List<Object?>? arguments]);
