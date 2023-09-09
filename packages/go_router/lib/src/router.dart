@@ -158,7 +158,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     );
 
     assert(() {
-      log.info('setting initial location $initialLocation');
+      log('setting initial location $initialLocation');
       return true;
     }());
   }
@@ -318,13 +318,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
   void go(String location, {Object? extra}) {
-    log.info('going to $location');
+    log('going to $location');
     routeInformationProvider.go(location, extra: extra);
   }
 
   /// Restore the RouteMatchList
   void restore(RouteMatchList matchList) {
-    log.info('restoring ${matchList.uri}');
+    log('restoring ${matchList.uri}');
     routeInformationProvider.restore(
       matchList.uri.toString(),
       encodedMatchList: RouteMatchListCodec(configuration).encode(matchList),
@@ -356,7 +356,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
   Future<T?> push<T extends Object?>(String location, {Object? extra}) async {
-    log.info('pushing $location');
+    log('pushing $location');
     return routeInformationProvider.push<T>(
       location,
       base: routerDelegate.currentConfiguration,
@@ -389,7 +389,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   ///   state and not run any page animation.
   Future<T?> pushReplacement<T extends Object?>(String location,
       {Object? extra}) {
-    log.info('pushReplacement $location');
+    log('pushReplacement $location');
     return routeInformationProvider.pushReplacement<T>(
       location,
       base: routerDelegate.currentConfiguration,
@@ -428,7 +428,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// * [pushReplacement] which replaces the top-most page of the page stack but
   ///   always uses a new page key.
   Future<T?> replace<T>(String location, {Object? extra}) {
-    log.info('replace $location');
+    log('replace $location');
     return routeInformationProvider.replace<T>(
       location,
       base: routerDelegate.currentConfiguration,
@@ -466,7 +466,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// of any GoRoute under it.
   void pop<T extends Object?>([T? result]) {
     assert(() {
-      log.info('popping ${routerDelegate.currentConfiguration.uri}');
+      log('popping ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
     routerDelegate.pop<T>(result);
@@ -475,7 +475,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// Refresh the route.
   void refresh() {
     assert(() {
-      log.info('refreshing ${routerDelegate.currentConfiguration.uri}');
+      log('refreshing ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
     routeInformationProvider.notifyListeners();
