@@ -355,6 +355,64 @@ void main() {
           (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
           'scope1');
     });
+
+
+    group('LocalHistoryRoute', () {
+      testWidgets('showBottomSheet', (WidgetTester tester) async {
+        final List<GoRoute> routes = <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) {
+              return const HomeScreen();
+            },
+            routes: <RouteBase>[
+              GoRoute(
+                path: 'detail',
+                builder: (BuildContext context, GoRouterState state) {
+                  return const _BottomSheetScreen();
+                },
+              ),
+            ],
+          ),
+        ];
+
+        // "/"
+        final GoRouter router = await createRouter(routes, tester);
+        router.go('/');
+        await tester.pumpAndSettle();
+        expect(
+          router.routerDelegate.currentConfiguration.matches.last.matchedLocation,
+          '/',
+        );
+        expect(find.byType(HomeScreen), findsOneWidget);
+
+        // "/" -> "/detail"
+        router.go('/detail');
+        await tester.pumpAndSettle();
+        expect(
+          router.routerDelegate.currentConfiguration.matches.last.matchedLocation,
+          '/detail',
+        );
+        expect(find.byType(_BottomSheetScreen), findsOneWidget);
+
+        // "/" -> "/detail" -> showBottomSheet
+        await tester.tap(find.text('Show bottom sheet'));
+        await tester.pumpAndSettle();
+        expect(find.byType(BottomSheet), findsOneWidget);
+
+        // "/" -> "/detail" -> [close]showBottomSheet
+        await tester.tap(find.text('Close'));
+        await tester.pumpAndSettle();
+        expect(find.byType(BottomSheet), findsNothing);
+        expect(find.byType(_BottomSheetScreen), findsOneWidget);
+
+        // "/" -> [close]"/detail"
+        await tester.tap(find.byTooltip('Back'));
+        await tester.pumpAndSettle();
+        expect(find.byType(_BottomSheetScreen), findsNothing);
+        expect(find.byType(HomeScreen), findsOneWidget);
+      });
+    });
   });
 }
 
@@ -383,6 +441,36 @@ class _DetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Text('Details Screen'),
+    );
+  }
+}
+
+class _BottomSheetScreen extends StatelessWidget {
+
+  const _BottomSheetScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Builder(
+        builder: (BuildContext context) {
+          return TextButton(
+            onPressed: () {
+              Scaffold.of(context).showBottomSheet((context) {
+                return SizedBox(
+                  height: 200,
+                  child: TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Close'),
+                  ),
+                );
+              });
+            },
+            child: const Text('Show bottom sheet'),
+          );
+        },
+      ),
     );
   }
 }
