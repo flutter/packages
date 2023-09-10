@@ -356,7 +356,6 @@ void main() {
           'scope1');
     });
 
-
     group('LocalHistoryRoute', () {
       testWidgets('showBottomSheet', (WidgetTester tester) async {
         final List<GoRoute> routes = <GoRoute>[
@@ -380,19 +379,16 @@ void main() {
         final GoRouter router = await createRouter(routes, tester);
         router.go('/');
         await tester.pumpAndSettle();
-        expect(
-          router.routerDelegate.currentConfiguration.matches.last.matchedLocation,
-          '/',
-        );
+        List<RouteMatch> matches =
+            router.routerDelegate.currentConfiguration.matches;
+        expect(matches.last.matchedLocation, '/');
         expect(find.byType(HomeScreen), findsOneWidget);
 
         // "/" -> "/detail"
         router.go('/detail');
         await tester.pumpAndSettle();
-        expect(
-          router.routerDelegate.currentConfiguration.matches.last.matchedLocation,
-          '/detail',
-        );
+        matches = router.routerDelegate.currentConfiguration.matches;
+        expect(matches.last.matchedLocation, '/detail');
         expect(find.byType(_BottomSheetScreen), findsOneWidget);
 
         // "/" -> "/detail" -> showBottomSheet
@@ -446,7 +442,6 @@ class _DetailsScreen extends StatelessWidget {
 }
 
 class _BottomSheetScreen extends StatelessWidget {
-
   const _BottomSheetScreen();
 
   @override
