@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixed so that it works even if Scaffold.showBottomSheet is closed.
+
 ## 10.1.2
 
 * Adds pub topics to package metadata.
