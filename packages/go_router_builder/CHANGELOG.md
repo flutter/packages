@@ -1,3 +1,6 @@
+## 2.3.2
+* Add initialLocation with StatefulShellBranchConfig
+
 ## 2.3.1
 
 * Adds pub topics to package metadata.
