@@ -594,7 +594,14 @@ class _PagePopContext {
     final Page<Object?> page = route.settings as Page<Object?>;
 
     final RouteMatch match = _routeMatchesLookUp[page]!.last;
-    _routeMatchesLookUp[page]!.removeLast();
+
+    // If a popup is opened using something like Scaffold.showBottomSheet,
+    // it will be registered in LocalHistoryRoute._localHistory,
+    // so it should be deleted from _routeMatchesLookUp only if
+    // LocalHistoryRoute.willHandlePopInternally is false.
+    if (route is LocalHistoryRoute && route.willHandlePopInternally == false) {
+      _routeMatchesLookUp[page]!.removeLast();
+    }
 
     return onPopPageWithRouteMatch(route, result, match);
   }
