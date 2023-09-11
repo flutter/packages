@@ -1,6 +1,6 @@
 ## 2.0.9
 
-* Use motion curves with updated names from the new framework `Easing` class.
+* Migrate motion curves to use `Easing` class.
 
 ## 2.0.8
 
