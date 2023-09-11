@@ -800,7 +800,7 @@ Future<void> main() async {
       await expectLater(authRequested.future, completes);
     });
 
-    testWidgets('can reply to HTTP basic auth requests',
+    testWidgets('can authenticate to HTTP basic auth requests',
         (WidgetTester tester) async {
       final WebViewController controller = WebViewController();
       final Completer<void> pageFinished = Completer<void>();
@@ -811,7 +811,7 @@ Future<void> main() async {
             onHttpAuthRequest: (HttpAuthRequest request) =>
                 request.onAuthenticate(
               const WebViewCredential(
-                user: 'u2ser',
+                user: 'user',
                 password: 'password',
               ),
             ),
