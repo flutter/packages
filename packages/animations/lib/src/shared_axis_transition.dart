@@ -303,18 +303,18 @@ class _EnterTransition extends StatelessWidget {
   final bool reverse;
 
   static final Animatable<double> _fadeInTransition = CurveTween(
-    curve: decelerateEasing,
+    curve: Easing.legacyDecelerate,
   ).chain(CurveTween(curve: const Interval(0.3, 1.0)));
 
   static final Animatable<double> _scaleDownTransition = Tween<double>(
     begin: 1.10,
     end: 1.00,
-  ).chain(CurveTween(curve: standardEasing));
+  ).chain(CurveTween(curve: Easing.legacy));
 
   static final Animatable<double> _scaleUpTransition = Tween<double>(
     begin: 0.80,
     end: 1.00,
-  ).chain(CurveTween(curve: standardEasing));
+  ).chain(CurveTween(curve: Easing.legacy));
 
   @override
   Widget build(BuildContext context) {
@@ -323,7 +323,7 @@ class _EnterTransition extends StatelessWidget {
         final Animatable<Offset> slideInTransition = Tween<Offset>(
           begin: Offset(!reverse ? 30.0 : -30.0, 0.0),
           end: Offset.zero,
-        ).chain(CurveTween(curve: standardEasing));
+        ).chain(CurveTween(curve: Easing.legacy));
 
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
@@ -342,7 +342,7 @@ class _EnterTransition extends StatelessWidget {
         final Animatable<Offset> slideInTransition = Tween<Offset>(
           begin: Offset(0.0, !reverse ? 30.0 : -30.0),
           end: Offset.zero,
-        ).chain(CurveTween(curve: standardEasing));
+        ).chain(CurveTween(curve: Easing.legacy));
 
         return FadeTransition(
           opacity: _fadeInTransition.animate(animation),
@@ -386,18 +386,18 @@ class _ExitTransition extends StatelessWidget {
   final Widget? child;
 
   static final Animatable<double> _fadeOutTransition = _FlippedCurveTween(
-    curve: accelerateEasing,
+    curve: Easing.legacyAccelerate,
   ).chain(CurveTween(curve: const Interval(0.0, 0.3)));
 
   static final Animatable<double> _scaleUpTransition = Tween<double>(
     begin: 1.00,
     end: 1.10,
-  ).chain(CurveTween(curve: standardEasing));
+  ).chain(CurveTween(curve: Easing.legacy));
 
   static final Animatable<double> _scaleDownTransition = Tween<double>(
     begin: 1.00,
     end: 0.80,
-  ).chain(CurveTween(curve: standardEasing));
+  ).chain(CurveTween(curve: Easing.legacy));
 
   @override
   Widget build(BuildContext context) {
@@ -406,7 +406,7 @@ class _ExitTransition extends StatelessWidget {
         final Animatable<Offset> slideOutTransition = Tween<Offset>(
           begin: Offset.zero,
           end: Offset(!reverse ? -30.0 : 30.0, 0.0),
-        ).chain(CurveTween(curve: standardEasing));
+        ).chain(CurveTween(curve: Easing.legacy));
 
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),
@@ -428,7 +428,7 @@ class _ExitTransition extends StatelessWidget {
         final Animatable<Offset> slideOutTransition = Tween<Offset>(
           begin: Offset.zero,
           end: Offset(0.0, !reverse ? -30.0 : 30.0),
-        ).chain(CurveTween(curve: standardEasing));
+        ).chain(CurveTween(curve: Easing.legacy));
 
         return FadeTransition(
           opacity: _fadeOutTransition.animate(animation),

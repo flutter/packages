@@ -134,7 +134,7 @@ class FadeScaleTransition extends StatelessWidget {
   static final Animatable<double> _scaleInTransition = Tween<double>(
     begin: 0.80,
     end: 1.00,
-  ).chain(CurveTween(curve: decelerateEasing));
+  ).chain(CurveTween(curve: Easing.legacyDecelerate));
   static final Animatable<double> _fadeOutTransition = Tween<double>(
     begin: 1.0,
     end: 0.0,
