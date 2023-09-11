@@ -33,7 +33,6 @@
 	<string>If you want to use the camera, you have to give permission.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<key>UIBackgroundModes</key>
 	<array/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
