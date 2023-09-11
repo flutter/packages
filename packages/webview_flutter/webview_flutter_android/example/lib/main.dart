@@ -163,8 +163,6 @@ Page resource error:
             debugPrint('url change to ${change.url}');
           })
           ..setOnHttpAuthRequest((HttpAuthRequest request) {
-            debugPrint(
-                'HTTP basic auth request with host ${request.host} and realm ${request.realm ?? '-'}');
             openDialog(request);
           }),
       )
@@ -255,7 +253,7 @@ Page resource error:
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                httpRequest.onProceed(
+                httpRequest.onAuthenticate(
                   WebViewCredential(
                     user: usernameTextController.text,
                     password: passwordTextController.text,

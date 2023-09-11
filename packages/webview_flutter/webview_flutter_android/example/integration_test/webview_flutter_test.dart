@@ -1178,7 +1178,7 @@ Future<void> main() async {
     );
     await navigationDelegate.setOnPageFinished((_) => pageFinished.complete());
     await navigationDelegate.setOnHttpAuthRequest(
-      (HttpAuthRequest request) => request.onProceed(
+      (HttpAuthRequest request) => request.onAuthenticate(
         const WebViewCredential(user: 'user', password: 'password'),
       ),
     );

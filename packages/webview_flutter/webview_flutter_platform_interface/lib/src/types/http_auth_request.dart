@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:meta/meta.dart';
-
+import 'package:flutter/foundation.dart';
 import '../../webview_flutter_platform_interface.dart';
 
 /// Defines the parameters of a pending HTTP authentication request received by
@@ -51,17 +50,15 @@ import '../../webview_flutter_platform_interface.dart';
 class HttpAuthRequest {
   /// Creates a [HttpAuthRequest].
   const HttpAuthRequest({
-    required this.onProceed,
-    required this.onCancel,
+    required this.onAuthenticate,
     required this.host,
     this.realm,
   });
 
-  /// The callback to authenticate.
-  final void Function(WebViewCredential credential) onProceed;
-
-  /// The callback to cancel authentication.
-  final void Function() onCancel;
+  /// The callback to proceed with, or cancel an auth request.
+  ///
+  /// If `credential` is `null`, the request will be canceled.
+  final void Function(WebViewCredential? credential) onAuthenticate;
 
   /// The host requiring authentication.
   final String host;

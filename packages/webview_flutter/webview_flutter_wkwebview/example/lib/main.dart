@@ -259,14 +259,14 @@ Page resource error:
             // requests when a previous request is pending.
             TextButton(
               onPressed: () {
-                httpRequest.onCancel();
+                httpRequest.onAuthenticate(null);
                 Navigator.of(context).pop();
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                httpRequest.onProceed(
+                httpRequest.onAuthenticate(
                   WebViewCredential(
                     user: usernameTextController.text,
                     password: passwordTextController.text,

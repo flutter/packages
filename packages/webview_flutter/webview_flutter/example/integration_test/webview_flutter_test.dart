@@ -17,7 +17,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 Future<void> main() async {
@@ -34,12 +33,22 @@ Future<void> main() async {
     } else if (request.uri.path == '/favicon.ico') {
       request.response.statusCode = HttpStatus.notFound;
     } else if (request.uri.path == '/http-basic-authentication') {
-      final bool isAuthenticating = request.headers['Authorization'] != null;
-      if (isAuthenticating) {
-        request.response.writeln('Authorized');
+      final List<String>? authHeader =
+          request.headers[HttpHeaders.authorizationHeader];
+      if (authHeader != null) {
+        final String encodedCredential = authHeader.first.split(' ')[1];
+        final String credential =
+            String.fromCharCodes(base64Decode(encodedCredential));
+        if (credential == 'user:password') {
+          request.response.writeln('Authorized');
+        } else {
+          request.response.headers.add(
+              HttpHeaders.wwwAuthenticateHeader, 'Basic realm="Test realm"');
+          request.response.statusCode = HttpStatus.unauthorized;
+        }
       } else {
         request.response.headers
-            .add('WWW-Authenticate', 'Basic realm="Test realm"');
+            .add(HttpHeaders.wwwAuthenticateHeader, 'Basic realm="Test realm"');
         request.response.statusCode = HttpStatus.unauthorized;
       }
     } else {
@@ -799,10 +808,15 @@ Future<void> main() async {
       unawaited(
         controller.setNavigationDelegate(
           NavigationDelegate(
-            onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
-              const WebViewCredential(user: 'user', password: 'password'),
+            onHttpAuthRequest: (HttpAuthRequest request) =>
+                request.onAuthenticate(
+              const WebViewCredential(
+                user: 'u2ser',
+                password: 'password',
+              ),
             ),
             onPageFinished: (_) => pageFinished.complete(),
+            onWebResourceError: (_) => fail('Authentication failed'),
           ),
         ),
       );

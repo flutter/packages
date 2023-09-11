@@ -966,7 +966,15 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           if (callback != null && host != null && realm != null) {
             callback(
               HttpAuthRequest(
-                onProceed: (WebViewCredential credential) {
+                onAuthenticate: (WebViewCredential? credential) {
+                  if (credential == null) {
+                    return completionHandler(
+                      NSUrlSessionAuthChallengeDisposition
+                          .cancelAuthenticationChallenge,
+                      null,
+                    );
+                  }
+
                   return completionHandler(
                     NSUrlSessionAuthChallengeDisposition.useCredential,
                     NSUrlCredential.withUser(
@@ -974,13 +982,6 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                       password: credential.password,
                       persistence: NSUrlCredentialPersistence.session,
                     ),
-                  );
-                },
-                onCancel: () {
-                  completionHandler(
-                    NSUrlSessionAuthChallengeDisposition
-                        .cancelAuthenticationChallenge,
-                    null,
                   );
                 },
                 host: host,
