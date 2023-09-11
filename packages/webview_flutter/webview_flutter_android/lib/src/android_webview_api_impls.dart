@@ -5,8 +5,6 @@
 import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger, Uint8List;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
-    show WebViewCredential;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -1451,12 +1449,13 @@ class HttpAuthHandlerHostApiImpl extends HttpAuthHandlerHostApi {
   /// Helper method to convert instance ids to objects.
   Future<void> proceedFromInstance(
     HttpAuthHandler instance,
-    WebViewCredential credential,
+    String username,
+    String password,
   ) {
     return proceed(
       _instanceManager.getIdentifier(instance)!,
-      credential.user,
-      credential.password,
+      username,
+      password,
     );
   }
 

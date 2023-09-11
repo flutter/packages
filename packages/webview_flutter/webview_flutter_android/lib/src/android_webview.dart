@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -1533,8 +1532,8 @@ class HttpAuthHandler extends JavaObject {
 
   /// Instructs the WebView to proceed with the authentication with the provided
   /// credentials.
-  Future<void> proceed(WebViewCredential credential) {
-    return api.proceedFromInstance(this, credential);
+  Future<void> proceed(String username, String password) {
+    return api.proceedFromInstance(this, username, password);
   }
 
   /// Gets whether the credentials stored for the current host are suitable for
