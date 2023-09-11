@@ -884,6 +884,7 @@ void main() {
       camera.cameraSelector = MockCameraSelector();
       camera.recorder = camera.testRecorder;
       camera.videoCapture = camera.testVideoCapture;
+      camera.imageAnalysis = camera.testImageAnalysis;
       camera.camera = MockCamera();
       final MockPendingRecording mockPendingRecording = MockPendingRecording();
       final TestSystemServicesHostApi mockSystemServicesApi =
