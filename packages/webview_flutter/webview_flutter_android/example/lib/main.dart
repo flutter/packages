@@ -354,7 +354,7 @@ class SampleMenu extends StatelessWidget {
             _onLogExample();
             break;
           case MenuOptions.basicAuthentication:
-            _basicAuthExample();
+            _promptForUrl(context);
             break;
         }
       },
@@ -606,10 +606,38 @@ class SampleMenu extends StatelessWidget {
     return webViewController.loadHtmlString(kLogExamplePage);
   }
 
-  Future<void> _basicAuthExample() {
-    return webViewController.loadRequest(LoadRequestParams(
-        uri: Uri.parse(
-            'https://www.httpwatch.com/httpgallery/authentication/#showExample10')));
+  Future<void> _promptForUrl(BuildContext context) {
+    final TextEditingController urlTextController = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Input URL to visit'),
+          content: TextField(
+            decoration: const InputDecoration(labelText: 'URL'),
+            autofocus: true,
+            controller: urlTextController,
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                if (urlTextController.text.isNotEmpty) {
+                  final Uri? uri = Uri.tryParse(urlTextController.text);
+                  if (uri != null && uri.scheme.isNotEmpty) {
+                    webViewController.loadRequest(
+                      LoadRequestParams(uri: uri),
+                    );
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              child: const Text('Visit'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
