@@ -1,3 +1,8 @@
+## 3.0.8
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 3.0.7
 
 * Updates pigeon dependency for url_launcher_windows to "^10.1.2".
