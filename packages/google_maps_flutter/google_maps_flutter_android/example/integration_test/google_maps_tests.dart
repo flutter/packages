@@ -949,7 +949,13 @@ void googleMapsTests() {
     expect(iwVisibleStatus, false);
 
     await controller.showMarkerInfoWindow(marker.markerId);
-    iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
+    // The Maps SDK doesn't always return true for whether it is shown
+    // immediately after showing it, so wait for it to report as shown.
+    iwVisibleStatus = await waitForValueMatchingPredicate<bool>(
+            tester,
+            () => controller.isMarkerInfoWindowShown(marker.markerId),
+            (bool visible) => visible) ??
+        false;
     expect(iwVisibleStatus, true);
 
     await controller.hideMarkerInfoWindow(marker.markerId);
