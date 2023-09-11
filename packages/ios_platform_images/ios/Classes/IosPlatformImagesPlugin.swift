@@ -36,7 +36,7 @@ public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
   private func loadImage(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
     guard let arguments = call.arguments as? [Any],
       let name = arguments.first as? String,
-      let image = UIImage.flutterImage(withName: name)
+      let image = flutterImage(withName: name)
     else {
       result(nil)
       return

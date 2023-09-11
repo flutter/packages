@@ -9,17 +9,10 @@ import XCTest
 
 class IosPlatformImagesTests: XCTestCase {
 
-  var mockChannel: MockMethodChannel!
-
-  override func setUp() {
-    super.setUp()
-    mockChannel = MockMethodChannel()
-  }
-
   func testHandleMethodCall_loadImage() {
-    let name = "flutter"
+    let assetName = "flutter"
 
-    let call = FlutterMethodCall(methodName: "loadImage", arguments: [name])
+    let call = FlutterMethodCall(methodName: "loadImage", arguments: [assetName])
 
     let mockChannel = MockMethodChannel()
 
@@ -30,7 +23,7 @@ class IosPlatformImagesTests: XCTestCase {
     plugin.handle(call) { result in
       let result = result as? [String: Any]
       XCTAssertNotNil(result)
-      
+
       let scale = result?["scale"] as? CGFloat
       let data = result?["data"] as? FlutterStandardTypedData
 
@@ -44,9 +37,9 @@ class IosPlatformImagesTests: XCTestCase {
   }
 
   func testHandleMethodCall_loadImage_notFound() {
-    let name = "flutterNotFound"
+    let assetName = "flutterNotFound"
 
-    let call = FlutterMethodCall(methodName: "loadImage", arguments: [name])
+    let call = FlutterMethodCall(methodName: "loadImage", arguments: [assetName])
 
     let mockChannel = MockMethodChannel()
 
@@ -65,9 +58,9 @@ class IosPlatformImagesTests: XCTestCase {
   }
 
   func testHandleMethodCall_resolveURL() {
-    let name = "textfile"
+    let assetName = "textfile"
 
-    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [name])
+    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [assetName])
 
     let mockChannel = MockMethodChannel()
 
@@ -78,7 +71,7 @@ class IosPlatformImagesTests: XCTestCase {
     plugin.handle(call) { result in
       let result = result as? String
       XCTAssertNotNil(result)
-      XCTAssertEqual(result?.components(separatedBy: "/").last, name)
+      XCTAssertEqual(result?.components(separatedBy: "/").last, assetName)
       resultExpectation.fulfill()
     }
 
@@ -86,9 +79,9 @@ class IosPlatformImagesTests: XCTestCase {
   }
 
   func testHandleMethodCall_resolveURL_notFound() {
-    let name = "notFound"
+    let assetName = "notFound"
 
-    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [name])
+    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [assetName])
 
     let mockChannel = MockMethodChannel()
 
