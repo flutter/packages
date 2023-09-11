@@ -32,6 +32,7 @@ import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
 import 'java_generator.dart';
 import 'kotlin_generator.dart';
+import 'linux_generator.dart';
 import 'objc_generator.dart';
 import 'swift_generator.dart';
 
@@ -247,6 +248,9 @@ class PigeonOptions {
     this.cppHeaderOut,
     this.cppSourceOut,
     this.cppOptions,
+    this.linuxHeaderOut,
+    this.linuxSourceOut,
+    this.linuxOptions,
     this.dartOptions,
     this.copyrightHeader,
     this.oneLanguage,
@@ -301,6 +305,15 @@ class PigeonOptions {
   /// Options that control how C++ will be generated.
   final CppOptions? cppOptions;
 
+  /// Path to the ".h" Linux file that will be generated.
+  final String? linuxHeaderOut;
+
+  /// Path to the ".cc" Linux file that will be generated.
+  final String? linuxSourceOut;
+
+  /// Options that control how C++ will be generated.
+  final LinuxOptions? linuxOptions;
+
   /// Options that control how Dart will be generated.
   final DartOptions? dartOptions;
 
@@ -351,6 +364,11 @@ class PigeonOptions {
       cppOptions: map.containsKey('cppOptions')
           ? CppOptions.fromMap(map['cppOptions']! as Map<String, Object>)
           : null,
+      linuxHeaderOut: map['linuxHeaderOut'] as String?,
+      linuxSourceOut: map['linuxSourceOut'] as String?,
+      linuxOptions: map.containsKey('linuxOptions')
+          ? LinuxOptions.fromMap(map['linuxOptions']! as Map<String, Object>)
+          : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
           : null,
@@ -382,6 +400,9 @@ class PigeonOptions {
       if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
       if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
       if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
+      if (linuxHeaderOut != null) 'linuxHeaderOut': linuxHeaderOut!,
+      if (linuxSourceOut != null) 'linuxSourceOut': linuxSourceOut!,
+      if (linuxOptions != null) 'linuxOptions': linuxOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -754,6 +775,53 @@ class CppGeneratorAdapter implements GeneratorAdapter {
       return _openSink(options.cppSourceOut, basePath: options.basePath ?? '');
     } else {
       return _openSink(options.cppHeaderOut, basePath: options.basePath ?? '');
+    }
+  }
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+}
+
+/// A [GeneratorAdapter] that generates Linux source code.
+class LinuxGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [LinuxGeneratorAdapter].
+  LinuxGeneratorAdapter(
+      {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
+
+  @override
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
+    final LinuxOptions linuxOptions =
+        options.linuxOptions ?? const LinuxOptions();
+    final LinuxOptions linuxOptionsWithHeader = linuxOptions.merge(LinuxOptions(
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
+          : null,
+    ));
+    final OutputFileOptions<LinuxOptions> outputFileOptions =
+        OutputFileOptions<LinuxOptions>(
+            fileType: fileType, languageOptions: linuxOptionsWithHeader);
+    const LinuxGenerator generator = LinuxGenerator();
+    generator.generate(
+      outputFileOptions,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
+    if (fileType == FileType.source) {
+      return _openSink(options.linuxSourceOut,
+          basePath: options.basePath ?? '');
+    } else {
+      return _openSink(options.linuxHeaderOut,
+          basePath: options.basePath ?? '');
     }
   }
 
@@ -2073,6 +2141,18 @@ ${_argParser.usage}''';
     )
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
+    ..addOption(
+      'linux_header_out',
+      help: 'Path to generated Linux header file (.h).',
+      aliases: const <String>['experimental_linux_header_out'],
+    )
+    ..addOption(
+      'linux_source_out',
+      help: 'Path to generated Linux classes file (.cc).',
+      aliases: const <String>['experimental_linux_source_out'],
+    )
+    ..addOption('linux_module',
+        help: 'The module that generated Linux code will be in.')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -2126,6 +2206,11 @@ ${_argParser.usage}''';
       cppSourceOut: results['cpp_source_out'] as String?,
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'] as String?,
+      ),
+      linuxHeaderOut: results['linux_header_out'] as String?,
+      linuxSourceOut: results['linux_source_out'] as String?,
+      linuxOptions: LinuxOptions(
+        module: results['linux_module'] as String? ?? 'My',
       ),
       copyrightHeader: results['copyright_header'] as String?,
       oneLanguage: results['one_language'] as bool?,
@@ -2183,6 +2268,7 @@ ${_argParser.usage}''';
           SwiftGeneratorAdapter(),
           KotlinGeneratorAdapter(),
           CppGeneratorAdapter(),
+          LinuxGeneratorAdapter(),
           DartTestGeneratorAdapter(),
           ObjcGeneratorAdapter(),
           AstGeneratorAdapter(),
@@ -2249,6 +2335,13 @@ ${_argParser.usage}''';
           cppOptions: (options.cppOptions ?? const CppOptions()).merge(
               CppOptions(
                   headerIncludePath: path.basename(options.cppHeaderOut!)))));
+    }
+
+    if (options.linuxHeaderOut != null) {
+      options = options.merge(PigeonOptions(
+          linuxOptions: (options.linuxOptions ?? const LinuxOptions()).merge(
+              LinuxOptions(
+                  headerIncludePath: path.basename(options.linuxHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {

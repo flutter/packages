@@ -1,3 +1,7 @@
+## 17.1.2
+
+* Add Linux support
+
 ## 17.1.1
 
 * Removes heap allocation in generated C++ code.
