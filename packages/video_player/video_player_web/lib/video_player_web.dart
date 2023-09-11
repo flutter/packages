@@ -132,6 +132,11 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
     return _player(textureId).events;
   }
 
+  @override
+  Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {
+    return _player(textureId).setOptions(options);
+  }
+
   // Retrieves a [VideoPlayer] by its internal `id`.
   // It must have been created earlier from the [create] method.
   VideoPlayer _player(int id) {
