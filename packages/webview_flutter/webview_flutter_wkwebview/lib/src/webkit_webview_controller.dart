@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -692,20 +693,34 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UiKitView(
-      // Setting a default key using `params` ensures the `UIKitView` recreates
-      // the PlatformView when changes are made.
-      key: _webKitParams.key ??
-          ValueKey<WebKitWebViewWidgetCreationParams>(
-              params as WebKitWebViewWidgetCreationParams),
-      viewType: 'plugins.flutter.io/webview',
-      onPlatformViewCreated: (_) {},
-      layoutDirection: params.layoutDirection,
-      gestureRecognizers: params.gestureRecognizers,
-      creationParams: _webKitParams._instanceManager.getIdentifier(
-          (params.controller as WebKitWebViewController)._webView),
-      creationParamsCodec: const StandardMessageCodec(),
-    );
+    // Setting a default key using `params` ensures the `UIKitView` recreates
+    // the PlatformView when changes are made.
+    final Key key = _webKitParams.key ??
+        ValueKey<WebKitWebViewWidgetCreationParams>(
+            params as WebKitWebViewWidgetCreationParams);
+    if (Platform.isMacOS) {
+      return AppKitView(
+        key: key,
+        viewType: 'plugins.flutter.io/webview',
+        onPlatformViewCreated: (_) {},
+        layoutDirection: params.layoutDirection,
+        gestureRecognizers: params.gestureRecognizers,
+        creationParams: _webKitParams._instanceManager.getIdentifier(
+            (params.controller as WebKitWebViewController)._webView),
+        creationParamsCodec: const StandardMessageCodec(),
+      );
+    } else {
+      return UiKitView(
+        key: key,
+        viewType: 'plugins.flutter.io/webview',
+        onPlatformViewCreated: (_) {},
+        layoutDirection: params.layoutDirection,
+        gestureRecognizers: params.gestureRecognizers,
+        creationParams: _webKitParams._instanceManager.getIdentifier(
+            (params.controller as WebKitWebViewController)._webView),
+        creationParamsCodec: const StandardMessageCodec(),
+      );
+    }
   }
 }
 
