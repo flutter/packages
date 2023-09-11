@@ -1,3 +1,7 @@
+## 2.0.9
+
+* Use motion curves with updated names from the new framework `Easing` class.
+
 ## 2.0.8
 
 * Adds pub topics to package metadata.
@@ -24,7 +28,7 @@
 * Updates for non-nullable bindings.
 
 ## 2.0.2
-* Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`. 
+* Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`.
 
 ## 2.0.1
 * Add links to the spec and codelab.
