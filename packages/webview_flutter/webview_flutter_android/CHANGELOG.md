@@ -1,3 +1,8 @@
+## 3.10.0
+
+* Adds support for playing video in fullscreen. See
+  `AndroidWebViewController.setCustomWidgetCallbacks`.
+
 ## 3.9.5
 
 * Updates pigeon to 11 and removes unneeded enum wrappers.

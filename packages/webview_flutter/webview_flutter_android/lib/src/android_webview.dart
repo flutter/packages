@@ -129,7 +129,7 @@ class GeolocationPermissionsCallback extends JavaObject {
 /// [Web-based content](https://developer.android.com/guide/webapps).
 ///
 /// When a [WebView] is no longer needed [release] must be called.
-class WebView extends JavaObject {
+class WebView extends View {
   /// Constructs a new WebView.
   ///
   /// Due to changes in Flutter 3.0 the [useHybridComposition] doesn't have
@@ -1024,6 +1024,18 @@ typedef GeolocationPermissionsHidePrompt = void Function(
   WebChromeClient instance,
 );
 
+/// Signature for the callback that is responsible for showing a custom view.
+typedef ShowCustomViewCallback = void Function(
+  WebChromeClient instance,
+  View view,
+  CustomViewCallback callback,
+);
+
+/// Signature for the callback that is responsible for hiding a custom view.
+typedef HideCustomViewCallback = void Function(
+  WebChromeClient instance,
+);
+
 /// Handles JavaScript dialogs, favicons, titles, and the progress for [WebView].
 class WebChromeClient extends JavaObject {
   /// Constructs a [WebChromeClient].
@@ -1033,6 +1045,8 @@ class WebChromeClient extends JavaObject {
     this.onPermissionRequest,
     this.onGeolocationPermissionsShowPrompt,
     this.onGeolocationPermissionsHidePrompt,
+    this.onShowCustomView,
+    this.onHideCustomView,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -1052,6 +1066,8 @@ class WebChromeClient extends JavaObject {
     this.onPermissionRequest,
     this.onGeolocationPermissionsShowPrompt,
     this.onGeolocationPermissionsHidePrompt,
+    this.onShowCustomView,
+    this.onHideCustomView,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -1092,9 +1108,18 @@ class WebChromeClient extends JavaObject {
   /// Notify the host application that a request for Geolocation permissions,
   /// made with a previous call to [onGeolocationPermissionsShowPrompt] has been
   /// canceled.
-  final void Function(
-    WebChromeClient instance,
-  )? onGeolocationPermissionsHidePrompt;
+  final GeolocationPermissionsHidePrompt? onGeolocationPermissionsHidePrompt;
+
+  /// Notify the host application that the current page has entered full screen
+  /// mode.
+  ///
+  /// After this call, web content will no longer be rendered in the WebView,
+  /// but will instead be rendered in `view`.
+  final ShowCustomViewCallback? onShowCustomView;
+
+  /// Notify the host application that the current page has exited full screen
+  /// mode.
+  final HideCustomViewCallback? onHideCustomView;
 
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
@@ -1130,8 +1155,11 @@ class WebChromeClient extends JavaObject {
     return WebChromeClient.detached(
       onProgressChanged: onProgressChanged,
       onShowFileChooser: onShowFileChooser,
+      onPermissionRequest: onPermissionRequest,
       onGeolocationPermissionsShowPrompt: onGeolocationPermissionsShowPrompt,
       onGeolocationPermissionsHidePrompt: onGeolocationPermissionsHidePrompt,
+      onShowCustomView: onShowCustomView,
+      onHideCustomView: onHideCustomView,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
@@ -1367,6 +1395,64 @@ class WebStorage extends JavaObject {
     return WebStorage.detached(
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
+    );
+  }
+}
+
+/// The basic building block for user interface components.
+///
+/// See https://developer.android.com/reference/android/view/View.
+class View extends JavaObject {
+  /// Instantiates a [View] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  View.detached({super.binaryMessenger, super.instanceManager})
+      : super.detached();
+
+  @override
+  View copy() {
+    return View.detached(
+      binaryMessenger: _api.binaryMessenger,
+      instanceManager: _api.instanceManager,
+    );
+  }
+}
+
+/// A callback interface used by the host application to notify the current page
+/// that its custom view has been dismissed.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+class CustomViewCallback extends JavaObject {
+  /// Instantiates a [CustomViewCallback] without creating and attaching to an
+  /// instance of the associated native class.
+  ///
+  /// This should only be used outside of tests by subclasses created by this
+  /// library or to create a copy for an [InstanceManager].
+  @protected
+  CustomViewCallback.detached({
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _customViewCallbackApi = CustomViewCallbackHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  final CustomViewCallbackHostApiImpl _customViewCallbackApi;
+
+  /// Invoked when the host application dismisses the custom view.
+  Future<void> onCustomViewHidden() {
+    return _customViewCallbackApi.onCustomViewHiddenFromInstances(this);
+  }
+
+  @override
+  CustomViewCallback copy() {
+    return CustomViewCallback.detached(
+      binaryMessenger: _customViewCallbackApi.binaryMessenger,
+      instanceManager: _customViewCallbackApi.instanceManager,
     );
   }
 }
