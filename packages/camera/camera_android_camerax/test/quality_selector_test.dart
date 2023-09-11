@@ -41,7 +41,9 @@ void main() {
       );
 
       QualitySelector.detached(
-        qualityList: const <VideoQualityConstraint>[VideoQualityConstraint.FHD],
+        qualityList: <VideoQualityData>[
+          VideoQualityData(quality: VideoQuality.UHD)
+        ],
         fallbackStrategy: MockFallbackStrategy(),
         instanceManager: instanceManager,
       );
@@ -60,7 +62,8 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const VideoQualityConstraint quality = VideoQualityConstraint.FHD;
+      const VideoQuality videoQuality = VideoQuality.FHD;
+      final VideoQualityData quality = VideoQualityData(quality: videoQuality);
       final FallbackStrategy fallbackStrategy = MockFallbackStrategy();
       const int fallbackStrategyIdentifier = 9;
 
@@ -76,11 +79,15 @@ void main() {
         instanceManager: instanceManager,
       );
 
-      verify(mockApi.create(
+      final VerificationResult verificationResult = verify(mockApi.create(
         instanceManager.getIdentifier(instance),
-        <int>[2],
+        captureAny,
         fallbackStrategyIdentifier,
       ));
+      final List<VideoQualityData?> videoQualityData =
+          verificationResult.captured.single as List<VideoQualityData?>;
+      expect(videoQualityData.length, equals(1));
+      expect(videoQualityData.first!.quality, equals(videoQuality));
     });
 
     test('quality list constructor calls create on the Java side', () {
@@ -93,9 +100,9 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const List<VideoQualityConstraint> qualityList = <VideoQualityConstraint>[
-        VideoQualityConstraint.FHD,
-        VideoQualityConstraint.highest
+      final List<VideoQualityData> qualityList = <VideoQualityData>[
+        VideoQualityData(quality: VideoQuality.FHD),
+        VideoQualityData(quality: VideoQuality.highest),
       ];
 
       final FallbackStrategy fallbackStrategy = MockFallbackStrategy();
@@ -113,11 +120,16 @@ void main() {
         instanceManager: instanceManager,
       );
 
-      verify(mockApi.create(
+      final VerificationResult verificationResult = verify(mockApi.create(
         instanceManager.getIdentifier(instance),
-        <int>[2, 5],
+        captureAny,
         fallbackStrategyIdentifier,
       ));
+      final List<VideoQualityData?> videoQualityData =
+          verificationResult.captured.single as List<VideoQualityData?>;
+      expect(videoQualityData.length, equals(2));
+      expect(videoQualityData.first!.quality, equals(VideoQuality.FHD));
+      expect(videoQualityData.last!.quality, equals(VideoQuality.highest));
     });
 
     test('getResolution returns expected resolution info', () async {
@@ -131,7 +143,9 @@ void main() {
 
       final QualitySelector instance = QualitySelector.detached(
         instanceManager: instanceManager,
-        qualityList: const <VideoQualityConstraint>[VideoQualityConstraint.HD],
+        qualityList: <VideoQualityData>[
+          VideoQualityData(quality: VideoQuality.HD)
+        ],
         fallbackStrategy: MockFallbackStrategy(),
       );
       const int instanceIdentifier = 0;
@@ -153,7 +167,7 @@ void main() {
         onCopy: (_) => MockCameraInfo(),
       );
 
-      const VideoQualityConstraint quality = VideoQualityConstraint.FHD;
+      const VideoQuality quality = VideoQuality.FHD;
       final ResolutionInfo expectedResult =
           ResolutionInfo(width: 34, height: 23);
 

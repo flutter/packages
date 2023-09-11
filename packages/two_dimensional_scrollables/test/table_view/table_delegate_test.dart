@@ -146,6 +146,17 @@ void main() {
       expect(delegate.maxXIndex, 4); // columns
     });
 
+    test('Respects super class default for addRepaintBoundaries', () {
+      final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
+        cellBuilder: (_, __) => cell,
+        columnBuilder: (_) => span,
+        rowBuilder: (_) => span,
+        columnCount: 5,
+        rowCount: 6,
+      );
+      expect(delegate.addRepaintBoundaries, isTrue);
+    });
+
     test('Notifies listeners & rebuilds', () {
       int notified = 0;
       TableCellBuilderDelegate oldDelegate;
