@@ -6,7 +6,6 @@ import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
-import 'camera_info.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
@@ -39,7 +38,7 @@ class CameraControl extends JavaObject {
 
 /// Host API implementation of [CameraControl].
 class _CameraControlHostApiImpl extends CameraControlHostApi {
-  /// Constructs a [CameraHostApiImpl].
+  /// Constructs a [_CameraControlHostApiImpl].
   ///
   /// An [instanceManager] is typically passed when a copy of an instance
   /// contained by an [InstanceManager] is being created.

@@ -354,6 +354,22 @@ class MockCameraInfo extends _i1.Mock implements _i2.CameraInfo {
       ) as _i15.Future<_i4.LiveData<_i17.ZoomState>>);
 }
 
+/// A class which mocks [CameraControl].
+///
+/// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
+class MockCameraControl extends _i1.Mock implements _i3.CameraControl {
+  @override
+  _i15.Future<void> enableTorch(bool? torch) => (super.noSuchMethod(
+        Invocation.method(
+          #enableTorch,
+          [torch],
+        ),
+        returnValue: _i15.Future<void>.value(),
+        returnValueForMissingStub: _i15.Future<void>.value(),
+      ) as _i15.Future<void>);
+}
+
 /// A class which mocks [CameraImageData].
 ///
 /// See the documentation for Mockito's code generation for more information.

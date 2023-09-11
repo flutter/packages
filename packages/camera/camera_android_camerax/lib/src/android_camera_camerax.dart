@@ -113,6 +113,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   int? _currentFlashMode;
 
   /// Whether or not torch flash mode has been enabled for the [camera].
+  @visibleForTesting
   bool torchEnabled = false;
 
   /// The [ImageAnalysis] instance that can be configured to analyze individual
