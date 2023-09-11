@@ -513,7 +513,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Note that the preset resolution is used to configure the recording, but
   /// 240p ([ResolutionPreset.low]) is unsupported and will fallback to
   /// configure the recording as the next highest available quality.
-  /// 
+  ///
   /// This method is deprecated in favour of [startVideoCapturing].
   @override
   Future<void> startVideoRecording(int cameraId,
