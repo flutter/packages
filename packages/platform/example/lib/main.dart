@@ -1,12 +1,12 @@
-// ignore_for_file: public_member_api_docs
 import 'package:flutter/material.dart';
 import 'package:platform/platform.dart';
 
-void main() {
-  runApp(const MyApp());
-}
+/// This sample app shows how to single view the platform details.
+void main() => runApp(const MyApp());
 
+/// The main app.
 class MyApp extends StatelessWidget {
+  /// Constructs a [MyApp]
   const MyApp({super.key});
 
   @override
@@ -80,6 +80,18 @@ class MyApp extends StatelessWidget {
                   value: platform.localeName,
                 ),
                 FormatDetails(
+                  title: 'isAndroid:',
+                  value: platform.isAndroid.toString(),
+                ),
+                FormatDetails(
+                  title: 'isFuchsia:',
+                  value: platform.isFuchsia.toString(),
+                ),
+                FormatDetails(
+                  title: 'isIOS:',
+                  value: platform.isIOS.toString(),
+                ),
+                FormatDetails(
                   title: 'isLinux:',
                   value: platform.isLinux.toString(),
                 ),
@@ -91,18 +103,6 @@ class MyApp extends StatelessWidget {
                   title: 'isWindows:',
                   value: platform.isWindows.toString(),
                 ),
-                FormatDetails(
-                  title: 'isAndroid:',
-                  value: platform.isAndroid.toString(),
-                ),
-                FormatDetails(
-                  title: 'isIOS:',
-                  value: platform.isIOS.toString(),
-                ),
-                FormatDetails(
-                  title: 'isFuchsia:',
-                  value: platform.isFuchsia.toString(),
-                ),
               ],
             ),
           ),
@@ -112,14 +112,21 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// A widget to format the details.
 class FormatDetails extends StatelessWidget {
+  /// Constructs a [FormatDetails]
+  /// [title] is the title of the field.
+  /// [value] is the value of the field.
   const FormatDetails({
     super.key,
     required this.title,
     required this.value,
   });
 
+  /// The title of the field.
   final String title;
+
+  /// The value of the field.
   final String value;
 
   @override
