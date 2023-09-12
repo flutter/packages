@@ -46,7 +46,7 @@ class Camera extends JavaObject {
 
 /// Host API implementation of [Camera].
 class _CameraHostApiImpl extends CameraHostApi {
-  /// Constructs a [CameraHostApiImpl].
+  /// Constructs a [_CameraHostApiImpl].
   ///
   /// An [instanceManager] is typically passed when a copy of an instance
   /// contained by an [InstanceManager] is being created.
