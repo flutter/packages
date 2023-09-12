@@ -25,6 +25,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private VideoCaptureHostApiImpl videoCaptureHostApiImpl;
   private ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
   private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
+  private CameraControlHostApiImpl cameraControlHostApiImpl;
   public @Nullable SystemServicesHostApiImpl systemServicesHostApiImpl;
 
   @VisibleForTesting
@@ -81,7 +82,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     GeneratedCameraXLibrary.LiveDataHostApi.setup(binaryMessenger, liveDataHostApiImpl);
     GeneratedCameraXLibrary.ObserverHostApi.setup(
         binaryMessenger, new ObserverHostApiImpl(binaryMessenger, instanceManager));
-    imageAnalysisHostApiImpl = new ImageAnalysisHostApiImpl(binaryMessenger, instanceManager);
+    imageAnalysisHostApiImpl =
+        new ImageAnalysisHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ImageAnalysisHostApi.setup(binaryMessenger, imageAnalysisHostApiImpl);
     GeneratedCameraXLibrary.AnalyzerHostApi.setup(
         binaryMessenger, new AnalyzerHostApiImpl(binaryMessenger, instanceManager));
@@ -107,8 +109,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, new FallbackStrategyHostApiImpl(instanceManager));
     GeneratedCameraXLibrary.QualitySelectorHostApi.setup(
         binaryMessenger, new QualitySelectorHostApiImpl(instanceManager));
-    GeneratedCameraXLibrary.CameraControlHostApi.setup(
-        binaryMessenger, new CameraControlHostApiImpl(binaryMessenger, instanceManager));
+    cameraControlHostApiImpl = new CameraControlHostApiImpl(instanceManager, context);
+    GeneratedCameraXLibrary.CameraControlHostApi.setup(binaryMessenger, cameraControlHostApiImpl);
   }
 
   @Override
@@ -184,6 +186,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     }
     if (imageAnalysisHostApiImpl != null) {
       imageAnalysisHostApiImpl.setContext(context);
+    }
+    if (cameraControlHostApiImpl != null) {
+      cameraControlHostApiImpl.setContext(context);
     }
   }
 }

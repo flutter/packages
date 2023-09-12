@@ -1,3 +1,7 @@
+## 0.5.0+19
+
+* Implements torch flash mode.
+
 ## 0.5.0+17
 
 * Implements resolution configuration for all camera use cases.
