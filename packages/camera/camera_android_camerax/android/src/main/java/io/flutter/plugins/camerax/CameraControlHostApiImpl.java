@@ -30,8 +30,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
   /** Proxy for constructors and static method of {@link CameraControl}. */
   @VisibleForTesting
   public static class CameraControlProxy {
-
-    static Context context;
+    Context context;
 
     /** Enables or disables the torch of the specified {@link CameraControl} instance. */
     @NonNull
@@ -71,6 +70,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for constructors and static method of {@link CameraControl}
+   * @param context {@link Context} used to retrieve {@code Executor} used to enable torch mode
    */
   @VisibleForTesting
   CameraControlHostApiImpl(
@@ -79,7 +79,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
       @NonNull Context context) {
     this.instanceManager = instanceManager;
     this.proxy = proxy;
-    CameraControlProxy.context = context;
+    proxy.context = context;
   }
 
   /**
@@ -89,7 +89,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
    * {@code CameraControl} is fetched via {@code #enableTorch} anytime the context changes.
    */
   public void setContext(@NonNull Context context) {
-    CameraControlProxy.context = context;
+    this.proxy.context = context;
   }
 
   @Override
