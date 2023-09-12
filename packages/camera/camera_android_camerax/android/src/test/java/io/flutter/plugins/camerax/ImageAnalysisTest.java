@@ -72,8 +72,7 @@ public class ImageAnalysisTest {
   @Test
   public void setAnalyzer_makesCallToSetAnalyzerOnExpectedImageAnalysisInstance() {
     final ImageAnalysisHostApiImpl hostApi =
-        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
-    hostApi.setContext(context);
+        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
 
     final ImageAnalysis.Analyzer mockAnalyzer = mock(ImageAnalysis.Analyzer.class);
     final long analyzerIdentifier = 10;
