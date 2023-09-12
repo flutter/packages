@@ -1,4 +1,4 @@
-package com.example.plaform_example
+package dev.flutter.plaform_example
 
 import io.flutter.embedding.android.FlutterActivity
 
