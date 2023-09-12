@@ -983,12 +983,13 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 22;
+    final MockCameraControl mockCameraControl = MockCameraControl();
 
     camera.imageCapture = MockImageCapture();
     camera.camera = MockCamera();
 
     when(camera.camera!.getCameraControl())
-        .thenAnswer((_) async => MockCameraControl());
+        .thenAnswer((_) async => mockCameraControl);
 
     for (final FlashMode flashMode in FlashMode.values) {
       await camera.setFlashMode(cameraId, flashMode);
@@ -1014,6 +1015,7 @@ void main() {
         continue;
       }
 
+      verifyNever(mockCameraControl.enableTorch(true));
       expect(camera.torchEnabled, isFalse);
       await camera.takePicture(cameraId);
       verify(camera.imageCapture!.setFlashMode(expectedFlashMode));
@@ -1036,7 +1038,8 @@ void main() {
     expect(camera.torchEnabled, isTrue);
   });
 
-  test('setFlashMode turns off torch mode as expected', () async {
+  test('setFlashMode turns off torch mode when non-torch flash modes set',
+      () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 33;
     final MockCameraControl mockCameraControl = MockCameraControl();
