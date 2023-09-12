@@ -56,7 +56,7 @@ Calling `setFlashMode` with mode `FlashMode.torch` currently does nothing.
 Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
 `maxVideoDuration` and `streamOptions` is currently unsupported do to the
 limitations of the CameraX library and the platform interface, respectively,
-and thus, will silently be ignored.
+and thus, those parameters will silently be ignored.
 
 ## Contributing
 
