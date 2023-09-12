@@ -1050,7 +1050,6 @@ void main() {
       camera.torchEnabled = true;
       await camera.setFlashMode(cameraId, flashMode);
 
-      int? expectedFlashMode;
       switch (flashMode) {
         case FlashMode.off:
         case FlashMode.auto:
