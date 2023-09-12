@@ -1,3 +1,7 @@
+## 0.6.17+3
+
+* Fixes an incorrect note about SDK versions in the 0.6.17+2 CHANGELOG.md entry.
+
 ## 0.6.17+2
 
 * Adds pub topics to package metadata.
