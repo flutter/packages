@@ -1,10 +1,10 @@
 name: plaform_example
 description: Demonstrates how to use the plaform plugin.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=2.19.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -13,7 +13,6 @@ dependencies:
     path: ../
 
 dev_dependencies:
-  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
 
