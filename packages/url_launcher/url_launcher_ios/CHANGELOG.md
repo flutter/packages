@@ -1,6 +1,9 @@
 ## 6.1.5
 
 * Migrates plugin from objc to swift
+
+## 6.1.5
+
 * Adds pub topics to package metadata.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
