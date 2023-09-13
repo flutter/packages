@@ -252,15 +252,22 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  VideoPlayerController.asset(this.dataSource,
-      {this.package,
-      Future<ClosedCaptionFile>? closedCaptionFile,
-      this.videoPlayerOptions})
-      : _closedCaptionFileFuture = closedCaptionFile,
+  VideoPlayerController.asset(
+    this.dataSource, {
+    this.package,
+    Future<ClosedCaptionFile>? closedCaptionFile,
+    this.videoPlayerOptions,
+    bool isLooping = false,
+    double volume = 1.0,
+  })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.asset,
         formatHint = null,
         httpHeaders = const <String, String>{},
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(VideoPlayerValue(
+          duration: Duration.zero,
+          isLooping: isLooping,
+          volume: volume,
+        ));
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -278,10 +285,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
+    bool isLooping = false,
+    double volume = 1.0,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.network,
         package = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(VideoPlayerValue(
+          duration: Duration.zero,
+          isLooping: isLooping,
+          volume: volume,
+        ));
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -298,34 +311,51 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
+    bool isLooping = false,
+    double volume = 1.0,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = url.toString(),
         dataSourceType = DataSourceType.network,
         package = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(VideoPlayerValue(
+          duration: Duration.zero,
+          isLooping: isLooping,
+          volume: volume,
+        ));
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
   /// This will load the file from a file:// URI constructed from [file]'s path.
   /// [httpHeaders] option allows to specify HTTP headers, mainly used for hls files like (m3u8).
-  VideoPlayerController.file(File file,
-      {Future<ClosedCaptionFile>? closedCaptionFile,
-      this.videoPlayerOptions,
-      this.httpHeaders = const <String, String>{}})
-      : _closedCaptionFileFuture = closedCaptionFile,
+  VideoPlayerController.file(
+    File file, {
+    Future<ClosedCaptionFile>? closedCaptionFile,
+    this.videoPlayerOptions,
+    this.httpHeaders = const <String, String>{},
+    bool isLooping = false,
+    double volume = 1.0,
+  })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
         formatHint = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(VideoPlayerValue(
+          duration: Duration.zero,
+          isLooping: isLooping,
+          volume: volume,
+        ));
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
   ///
   /// This will load the video from the input content-URI.
   /// This is supported on Android only.
-  VideoPlayerController.contentUri(Uri contentUri,
-      {Future<ClosedCaptionFile>? closedCaptionFile, this.videoPlayerOptions})
-      : assert(defaultTargetPlatform == TargetPlatform.android,
+  VideoPlayerController.contentUri(
+    Uri contentUri, {
+    Future<ClosedCaptionFile>? closedCaptionFile,
+    this.videoPlayerOptions,
+    bool isLooping = false,
+    double volume = 1.0,
+  })  : assert(defaultTargetPlatform == TargetPlatform.android,
             'VideoPlayerController.contentUri is only supported on Android.'),
         _closedCaptionFileFuture = closedCaptionFile,
         dataSource = contentUri.toString(),
@@ -333,7 +363,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         package = null,
         formatHint = null,
         httpHeaders = const <String, String>{},
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(VideoPlayerValue(
+          duration: Duration.zero,
+          isLooping: isLooping,
+          volume: volume,
+        ));
 
   /// The URI to the video file. This will be in different formats depending on
   /// the [DataSourceType] of the original video.
@@ -844,6 +878,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
 class _VideoPlayerWithRotation extends StatelessWidget {
   const _VideoPlayerWithRotation({required this.rotation, required this.child});
+
   final int rotation;
   final Widget child;
 

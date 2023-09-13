@@ -1,3 +1,7 @@
+## 2.7.2
+
+* Adds option isLooping and volume to VideoPlayerController constructor
+
 ## 2.7.1
 
 * Adds pub topics to package metadata.
