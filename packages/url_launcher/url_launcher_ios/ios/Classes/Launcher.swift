@@ -9,7 +9,7 @@ protocol Launcher {
     completionHandler completion: ((Bool) -> Void)?)
 }
 
-class UIApplicationLauncher: Launcher {
+final class UIApplicationLauncher: Launcher {
   func canOpenURL(_ url: URL) -> Bool {
     UIApplication.shared.canOpenURL(url)
   }

@@ -5,12 +5,13 @@
 // See also: https://pub.dev/packages/pigeon
 
 import Foundation
+
 #if os(iOS)
-import Flutter
+  import Flutter
 #elseif os(macOS)
-import FlutterMacOS
+  import FlutterMacOS
 #else
-#error("Unsupported platform.")
+  #error("Unsupported platform.")
 #endif
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -22,13 +23,13 @@ private func wrapError(_ error: Any) -> [Any?] {
     return [
       flutterError.code,
       flutterError.message,
-      flutterError.details
+      flutterError.details,
     ]
   }
   return [
     "\(error)",
     "\(type(of: error))",
-    "Stacktrace: \(Thread.callStackSymbols)"
+    "Stacktrace: \(Thread.callStackSymbols)",
   ]
 }
 
@@ -42,10 +43,12 @@ protocol UrlLauncherApi {
   /// Returns true if the URL can definitely be launched.
   func canLaunchUrl(url: String) throws -> Bool
   /// Opens the URL externally, returning true if successful.
-  func launchUrl(url: String, universalLinksOnly: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
+  func launchUrl(
+    url: String, universalLinksOnly: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
   /// Opens the URL in an in-app SFSafariViewController, returning true
   /// when it has loaded successfully.
-  func openUrlInSafariViewController(url: String, completion: @escaping (Result<Bool, Error>) -> Void)
+  func openUrlInSafariViewController(
+    url: String, completion: @escaping (Result<Bool, Error>) -> Void)
   /// Closes the view controller opened by [openUrlInSafariViewController].
   func closeSafariViewController() throws
 }
@@ -56,7 +59,8 @@ class UrlLauncherApiSetup {
   /// Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UrlLauncherApi?) {
     /// Returns true if the URL can definitely be launched.
-    let canLaunchUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UrlLauncherApi.canLaunchUrl", binaryMessenger: binaryMessenger)
+    let canLaunchUrlChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.UrlLauncherApi.canLaunchUrl", binaryMessenger: binaryMessenger)
     if let api = api {
       canLaunchUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
@@ -72,7 +76,8 @@ class UrlLauncherApiSetup {
       canLaunchUrlChannel.setMessageHandler(nil)
     }
     /// Opens the URL externally, returning true if successful.
-    let launchUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UrlLauncherApi.launchUrl", binaryMessenger: binaryMessenger)
+    let launchUrlChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.UrlLauncherApi.launchUrl", binaryMessenger: binaryMessenger)
     if let api = api {
       launchUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
@@ -80,10 +85,10 @@ class UrlLauncherApiSetup {
         let universalLinksOnlyArg = args[1] as! Bool
         api.launchUrl(url: urlArg, universalLinksOnly: universalLinksOnlyArg) { result in
           switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
           }
         }
       }
@@ -92,17 +97,19 @@ class UrlLauncherApiSetup {
     }
     /// Opens the URL in an in-app SFSafariViewController, returning true
     /// when it has loaded successfully.
-    let openUrlInSafariViewControllerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UrlLauncherApi.openUrlInSafariViewController", binaryMessenger: binaryMessenger)
+    let openUrlInSafariViewControllerChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.UrlLauncherApi.openUrlInSafariViewController",
+      binaryMessenger: binaryMessenger)
     if let api = api {
       openUrlInSafariViewControllerChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
         let urlArg = args[0] as! String
         api.openUrlInSafariViewController(url: urlArg) { result in
           switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
           }
         }
       }
@@ -110,7 +117,9 @@ class UrlLauncherApiSetup {
       openUrlInSafariViewControllerChannel.setMessageHandler(nil)
     }
     /// Closes the view controller opened by [openUrlInSafariViewController].
-    let closeSafariViewControllerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UrlLauncherApi.closeSafariViewController", binaryMessenger: binaryMessenger)
+    let closeSafariViewControllerChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.UrlLauncherApi.closeSafariViewController",
+      binaryMessenger: binaryMessenger)
     if let api = api {
       closeSafariViewControllerChannel.setMessageHandler { _, reply in
         do {

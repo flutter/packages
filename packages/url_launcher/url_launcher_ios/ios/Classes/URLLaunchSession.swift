@@ -6,7 +6,7 @@ import SafariServices
 
 typealias OpenInSafariVCResponse = (Result<Bool, Error>) -> Void
 
-class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
+final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
 
   private let completion: OpenInSafariVCResponse
   private let url: URL
