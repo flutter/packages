@@ -23,12 +23,18 @@ import UIKit
 /// Note: We don't yet support images from package dependencies (ex.
 /// `AssetImage('icons/heart.png', package: 'my_icons')`).
 
-func flutterImage(withName imageName: String) -> UIImage? {
-    for scale in stride(from: Int(UIScreen.main.scale), through: 1, by: -1) {
-      let scaledImage = imageName.replacingOccurrences(of: ".", with: "@\(scale)x.")
-      return UIImage(named: scaledImage, in: Bundle.main, compatibleWith: nil)
-    }
+func flutterImage(withName name: String) -> UIImage? {
+  let components = name.components(separatedBy: "/")
+  let filename = components.last
+  let path = components.dropLast().joined(separator: "/")
 
-    return UIImage(named: imageName, in: Bundle.main, compatibleWith: nil)
+  for screenScale in stride(from: Int(UIScreen.main.scale), to: 1, by: -1) {
+    let key = FlutterDartProject.lookupKey(forAsset: "\(path)\(screenScale).0x/\(filename!)")
+    if let image = UIImage(named: key, in: Bundle.main, compatibleWith: nil) {
+      return image
+    }
   }
 
+  let key = FlutterDartProject.lookupKey(forAsset: name)
+  return UIImage(named: key, in: Bundle.main, compatibleWith: nil)
+}

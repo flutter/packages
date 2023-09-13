@@ -34,22 +34,26 @@ public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
   }
 
   private func loadImage(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-    guard let arguments = call.arguments as? [Any],
-      let name = arguments.first as? String,
-      let image = flutterImage(withName: name)
-    else {
+    if let name = call.arguments as? [String], let firstItem = name.first {
+      guard let image = flutterImage(withName: firstItem) else {
+        result(nil)
+        return
+      }
+
+      guard let data = image.pngData() else {
+        result(nil)
+        return
+      }
+
+      let imageResult: [String: Any] = [
+        "scale": image.scale,
+        "data": FlutterStandardTypedData(bytes: data),
+      ]
+
+      result(imageResult)
+    } else {
       result(nil)
-      return
     }
-
-    let data = image.pngData()
-
-    let imageResult: [String: Any] = [
-      "scale": image.scale,
-      "data": FlutterStandardTypedData(bytes: data!),
-    ]
-
-    result(imageResult)
   }
 
   private func resolveURL(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
