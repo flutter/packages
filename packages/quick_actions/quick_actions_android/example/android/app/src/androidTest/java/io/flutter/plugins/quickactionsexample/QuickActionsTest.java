@@ -99,7 +99,7 @@ public class QuickActionsTest {
             .filter(s -> s.getId().equals(firstShortcut.getId()))
             .findFirst()
             .get();
-    Intent dynamicShortcutIntent = dynamicShortcut.getIntent();
+    Intent dynamicShortcutIntent = dynamicShortcut.getIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     AtomicReference<QuickActionsTestActivity> initialActivity = new AtomicReference<>();
     scenario.onActivity(initialActivity::set);
     String appReadySentinel = " has launched";
