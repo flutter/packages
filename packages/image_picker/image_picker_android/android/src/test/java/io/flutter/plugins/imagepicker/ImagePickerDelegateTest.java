@@ -467,23 +467,23 @@ public class ImagePickerDelegateTest {
 
   @Test
   public void
-  onActivityResult_whenVideoPickedFromGallery_nullUriFromGetData_finishesWithVideoPath() {
+      onActivityResult_whenVideoPickedFromGallery_nullUriFromGetData_finishesWithVideoPath() {
     setupMockClipData();
 
     when(mockIntent.getData()).thenReturn(null);
 
     Mockito.doAnswer(
-                    invocation -> {
-                      ((Runnable) invocation.getArgument(0)).run();
-                      return null;
-                    })
-            .when(mockExecutor)
-            .execute(any(Runnable.class));
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
     ImagePickerDelegate delegate =
-            createDelegateWithPendingResultAndOptions(null, DEFAULT_VIDEO_OPTIONS);
+        createDelegateWithPendingResultAndOptions(null, DEFAULT_VIDEO_OPTIONS);
 
     delegate.onActivityResult(
-            ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
@@ -520,24 +520,23 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void
-  onActivityResult_whenVideoPickedFromGallery_nullUri_finishesWithNoValidUriError() {
+  public void onActivityResult_whenVideoPickedFromGallery_nullUri_finishesWithNoValidUriError() {
     setupMockClipDataNullUri();
 
     when(mockIntent.getData()).thenReturn(null);
 
     Mockito.doAnswer(
-                    invocation -> {
-                      ((Runnable) invocation.getArgument(0)).run();
-                      return null;
-                    })
-            .when(mockExecutor)
-            .execute(any(Runnable.class));
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
     ImagePickerDelegate delegate =
-            createDelegateWithPendingResultAndOptions(null, DEFAULT_VIDEO_OPTIONS);
+        createDelegateWithPendingResultAndOptions(null, DEFAULT_VIDEO_OPTIONS);
 
     delegate.onActivityResult(
-            ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_VIDEO_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
     @SuppressWarnings("unchecked")
     ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
