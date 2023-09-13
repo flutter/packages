@@ -25,8 +25,6 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
   private final InstanceManager instanceManager;
   private final CameraControlProxy proxy;
 
-  @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
-
   /** Proxy for constructors and static method of {@link CameraControl}. */
   @VisibleForTesting
   public static class CameraControlProxy {
