@@ -51,10 +51,12 @@ Calling `setFlashMode` with mode `FlashMode.torch` currently does nothing.
 
 `setZoomLevel` is unimplemented.
 
-### Some video capture functionality \[[Issue #127896][127896], [Issue #126477][126477]\]
+### Setting maximum duration and stream options for video capture
 
-`startVideoCapturing` is unimplemented; use `startVideoRecording` instead.
-`onVideoRecordedEvent` is also unimplemented.
+Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
+`maxVideoDuration` and `streamOptions` is currently unsupported do to the
+limitations of the CameraX library and the platform interface, respectively,
+and thus, those parameters will silently be ignored.
 
 ## Contributing
 

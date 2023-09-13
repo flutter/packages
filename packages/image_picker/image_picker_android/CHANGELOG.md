@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 ## 0.8.7+6
 
 * Fixes NullPointerException on Android 10 devices when using Android Photo Picker.
+=======
+## 0.8.8
+
+* Adds additional category II and III exif tags to be copied during photo resize.
+>>>>>>> 06cd9e967b9f17da3eea812a6f85394f62278aec
 
 ## 0.8.7+5
 
