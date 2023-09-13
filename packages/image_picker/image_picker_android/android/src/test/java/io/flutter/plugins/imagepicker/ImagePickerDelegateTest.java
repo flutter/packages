@@ -472,6 +472,38 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
+  public void
+      onActivityResult_whenImagePickedFromGallery_nullUri_andNoResizeNeeded_finishesWithNoValidUriError() {
+    ClipData mockClipData = mock(ClipData.class);
+    ClipData.Item mockItem = mock(ClipData.Item.class);
+    when(mockItem.getUri()).thenReturn(null);
+    when(mockClipData.getItemCount()).thenReturn(1);
+    when(mockClipData.getItemAt(0)).thenReturn(mockItem);
+    when(mockIntent.getClipData()).thenReturn(mockClipData);
+
+    when(mockIntent.getData()).thenReturn(null);
+
+    Mockito.doAnswer(
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
+    ImagePickerDelegate delegate =
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
+
+    delegate.onActivityResult(
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_image_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected image.", errorCaptor.getValue().getMessage());
+    verifyNoMoreInteractions(mockResult);
+  }
+
+  @Test
   public void onActivityResult_whenImagePickedFromGallery_andNoResizeNeeded_storesImageInCache() {
     Mockito.doAnswer(
             invocation -> {
