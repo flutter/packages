@@ -1,3 +1,7 @@
+## 0.8.8+1
+
+* Fixes NullPointerException on pre-Android 13 devices when using Android Photo Picker to pick image or video.
+
 ## 0.8.8
 
 * Adds additional category II and III exif tags to be copied during photo resize.
