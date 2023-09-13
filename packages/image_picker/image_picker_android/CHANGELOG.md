@@ -1,3 +1,7 @@
+## 0.8.8
+
+* Adds additional category II and III exif tags to be copied during photo resize.
+
 ## 0.8.7+5
 
 * Adds pub topics to package metadata.
