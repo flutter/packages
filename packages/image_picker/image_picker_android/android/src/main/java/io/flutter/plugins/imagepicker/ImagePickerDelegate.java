@@ -630,15 +630,17 @@ public class ImagePickerDelegate
 
   private void handleChooseImageResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_OK && data != null) {
-      Uri uri;
-      // On Android 10 devices using Android Photo Picker, the Uri from getData() could be null.
+      Uri uri = null;
+      // On several pre-Android 13 devices using Android Photo Picker, the Uri from getData() could be null.
       if (data.getData() != null) {
         uri = data.getData();
       } else if (data.getClipData() != null && data.getClipData().getItemCount() == 1) {
         uri = data.getClipData().getItemAt(0).getUri();
-      } else {
-        finishWithSuccess(null);
-        return;
+
+        if (uri == null) {
+          finishWithError("no_valid_image_uri", "Cannot find the selected image.");
+          return;
+        }
       }
 
       String path = fileUtils.getPathFromUri(activity, uri);
