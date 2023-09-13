@@ -204,6 +204,21 @@ void main() {
       expect(command.plugins, unorderedEquals(<String>[]));
     });
 
+    test('filter-packages-to accepts config files', () async {
+      final RepositoryPackage plugin1 =
+          createFakePlugin('plugin1', packagesDir);
+      createFakePlugin('plugin2', packagesDir);
+      final File configFile = packagesDir.childFile('exclude.yaml');
+      configFile.writeAsStringSync('- plugin1');
+
+      await runCapturingPrint(runner, <String>[
+        'sample',
+        '--packages=plugin1,plugin2',
+        '--filter-packages-to=${configFile.path}'
+      ]);
+      expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+    });
+
     test(
         'explicitly specifying the plugin (group) name of a federated plugin '
         'should include all plugins in the group', () async {
@@ -765,7 +780,7 @@ packages/plugin1/plugin1/plugin1.dart
         expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
       });
 
-      test('--exclude flag works with --run-on-changed-packages', () async {
+      test('honors --exclude flag', () async {
         processRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
@@ -781,6 +796,29 @@ packages/plugin3/plugin3.dart
         await runCapturingPrint(runner, <String>[
           'sample',
           '--exclude=plugin2,plugin3',
+          '--base-sha=main',
+          '--run-on-changed-packages'
+        ]);
+
+        expect(command.plugins, unorderedEquals(<String>[plugin1.path]));
+      });
+
+      test('honors --filter-packages-to flag', () async {
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/plugin1/plugin1.dart
+packages/plugin2/ios/plugin2.m
+packages/plugin3/plugin3.dart
+''')),
+        ];
+        final RepositoryPackage plugin1 =
+            createFakePlugin('plugin1', packagesDir.childDirectory('plugin1'));
+        createFakePlugin('plugin2', packagesDir);
+        createFakePlugin('plugin3', packagesDir);
+        await runCapturingPrint(runner, <String>[
+          'sample',
+          '--filter-packages-to=plugin1',
           '--base-sha=main',
           '--run-on-changed-packages'
         ]);

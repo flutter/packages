@@ -1764,6 +1764,49 @@ abstract class TestPermissionRequestHostApi {
   }
 }
 
+/// Host API for `CustomViewCallback`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+abstract class TestCustomViewCallbackHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles Dart method `CustomViewCallback.onCustomViewHidden`.
+  void onCustomViewHidden(int identifier);
+
+  static void setup(TestCustomViewCallbackHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.CustomViewCallbackHostApi.onCustomViewHidden',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.CustomViewCallbackHostApi.onCustomViewHidden was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.CustomViewCallbackHostApi.onCustomViewHidden was null, expected non-null int.');
+          api.onCustomViewHidden(arg_identifier!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
 /// Host API for `GeolocationPermissionsCallback`.
 ///
 /// This class may handle instantiating and adding native object instances that
