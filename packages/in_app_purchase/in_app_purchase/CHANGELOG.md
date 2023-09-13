@@ -1,5 +1,10 @@
-## NEXT
+## 3.1.10
 
+* Updates example code for current versions of Flutter.
+
+## 3.1.9
+
+* Adds pub topics to package metadata.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 3.1.8

@@ -20,6 +20,7 @@ class CMakeProject {
     required this.buildMode,
     this.processRunner = const ProcessRunner(),
     this.platform = const LocalPlatform(),
+    this.arch,
   });
 
   /// The directory of a Flutter project to run Gradle commands in.
@@ -30,6 +31,11 @@ class CMakeProject {
 
   /// The platform that commands are being run on.
   final Platform platform;
+
+  /// The architecture subdirectory of the build.
+  // TODO(stuartmorgan): Make this non-nullable once Flutter 3.13 is no longer
+  // supported, since at that point there will always be a subdirectory.
+  final String? arch;
 
   /// The build mode (e.g., Debug, Release).
   ///
@@ -46,14 +52,13 @@ class CMakeProject {
   Directory get buildDirectory {
     Directory buildDir =
         flutterProject.childDirectory('build').childDirectory(_platformDirName);
+    if (arch != null) {
+      buildDir = buildDir.childDirectory(arch!);
+    }
     if (platform.isLinux) {
-      buildDir = buildDir
-          // TODO(stuartmorgan): Support arm64 if that ever becomes a supported
-          // CI configuration for the repository.
-          .childDirectory('x64')
-          // Linux uses a single-config generator, so the base build directory
-          // includes the configuration.
-          .childDirectory(buildMode.toLowerCase());
+      // Linux uses a single-config generator, so the base build directory
+      // includes the configuration.
+      buildDir = buildDir.childDirectory(buildMode.toLowerCase());
     }
     return buildDir;
   }

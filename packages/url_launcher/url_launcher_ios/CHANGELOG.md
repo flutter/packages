@@ -1,7 +1,7 @@
 ## 6.1.5
 
 * Migrates plugin from objc to swift
-* Migrates unit tests and UI test from objc to swift
+* Adds pub topics to package metadata.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 6.1.4

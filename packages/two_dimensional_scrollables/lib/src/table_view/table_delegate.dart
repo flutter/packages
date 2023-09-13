@@ -124,7 +124,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     required int rowCount,
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
-    super.addRepaintBoundaries = false,
+    super.addRepaintBoundaries,
     required TableViewCellBuilder cellBuilder,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,

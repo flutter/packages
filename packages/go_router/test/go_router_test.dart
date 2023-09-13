@@ -309,6 +309,53 @@ void main() {
       expect(find.byKey(settings), findsOneWidget);
     });
 
+    testWidgets('can correctly pop stacks of repeated pages',
+        (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/#132229.
+
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: HomeScreen()),
+        ),
+        GoRoute(
+          path: '/page1',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page1Screen()),
+        ),
+        GoRoute(
+          path: '/page2',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page2Screen()),
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, navigatorKey: navKey);
+      expect(find.byType(HomeScreen), findsOneWidget);
+
+      router.push('/page1');
+      router.push('/page2');
+      router.push('/page1');
+      router.push('/page2');
+      await tester.pumpAndSettle();
+
+      expect(find.byType(HomeScreen), findsNothing);
+      expect(find.byType(Page1Screen), findsNothing);
+      expect(find.byType(Page2Screen), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+
+      final List<RouteMatch> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches.length, 4);
+      expect(find.byType(HomeScreen), findsNothing);
+      expect(find.byType(Page1Screen), findsOneWidget);
+      expect(find.byType(Page2Screen), findsNothing);
+    });
+
     testWidgets('match sub-route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(

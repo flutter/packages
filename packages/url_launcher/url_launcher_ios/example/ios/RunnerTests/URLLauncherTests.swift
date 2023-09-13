@@ -7,42 +7,51 @@ import XCTest
 
 @testable import url_launcher_ios
 
-final private class URLLauncherTests: XCTestCase {
-  var plugin: URLLauncherPlugin!
-  var launcher: FakeLauncher!
+final class URLLauncherTests: XCTestCase {
 
-  override func setUp() {
-    launcher = FakeLauncher()
-    plugin = URLLauncherPlugin(launcher: launcher, binaryMessenger: FakeFlutterBinaryMessenger())
+  private func createPlugin() -> FLTURLLauncherPlugin {
+    let launcher = FakeLauncher()
+    return FLTURLLauncherPlugin(launcher: launcher)
+  }
+
+  private func createPlugin(launcher: FakeLauncher) -> FLTURLLauncherPlugin {
+    FLTURLLauncherPlugin(launcher: launcher)
   }
 
   func testCanLaunchSuccess() {
-    let result = plugin.canLaunchUrl(url: "good://url")
+    var error: FlutterError?
+    let result = createPlugin().canLaunchURL("good://url", error: &error)
 
-    XCTAssertTrue(result)
+    XCTAssertNotNil(result)
+    XCTAssertTrue(result?.boolValue ?? false)
+    XCTAssertNil(error)
   }
 
   func testCanLaunchFailure() {
-    let result = plugin.canLaunchUrl(url: "bad://url")
+    var error: FlutterError?
+    let result = createPlugin().canLaunchURL("bad://url", error: &error)
 
-    XCTAssertFalse(result)
+    XCTAssertNotNil(result)
+    XCTAssertFalse(result?.boolValue ?? true)
   }
 
   func testCanLaunchFailureWithInvalidURL() {
-    let result = plugin.canLaunchUrl(url: "urls can't have spaces")
+    var error: FlutterError?
+    let result = createPlugin().canLaunchURL("urls can't have spaces", error: &error)
 
-    XCTAssertFalse(result)
+    XCTAssertNil(result)
+    XCTAssertNotNil(error)
+    XCTAssertEqual(error?.code, "argument_error")
+    XCTAssertEqual(error?.message, "Unable to parse URL")
+    XCTAssertEqual(error?.details as? String, "Provided URL: urls can't have spaces")
   }
 
   func testLaunchSuccess() {
     let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "good://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
+    createPlugin().launchURL("good://url", universalLinksOnly: false) { result, error in
+      XCTAssertNotNil(result)
+      XCTAssertTrue(result?.boolValue ?? false)
+      XCTAssertNil(error)
       expectation.fulfill()
     }
 
@@ -51,13 +60,11 @@ final private class URLLauncherTests: XCTestCase {
 
   func testLaunchFailure() {
     let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "bad://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let success):
-        XCTAssertFalse(success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
+
+    createPlugin().launchURL("bad://url", universalLinksOnly: false) { result, error in
+      XCTAssertNotNil(result)
+      XCTAssertFalse(result?.boolValue ?? true)
+      XCTAssertNil(error)
       expectation.fulfill()
     }
 
@@ -66,16 +73,14 @@ final private class URLLauncherTests: XCTestCase {
 
   func testLaunchFailureWithInvalidURL() {
     let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
-      switch result {
-      case .success(_):
-        XCTFail("Expected an error")
-      case .failure(let error):
-        let generalError = error as! GeneralError
-        XCTAssertEqual(generalError.code, "argument_error")
-        XCTAssertEqual(generalError.message, "Unable to parse URL")
-        XCTAssertEqual(generalError.details, "Provided URL: urls can't have spaces")
-      }
+
+    createPlugin().launchURL("urls can't have spaces", universalLinksOnly: false) { result, error in
+      XCTAssertNil(result)
+      XCTAssertNotNil(error)
+      XCTAssertEqual(error?.code, "argument_error")
+      XCTAssertEqual(error?.message, "Unable to parse URL")
+      XCTAssertEqual(error?.details as? String, "Provided URL: urls can't have spaces")
+
       expectation.fulfill()
     }
 
@@ -83,14 +88,12 @@ final private class URLLauncherTests: XCTestCase {
   }
 
   func testLaunchWithoutUniversalLinks() {
+    let launcher = FakeLauncher()
+    let plugin = createPlugin(launcher: launcher)
+
     let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "good://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
+    plugin.launchURL("good://url", universalLinksOnly: false) { result, error in
+      XCTAssertNil(error)
       expectation.fulfill()
     }
 
@@ -99,14 +102,13 @@ final private class URLLauncherTests: XCTestCase {
   }
 
   func testLaunchWithUniversalLinks() {
+    let launcher = FakeLauncher()
+    let plugin = createPlugin(launcher: launcher)
+
     let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "good://url", universalLinksOnly: true) { result in
-      switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
+
+    plugin.launchURL("good://url", universalLinksOnly: true) { result, error in
+      XCTAssertNil(error)
       expectation.fulfill()
     }
 
@@ -116,34 +118,18 @@ final private class URLLauncherTests: XCTestCase {
 
 }
 
-final fileprivate class FakeLauncher: Launcher {
+final private class FakeLauncher: NSObject, FULLauncher {
   var passedOptions: [UIApplication.OpenExternalURLOptionsKey: Any]?
 
-  func canOpenURL(_ url: URL) -> Bool {
+  func canOpen(_ url: URL) -> Bool {
     return url.scheme == "good"
   }
 
-  func openURL(
+  func open(
     _ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any] = [:],
     completionHandler: ((Bool) -> Void)? = nil
   ) {
     self.passedOptions = options
     completionHandler?(url.scheme == "good")
   }
-}
-
-final fileprivate class FakeFlutterBinaryMessenger: NSObject, FlutterBinaryMessenger {
-  func send(onChannel channel: String, message: Data?) {}
-
-  func send(
-    onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil
-  ) {}
-
-  func setMessageHandlerOnChannel(
-    _ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
-  ) -> FlutterBinaryMessengerConnection {
-    123
-  }
-
-  func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
 }

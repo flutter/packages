@@ -17,6 +17,7 @@ const LatLng _kInitialMapCenter = LatLng(0, 0);
 const double _kInitialZoomLevel = 5;
 const CameraPosition _kInitialCameraPosition =
     CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
+const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
 void googleMapsTests() {
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
@@ -935,6 +936,14 @@ void googleMapsTests() {
     final ExampleGoogleMapController controller =
         await controllerCompleter.future;
 
+    await tester.pumpAndSettle();
+
+    // TODO(mossmana): Adding this delay addresses
+    // https://github.com/flutter/flutter/issues/131783. It may be related
+    // to https://github.com/flutter/flutter/issues/54758 and should be
+    // re-evaluated when that issue is fixed.
+    await Future<void>.delayed(const Duration(seconds: 1));
+
     bool iwVisibleStatus =
         await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
@@ -952,9 +961,7 @@ void googleMapsTests() {
     await controller.hideMarkerInfoWindow(marker.markerId);
     iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
-  },
-      // TODO(camsim99): Fix https://github.com/flutter/flutter/issues/131783.
-      skip: true);
+  });
 
   testWidgets('fromAssetImage', (WidgetTester tester) async {
     const double pixelRatio = 2;
@@ -1176,6 +1183,32 @@ void googleMapsTests() {
           await inspector.getTileOverlayInfo(tileOverlay1.mapsId, mapId: mapId);
 
       expect(tileOverlayInfo1, isNull);
+    },
+  );
+
+  testWidgets(
+    'testCloudMapId',
+    (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ExampleGoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            onMapCreated: (ExampleGoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+            cloudMapId: _kCloudMapId,
+          ),
+        ),
+      );
+
+      // Await mapIdCompleter to finish to make sure map can be created with styledMapId
+      // Styled map
+      await mapIdCompleter.future;
     },
   );
 }

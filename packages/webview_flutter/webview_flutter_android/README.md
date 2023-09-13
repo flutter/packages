@@ -36,7 +36,7 @@ This can be configured for versions >=23 with
 `AndroidWebViewWidgetCreationParams.displayWithHybridComposition`. See https://pub.dev/packages/webview_flutter#platform-specific-features
 for more details on setting platform-specific features in the main plugin.
 
-### External Native API
+## External Native API
 
 The plugin also provides a native API accessible by the native code of Android applications or
 packages. This API follows the convention of breaking changes of the Dart API, which means that any
@@ -50,6 +50,27 @@ Java:
 
 ```java
 import io.flutter.plugins.webviewflutter.WebViewFlutterAndroidExternalApi;
+```
+
+## Fullscreen Video
+
+To display a video as fullscreen, an app must manually handle the notification that the current page
+has entered fullscreen mode. This can be done by calling
+`AndroidWebViewController.setCustomWidgetCallbacks`. Below is an example implementation.
+
+<?code-excerpt "example/lib/main.dart (fullscreen_example)"?>
+```dart
+androidController.setCustomWidgetCallbacks(
+  onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      builder: (BuildContext context) => widget,
+      fullscreenDialog: true,
+    ));
+  },
+  onHideCustomWidget: () {
+    Navigator.of(context).pop();
+  },
+);
 ```
 
 ## Contributing
