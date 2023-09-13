@@ -714,7 +714,20 @@ public class ImagePickerDelegate
 
   private void handleChooseVideoResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_OK && data != null) {
-      String path = fileUtils.getPathFromUri(activity, data.getData());
+      Uri uri = null;
+      // On several pre-Android 13 devices using Android Photo Picker, the Uri from getData() could be null.
+      if (data.getData() != null) {
+        uri = data.getData();
+      } else if (data.getClipData() != null && data.getClipData().getItemCount() == 1) {
+        uri = data.getClipData().getItemAt(0).getUri();
+
+        if (uri == null) {
+          finishWithError("no_valid_video_uri", "Cannot find the selected video.");
+          return;
+        }
+      }
+
+      String path = fileUtils.getPathFromUri(activity, uri);
       handleVideoResult(path);
       return;
     }
