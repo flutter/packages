@@ -12,7 +12,7 @@ class IosPlatformImagesTests: XCTestCase {
   func testHandleMethodCall_loadImage() {
     let assetName = "flutter"
 
-    let call = FlutterMethodCall(methodName: "loadImage", arguments: [assetName])
+    let call = FlutterMethodCall(methodName: "loadImage", arguments: assetName)
     let mockChannel = MockMethodChannel()
     let plugin = IosPlatformImagesPlugin(channel: mockChannel)
 
