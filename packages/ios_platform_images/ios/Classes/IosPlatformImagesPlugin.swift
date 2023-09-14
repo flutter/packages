@@ -54,13 +54,13 @@ public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
     }
 
     let name = args[0]
-    let extesnsionName = args.count > 1 && args[1] != nil ? args[1] : nil
+    let extensionName = args.count > 1 && args[1] != nil ? args[1] : nil
 
-    guard let url = Bundle.main.url(forResource: name, withExtension: extesnsionName) else {
+    guard let url = Bundle.main.url(forResource: name, withExtension: extensionName) else {
       return result(nil)
     }
       
-    result(url)
+    result(url.absoluteString)
 
   }
 
