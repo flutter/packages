@@ -4,7 +4,7 @@
 
 import Flutter
 import Foundation
-import UIKit
+import SwiftUI
 
 /// Loads a UIImage from the embedded Flutter project's assets.
 ///
@@ -23,13 +23,12 @@ import UIKit
 /// Note: We don't yet support images from package dependencies (ex.
 /// `AssetImage('icons/heart.png', package: 'my_icons')`).
 
-func flutterImage(withName name: String) -> UIImage? {
-  let components = name.components(separatedBy: "/")
-  let filename = components.last
-  let path = components.dropLast().joined(separator: "/")
+func flutterImageWithName(withName name: String) -> UIImage? {
+  let filename = (name as NSString).lastPathComponent
+  let path = (name as NSString).deletingLastPathComponent
 
   for screenScale in stride(from: Int(UIScreen.main.scale), to: 1, by: -1) {
-    let key = FlutterDartProject.lookupKey(forAsset: "\(path)\(screenScale).0x/\(filename!)")
+    let key = FlutterDartProject.lookupKey(forAsset: "\(path)/\(screenScale).0x/\(filename)")
     if let image = UIImage(named: key, in: Bundle.main, compatibleWith: nil) {
       return image
     }
