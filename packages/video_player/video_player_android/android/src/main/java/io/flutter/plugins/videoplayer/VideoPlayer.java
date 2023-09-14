@@ -8,6 +8,7 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.view.Surface;
@@ -40,6 +41,7 @@ import com.mux.stats.sdk.core.model.CustomerVideoData;
 import com.mux.stats.sdk.core.model.CustomerViewData;
 import com.mux.stats.sdk.core.model.CustomerViewerData;
 import com.mux.stats.sdk.muxstats.MuxStatsExoPlayer;
+import android.content.res.Configuration;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
@@ -186,6 +188,9 @@ final class VideoPlayer {
   //initializing MUX Data Analytics for ExoPlayer
   private void initializeMUXDataAnalytics(Context context, String videoURL) {
 
+    Resources resources = context.getResources(); // Use your context to get resources
+    boolean isTablet = isTablet(resources);
+
     CustomerData customerData = new CustomerData();
     customerData.setCustomerVideoData(new CustomerVideoData());
     customerData.getCustomerVideoData().setVideoTitle(
@@ -197,7 +202,7 @@ final class VideoPlayer {
     customerData.getCustomerViewData().setViewSessionId("sessionID");
 
     customerData.setCustomerViewerData(new CustomerViewerData());
-    customerData.getCustomerViewerData().setMuxViewerDeviceCategory("Mobile");
+    customerData.getCustomerViewerData().setMuxViewerDeviceCategory(isTablet ? "Android Tablet" : "Android Mobile");
     customerData.getCustomerViewerData().setMuxViewerDeviceManufacturer(Build.MANUFACTURER);
     customerData.getCustomerViewerData().setMuxViewerOsVersion(Build.VERSION.RELEASE);
 
@@ -216,6 +221,11 @@ final class VideoPlayer {
 
     muxStatsExoPlayer = new MuxStatsExoPlayer(context, "5h5v06ok3neps8k66b1dppton", exoPlayer, customerData);
     muxStatsExoPlayer.setPlayerView(playerView);
+  }
+
+  private boolean isTablet(Resources resources) {
+    int screenLayout = resources.getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+    return screenLayout == Configuration.SCREENLAYOUT_SIZE_LARGE || screenLayout == Configuration.SCREENLAYOUT_SIZE_XLARGE;
   }
 
   private void setUpVideoPlayer(ExoPlayer exoPlayer, QueuingEventSink eventSink) {
