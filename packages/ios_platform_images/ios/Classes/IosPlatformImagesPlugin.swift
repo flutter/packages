@@ -48,7 +48,7 @@ public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
     result(imageResult)
   }
 
-    private func resolveURL(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+  private func resolveURL(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
     guard let args = call.arguments as? [String?] else {
       return result(nil)
     }
@@ -59,7 +59,7 @@ public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
     guard let url = Bundle.main.url(forResource: name, withExtension: extensionName) else {
       return result(nil)
     }
-      
+
     result(url.absoluteString)
 
   }
