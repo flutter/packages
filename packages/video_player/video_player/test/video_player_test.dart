@@ -1204,6 +1204,64 @@ void main() {
     expect(colors.bufferedColor, bufferedColor);
     expect(colors.backgroundColor, backgroundColor);
   });
+
+  test('isCompleted updates on video end', () async {
+    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      _localhostUri,
+      videoPlayerOptions: VideoPlayerOptions(),
+    );
+
+    await controller.initialize();
+
+    final StreamController<VideoEvent> fakeVideoEventStream =
+        fakeVideoPlayerPlatform.streams[controller.textureId]!;
+
+    bool currentIsCompleted = controller.value.isCompleted;
+
+    final void Function() isCompletedTest = expectAsync0(() {});
+
+    controller.addListener(() async {
+      if (currentIsCompleted != controller.value.isCompleted) {
+        currentIsCompleted = controller.value.isCompleted;
+        if (controller.value.isCompleted) {
+          isCompletedTest();
+        }
+      }
+    });
+
+    fakeVideoEventStream.add(VideoEvent(eventType: VideoEventType.completed));
+  });
+
+  test('isCompleted updates on video end', () async {
+    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      _localhostUri,
+      videoPlayerOptions: VideoPlayerOptions(),
+    );
+
+    await controller.initialize();
+
+    final StreamController<VideoEvent> fakeVideoEventStream =
+        fakeVideoPlayerPlatform.streams[controller.textureId]!;
+
+    bool currentIsCompleted = controller.value.isCompleted;
+
+    final void Function() isCompletedTest = expectAsync0(() {});
+    final void Function() isNoLongerCompletedTest = expectAsync0(() {});
+    controller.addListener(() async {
+      if (currentIsCompleted != controller.value.isCompleted) {
+        currentIsCompleted = controller.value.isCompleted;
+        if (controller.value.isCompleted) {
+          isCompletedTest();
+          fakeVideoEventStream
+              .add(VideoEvent(eventType: VideoEventType.isPlayingStateUpdate));
+        } else {
+          isNoLongerCompletedTest();
+        }
+      }
+    });
+
+    fakeVideoEventStream.add(VideoEvent(eventType: VideoEventType.completed));
+  });
 }
 
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
