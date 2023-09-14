@@ -23,7 +23,7 @@ tasks:
     args: ["native-test", "--android", "--no-integration", "--exclude=script/configs/exclude_native_unit_android.yaml"]
   - name: native integration tests
     script: script/tool_runner.sh
-    args: ["native-test", "--android", "--no-unit"]
+    args: ["native-test", "--android", "--no-unit", "--filter-packages-to=script/configs/still_requires_api_33_avd_integration.yaml"]
   - name: drive examples
     script: script/tool_runner.sh
-    args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml", "--filter-packages-to=script/configs/still_requires_api_33_avd.yaml"]
+    args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml", "--filter-packages-to=script/configs/still_requires_api_33_avd_drive_examples.yaml"]
