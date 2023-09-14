@@ -13,8 +13,7 @@ class IosPlatformImagesTests: XCTestCase {
     let assetName = "flutter"
 
     let call = FlutterMethodCall(methodName: "loadImage", arguments: assetName)
-    let mockChannel = MockMethodChannel()
-    let plugin = IosPlatformImagesPlugin(channel: mockChannel)
+    let plugin = IosPlatformImagesPlugin()
 
     let resultExpectation = expectation(description: "result block must be called.")
 
@@ -38,8 +37,7 @@ class IosPlatformImagesTests: XCTestCase {
     let assetName = "flutterNotFound"
 
     let call = FlutterMethodCall(methodName: "loadImage", arguments: [assetName])
-    let mockChannel = MockMethodChannel()
-    let plugin = IosPlatformImagesPlugin(channel: mockChannel)
+    let plugin = IosPlatformImagesPlugin()
 
     let resultExpectation = expectation(description: "result block must be called.")
 
@@ -57,8 +55,7 @@ class IosPlatformImagesTests: XCTestCase {
     let assetName = "textfile"
 
     let call = FlutterMethodCall(methodName: "resolveURL", arguments: [assetName])
-    let mockChannel = MockMethodChannel()
-    let plugin = IosPlatformImagesPlugin(channel: mockChannel)
+    let plugin = IosPlatformImagesPlugin()
 
     let resultExpectation = expectation(description: "result block must be called.")
 
@@ -75,9 +72,8 @@ class IosPlatformImagesTests: XCTestCase {
   func testHandleMethodCall_resolveURL_notFound() {
     let assetName = "notFound"
 
-    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [assetName])
-    let mockChannel = MockMethodChannel()
-    let plugin = IosPlatformImagesPlugin(channel: mockChannel)
+    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [assetName, NSNull()])
+    let plugin = IosPlatformImagesPlugin()
 
     let resultExpectation = expectation(description: "result block must be called.")
 

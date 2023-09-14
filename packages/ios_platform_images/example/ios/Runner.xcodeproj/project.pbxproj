@@ -10,7 +10,6 @@
 		0DE21BF72447752100097E3A /* textfile in Resources */ = {isa = PBXBuildFile; fileRef = 0DE21BF62447752100097E3A /* textfile */; };
 		1249487BECEEB37B66E4BD6E /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A79FBC35316559720A400F3 /* libPods-Runner.a */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		31DC4A202AA8BBEB00781E88 /* MockMethodChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31DC4A1F2AA8BBEB00781E88 /* MockMethodChannel.swift */; };
 		31DC4A212AA8CC9300781E88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
@@ -52,7 +51,6 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3153765C2AAA95AD009694AF /* libios_platform_images.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libios_platform_images.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		31DC4A1F2AA8BBEB00781E88 /* MockMethodChannel.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = MockMethodChannel.swift; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		4B56C310C5932F84CD6C17AC /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -94,14 +92,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		31DC4A1E2AA8BBBE00781E88 /* Mocks */ = {
-			isa = PBXGroup;
-			children = (
-				31DC4A1F2AA8BBEB00781E88 /* MockMethodChannel.swift */,
-			);
-			path = Mocks;
-			sourceTree = "<group>";
-		};
 		790F6E36EBDB3EC4A899BEF5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -176,7 +166,6 @@
 		F76AC1BF266713D00040C8BC /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				31DC4A1E2AA8BBBE00781E88 /* Mocks */,
 				F76AC1C0266713D00040C8BC /* IosPlatformImagesTests.swift */,
 				F76AC1C2266713D00040C8BC /* Info.plist */,
 			);
@@ -381,7 +370,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				31DC4A202AA8BBEB00781E88 /* MockMethodChannel.swift in Sources */,
 				F76AC1C1266713D00040C8BC /* IosPlatformImagesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -7,18 +7,12 @@ import Foundation
 
 public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
 
-  private let channel: MethodChannel
-
-  init(channel: MethodChannel) {
-    self.channel = channel
-  }
-
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(
       name: "plugins.flutter.io/ios_platform_images",
       binaryMessenger: registrar.messenger())
 
-    let instance = IosPlatformImagesPlugin(channel: channel)
+    let instance = IosPlatformImagesPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
@@ -54,18 +48,20 @@ public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
     result(imageResult)
   }
 
-  private func resolveURL(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-    if let args = call.arguments as? [String?] {
-      let name = args[0]
-      let extensionName = args.count == 2 ? args[1] : nil
-
-      if let url = Bundle.main.url(forResource: name, withExtension: extensionName) {
-        result(url.absoluteString)
-      } else {
-        result(nil)
-      }
-    } else {
-      result(nil)
+    private func resolveURL(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    guard let args = call.arguments as? [String?] else {
+      return result(nil)
     }
+
+    let name = args[0]
+    let extesnsionName = args.count > 1 && args[1] != nil ? args[1] : nil
+
+    guard let url = Bundle.main.url(forResource: name, withExtension: extesnsionName) else {
+      return result(nil)
+    }
+      
+    result(url)
+
   }
+
 }
