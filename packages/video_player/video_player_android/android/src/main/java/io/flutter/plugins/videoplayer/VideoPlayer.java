@@ -9,6 +9,7 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -28,10 +29,18 @@ import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import com.mux.stats.sdk.core.model.CustomData;
+import com.mux.stats.sdk.core.model.CustomerData;
+import com.mux.stats.sdk.core.model.CustomerVideoData;
+import com.mux.stats.sdk.core.model.CustomerViewData;
+import com.mux.stats.sdk.core.model.CustomerViewerData;
+import com.mux.stats.sdk.muxstats.MuxStatsExoPlayer;
+
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
 import java.util.Arrays;
@@ -64,6 +73,9 @@ final class VideoPlayer {
 
   private DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory();
 
+  private MuxStatsExoPlayer muxStatsExoPlayer = null;
+  private CustomerData customerData = new CustomerData();
+
   VideoPlayer(
       Context context,
       EventChannel eventChannel,
@@ -89,6 +101,8 @@ final class VideoPlayer {
     exoPlayer.prepare();
 
     setUpVideoPlayer(exoPlayer, new QueuingEventSink());
+
+    initializeMUXDataAnalytics(context,uri.toString());
   }
 
   // Constructor used to directly test members of this class.
@@ -167,6 +181,41 @@ final class VideoPlayer {
           throw new IllegalStateException("Unsupported type: " + type);
         }
     }
+  }
+
+  //initializing MUX Data Analytics for ExoPlayer
+  private void initializeMUXDataAnalytics(Context context, String videoURL) {
+
+    CustomerData customerData = new CustomerData();
+    customerData.setCustomerVideoData(new CustomerVideoData());
+    customerData.getCustomerVideoData().setVideoTitle(
+            "STAGE-Android MUX"
+    );
+    customerData.getCustomerVideoData().setVideoSourceUrl(videoURL);
+
+    customerData.setCustomerViewData(new CustomerViewData());
+    customerData.getCustomerViewData().setViewSessionId("sessionID");
+
+    customerData.setCustomerViewerData(new CustomerViewerData());
+    customerData.getCustomerViewerData().setMuxViewerDeviceCategory("Mobile");
+    customerData.getCustomerViewerData().setMuxViewerDeviceManufacturer(Build.MANUFACTURER);
+    customerData.getCustomerViewerData().setMuxViewerOsVersion(Build.VERSION.RELEASE);
+
+    customerData.setCustomData(new CustomData());
+    customerData.getCustomData().setCustomData1("");
+    customerData.getCustomData().setCustomData2("");
+    customerData.getCustomData().setCustomData3("");
+    customerData.getCustomData().setCustomData4("");
+    customerData.getCustomData().setCustomData5("");
+
+
+    //associating the mux stats player to monitor the video player and send analytics
+    // Make sure to monitor the player before calling `prepare` on the ExoPlayer instance
+    StyledPlayerView playerView = new StyledPlayerView(context);
+//    playerView.setPlayer(exoPlayer);
+
+    muxStatsExoPlayer = new MuxStatsExoPlayer(context, "5h5v06ok3neps8k66b1dppton", exoPlayer, customerData);
+    muxStatsExoPlayer.setPlayerView(playerView);
   }
 
   private void setUpVideoPlayer(ExoPlayer exoPlayer, QueuingEventSink eventSink) {
