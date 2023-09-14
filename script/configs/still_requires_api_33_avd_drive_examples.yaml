@@ -1,2 +1,0 @@
-# Running the `drive examples` tests of these packages on an AVD with Android 34 causes failures.
-- path_provider
