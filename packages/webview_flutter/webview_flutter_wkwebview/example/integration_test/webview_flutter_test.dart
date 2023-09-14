@@ -69,47 +69,50 @@ Future<void> main() async {
   testWidgets(
     'WKWebView is released by garbage collection',
     (WidgetTester tester) async {
-      final Completer<void> webViewGCCompleter = Completer<void>();
+      bool aWebViewHasBeenGarbageCollected = false;
 
       late final InstanceManager instanceManager;
       instanceManager =
           InstanceManager(onWeakReferenceRemoved: (int identifier) {
-        final Copyable instance =
-            instanceManager.getInstanceWithWeakReference(identifier)!;
-        if (instance is WKWebView && !webViewGCCompleter.isCompleted) {
-          webViewGCCompleter.complete();
+        if (!aWebViewHasBeenGarbageCollected) {
+          final Copyable instance =
+              instanceManager.getInstanceWithWeakReference(identifier)!;
+          if (instance is WKWebView) {
+            aWebViewHasBeenGarbageCollected = true;
+          }
         }
       });
 
-      await tester.pumpWidget(
-        Builder(
-          builder: (BuildContext context) {
-            return PlatformWebViewWidget(
-              WebKitWebViewWidgetCreationParams(
-                instanceManager: instanceManager,
-                controller: PlatformWebViewController(
-                  WebKitWebViewControllerCreationParams(
-                    instanceManager: instanceManager,
+      // Wait for any WebView to be garbage collected.
+      while (!aWebViewHasBeenGarbageCollected) {
+        await tester.pumpWidget(
+          Builder(
+            builder: (BuildContext context) {
+              return PlatformWebViewWidget(
+                WebKitWebViewWidgetCreationParams(
+                  instanceManager: instanceManager,
+                  controller: PlatformWebViewController(
+                    WebKitWebViewControllerCreationParams(
+                      instanceManager: instanceManager,
+                    ),
                   ),
                 ),
-              ),
-            ).build(context);
-          },
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.pumpWidget(Container());
-
-      // Force garbage collection.
-      await IntegrationTestWidgetsFlutterBinding.instance
-          .watchPerformance(() async {
+              ).build(context);
+            },
+          ),
+        );
         await tester.pumpAndSettle();
-      });
 
-      await expectLater(webViewGCCompleter.future, completes);
+        await tester.pumpWidget(Container());
+
+        // Force garbage collection.
+        await IntegrationTestWidgetsFlutterBinding.instance
+            .watchPerformance(() async {
+          await tester.pumpAndSettle();
+        });
+      }
     },
-    timeout: const Timeout(Duration(seconds: 10)),
+    timeout: const Timeout(Duration(seconds: 30)),
   );
 
   testWidgets('loadRequest', (WidgetTester tester) async {

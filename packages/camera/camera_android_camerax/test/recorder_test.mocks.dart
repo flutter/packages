@@ -5,13 +5,15 @@
 // @dart=2.19
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
+import 'dart:async' as _i7;
 
-import 'package:camera_android_camerax/src/pending_recording.dart' as _i4;
-import 'package:camera_android_camerax/src/recording.dart' as _i2;
+import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i2;
+import 'package:camera_android_camerax/src/pending_recording.dart' as _i6;
+import 'package:camera_android_camerax/src/quality_selector.dart' as _i4;
+import 'package:camera_android_camerax/src/recording.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 
-import 'test_camerax_library.g.dart' as _i3;
+import 'test_camerax_library.g.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -24,8 +26,9 @@ import 'test_camerax_library.g.dart' as _i3;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeRecording_0 extends _i1.SmartFake implements _i2.Recording {
-  _FakeRecording_0(
+class _FakeResolutionInfo_0 extends _i1.SmartFake
+    implements _i2.ResolutionInfo {
+  _FakeResolutionInfo_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -34,11 +37,84 @@ class _FakeRecording_0 extends _i1.SmartFake implements _i2.Recording {
         );
 }
 
+class _FakeRecording_1 extends _i1.SmartFake implements _i3.Recording {
+  _FakeRecording_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+/// A class which mocks [QualitySelector].
+///
+/// See the documentation for Mockito's code generation for more information.
+// ignore: must_be_immutable
+class MockQualitySelector extends _i1.Mock implements _i4.QualitySelector {
+  MockQualitySelector() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  List<_i2.VideoQualityData> get qualityList => (super.noSuchMethod(
+        Invocation.getter(#qualityList),
+        returnValue: <_i2.VideoQualityData>[],
+      ) as List<_i2.VideoQualityData>);
+}
+
+/// A class which mocks [TestInstanceManagerHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestInstanceManagerHostApi extends _i1.Mock
+    implements _i5.TestInstanceManagerHostApi {
+  MockTestInstanceManagerHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void clear() => super.noSuchMethod(
+        Invocation.method(
+          #clear,
+          [],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
+/// A class which mocks [TestFallbackStrategyHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestFallbackStrategyHostApi extends _i1.Mock
+    implements _i5.TestFallbackStrategyHostApi {
+  MockTestFallbackStrategyHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void create(
+    int? identifier,
+    _i2.VideoQuality? quality,
+    _i2.VideoResolutionFallbackRule? fallbackRule,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #create,
+          [
+            identifier,
+            quality,
+            fallbackRule,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [TestRecorderHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestRecorderHostApi extends _i1.Mock
-    implements _i3.TestRecorderHostApi {
+    implements _i5.TestRecorderHostApi {
   MockTestRecorderHostApi() {
     _i1.throwOnMissingStub(this);
   }
@@ -48,6 +124,7 @@ class MockTestRecorderHostApi extends _i1.Mock
     int? identifier,
     int? aspectRatio,
     int? bitRate,
+    int? qualitySelectorId,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -56,6 +133,7 @@ class MockTestRecorderHostApi extends _i1.Mock
             identifier,
             aspectRatio,
             bitRate,
+            qualitySelectorId,
           ],
         ),
         returnValueForMissingStub: null,
@@ -93,46 +171,79 @@ class MockTestRecorderHostApi extends _i1.Mock
       ) as int);
 }
 
-/// A class which mocks [TestInstanceManagerHostApi].
+/// A class which mocks [TestQualitySelectorHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i3.TestInstanceManagerHostApi {
-  MockTestInstanceManagerHostApi() {
+class MockTestQualitySelectorHostApi extends _i1.Mock
+    implements _i5.TestQualitySelectorHostApi {
+  MockTestQualitySelectorHostApi() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  void clear() => super.noSuchMethod(
+  void create(
+    int? identifier,
+    List<_i2.VideoQualityData?>? videoQualityDataList,
+    int? fallbackStrategyId,
+  ) =>
+      super.noSuchMethod(
         Invocation.method(
-          #clear,
-          [],
+          #create,
+          [
+            identifier,
+            videoQualityDataList,
+            fallbackStrategyId,
+          ],
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  _i2.ResolutionInfo getResolution(
+    int? cameraInfoId,
+    _i2.VideoQuality? quality,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getResolution,
+          [
+            cameraInfoId,
+            quality,
+          ],
+        ),
+        returnValue: _FakeResolutionInfo_0(
+          this,
+          Invocation.method(
+            #getResolution,
+            [
+              cameraInfoId,
+              quality,
+            ],
+          ),
+        ),
+      ) as _i2.ResolutionInfo);
 }
 
 /// A class which mocks [PendingRecording].
 ///
 /// See the documentation for Mockito's code generation for more information.
 // ignore: must_be_immutable
-class MockPendingRecording extends _i1.Mock implements _i4.PendingRecording {
+class MockPendingRecording extends _i1.Mock implements _i6.PendingRecording {
   MockPendingRecording() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.Future<_i2.Recording> start() => (super.noSuchMethod(
+  _i7.Future<_i3.Recording> start() => (super.noSuchMethod(
         Invocation.method(
           #start,
           [],
         ),
-        returnValue: _i5.Future<_i2.Recording>.value(_FakeRecording_0(
+        returnValue: _i7.Future<_i3.Recording>.value(_FakeRecording_1(
           this,
           Invocation.method(
             #start,
             [],
           ),
         )),
-      ) as _i5.Future<_i2.Recording>);
+      ) as _i7.Future<_i3.Recording>);
 }

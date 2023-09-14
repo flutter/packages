@@ -1,3 +1,21 @@
+## 0.5.4+2
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 0.5.4+1
+
+* Adds pub topics to package metadata.
+
+## 0.5.4
+
+* Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.5.3
+
+* Initial support for custom overlays. [#98596](https://github.com/flutter/flutter/issues/98596).
+
 ## 0.5.2
 
 * Adds options for gesture handling and tilt controls.

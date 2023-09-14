@@ -10,7 +10,7 @@ class PolygonController {
   PolygonController({
     required gmaps.Polygon polygon,
     bool consumeTapEvents = false,
-    ui.VoidCallback? onTap,
+    VoidCallback? onTap,
   })  : _polygon = polygon,
         _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {

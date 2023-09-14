@@ -2,11 +2,10 @@ name: url_launcher_android
 description: Android implementation of the url_launcher plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+url_launcher%22
-version: 6.0.37
-
+version: 6.1.0
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-  flutter: ">=3.3.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
 
 flutter:
   plugin:
@@ -29,3 +28,9 @@ dev_dependencies:
   pigeon: ^10.0.0
   plugin_platform_interface: ^2.0.0
   test: ^1.16.3
+
+topics:
+  - links
+  - os-integration
+  - url-launcher
+  - urls
