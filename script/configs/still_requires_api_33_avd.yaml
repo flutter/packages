@@ -1,3 +1,4 @@
 # Running the tests of these packages on an AVD with Android 34 causes failures.
 - file_selector
 - path_provider
+- quick_actions
