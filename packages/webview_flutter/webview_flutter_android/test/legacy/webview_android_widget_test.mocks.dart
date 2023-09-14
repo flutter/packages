@@ -280,6 +280,14 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<String> getUserAgentString() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgentString,
+          [],
+        ),
+        returnValue: _i5.Future<String>.value(''),
+      ) as _i5.Future<String>);
+  @override
   _i2.WebSettings copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,

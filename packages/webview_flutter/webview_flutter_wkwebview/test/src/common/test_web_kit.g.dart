@@ -1160,6 +1160,8 @@ abstract class TestWKWebViewHostApi {
 
   void setInspectable(int identifier, bool inspectable);
 
+  String? getCustomUserAgent(int identifier);
+
   static void setup(TestWKWebViewHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1630,6 +1632,29 @@ abstract class TestWKWebViewHostApi {
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setInspectable was null, expected non-null bool.');
           api.setInspectable(arg_identifier!, arg_inspectable!);
           return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent was null, expected non-null int.');
+          final String? output = api.getCustomUserAgent(arg_identifier!);
+          return <Object?>[output];
         });
       }
     }

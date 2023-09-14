@@ -1,3 +1,7 @@
+## 3.8.0
+
+* Adds support for `PlatformWebViewController.getUserAgent`.
+
 ## 3.7.4
 
 * Adds pub topics to package metadata.

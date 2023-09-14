@@ -999,6 +999,8 @@ abstract class TestWebSettingsHostApi {
 
   void setTextZoom(int instanceId, int textZoom);
 
+  String getUserAgentString(int instanceId);
+
   static void setup(TestWebSettingsHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1362,6 +1364,29 @@ abstract class TestWebSettingsHostApi {
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.setTextZoom was null, expected non-null int.');
           api.setTextZoom(arg_instanceId!, arg_textZoom!);
           return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.getUserAgentString',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.getUserAgentString was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.getUserAgentString was null, expected non-null int.');
+          final String output = api.getUserAgentString(arg_instanceId!);
+          return <Object?>[output];
         });
       }
     }

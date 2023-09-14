@@ -739,8 +739,8 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i9.Future<void>);
   @override
   _i9.Future<void> setCustomWidgetCallbacks({
-    _i8.OnShowCustomWidgetCallback? onShowCustomWidget,
-    _i8.OnHideCustomWidgetCallback? onHideCustomWidget,
+    required _i8.OnShowCustomWidgetCallback? onShowCustomWidget,
+    required _i8.OnHideCustomWidgetCallback? onHideCustomWidget,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -750,6 +750,26 @@ class MockAndroidWebViewController extends _i1.Mock
             #onShowCustomWidget: onShowCustomWidget,
             #onHideCustomWidget: onHideCustomWidget,
           },
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<String?> getUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgent,
+          [],
+        ),
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
+  @override
+  _i9.Future<void> setOnConsoleMessage(
+          void Function(_i3.JavaScriptConsoleMessage)? onConsoleMessage) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnConsoleMessage,
+          [onConsoleMessage],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
@@ -1928,6 +1948,15 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<String> getUserAgentString() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgentString,
+          [],
+        ),
+        returnValue: _i9.Future<String>.value(''),
+        returnValueForMissingStub: _i9.Future<String>.value(''),
+      ) as _i9.Future<String>);
   @override
   _i2.WebSettings copy() => (super.noSuchMethod(
         Invocation.method(

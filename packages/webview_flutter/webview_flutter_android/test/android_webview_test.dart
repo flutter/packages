@@ -528,6 +528,13 @@ void main() {
           100,
         ));
       });
+
+      test('getUserAgentString', () async {
+        const String userAgent = 'str';
+        when(mockPlatformHostApi.getUserAgentString(webSettingsInstanceId))
+            .thenReturn(userAgent);
+        expect(await webSettings.getUserAgentString(), userAgent);
+      });
     });
 
     group('JavaScriptChannel', () {

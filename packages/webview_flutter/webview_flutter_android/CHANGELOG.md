@@ -1,3 +1,7 @@
+## 3.11.0
+
+* Adds support for `PlatformWebViewController.getUserAgent`.
+
 ## 3.10.0
 
 * Adds support for playing video in fullscreen. See
@@ -19,7 +23,7 @@
 ## 3.9.2
 
 * Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller or PlatformView
-  implementation flag changes. 
+  implementation flag changes.
 
 ## 3.9.1
 

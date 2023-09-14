@@ -701,6 +701,14 @@ class MockTestWebSettingsHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  String getUserAgentString(int? instanceId) => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgentString,
+          [instanceId],
+        ),
+        returnValue: '',
+      ) as String);
 }
 
 /// A class which mocks [TestWebStorageHostApi].

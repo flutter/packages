@@ -566,6 +566,9 @@ class AndroidWebViewController extends PlatformWebViewController {
     _onShowCustomWidgetCallback = onShowCustomWidget;
     _onHideCustomWidgetCallback = onHideCustomWidget;
   }
+
+  @override
+  Future<String?> getUserAgent() => _webView.settings.getUserAgentString();
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
