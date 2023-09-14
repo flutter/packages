@@ -17,11 +17,20 @@
 - (void)testMultiResolutionImageUsesBest {
   UIImage *image = [UIImage flutterImageWithName:@"assets/multisize.png"];
   XCTAssertNotNil(image);
-  // The 1x image height is is 125px, and the 2x is 250px.
-  XCTAssertEqualWithAccuracy(image.size.height, 250, 0.00001);
+  const double height1x = 125;  // The height of assets/multisize.png.
+  const double height2x = 250;  // The height of assets/2.0x/multisize.png.
+  // Loading assets should get the best available asset for the screen scale when resolution-aware
+  // assets are available (and the example app has 1x and 2x for this asset). See
+  // https://docs.flutter.dev/ui/assets/assets-and-images#resolution-aware
+  if (UIScreen.mainScreen.scale > 1.0) {
+    XCTAssertEqualWithAccuracy(image.size.height, height2x, 0.00001);
+  } else {
+    XCTAssertEqualWithAccuracy(image.size.height, height1x, 0.00001);
+  }
 }
 
 - (void)testSingleResolutionFindsImage {
+  // When there is no resolution-aware asset, the main asset should be used.
   UIImage *image = [UIImage flutterImageWithName:@"assets/monosize.png"];
   XCTAssertNotNil(image);
 }
