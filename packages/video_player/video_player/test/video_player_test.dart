@@ -1069,7 +1069,8 @@ void main() {
           'isBuffering: true, '
           'volume: 0.5, '
           'playbackSpeed: 1.5, '
-          'errorDescription: null)');
+          'errorDescription: null, '
+          'isCompleted: false),');
     });
 
     group('copyWith()', () {
