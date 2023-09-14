@@ -823,7 +823,7 @@ void main() {
       );
     });
 
-    test('getUserAGent', () {
+    test('getUserAgent', () {
       final MockWKWebView mockWebView = MockWKWebView();
 
       final WebKitWebViewController controller = createControllerWithMocks(
