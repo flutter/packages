@@ -104,6 +104,7 @@ final class VideoPlayer {
 
     setUpVideoPlayer(exoPlayer, new QueuingEventSink());
 
+    //Todo- @shreyansh requires check if MUX Data is enabled from the flutter app
     initializeMUXDataAnalytics(context,uri.toString());
   }
 
@@ -188,11 +189,13 @@ final class VideoPlayer {
   //initializing MUX Data Analytics for ExoPlayer
   private void initializeMUXDataAnalytics(Context context, String videoURL) {
 
-    Resources resources = context.getResources(); // Use your context to get resources
-    boolean isTablet = isTablet(resources);
+    Resources resources = context.getResources(); // Using context to get resources
+    boolean isTablet = isTablet(resources); //checking the device type
 
     CustomerData customerData = new CustomerData();
     customerData.setCustomerVideoData(new CustomerVideoData());
+
+    //add the title of the video
     customerData.getCustomerVideoData().setVideoTitle(
             "STAGE-Android MUX"
     );
@@ -200,12 +203,15 @@ final class VideoPlayer {
 
     customerData.setCustomerViewData(new CustomerViewData());
     customerData.getCustomerViewData().setViewSessionId("sessionID");
+//    other parameters can also be set to customer view data in the similar way
+//    customerData.getCustomerViewData().set
 
     customerData.setCustomerViewerData(new CustomerViewerData());
     customerData.getCustomerViewerData().setMuxViewerDeviceCategory(isTablet ? "Android Tablet" : "Android Mobile");
     customerData.getCustomerViewerData().setMuxViewerDeviceManufacturer(Build.MANUFACTURER);
     customerData.getCustomerViewerData().setMuxViewerOsVersion(Build.VERSION.RELEASE);
 
+    //CUSTOM tracking parameters can be sent by attaching to customData (MAX-5)
     customerData.setCustomData(new CustomData());
     customerData.getCustomData().setCustomData1("");
     customerData.getCustomData().setCustomData2("");
@@ -214,12 +220,14 @@ final class VideoPlayer {
     customerData.getCustomData().setCustomData5("");
 
 
-    //associating the mux stats player to monitor the video player and send analytics
-    // Make sure to monitor the player before calling `prepare` on the ExoPlayer instance
+    //we need a separate player view to be associated with the exo player
     StyledPlayerView playerView = new StyledPlayerView(context);
 //    playerView.setPlayer(exoPlayer);
 
     muxStatsExoPlayer = new MuxStatsExoPlayer(context, "5h5v06ok3neps8k66b1dppton", exoPlayer, customerData);
+
+    //associating the mux stats player to monitor the video player and send analytics
+    // Make sure to monitor the player before calling `prepare` on the ExoPlayer instance
     muxStatsExoPlayer.setPlayerView(playerView);
   }
 
