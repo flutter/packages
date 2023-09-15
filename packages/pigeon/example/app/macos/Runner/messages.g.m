@@ -16,6 +16,16 @@
 #error File requires ARC to be enabled.
 #endif
 
+@implementation PGNCodeBox
+- (instancetype)initWithValue:(PGNCode)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 static NSArray *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[
@@ -121,7 +131,7 @@ void PGNExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                             NSObject<PGNExampleHostApi> *api) {
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.ExampleHostApi.getHostLanguage"
+           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage"
         binaryMessenger:binaryMessenger
                   codec:PGNExampleHostApiGetCodec()];
     if (api) {
@@ -139,10 +149,10 @@ void PGNExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-        [[FlutterBasicMessageChannel alloc] initWithName:@"dev.flutter.pigeon.ExampleHostApi.add"
-                                         binaryMessenger:binaryMessenger
-                                                   codec:PGNExampleHostApiGetCodec()];
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add"
+        binaryMessenger:binaryMessenger
+                  codec:PGNExampleHostApiGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(addNumber:toNumber:error:)],
@@ -162,7 +172,7 @@ void PGNExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.ExampleHostApi.sendMessage"
+           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage"
         binaryMessenger:binaryMessenger
                   codec:PGNExampleHostApiGetCodec()];
     if (api) {
@@ -205,7 +215,8 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
 - (void)flutterMethodAString:(nullable NSString *)arg_aString
                   completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.MessageFlutterApi.flutterMethod"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
              binaryMessenger:self.binaryMessenger
                        codec:PGNMessageFlutterApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]

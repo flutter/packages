@@ -46,8 +46,10 @@ typedef GoExceptionHandler = void Function(
 /// `errorPageBuilder` to build a page for the Router if it is not null;
 /// otherwise, it is passed to `errorBuilder` instead. If none of them are
 /// provided, go_router builds a default error screen to show the exception.
-/// See [Error handling](https://pub.dev/documentation/go_router/latest/topics/error-handling.html)
+/// See [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 /// for more details.
+///
+/// To disable automatically requesting focus when new routes are pushed to the navigator, set `requestFocus` to false.
 ///
 /// See also:
 /// * [Configuration](https://pub.dev/documentation/go_router/latest/topics/Configuration-topic.html)
@@ -83,6 +85,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     bool debugLogDiagnostics = false,
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
+    bool requestFocus = true,
   })  : backButtonDispatcher = RootBackButtonDispatcher(),
         assert(
           initialExtra == null || initialLocation != null,
@@ -147,6 +150,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
         ...observers ?? <NavigatorObserver>[],
       ],
       restorationScopeId: restorationScopeId,
+      requestFocus: requestFocus,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
       builderWithNav: (BuildContext context, Widget child) =>

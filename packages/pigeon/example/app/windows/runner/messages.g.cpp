@@ -135,7 +135,9 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api) {
   {
     auto channel = std::make_unique<BasicMessageChannel<>>(
-        binary_messenger, "dev.flutter.pigeon.ExampleHostApi.getHostLanguage",
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi."
+        "getHostLanguage",
         &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
@@ -160,7 +162,9 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   }
   {
     auto channel = std::make_unique<BasicMessageChannel<>>(
-        binary_messenger, "dev.flutter.pigeon.ExampleHostApi.add", &GetCodec());
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+        &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
           [api](const EncodableValue& message,
@@ -197,7 +201,8 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   }
   {
     auto channel = std::make_unique<BasicMessageChannel<>>(
-        binary_messenger, "dev.flutter.pigeon.ExampleHostApi.sendMessage",
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
         &GetCodec());
     if (api != nullptr) {
       channel->SetMessageHandler(
@@ -259,7 +264,9 @@ void MessageFlutterApi::FlutterMethod(
     std::function<void(const std::string&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<BasicMessageChannel<>>(
-      binary_messenger_, "dev.flutter.pigeon.MessageFlutterApi.flutterMethod",
+      binary_messenger_,
+      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi."
+      "flutterMethod",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue(),

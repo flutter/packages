@@ -1,3 +1,24 @@
+## 3.7.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 3.7.3
+
+* Fixes bug where the `PlatformWebViewWidget` was rebuilt unnecessarily.
+
+## 3.7.2
+
+* Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller changes.
+
+## 3.7.1
+
+* Updates pigeon version to `10.1.4`.
+
+## 3.7.0
+
+* Adds support for `WebResouceError.url`.
+
 ## 3.6.3
 
 * Introduces `NSError.toString` for better diagnostics.
@@ -16,7 +37,7 @@
 
 * Adds support to enable debugging of web contents on the latest versions of WebKit. See
   `WebKitWebViewController.setInspectable`.
-  
+
 ## 3.5.0
 
 * Adds support to limit navigation to pages within the app’s domain. See

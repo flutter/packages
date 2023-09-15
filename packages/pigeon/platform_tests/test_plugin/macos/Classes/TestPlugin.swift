@@ -24,6 +24,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   // MARK: HostIntegrationCoreApi implementation
+
   func noop() {
 
   }
@@ -80,9 +81,13 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aMap
   }
 
-   func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper {
+  func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper {
     return wrapper
-   }
+  }
+
+  func echo(_ anEnum: AnEnum) throws -> AnEnum {
+    return anEnum
+  }
 
   func extractNestedNullableString(from wrapper: AllClassesWrapper) -> String? {
     return wrapper.allNullableTypes.aNullableString;
@@ -127,6 +132,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echoNullable(_ aNullableMap: [String?: Any?]?) throws -> [String?: Any?]? {
     return aNullableMap
+  }
+
+  func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum? {
+    return anEnum
   }
 
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -185,6 +194,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(aMap))
   }
 
+  func echoAsync(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void) {
+    completion(.success(anEnum))
+  }
+
   func echoAsyncNullable(_ anInt: Int64?, completion: @escaping (Result<Int64?, Error>) -> Void) {
     completion(.success(anInt))
   }
@@ -217,6 +230,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(aMap))
   }
 
+  func echoAsyncNullable(_ anEnum: AnEnum?, completion: @escaping (Result<AnEnum?, Error>) -> Void) {
+    completion(.success(anEnum))
+  }
+
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {
     flutterAPI.noop() {
       completion(.success(Void()))
@@ -235,6 +252,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func callFlutterEcho(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {
     flutterAPI.echo(everything) { 
+      completion(.success($0)) 
+    }
+  }
+
+  func callFlutterEcho(_ everything: AllNullableTypes?, completion: @escaping (Result<AllNullableTypes?, Error>) -> Void) {
+    flutterAPI.echoNullable(everything) {
       completion(.success($0)) 
     }
   }
@@ -296,6 +319,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
+  func callFlutterEcho(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void) {
+    flutterAPI.echo(anEnum) {
+      completion(.success($0))
+    }
+  }
+
   func callFlutterEchoNullable(_ aBool: Bool?, completion: @escaping (Result<Bool?, Error>) -> Void) {
     flutterAPI.echoNullable(aBool) {
       completion(.success($0))
@@ -336,5 +365,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     flutterAPI.echoNullable(aMap) {
       completion(.success($0))
     }
+  }
+
+  func callFlutterNullableEcho(_ anEnum: AnEnum?, completion: @escaping (Result<AnEnum?, Error>) -> Void) {
+    flutterAPI.echoNullable(anEnum) {
+      completion(.success($0))
+    }    
   }
 }

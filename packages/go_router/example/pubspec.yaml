@@ -4,11 +4,10 @@ version: 3.0.1
 publish_to: none
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-  flutter: ">=3.3.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
 
 dependencies:
-  adaptive_dialog: 1.8.2
   adaptive_navigation: ^0.0.4
   collection: ^1.15.0
   cupertino_icons: ^1.0.2

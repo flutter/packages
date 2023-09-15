@@ -85,7 +85,7 @@ class App extends StatelessWidget {
               builder: (BuildContext context, GoRouterState state) {
                 return FamilyScreen(
                   fid: state.pathParameters['fid']!,
-                  asc: state.queryParameters['sort'] == 'asc',
+                  asc: state.uri.queryParameters['sort'] == 'asc',
                 );
               }),
         ],

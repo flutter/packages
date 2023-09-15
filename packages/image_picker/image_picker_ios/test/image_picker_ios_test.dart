@@ -57,7 +57,7 @@ class _ApiLogger implements TestHostImagePickerApi {
   }
 
   @override
-  Future<List<String?>?> pickMultiImage(
+  Future<List<String?>> pickMultiImage(
     MaxSize maxSize,
     int? imageQuality,
     bool requestFullMetadata,
@@ -68,7 +68,7 @@ class _ApiLogger implements TestHostImagePickerApi {
       'imageQuality': imageQuality,
       'requestFullMetadata': requestFullMetadata,
     }));
-    return returnValue as List<String?>?;
+    return returnValue as List<String?>;
   }
 
   @override
@@ -441,8 +441,8 @@ void main() {
       );
     });
 
-    test('handles a null image path response gracefully', () async {
-      log.returnValue = null;
+    test('returns null for an empty list', () async {
+      log.returnValue = <String>[];
 
       expect(await picker.pickMultiImage(), isNull);
     });
@@ -883,10 +883,9 @@ void main() {
       );
     });
 
-    test('handles a null image path response gracefully', () async {
-      log.returnValue = null;
+    test('returns null for an empty list', () async {
+      log.returnValue = <String>[];
 
-      expect(await picker.getMultiImage(), isNull);
       expect(await picker.getMultiImage(), isNull);
     });
   });
@@ -1643,8 +1642,8 @@ void main() {
       );
     });
 
-    test('handles a null image path response gracefully', () async {
-      log.returnValue = null;
+    test('handles an empty response', () async {
+      log.returnValue = <String>[];
 
       expect(await picker.getMultiImageWithOptions(), isEmpty);
     });

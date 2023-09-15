@@ -2,10 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io' show Directory, File, FileSystemEntity;
-
 import 'package:path/path.dart' as path;
-import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
 import 'functional.dart';
@@ -77,7 +74,11 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeFilePrologue(
-      DartOptions generatorOptions, Root root, Indent indent) {
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
@@ -91,7 +92,11 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeFileImports(
-      DartOptions generatorOptions, Root root, Indent indent) {
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.writeln("import 'dart:async';");
     indent.writeln(
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
@@ -104,7 +109,12 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeEnum(
-      DartOptions generatorOptions, Root root, Indent indent, Enum anEnum) {
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Enum anEnum, {
+    required String dartPackageName,
+  }) {
     indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
@@ -120,7 +130,12 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeDataClass(
-      DartOptions generatorOptions, Root root, Indent indent, Class klass) {
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class klass, {
+    required String dartPackageName,
+  }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
@@ -142,11 +157,25 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         indent.writeln('$datatype ${field.name};');
         indent.newln();
       }
-      writeClassEncode(generatorOptions, root, indent, klass, customClassNames,
-          customEnumNames);
+      writeClassEncode(
+        generatorOptions,
+        root,
+        indent,
+        klass,
+        customClassNames,
+        customEnumNames,
+        dartPackageName: dartPackageName,
+      );
       indent.newln();
-      writeClassDecode(generatorOptions, root, indent, klass, customClassNames,
-          customEnumNames);
+      writeClassDecode(
+        generatorOptions,
+        root,
+        indent,
+        klass,
+        customClassNames,
+        customEnumNames,
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
@@ -167,8 +196,9 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String dartPackageName,
+  }) {
     indent.write('Object encode() ');
     indent.addScoped('{', '}', () {
       indent.write(
@@ -200,8 +230,9 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Indent indent,
     Class klass,
     Set<String> customClassNames,
-    Set<String> customEnumNames,
-  ) {
+    Set<String> customEnumNames, {
+    required String dartPackageName,
+  }) {
     void writeValueDecode(NamedType field, int index) {
       final String resultAt = 'result[$index]';
       final String castCallPrefix = field.type.isNullable ? '?' : '!';
@@ -280,6 +311,7 @@ $resultAt != null
     Api api, {
     String Function(Method)? channelNameFunc,
     bool isMockHandler = false,
+    required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
     final List<String> customEnumNames =
@@ -327,7 +359,7 @@ $resultAt != null
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
             );
             final String channelName = channelNameFunc == null
-                ? makeChannelName(api, func)
+                ? makeChannelName(api, func, dartPackageName)
                 : channelNameFunc(func);
             indent.nest(2, () {
               indent.writeln("'$channelName', codec,");
@@ -379,7 +411,7 @@ $resultAt != null
                     final String leftHandSide = 'final $argType? $argName';
                     if (customEnumNames.contains(arg.type.baseName)) {
                       indent.writeln(
-                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count] as int];');
+                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
                     } else {
                       indent.writeln(
                           '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
@@ -410,10 +442,15 @@ $resultAt != null
                   } else {
                     indent.writeln('final $returnType output = $call;');
                   }
+
                   const String returnExpression = 'output';
+                  final String nullability =
+                      func.returnType.isNullable ? '?' : '';
+                  final String valueExtraction =
+                      isEnum(root, func.returnType) ? '$nullability.index' : '';
                   final String returnStatement = isMockHandler
-                      ? 'return <Object?>[$returnExpression];'
-                      : 'return $returnExpression;';
+                      ? 'return <Object?>[$returnExpression$valueExtraction];'
+                      : 'return $returnExpression$valueExtraction;';
                   indent.writeln(returnStatement);
                 }
               });
@@ -443,13 +480,20 @@ $resultAt != null
   /// a code, a message, and details in that order.
   @override
   void writeHostApi(
-      DartOptions generatorOptions, Root root, Indent indent, Api api) {
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Api api, {
+    required String dartPackageName,
+  }) {
     assert(api.location == ApiLocation.host);
     String codecName = _standardMessageCodec;
     if (getCodecClasses(api, root).isNotEmpty) {
       codecName = _getCodecName(api);
       _writeCodec(indent, codecName, api, root);
     }
+    final List<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toList();
     indent.newln();
     bool first = true;
     addDocumentationComments(
@@ -499,7 +543,8 @@ final BinaryMessenger? _binaryMessenger;
           'Future<${_addGenericTypesNullable(func.returnType)}> ${func.name}($argSignature) async ',
         );
         indent.addScoped('{', '}', () {
-          final String channelName = makeChannelName(api, func);
+          final String channelName =
+              makeChannelName(api, func, dartPackageName);
           indent.writeln(
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
           indent.nest(2, () {
@@ -515,9 +560,21 @@ final BinaryMessenger? _binaryMessenger;
           final String nullHandler = func.returnType.isNullable
               ? (genericCastCall.isEmpty ? '' : '?')
               : '!';
-          final String returnStatement = func.returnType.isVoid
-              ? 'return;'
-              : 'return $nullablyTypedAccessor$nullHandler$genericCastCall;';
+          String returnStatement = 'return';
+          if (customEnumNames.contains(returnType)) {
+            if (func.returnType.isNullable) {
+              returnStatement =
+                  '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
+            } else {
+              returnStatement =
+                  '$returnStatement $returnType.values[$accessor! as int]';
+            }
+          } else if (!func.returnType.isVoid) {
+            returnStatement =
+                '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+          }
+          returnStatement = '$returnStatement;';
+
           indent.format('''
 final List<Object?>? replyList =
 \t\tawait channel.send($sendArgument) as List<Object?>?;
@@ -556,7 +613,13 @@ if (replyList == null) {
   /// represented by [root], outputting the code to [sink]. [sourceOutPath] is the
   /// path of the generated dart code to be tested. [testOutPath] is where the
   /// test code will be generated.
-  void generateTest(DartOptions generatorOptions, Root root, StringSink sink) {
+  void generateTest(
+    DartOptions generatorOptions,
+    Root root,
+    StringSink sink, {
+    required String dartPackageName,
+    required String dartOutputPackageName,
+  }) {
     final Indent indent = Indent(sink);
     final String sourceOutPath = generatorOptions.sourceOutPath ?? '';
     final String testOutPath = generatorOptions.testOutPath ?? '';
@@ -567,8 +630,7 @@ if (replyList == null) {
       _posixify(sourceOutPath),
       from: _posixify(path.dirname(testOutPath)),
     );
-    late final String? packageName = _deducePackageName(sourceOutPath);
-    if (!relativeDartPath.contains('/lib/') || packageName == null) {
+    if (!relativeDartPath.contains('/lib/')) {
       // If we can't figure out the package name or the relative path doesn't
       // include a 'lib' directory, try relative path import which only works in
       // certain (older) versions of Dart.
@@ -578,7 +640,7 @@ if (replyList == null) {
     } else {
       final String path =
           relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
-      indent.writeln("import 'package:$packageName/$path';");
+      indent.writeln("import 'package:$dartOutputPackageName/$path';");
     }
     for (final Api api in root.apis) {
       if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
@@ -594,8 +656,10 @@ if (replyList == null) {
           root,
           indent,
           mockApi,
-          channelNameFunc: (Method func) => makeChannelName(api, func),
+          channelNameFunc: (Method func) =>
+              makeChannelName(api, func, dartPackageName),
           isMockHandler: true,
+          dartPackageName: dartPackageName,
         );
       }
     }
@@ -758,49 +822,6 @@ String _addGenericTypes(TypeDeclaration type) {
 String _addGenericTypesNullable(TypeDeclaration type) {
   final String genericType = _addGenericTypes(type);
   return type.isNullable ? '$genericType?' : genericType;
-}
-
-/// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
-/// parent directory and returns its path.
-String? _findPubspecPath(String dartFilePath) {
-  try {
-    Directory dir = File(dartFilePath).parent;
-    String? pubspecPath;
-    while (pubspecPath == null) {
-      if (dir.existsSync()) {
-        final Iterable<String> pubspecPaths = dir
-            .listSync()
-            .map((FileSystemEntity e) => e.path)
-            .where((String path) => path.endsWith('pubspec.yaml'));
-        if (pubspecPaths.isNotEmpty) {
-          pubspecPath = pubspecPaths.first;
-        } else {
-          dir = dir.parent;
-        }
-      } else {
-        break;
-      }
-    }
-    return pubspecPath;
-  } catch (ex) {
-    return null;
-  }
-}
-
-/// Given the path of a Dart file, [mainDartFile], the name of the package will
-/// be deduced by locating and parsing its associated pubspec.yaml.
-String? _deducePackageName(String mainDartFile) {
-  final String? pubspecPath = _findPubspecPath(mainDartFile);
-  if (pubspecPath == null) {
-    return null;
-  }
-
-  try {
-    final String text = File(pubspecPath).readAsStringSync();
-    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'] as String?;
-  } catch (_) {
-    return null;
-  }
 }
 
 /// Converts [inputPath] to a posix absolute path.

@@ -9,8 +9,9 @@ import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 
 class _UpdateResult {
-  const _UpdateResult(this.changed, this.errors);
+  const _UpdateResult(this.changed, this.snippetCount, this.errors);
   final bool changed;
+  final int snippetCount;
   final List<String> errors;
 }
 
@@ -42,6 +43,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       'on code from code files, via <?code-excerpt?> pragmas.';
 
   @override
+  bool get hasLongOutput => false;
+
+  @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final List<File> changedFiles = <File>[];
     final List<String> errors = <String>[];
@@ -56,6 +60,12 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         .toList();
     for (final File file in markdownFiles) {
       final _UpdateResult result = _updateExcerptsIn(file);
+      if (result.snippetCount > 0) {
+        final String displayPath =
+            getRelativePosixPath(file, from: package.directory);
+        print('${indentation}Checked ${result.snippetCount} snippet(s) in '
+            '$displayPath.');
+      }
       if (result.changed) {
         changedFiles.add(file);
       }
@@ -65,22 +75,23 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
     }
 
     if (errors.isNotEmpty) {
-      printError('Injecting excerpts failed:');
-      printError(errors.join('\n'));
+      printError('${indentation}Injecting excerpts failed:');
+      printError(errors.join('\n$indentation'));
       return PackageResult.fail();
     }
 
     if (getBoolArg(_failOnChangeFlag) && changedFiles.isNotEmpty) {
       printError(
-        'The following files have out of date excerpts:\n'
-        '  ${changedFiles.map((File file) => file.path).join("\n  ")}\n'
+        '${indentation}The following files have out of date excerpts:\n'
+        '$indentation  ${changedFiles.map((File file) => file.path).join("\n$indentation  ")}\n'
         '\n'
-        'If you edited code in a .md file directly, you should instead edit the '
-        'files that contain the sources of the excerpts.\n'
-        'If you did edit those source files, run the repository tooling\'s "$name" '
-        'command on this package, and update your PR with the resulting changes.\n'
+        '${indentation}If you edited code in a .md file directly, you should '
+        'instead edit the files that contain the sources of the excerpts.\n'
+        '${indentation}If you did edit those source files, run the repository '
+        'tooling\'s "$name" command on this package, and update your PR with '
+        'the resulting changes.\n'
         '\n'
-        'For more information, see '
+        '${indentation}For more information, see '
         'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#readme-code',
       );
       return PackageResult.fail();
@@ -98,6 +109,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
 
   _UpdateResult _updateExcerptsIn(File file) {
     bool detectedChange = false;
+    int snippetCount = 0;
     final List<String> errors = <String>[];
     Directory pathBase = file.parent;
     final StringBuffer output = StringBuffer();
@@ -118,6 +130,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
             } else {
               match = _injectPattern.firstMatch(line);
               if (match != null) {
+                snippetCount++;
                 final String excerptPath =
                     path.normalize(match.namedGroup('path')!);
                 final File excerptSourceFile = pathBase.childFile(excerptPath);
@@ -165,7 +178,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
               errors.add(
                   '${file.path}:$lineNumber: code block was followed by a space character instead of the language (expected "$language")');
               mode = _ExcerptParseMode.injecting;
-            } else if (line != '```$language' && line != '```rfwtxt' && line != '```json') {
+            } else if (line != '```$language' &&
+                line != '```rfwtxt' &&
+                line != '```json') {
               // We special-case rfwtxt and json because the rfw package extracts such sections from Dart files.
               // If we get more special cases we should think about a more general solution.
               errors.add(
@@ -204,7 +219,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         }
       }
     }
-    return _UpdateResult(detectedChange, errors);
+    return _UpdateResult(detectedChange, snippetCount, errors);
   }
 
   String _extractExcerpt(File excerptSourceFile, String section,

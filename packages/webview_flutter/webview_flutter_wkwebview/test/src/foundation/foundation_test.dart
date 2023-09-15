@@ -252,33 +252,41 @@ void main() {
       const NSError(
         code: 0,
         domain: 'domain',
-        localizedDescription: 'desc',
+        userInfo: <String, Object?>{
+          NSErrorUserInfoKey.NSLocalizedDescription: 'desc',
+        },
       ).toString(),
-      'desc (domain:0)',
+      'desc (domain:0:{NSLocalizedDescription: desc})',
     );
     expect(
       const NSError(
         code: 0,
         domain: 'domain',
-        localizedDescription: '',
+        userInfo: <String, Object?>{
+          NSErrorUserInfoKey.NSLocalizedDescription: '',
+        },
       ).toString(),
-      'Error domain:0',
+      'Error domain:0:{NSLocalizedDescription: }',
     );
     expect(
       const NSError(
         code: 255,
         domain: 'bar',
-        localizedDescription: 'baz',
+        userInfo: <String, Object?>{
+          NSErrorUserInfoKey.NSLocalizedDescription: 'baz',
+        },
       ).toString(),
-      'baz (bar:255)',
+      'baz (bar:255:{NSLocalizedDescription: baz})',
     );
     expect(
       const NSError(
         code: 255,
         domain: 'bar',
-        localizedDescription: '',
+        userInfo: <String, Object?>{
+          NSErrorUserInfoKey.NSLocalizedDescription: '',
+        },
       ).toString(),
-      'Error bar:255',
+      'Error bar:255:{NSLocalizedDescription: }',
     );
   });
 }

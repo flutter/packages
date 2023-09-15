@@ -111,22 +111,23 @@ class _MyHomePageState extends State<MyHomePage> {
         await _displayPickImageDialog(context,
             (double? maxWidth, double? maxHeight, int? quality) async {
           try {
-            final List<XFile>? pickedFileList = isMedia
+            final ImageOptions imageOptions = ImageOptions(
+              maxWidth: maxWidth,
+              maxHeight: maxHeight,
+              imageQuality: quality,
+            );
+            final List<XFile> pickedFileList = isMedia
                 ? await _picker.getMedia(
                     options: MediaOptions(
                         allowMultiple: isMultiImage,
-                        imageOptions: ImageOptions(
-                          maxWidth: maxWidth,
-                          maxHeight: maxHeight,
-                          imageQuality: quality,
-                        )),
+                        imageOptions: imageOptions),
                   )
-                : await _picker.getMultiImage(
-                    maxWidth: maxWidth,
-                    maxHeight: maxHeight,
-                    imageQuality: quality,
+                : await _picker.getMultiImageWithOptions(
+                    options: MultiImagePickerOptions(
+                      imageOptions: imageOptions,
+                    ),
                   );
-            if (pickedFileList != null && context.mounted) {
+            if (pickedFileList.isNotEmpty && context.mounted) {
               _showPickedSnackBar(context, pickedFileList);
             }
             setState(() {
@@ -167,11 +168,13 @@ class _MyHomePageState extends State<MyHomePage> {
         await _displayPickImageDialog(context,
             (double? maxWidth, double? maxHeight, int? quality) async {
           try {
-            final XFile? pickedFile = await _picker.getImage(
+            final XFile? pickedFile = await _picker.getImageFromSource(
               source: source,
-              maxWidth: maxWidth,
-              maxHeight: maxHeight,
-              imageQuality: quality,
+              options: ImagePickerOptions(
+                maxWidth: maxWidth,
+                maxHeight: maxHeight,
+                imageQuality: quality,
+              ),
             );
             if (pickedFile != null && context.mounted) {
               _showPickedSnackBar(context, <XFile>[pickedFile]);
