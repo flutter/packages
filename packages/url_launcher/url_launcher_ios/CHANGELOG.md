@@ -1,6 +1,6 @@
 ## 6.1.6
 
-* Migrates plugin from objc to swift
+* Migrates plugin from Objective-C to Swift.
 
 ## 6.1.5
 
