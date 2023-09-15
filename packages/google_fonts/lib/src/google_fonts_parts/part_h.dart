@@ -130,7 +130,7 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6bd24d8b6d4eef3b41f62c3b1888117803fc7d153401696545c788bf88332d14',
+        '88bb6ab35c64d4b2c4e4dbff81940660bbfe878d23a0cf06e08904654ea30e4f',
         4374644,
       ),
     };
@@ -705,6 +705,149 @@ class PartH {
     );
   }
 
+  /// Applies the Handjet font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Handjet
+  static TextStyle handjet({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ac6ec8a5eefe9d8651c8e85dc924e2a765c0d65a845434b8ed86cfb83b099b3c',
+        183680,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '98158733e2b5103202097d44460f5873e9f150c1b75ef8166ffa0977f595cc7c',
+        183728,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1f731c0f438e449e93f25873abb17f338d1ce29ec5cf401a192a127f8ce329c4',
+        183688,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0e4a4ab0b3bf1e77192a5b2a3866ec0750a235629900a13e5680789135a7614e',
+        183668,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '549f62e380c85b9e13f9628f18069eb683c7f6e4e31db0d5bf743cff22c234fc',
+        183696,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f4addc945fec0dde0bf54fae19fd20835e49ffca3b964f1a5fdcffde41adad97',
+        183744,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9bf103545efe50872ab315e490a843d5cb562b2da6eedc032e699ebbc16046cc',
+        183676,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c808b9055ddfd14ae795c8b1f0822478b9efeee185d4823fb356607e645926ff',
+        183768,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2cfc3787a836cdbb78d1e07f8eafb8ee574441c7a31b446f22a4d6b093cae7b2',
+        183736,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Handjet',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Handjet font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Handjet
+  static TextTheme handjetTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: handjet(textStyle: textTheme.displayLarge),
+      displayMedium: handjet(textStyle: textTheme.displayMedium),
+      displaySmall: handjet(textStyle: textTheme.displaySmall),
+      headlineLarge: handjet(textStyle: textTheme.headlineLarge),
+      headlineMedium: handjet(textStyle: textTheme.headlineMedium),
+      headlineSmall: handjet(textStyle: textTheme.headlineSmall),
+      titleLarge: handjet(textStyle: textTheme.titleLarge),
+      titleMedium: handjet(textStyle: textTheme.titleMedium),
+      titleSmall: handjet(textStyle: textTheme.titleSmall),
+      bodyLarge: handjet(textStyle: textTheme.bodyLarge),
+      bodyMedium: handjet(textStyle: textTheme.bodyMedium),
+      bodySmall: handjet(textStyle: textTheme.bodySmall),
+      labelLarge: handjet(textStyle: textTheme.labelLarge),
+      labelMedium: handjet(textStyle: textTheme.labelMedium),
+      labelSmall: handjet(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Handlee font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -736,7 +879,7 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6a44774e7b1f7e4ec43fcce9075e9f9b021e5ca365b337524506b687e0a4f48f',
+        'e92b00d221f9645dddf0e69149a6981b6a9520417d3a7709a9b1e705b673be86',
         37208,
       ),
     };
@@ -1231,15 +1374,29 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '97ed1bae30c75f34b45fcaf4f93cee62e97900fc6f2de4deb55fbac191bd5b55',
-        354412,
+        '584cbaf25726bfc7dc3bb52dfe7dbb9327659ecfc43c811dcf759d22dabdd3bb',
+        516984,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '68ffe6c0fdddd5977843ac524dd798cb170358ba9990de4581dbd070e0d992b8',
+        521664,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '91d4905bb9b0a0466633618f395df782e093cae34860c4702bc716235885a163',
+        509416,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9747aeee6bfb6e2994499fbbf51c7b678fcd04cbb4770d0e46ebc03f5d058493',
-        341536,
+        '99fe5112062deba0435fc6d755f7ec0cea88bdc2c959095bf35f73daca5d520a',
+        503324,
       ),
     };
 
@@ -1872,7 +2029,7 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '26b8d67b241afa0867bde9f68f919afad263949a96c1b0cd3bf2892fdbd264e8',
+        '6891c347248878bf2dfe4c0b2f35ead9c30c847376ae900796818c6811b57dd8',
         6090828,
       ),
     };
@@ -2621,8 +2778,8 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9229d26a43c2a733086377e05f35dc7301db4e52e5baed996313763c3d6979ff',
-        34884,
+        'ef7aa8dcd3e6fb872ab0f4180c695d6bdc4780b8847960accb2bab54d96ca24d',
+        34936,
       ),
     };
 
@@ -2708,8 +2865,8 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a85ac81efc3a564097e91c9156af91c780a80075a299b93891a6282ae798e1ce',
-        108284,
+        '9a2e9b2e6390fd42b70f39e4bddcb2ae8ba3a8ea361821350fc8550ae24c303e',
+        108288,
       ),
     };
 
@@ -2882,8 +3039,8 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a78cea124e3aa93dda612a80613704a86ebe72a9c90cf69e7983b541a40a131d',
-        133616,
+        '7a4f2e40aef8273c8a778375127b8979ccf2e6737c06db7c9440b61f93905329',
+        133796,
       ),
     };
 
@@ -2969,8 +3126,8 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '841bc5c7ef1192aa28ff9a52dbbd34e93fa30eaf584f8b00fd3ac3e303365c05',
-        123080,
+        'e938f4954a5cfaa79d76f337639665467e71fe88b5c351092b12087e3264dfc1',
+        123112,
       ),
     };
 

@@ -266,29 +266,29 @@ class PartU {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ef8cd8ab550b2ac95d8a6afa037afeb9ead1630ed8e135a374d171f9d4e03698',
-        97980,
+        '78f0e98c9013a285561af8018ff090e9536f9cb0977464ecf0a117a66423d97e',
+        98028,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '01f30a2e1e6f2b3854b3319ce6d706e1160186649cce8aa089e865db82468c73',
-        102780,
+        '540117820bd0ee5e3019a08e6f987766aec0fbd040bd92413dcb2c3ed677ad6a',
+        102844,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1d75371c8840ea6ea45ff541a2545de7b45bd90c280a0febb4adc15858e9406c',
-        96860,
+        'efa8334b43a090218e12b7084b2b7f1d076d4a0e19b93fcdf9ab18cc37fb08dc',
+        96904,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '03abb6786289973fffb7dfc450dc1f4e337cbce645eeaca89f5dd518ca1e0c1e',
-        102128,
+        '0422cea66b5b06d5963351f52c43d01dfdc889a545e122abcfe9726e4aca8fca',
+        102172,
       ),
     };
 
@@ -374,8 +374,8 @@ class PartU {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'cc26e05fc952d41b442ad00b78f88d5ad00335aa1d1ecf7a849ea618c6b92269',
-        800808,
+        '5b027e7e8a92c6e91d64a5d8dc7140dbbebf3d593ea25e842bff2d7b819a0e0f',
+        800904,
       ),
     };
 
@@ -461,7 +461,7 @@ class PartU {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5ab1d6dcad80a60014e7fcbd71e90d4d52cb1cc0a0d4dd4ab9802bd8c55efb0d',
+        '51d2390e97e8f01f554f4a9517854ed69e2fffa497b2c2b5cac87c427eba79ee',
         50316,
       ),
     };
@@ -945,8 +945,8 @@ class PartU {
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd8e074d3f3a10741eb512a044660449d7d05d7953273b453cc7db573c17cb297',
-        35620,
+        '1afa20b47835b72c9aa4a77763cbd6fbebb470d04a70e34f6259e1445639d5e0',
+        35640,
       ),
     };
 
@@ -1032,8 +1032,8 @@ class PartU {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'da0d18b09971ee17c4013fcde8e378ed92a502de1b520b291cf55390e5926ecf',
-        56652,
+        '77773983d9e3c4662fda43de043b8bcec9ce14ad5bc6cbad30ded723c1e465db',
+        56692,
       ),
     };
 
@@ -1119,15 +1119,15 @@ class PartU {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '3c7ed0bc3a72d6a3873308b20efefecacc7b296a9d43e501e82f3f014d0a2105',
+        '74e8417429eb3bbeef53ac4f2f91d70a30dd1fddec024eacab3e54b4010611f4',
         190344,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e485762c250d7cc9ff4c15f344be45569c435f697fe7f41a57763d6e83cc3935',
-        188700,
+        'e8c28bec2588dbdd2cf0468c9c5ccca5dbeafa95048486049ee871a2b74ef6ee',
+        188712,
       ),
     };
 
@@ -1300,28 +1300,28 @@ class PartU {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ef1faa488673b825c6be9390a0252787afb44f0d693765e773313163fa9f0afe',
+        'e0bd31fc3cd967f6c1621d02c3ad0079113c3bdd87f52cf093f2a45edad47983',
         37964,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '9c21cd08574d376a52a04407644e6f1e77fb1a252d4b92779e775a7fb81d1a49',
+        '8e1ae73e6bf7f8c03a7647fc1e3fc83918735ec2c00f8ada3ccb8c10eb83f151',
         43884,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2f463178f6e0320734be202b93e23a829e52c9aadda63899c51adff9583adb16',
+        '7e48cad3cba7e2a4265d7d66944fe41ac5af13303df1bf350fd6af9539967ffe',
         38572,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'c4dd9b939a132a083272c72d6691f6977d836e18f23d1ab2cd661381cc3e7faf',
+        '5cc871447f42211cfb6f8230387b9d14d42145186a734e03ade260bc14e6626b',
         44840,
       ),
     };
@@ -1408,8 +1408,8 @@ class PartU {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '3d2ea4e019d7fad0153e73a20891f0f3eeb94fc24e2d1294238c0670159c81cd',
-        75336,
+        '220e52bd71dbaf18cf79cb3dfba25494511646b702faa96db7ef2737b395f91c',
+        75500,
       ),
     };
 
@@ -1495,127 +1495,127 @@ class PartU {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '7ccb27b1e48bec9cc96e010ff3dc49563a630f5e0b9700ba8d259afa2d67810a',
-        40912,
+        '76235e223645d450dadc33a58b471816fe422f40df021725556ebb2fc0563ba9',
+        40916,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'bb490c6d47b78fb609e20c3776b80e944b1891bb2bcf91a29d09b2049245e9a1',
-        41136,
+        'a62fd06c9d9d88332344989836eb0063495b4eaa1e3737837035c67a63e87186',
+        41140,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '07c4958279c71bce17c7edf7729c10f287732103c5aef6f144ded71342a364c4',
+        '18852f90aa1bf14de40d6f029eecbd1d4611d5701de197e53d0c7ba98f5af41c',
         41104,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd601305cb24b44701742e5acace20662ff08d7eb304d4ca7fa4593e2739ef02e',
+        'e1c559f34e38b9716d4d77c1e29cee7aab5fea0ec5406491fa25c527dc79186c',
         41036,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '8cbd58acc622a6a9d12ca7faae7614106fc0bf00a85dc3aeb8f8e71c6f6a77aa',
+        'ace39b6f55ef23a2b494e5aaefa309e29de2b75df1b15a33b899f675bed1a3ab',
         41092,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c319914eb7a2f989f368f7863e7e54b20a375e384fa42b38587430d4cc2cefd4',
-        41072,
+        '81050f4f88133cfa61620ed3f5c037bf33067b7cda8bb5a959564037565c93c1',
+        41084,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fdb61ae6c93fc6832494bbc9d221668cb2b6ed13acd5b417ae2e2aea8caecb73',
-        40932,
+        '8fbfde7af5fcf724ec2176047afc0087c773f55e59dc947369f6f25c578f1cbd',
+        40960,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '23eea7bd5577051e6ceb13746c9ab8c8a8eea1e0a1b6011ce4a8728fca12e7b8',
-        41220,
+        '34b3d9cc4d8ef19c88da410462f1f2c03b0f7833fe80aeb883f09151081e3634',
+        41256,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2c409f6b7f2eaf9920efeab4fbadbf11aa2230d1f6b51fb3fc731c23af2a2e83',
-        41088,
+        '198b2b4cf699700d690dcf0b7e50048aa685e0d57d36eca04514eba3968ac923',
+        41124,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'f80ede6ee8db2e424f02aea8c8d9dbb7e119dbfc2c50659fd9e5f1c0f0ccc72c',
-        41880,
+        '5b2080f9c72d806bba735dd1cca247bfeb11e9068bce5ea8010935d26428797c',
+        41884,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'a81bbbc4513e8c11e7da9b2e24a2cd69295f42a76f84e67588e52436f0d0e77e',
+        '15dfca2eca2c77cdbaab3588281ac432e343e0e4ab2bb7c144359ebc7ccd0455',
         42144,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '31f41760f9e7e3c03d3881fad2c4a58fd253a6990b8b056280038863c442c367',
+        '6e1b357e80eb40fd9fa8a3bc4b45cc7330013abe6d52ea8330d0156ec96d08be',
         42072,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '18332ab7dd48e992dff70738d3a751b5fc13e1eb8b502105102d406828d28e4e',
+        'ce1fe627bed11341c82a27ae469a90359d980d5ec4e0a3bdfaa65176ab00989a',
         41996,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '785502a3a33b26a51420b2265d1bd3109413f0f43f368443287697128c99c185',
-        42100,
+        'c92a2b9ae484c0d846f0bfd5e78211553f6e84c2c9a1cda93cfe5807a587b89e',
+        42104,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '14b2f34491271642644f2db1b75b02c04353ce3b3313123e74af47c43fcecfe6',
-        42108,
+        '8d012a0073b2dbb60277356130a8b94d4dd35887a00e119980439311fc3a2498',
+        42120,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'd6be3b4e6d8fba80e233667d8b6c37e4723962b41d1ec13dbd160fc40d852ce1',
-        41888,
+        'e32e15bbdfd9fdd842c33d06d7b384471663c9f08b69f82da645efdf66920211',
+        41916,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '6fb7ddf11c985d579bae9ead1c60304f687691d36f805a3db24c5a7963953e2c',
-        42212,
+        'ee7a8c2b66cac0f674b2c295ed489f1edf1be43906ed8885606df7c031f2e2f8',
+        42244,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'ed99a987ac54e910c9c488aee12e0a082f6aee946f4df288632203522c227d29',
-        42068,
+        '50e717fd17cf6d29ecb63ee7868ae1cf38fab627bc6fe403c22251ca8978381b',
+        42104,
       ),
     };
 

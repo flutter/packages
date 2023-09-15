@@ -1,3 +1,69 @@
+## 6.0.0 - 2023-09-15
+### Added
+- `ADLaM Display`
+- `Agdasima`
+- `Akatab`
+- `Aoboshi One`
+- `Bacasime Antique`
+- `Bagel Fat One`
+- `Belanosima`
+- `Borel`
+- `Bricolage Grotesque`
+- `Caprasimo`
+- `Cherry Bomb One`
+- `Chokokutai`
+- `Dai Banna SIL`
+- `Diphylleia`
+- `Gasoek One`
+- `Geologica`
+- `Grandiflora One`
+- `Handjet`
+- `Inclusive Sans`
+- `Kablammo`
+- `Lisu Bosa`
+- `Lugrasimo`
+- `Lumanosimo`
+- `Lunasima`
+- `Moirai One`
+- `Monomaniac One`
+- `Mooli`
+- `Narnoor`
+- `Noto Sans Chorasmian`
+- `Noto Sans Cypro Minoan`
+- `Noto Sans HK`
+- `Noto Sans JP`
+- `Noto Sans KR`
+- `Noto Sans SC`
+- `Noto Sans Syriac Eastern`
+- `Noto Sans TC`
+- `Noto Sans Vithkuqi`
+- `Noto Serif Khitan Small Script`
+- `Noto Serif Makasar`
+- `Noto Serif Ottoman Siyaq`
+- `Noto Serif Vithkuqi`
+- `Orbit`
+- `Palette Mosaic`
+- `Playfair`
+- `REM`
+- `Rock 3D`
+- `Ruwudu`
+- `Shizuru`
+- `Slackside One`
+- `Tektur`
+- `Tsukimi Rounded`
+- `Victor Mono`
+- `Wavefont`
+- `Ysabeau Infant`
+- `Ysabeau Office`
+- `Ysabeau SC`
+- `Yuji Hentaigana Akari`
+- `Yuji Hentaigana Akebono`
+
+### Removed
+- `Coda Caption`
+- `Source Sans Pro`
+- `Source Serif Pro`
+
 ## 5.1.0 - 2023-06-19
 ### Added
 - Add ability to wait for fonts to load with `GoogleFonts.pendingFonts`

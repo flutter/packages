@@ -506,7 +506,7 @@ class PartV {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a36d9acf19123a5f56ab054197d42e3df0bec989971fd10198658e574cd19270',
+        'd043bcb9908c0ffb2bc8d12f862a146d623a1bde4292674a76e9b0df3bafdadb',
         58360,
       ),
     };
@@ -844,7 +844,7 @@ class PartV {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5cd9fa7366844c7fa0e7fcb7eb8a89ff520272aa66626cf52c12ddc6db53886a',
+        'a4f29c65db5a76a32dc57b080eeb9ad721ca3817bdf5d87f3dff0231a9f6eb12',
         104232,
       ),
     };
@@ -1074,6 +1074,184 @@ class PartV {
     );
   }
 
+  /// Applies the Victor Mono font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Victor+Mono
+  static TextStyle victorMono({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e56b31be68b6ae5f4b201e7d83c731967d03ac81f6cef091806db8727e3dd031',
+        131336,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cdd457404bc6dc448d8061a990a72f88fc40ddec85e1ab1a9287b4c544e5f8b5',
+        131632,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a56c4acc1eb197310aeb37faad64d6588fa5a7bb1ef04cf48448c0edd9254a18',
+        131660,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '797d9ee5e729d818c6915a947150c2bbefb8741648bae51f6a5274da4b9be149',
+        131620,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9809a2eebe27caf2f258d96eef29e18c92b7e6b7a436b4391697eba5236dff47',
+        131632,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7444e766a2e962221175a2936d245bbe070ed7bc80ce618c1848eab70a5848e2',
+        131520,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b010edbe4c18f8a2a3e2f19d53f617fd4ab242ab6635caee1feef4cf9260c5ca',
+        131344,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '5dc075be0c701bf5db77aca0b747b7db8351131b389589f1e5c1eed964e43c09',
+        160648,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ceb77620c6714dfcd8022c0f31fd31e5d6f4b58cfb67a911748bf193aa8c0807',
+        161032,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '5a52738c56cb50fac7a0f0e147dbf8dbb0d87e75afcc4f509b802f122237f006',
+        161180,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '3ccb1fc54e0fbf8da96427d35bdbd2c2e36fc41ca59ebafb5c82d650f27e8253',
+        161144,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '2170765225e1b5a36a6d9274159119e3743c228245818310541ac3bee7ef4f7d',
+        161308,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '02c5a60db20a721d0bef85dc2745480bb07ce2e026f213ba51715905291369fa',
+        161276,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '11f117ba0632df78e4ef6d584e9a541356b1bb3f4dbf4d7b52055ccef0347399',
+        160964,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'VictorMono',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Victor Mono font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Victor+Mono
+  static TextTheme victorMonoTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: victorMono(textStyle: textTheme.displayLarge),
+      displayMedium: victorMono(textStyle: textTheme.displayMedium),
+      displaySmall: victorMono(textStyle: textTheme.displaySmall),
+      headlineLarge: victorMono(textStyle: textTheme.headlineLarge),
+      headlineMedium: victorMono(textStyle: textTheme.headlineMedium),
+      headlineSmall: victorMono(textStyle: textTheme.headlineSmall),
+      titleLarge: victorMono(textStyle: textTheme.titleLarge),
+      titleMedium: victorMono(textStyle: textTheme.titleMedium),
+      titleSmall: victorMono(textStyle: textTheme.titleSmall),
+      bodyLarge: victorMono(textStyle: textTheme.bodyLarge),
+      bodyMedium: victorMono(textStyle: textTheme.bodyMedium),
+      bodySmall: victorMono(textStyle: textTheme.bodySmall),
+      labelLarge: victorMono(textStyle: textTheme.labelLarge),
+      labelMedium: victorMono(textStyle: textTheme.labelMedium),
+      labelSmall: victorMono(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Vidaloka font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -1279,8 +1457,8 @@ class PartV {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2353bd63f98289da30eb6cb7493598b39bdfe80211fb5ee8cff241216fdcbd95',
-        42416,
+        'cc7cae8011a124a8393e97c8c7fde61a2c6f03514772ab3b105c572a06ebc0ca',
+        42772,
       ),
     };
 
@@ -1366,7 +1544,7 @@ class PartV {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '05466ef678a5d745296fac575119a68a54cc3b0978dfe5714424b4ab0dfc9d0a',
+        'a60ebcb2eb175a13b0a603bc6d82597439d1539487c82c852c27d4a7f86e8fb9',
         73856,
       ),
     };

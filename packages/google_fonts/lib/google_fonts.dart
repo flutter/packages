@@ -143,6 +143,7 @@ class GoogleFonts {
         double? decorationThickness,
       })> asMap() => const {
         'ABeeZee': PartA.aBeeZee,
+        'ADLaM Display': PartA.aDLaMDisplay,
         'Abel': PartA.abel,
         'Abhaya Libre': PartA.abhayaLibre,
         'Aboreto': PartA.aboreto,
@@ -153,7 +154,9 @@ class GoogleFonts {
         'Actor': PartA.actor,
         'Adamina': PartA.adamina,
         'Advent Pro': PartA.adventPro,
+        'Agdasima': PartA.agdasima,
         'Aguafina Script': PartA.aguafinaScript,
+        'Akatab': PartA.akatab,
         'Akaya Kanadaka': PartA.akayaKanadaka,
         'Akaya Telivigala': PartA.akayaTelivigala,
         'Akronim': PartA.akronim,
@@ -221,6 +224,7 @@ class GoogleFonts {
         'Antonio': PartA.antonio,
         'Anuphan': PartA.anuphan,
         'Anybody': PartA.anybody,
+        'Aoboshi One': PartA.aoboshiOne,
         'Arapey': PartA.arapey,
         'Arbutus': PartA.arbutus,
         'Arbutus Slab': PartA.arbutusSlab,
@@ -267,7 +271,9 @@ class GoogleFonts {
         'BIZ UDPGothic': PartB.bizUDPGothic,
         'BIZ UDPMincho': PartB.bizUDPMincho,
         'Babylonica': PartB.babylonica,
+        'Bacasime Antique': PartB.bacasimeAntique,
         'Bad Script': PartB.badScript,
+        'Bagel Fat One': PartB.bagelFatOne,
         'Bahiana': PartB.bahiana,
         'Bahianita': PartB.bahianita,
         'Bai Jamjuree': PartB.baiJamjuree,
@@ -299,6 +305,7 @@ class GoogleFonts {
         'Be Vietnam Pro': PartB.beVietnamPro,
         'Beau Rivage': PartB.beauRivage,
         'Bebas Neue': PartB.bebasNeue,
+        'Belanosima': PartB.belanosima,
         'Belgrano': PartB.belgrano,
         'Bellefair': PartB.bellefair,
         'Belleza': PartB.belleza,
@@ -341,11 +348,13 @@ class GoogleFonts {
         'Bonbon': PartB.bonbon,
         'Bonheur Royale': PartB.bonheurRoyale,
         'Boogaloo': PartB.boogaloo,
+        'Borel': PartB.borel,
         'Bowlby One': PartB.bowlbyOne,
         'Bowlby One SC': PartB.bowlbyOneSc,
         'Braah One': PartB.braahOne,
         'Brawler': PartB.brawler,
         'Bree Serif': PartB.breeSerif,
+        'Bricolage Grotesque': PartB.bricolageGrotesque,
         'Bruno Ace': PartB.brunoAce,
         'Bruno Ace SC': PartB.brunoAceSc,
         'Brygada 1918': PartB.brygada1918,
@@ -377,6 +386,7 @@ class GoogleFonts {
         'Cantarell': PartC.cantarell,
         'Cantata One': PartC.cantataOne,
         'Cantora One': PartC.cantoraOne,
+        'Caprasimo': PartC.caprasimo,
         'Capriola': PartC.capriola,
         'Caramel': PartC.caramel,
         'Carattere': PartC.carattere,
@@ -407,6 +417,7 @@ class GoogleFonts {
         'Chelsea Market': PartC.chelseaMarket,
         'Chenla': PartC.chenla,
         'Cherish': PartC.cherish,
+        'Cherry Bomb One': PartC.cherryBombOne,
         'Cherry Cream Soda': PartC.cherryCreamSoda,
         'Cherry Swash': PartC.cherrySwash,
         'Chewy': PartC.chewy,
@@ -414,13 +425,13 @@ class GoogleFonts {
         'Chilanka': PartC.chilanka,
         'Chivo': PartC.chivo,
         'Chivo Mono': PartC.chivoMono,
+        'Chokokutai': PartC.chokokutai,
         'Chonburi': PartC.chonburi,
         'Cinzel': PartC.cinzel,
         'Cinzel Decorative': PartC.cinzelDecorative,
         'Clicker Script': PartC.clickerScript,
         'Climate Crisis': PartC.climateCrisis,
         'Coda': PartC.coda,
-        'Coda Caption': PartC.codaCaption,
         'Codystar': PartC.codystar,
         'Coiny': PartC.coiny,
         'Combo': PartC.combo,
@@ -466,6 +477,7 @@ class GoogleFonts {
         'DM Sans': PartD.dmSans,
         'DM Serif Display': PartD.dmSerifDisplay,
         'DM Serif Text': PartD.dmSerifText,
+        'Dai Banna SIL': PartD.daiBannaSil,
         'Damion': PartD.damion,
         'Dancing Script': PartD.dancingScript,
         'Dangrek': PartD.dangrek,
@@ -485,6 +497,7 @@ class GoogleFonts {
         'Devonshire': PartD.devonshire,
         'Dhurjati': PartD.dhurjati,
         'Didact Gothic': PartD.didactGothic,
+        'Diphylleia': PartD.diphylleia,
         'Diplomata': PartD.diplomata,
         'Diplomata SC': PartD.diplomataSc,
         'Do Hyeon': PartD.doHyeon,
@@ -598,6 +611,7 @@ class GoogleFonts {
         'Galindo': PartG.galindo,
         'Gamja Flower': PartG.gamjaFlower,
         'Gantari': PartG.gantari,
+        'Gasoek One': PartG.gasoekOne,
         'Gayathri': PartG.gayathri,
         'Gelasio': PartG.gelasio,
         'Gemunu Libre': PartG.gemunuLibre,
@@ -605,6 +619,7 @@ class GoogleFonts {
         'Gentium Book Plus': PartG.gentiumBookPlus,
         'Gentium Plus': PartG.gentiumPlus,
         'Geo': PartG.geo,
+        'Geologica': PartG.geologica,
         'Georama': PartG.georama,
         'Geostar': PartG.geostar,
         'Geostar Fill': PartG.geostarFill,
@@ -632,6 +647,7 @@ class GoogleFonts {
         'Gowun Dodum': PartG.gowunDodum,
         'Graduate': PartG.graduate,
         'Grand Hotel': PartG.grandHotel,
+        'Grandiflora One': PartG.grandifloraOne,
         'Grandstander': PartG.grandstander,
         'Grape Nuts': PartG.grapeNuts,
         'Gravitas One': PartG.gravitasOne,
@@ -655,6 +671,7 @@ class GoogleFonts {
         'Hammersmith One': PartH.hammersmithOne,
         'Hanalei': PartH.hanalei,
         'Hanalei Fill': PartH.hanaleiFill,
+        'Handjet': PartH.handjet,
         'Handlee': PartH.handlee,
         'Hanken Grotesk': PartH.hankenGrotesk,
         'Hanuman': PartH.hanuman,
@@ -704,6 +721,7 @@ class GoogleFonts {
         'Imbue': PartI.imbue,
         'Imperial Script': PartI.imperialScript,
         'Imprima': PartI.imprima,
+        'Inclusive Sans': PartI.inclusiveSans,
         'Inconsolata': PartI.inconsolata,
         'Inder': PartI.inder,
         'Indie Flower': PartI.indieFlower,
@@ -746,6 +764,7 @@ class GoogleFonts {
         'Just Another Hand': PartJ.justAnotherHand,
         'Just Me Again Down Here': PartJ.justMeAgainDownHere,
         'K2D': PartK.k2d,
+        'Kablammo': PartK.kablammo,
         'Kadwa': PartK.kadwa,
         'Kaisei Decol': PartK.kaiseiDecol,
         'Kaisei HarunoUmi': PartK.kaiseiHarunoUmi,
@@ -840,6 +859,7 @@ class GoogleFonts {
         'Lily Script One': PartL.lilyScriptOne,
         'Limelight': PartL.limelight,
         'Linden Hill': PartL.lindenHill,
+        'Lisu Bosa': PartL.lisuBosa,
         'Literata': PartL.literata,
         'Liu Jian Mao Cao': PartL.liuJianMaoCao,
         'Livvic': PartL.livvic,
@@ -856,6 +876,9 @@ class GoogleFonts {
         'Loved by the King': PartL.lovedByTheKing,
         'Lovers Quarrel': PartL.loversQuarrel,
         'Luckiest Guy': PartL.luckiestGuy,
+        'Lugrasimo': PartL.lugrasimo,
+        'Lumanosimo': PartL.lumanosimo,
+        'Lunasima': PartL.lunasima,
         'Lusitana': PartL.lusitana,
         'Lustria': PartL.lustria,
         'Luxurious Roman': PartL.luxuriousRoman,
@@ -930,10 +953,12 @@ class GoogleFonts {
         'Modern Antiqua': PartM.modernAntiqua,
         'Mogra': PartM.mogra,
         'Mohave': PartM.mohave,
+        'Moirai One': PartM.moiraiOne,
         'Molengo': PartM.molengo,
         'Molle': PartM.molle,
         'Monda': PartM.monda,
         'Monofett': PartM.monofett,
+        'Monomaniac One': PartM.monomaniacOne,
         'Monoton': PartM.monoton,
         'Monsieur La Doulaise': PartM.monsieurLaDoulaise,
         'Montaga': PartM.montaga,
@@ -944,6 +969,7 @@ class GoogleFonts {
         'Montserrat Alternates': PartM.montserratAlternates,
         'Montserrat Subrayada': PartM.montserratSubrayada,
         'Moo Lah Lah': PartM.mooLahLah,
+        'Mooli': PartM.mooli,
         'Moon Dance': PartM.moonDance,
         'Moul': PartM.moul,
         'Moulpali': PartM.moulpali,
@@ -972,6 +998,7 @@ class GoogleFonts {
         'Nanum Gothic Coding': PartN.nanumGothicCoding,
         'Nanum Myeongjo': PartN.nanumMyeongjo,
         'Nanum Pen Script': PartN.nanumPenScript,
+        'Narnoor': PartN.narnoor,
         'Neonderthaw': PartN.neonderthaw,
         'Nerko One': PartN.nerkoOne,
         'Neucha': PartN.neucha,
@@ -1019,9 +1046,11 @@ class GoogleFonts {
         'Noto Sans Chakma': PartN.notoSansChakma,
         'Noto Sans Cham': PartN.notoSansCham,
         'Noto Sans Cherokee': PartN.notoSansCherokee,
+        'Noto Sans Chorasmian': PartN.notoSansChorasmian,
         'Noto Sans Coptic': PartN.notoSansCoptic,
         'Noto Sans Cuneiform': PartN.notoSansCuneiform,
         'Noto Sans Cypriot': PartN.notoSansCypriot,
+        'Noto Sans Cypro Minoan': PartN.notoSansCyproMinoan,
         'Noto Sans Deseret': PartN.notoSansDeseret,
         'Noto Sans Devanagari': PartN.notoSansDevanagari,
         'Noto Sans Display': PartN.notoSansDisplay,
@@ -1037,6 +1066,7 @@ class GoogleFonts {
         'Noto Sans Gujarati': PartN.notoSansGujarati,
         'Noto Sans Gunjala Gondi': PartN.notoSansGunjalaGondi,
         'Noto Sans Gurmukhi': PartN.notoSansGurmukhi,
+        'Noto Sans HK': PartN.notoSansHk,
         'Noto Sans Hanifi Rohingya': PartN.notoSansHanifiRohingya,
         'Noto Sans Hanunoo': PartN.notoSansHanunoo,
         'Noto Sans Hatran': PartN.notoSansHatran,
@@ -1045,7 +1075,9 @@ class GoogleFonts {
         'Noto Sans Indic Siyaq Numbers': PartN.notoSansIndicSiyaqNumbers,
         'Noto Sans Inscriptional Pahlavi': PartN.notoSansInscriptionalPahlavi,
         'Noto Sans Inscriptional Parthian': PartN.notoSansInscriptionalParthian,
+        'Noto Sans JP': PartN.notoSansJp,
         'Noto Sans Javanese': PartN.notoSansJavanese,
+        'Noto Sans KR': PartN.notoSansKr,
         'Noto Sans Kaithi': PartN.notoSansKaithi,
         'Noto Sans Kannada': PartN.notoSansKannada,
         'Noto Sans Kayah Li': PartN.notoSansKayahLi,
@@ -1109,6 +1141,7 @@ class GoogleFonts {
         'Noto Sans Psalter Pahlavi': PartN.notoSansPsalterPahlavi,
         'Noto Sans Rejang': PartN.notoSansRejang,
         'Noto Sans Runic': PartN.notoSansRunic,
+        'Noto Sans SC': PartN.notoSansSc,
         'Noto Sans Samaritan': PartN.notoSansSamaritan,
         'Noto Sans Saurashtra': PartN.notoSansSaurashtra,
         'Noto Sans Sharada': PartN.notoSansSharada,
@@ -1124,6 +1157,8 @@ class GoogleFonts {
         'Noto Sans Symbols': PartN.notoSansSymbols,
         'Noto Sans Symbols 2': PartN.notoSansSymbols2,
         'Noto Sans Syriac': PartN.notoSansSyriac,
+        'Noto Sans Syriac Eastern': PartN.notoSansSyriacEastern,
+        'Noto Sans TC': PartN.notoSansTc,
         'Noto Sans Tagalog': PartN.notoSansTagalog,
         'Noto Sans Tagbanwa': PartN.notoSansTagbanwa,
         'Noto Sans Tai Le': PartN.notoSansTaiLe,
@@ -1141,6 +1176,7 @@ class GoogleFonts {
         'Noto Sans Tirhuta': PartN.notoSansTirhuta,
         'Noto Sans Ugaritic': PartN.notoSansUgaritic,
         'Noto Sans Vai': PartN.notoSansVai,
+        'Noto Sans Vithkuqi': PartN.notoSansVithkuqi,
         'Noto Sans Wancho': PartN.notoSansWancho,
         'Noto Sans Warang Citi': PartN.notoSansWarangCiti,
         'Noto Sans Yi': PartN.notoSansYi,
@@ -1161,13 +1197,16 @@ class GoogleFonts {
         'Noto Serif HK': PartN.notoSerifHk,
         'Noto Serif Hebrew': PartN.notoSerifHebrew,
         'Noto Serif Kannada': PartN.notoSerifKannada,
+        'Noto Serif Khitan Small Script': PartN.notoSerifKhitanSmallScript,
         'Noto Serif Khmer': PartN.notoSerifKhmer,
         'Noto Serif Khojki': PartN.notoSerifKhojki,
         'Noto Serif Lao': PartN.notoSerifLao,
+        'Noto Serif Makasar': PartN.notoSerifMakasar,
         'Noto Serif Malayalam': PartN.notoSerifMalayalam,
         'Noto Serif Myanmar': PartN.notoSerifMyanmar,
         'Noto Serif NP Hmong': PartN.notoSerifNpHmong,
         'Noto Serif Oriya': PartN.notoSerifOriya,
+        'Noto Serif Ottoman Siyaq': PartN.notoSerifOttomanSiyaq,
         'Noto Serif Sinhala': PartN.notoSerifSinhala,
         'Noto Serif Tamil': PartN.notoSerifTamil,
         'Noto Serif Tangut': PartN.notoSerifTangut,
@@ -1175,6 +1214,7 @@ class GoogleFonts {
         'Noto Serif Thai': PartN.notoSerifThai,
         'Noto Serif Tibetan': PartN.notoSerifTibetan,
         'Noto Serif Toto': PartN.notoSerifToto,
+        'Noto Serif Vithkuqi': PartN.notoSerifVithkuqi,
         'Noto Serif Yezidi': PartN.notoSerifYezidi,
         'Noto Traditional Nushu': PartN.notoTraditionalNushu,
         'Nova Cut': PartN.novaCut,
@@ -1202,6 +1242,7 @@ class GoogleFonts {
         'Open Sans': PartO.openSans,
         'Open Sans Condensed': PartO.openSansCondensed,
         'Oranienbaum': PartO.oranienbaum,
+        'Orbit': PartO.orbit,
         'Orbitron': PartO.orbitron,
         'Oregano': PartO.oregano,
         'Orelega One': PartO.orelegaOne,
@@ -1229,6 +1270,7 @@ class GoogleFonts {
         'Padyakke Expanded One': PartP.padyakkeExpandedOne,
         'Palanquin': PartP.palanquin,
         'Palanquin Dark': PartP.palanquinDark,
+        'Palette Mosaic': PartP.paletteMosaic,
         'Pangolin': PartP.pangolin,
         'Paprika': PartP.paprika,
         'Parisienne': PartP.parisienne,
@@ -1258,6 +1300,7 @@ class GoogleFonts {
         'Plaster': PartP.plaster,
         'Play': PartP.play,
         'Playball': PartP.playball,
+        'Playfair': PartP.playfair,
         'Playfair Display': PartP.playfairDisplay,
         'Playfair Display SC': PartP.playfairDisplaySc,
         'Plus Jakarta Sans': PartP.plusJakartaSans,
@@ -1298,6 +1341,7 @@ class GoogleFonts {
         'Quintessential': PartQ.quintessential,
         'Qwigley': PartQ.qwigley,
         'Qwitcher Grypen': PartQ.qwitcherGrypen,
+        'REM': PartR.rem,
         'Racing Sans One': PartR.racingSansOne,
         'Radio Canada': PartR.radioCanada,
         'Radley': PartR.radley,
@@ -1344,6 +1388,7 @@ class GoogleFonts {
         'Roboto Serif': PartR.robotoSerif,
         'Roboto Slab': PartR.robotoSlab,
         'Rochester': PartR.rochester,
+        'Rock 3D': PartR.rock3d,
         'Rock Salt': PartR.rockSalt,
         'RocknRoll One': PartR.rocknRollOne,
         'Rokkitt': PartR.rokkitt,
@@ -1383,6 +1428,7 @@ class GoogleFonts {
         'Ruslan Display': PartR.ruslanDisplay,
         'Russo One': PartR.russoOne,
         'Ruthie': PartR.ruthie,
+        'Ruwudu': PartR.ruwudu,
         'Rye': PartR.rye,
         'STIX Two Text': PartS.stixTwoText,
         'Sacramento': PartS.sacramento,
@@ -1431,6 +1477,7 @@ class GoogleFonts {
         'Shippori Antique B1': PartS.shipporiAntiqueB1,
         'Shippori Mincho': PartS.shipporiMincho,
         'Shippori Mincho B1': PartS.shipporiMinchoB1,
+        'Shizuru': PartS.shizuru,
         'Shojumaru': PartS.shojumaru,
         'Short Stack': PartS.shortStack,
         'Shrikhand': PartS.shrikhand,
@@ -1449,6 +1496,7 @@ class GoogleFonts {
         'Slabo 13px': PartS.slabo13px,
         'Slabo 27px': PartS.slabo27px,
         'Slackey': PartS.slackey,
+        'Slackside One': PartS.slacksideOne,
         'Smokum': PartS.smokum,
         'Smooch': PartS.smooch,
         'Smooch Sans': PartS.smoochSans,
@@ -1471,9 +1519,7 @@ class GoogleFonts {
         'Sorts Mill Goudy': PartS.sortsMillGoudy,
         'Source Code Pro': PartS.sourceCodePro,
         'Source Sans 3': PartS.sourceSans3,
-        'Source Sans Pro': PartS.sourceSansPro,
         'Source Serif 4': PartS.sourceSerif4,
-        'Source Serif Pro': PartS.sourceSerifPro,
         'Space Grotesk': PartS.spaceGrotesk,
         'Space Mono': PartS.spaceMono,
         'Special Elite': PartS.specialElite,
@@ -1526,6 +1572,7 @@ class GoogleFonts {
         'Tauri': PartT.tauri,
         'Taviraj': PartT.taviraj,
         'Teko': PartT.teko,
+        'Tektur': PartT.tektur,
         'Telex': PartT.telex,
         'Tenali Ramakrishna': PartT.tenaliRamakrishna,
         'Tenor Sans': PartT.tenorSans,
@@ -1561,6 +1608,7 @@ class GoogleFonts {
         'Trochut': PartT.trochut,
         'Truculenta': PartT.truculenta,
         'Trykker': PartT.trykker,
+        'Tsukimi Rounded': PartT.tsukimiRounded,
         'Tulpen One': PartT.tulpenOne,
         'Turret Road': PartT.turretRoad,
         'Twinkle Star': PartT.twinkleStar,
@@ -1591,6 +1639,7 @@ class GoogleFonts {
         'Viaoda Libre': PartV.viaodaLibre,
         'Vibes': PartV.vibes,
         'Vibur': PartV.vibur,
+        'Victor Mono': PartV.victorMono,
         'Vidaloka': PartV.vidaloka,
         'Viga': PartV.viga,
         'Vina Sans': PartV.vinaSans,
@@ -1606,6 +1655,7 @@ class GoogleFonts {
         'Warnes': PartW.warnes,
         'Water Brush': PartW.waterBrush,
         'Waterfall': PartW.waterfall,
+        'Wavefont': PartW.wavefont,
         'Wellfleet': PartW.wellfleet,
         'Wendy One': PartW.wendyOne,
         'Whisper': PartW.whisper,
@@ -1626,7 +1676,12 @@ class GoogleFonts {
         'Yomogi': PartY.yomogi,
         'Yrsa': PartY.yrsa,
         'Ysabeau': PartY.ysabeau,
+        'Ysabeau Infant': PartY.ysabeauInfant,
+        'Ysabeau Office': PartY.ysabeauOffice,
+        'Ysabeau SC': PartY.ysabeauSc,
         'Yuji Boku': PartY.yujiBoku,
+        'Yuji Hentaigana Akari': PartY.yujiHentaiganaAkari,
+        'Yuji Hentaigana Akebono': PartY.yujiHentaiganaAkebono,
         'Yuji Mai': PartY.yujiMai,
         'Yuji Syuku': PartY.yujiSyuku,
         'Yusei Magic': PartY.yuseiMagic,
@@ -1656,6 +1711,7 @@ class GoogleFonts {
   static Map<String, TextTheme Function([TextTheme?])> _asMapOfTextThemes() =>
       const {
         'ABeeZee': PartA.aBeeZeeTextTheme,
+        'ADLaM Display': PartA.aDLaMDisplayTextTheme,
         'Abel': PartA.abelTextTheme,
         'Abhaya Libre': PartA.abhayaLibreTextTheme,
         'Aboreto': PartA.aboretoTextTheme,
@@ -1666,7 +1722,9 @@ class GoogleFonts {
         'Actor': PartA.actorTextTheme,
         'Adamina': PartA.adaminaTextTheme,
         'Advent Pro': PartA.adventProTextTheme,
+        'Agdasima': PartA.agdasimaTextTheme,
         'Aguafina Script': PartA.aguafinaScriptTextTheme,
+        'Akatab': PartA.akatabTextTheme,
         'Akaya Kanadaka': PartA.akayaKanadakaTextTheme,
         'Akaya Telivigala': PartA.akayaTelivigalaTextTheme,
         'Akronim': PartA.akronimTextTheme,
@@ -1734,6 +1792,7 @@ class GoogleFonts {
         'Antonio': PartA.antonioTextTheme,
         'Anuphan': PartA.anuphanTextTheme,
         'Anybody': PartA.anybodyTextTheme,
+        'Aoboshi One': PartA.aoboshiOneTextTheme,
         'Arapey': PartA.arapeyTextTheme,
         'Arbutus': PartA.arbutusTextTheme,
         'Arbutus Slab': PartA.arbutusSlabTextTheme,
@@ -1780,7 +1839,9 @@ class GoogleFonts {
         'BIZ UDPGothic': PartB.bizUDPGothicTextTheme,
         'BIZ UDPMincho': PartB.bizUDPMinchoTextTheme,
         'Babylonica': PartB.babylonicaTextTheme,
+        'Bacasime Antique': PartB.bacasimeAntiqueTextTheme,
         'Bad Script': PartB.badScriptTextTheme,
+        'Bagel Fat One': PartB.bagelFatOneTextTheme,
         'Bahiana': PartB.bahianaTextTheme,
         'Bahianita': PartB.bahianitaTextTheme,
         'Bai Jamjuree': PartB.baiJamjureeTextTheme,
@@ -1812,6 +1873,7 @@ class GoogleFonts {
         'Be Vietnam Pro': PartB.beVietnamProTextTheme,
         'Beau Rivage': PartB.beauRivageTextTheme,
         'Bebas Neue': PartB.bebasNeueTextTheme,
+        'Belanosima': PartB.belanosimaTextTheme,
         'Belgrano': PartB.belgranoTextTheme,
         'Bellefair': PartB.bellefairTextTheme,
         'Belleza': PartB.bellezaTextTheme,
@@ -1856,11 +1918,13 @@ class GoogleFonts {
         'Bonbon': PartB.bonbonTextTheme,
         'Bonheur Royale': PartB.bonheurRoyaleTextTheme,
         'Boogaloo': PartB.boogalooTextTheme,
+        'Borel': PartB.borelTextTheme,
         'Bowlby One': PartB.bowlbyOneTextTheme,
         'Bowlby One SC': PartB.bowlbyOneScTextTheme,
         'Braah One': PartB.braahOneTextTheme,
         'Brawler': PartB.brawlerTextTheme,
         'Bree Serif': PartB.breeSerifTextTheme,
+        'Bricolage Grotesque': PartB.bricolageGrotesqueTextTheme,
         'Bruno Ace': PartB.brunoAceTextTheme,
         'Bruno Ace SC': PartB.brunoAceScTextTheme,
         'Brygada 1918': PartB.brygada1918TextTheme,
@@ -1892,6 +1956,7 @@ class GoogleFonts {
         'Cantarell': PartC.cantarellTextTheme,
         'Cantata One': PartC.cantataOneTextTheme,
         'Cantora One': PartC.cantoraOneTextTheme,
+        'Caprasimo': PartC.caprasimoTextTheme,
         'Capriola': PartC.capriolaTextTheme,
         'Caramel': PartC.caramelTextTheme,
         'Carattere': PartC.carattereTextTheme,
@@ -1922,6 +1987,7 @@ class GoogleFonts {
         'Chelsea Market': PartC.chelseaMarketTextTheme,
         'Chenla': PartC.chenlaTextTheme,
         'Cherish': PartC.cherishTextTheme,
+        'Cherry Bomb One': PartC.cherryBombOneTextTheme,
         'Cherry Cream Soda': PartC.cherryCreamSodaTextTheme,
         'Cherry Swash': PartC.cherrySwashTextTheme,
         'Chewy': PartC.chewyTextTheme,
@@ -1929,13 +1995,13 @@ class GoogleFonts {
         'Chilanka': PartC.chilankaTextTheme,
         'Chivo': PartC.chivoTextTheme,
         'Chivo Mono': PartC.chivoMonoTextTheme,
+        'Chokokutai': PartC.chokokutaiTextTheme,
         'Chonburi': PartC.chonburiTextTheme,
         'Cinzel': PartC.cinzelTextTheme,
         'Cinzel Decorative': PartC.cinzelDecorativeTextTheme,
         'Clicker Script': PartC.clickerScriptTextTheme,
         'Climate Crisis': PartC.climateCrisisTextTheme,
         'Coda': PartC.codaTextTheme,
-        'Coda Caption': PartC.codaCaptionTextTheme,
         'Codystar': PartC.codystarTextTheme,
         'Coiny': PartC.coinyTextTheme,
         'Combo': PartC.comboTextTheme,
@@ -1981,6 +2047,7 @@ class GoogleFonts {
         'DM Sans': PartD.dmSansTextTheme,
         'DM Serif Display': PartD.dmSerifDisplayTextTheme,
         'DM Serif Text': PartD.dmSerifTextTextTheme,
+        'Dai Banna SIL': PartD.daiBannaSilTextTheme,
         'Damion': PartD.damionTextTheme,
         'Dancing Script': PartD.dancingScriptTextTheme,
         'Dangrek': PartD.dangrekTextTheme,
@@ -2000,6 +2067,7 @@ class GoogleFonts {
         'Devonshire': PartD.devonshireTextTheme,
         'Dhurjati': PartD.dhurjatiTextTheme,
         'Didact Gothic': PartD.didactGothicTextTheme,
+        'Diphylleia': PartD.diphylleiaTextTheme,
         'Diplomata': PartD.diplomataTextTheme,
         'Diplomata SC': PartD.diplomataScTextTheme,
         'Do Hyeon': PartD.doHyeonTextTheme,
@@ -2113,6 +2181,7 @@ class GoogleFonts {
         'Galindo': PartG.galindoTextTheme,
         'Gamja Flower': PartG.gamjaFlowerTextTheme,
         'Gantari': PartG.gantariTextTheme,
+        'Gasoek One': PartG.gasoekOneTextTheme,
         'Gayathri': PartG.gayathriTextTheme,
         'Gelasio': PartG.gelasioTextTheme,
         'Gemunu Libre': PartG.gemunuLibreTextTheme,
@@ -2120,6 +2189,7 @@ class GoogleFonts {
         'Gentium Book Plus': PartG.gentiumBookPlusTextTheme,
         'Gentium Plus': PartG.gentiumPlusTextTheme,
         'Geo': PartG.geoTextTheme,
+        'Geologica': PartG.geologicaTextTheme,
         'Georama': PartG.georamaTextTheme,
         'Geostar': PartG.geostarTextTheme,
         'Geostar Fill': PartG.geostarFillTextTheme,
@@ -2147,6 +2217,7 @@ class GoogleFonts {
         'Gowun Dodum': PartG.gowunDodumTextTheme,
         'Graduate': PartG.graduateTextTheme,
         'Grand Hotel': PartG.grandHotelTextTheme,
+        'Grandiflora One': PartG.grandifloraOneTextTheme,
         'Grandstander': PartG.grandstanderTextTheme,
         'Grape Nuts': PartG.grapeNutsTextTheme,
         'Gravitas One': PartG.gravitasOneTextTheme,
@@ -2170,6 +2241,7 @@ class GoogleFonts {
         'Hammersmith One': PartH.hammersmithOneTextTheme,
         'Hanalei': PartH.hanaleiTextTheme,
         'Hanalei Fill': PartH.hanaleiFillTextTheme,
+        'Handjet': PartH.handjetTextTheme,
         'Handlee': PartH.handleeTextTheme,
         'Hanken Grotesk': PartH.hankenGroteskTextTheme,
         'Hanuman': PartH.hanumanTextTheme,
@@ -2219,6 +2291,7 @@ class GoogleFonts {
         'Imbue': PartI.imbueTextTheme,
         'Imperial Script': PartI.imperialScriptTextTheme,
         'Imprima': PartI.imprimaTextTheme,
+        'Inclusive Sans': PartI.inclusiveSansTextTheme,
         'Inconsolata': PartI.inconsolataTextTheme,
         'Inder': PartI.inderTextTheme,
         'Indie Flower': PartI.indieFlowerTextTheme,
@@ -2261,6 +2334,7 @@ class GoogleFonts {
         'Just Another Hand': PartJ.justAnotherHandTextTheme,
         'Just Me Again Down Here': PartJ.justMeAgainDownHereTextTheme,
         'K2D': PartK.k2dTextTheme,
+        'Kablammo': PartK.kablammoTextTheme,
         'Kadwa': PartK.kadwaTextTheme,
         'Kaisei Decol': PartK.kaiseiDecolTextTheme,
         'Kaisei HarunoUmi': PartK.kaiseiHarunoUmiTextTheme,
@@ -2356,6 +2430,7 @@ class GoogleFonts {
         'Lily Script One': PartL.lilyScriptOneTextTheme,
         'Limelight': PartL.limelightTextTheme,
         'Linden Hill': PartL.lindenHillTextTheme,
+        'Lisu Bosa': PartL.lisuBosaTextTheme,
         'Literata': PartL.literataTextTheme,
         'Liu Jian Mao Cao': PartL.liuJianMaoCaoTextTheme,
         'Livvic': PartL.livvicTextTheme,
@@ -2372,6 +2447,9 @@ class GoogleFonts {
         'Loved by the King': PartL.lovedByTheKingTextTheme,
         'Lovers Quarrel': PartL.loversQuarrelTextTheme,
         'Luckiest Guy': PartL.luckiestGuyTextTheme,
+        'Lugrasimo': PartL.lugrasimoTextTheme,
+        'Lumanosimo': PartL.lumanosimoTextTheme,
+        'Lunasima': PartL.lunasimaTextTheme,
         'Lusitana': PartL.lusitanaTextTheme,
         'Lustria': PartL.lustriaTextTheme,
         'Luxurious Roman': PartL.luxuriousRomanTextTheme,
@@ -2446,10 +2524,12 @@ class GoogleFonts {
         'Modern Antiqua': PartM.modernAntiquaTextTheme,
         'Mogra': PartM.mograTextTheme,
         'Mohave': PartM.mohaveTextTheme,
+        'Moirai One': PartM.moiraiOneTextTheme,
         'Molengo': PartM.molengoTextTheme,
         'Molle': PartM.molleTextTheme,
         'Monda': PartM.mondaTextTheme,
         'Monofett': PartM.monofettTextTheme,
+        'Monomaniac One': PartM.monomaniacOneTextTheme,
         'Monoton': PartM.monotonTextTheme,
         'Monsieur La Doulaise': PartM.monsieurLaDoulaiseTextTheme,
         'Montaga': PartM.montagaTextTheme,
@@ -2460,6 +2540,7 @@ class GoogleFonts {
         'Montserrat Alternates': PartM.montserratAlternatesTextTheme,
         'Montserrat Subrayada': PartM.montserratSubrayadaTextTheme,
         'Moo Lah Lah': PartM.mooLahLahTextTheme,
+        'Mooli': PartM.mooliTextTheme,
         'Moon Dance': PartM.moonDanceTextTheme,
         'Moul': PartM.moulTextTheme,
         'Moulpali': PartM.moulpaliTextTheme,
@@ -2488,6 +2569,7 @@ class GoogleFonts {
         'Nanum Gothic Coding': PartN.nanumGothicCodingTextTheme,
         'Nanum Myeongjo': PartN.nanumMyeongjoTextTheme,
         'Nanum Pen Script': PartN.nanumPenScriptTextTheme,
+        'Narnoor': PartN.narnoorTextTheme,
         'Neonderthaw': PartN.neonderthawTextTheme,
         'Nerko One': PartN.nerkoOneTextTheme,
         'Neucha': PartN.neuchaTextTheme,
@@ -2538,9 +2620,11 @@ class GoogleFonts {
         'Noto Sans Chakma': PartN.notoSansChakmaTextTheme,
         'Noto Sans Cham': PartN.notoSansChamTextTheme,
         'Noto Sans Cherokee': PartN.notoSansCherokeeTextTheme,
+        'Noto Sans Chorasmian': PartN.notoSansChorasmianTextTheme,
         'Noto Sans Coptic': PartN.notoSansCopticTextTheme,
         'Noto Sans Cuneiform': PartN.notoSansCuneiformTextTheme,
         'Noto Sans Cypriot': PartN.notoSansCypriotTextTheme,
+        'Noto Sans Cypro Minoan': PartN.notoSansCyproMinoanTextTheme,
         'Noto Sans Deseret': PartN.notoSansDeseretTextTheme,
         'Noto Sans Devanagari': PartN.notoSansDevanagariTextTheme,
         'Noto Sans Display': PartN.notoSansDisplayTextTheme,
@@ -2557,6 +2641,7 @@ class GoogleFonts {
         'Noto Sans Gujarati': PartN.notoSansGujaratiTextTheme,
         'Noto Sans Gunjala Gondi': PartN.notoSansGunjalaGondiTextTheme,
         'Noto Sans Gurmukhi': PartN.notoSansGurmukhiTextTheme,
+        'Noto Sans HK': PartN.notoSansHkTextTheme,
         'Noto Sans Hanifi Rohingya': PartN.notoSansHanifiRohingyaTextTheme,
         'Noto Sans Hanunoo': PartN.notoSansHanunooTextTheme,
         'Noto Sans Hatran': PartN.notoSansHatranTextTheme,
@@ -2568,7 +2653,9 @@ class GoogleFonts {
             PartN.notoSansInscriptionalPahlaviTextTheme,
         'Noto Sans Inscriptional Parthian':
             PartN.notoSansInscriptionalParthianTextTheme,
+        'Noto Sans JP': PartN.notoSansJpTextTheme,
         'Noto Sans Javanese': PartN.notoSansJavaneseTextTheme,
+        'Noto Sans KR': PartN.notoSansKrTextTheme,
         'Noto Sans Kaithi': PartN.notoSansKaithiTextTheme,
         'Noto Sans Kannada': PartN.notoSansKannadaTextTheme,
         'Noto Sans Kayah Li': PartN.notoSansKayahLiTextTheme,
@@ -2632,6 +2719,7 @@ class GoogleFonts {
         'Noto Sans Psalter Pahlavi': PartN.notoSansPsalterPahlaviTextTheme,
         'Noto Sans Rejang': PartN.notoSansRejangTextTheme,
         'Noto Sans Runic': PartN.notoSansRunicTextTheme,
+        'Noto Sans SC': PartN.notoSansScTextTheme,
         'Noto Sans Samaritan': PartN.notoSansSamaritanTextTheme,
         'Noto Sans Saurashtra': PartN.notoSansSaurashtraTextTheme,
         'Noto Sans Sharada': PartN.notoSansSharadaTextTheme,
@@ -2647,6 +2735,8 @@ class GoogleFonts {
         'Noto Sans Symbols': PartN.notoSansSymbolsTextTheme,
         'Noto Sans Symbols 2': PartN.notoSansSymbols2TextTheme,
         'Noto Sans Syriac': PartN.notoSansSyriacTextTheme,
+        'Noto Sans Syriac Eastern': PartN.notoSansSyriacEasternTextTheme,
+        'Noto Sans TC': PartN.notoSansTcTextTheme,
         'Noto Sans Tagalog': PartN.notoSansTagalogTextTheme,
         'Noto Sans Tagbanwa': PartN.notoSansTagbanwaTextTheme,
         'Noto Sans Tai Le': PartN.notoSansTaiLeTextTheme,
@@ -2664,6 +2754,7 @@ class GoogleFonts {
         'Noto Sans Tirhuta': PartN.notoSansTirhutaTextTheme,
         'Noto Sans Ugaritic': PartN.notoSansUgariticTextTheme,
         'Noto Sans Vai': PartN.notoSansVaiTextTheme,
+        'Noto Sans Vithkuqi': PartN.notoSansVithkuqiTextTheme,
         'Noto Sans Wancho': PartN.notoSansWanchoTextTheme,
         'Noto Sans Warang Citi': PartN.notoSansWarangCitiTextTheme,
         'Noto Sans Yi': PartN.notoSansYiTextTheme,
@@ -2684,13 +2775,17 @@ class GoogleFonts {
         'Noto Serif HK': PartN.notoSerifHkTextTheme,
         'Noto Serif Hebrew': PartN.notoSerifHebrewTextTheme,
         'Noto Serif Kannada': PartN.notoSerifKannadaTextTheme,
+        'Noto Serif Khitan Small Script':
+            PartN.notoSerifKhitanSmallScriptTextTheme,
         'Noto Serif Khmer': PartN.notoSerifKhmerTextTheme,
         'Noto Serif Khojki': PartN.notoSerifKhojkiTextTheme,
         'Noto Serif Lao': PartN.notoSerifLaoTextTheme,
+        'Noto Serif Makasar': PartN.notoSerifMakasarTextTheme,
         'Noto Serif Malayalam': PartN.notoSerifMalayalamTextTheme,
         'Noto Serif Myanmar': PartN.notoSerifMyanmarTextTheme,
         'Noto Serif NP Hmong': PartN.notoSerifNpHmongTextTheme,
         'Noto Serif Oriya': PartN.notoSerifOriyaTextTheme,
+        'Noto Serif Ottoman Siyaq': PartN.notoSerifOttomanSiyaqTextTheme,
         'Noto Serif Sinhala': PartN.notoSerifSinhalaTextTheme,
         'Noto Serif Tamil': PartN.notoSerifTamilTextTheme,
         'Noto Serif Tangut': PartN.notoSerifTangutTextTheme,
@@ -2698,6 +2793,7 @@ class GoogleFonts {
         'Noto Serif Thai': PartN.notoSerifThaiTextTheme,
         'Noto Serif Tibetan': PartN.notoSerifTibetanTextTheme,
         'Noto Serif Toto': PartN.notoSerifTotoTextTheme,
+        'Noto Serif Vithkuqi': PartN.notoSerifVithkuqiTextTheme,
         'Noto Serif Yezidi': PartN.notoSerifYezidiTextTheme,
         'Noto Traditional Nushu': PartN.notoTraditionalNushuTextTheme,
         'Nova Cut': PartN.novaCutTextTheme,
@@ -2725,6 +2821,7 @@ class GoogleFonts {
         'Open Sans': PartO.openSansTextTheme,
         'Open Sans Condensed': PartO.openSansCondensedTextTheme,
         'Oranienbaum': PartO.oranienbaumTextTheme,
+        'Orbit': PartO.orbitTextTheme,
         'Orbitron': PartO.orbitronTextTheme,
         'Oregano': PartO.oreganoTextTheme,
         'Orelega One': PartO.orelegaOneTextTheme,
@@ -2752,6 +2849,7 @@ class GoogleFonts {
         'Padyakke Expanded One': PartP.padyakkeExpandedOneTextTheme,
         'Palanquin': PartP.palanquinTextTheme,
         'Palanquin Dark': PartP.palanquinDarkTextTheme,
+        'Palette Mosaic': PartP.paletteMosaicTextTheme,
         'Pangolin': PartP.pangolinTextTheme,
         'Paprika': PartP.paprikaTextTheme,
         'Parisienne': PartP.parisienneTextTheme,
@@ -2781,6 +2879,7 @@ class GoogleFonts {
         'Plaster': PartP.plasterTextTheme,
         'Play': PartP.playTextTheme,
         'Playball': PartP.playballTextTheme,
+        'Playfair': PartP.playfairTextTheme,
         'Playfair Display': PartP.playfairDisplayTextTheme,
         'Playfair Display SC': PartP.playfairDisplayScTextTheme,
         'Plus Jakarta Sans': PartP.plusJakartaSansTextTheme,
@@ -2821,6 +2920,7 @@ class GoogleFonts {
         'Quintessential': PartQ.quintessentialTextTheme,
         'Qwigley': PartQ.qwigleyTextTheme,
         'Qwitcher Grypen': PartQ.qwitcherGrypenTextTheme,
+        'REM': PartR.remTextTheme,
         'Racing Sans One': PartR.racingSansOneTextTheme,
         'Radio Canada': PartR.radioCanadaTextTheme,
         'Radley': PartR.radleyTextTheme,
@@ -2867,6 +2967,7 @@ class GoogleFonts {
         'Roboto Serif': PartR.robotoSerifTextTheme,
         'Roboto Slab': PartR.robotoSlabTextTheme,
         'Rochester': PartR.rochesterTextTheme,
+        'Rock 3D': PartR.rock3dTextTheme,
         'Rock Salt': PartR.rockSaltTextTheme,
         'RocknRoll One': PartR.rocknRollOneTextTheme,
         'Rokkitt': PartR.rokkittTextTheme,
@@ -2906,6 +3007,7 @@ class GoogleFonts {
         'Ruslan Display': PartR.ruslanDisplayTextTheme,
         'Russo One': PartR.russoOneTextTheme,
         'Ruthie': PartR.ruthieTextTheme,
+        'Ruwudu': PartR.ruwuduTextTheme,
         'Rye': PartR.ryeTextTheme,
         'STIX Two Text': PartS.stixTwoTextTextTheme,
         'Sacramento': PartS.sacramentoTextTheme,
@@ -2954,6 +3056,7 @@ class GoogleFonts {
         'Shippori Antique B1': PartS.shipporiAntiqueB1TextTheme,
         'Shippori Mincho': PartS.shipporiMinchoTextTheme,
         'Shippori Mincho B1': PartS.shipporiMinchoB1TextTheme,
+        'Shizuru': PartS.shizuruTextTheme,
         'Shojumaru': PartS.shojumaruTextTheme,
         'Short Stack': PartS.shortStackTextTheme,
         'Shrikhand': PartS.shrikhandTextTheme,
@@ -2972,6 +3075,7 @@ class GoogleFonts {
         'Slabo 13px': PartS.slabo13pxTextTheme,
         'Slabo 27px': PartS.slabo27pxTextTheme,
         'Slackey': PartS.slackeyTextTheme,
+        'Slackside One': PartS.slacksideOneTextTheme,
         'Smokum': PartS.smokumTextTheme,
         'Smooch': PartS.smoochTextTheme,
         'Smooch Sans': PartS.smoochSansTextTheme,
@@ -2994,9 +3098,7 @@ class GoogleFonts {
         'Sorts Mill Goudy': PartS.sortsMillGoudyTextTheme,
         'Source Code Pro': PartS.sourceCodeProTextTheme,
         'Source Sans 3': PartS.sourceSans3TextTheme,
-        'Source Sans Pro': PartS.sourceSansProTextTheme,
         'Source Serif 4': PartS.sourceSerif4TextTheme,
-        'Source Serif Pro': PartS.sourceSerifProTextTheme,
         'Space Grotesk': PartS.spaceGroteskTextTheme,
         'Space Mono': PartS.spaceMonoTextTheme,
         'Special Elite': PartS.specialEliteTextTheme,
@@ -3049,6 +3151,7 @@ class GoogleFonts {
         'Tauri': PartT.tauriTextTheme,
         'Taviraj': PartT.tavirajTextTheme,
         'Teko': PartT.tekoTextTheme,
+        'Tektur': PartT.tekturTextTheme,
         'Telex': PartT.telexTextTheme,
         'Tenali Ramakrishna': PartT.tenaliRamakrishnaTextTheme,
         'Tenor Sans': PartT.tenorSansTextTheme,
@@ -3084,6 +3187,7 @@ class GoogleFonts {
         'Trochut': PartT.trochutTextTheme,
         'Truculenta': PartT.truculentaTextTheme,
         'Trykker': PartT.trykkerTextTheme,
+        'Tsukimi Rounded': PartT.tsukimiRoundedTextTheme,
         'Tulpen One': PartT.tulpenOneTextTheme,
         'Turret Road': PartT.turretRoadTextTheme,
         'Twinkle Star': PartT.twinkleStarTextTheme,
@@ -3114,6 +3218,7 @@ class GoogleFonts {
         'Viaoda Libre': PartV.viaodaLibreTextTheme,
         'Vibes': PartV.vibesTextTheme,
         'Vibur': PartV.viburTextTheme,
+        'Victor Mono': PartV.victorMonoTextTheme,
         'Vidaloka': PartV.vidalokaTextTheme,
         'Viga': PartV.vigaTextTheme,
         'Vina Sans': PartV.vinaSansTextTheme,
@@ -3129,6 +3234,7 @@ class GoogleFonts {
         'Warnes': PartW.warnesTextTheme,
         'Water Brush': PartW.waterBrushTextTheme,
         'Waterfall': PartW.waterfallTextTheme,
+        'Wavefont': PartW.wavefontTextTheme,
         'Wellfleet': PartW.wellfleetTextTheme,
         'Wendy One': PartW.wendyOneTextTheme,
         'Whisper': PartW.whisperTextTheme,
@@ -3149,7 +3255,12 @@ class GoogleFonts {
         'Yomogi': PartY.yomogiTextTheme,
         'Yrsa': PartY.yrsaTextTheme,
         'Ysabeau': PartY.ysabeauTextTheme,
+        'Ysabeau Infant': PartY.ysabeauInfantTextTheme,
+        'Ysabeau Office': PartY.ysabeauOfficeTextTheme,
+        'Ysabeau SC': PartY.ysabeauScTextTheme,
         'Yuji Boku': PartY.yujiBokuTextTheme,
+        'Yuji Hentaigana Akari': PartY.yujiHentaiganaAkariTextTheme,
+        'Yuji Hentaigana Akebono': PartY.yujiHentaiganaAkebonoTextTheme,
         'Yuji Mai': PartY.yujiMaiTextTheme,
         'Yuji Syuku': PartY.yujiSyukuTextTheme,
         'Yusei Magic': PartY.yuseiMagicTextTheme,
@@ -3249,6 +3360,8 @@ class GoogleFonts {
 
   static const aBeeZee = PartA.aBeeZee;
   static const aBeeZeeTextTheme = PartA.aBeeZeeTextTheme;
+  static const aDLaMDisplay = PartA.aDLaMDisplay;
+  static const aDLaMDisplayTextTheme = PartA.aDLaMDisplayTextTheme;
   static const abel = PartA.abel;
   static const abelTextTheme = PartA.abelTextTheme;
   static const abhayaLibre = PartA.abhayaLibre;
@@ -3269,8 +3382,12 @@ class GoogleFonts {
   static const adaminaTextTheme = PartA.adaminaTextTheme;
   static const adventPro = PartA.adventPro;
   static const adventProTextTheme = PartA.adventProTextTheme;
+  static const agdasima = PartA.agdasima;
+  static const agdasimaTextTheme = PartA.agdasimaTextTheme;
   static const aguafinaScript = PartA.aguafinaScript;
   static const aguafinaScriptTextTheme = PartA.aguafinaScriptTextTheme;
+  static const akatab = PartA.akatab;
+  static const akatabTextTheme = PartA.akatabTextTheme;
   static const akayaKanadaka = PartA.akayaKanadaka;
   static const akayaKanadakaTextTheme = PartA.akayaKanadakaTextTheme;
   static const akayaTelivigala = PartA.akayaTelivigala;
@@ -3409,6 +3526,8 @@ class GoogleFonts {
   static const anuphanTextTheme = PartA.anuphanTextTheme;
   static const anybody = PartA.anybody;
   static const anybodyTextTheme = PartA.anybodyTextTheme;
+  static const aoboshiOne = PartA.aoboshiOne;
+  static const aoboshiOneTextTheme = PartA.aoboshiOneTextTheme;
   static const arapey = PartA.arapey;
   static const arapeyTextTheme = PartA.arapeyTextTheme;
   static const arbutus = PartA.arbutus;
@@ -3502,8 +3621,12 @@ class GoogleFonts {
   static const bizUDPMinchoTextTheme = PartB.bizUDPMinchoTextTheme;
   static const babylonica = PartB.babylonica;
   static const babylonicaTextTheme = PartB.babylonicaTextTheme;
+  static const bacasimeAntique = PartB.bacasimeAntique;
+  static const bacasimeAntiqueTextTheme = PartB.bacasimeAntiqueTextTheme;
   static const badScript = PartB.badScript;
   static const badScriptTextTheme = PartB.badScriptTextTheme;
+  static const bagelFatOne = PartB.bagelFatOne;
+  static const bagelFatOneTextTheme = PartB.bagelFatOneTextTheme;
   static const bahiana = PartB.bahiana;
   static const bahianaTextTheme = PartB.bahianaTextTheme;
   static const bahianita = PartB.bahianita;
@@ -3567,6 +3690,8 @@ class GoogleFonts {
   static const beauRivageTextTheme = PartB.beauRivageTextTheme;
   static const bebasNeue = PartB.bebasNeue;
   static const bebasNeueTextTheme = PartB.bebasNeueTextTheme;
+  static const belanosima = PartB.belanosima;
+  static const belanosimaTextTheme = PartB.belanosimaTextTheme;
   static const belgrano = PartB.belgrano;
   static const belgranoTextTheme = PartB.belgranoTextTheme;
   static const bellefair = PartB.bellefair;
@@ -3657,6 +3782,8 @@ class GoogleFonts {
   static const bonheurRoyaleTextTheme = PartB.bonheurRoyaleTextTheme;
   static const boogaloo = PartB.boogaloo;
   static const boogalooTextTheme = PartB.boogalooTextTheme;
+  static const borel = PartB.borel;
+  static const borelTextTheme = PartB.borelTextTheme;
   static const bowlbyOne = PartB.bowlbyOne;
   static const bowlbyOneTextTheme = PartB.bowlbyOneTextTheme;
   static const bowlbyOneSc = PartB.bowlbyOneSc;
@@ -3667,6 +3794,8 @@ class GoogleFonts {
   static const brawlerTextTheme = PartB.brawlerTextTheme;
   static const breeSerif = PartB.breeSerif;
   static const breeSerifTextTheme = PartB.breeSerifTextTheme;
+  static const bricolageGrotesque = PartB.bricolageGrotesque;
+  static const bricolageGrotesqueTextTheme = PartB.bricolageGrotesqueTextTheme;
   static const brunoAce = PartB.brunoAce;
   static const brunoAceTextTheme = PartB.brunoAceTextTheme;
   static const brunoAceSc = PartB.brunoAceSc;
@@ -3729,6 +3858,8 @@ class GoogleFonts {
   static const cantataOneTextTheme = PartC.cantataOneTextTheme;
   static const cantoraOne = PartC.cantoraOne;
   static const cantoraOneTextTheme = PartC.cantoraOneTextTheme;
+  static const caprasimo = PartC.caprasimo;
+  static const caprasimoTextTheme = PartC.caprasimoTextTheme;
   static const capriola = PartC.capriola;
   static const capriolaTextTheme = PartC.capriolaTextTheme;
   static const caramel = PartC.caramel;
@@ -3789,6 +3920,8 @@ class GoogleFonts {
   static const chenlaTextTheme = PartC.chenlaTextTheme;
   static const cherish = PartC.cherish;
   static const cherishTextTheme = PartC.cherishTextTheme;
+  static const cherryBombOne = PartC.cherryBombOne;
+  static const cherryBombOneTextTheme = PartC.cherryBombOneTextTheme;
   static const cherryCreamSoda = PartC.cherryCreamSoda;
   static const cherryCreamSodaTextTheme = PartC.cherryCreamSodaTextTheme;
   static const cherrySwash = PartC.cherrySwash;
@@ -3803,6 +3936,8 @@ class GoogleFonts {
   static const chivoTextTheme = PartC.chivoTextTheme;
   static const chivoMono = PartC.chivoMono;
   static const chivoMonoTextTheme = PartC.chivoMonoTextTheme;
+  static const chokokutai = PartC.chokokutai;
+  static const chokokutaiTextTheme = PartC.chokokutaiTextTheme;
   static const chonburi = PartC.chonburi;
   static const chonburiTextTheme = PartC.chonburiTextTheme;
   static const cinzel = PartC.cinzel;
@@ -3815,8 +3950,6 @@ class GoogleFonts {
   static const climateCrisisTextTheme = PartC.climateCrisisTextTheme;
   static const coda = PartC.coda;
   static const codaTextTheme = PartC.codaTextTheme;
-  static const codaCaption = PartC.codaCaption;
-  static const codaCaptionTextTheme = PartC.codaCaptionTextTheme;
   static const codystar = PartC.codystar;
   static const codystarTextTheme = PartC.codystarTextTheme;
   static const coiny = PartC.coiny;
@@ -3907,6 +4040,8 @@ class GoogleFonts {
   static const dmSerifDisplayTextTheme = PartD.dmSerifDisplayTextTheme;
   static const dmSerifText = PartD.dmSerifText;
   static const dmSerifTextTextTheme = PartD.dmSerifTextTextTheme;
+  static const daiBannaSil = PartD.daiBannaSil;
+  static const daiBannaSilTextTheme = PartD.daiBannaSilTextTheme;
   static const damion = PartD.damion;
   static const damionTextTheme = PartD.damionTextTheme;
   static const dancingScript = PartD.dancingScript;
@@ -3945,6 +4080,8 @@ class GoogleFonts {
   static const dhurjatiTextTheme = PartD.dhurjatiTextTheme;
   static const didactGothic = PartD.didactGothic;
   static const didactGothicTextTheme = PartD.didactGothicTextTheme;
+  static const diphylleia = PartD.diphylleia;
+  static const diphylleiaTextTheme = PartD.diphylleiaTextTheme;
   static const diplomata = PartD.diplomata;
   static const diplomataTextTheme = PartD.diplomataTextTheme;
   static const diplomataSc = PartD.diplomataSc;
@@ -4176,6 +4313,8 @@ class GoogleFonts {
   static const gamjaFlowerTextTheme = PartG.gamjaFlowerTextTheme;
   static const gantari = PartG.gantari;
   static const gantariTextTheme = PartG.gantariTextTheme;
+  static const gasoekOne = PartG.gasoekOne;
+  static const gasoekOneTextTheme = PartG.gasoekOneTextTheme;
   static const gayathri = PartG.gayathri;
   static const gayathriTextTheme = PartG.gayathriTextTheme;
   static const gelasio = PartG.gelasio;
@@ -4190,6 +4329,8 @@ class GoogleFonts {
   static const gentiumPlusTextTheme = PartG.gentiumPlusTextTheme;
   static const geo = PartG.geo;
   static const geoTextTheme = PartG.geoTextTheme;
+  static const geologica = PartG.geologica;
+  static const geologicaTextTheme = PartG.geologicaTextTheme;
   static const georama = PartG.georama;
   static const georamaTextTheme = PartG.georamaTextTheme;
   static const geostar = PartG.geostar;
@@ -4245,6 +4386,8 @@ class GoogleFonts {
   static const graduateTextTheme = PartG.graduateTextTheme;
   static const grandHotel = PartG.grandHotel;
   static const grandHotelTextTheme = PartG.grandHotelTextTheme;
+  static const grandifloraOne = PartG.grandifloraOne;
+  static const grandifloraOneTextTheme = PartG.grandifloraOneTextTheme;
   static const grandstander = PartG.grandstander;
   static const grandstanderTextTheme = PartG.grandstanderTextTheme;
   static const grapeNuts = PartG.grapeNuts;
@@ -4291,6 +4434,8 @@ class GoogleFonts {
   static const hanaleiTextTheme = PartH.hanaleiTextTheme;
   static const hanaleiFill = PartH.hanaleiFill;
   static const hanaleiFillTextTheme = PartH.hanaleiFillTextTheme;
+  static const handjet = PartH.handjet;
+  static const handjetTextTheme = PartH.handjetTextTheme;
   static const handlee = PartH.handlee;
   static const handleeTextTheme = PartH.handleeTextTheme;
   static const hankenGrotesk = PartH.hankenGrotesk;
@@ -4394,6 +4539,8 @@ class GoogleFonts {
   static const imperialScriptTextTheme = PartI.imperialScriptTextTheme;
   static const imprima = PartI.imprima;
   static const imprimaTextTheme = PartI.imprimaTextTheme;
+  static const inclusiveSans = PartI.inclusiveSans;
+  static const inclusiveSansTextTheme = PartI.inclusiveSansTextTheme;
   static const inconsolata = PartI.inconsolata;
   static const inconsolataTextTheme = PartI.inconsolataTextTheme;
   static const inder = PartI.inder;
@@ -4480,6 +4627,8 @@ class GoogleFonts {
       PartJ.justMeAgainDownHereTextTheme;
   static const k2d = PartK.k2d;
   static const k2dTextTheme = PartK.k2dTextTheme;
+  static const kablammo = PartK.kablammo;
+  static const kablammoTextTheme = PartK.kablammoTextTheme;
   static const kadwa = PartK.kadwa;
   static const kadwaTextTheme = PartK.kadwaTextTheme;
   static const kaiseiDecol = PartK.kaiseiDecol;
@@ -4672,6 +4821,8 @@ class GoogleFonts {
   static const limelightTextTheme = PartL.limelightTextTheme;
   static const lindenHill = PartL.lindenHill;
   static const lindenHillTextTheme = PartL.lindenHillTextTheme;
+  static const lisuBosa = PartL.lisuBosa;
+  static const lisuBosaTextTheme = PartL.lisuBosaTextTheme;
   static const literata = PartL.literata;
   static const literataTextTheme = PartL.literataTextTheme;
   static const liuJianMaoCao = PartL.liuJianMaoCao;
@@ -4704,6 +4855,12 @@ class GoogleFonts {
   static const loversQuarrelTextTheme = PartL.loversQuarrelTextTheme;
   static const luckiestGuy = PartL.luckiestGuy;
   static const luckiestGuyTextTheme = PartL.luckiestGuyTextTheme;
+  static const lugrasimo = PartL.lugrasimo;
+  static const lugrasimoTextTheme = PartL.lugrasimoTextTheme;
+  static const lumanosimo = PartL.lumanosimo;
+  static const lumanosimoTextTheme = PartL.lumanosimoTextTheme;
+  static const lunasima = PartL.lunasima;
+  static const lunasimaTextTheme = PartL.lunasimaTextTheme;
   static const lusitana = PartL.lusitana;
   static const lusitanaTextTheme = PartL.lusitanaTextTheme;
   static const lustria = PartL.lustria;
@@ -4852,6 +5009,8 @@ class GoogleFonts {
   static const mograTextTheme = PartM.mograTextTheme;
   static const mohave = PartM.mohave;
   static const mohaveTextTheme = PartM.mohaveTextTheme;
+  static const moiraiOne = PartM.moiraiOne;
+  static const moiraiOneTextTheme = PartM.moiraiOneTextTheme;
   static const molengo = PartM.molengo;
   static const molengoTextTheme = PartM.molengoTextTheme;
   static const molle = PartM.molle;
@@ -4860,6 +5019,8 @@ class GoogleFonts {
   static const mondaTextTheme = PartM.mondaTextTheme;
   static const monofett = PartM.monofett;
   static const monofettTextTheme = PartM.monofettTextTheme;
+  static const monomaniacOne = PartM.monomaniacOne;
+  static const monomaniacOneTextTheme = PartM.monomaniacOneTextTheme;
   static const monoton = PartM.monoton;
   static const monotonTextTheme = PartM.monotonTextTheme;
   static const monsieurLaDoulaise = PartM.monsieurLaDoulaise;
@@ -4882,6 +5043,8 @@ class GoogleFonts {
       PartM.montserratSubrayadaTextTheme;
   static const mooLahLah = PartM.mooLahLah;
   static const mooLahLahTextTheme = PartM.mooLahLahTextTheme;
+  static const mooli = PartM.mooli;
+  static const mooliTextTheme = PartM.mooliTextTheme;
   static const moonDance = PartM.moonDance;
   static const moonDanceTextTheme = PartM.moonDanceTextTheme;
   static const moul = PartM.moul;
@@ -4939,6 +5102,8 @@ class GoogleFonts {
   static const nanumMyeongjoTextTheme = PartN.nanumMyeongjoTextTheme;
   static const nanumPenScript = PartN.nanumPenScript;
   static const nanumPenScriptTextTheme = PartN.nanumPenScriptTextTheme;
+  static const narnoor = PartN.narnoor;
+  static const narnoorTextTheme = PartN.narnoorTextTheme;
   static const neonderthaw = PartN.neonderthaw;
   static const neonderthawTextTheme = PartN.neonderthawTextTheme;
   static const nerkoOne = PartN.nerkoOne;
@@ -5038,12 +5203,17 @@ class GoogleFonts {
   static const notoSansChamTextTheme = PartN.notoSansChamTextTheme;
   static const notoSansCherokee = PartN.notoSansCherokee;
   static const notoSansCherokeeTextTheme = PartN.notoSansCherokeeTextTheme;
+  static const notoSansChorasmian = PartN.notoSansChorasmian;
+  static const notoSansChorasmianTextTheme = PartN.notoSansChorasmianTextTheme;
   static const notoSansCoptic = PartN.notoSansCoptic;
   static const notoSansCopticTextTheme = PartN.notoSansCopticTextTheme;
   static const notoSansCuneiform = PartN.notoSansCuneiform;
   static const notoSansCuneiformTextTheme = PartN.notoSansCuneiformTextTheme;
   static const notoSansCypriot = PartN.notoSansCypriot;
   static const notoSansCypriotTextTheme = PartN.notoSansCypriotTextTheme;
+  static const notoSansCyproMinoan = PartN.notoSansCyproMinoan;
+  static const notoSansCyproMinoanTextTheme =
+      PartN.notoSansCyproMinoanTextTheme;
   static const notoSansDeseret = PartN.notoSansDeseret;
   static const notoSansDeseretTextTheme = PartN.notoSansDeseretTextTheme;
   static const notoSansDevanagari = PartN.notoSansDevanagari;
@@ -5076,6 +5246,8 @@ class GoogleFonts {
       PartN.notoSansGunjalaGondiTextTheme;
   static const notoSansGurmukhi = PartN.notoSansGurmukhi;
   static const notoSansGurmukhiTextTheme = PartN.notoSansGurmukhiTextTheme;
+  static const notoSansHk = PartN.notoSansHk;
+  static const notoSansHkTextTheme = PartN.notoSansHkTextTheme;
   static const notoSansHanifiRohingya = PartN.notoSansHanifiRohingya;
   static const notoSansHanifiRohingyaTextTheme =
       PartN.notoSansHanifiRohingyaTextTheme;
@@ -5099,8 +5271,12 @@ class GoogleFonts {
       PartN.notoSansInscriptionalParthian;
   static const notoSansInscriptionalParthianTextTheme =
       PartN.notoSansInscriptionalParthianTextTheme;
+  static const notoSansJp = PartN.notoSansJp;
+  static const notoSansJpTextTheme = PartN.notoSansJpTextTheme;
   static const notoSansJavanese = PartN.notoSansJavanese;
   static const notoSansJavaneseTextTheme = PartN.notoSansJavaneseTextTheme;
+  static const notoSansKr = PartN.notoSansKr;
+  static const notoSansKrTextTheme = PartN.notoSansKrTextTheme;
   static const notoSansKaithi = PartN.notoSansKaithi;
   static const notoSansKaithiTextTheme = PartN.notoSansKaithiTextTheme;
   static const notoSansKannada = PartN.notoSansKannada;
@@ -5238,6 +5414,8 @@ class GoogleFonts {
   static const notoSansRejangTextTheme = PartN.notoSansRejangTextTheme;
   static const notoSansRunic = PartN.notoSansRunic;
   static const notoSansRunicTextTheme = PartN.notoSansRunicTextTheme;
+  static const notoSansSc = PartN.notoSansSc;
+  static const notoSansScTextTheme = PartN.notoSansScTextTheme;
   static const notoSansSamaritan = PartN.notoSansSamaritan;
   static const notoSansSamaritanTextTheme = PartN.notoSansSamaritanTextTheme;
   static const notoSansSaurashtra = PartN.notoSansSaurashtra;
@@ -5271,6 +5449,11 @@ class GoogleFonts {
   static const notoSansSymbols2TextTheme = PartN.notoSansSymbols2TextTheme;
   static const notoSansSyriac = PartN.notoSansSyriac;
   static const notoSansSyriacTextTheme = PartN.notoSansSyriacTextTheme;
+  static const notoSansSyriacEastern = PartN.notoSansSyriacEastern;
+  static const notoSansSyriacEasternTextTheme =
+      PartN.notoSansSyriacEasternTextTheme;
+  static const notoSansTc = PartN.notoSansTc;
+  static const notoSansTcTextTheme = PartN.notoSansTcTextTheme;
   static const notoSansTagalog = PartN.notoSansTagalog;
   static const notoSansTagalogTextTheme = PartN.notoSansTagalogTextTheme;
   static const notoSansTagbanwa = PartN.notoSansTagbanwa;
@@ -5306,6 +5489,8 @@ class GoogleFonts {
   static const notoSansUgariticTextTheme = PartN.notoSansUgariticTextTheme;
   static const notoSansVai = PartN.notoSansVai;
   static const notoSansVaiTextTheme = PartN.notoSansVaiTextTheme;
+  static const notoSansVithkuqi = PartN.notoSansVithkuqi;
+  static const notoSansVithkuqiTextTheme = PartN.notoSansVithkuqiTextTheme;
   static const notoSansWancho = PartN.notoSansWancho;
   static const notoSansWanchoTextTheme = PartN.notoSansWanchoTextTheme;
   static const notoSansWarangCiti = PartN.notoSansWarangCiti;
@@ -5348,12 +5533,17 @@ class GoogleFonts {
   static const notoSerifHebrewTextTheme = PartN.notoSerifHebrewTextTheme;
   static const notoSerifKannada = PartN.notoSerifKannada;
   static const notoSerifKannadaTextTheme = PartN.notoSerifKannadaTextTheme;
+  static const notoSerifKhitanSmallScript = PartN.notoSerifKhitanSmallScript;
+  static const notoSerifKhitanSmallScriptTextTheme =
+      PartN.notoSerifKhitanSmallScriptTextTheme;
   static const notoSerifKhmer = PartN.notoSerifKhmer;
   static const notoSerifKhmerTextTheme = PartN.notoSerifKhmerTextTheme;
   static const notoSerifKhojki = PartN.notoSerifKhojki;
   static const notoSerifKhojkiTextTheme = PartN.notoSerifKhojkiTextTheme;
   static const notoSerifLao = PartN.notoSerifLao;
   static const notoSerifLaoTextTheme = PartN.notoSerifLaoTextTheme;
+  static const notoSerifMakasar = PartN.notoSerifMakasar;
+  static const notoSerifMakasarTextTheme = PartN.notoSerifMakasarTextTheme;
   static const notoSerifMalayalam = PartN.notoSerifMalayalam;
   static const notoSerifMalayalamTextTheme = PartN.notoSerifMalayalamTextTheme;
   static const notoSerifMyanmar = PartN.notoSerifMyanmar;
@@ -5362,6 +5552,9 @@ class GoogleFonts {
   static const notoSerifNpHmongTextTheme = PartN.notoSerifNpHmongTextTheme;
   static const notoSerifOriya = PartN.notoSerifOriya;
   static const notoSerifOriyaTextTheme = PartN.notoSerifOriyaTextTheme;
+  static const notoSerifOttomanSiyaq = PartN.notoSerifOttomanSiyaq;
+  static const notoSerifOttomanSiyaqTextTheme =
+      PartN.notoSerifOttomanSiyaqTextTheme;
   static const notoSerifSinhala = PartN.notoSerifSinhala;
   static const notoSerifSinhalaTextTheme = PartN.notoSerifSinhalaTextTheme;
   static const notoSerifTamil = PartN.notoSerifTamil;
@@ -5376,6 +5569,8 @@ class GoogleFonts {
   static const notoSerifTibetanTextTheme = PartN.notoSerifTibetanTextTheme;
   static const notoSerifToto = PartN.notoSerifToto;
   static const notoSerifTotoTextTheme = PartN.notoSerifTotoTextTheme;
+  static const notoSerifVithkuqi = PartN.notoSerifVithkuqi;
+  static const notoSerifVithkuqiTextTheme = PartN.notoSerifVithkuqiTextTheme;
   static const notoSerifYezidi = PartN.notoSerifYezidi;
   static const notoSerifYezidiTextTheme = PartN.notoSerifYezidiTextTheme;
   static const notoTraditionalNushu = PartN.notoTraditionalNushu;
@@ -5432,6 +5627,8 @@ class GoogleFonts {
   static const openSansCondensedTextTheme = PartO.openSansCondensedTextTheme;
   static const oranienbaum = PartO.oranienbaum;
   static const oranienbaumTextTheme = PartO.oranienbaumTextTheme;
+  static const orbit = PartO.orbit;
+  static const orbitTextTheme = PartO.orbitTextTheme;
   static const orbitron = PartO.orbitron;
   static const orbitronTextTheme = PartO.orbitronTextTheme;
   static const oregano = PartO.oregano;
@@ -5487,6 +5684,8 @@ class GoogleFonts {
   static const palanquinTextTheme = PartP.palanquinTextTheme;
   static const palanquinDark = PartP.palanquinDark;
   static const palanquinDarkTextTheme = PartP.palanquinDarkTextTheme;
+  static const paletteMosaic = PartP.paletteMosaic;
+  static const paletteMosaicTextTheme = PartP.paletteMosaicTextTheme;
   static const pangolin = PartP.pangolin;
   static const pangolinTextTheme = PartP.pangolinTextTheme;
   static const paprika = PartP.paprika;
@@ -5545,6 +5744,8 @@ class GoogleFonts {
   static const playTextTheme = PartP.playTextTheme;
   static const playball = PartP.playball;
   static const playballTextTheme = PartP.playballTextTheme;
+  static const playfair = PartP.playfair;
+  static const playfairTextTheme = PartP.playfairTextTheme;
   static const playfairDisplay = PartP.playfairDisplay;
   static const playfairDisplayTextTheme = PartP.playfairDisplayTextTheme;
   static const playfairDisplaySc = PartP.playfairDisplaySc;
@@ -5625,6 +5826,8 @@ class GoogleFonts {
   static const qwigleyTextTheme = PartQ.qwigleyTextTheme;
   static const qwitcherGrypen = PartQ.qwitcherGrypen;
   static const qwitcherGrypenTextTheme = PartQ.qwitcherGrypenTextTheme;
+  static const rem = PartR.rem;
+  static const remTextTheme = PartR.remTextTheme;
   static const racingSansOne = PartR.racingSansOne;
   static const racingSansOneTextTheme = PartR.racingSansOneTextTheme;
   static const radioCanada = PartR.radioCanada;
@@ -5717,6 +5920,8 @@ class GoogleFonts {
   static const robotoSlabTextTheme = PartR.robotoSlabTextTheme;
   static const rochester = PartR.rochester;
   static const rochesterTextTheme = PartR.rochesterTextTheme;
+  static const rock3d = PartR.rock3d;
+  static const rock3dTextTheme = PartR.rock3dTextTheme;
   static const rockSalt = PartR.rockSalt;
   static const rockSaltTextTheme = PartR.rockSaltTextTheme;
   static const rocknRollOne = PartR.rocknRollOne;
@@ -5795,6 +6000,8 @@ class GoogleFonts {
   static const russoOneTextTheme = PartR.russoOneTextTheme;
   static const ruthie = PartR.ruthie;
   static const ruthieTextTheme = PartR.ruthieTextTheme;
+  static const ruwudu = PartR.ruwudu;
+  static const ruwuduTextTheme = PartR.ruwuduTextTheme;
   static const rye = PartR.rye;
   static const ryeTextTheme = PartR.ryeTextTheme;
   static const stixTwoText = PartS.stixTwoText;
@@ -5893,6 +6100,8 @@ class GoogleFonts {
   static const shipporiMinchoTextTheme = PartS.shipporiMinchoTextTheme;
   static const shipporiMinchoB1 = PartS.shipporiMinchoB1;
   static const shipporiMinchoB1TextTheme = PartS.shipporiMinchoB1TextTheme;
+  static const shizuru = PartS.shizuru;
+  static const shizuruTextTheme = PartS.shizuruTextTheme;
   static const shojumaru = PartS.shojumaru;
   static const shojumaruTextTheme = PartS.shojumaruTextTheme;
   static const shortStack = PartS.shortStack;
@@ -5929,6 +6138,8 @@ class GoogleFonts {
   static const slabo27pxTextTheme = PartS.slabo27pxTextTheme;
   static const slackey = PartS.slackey;
   static const slackeyTextTheme = PartS.slackeyTextTheme;
+  static const slacksideOne = PartS.slacksideOne;
+  static const slacksideOneTextTheme = PartS.slacksideOneTextTheme;
   static const smokum = PartS.smokum;
   static const smokumTextTheme = PartS.smokumTextTheme;
   static const smooch = PartS.smooch;
@@ -5975,12 +6186,8 @@ class GoogleFonts {
   static const sourceCodeProTextTheme = PartS.sourceCodeProTextTheme;
   static const sourceSans3 = PartS.sourceSans3;
   static const sourceSans3TextTheme = PartS.sourceSans3TextTheme;
-  static const sourceSansPro = PartS.sourceSansPro;
-  static const sourceSansProTextTheme = PartS.sourceSansProTextTheme;
   static const sourceSerif4 = PartS.sourceSerif4;
   static const sourceSerif4TextTheme = PartS.sourceSerif4TextTheme;
-  static const sourceSerifPro = PartS.sourceSerifPro;
-  static const sourceSerifProTextTheme = PartS.sourceSerifProTextTheme;
   static const spaceGrotesk = PartS.spaceGrotesk;
   static const spaceGroteskTextTheme = PartS.spaceGroteskTextTheme;
   static const spaceMono = PartS.spaceMono;
@@ -6087,6 +6294,8 @@ class GoogleFonts {
   static const tavirajTextTheme = PartT.tavirajTextTheme;
   static const teko = PartT.teko;
   static const tekoTextTheme = PartT.tekoTextTheme;
+  static const tektur = PartT.tektur;
+  static const tekturTextTheme = PartT.tekturTextTheme;
   static const telex = PartT.telex;
   static const telexTextTheme = PartT.telexTextTheme;
   static const tenaliRamakrishna = PartT.tenaliRamakrishna;
@@ -6160,6 +6369,8 @@ class GoogleFonts {
   static const truculentaTextTheme = PartT.truculentaTextTheme;
   static const trykker = PartT.trykker;
   static const trykkerTextTheme = PartT.trykkerTextTheme;
+  static const tsukimiRounded = PartT.tsukimiRounded;
+  static const tsukimiRoundedTextTheme = PartT.tsukimiRoundedTextTheme;
   static const tulpenOne = PartT.tulpenOne;
   static const tulpenOneTextTheme = PartT.tulpenOneTextTheme;
   static const turretRoad = PartT.turretRoad;
@@ -6220,6 +6431,8 @@ class GoogleFonts {
   static const vibesTextTheme = PartV.vibesTextTheme;
   static const vibur = PartV.vibur;
   static const viburTextTheme = PartV.viburTextTheme;
+  static const victorMono = PartV.victorMono;
+  static const victorMonoTextTheme = PartV.victorMonoTextTheme;
   static const vidaloka = PartV.vidaloka;
   static const vidalokaTextTheme = PartV.vidalokaTextTheme;
   static const viga = PartV.viga;
@@ -6251,6 +6464,8 @@ class GoogleFonts {
   static const waterBrushTextTheme = PartW.waterBrushTextTheme;
   static const waterfall = PartW.waterfall;
   static const waterfallTextTheme = PartW.waterfallTextTheme;
+  static const wavefont = PartW.wavefont;
+  static const wavefontTextTheme = PartW.wavefontTextTheme;
   static const wellfleet = PartW.wellfleet;
   static const wellfleetTextTheme = PartW.wellfleetTextTheme;
   static const wendyOne = PartW.wendyOne;
@@ -6291,8 +6506,20 @@ class GoogleFonts {
   static const yrsaTextTheme = PartY.yrsaTextTheme;
   static const ysabeau = PartY.ysabeau;
   static const ysabeauTextTheme = PartY.ysabeauTextTheme;
+  static const ysabeauInfant = PartY.ysabeauInfant;
+  static const ysabeauInfantTextTheme = PartY.ysabeauInfantTextTheme;
+  static const ysabeauOffice = PartY.ysabeauOffice;
+  static const ysabeauOfficeTextTheme = PartY.ysabeauOfficeTextTheme;
+  static const ysabeauSc = PartY.ysabeauSc;
+  static const ysabeauScTextTheme = PartY.ysabeauScTextTheme;
   static const yujiBoku = PartY.yujiBoku;
   static const yujiBokuTextTheme = PartY.yujiBokuTextTheme;
+  static const yujiHentaiganaAkari = PartY.yujiHentaiganaAkari;
+  static const yujiHentaiganaAkariTextTheme =
+      PartY.yujiHentaiganaAkariTextTheme;
+  static const yujiHentaiganaAkebono = PartY.yujiHentaiganaAkebono;
+  static const yujiHentaiganaAkebonoTextTheme =
+      PartY.yujiHentaiganaAkebonoTextTheme;
   static const yujiMai = PartY.yujiMai;
   static const yujiMaiTextTheme = PartY.yujiMaiTextTheme;
   static const yujiSyuku = PartY.yujiSyuku;

@@ -130,7 +130,7 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f49b5299d84dd6c2191a00fda701356a4bd0b15e01390badbf64bf8b1a271d0d',
+        '753b6658174f4e562f1a4f6d06f560858aced2a6e1a9666f385966abfccefa2d',
         1441836,
       ),
     };
@@ -304,22 +304,22 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '384554f92bd4d754bd8750f8885c456c5264d6814731376178dd0727fcf2d98c',
-        2879864,
+        '77530df7fc79e351c8ab6119c7edc574670a154625acc38f8d826fc50f1eb10a',
+        2879844,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '66257cb7dbb7d38dd5d9b0c7a1f9df7ae828f4a2a79a37070603405220e9f32b',
-        2891140,
+        'e281256634af62557997b29a416167b744d88bfc4631408f7c345a9e69b13cb3',
+        2891120,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '560717e4c667f1bdf58f6426ef133e74637eb3c1868feff814bb8a5b707e6880',
-        2951544,
+        '96dc44cf48029cb19948264b88b6cae76f1dd56ac14257e14d949182a3d031d6',
+        2951524,
       ),
     };
 
@@ -405,15 +405,15 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '138988e0fd6fd8f224071be2ae8819dccbac2c5cc864a10738e3729add92bff7',
-        1432596,
+        '64f0cf664abd2cf4793677f1721c1b6e392ba4881dc2bafabcaecad7dcd5a4d9',
+        1432696,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e508c880cc5777002ada1fb069e7263c37351353018bd91b9159796f4b07ea61',
-        1458728,
+        '16674148d9db5dfefada907e624cf4352205fe6441fa25285c291e0b32c50198',
+        1458828,
       ),
     };
 
@@ -499,22 +499,22 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '49692dfdd96d14451d2d587fe44d08d2eb6a322bd051b968778e8e827294c377',
-        2167668,
+        '6f775cb4748c07cc95064a8b3a3f1e9766df44a59913fc3ba7657633eb722354',
+        2167768,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f4bb4ddf8c1633217f5cf7548dd4488d0a3ebcd539ef562e2c61d1903282de9c',
-        2241272,
+        'd4fed937dfa086286d25fa29ebf7d291f1b2a3fc800cff94ddd06a6c44bca0c8',
+        2241372,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '74e88e02ceb7e7bd1bc2c12f2baa96b423bb98482abbc6185495d8ab6962a352',
-        2293712,
+        '344ee6c1b3ccd22ffaba4c9cc1a8508dc3556083aa017d95c38a45d5ac7579dc',
+        2293812,
       ),
     };
 
@@ -656,6 +656,93 @@ class PartN {
     );
   }
 
+  /// Applies the Narnoor font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Narnoor
+  static TextStyle narnoor({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6ac7cb5f2a20112742fd96a7ff1b80f8ce28225c81e76ff657118c4583e03c6c',
+        78964,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Narnoor',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Narnoor font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Narnoor
+  static TextTheme narnoorTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: narnoor(textStyle: textTheme.displayLarge),
+      displayMedium: narnoor(textStyle: textTheme.displayMedium),
+      displaySmall: narnoor(textStyle: textTheme.displaySmall),
+      headlineLarge: narnoor(textStyle: textTheme.headlineLarge),
+      headlineMedium: narnoor(textStyle: textTheme.headlineMedium),
+      headlineSmall: narnoor(textStyle: textTheme.headlineSmall),
+      titleLarge: narnoor(textStyle: textTheme.titleLarge),
+      titleMedium: narnoor(textStyle: textTheme.titleMedium),
+      titleSmall: narnoor(textStyle: textTheme.titleSmall),
+      bodyLarge: narnoor(textStyle: textTheme.bodyLarge),
+      bodyMedium: narnoor(textStyle: textTheme.bodyMedium),
+      bodySmall: narnoor(textStyle: textTheme.bodySmall),
+      labelLarge: narnoor(textStyle: textTheme.labelLarge),
+      labelMedium: narnoor(textStyle: textTheme.labelMedium),
+      labelSmall: narnoor(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Neonderthaw font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -687,8 +774,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f677c5d5a558cea02360fa74dfeb92f2deaf067d6c8f6e2fb2caf6a47a0708bf',
-        168352,
+        '819b5c4993e4f6f7a953153cbcd5c4632428147d55fa4f7eb9aecc6343f6a8e6',
+        168388,
       ),
     };
 
@@ -1976,36 +2063,36 @@ class PartN {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '73fc01c7c59d0cf17efc538be65ae11bbb3bc07788d3317571c152bf76f713c3',
-        33084,
+        'bc4a1bbbd3cc3b34f022349bcb6b28ca2dc752d4bef90b454c8f84c8d50af826',
+        33112,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '66081a8b50dfe136b6b60c8dbbc062ea33121bdc6d9af2e1e86a14145b277374',
-        32028,
+        '98033eaf7f49275cc903253086b31dd72bbf05aaacd0f07d58537532ea4f4bd6',
+        32056,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2006cbb942776b3eed98b61fb710bc740daa4e2fb8893e522f5f05373bf205a2',
-        33604,
+        '1209f186e26f338a8da618ae061b624c07b934ff38211a2b1096d6b99a67f296',
+        33632,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '962d86d3e4a1b24f27db28d0030fed3de2655de7f1f595610e43560662c1f032',
-        32948,
+        'b5a52f2db3bfb1525b0db3d6a49f64994f759af15539259e92f8a1d9cac9000c',
+        32972,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '706fc9970bcb8f83a837092142f056d7c58dbae61b4c33420e9055a89da980b7',
-        33004,
+        'de95bb52e35187386b3fb9fb044a6cb99bef9295f4779e9b331c148fd5141e07',
+        33028,
       ),
     };
 
@@ -2091,8 +2178,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1dff2380d6bb89e82464656d44616895736da33e6f9c5c5c5af0d2d56754fee2',
-        43456,
+        '41bf6b2ebdc2639a8fdf67bdc0fcc55ae0960a6434150d8b6d6f0ddab5248703',
+        52792,
       ),
     };
 
@@ -2178,7 +2265,7 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '51f2ff64324f9bfb46f8b6a33e7d14e4b653d11acbbb343a168aedf016b5f846',
+        'aa5ab6f4f00562ef34a63d1f0dbcb108c153dcb936fb0447185e70ac42daeae5',
         41152,
       ),
     };
@@ -2265,8 +2352,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0fa7af35d5805dd738d17de5e17895d6868f7b4320ee55fa7ee5de02e49c0a51',
-        24588,
+        '3c596373178a4369da14982762a1d6c36412b593d64631b8a1962ce9979fc42c',
+        24620,
       ),
     };
 
@@ -2352,8 +2439,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5a41f6c0adff3f36a5b115b837a4565bd55f338ef9f7b864672066d063d05aa6',
-        31648,
+        'c51730c293b2041740683a5b8fc4fccb6245f5438b8bd10ea5f0c71d5140b075',
+        31704,
       ),
     };
 
@@ -2547,8 +2634,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '8c93f34c9bae6966eb1c7cf84556eba3cbc12f33085f594901c4fa1b08283da0',
-        23745556,
+        'b5737811b74015fb06e032077404fd491bfba74405c23e1fabe8186ed713107a',
+        23708572,
       ),
     };
 
@@ -2634,36 +2721,36 @@ class PartN {
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e3c638a6dd16af7be203c392ac22ea5f2caade3ce70117a95380ea413661f537',
-        877996,
+        '188deb277ba495d2fb7c8f0eab185699e281eba59e2db95557a4146e20b77e1b',
+        885452,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '76265f243371d58d9894b937342ecf046b5a207e135266f2398a6cc6da05ffdc',
-        877988,
+        'bc11c3a417c412df752565be8c4c619415bf1858bbb15a8654242af597a63e5b',
+        885444,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e459db86ade2e3833b4b39a44cef8fc1fbd5cf705d6e025bbeaa88d9d608ddec',
-        878172,
+        '75d48e3582ad0fb7de8edbffe80297d6ec933c4369934b1e1d0518c5f0dbfb06',
+        885636,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9ef9bd29fc791fc9bd66d54df4583ca80fb2a13bb4dff8bf283deeaf6d7e7c2a',
-        878024,
+        'f8144d79d5d3f036f47dd6d5f1fb4b55a46fc83bd758aebe5adbf38d97d37042',
+        885488,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd61b89360653b70b5f755d222649783bc417224b009b50b35fd82f5eb4d39a6f',
-        876524,
+        'dab394647311df1b2ba68990ff5b3c311fc98bb631504f0b7d25700a32436c8f',
+        883984,
       ),
     };
 
@@ -2892,8 +2979,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd0c3c9a24908f253e35735b00f5892d999d6cda80c6dcef86a7b128eb5e12e1a',
-        113672,
+        '5ea9f60cd26f08030e3160a971c8edb7537aadbd3f743daf4d33a5fcbb2bfab2',
+        113796,
       ),
     };
 
@@ -3761,8 +3848,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '3b7fec31fcf1999c0ed4806c3a1ba64c7301926c597bd38181f8d744a7fe8a7e',
-        227240,
+        '636f10e414038c0e12f27e89b59317ddb38a04b6e192bd612be18bf09cc6b049',
+        258700,
       ),
     };
 
@@ -4554,8 +4641,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '991967bb6bb52a6fa8f7f86dd62741d8d6750116db42786e1f6b5960fa6a0f08',
-        49860,
+        'f1d2adf3d391af9b323eea890393450968fca080098dc63cdf96a366dd7e87ee',
+        49988,
       ),
     };
 
@@ -4871,8 +4958,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ac833cf856e3f461dacd1f9f4dbd05cfac3270402d1907c2b0a241ac68b44231',
-        40808,
+        'c5387cf69e4363d44b4d9b645b15d3b0e92348ab0aae40e4c3fc8a3f6c29b9ec',
+        76108,
       ),
     };
 
@@ -5281,8 +5368,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f91a0a8cd4ae5f183baf7ce214e9c21c01155a56c0ff62946d7e3920c8a663f3',
-        5684,
+        '5940bb3d836e0fad249e08d5c16de22b1b62ba53186f967557d42a6a7ade2457',
+        36156,
       ),
     };
 
@@ -5803,6 +5890,93 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Sans Chorasmian font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+Chorasmian
+  static TextStyle notoSansChorasmian({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f697865b61be13dc4800dc13ac643a8a87da818f7db69a02f2cd5327a57c9ae9',
+        45676,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansChorasmian',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans Chorasmian font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+Chorasmian
+  static TextTheme notoSansChorasmianTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansChorasmian(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansChorasmian(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansChorasmian(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansChorasmian(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansChorasmian(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansChorasmian(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansChorasmian(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansChorasmian(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansChorasmian(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansChorasmian(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansChorasmian(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansChorasmian(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansChorasmian(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansChorasmian(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansChorasmian(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Sans Coptic font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -5921,8 +6095,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0f2b2a0acebd7dfd14f13fe15e3f6a07aa5ce8171003a37235ff682b8668d15c',
-        819140,
+        '571429666ce1c2b09f09d780195147d2f714fce9214829b43b679fbdb19f6649',
+        850560,
       ),
     };
 
@@ -6064,6 +6238,93 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Sans Cypro Minoan font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+Cypro+Minoan
+  static TextStyle notoSansCyproMinoan({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0a5edc39daa006a12aeda9a5d6fc39a2d00f899d9f83f66f30f2b30a8de9b32e',
+        42644,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansCyproMinoan',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans Cypro Minoan font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+Cypro+Minoan
+  static TextTheme notoSansCyproMinoanTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansCyproMinoan(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansCyproMinoan(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansCyproMinoan(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansCyproMinoan(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansCyproMinoan(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansCyproMinoan(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansCyproMinoan(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansCyproMinoan(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansCyproMinoan(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansCyproMinoan(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansCyproMinoan(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansCyproMinoan(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansCyproMinoan(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansCyproMinoan(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansCyproMinoan(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Sans Deseret font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -6095,8 +6356,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'bd5d317ff72297736ce5816df14ca4ac568df2a12fe56cafff20c78c341be9eb',
-        10088,
+        '8b76b69f49a5d658aaf42cb354d1d06c26cfcc266cae0839da6c10cef1c84899',
+        40740,
       ),
     };
 
@@ -6325,127 +6586,127 @@ class PartN {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd7b5c341fe5771dcf9e682598c78cae7475c5b955a479aa921e45fbcfd7bb871',
-        328296,
+        '4aaf6f3c69768ffadb1daee44297052a4f1cf7ca933a5455613d37c104941b8c',
+        328380,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1134bdfe54f78b39841bc3f68e7c93e17e94c2a04c241e6aca932c7b86214361',
-        328644,
+        '1bf27636a29653f17a6a33da9b8dbce02de46961e69552e0904ddcf86422974c',
+        328704,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '7a3a4c60525f76f6fba6fbd341aa8db9829fa892da22521818ab01d655168b23',
-        328592,
+        '2f94cad9254407842c519e57d26840de5ff46d7853811421e18910591e1d60f1',
+        328624,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '626c1c90d949045c73a2d5cc5579a5a2debc98df486c002fcae5dcbdbaf435eb',
-        327984,
+        '2a4d8f0b726a05dad002d71517d2448fa905c68cda2a2f929f02b5792ba95a7d',
+        327988,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2730db348743fd4a86cf4a1d33f5c86f1fcb0bddd36564620255da24feefe088',
-        328452,
+        '28d24f5dd3a4fa209350e11c1a68de430d2158872eddb258da93d79793aaada3',
+        328460,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '30aacdd857dcfd16cbd69c56d7c735466ebbf7edaccee8df315fe807b6c16190',
-        328548,
+        'ca1d9e53ea2fae3ba970b553b44db902f26244a0b706bcc14b38b4b6e3eec8c9',
+        328572,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f42e50ebc8fe182d19b8920a0a69e4b2f2a72a7bd7beba186951797159c222a5',
-        328248,
+        '674164fbb0edd558dcb56c1b9de191b5da2eca9481c0c289c658521203b514c1',
+        328288,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '8c31f4316263d13fdb25780cae9d89c64cedfa38b57d632c2b246c42ba0e58b5',
-        328724,
+        '56948e2a24a43b3eea96fa3a9cc864c4b22f198ec4ccefa30b34bf8fedfcc968',
+        328804,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f84e133aa6d57401b0b7c65d6ca4b60fe69e5e63bd44b8d7f97eec61ea253599',
-        328764,
+        '25f170c25c4fb8493d9d4fb0a38bd7c29dd8a1de85e9422b170eaaa328ff7eb2',
+        328896,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '9fdc2dfde4bdb8ea9c6d61f2110520c23323643cb9e8b11e06bfecab6380aa16',
-        350752,
+        '44a80ae636b67b6024aecedb1ab2738ae7b235028706b5943d2e49ab1c3e122a',
+        350940,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'd8743d7dd1b692b1763c4b759cc73276ae4123950f54bc203b725235408f0517',
-        351224,
+        '53774b4973e89a999cd280e3d627e952b41e38f97935c1b34ad8cc7a42e0c0a9',
+        351396,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '983ff9bc8a5c5bbad88fa6baac6014b534b34a854c7a6a336d9106f4f9b396e4',
-        350816,
+        '61b0cdb645b0eccb22cfd73b691e174880a22bad4d06c2f69c2a48fecfe964bc',
+        350984,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '830195c90e484ee9dc8844e183ae238e9b3b7ede173b4eb1167c6654ebd06f7d',
-        349532,
+        '4b2f083762d9259421bc4e277796fbd0450103cc6d385a368dca7f5992287b63',
+        349544,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'eb227c09ad0591b6492f6a7644b25580c92f692bda50e16452f45934cdd86d3e',
-        349996,
+        '6a8ef2963d05597d58e64e9887a8105392d2b689b5a0ca71b095412f7fa18b1d',
+        350012,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '0a0d1cb7b9a8fa8e768b472ee391878dbf9232bdc734c8b3fe60bcaffec35d62',
-        350104,
+        'b2fce9d9176ff3ad986864078f81839a3a4bdab3f3b77f99db215e5ec9688470',
+        350124,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '8b95ec211de9e560348430eaf28145f128f59010fed1df2e1fa0e51a99a605be',
-        349660,
+        'df9415a23cc8b669a8ddf804c974cd38e55940ba56e4e638408105b527a8d560',
+        349696,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '8de2f7361e257950636625a421fb6c4d446d1b5b942348bd7f853314a5805eff',
-        350328,
+        '29079f47b2544b147ea4cc9e68eb5b53b09e557c2be7cc5f88aeed96a90b1157',
+        350360,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '63a96cd6529aa23dbecb27e8266886658fd77b74a28be02ad5f9f7d183316636',
-        350188,
+        'f8ac203895993f1926f4ed25e2a58455cb36bc086270f4755b18c0063d88c92f',
+        350256,
       ),
     };
 
@@ -6531,8 +6792,15 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2d65e0c35583d311f2fdef5c30714968e9d4a8323255cd4465cf5b89bd73439b',
-        17464,
+        '7fc117b1448fd95d257767493e2283f4fe6f87aac8ce13d1792ef8ae47e6ec81',
+        1823492,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6f6dee4ca9ca64c2a632b8774fe5e91e1b59b4c18040c2bf5ea6f945964958f5',
+        1815296,
       ),
     };
 
@@ -6618,8 +6886,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a8d8b24a7afab8914c32ed38152796f169fda238a2e0ae6e3275adf99c516b44',
-        584220,
+        '435214f6a7bcd3b7548b6aefe40036b0c1633da2a2eae42d51fa11862b418ab2',
+        612876,
       ),
     };
 
@@ -6714,8 +6982,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '8db1829d7d68f7956f38788a63610b7fe34d4f5427bab75d6904ea9f4e8bc085',
-        10260,
+        'bd1ea68efe1d5e8f2248de979d1e5968bf1536c01b72f26014587234b0064749',
+        41208,
       ),
     };
 
@@ -7174,8 +7442,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '19a59c25a4ad15509971a871bb55fa977b00a705cb5d709e75ec4ce1807b9971',
-        22288,
+        'e939d96f10a3d6cf84451d6122c7dc1c91c66c27f8ef698268aa0d0880b18a8c',
+        53520,
       ),
     };
 
@@ -7261,8 +7529,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '33e4a647c2f0d107e063a33cde8d7b165cc640527a11f421bf2b2a95c0d42e3e',
-        5140,
+        '3f082f3e2953db35b863943d051a3bdc758d14244e593b585781c622a5e98aa3',
+        33264,
       ),
     };
 
@@ -7578,7 +7846,7 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'b3ae7923704e2060fcdcc69a151f360f8c6b7db71e8086550115b7981aea77a4',
+        '114266f49bac04287b814fc04c0adc257f8bb4c0acdbecbb5d41f84cce905cca',
         61064,
       ),
     };
@@ -7777,6 +8045,149 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Sans HK font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+HK
+  static TextStyle notoSansHk({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '587fd94fe5686437384a24d0e6185363a93fdf38f1ae00c046b419cc1b1cc100',
+        7070116,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '40d4852ffd77aa642046901b5ac43f2f3b982ddce6fcb5da6ec473b5c33fd5f0',
+        7073296,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '57f8e449f06466461c11366f0e8bd7b646fd223c60a8271ae83569cd34364ef1',
+        7073688,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5457e0b1c20255a7dc30331205583b491a23da8a87ff7af19501d5bd6e8d171d',
+        7071524,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'af4a67a314ce05c31b504380ce60db588a4fc3a0cf5f9bb9f8d5e307744acb03',
+        7067572,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bfc9fb1d1a71d7b26a4f1d40da7033434b68a4936468fc0f69659640607a2140',
+        7064924,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0a6a488b1766f6f70957d6754c4e1d3423f86479358a7cb6c83d73a302dcd951',
+        7064176,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7038b742f14965f20a3410707380af81a871f4935609a4b3d3a1db14abec330d',
+        7060576,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '51209da149d158438b2142293183dc704a1c911f55e03fc7376d901f85214e96',
+        7058120,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansHK',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans HK font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+HK
+  static TextTheme notoSansHkTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansHk(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansHk(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansHk(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansHk(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansHk(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansHk(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansHk(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansHk(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansHk(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansHk(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansHk(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansHk(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansHk(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansHk(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansHk(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Sans Hanifi Rohingya font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -7917,8 +8328,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2178b2c6e787beedf2ef2566b22a83628ffb17e06b9a9835f9ca215d7e0ef9cb',
-        34880,
+        'ed369064f3a56fe410b6570f29edbfd65098d279c7c70814ae441b5c4c83ac1f',
+        35008,
       ),
     };
 
@@ -8004,8 +8415,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a34cac0fc3e9de2739b68efdcf44d7d372e844e161c47b51da98dbb015544515',
-        3936,
+        '9f667251aeb780c8ef571d393cb6c18bd1cf52ec926938e67b41341b09dbe43d',
+        34760,
       ),
     };
 
@@ -8234,8 +8645,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '71d68e7f88e810673aa7152a814623ed781b2c484ed5ba0612fa4ffdddb51e47',
-        5260,
+        '5e76cb3572d0fec816b021a05f59870c3cd6e30d6b061c1000f9591d934bdfce',
+        36116,
       ),
     };
 
@@ -8325,8 +8736,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd8778de4424790282d0ddb573efe2cc256ddd84cd262e5c955ef7fb6ac758803',
-        21412,
+        '313186a1b115b390c9c03a1a32958d73a528ff801b627c4c7820019a45295140',
+        52176,
       ),
     };
 
@@ -8418,8 +8829,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fdf5b6f1a8b597f7b8ab231369438a1c672d54982ffe35cf7795a5973a5ccee9',
-        4804,
+        'eb4ec7e17aae605bee9223b85688c4ccf87741d432045459db7297fe801c56ac',
+        35584,
       ),
     };
 
@@ -8514,8 +8925,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fcd697800a8f12c4eca32a89e51df6461b2581a979c420e02d9fbe40b72108fd',
-        6564,
+        '9c72954e84a3025d34b6b16fcc8999e1b0b9b2694d646a89fea211140a444939',
+        34564,
       ),
     };
 
@@ -8581,6 +8992,149 @@ class PartN {
           notoSansInscriptionalParthian(textStyle: textTheme.labelMedium),
       labelSmall:
           notoSansInscriptionalParthian(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Noto Sans JP font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+JP
+  static TextStyle notoSansJp({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '78a1fa1d16c437fe5d97df787782b6098a750350b5913b9f80089dc81f512417',
+        5706804,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c0532e4abf0ca438ea0e56749a3106a5badb2f10a89c8ba217b43dae4ec6e590',
+        5708144,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '64f10b3b9e06c99b76b16e1441174fba6adf994fcd6b8036cef2fbfa38535a84',
+        5707688,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '209c70f533554d512ef0a417b70dfe2997aeec080d2fe41695c55b361643f9ba',
+        5703748,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c5233cdc5a2901be5503f0d95ff48b4b5170afff6a39f95a076520cb73f17860',
+        5700280,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '852ad9268beb7d467374ec5ff0d416a22102c52d984ec21913f6d886409b85c4',
+        5697576,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eee16e4913b766be0eb7b9a02cd6ec3daf27292ca0ddf194cae01279aac1c9d0',
+        5698756,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '68d3c7136501158a6cf7d15c1c13e4af995aa164e34d1c250c3eef259cda74dd',
+        5696016,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6ff9b55a270592e78670f98a2f866f621d05b6e1c3a18a14301da455a36f6561',
+        5693644,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansJP',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans JP font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+JP
+  static TextTheme notoSansJpTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansJp(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansJp(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansJp(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansJp(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansJp(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansJp(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansJp(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansJp(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansJp(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansJp(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansJp(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansJp(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansJp(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansJp(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansJp(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -8692,6 +9246,149 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Sans KR font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+KR
+  static TextStyle notoSansKr({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '302d55d333b15473a5b4909964ad17885a53cb41c34e3b434471f22ea55faea1',
+        6177560,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1b03f89eccef4f2931d49db437091de1b15ced57186990749350a2cec1f4feb8',
+        6177360,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f8ed45f767a44de83d969ea276c3b4419c41a291d8460c32379e95930eae878e',
+        6175264,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '82547e25c2011910dae0116ba57d3ab9abd63f4865405677bd6f79c64487ae31',
+        6169044,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f67bdb1581dbb91b1ce92bdf89a0f3a4ca2545d821d204b17c5443bcda6b3677',
+        6166588,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '922e269443119b1ffa72c9631d4c7dcb365ab29ba1587b96e715d29c9a66d1b4',
+        6165240,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ed93ef6659b28599d47e40d020b9f55d18a01d94fdd43c9c171e44a66ddc1d66',
+        6165036,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e7088e3dfcc13f400aa9433a4042fce57b3dbe41038040073e9b5909a9390048',
+        6164096,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '14c5cfe30331277d21fa0086e66e11a7c414d4a5ce403229bdb0f384d3376888',
+        6163040,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansKR',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans KR font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+KR
+  static TextTheme notoSansKrTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansKr(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansKr(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansKr(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansKr(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansKr(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansKr(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansKr(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansKr(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansKr(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansKr(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansKr(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansKr(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansKr(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansKr(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansKr(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Sans Kaithi font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -8723,8 +9420,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'cf66bb4e97c9896f9ee4a5e143bbcd2f844d52858a988470fe2f5c99ec715b4a',
-        41908,
+        '52b5c6aa9d5d5185019c546d05fcb718ee4b1e5c2e571877cf8fd687966173ae',
+        74716,
       ),
     };
 
@@ -9291,8 +9988,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5461ff34f0a13a0784f43e72cf4fb37e9a335f72465523ca61d3855fd3fded0d',
-        73592,
+        'ba19caee4e9850ca46ad1e87c48535b01f53031a429f7a6f1ad8c5dda42a2bdb',
+        74932,
       ),
     };
 
@@ -9378,8 +10075,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd20aafa8d8070841fab37a855f0be7e10ff9e45c734ea4134d377176b09e27c4',
-        17804,
+        '23d02af90d92b27af0c8707b1f54501bf70ac2c3e4402f0a2dd0d6bf0a35cbb6',
+        50232,
       ),
     };
 
@@ -9751,8 +10448,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '327502fcadf4a82f646fe750a416020ccca75e36097f1965956a9feae2d6c444',
-        52356,
+        '020c08e312c5994a0dd79b6745942edbfef0af7e4d58004ebabeb72fefe45872',
+        52480,
       ),
     };
 
@@ -9925,8 +10622,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1227f2e8ebf7d0e3fdc1fae2a3ae9d2f98b2d147c2947377683f565f8ec2f64f',
-        57060,
+        '96600672a897e52664785e2066f3ff838549020a4e45a7ec82b96a3854edc480',
+        104760,
       ),
     };
 
@@ -10012,8 +10709,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '7957267e2b3c2710bfeee8f4fa0aa2ab588b29491462ef69ef35cc073556b474',
-        61784,
+        'd609a37cfc2c42016972002d0af32419db0770a0d7dc44fc621258ba6b795117',
+        92600,
       ),
     };
 
@@ -10294,8 +10991,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'be20f86effa0edfe9e44af4bece86273f01401de2474475d3638020522375ab9',
-        3416,
+        'a2acd1cc334df2ec1b59e29c83f0cdef922623f25a598411b942ce8f4295cb8e',
+        34356,
       ),
     };
 
@@ -10381,8 +11078,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '05fda04889edb50e9156b3e8cd76e1a18ae80cf358b080e27550506ee78df877',
-        13188,
+        '8279f3206f7e0c4f66d7316ee36a0097bf0119323674e2077bd8d38b1b7f7f7b',
+        44252,
       ),
     };
 
@@ -10611,8 +11308,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '78fb7e8745af6b194703eabd0065aad9a2416b07929098e45d4d51dbdcb6255d',
-        17580,
+        '46dd452ead45cbe470bae01bab8e86f136a2029c522703e10373803ee5a5587b',
+        44700,
       ),
     };
 
@@ -10698,8 +11395,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '37a692a9908045f47cb605073ef7998afdfc6c08bc09411f94b36613a08253b0',
-        30528,
+        'cfff108883ac8705334136d531216e45b581778040eced137e48751b530c43cc',
+        61900,
       ),
     };
 
@@ -10785,8 +11482,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9d31c71c74d9f12f7a49540daf0acaef930f175def7bb0745dcc7a7d3404c44b',
-        130140,
+        '79f70ab10953303aa753e1bdcafe3d3a651bcc21792f3bdae76df5cfbe155c5d',
+        155416,
       ),
     };
 
@@ -11046,8 +11743,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'b07a0e7bdda2b80c6ce870eeb5239efa8389c65e4f51b02193cfc01a784bfba7',
-        3608,
+        'e855129f80244b8c9049cd698029f49c950a19107aca5d59193d4acf47f38c7f',
+        34448,
       ),
     };
 
@@ -11472,8 +12169,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4e4b78790e277889349fc353d7649e5c3044d4819c84ada82f9b26fc9bb3b7bf',
-        32356,
+        'f03ba236b4d091c755a87a310a2d959ee80131ee660c83a461ee64061803b82d',
+        60108,
       ),
     };
 
@@ -11820,64 +12517,64 @@ class PartN {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2b1a9b40e4340f0eb17826be3618586b6dddbb066fc98e6bb6127fa399cb7681',
-        367812,
+        'd8742698300597739b917628cd931a45e7b8ea639cb9a9c3330cef976c40ff1a',
+        386572,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fd9e75148d9e567e0ff99badc1accb48316b1663d5d56b0f917f91d4374ea12b',
-        368256,
+        'a000bf69dde9009c7d540b96938b9e835cc6d5208e229efeb743d2f8d6f7caa8',
+        387068,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f3b113f51e145224f14da82a1126264fd21ee1a6bdf69b362d4002a8cab5a3cc',
-        368180,
+        'a799e7e9ece22a52761b9d4b545ba0fd103098aff66a026e28699218439ace24',
+        386948,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'db86a2eca822cc6924256a3f1d8c4c927c516b17c6dd4d51dacc3925ad27d1fc',
-        367420,
+        '0e35f90d6c7bb9ec3cc92377df6027f798c25ce98a52d5c89946fbc1c9addf2e',
+        386144,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e64e9f20834a94f9b13523525553e474406f1e69effcee70dad60ff948fb25fb',
-        367744,
+        '7b4612a76951cafc0b39e00f81042dce995cab1b96f45f5d008773448b3b654b',
+        386480,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1453814bfab6d95ee8cfc04895d998c4c602fd2fced9991926cc01182b16cbb4',
-        367600,
+        '8b7b642136e79fe7fa46e26e9c8c78738dfe310504ad24edb67ae92f968322e4',
+        386352,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f5c0c4db46999f57b54a48b3c5e01af07075997af9fe45438aeb419ff67ed6d8',
-        367076,
+        'c49a7b5308eefdac09b57d42786a1f0607fae3dfde52e6b143567379c81115c8',
+        385752,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '140ab417fbdf90811218bb113aaff3a639c8f57621e03e60890a73865880b32f',
-        367340,
+        'fa7887b9c298dccd3be533ab977734285ed16059746d49a6cb7bff1624bc0022',
+        386040,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0a773805f9c69fea43973e5c571e1a1231d265561fbb3ae07a19cd5f9e352bfb',
-        366932,
+        'c290b8fa89c9890062d516908b0f16d72cc53429ed9876b63078067bdc2ffb98',
+        385624,
       ),
     };
 
@@ -12367,8 +13064,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '7e8c3449feabfa772702ad83fc3dd0856914f08ceecd16b5f4c1a92276210d04',
-        7220,
+        '3b2e1dbab6f16c77b472114428ae501b49a523b84f4166f5a1be838b4aba53f0',
+        38048,
       ),
     };
 
@@ -12931,8 +13628,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '294effb5be358f3c23b989a8494391ee075c64a16199eed47f2f68a0c3bf2cdd',
-        3576,
+        '526283d3348840599b2c7158daf293fa375e7e22d550b8c4d0f6ccdc9faa5cc7',
+        30924,
       ),
     };
 
@@ -13126,8 +13823,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c9bdbb5dadef6da77dab44efa6ee39f42b1f05e6c9ae248d564d4bc3eb304270',
-        51516,
+        'fa4dd2da85803ed92d96129c4bb595752157120d02bd990d306ef4e18cef0505',
+        83708,
       ),
     };
 
@@ -13213,8 +13910,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'dd972f97bde9d9beb1c5523f012d1a922b2404825cc97c7abca5ff3195a99fbe',
-        6468,
+        '0a9ad82eb2b267be4595e63423ab37909d5a63288b7cdc3febf942767ee3713b',
+        34376,
       ),
     };
 
@@ -13300,8 +13997,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'dbba4bfcba4ee5c7ebd24e3846976091dc9b8645dad791da43258929d7e17f8e',
-        6052,
+        '48f548068165ae89385bfbfda4d496ce1c4f87fcc9d391a15fb03ab965746b03',
+        36912,
       ),
     };
 
@@ -13391,8 +14088,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '56d277d03f0f1e1452a9a355a3e3cb48770eeac59a3a3bfa9d3069d3ea208f4e',
-        8896,
+        'b9480a7153dc760712f88a7fdf8117020f4c3430783bbb2f18f17cb6206193ea',
+        33956,
       ),
     };
 
@@ -13478,8 +14175,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '528ce03546fe77eb57753de610acf14ff09997fbb209f719ab59cc0071beadad',
-        11600,
+        '691953e556cd0d1c22c53acd85a8a53d7b46c65ba0b25e331b539ac689e828c3',
+        42432,
       ),
     };
 
@@ -13565,8 +14262,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f119c713211e3d8bf6be1de794962b8ee716e107bb141f0deaca2c217ac9326e',
-        10808,
+        '6f8af79796f87fe18da4252946095768e42675623e0afa295c26b10d8a5a4d1a',
+        42456,
       ),
     };
 
@@ -13652,8 +14349,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6ee26c031ce58b213f95a4622e9cc71cafee3721cbc5bf950748660a755e6b34',
-        4100,
+        'ff3a197d161bb098ebf3ca97595e594823fe66fb37c9f8cf175a2a0ca36dc8e5',
+        34960,
       ),
     };
 
@@ -13743,8 +14440,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c4df21a3b450dd95c0f4cac89e752c00575932aa0b504a0bc481b1e746e10bb6',
-        7368,
+        '2c117a77666c22aa904a1e048f820b380d9ed6bfb0c977d6cc11c07264070572',
+        39240,
       ),
     };
 
@@ -14234,8 +14931,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6baf5aae853c00199a1ca94a0984a6cb1e2a9117b6a04bd069167b1fff053b53',
-        7644,
+        '072e0c15dfa4818122fde6953ac1a5a62e7d63ea90dd1ff883886da01c10aeb1',
+        35560,
       ),
     };
 
@@ -14495,8 +15192,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '3bd17d1dbba92b5a391fced2df69da9531df480c6bcb5d9c081fc9b34db67c25',
-        5084,
+        '90a46fbb0735f893449ca11af7f8dd77cda55b173b225af3e3c647c8e324f714',
+        35916,
       ),
     };
 
@@ -14582,8 +15279,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'eefea62df4bff86236cfd0645d22235acc2135a2a4661878c94c2444184307fb',
-        20704,
+        '11c3de41d8ffc8e4006465351955617e692a29b66253353b2d5f838602f2fc0e',
+        51152,
       ),
     };
 
@@ -14757,8 +15454,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '566ee9e53d3557252c8c79fa2f468d026464006200b332c972006fa696095c33',
-        7936,
+        'c33a67543c197fcb847a7267c8f49ff70c2497a4895ea1c99ae8a5f3ae6714d3',
+        37064,
       ),
     };
 
@@ -14813,6 +15510,149 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Sans SC font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+SC
+  static TextStyle notoSansSc({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f1b8c2a287d23095abd470376c60519c9ff650ae8744b82bf76434ac5438982a',
+        10538940,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cba9bb657b61103aeb3cd0f360e8d3958c66febf59fbf58a4762f61e52015d36',
+        10544320,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4cdbb86a1d6eca92c7bcaa0c759593bc2600a153600532584a8016c24eaca56c',
+        10545812,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eacedb2999b6cd30457f3820f277842f0dfbb28152a246fca8161779a8945425',
+        10540772,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5383032c8e54fc5fa09773ce16483f64d9cdb7d1f8e87073a556051eb60f8529',
+        10533968,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '85c00dac0627c2c0184c24669735fad5adbb4f150bcb320c05620d46ed086381',
+        10530476,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a7a29b6d611205bb39b9a1a5c2be5a48416fbcbcfd7e6de98976e73ecb48720b',
+        10530536,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '038de57b1dc5f6428317a8b0fc11984789c25f49a9c24d47d33d2c03e3491d28',
+        10525556,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '501582a5e956ab1f4d9f9b2d683cf1646463eea291b21f928419da5e0c5a26eb',
+        10521812,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansSC',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans SC font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+SC
+  static TextTheme notoSansScTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansSc(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansSc(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansSc(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansSc(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansSc(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansSc(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansSc(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansSc(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansSc(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansSc(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansSc(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansSc(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansSc(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansSc(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansSc(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Sans Samaritan font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -14844,8 +15684,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '920a2c02a0e2c2fab6c34f318613b5ee6587a116e4158a955b55006c58a1f3b6',
-        10012,
+        'ebd598088cf58542a28e8d255f645c3b2ffd371f6e4407a5fbb559542c17a16a',
+        34400,
       ),
     };
 
@@ -15105,8 +15945,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '835fe7e7c393b0ca630d753a483e51e5c256f4e8535bb9e693376922a7470091',
-        5724,
+        '7476dfb42670e340222928d4406087a617c6e8923b6b2a3b389060fa430f5e22',
+        36376,
       ),
     };
 
@@ -15509,8 +16349,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '574fabb53f2fd5d310d2d6779bb40f17024a3f3dcc3e3d6a59a3f0f22c7320ed',
-        63808,
+        '24cfe180420552825d7764ef4bf2c3d021be2e47fe10c6b066cc27b5b7cbdaf8',
+        92924,
       ),
     };
 
@@ -15704,8 +16544,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0f02d35b6efba6a045abf92f6f60e73ac11b35c6773ba5383fcb441ab028bafb',
-        65788,
+        'dbc443e990dd411e530075af08f7ea00f8de00d73b1c90c0f57918ef2832c690',
+        93392,
       ),
     };
 
@@ -16328,6 +17168,293 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Sans Syriac Eastern font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+Syriac+Eastern
+  static TextStyle notoSansSyriacEastern({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '84dfb15e77410e4d214d9af31fb104b6546661a22258c6f190875f40a38a2a24',
+        71296,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9c3e7a689b79856d4b88b83bfd77128e7284aca651d3d1aa252e68f280c5023d',
+        71404,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8fea9001f6098bd11d94ea8b93501821d54c89e03b7dc708dc7a8f3ee78a4c66',
+        71440,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6ecc897115cbb80548c293a2a879d63a7753fee9aefcd111fd2004777a9d9d6b',
+        71036,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3fad0e998f6c7390c0c91e57bc43e48ec87e3afad868136d3810ec4c7f909b79',
+        71300,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eb73ef36d7ce7127e52d0ae53657afa9ca2b96e58d1f37728df7285d9f877bf3',
+        71436,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '531abfd8787c113c7c2ed63b6b664231d8c095c794c7aa9be652b00067c4ceda',
+        71324,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f76a0720961f06bbd013b070caab5d86a6e0c36674c0e519dbb856526edc9f29',
+        71424,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7b809f1381031066fc8900fa07a0c26fe6879d258b1490eb35fb969e5888ebc0',
+        71356,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansSyriacEastern',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans Syriac Eastern font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+Syriac+Eastern
+  static TextTheme notoSansSyriacEasternTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansSyriacEastern(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansSyriacEastern(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansSyriacEastern(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansSyriacEastern(textStyle: textTheme.headlineLarge),
+      headlineMedium:
+          notoSansSyriacEastern(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansSyriacEastern(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansSyriacEastern(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansSyriacEastern(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansSyriacEastern(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansSyriacEastern(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansSyriacEastern(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansSyriacEastern(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansSyriacEastern(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansSyriacEastern(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansSyriacEastern(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Noto Sans TC font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+TC
+  static TextStyle notoSansTc({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '53debc0456f3a7d4bdb00e14704fc29ea129d38bd8a9f6565cf656ddc27abb91',
+        7089040,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5ef06c341be841ab9e166a9cc7ebc0e39cfe695da81d819672f3d14b3fca56a8',
+        7092508,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9e50ec0d5779016c848855daa73f8d866ef323f0431d5770f53b60a1506f1c4a',
+        7092872,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b4f9cfdee95b77d72fe945347c0b7457f1ffc0d5d05eaf6ff688e60a86067c95',
+        7090948,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2011294f66de6692639ee00a9e74d67bc9134f251100feb5448ab6322a4a2a75',
+        7087068,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '440471acbbc2a3b33bf11befde184b2cafe5b0fcde243e2b832357044baa4aa1',
+        7084432,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '22779de66d31884014b0530df89e69d596018a486a84a57994209dff1dcb97cf',
+        7085728,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f5e8e3e746319570b0979bfa3a90b6ec6a84ec38fe9e41c45a395724c31db7b4',
+        7082400,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2b1ab3d7db76aa94006fa19dc38b61e93578833d2e3f268a0a3b0b1321852af6',
+        7079980,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansTC',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans TC font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+TC
+  static TextTheme notoSansTcTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansTc(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansTc(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansTc(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansTc(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansTc(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansTc(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansTc(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansTc(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansTc(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansTc(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansTc(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansTc(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansTc(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansTc(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansTc(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Sans Tagalog font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -16815,8 +17942,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd3c64d19a9331b7c42eb6d8a6a70656f61be4a2aadafcaf9b4f14d41bf26bb75',
-        46492,
+        '0a9da9b1943949859736b765fe79cdbc3f669335097cd954e1e7191799d74cb1',
+        50468,
       ),
     };
 
@@ -17045,8 +18172,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6f348d8c6df01afb3c86986e2e48509bf954f3a1c36cebc2cf14620e8875d64c',
-        14812,
+        'cc09a6577d844372e36a3e33ace4bcfcd67f3c2fbbd7122bf6e9fe1307fc0892',
+        45524,
       ),
     };
 
@@ -17903,8 +19030,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'efa07c6b3f157b258dd2ac796311d3d0468e6c104d124c30186e8d10d29c1298',
-        66912,
+        '967de4f8fa63baf921cb432da2a67757780933f51701291da0b6671a7c2a1084',
+        97732,
       ),
     };
 
@@ -17990,8 +19117,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5d9f37689815afee098c7697688ae1020a16706942a7110b8c6b3b0f6c6332fd',
-        6192,
+        'cc83b96e6ee92a9494711cabc1339e68139456442d40d478d5a6b9d1ec64fd59',
+        37020,
       ),
     };
 
@@ -18130,6 +19257,114 @@ class PartN {
       labelLarge: notoSansVai(textStyle: textTheme.labelLarge),
       labelMedium: notoSansVai(textStyle: textTheme.labelMedium),
       labelSmall: notoSansVai(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Noto Sans Vithkuqi font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+Vithkuqi
+  static TextStyle notoSansVithkuqi({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ecd8208ac728835181a2bc03533a315bd3ca4b7935c9e821f9d5ecb9724c26ce',
+        48468,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '669f78d94619c8ab26256e6a520d028e6535e40718f67e90add49c3bda240e20',
+        48544,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '027ec6732bc098166e70c162ebcee63dfe818753e5f5f5c9ba49e981104a6694',
+        48564,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'be010cc9308e190e6389632cfc3e46367634bd5c5e49af90bfb6ff33e5cabf71',
+        48516,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSansVithkuqi',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Sans Vithkuqi font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Sans+Vithkuqi
+  static TextTheme notoSansVithkuqiTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSansVithkuqi(textStyle: textTheme.displayLarge),
+      displayMedium: notoSansVithkuqi(textStyle: textTheme.displayMedium),
+      displaySmall: notoSansVithkuqi(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSansVithkuqi(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSansVithkuqi(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSansVithkuqi(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSansVithkuqi(textStyle: textTheme.titleLarge),
+      titleMedium: notoSansVithkuqi(textStyle: textTheme.titleMedium),
+      titleSmall: notoSansVithkuqi(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSansVithkuqi(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSansVithkuqi(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSansVithkuqi(textStyle: textTheme.bodySmall),
+      labelLarge: notoSansVithkuqi(textStyle: textTheme.labelLarge),
+      labelMedium: notoSansVithkuqi(textStyle: textTheme.labelMedium),
+      labelSmall: notoSansVithkuqi(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -18513,32 +19748,130 @@ class PartN {
   }) {
     final fonts = <GoogleFontsVariant, GoogleFontsFile>{
       const GoogleFontsVariant(
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '7a5be5264ec79b04fbdf0cc7539b6f2b76bb688af4fb0a935b31114ca4f32197',
-        245132,
+        '58bf711326ed4774ba3606e55a70cc2bb63bcc19ba5a39ac60fee4c9ca374466',
+        452504,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd11efaf5933b96c75b36a4454e0143463f76898d2c062148116c48beb8f0b77b',
+        452948,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a0660c0a9e660e2871d1708ac1a94c3b4709725f6afd67f6765c1f12eeea4626',
+        453092,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.italic,
+        fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c77141ccb7e46b999b2ec567b0ffd15868f49f1e5206ff5c8a9e7386004b899e',
-        247988,
+        '64080eab10a830c5fbab27d2a23bb4da2f460246ba924938d50edf951642df94',
+        452064,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '32148a47c3ddc91816e15452208e4f1b4188cc8634a41aad80b7843963942d77',
+        453016,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a5357fc77fa7473d0d0d062bb7b1723205815a88c5d40deae7d598afa6cea1a6',
+        452908,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9e4918ed0e89a5e49432cafc9f4b66350d24d7ea9c6d33fd9c8d7def64430f54',
-        246032,
+        '8d4df81b96c554d798026801e9426a8c60ffc5eecdbe6bfd9cad32d774c0863d',
+        452228,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '288beef79b78a1d8d4d2f676df95722204bea533bfa147533de89ae03a25d71b',
+        453880,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ab261cf7ed43214d1370bf7c30ca63efc919c1222c7ce8bafbc53bc54c408566',
+        453796,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ee920b2b22db367cae96c4b0ec5ab7408ced24132d9bdc114faf52792b85813f',
+        471800,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '4b1e40f62bf0c7b3e7eecfbf6bf40643abec412617b103aeb630b3882916b6f1',
+        472284,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'f5b403d5506d6389b405092c20cca89616f0b75b0e48063608045f161d629118',
+        471964,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '2fe5350ac5ea77ac47244712d3d7e1aebc915b2dfe545b6694e8473184e7a273',
+        470056,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '76f9e365bb052206f1f9490beff131d8aa35c1d801fe0a359349c749beae8d07',
+        470796,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '4df66a7cfafcea045f83f87b9a23be639ddd4d86087d049b9cbef63bb777a6a1',
+        470876,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '01e0d5c835c58708f4b96199949783c81fd202953c056c3ca5fc6faab9e676f4',
-        261112,
+        'd59a0790ac31ead45d6aaaa205701493e4d68989c74acadb9c74dd5e58cea4ba',
+        470216,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'cb07052e291685833974a46e793914b5b8a764554a24e4f74163d8bfa26fa4e8',
+        471524,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'f4104b20d1cf6c13a821a19e613668ec29c331ea9ba52ef1a79e032909af9f66',
+        471460,
       ),
     };
 
@@ -19433,8 +20766,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '861d3fa005d5e07807519d816a1cf6cbb6317e2c925c46e791b417f0a26b84b7',
-        17188,
+        '9a7a754b836d86ed9c659d561a27856df2ebb2004452877a3101c618ab0082b4',
+        52004,
       ),
     };
 
@@ -20570,6 +21903,99 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Serif Khitan Small Script font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Serif+Khitan+Small+Script
+  static TextStyle notoSerifKhitanSmallScript({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2aa739919c4f8f3d81e3dfa8e3c90f8e3b99901707106a2ac9776f6cc44b4c6f',
+        643204,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSerifKhitanSmallScript',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Serif Khitan Small Script font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Serif+Khitan+Small+Script
+  static TextTheme notoSerifKhitanSmallScriptTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge:
+          notoSerifKhitanSmallScript(textStyle: textTheme.displayLarge),
+      displayMedium:
+          notoSerifKhitanSmallScript(textStyle: textTheme.displayMedium),
+      displaySmall:
+          notoSerifKhitanSmallScript(textStyle: textTheme.displaySmall),
+      headlineLarge:
+          notoSerifKhitanSmallScript(textStyle: textTheme.headlineLarge),
+      headlineMedium:
+          notoSerifKhitanSmallScript(textStyle: textTheme.headlineMedium),
+      headlineSmall:
+          notoSerifKhitanSmallScript(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSerifKhitanSmallScript(textStyle: textTheme.titleLarge),
+      titleMedium: notoSerifKhitanSmallScript(textStyle: textTheme.titleMedium),
+      titleSmall: notoSerifKhitanSmallScript(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSerifKhitanSmallScript(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSerifKhitanSmallScript(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSerifKhitanSmallScript(textStyle: textTheme.bodySmall),
+      labelLarge: notoSerifKhitanSmallScript(textStyle: textTheme.labelLarge),
+      labelMedium: notoSerifKhitanSmallScript(textStyle: textTheme.labelMedium),
+      labelSmall: notoSerifKhitanSmallScript(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Serif Khmer font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -20744,29 +22170,29 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0fb79c6ca595823f0d8bda88d9ca736346b0e245de5dcd47224207d11b25945a',
-        139488,
+        'd6238a2f7239dddf7a4bcdd81d23cabb0eed5d28646e2b39b2605ea75566f91d',
+        137076,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c4ae1381fb95716f26fcf2e6e17ee3cde9c4347b24fdbe961851b273cbe0265d',
-        139924,
+        '435ce59b4d0df6c29799544596c54aaf229d5de13385ff71d7edf694ed9d7bdf',
+        137508,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '984ffee2460b80baaf9cfdf64fee7dc21368a822b15a0b3a493e350f41bcb09d',
-        139936,
+        '77adb17bc0fb9fd08bda054fc8a4b7a368dc7acb67eb50068eea780858b7df40',
+        137524,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '08f6c09d754d88e93d0cd0f94ac1d412f520ec66b91248e97f9bfab467af5b75',
-        139696,
+        '5187670051309df92c0535f367e3efb2fb4e35c1548545272d635090cce73b2e',
+        137292,
       ),
     };
 
@@ -20961,6 +22387,93 @@ class PartN {
       labelLarge: notoSerifLao(textStyle: textTheme.labelLarge),
       labelMedium: notoSerifLao(textStyle: textTheme.labelMedium),
       labelSmall: notoSerifLao(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Noto Serif Makasar font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Serif+Makasar
+  static TextStyle notoSerifMakasar({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4bef6fa2c52f5bbe78962332360c286b8620831fcadfc04864ffb87c244c91e6',
+        38632,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSerifMakasar',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Serif Makasar font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Serif+Makasar
+  static TextTheme notoSerifMakasarTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSerifMakasar(textStyle: textTheme.displayLarge),
+      displayMedium: notoSerifMakasar(textStyle: textTheme.displayMedium),
+      displaySmall: notoSerifMakasar(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSerifMakasar(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSerifMakasar(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSerifMakasar(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSerifMakasar(textStyle: textTheme.titleLarge),
+      titleMedium: notoSerifMakasar(textStyle: textTheme.titleMedium),
+      titleSmall: notoSerifMakasar(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSerifMakasar(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSerifMakasar(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSerifMakasar(textStyle: textTheme.bodySmall),
+      labelLarge: notoSerifMakasar(textStyle: textTheme.labelLarge),
+      labelMedium: notoSerifMakasar(textStyle: textTheme.labelMedium),
+      labelSmall: notoSerifMakasar(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -21466,6 +22979,94 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Serif Ottoman Siyaq font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Serif+Ottoman+Siyaq
+  static TextStyle notoSerifOttomanSiyaq({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f5344aa82a28aed829cc879c518f6b5db136814db846c45067469a1dd61e1945',
+        55152,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSerifOttomanSiyaq',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Serif Ottoman Siyaq font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Serif+Ottoman+Siyaq
+  static TextTheme notoSerifOttomanSiyaqTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSerifOttomanSiyaq(textStyle: textTheme.displayLarge),
+      displayMedium: notoSerifOttomanSiyaq(textStyle: textTheme.displayMedium),
+      displaySmall: notoSerifOttomanSiyaq(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSerifOttomanSiyaq(textStyle: textTheme.headlineLarge),
+      headlineMedium:
+          notoSerifOttomanSiyaq(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSerifOttomanSiyaq(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSerifOttomanSiyaq(textStyle: textTheme.titleLarge),
+      titleMedium: notoSerifOttomanSiyaq(textStyle: textTheme.titleMedium),
+      titleSmall: notoSerifOttomanSiyaq(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSerifOttomanSiyaq(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSerifOttomanSiyaq(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSerifOttomanSiyaq(textStyle: textTheme.bodySmall),
+      labelLarge: notoSerifOttomanSiyaq(textStyle: textTheme.labelLarge),
+      labelMedium: notoSerifOttomanSiyaq(textStyle: textTheme.labelMedium),
+      labelSmall: notoSerifOttomanSiyaq(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Serif Sinhala font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -21846,8 +23447,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '024d9681f91ec8979de208aebd8b3ef0e5c42106cb1281d9fcb3eea68fb487f2',
-        3417888,
+        'ed23adac92c60c3bd2f7d6130b9dfaa27449bc94ef96a5a679f39ef0dc3f3783',
+        3120360,
       ),
     };
 
@@ -22439,6 +24040,114 @@ class PartN {
     );
   }
 
+  /// Applies the Noto Serif Vithkuqi font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Serif+Vithkuqi
+  static TextStyle notoSerifVithkuqi({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '85fc9090f6583fc8ac3a3f6d015174af2f0a49e46661eafb55678ea8ae259075',
+        53500,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '62bffa84ae1144b2cb358715bc86da19768a4a643b1182dc32a0f360a9bc9f81',
+        53620,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1b5aa13d24600810ca5b87d0b6e58fd74d31994e403e9667020da2503df50141',
+        53552,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '87c5e76663ddee8eb51bb02bcf86ceb7bf013c1684f201746ce698c4557f26f2',
+        53432,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'NotoSerifVithkuqi',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Noto Serif Vithkuqi font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Noto+Serif+Vithkuqi
+  static TextTheme notoSerifVithkuqiTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: notoSerifVithkuqi(textStyle: textTheme.displayLarge),
+      displayMedium: notoSerifVithkuqi(textStyle: textTheme.displayMedium),
+      displaySmall: notoSerifVithkuqi(textStyle: textTheme.displaySmall),
+      headlineLarge: notoSerifVithkuqi(textStyle: textTheme.headlineLarge),
+      headlineMedium: notoSerifVithkuqi(textStyle: textTheme.headlineMedium),
+      headlineSmall: notoSerifVithkuqi(textStyle: textTheme.headlineSmall),
+      titleLarge: notoSerifVithkuqi(textStyle: textTheme.titleLarge),
+      titleMedium: notoSerifVithkuqi(textStyle: textTheme.titleMedium),
+      titleSmall: notoSerifVithkuqi(textStyle: textTheme.titleSmall),
+      bodyLarge: notoSerifVithkuqi(textStyle: textTheme.bodyLarge),
+      bodyMedium: notoSerifVithkuqi(textStyle: textTheme.bodyMedium),
+      bodySmall: notoSerifVithkuqi(textStyle: textTheme.bodySmall),
+      labelLarge: notoSerifVithkuqi(textStyle: textTheme.labelLarge),
+      labelMedium: notoSerifVithkuqi(textStyle: textTheme.labelMedium),
+      labelSmall: notoSerifVithkuqi(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Noto Serif Yezidi font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -22470,29 +24179,29 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '43e8f895b225bdbc5cafb32d375ee6c1518a30a377685a8c508c29a49705b538',
-        9416,
+        '4cb638b074ae8ad83aca5e479e264a2c8573ec337d9d96683a9d5343b1e3261a',
+        47716,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4601212af33ed4cccc6a83e8e1b3fa6be13d10fe6b36a976a7b05462c983d8b3',
-        9452,
+        'd3fd0fb941820e9c8b1d8655009ef417c07bcafad4eb526ebfed775d793b5b2d',
+        47820,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '079d317d39cb00e3f0055da212df45025e6a7b2749847a1b69a3529eadc59388',
-        9468,
+        '5f15561ac3b91eae2cc5bef5c01f0c462c2bac305301ec726ea58b97b44ea41d',
+        47744,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'cc7ab49672f45a2033d17998bfe3ce17fe37620aab8ff156195f8df0de3bd614',
-        9400,
+        'ba9cb35c4438c08056b17de01b4ade99c57264f97dc5c31deeee337df93e7376',
+        47632,
       ),
     };
 
@@ -22575,11 +24284,39 @@ class PartN {
   }) {
     final fonts = <GoogleFontsVariant, GoogleFontsFile>{
       const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '256b891d392d777f12474f2e6df4c5b4558d59aeab0d3028c791f51f353aad99',
+        136668,
+      ),
+      const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fed09fc212bb50538e272bd8c2c4b76ef015f1bdf06f1570b7f16317810c88db',
-        204860,
+        'da1f6df74e4fb672e515142655da2071e641ce8e0fe3e5605f025c13e34c2b91',
+        136620,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5bef080439a839089d6852878bb98ff15635a04b3deacca9fb1f94433aa332c5',
+        136908,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bf1dbc86945162a664b81b808b73988e7872929c0041b3d83931b1a3039cb0a5',
+        136948,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e6586b0e664c8f16a9da9955a3893a2c3f8faae6fa1eaffa9f2b73ebd84ec0fe',
+        136996,
       ),
     };
 
@@ -22839,7 +24576,7 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e02d031e7313ecfa888c02acf70261f9ced82988ca4a05bcd3450101d6f0d4b3',
+        '1cef6f9dace4114875a71406ef44b771ecc4407479c473af326d93764a6c55c3',
         152484,
       ),
     };
@@ -23274,7 +25011,7 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '3f12427d5a0a7c28ae2e285419ace837d6888bebbdd1354f3c93e4f710275420',
+        '4b13b4b4b397a598b606650b2bac246840ef1adf11cead697a55aad6fbea9745',
         46800,
       ),
     };
@@ -23832,8 +25569,8 @@ class PartN {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ff221cd5711453322dd44afffaee3becc128ab0fabd1f4dea7013343f45b1b80',
-        251700,
+        'fd39083907e767636d1865fa86c51a5a1982eeba7c27ef175747c31a2df89aef',
+        249960,
       ),
     };
 
