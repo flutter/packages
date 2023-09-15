@@ -11,13 +11,11 @@ final class URLLauncherTests: XCTestCase {
 
   private func createPlugin() -> URLLauncherPlugin {
     let launcher = FakeLauncher()
-    let binaryMessenger = FakeFlutterBinaryMessenger()
-    return URLLauncherPlugin(launcher: launcher, binaryMessenger: binaryMessenger)
+    return URLLauncherPlugin(launcher: launcher)
   }
 
   private func createPlugin(launcher: FakeLauncher) -> URLLauncherPlugin {
-    let binaryMessenger = FakeFlutterBinaryMessenger()
-    return URLLauncherPlugin(launcher: launcher, binaryMessenger: binaryMessenger)
+    return URLLauncherPlugin(launcher: launcher)
   }
 
   func testCanLaunchSuccess() {
@@ -140,20 +138,4 @@ final private class FakeLauncher: NSObject, Launcher {
     self.passedOptions = options
     completion?(url.scheme == "good")
   }
-}
-
-final private class FakeFlutterBinaryMessenger: NSObject, FlutterBinaryMessenger {
-  func send(onChannel channel: String, message: Data?) {}
-
-  func send(
-    onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil
-  ) {}
-
-  func setMessageHandlerOnChannel(
-    _ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
-  ) -> FlutterBinaryMessengerConnection {
-    123
-  }
-
-  func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
 }
