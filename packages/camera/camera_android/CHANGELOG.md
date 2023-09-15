@@ -1,3 +1,7 @@
+## 0.10.8+9
+
+* Update annotations lib to 1.7.0.
+
 ## 0.10.8+8
 
 * Adds pub topics to package metadata.

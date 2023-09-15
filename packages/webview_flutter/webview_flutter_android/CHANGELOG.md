@@ -1,3 +1,7 @@
+## 3.10.1
+
+* Update annotations lib to 1.7.0.
+
 ## 3.10.0
 
 * Adds support for playing video in fullscreen. See
