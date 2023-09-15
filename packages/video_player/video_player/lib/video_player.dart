@@ -113,6 +113,9 @@ class VideoPlayerValue {
   final String? errorDescription;
 
   /// True if video has finished playing to end.
+  ///
+  /// Reverts to false if video position changes, or video begins playing.
+  /// Does not update if video is looping.
   final bool isCompleted;
 
   /// The [size] of the currently loaded video.
