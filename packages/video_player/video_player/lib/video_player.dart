@@ -475,8 +475,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: false);
           break;
         case VideoEventType.isPlayingStateUpdate:
-          value =
-              value.copyWith(isPlaying: event.isPlaying, isCompleted: false);
+          if (event.isPlaying ?? false) {
+            value =
+                value.copyWith(isPlaying: event.isPlaying, isCompleted: false);
+          } else {
+            value = value.copyWith(isPlaying: event.isPlaying);
+          }
           break;
         case VideoEventType.unknown:
           break;
@@ -540,7 +544,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Sets whether or not the video should loop after playing once. See also
   /// [VideoPlayerValue.isLooping].
   Future<void> setLooping(bool looping) async {
-    value = value.copyWith(isLooping: looping);
+    value = value.copyWith(isLooping: looping, isCompleted: false);
     await _applyLooping();
   }
 
@@ -749,6 +753,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     value = value.copyWith(
       position: position,
       caption: _getCaptionAt(position),
+      isCompleted: false,
     );
   }
 
