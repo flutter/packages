@@ -4933,7 +4933,8 @@ void main() {
           throwsA(const TypeMatcher<AssertionError>()));
     });
     test('Test override using routeInformationProvider', () {
-      final String platformRoute = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+      final String platformRoute =
+          WidgetsBinding.instance.platformDispatcher.defaultRouteName;
       const String expectedInitialRoute = '/abc';
       expect(platformRoute != expectedInitialRoute, isTrue);
 
@@ -4944,16 +4945,17 @@ void main() {
           GoRoute(
             path: '/abc',
             builder: (BuildContext context, GoRouterState state) =>
-            const Placeholder(),
+                const Placeholder(),
           ),
           GoRoute(
             path: '/bcd',
             builder: (BuildContext context, GoRouterState state) =>
-            const Placeholder(),
+                const Placeholder(),
           ),
         ],
       );
-      expect(router.routeInformationProvider.value.uri.toString(),  expectedInitialRoute);
+      expect(router.routeInformationProvider.value.uri.toString(),
+          expectedInitialRoute);
     });
   });
 }

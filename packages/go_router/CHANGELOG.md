@@ -1,4 +1,3 @@
-## NEXT
 ## 10.1.3
 
 - Adds optional parameter `overridePlatformDefaultLocation` to override initial route set by platform.
