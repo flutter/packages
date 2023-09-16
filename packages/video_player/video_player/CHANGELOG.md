@@ -1,6 +1,6 @@
 ## 2.7.2
 
-* Adds option isLooping and volume to VideoPlayerController constructor
+* Adds `loop`, `volume` and `playAfterInitialized` parameters to VideoPlayerController constructors.
 
 ## 2.7.1
 
