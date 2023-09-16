@@ -259,6 +259,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.videoPlayerOptions,
     bool loop = false,
     double volume = 1.0,
+    bool playAfterInitialized = false,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.asset,
         formatHint = null,
@@ -267,6 +268,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           duration: Duration.zero,
           isLooping: loop,
           volume: volume.clamp(0.0, 1.0),
+          isPlaying: playAfterInitialized,
         ));
 
   /// Constructs a [VideoPlayerController] playing a network video.
