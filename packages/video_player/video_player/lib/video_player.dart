@@ -257,7 +257,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.package,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
-    bool isLooping = false,
+    bool loop = false,
     double volume = 1.0,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.asset,
@@ -265,7 +265,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         httpHeaders = const <String, String>{},
         super(VideoPlayerValue(
           duration: Duration.zero,
-          isLooping: isLooping,
+          isLooping: loop,
           volume: volume.clamp(0.0, 1.0),
         ));
 
@@ -285,15 +285,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    bool isLooping = false,
+    bool loop = false,
     double volume = 1.0,
+    bool playAfterInitialized = false,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.network,
         package = null,
         super(VideoPlayerValue(
           duration: Duration.zero,
-          isLooping: isLooping,
+          isLooping: loop,
           volume: volume.clamp(0.0, 1.0),
+          isPlaying: playAfterInitialized,
         ));
 
   /// Constructs a [VideoPlayerController] playing a network video.
@@ -311,16 +313,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    bool isLooping = false,
+    bool loop = false,
     double volume = 1.0,
+    bool playAfterInitialized = false,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = url.toString(),
         dataSourceType = DataSourceType.network,
         package = null,
         super(VideoPlayerValue(
           duration: Duration.zero,
-          isLooping: isLooping,
+          isLooping: loop,
           volume: volume.clamp(0.0, 1.0),
+          isPlaying: playAfterInitialized,
         ));
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
@@ -332,8 +336,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    bool isLooping = false,
+    bool loop = false,
     double volume = 1.0,
+    bool playAfterInitialized = false,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
@@ -341,8 +346,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         formatHint = null,
         super(VideoPlayerValue(
           duration: Duration.zero,
-          isLooping: isLooping,
+          isLooping: loop,
           volume: volume.clamp(0.0, 1.0),
+          isPlaying: playAfterInitialized,
         ));
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
@@ -353,8 +359,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Uri contentUri, {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
-    bool isLooping = false,
+    bool loop = false,
     double volume = 1.0,
+    bool playAfterInitialized = false,
   })  : assert(defaultTargetPlatform == TargetPlatform.android,
             'VideoPlayerController.contentUri is only supported on Android.'),
         _closedCaptionFileFuture = closedCaptionFile,
@@ -365,8 +372,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         httpHeaders = const <String, String>{},
         super(VideoPlayerValue(
           duration: Duration.zero,
-          isLooping: isLooping,
+          isLooping: loop,
           volume: volume.clamp(0.0, 1.0),
+          isPlaying: playAfterInitialized,
         ));
 
   /// The URI to the video file. This will be in different formats depending on
