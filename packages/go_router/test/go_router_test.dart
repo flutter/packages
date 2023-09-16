@@ -4932,6 +4932,29 @@ void main() {
               ),
           throwsA(const TypeMatcher<AssertionError>()));
     });
+    test('Test override using routeInformationProvider', () {
+      final String platformRoute = WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+      const String expectedInitialRoute = '/abc';
+      expect(platformRoute != expectedInitialRoute, isTrue);
+
+      final GoRouter router = GoRouter(
+        overridePlatformDefaultLocation: true,
+        initialLocation: '/abc',
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/abc',
+            builder: (BuildContext context, GoRouterState state) =>
+            const Placeholder(),
+          ),
+          GoRoute(
+            path: '/bcd',
+            builder: (BuildContext context, GoRouterState state) =>
+            const Placeholder(),
+          ),
+        ],
+      );
+      expect(router.routeInformationProvider.value.uri.toString(),  expectedInitialRoute);
+    });
   });
 }
 
