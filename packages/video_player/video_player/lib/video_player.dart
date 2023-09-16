@@ -266,7 +266,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         super(VideoPlayerValue(
           duration: Duration.zero,
           isLooping: isLooping,
-          volume: volume,
+          volume: volume.clamp(0.0, 1.0),
         ));
 
   /// Constructs a [VideoPlayerController] playing a network video.
@@ -293,7 +293,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         super(VideoPlayerValue(
           duration: Duration.zero,
           isLooping: isLooping,
-          volume: volume,
+          volume: volume.clamp(0.0, 1.0),
         ));
 
   /// Constructs a [VideoPlayerController] playing a network video.
@@ -320,7 +320,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         super(VideoPlayerValue(
           duration: Duration.zero,
           isLooping: isLooping,
-          volume: volume,
+          volume: volume.clamp(0.0, 1.0),
         ));
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
@@ -342,7 +342,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         super(VideoPlayerValue(
           duration: Duration.zero,
           isLooping: isLooping,
-          volume: volume,
+          volume: volume.clamp(0.0, 1.0),
         ));
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
@@ -366,7 +366,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         super(VideoPlayerValue(
           duration: Duration.zero,
           isLooping: isLooping,
-          volume: volume,
+          volume: volume.clamp(0.0, 1.0),
         ));
 
   /// The URI to the video file. This will be in different formats depending on
