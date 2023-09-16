@@ -9,7 +9,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.camera.video.FallbackStrategy;
 import androidx.camera.video.Quality;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FallbackStrategyHostApi;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityConstraint;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQuality;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoResolutionFallbackRule;
 
 /**
@@ -28,20 +28,18 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
   public static class FallbackStrategyProxy {
     /** Creates an instance of {@link FallbackStrategy}. */
     public @NonNull FallbackStrategy create(
-        @NonNull VideoQualityConstraint videoQualityConstraint,
-        @NonNull VideoResolutionFallbackRule fallbackRule) {
-      Quality videoQuality =
-          QualitySelectorHostApiImpl.getQualityFromVideoQualityConstraint(videoQualityConstraint);
+        @NonNull VideoQuality videoQuality, @NonNull VideoResolutionFallbackRule fallbackRule) {
+      Quality quality = QualitySelectorHostApiImpl.getQualityFromVideoQuality(videoQuality);
 
       switch (fallbackRule) {
         case HIGHER_QUALITY_OR_LOWER_THAN:
-          return FallbackStrategy.higherQualityOrLowerThan(videoQuality);
+          return FallbackStrategy.higherQualityOrLowerThan(quality);
         case HIGHER_QUALITY_THAN:
-          return FallbackStrategy.higherQualityThan(videoQuality);
+          return FallbackStrategy.higherQualityThan(quality);
         case LOWER_QUALITY_OR_HIGHER_THAN:
-          return FallbackStrategy.lowerQualityOrHigherThan(videoQuality);
+          return FallbackStrategy.lowerQualityOrHigherThan(quality);
         case LOWER_QUALITY_THAN:
-          return FallbackStrategy.lowerQualityThan(videoQuality);
+          return FallbackStrategy.lowerQualityThan(quality);
       }
       throw new IllegalArgumentException(
           "Specified fallback rule " + fallbackRule + " unrecognized.");
@@ -75,9 +73,8 @@ public class FallbackStrategyHostApiImpl implements FallbackStrategyHostApi {
   @Override
   public void create(
       @NonNull Long identifier,
-      @NonNull VideoQualityConstraint videoQualityConstraint,
+      @NonNull VideoQuality videoQuality,
       @NonNull VideoResolutionFallbackRule fallbackRule) {
-    instanceManager.addDartCreatedInstance(
-        proxy.create(videoQualityConstraint, fallbackRule), identifier);
+    instanceManager.addDartCreatedInstance(proxy.create(videoQuality, fallbackRule), identifier);
   }
 }
