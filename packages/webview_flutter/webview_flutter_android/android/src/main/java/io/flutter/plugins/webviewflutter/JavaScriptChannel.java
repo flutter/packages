@@ -38,11 +38,27 @@ public class JavaScriptChannel {
   }
 
   // Suppressing unused warning as this is invoked from JavaScript.
+  // Javascript postMessage method with message only parameter
   @SuppressWarnings("unused")
   @JavascriptInterface
   public void postMessage(@NonNull final String message) {
     final Runnable postMessageRunnable =
         () -> flutterApi.postMessage(JavaScriptChannel.this, message, reply -> {});
+
+    if (platformThreadHandler.getLooper() == Looper.myLooper()) {
+      postMessageRunnable.run();
+    } else {
+      platformThreadHandler.post(postMessageRunnable);
+    }
+  }
+
+  // Suppressing unused warning as this is invoked from JavaScript.
+  // Javascript postMessage method with message and targetOrigin parameters
+  @SuppressWarnings("unused")
+  @JavascriptInterface
+  public void postMessage(@NonNull final String message, @NonNull final String targetOrigin) {
+    final Runnable postMessageRunnable =
+            () -> flutterApi.postMessage(JavaScriptChannel.this, message, reply -> {});
 
     if (platformThreadHandler.getLooper() == Looper.myLooper()) {
       postMessageRunnable.run();
