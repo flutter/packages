@@ -1,6 +1,6 @@
 ## 6.1.1
 
-* Update annotations lib to 1.7.0.
+* Updates annotations lib to 1.7.0.
 
 ## 6.1.0
 

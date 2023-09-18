@@ -1,6 +1,6 @@
 ## 2.5.2
 
-* Update annotations lib to 1.7.0.
+* Updates annotations lib to 1.7.0.
 
 ## 2.5.1
 
