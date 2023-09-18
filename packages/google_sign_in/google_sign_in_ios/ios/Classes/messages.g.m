@@ -16,17 +16,6 @@
 #error File requires ARC to be enabled.
 #endif
 
-/// Pigeon version of SignInOption.
-@implementation FSISignInTypeBox
-- (instancetype)initWithValue:(FSISignInType)value {
-  self = [super init];
-  if (self) {
-    _value = value;
-  }
-  return self;
-}
-@end
-
 static NSArray *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[

@@ -12,15 +12,6 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-/// Pigeon version of SignInOption.
-enum SignInType {
-  /// Default configuration.
-  standard,
-
-  /// Recommended configuration for game sign in.
-  games,
-}
-
 /// Pigeon version of SignInInitParams.
 ///
 /// See SignInInitParams for details.

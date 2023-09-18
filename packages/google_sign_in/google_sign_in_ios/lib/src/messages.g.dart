@@ -11,15 +11,6 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-/// Pigeon version of SignInOption.
-enum SignInType {
-  /// Default configuration.
-  standard,
-
-  /// Recommended configuration for game sign in.
-  games,
-}
-
 /// Pigeon version of SignInInitParams.
 ///
 /// See SignInInitParams for details.

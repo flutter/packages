@@ -13,20 +13,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Pigeon version of SignInOption.
-typedef NS_ENUM(NSUInteger, FSISignInType) {
-  /// Default configuration.
-  FSISignInTypeStandard = 0,
-  /// Recommended configuration for game sign in.
-  FSISignInTypeGames = 1,
-};
-
-/// Wrapper for FSISignInType to allow for nullability.
-@interface FSISignInTypeBox : NSObject
-@property(nonatomic, assign) FSISignInType value;
-- (instancetype)initWithValue:(FSISignInType)value;
-@end
-
 @class FSIInitParams;
 @class FSIUserData;
 @class FSITokenData;
