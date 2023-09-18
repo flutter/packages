@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 final class VideoPlayer {
   private static final String FORMAT_SS = "ss";
@@ -76,6 +77,7 @@ final class VideoPlayer {
   private DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory();
 
   private MuxStatsExoPlayer muxStatsExoPlayer = null;
+
   private CustomerData customerData = new CustomerData();
 
   VideoPlayer(
@@ -93,6 +95,9 @@ final class VideoPlayer {
     ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
     Uri uri = Uri.parse(dataSource);
 
+    System.out.println(uri.toString()+"shreyNat");
+    System.out.println(httpHeaders.toString()+"shreyNat");
+
     buildHttpDataSourceFactory(httpHeaders);
     DataSource.Factory dataSourceFactory =
         new DefaultDataSource.Factory(context, httpDataSourceFactory);
@@ -104,8 +109,9 @@ final class VideoPlayer {
 
     setUpVideoPlayer(exoPlayer, new QueuingEventSink());
 
-    //Todo- @shreyansh requires check if MUX Data is enabled from the flutter app
-    initializeMUXDataAnalytics(context,uri.toString());
+    if(Objects.equals(httpHeaders.get("enableMuxAnalytics"), "true")) {
+      initializeMUXDataAnalytics(context, uri.toString(),httpHeaders);
+    }
   }
 
   // Constructor used to directly test members of this class.
@@ -187,7 +193,7 @@ final class VideoPlayer {
   }
 
   //initializing MUX Data Analytics for ExoPlayer
-  private void initializeMUXDataAnalytics(Context context, String videoURL) {
+  private void initializeMUXDataAnalytics(Context context, String videoURL, Map<String,String> data) {
 
     Resources resources = context.getResources(); // Using context to get resources
     boolean isTablet = isTablet(resources); //checking the device type
@@ -197,12 +203,13 @@ final class VideoPlayer {
 
     //add the title of the video
     customerData.getCustomerVideoData().setVideoTitle(
-            "STAGE-Android MUX"
+            data.get("videoTitle") == null ? "STAGE-ANDROID" : data.get("videoTitle")
     );
     customerData.getCustomerVideoData().setVideoSourceUrl(videoURL);
 
     customerData.setCustomerViewData(new CustomerViewData());
-    customerData.getCustomerViewData().setViewSessionId("sessionID");
+
+    customerData.getCustomerViewData().setViewSessionId( data.get("sessionID") == null ? "STAGE-ANDROID" : data.get("sessionID"));
 //    other parameters can also be set to customer view data in the similar way
 //    customerData.getCustomerViewData().set
 
@@ -213,18 +220,23 @@ final class VideoPlayer {
 
     //CUSTOM tracking parameters can be sent by attaching to customData (MAX-5)
     customerData.setCustomData(new CustomData());
-    customerData.getCustomData().setCustomData1("");
-    customerData.getCustomData().setCustomData2("");
-    customerData.getCustomData().setCustomData3("");
-    customerData.getCustomData().setCustomData4("");
-    customerData.getCustomData().setCustomData5("");
+    if(data.get("customData1")!=null)
+      customerData.getCustomData().setCustomData1(data.get("customData1"));
+    if(data.get("customData2")!=null)
+      customerData.getCustomData().setCustomData2(data.get("customData2"));
+    if(data.get("customData3")!=null)
+      customerData.getCustomData().setCustomData3(data.get("customData3"));
+    if(data.get("customData4")!=null)
+      customerData.getCustomData().setCustomData4(data.get("customData4"));
+    if(data.get("customData5")!=null)
+      customerData.getCustomData().setCustomData5(data.get("customData5"));
 
 
     //we need a separate player view to be associated with the exo player
     StyledPlayerView playerView = new StyledPlayerView(context);
-//    playerView.setPlayer(exoPlayer);
+    //playerView.setPlayer(exoPlayer);
 
-    muxStatsExoPlayer = new MuxStatsExoPlayer(context, "5h5v06ok3neps8k66b1dppton", exoPlayer, customerData);
+    muxStatsExoPlayer = new MuxStatsExoPlayer(context, Objects.requireNonNull(data.get("muxEnvKey")), exoPlayer, customerData);
 
     //associating the mux stats player to monitor the video player and send analytics
     // Make sure to monitor the player before calling `prepare` on the ExoPlayer instance
