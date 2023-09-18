@@ -547,7 +547,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Sets whether or not the video should loop after playing once. See also
   /// [VideoPlayerValue.isLooping].
   Future<void> setLooping(bool looping) async {
-    value = value.copyWith(isLooping: looping, isCompleted: false);
+    value = value.copyWith(isLooping: looping);
     await _applyLooping();
   }
 
@@ -756,7 +756,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     value = value.copyWith(
       position: position,
       caption: _getCaptionAt(position),
-      isCompleted: false,
+      isCompleted: position == value.duration,
     );
   }
 

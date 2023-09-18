@@ -1233,7 +1233,7 @@ void main() {
     fakeVideoEventStream.add(VideoEvent(eventType: VideoEventType.completed));
   });
 
-  test('isCompleted updates on video end', () async {
+  test('isCompleted updates on video play after completed', () async {
     final VideoPlayerController controller = VideoPlayerController.networkUrl(
       _localhostUri,
       videoPlayerOptions: VideoPlayerOptions(),
@@ -1248,6 +1248,7 @@ void main() {
 
     final void Function() isCompletedTest = expectAsync0(() {});
     final void Function() isNoLongerCompletedTest = expectAsync0(() {});
+
     controller.addListener(() async {
       if (currentIsCompleted != controller.value.isCompleted) {
         currentIsCompleted = controller.value.isCompleted;
@@ -1262,6 +1263,37 @@ void main() {
     });
 
     fakeVideoEventStream.add(VideoEvent(eventType: VideoEventType.completed));
+  });
+
+  test('isCompleted updates on video seek to end', () async {
+    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      _localhostUri,
+      videoPlayerOptions: VideoPlayerOptions(),
+    );
+
+    await controller.initialize();
+
+    bool currentIsCompleted = controller.value.isCompleted;
+
+    final void Function() isCompletedTest = expectAsync0(() {});
+
+    controller.value =
+        controller.value.copyWith(duration: const Duration(seconds: 10));
+
+    controller.addListener(() async {
+      if (currentIsCompleted != controller.value.isCompleted) {
+        currentIsCompleted = controller.value.isCompleted;
+        if (controller.value.isCompleted) {
+          isCompletedTest();
+        }
+      }
+    });
+
+    // This call won't update isCompleted.
+    // The test will fail if `isCompletedTest` is called more than once.
+    await controller.seekTo(const Duration(seconds: 10));
+
+    await controller.seekTo(const Duration(seconds: 20));
   });
 }
 
