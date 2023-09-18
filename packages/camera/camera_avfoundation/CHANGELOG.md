@@ -1,3 +1,7 @@
+## 0.9.13+5
+
+* Ignores audio samples until the first video sample arrives.
+
 ## 0.9.13+4
 
 * Adds pub topics to package metadata.
