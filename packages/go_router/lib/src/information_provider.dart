@@ -183,7 +183,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     );
   }
 
-  /// Restores the current route matches with the `encodedMatchList`.
+  /// Restores the current route matches with the `matchList`.
   void restore(String location, {required RouteMatchList matchList}) {
     _setValue(
       matchList.uri.toString(),
