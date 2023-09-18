@@ -373,13 +373,13 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests.yaml
+      target_file: android_platform_tests_api_33.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "33"}
         ]
 
   - name: Linux_android android_platform_tests_shard_1 stable
