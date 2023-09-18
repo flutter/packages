@@ -1,3 +1,7 @@
+## 10.1.3
+
+- Fixes an issue in the documentation that was using `state.queryParameters` instead of `state.uri.queryParameters`.
+
 ## 10.1.2
 
 * Adds pub topics to package metadata.
