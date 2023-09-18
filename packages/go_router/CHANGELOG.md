@@ -1,3 +1,8 @@
+## 10.1.4
+
+- Fixes RouteInformationParser that does not restore full RouteMatchList if
+  the optionURLReflectsImperativeAPIs is set.
+
 ## 10.1.3
 
 - Fixes an issue in the documentation that was using `state.queryParameters` instead of `state.uri.queryParameters`.
