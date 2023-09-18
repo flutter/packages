@@ -1246,16 +1246,21 @@ void main() {
 
     bool currentIsCompleted = controller.value.isCompleted;
 
-    final void Function() isCompletedTest = expectAsync0(() {});
+    final void Function() isCompletedTest = expectAsync0(() {}, count: 2);
     final void Function() isNoLongerCompletedTest = expectAsync0(() {});
+    bool hasLooped = false;
 
     controller.addListener(() async {
       if (currentIsCompleted != controller.value.isCompleted) {
         currentIsCompleted = controller.value.isCompleted;
         if (controller.value.isCompleted) {
           isCompletedTest();
-          fakeVideoEventStream
-              .add(VideoEvent(eventType: VideoEventType.isPlayingStateUpdate));
+          if (!hasLooped) {
+            fakeVideoEventStream.add(VideoEvent(
+                eventType: VideoEventType.isPlayingStateUpdate,
+                isPlaying: true));
+            hasLooped = !hasLooped;
+          }
         } else {
           isNoLongerCompletedTest();
         }
