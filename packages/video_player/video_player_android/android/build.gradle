@@ -12,6 +12,7 @@ buildscript {
     }
 
     dependencies {
+        //the gradle version has been upgraded to 7.4.2 because of MUX Data SDK
         classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
@@ -20,9 +21,11 @@ rootProject.allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://muxinc.jfrog.io/artifactory/default-maven-virtual' }
+        //required for passing customer data in mux analytics
         maven { url 'https://muxinc.jfrog.io/artifactory/default-maven-release-local' }
-        maven { url 'https://muxinc.jfrog.io/artifactory/default-maven-local' }
+        //these are extra MUX Data dependencies which may be required later in future
+//        maven { url 'https://muxinc.jfrog.io/artifactory/default-maven-virtual' }
+//        maven { url 'https://muxinc.jfrog.io/artifactory/default-maven-local' }
     }
 }
 
@@ -54,6 +57,8 @@ android {
     }
 
     dependencies {
+//        def exoplayer_version = "2.18.7"
+        // downgraded version of ExoPlayer from 2.18.7 to 2.18.1 because MUX Data has support only till 2.18.1
         def exoplayer_version = "2.18.1"
         implementation "com.google.android.exoplayer:exoplayer-core:${exoplayer_version}"
         implementation "com.google.android.exoplayer:exoplayer-hls:${exoplayer_version}"

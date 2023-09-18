@@ -95,9 +95,6 @@ final class VideoPlayer {
     ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
     Uri uri = Uri.parse(dataSource);
 
-    System.out.println(uri.toString()+"shreyNat");
-    System.out.println(httpHeaders.toString()+"shreyNat");
-
     buildHttpDataSourceFactory(httpHeaders);
     DataSource.Factory dataSourceFactory =
         new DefaultDataSource.Factory(context, httpDataSourceFactory);
