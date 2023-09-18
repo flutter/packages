@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Adds web options to customize the control list and context menu display.
+
 ## 2.0.18
 
 * Migrates to `dart:ui_web` APIs.
