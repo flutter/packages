@@ -1,5 +1,10 @@
+## 2.3.3
+
+* Adds `initialLocation` for `StatefulShellBranchConfig`
+
 ## 2.3.2
-* Add initialLocation with StatefulShellBranchConfig
+
+* Supports the latest `package:analyzer`.
 
 ## 2.3.1
 
