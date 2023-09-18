@@ -396,10 +396,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Example:
   /// public static final class Foo {
   ///   public Foo(BinaryMessenger argBinaryMessenger) {...}
-  ///   public interface Reply<T> {
+  ///   public interface Result<T> {
   ///     void reply(T reply);
   ///   }
-  ///   public int add(int x, int y, Reply<int> callback) {...}
+  ///   public int add(int x, int y, Result<int> result) {...}
   /// }
   @override
   void writeFlutterApi(
@@ -409,6 +409,17 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Api api, {
     required String dartPackageName,
   }) {
+    /// Returns an argument name that can be used in a context where it is possible to collide
+    /// and append `.index` to enums.
+    String getEnumSafeArgumentExpression(int count, NamedType argument) {
+      if (isEnum(root, argument.type)) {
+        return argument.type.isNullable
+            ? '${_getArgumentName(count, argument)}Arg == null ? null : ${_getArgumentName(count, argument)}Arg.index'
+            : '${_getArgumentName(count, argument)}Arg.index';
+      }
+      return '${_getArgumentName(count, argument)}Arg';
+    }
+
     assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
@@ -430,16 +441,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       });
       indent.newln();
       indent.writeln('/** Public interface for sending reply. */ ');
-      // This warning can't be fixed without a breaking change, and the next
-      // breaking change to this part of the code should be eliminating Reply
-      // entirely in favor of using Result<T> for
-      // https://github.com/flutter/flutter/issues/118243
-      // See also the comment on the Result<T> code.
-      indent.writeln('@SuppressWarnings("UnknownNullness")');
-      indent.write('public interface Reply<T> ');
-      indent.addScoped('{', '}', () {
-        indent.writeln('void reply(T reply);');
-      });
       final String codecName = _getCodecName(api);
       indent.writeln('/** The codec used by ${api.name}. */');
       indent.write('static @NonNull MessageCodec<Object> getCodec() ');
@@ -452,17 +453,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         }
       });
 
-      /// Returns an argument name that can be used in a context where it is possible to collide
-      /// and append `.index` to enums.
-      String getEnumSafeArgumentExpression(int count, NamedType argument) {
-        if (isEnum(root, argument.type)) {
-          return argument.type.isNullable
-              ? '${_getArgumentName(count, argument)}Arg == null ? null : ${_getArgumentName(count, argument)}Arg.index'
-              : '${_getArgumentName(count, argument)}Arg.index';
-        }
-        return '${_getArgumentName(count, argument)}Arg';
-      }
-
       for (final Method func in api.methods) {
         final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
@@ -473,7 +463,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             indent, func.documentationComments, _docCommentSpec);
         if (func.arguments.isEmpty) {
           indent.write(
-              'public void ${func.name}(@NonNull Reply<$returnType> callback) ');
+              'public void ${func.name}(@NonNull Result<$returnType> result) ');
           sendArgument = 'null';
         } else {
           final Iterable<String> argTypes = func.arguments
@@ -493,7 +483,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
               map2(argTypes, argNames, (String x, String y) => '$x $y')
                   .join(', ');
           indent.write(
-              'public void ${func.name}($argsSignature, @NonNull Reply<$returnType> callback) ');
+              'public void ${func.name}($argsSignature, @NonNull Result<$returnType> result) ');
         }
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
@@ -508,30 +498,52 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           indent.nest(2, () {
             indent.writeln('$sendArgument,');
             indent.write('channelReply -> ');
-            if (func.returnType.isVoid) {
-              indent.addln('callback.reply(null));');
-            } else {
-              indent.addScoped('{', '});', () {
-                const String output = 'output';
-                indent.writeln('@SuppressWarnings("ConstantConditions")');
-                if (func.returnType.baseName == 'int') {
+            indent.addScoped('{', '});', () {
+              indent.writeScoped('if (channelReply instanceof List) {', '} ',
+                  () {
+                indent.writeln(
+                    'List<Object> listReply = (List<Object>) channelReply;');
+                indent.writeScoped('if (listReply.size() > 1) {', '} ', () {
                   indent.writeln(
-                      '$returnType $output = channelReply == null ? null : ((Number) channelReply).longValue();');
-                } else if (isEnum(root, func.returnType)) {
-                  if (func.returnType.isNullable) {
+                      'result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));');
+                }, addTrailingNewline: false);
+                if (!func.returnType.isNullable && !func.returnType.isVoid) {
+                  indent.addScoped('else if (listReply.get(0) == null) {', '} ',
+                      () {
                     indent.writeln(
-                        '$returnType $output = channelReply == null ? null : $returnType.values()[(int) channelReply];');
-                  } else {
-                    indent.writeln(
-                        '$returnType $output = $returnType.values()[(int) channelReply];');
-                  }
-                } else {
-                  indent.writeln(
-                      '$returnType $output = ${_cast('channelReply', javaType: returnType)};');
+                        'result.error(new FlutterError("null-error", "Flutter api returned null value for non-null return value.", ""));');
+                  }, addTrailingNewline: false);
                 }
-                indent.writeln('callback.reply($output);');
+                indent.addScoped('else {', '}', () {
+                  if (func.returnType.isVoid) {
+                    indent.writeln('result.success(null);');
+                  } else {
+                    const String output = 'output';
+                    indent.writeln('@SuppressWarnings("ConstantConditions")');
+                    if (func.returnType.baseName == 'int') {
+                      indent.writeln(
+                          '$returnType $output = listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();');
+                    } else if (isEnum(root, func.returnType)) {
+                      if (func.returnType.isNullable) {
+                        indent.writeln(
+                            '$returnType $output = listReply.get(0) == null ? null : $returnType.values()[(int) listReply.get(0)];');
+                      } else {
+                        indent.writeln(
+                            '$returnType $output = $returnType.values()[(int) listReply.get(0)];');
+                      }
+                    } else {
+                      indent.writeln(
+                          '$returnType $output = ${_cast('listReply.get(0)', javaType: returnType)};');
+                    }
+                    indent.writeln('result.success($output);');
+                  }
+                });
+              }, addTrailingNewline: false);
+              indent.addScoped(' else {', '} ', () {
+                indent.writeln(
+                    'result.error(new FlutterError("channel-error",  "Unable to establish connection on channel.", ""));');
               });
-            }
+            });
           });
         });
       }
@@ -547,7 +559,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }) {
     if (root.apis.any((Api api) =>
         api.location == ApiLocation.host &&
-        api.methods.any((Method it) => it.isAsynchronous))) {
+            api.methods.any((Method it) => it.isAsynchronous) ||
+        api.location == ApiLocation.flutter)) {
       indent.newln();
       _writeResultInterface(indent);
     }

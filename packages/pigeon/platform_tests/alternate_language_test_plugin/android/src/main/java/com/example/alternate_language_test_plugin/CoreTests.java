@@ -3360,10 +3360,6 @@ public class CoreTests {
     }
 
     /** Public interface for sending reply. */
-    @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
-      void reply(T reply);
-    }
     /** The codec used by FlutterIntegrationCoreApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return FlutterIntegrationCoreApiCodec.INSTANCE;
@@ -3371,16 +3367,35 @@ public class CoreTests {
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic calling.
      */
-    public void noop(@NonNull Reply<Void> callback) {
+    public void noop(@NonNull Result<Void> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
               "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop",
               getCodec());
-      channel.send(null, channelReply -> callback.reply(null));
+      channel.send(
+          null,
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success(null);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
+          });
     }
     /** Responds with an error from an async function returning a value. */
-    public void throwError(@NonNull Reply<Object> callback) {
+    public void throwError(@NonNull Result<Object> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3389,22 +3404,56 @@ public class CoreTests {
       channel.send(
           null,
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Object output = channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Object output = listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Responds with an error from an async void function. */
-    public void throwErrorFromVoid(@NonNull Reply<Void> callback) {
+    public void throwErrorFromVoid(@NonNull Result<Void> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
               "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid",
               getCodec());
-      channel.send(null, channelReply -> callback.reply(null));
+      channel.send(
+          null,
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success(null);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
+          });
     }
     /** Returns the passed object, to test serialization and deserialization. */
-    public void echoAllTypes(@NonNull AllTypes everythingArg, @NonNull Reply<AllTypes> callback) {
+    public void echoAllTypes(@NonNull AllTypes everythingArg, @NonNull Result<AllTypes> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3413,14 +3462,35 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(everythingArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            AllTypes output = (AllTypes) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AllTypes output = (AllTypes) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed object, to test serialization and deserialization. */
     public void echoAllNullableTypes(
-        @Nullable AllNullableTypes everythingArg, @NonNull Reply<AllNullableTypes> callback) {
+        @Nullable AllNullableTypes everythingArg, @NonNull Result<AllNullableTypes> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3429,9 +3499,24 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(everythingArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            AllNullableTypes output = (AllNullableTypes) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AllNullableTypes output = (AllNullableTypes) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /**
@@ -3443,7 +3528,7 @@ public class CoreTests {
         @Nullable Boolean aNullableBoolArg,
         @Nullable Long aNullableIntArg,
         @Nullable String aNullableStringArg,
-        @NonNull Reply<AllNullableTypes> callback) {
+        @NonNull Result<AllNullableTypes> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3453,13 +3538,34 @@ public class CoreTests {
           new ArrayList<Object>(
               Arrays.asList(aNullableBoolArg, aNullableIntArg, aNullableStringArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            AllNullableTypes output = (AllNullableTypes) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AllNullableTypes output = (AllNullableTypes) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed boolean, to test serialization and deserialization. */
-    public void echoBool(@NonNull Boolean aBoolArg, @NonNull Reply<Boolean> callback) {
+    public void echoBool(@NonNull Boolean aBoolArg, @NonNull Result<Boolean> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3468,13 +3574,34 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aBoolArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Boolean output = (Boolean) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Boolean output = (Boolean) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed int, to test serialization and deserialization. */
-    public void echoInt(@NonNull Long anIntArg, @NonNull Reply<Long> callback) {
+    public void echoInt(@NonNull Long anIntArg, @NonNull Result<Long> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3483,13 +3610,35 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(anIntArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Long output = channelReply == null ? null : ((Number) channelReply).longValue();
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Long output =
+                    listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed double, to test serialization and deserialization. */
-    public void echoDouble(@NonNull Double aDoubleArg, @NonNull Reply<Double> callback) {
+    public void echoDouble(@NonNull Double aDoubleArg, @NonNull Result<Double> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3498,13 +3647,34 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aDoubleArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Double output = (Double) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Double output = (Double) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed string, to test serialization and deserialization. */
-    public void echoString(@NonNull String aStringArg, @NonNull Reply<String> callback) {
+    public void echoString(@NonNull String aStringArg, @NonNull Result<String> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3513,13 +3683,34 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            String output = (String) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                String output = (String) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed byte list, to test serialization and deserialization. */
-    public void echoUint8List(@NonNull byte[] aListArg, @NonNull Reply<byte[]> callback) {
+    public void echoUint8List(@NonNull byte[] aListArg, @NonNull Result<byte[]> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3528,13 +3719,34 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aListArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            byte[] output = (byte[]) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                byte[] output = (byte[]) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed list, to test serialization and deserialization. */
-    public void echoList(@NonNull List<Object> aListArg, @NonNull Reply<List<Object>> callback) {
+    public void echoList(@NonNull List<Object> aListArg, @NonNull Result<List<Object>> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3543,14 +3755,35 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aListArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            List<Object> output = (List<Object>) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                List<Object> output = (List<Object>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoMap(
-        @NonNull Map<String, Object> aMapArg, @NonNull Reply<Map<String, Object>> callback) {
+        @NonNull Map<String, Object> aMapArg, @NonNull Result<Map<String, Object>> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3559,13 +3792,34 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aMapArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Map<String, Object> output = (Map<String, Object>) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<String, Object> output = (Map<String, Object>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed enum to test serialization and deserialization. */
-    public void echoEnum(@NonNull AnEnum anEnumArg, @NonNull Reply<AnEnum> callback) {
+    public void echoEnum(@NonNull AnEnum anEnumArg, @NonNull Result<AnEnum> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3574,13 +3828,34 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(anEnumArg.index)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            AnEnum output = AnEnum.values()[(int) channelReply];
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AnEnum output = AnEnum.values()[(int) listReply.get(0)];
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed boolean, to test serialization and deserialization. */
-    public void echoNullableBool(@Nullable Boolean aBoolArg, @NonNull Reply<Boolean> callback) {
+    public void echoNullableBool(@Nullable Boolean aBoolArg, @NonNull Result<Boolean> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3589,13 +3864,28 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aBoolArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Boolean output = (Boolean) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Boolean output = (Boolean) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed int, to test serialization and deserialization. */
-    public void echoNullableInt(@Nullable Long anIntArg, @NonNull Reply<Long> callback) {
+    public void echoNullableInt(@Nullable Long anIntArg, @NonNull Result<Long> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3604,13 +3894,29 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(anIntArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Long output = channelReply == null ? null : ((Number) channelReply).longValue();
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Long output =
+                    listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed double, to test serialization and deserialization. */
-    public void echoNullableDouble(@Nullable Double aDoubleArg, @NonNull Reply<Double> callback) {
+    public void echoNullableDouble(@Nullable Double aDoubleArg, @NonNull Result<Double> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3619,13 +3925,28 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aDoubleArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Double output = (Double) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Double output = (Double) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed string, to test serialization and deserialization. */
-    public void echoNullableString(@Nullable String aStringArg, @NonNull Reply<String> callback) {
+    public void echoNullableString(@Nullable String aStringArg, @NonNull Result<String> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3634,13 +3955,28 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            String output = (String) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                String output = (String) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed byte list, to test serialization and deserialization. */
-    public void echoNullableUint8List(@Nullable byte[] aListArg, @NonNull Reply<byte[]> callback) {
+    public void echoNullableUint8List(@Nullable byte[] aListArg, @NonNull Result<byte[]> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3649,14 +3985,29 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aListArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            byte[] output = (byte[]) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                byte[] output = (byte[]) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed list, to test serialization and deserialization. */
     public void echoNullableList(
-        @Nullable List<Object> aListArg, @NonNull Reply<List<Object>> callback) {
+        @Nullable List<Object> aListArg, @NonNull Result<List<Object>> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3665,14 +4016,29 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aListArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            List<Object> output = (List<Object>) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                List<Object> output = (List<Object>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoNullableMap(
-        @Nullable Map<String, Object> aMapArg, @NonNull Reply<Map<String, Object>> callback) {
+        @Nullable Map<String, Object> aMapArg, @NonNull Result<Map<String, Object>> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3681,13 +4047,28 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aMapArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            Map<String, Object> output = (Map<String, Object>) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                Map<String, Object> output = (Map<String, Object>) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /** Returns the passed enum to test serialization and deserialization. */
-    public void echoNullableEnum(@Nullable AnEnum anEnumArg, @NonNull Reply<AnEnum> callback) {
+    public void echoNullableEnum(@Nullable AnEnum anEnumArg, @NonNull Result<AnEnum> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3697,25 +4078,60 @@ public class CoreTests {
           new ArrayList<Object>(
               Collections.singletonList(anEnumArg == null ? null : anEnumArg.index)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            AnEnum output = channelReply == null ? null : AnEnum.values()[(int) channelReply];
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                AnEnum output =
+                    listReply.get(0) == null ? null : AnEnum.values()[(int) listReply.get(0)];
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    public void noopAsync(@NonNull Reply<Void> callback) {
+    public void noopAsync(@NonNull Result<Void> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
               "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync",
               getCodec());
-      channel.send(null, channelReply -> callback.reply(null));
+      channel.send(
+          null,
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success(null);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
+          });
     }
     /** Returns the passed in generic Object asynchronously. */
-    public void echoAsyncString(@NonNull String aStringArg, @NonNull Reply<String> callback) {
+    public void echoAsyncString(@NonNull String aStringArg, @NonNull Result<String> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3724,9 +4140,30 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            String output = (String) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                String output = (String) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
   }
@@ -3889,16 +4326,12 @@ public class CoreTests {
     }
 
     /** Public interface for sending reply. */
-    @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
-      void reply(T reply);
-    }
     /** The codec used by FlutterSmallApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return FlutterSmallApiCodec.INSTANCE;
     }
 
-    public void echoWrappedList(@NonNull TestMessage msgArg, @NonNull Reply<TestMessage> callback) {
+    public void echoWrappedList(@NonNull TestMessage msgArg, @NonNull Result<TestMessage> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3907,9 +4340,30 @@ public class CoreTests {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(msgArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            TestMessage output = (TestMessage) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                TestMessage output = (TestMessage) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
   }

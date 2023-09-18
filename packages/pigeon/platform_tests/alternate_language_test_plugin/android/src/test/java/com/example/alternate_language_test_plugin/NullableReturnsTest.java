@@ -58,7 +58,14 @@ public class NullableReturnsTest {
                       NullableReturns.NullableArgFlutterApi.getCodec().decodeMessage(message);
               assertNull(args.get(0));
               ByteBuffer replyData =
-                  NullableReturns.NullableArgFlutterApi.getCodec().encodeMessage(args.get(0));
+                  NullableReturns.NullableArgFlutterApi.getCodec()
+                      .encodeMessage(
+                          new ArrayList<Object>() {
+                            {
+                              add(args.get(0));
+                            }
+                          });
+              replyData.rewind();
               reply.reply(replyData);
               return null;
             })
@@ -69,9 +76,15 @@ public class NullableReturnsTest {
     boolean[] didCall = {false};
     api.doit(
         null,
-        (Long result) -> {
-          didCall[0] = true;
-          assertNull(result);
+        new NullableReturns.Result<Long>() {
+          public void success(Long result) {
+            didCall[0] = true;
+            assertNull(result);
+          }
+
+          public void error(Throwable error) {
+            assertEquals(error, null);
+          }
         });
     assertTrue(didCall[0]);
   }

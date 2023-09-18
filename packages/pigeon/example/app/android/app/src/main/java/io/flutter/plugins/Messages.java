@@ -325,7 +325,7 @@ public class Messages {
 
     /** Public interface for sending reply. */
     @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
+    public interface Result<T> {
       void reply(T reply);
     }
     /** The codec used by MessageFlutterApi. */
@@ -333,7 +333,7 @@ public class Messages {
       return new StandardMessageCodec();
     }
 
-    public void flutterMethod(@Nullable String aStringArg, @NonNull Reply<String> callback) {
+    public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -342,9 +342,19 @@ public class Messages {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            String output = (String) channelReply;
-            callback.reply(output);
+            if (channelReply == null) {
+              throw FlutterError("channel-error", "Unable to establish connection on channel.");
+            } else if (channelReply.length > 1) {
+              throw FlutterError(
+                  (String) channelReply[0], (String) channelReply[1], (String) channelReply[2]);
+            } else if (channelReply[0] == null) {
+              throw FlutterError(
+                  "null-error", "Flutter api returned null value for non-null return value.");
+            } else {
+              @SuppressWarnings("ConstantConditions")
+              String output = (String) channelReply[0];
+              callback.reply(output);
+            }
           });
     }
   }

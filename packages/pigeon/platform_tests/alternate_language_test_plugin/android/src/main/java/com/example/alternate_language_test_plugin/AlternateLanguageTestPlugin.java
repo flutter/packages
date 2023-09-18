@@ -308,60 +308,29 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void callFlutterNoop(@NonNull Result<Void> result) {
-    flutterApi.noop(
-        new FlutterIntegrationCoreApi.Reply<Void>() {
-          public void reply(Void value) {
-            result.success(value);
-          }
-        });
+    flutterApi.noop(result);
   }
 
   @Override
   public void callFlutterThrowError(@NonNull Result<Object> result) {
-    flutterApi.throwError(
-        new FlutterIntegrationCoreApi.Reply<Object>() {
-          public void reply(Object value) {
-            // TODO: (tarrinneal) Once flutter api error handling is added,
-            // update error handling tests to properly recieve and handle errors.
-            // See issue https://github.com/flutter/flutter/issues/118243
-          }
-        });
+    flutterApi.throwError(result);
   }
 
   @Override
   public void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result) {
-    flutterApi.throwErrorFromVoid(
-        new FlutterIntegrationCoreApi.Reply<Void>() {
-          public void reply(Void value) {
-            // TODO: (tarrinneal) Once flutter api error handling is added,
-            // update error handling tests to properly recieve and handle errors.
-            // See issue https://github.com/flutter/flutter/issues/118243
-          }
-        });
+    flutterApi.throwErrorFromVoid(result);
   }
 
   @Override
   public void callFlutterEchoAllTypes(
       @NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
-    flutterApi.echoAllTypes(
-        everything,
-        new FlutterIntegrationCoreApi.Reply<AllTypes>() {
-          public void reply(AllTypes value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoAllTypes(everything, result);
   }
 
   @Override
   public void callFlutterEchoAllNullableTypes(
       @Nullable AllNullableTypes everything, @NonNull Result<AllNullableTypes> result) {
-    flutterApi.echoAllNullableTypes(
-        everything,
-        new FlutterIntegrationCoreApi.Reply<AllNullableTypes>() {
-          public void reply(AllNullableTypes value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoAllNullableTypes(everything, result);
   }
 
   @Override
@@ -370,198 +339,94 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable Long aNullableInt,
       @Nullable String aNullableString,
       @NonNull Result<AllNullableTypes> result) {
-    flutterApi.sendMultipleNullableTypes(
-        aNullableBool,
-        aNullableInt,
-        aNullableString,
-        new FlutterIntegrationCoreApi.Reply<AllNullableTypes>() {
-          public void reply(AllNullableTypes value) {
-            result.success(value);
-          }
-        });
+    flutterApi.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString, result);
   }
 
   @Override
   public void callFlutterEchoBool(@NonNull Boolean aBool, @NonNull Result<Boolean> result) {
-    flutterApi.echoBool(
-        aBool,
-        new FlutterIntegrationCoreApi.Reply<Boolean>() {
-          public void reply(Boolean value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoBool(aBool, result);
   }
 
   @Override
   public void callFlutterEchoInt(@NonNull Long anInt, @NonNull Result<Long> result) {
-    flutterApi.echoInt(
-        anInt,
-        new FlutterIntegrationCoreApi.Reply<Long>() {
-          public void reply(Long value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoInt(anInt, result);
   }
 
   @Override
   public void callFlutterEchoDouble(@NonNull Double aDouble, @NonNull Result<Double> result) {
-    flutterApi.echoDouble(
-        aDouble,
-        new FlutterIntegrationCoreApi.Reply<Double>() {
-          public void reply(Double value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoDouble(aDouble, result);
   }
 
   @Override
   public void callFlutterEchoString(@NonNull String aString, @NonNull Result<String> result) {
-    flutterApi.echoString(
-        aString,
-        new FlutterIntegrationCoreApi.Reply<String>() {
-          public void reply(String value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoString(aString, result);
   }
 
   @Override
   public void callFlutterEchoUint8List(@NonNull byte[] aList, @NonNull Result<byte[]> result) {
-    flutterApi.echoUint8List(
-        aList,
-        new FlutterIntegrationCoreApi.Reply<byte[]>() {
-          public void reply(byte[] value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoUint8List(aList, result);
   }
 
   @Override
   public void callFlutterEchoList(
       @NonNull List<Object> aList, @NonNull Result<List<Object>> result) {
-    flutterApi.echoList(
-        aList,
-        new FlutterIntegrationCoreApi.Reply<List<Object>>() {
-          public void reply(List<Object> value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoList(aList, result);
   }
 
   @Override
   public void callFlutterEchoMap(
       @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
-    flutterApi.echoMap(
-        aMap,
-        new FlutterIntegrationCoreApi.Reply<Map<String, Object>>() {
-          public void reply(Map<String, Object> value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoMap(aMap, result);
   }
 
   @Override
   public void callFlutterEchoEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result) {
-    flutterApi.echoEnum(
-        anEnum,
-        new FlutterIntegrationCoreApi.Reply<AnEnum>() {
-          public void reply(AnEnum value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoEnum(anEnum, result);
   }
 
   @Override
   public void callFlutterEchoNullableBool(
       @Nullable Boolean aBool, @NonNull Result<Boolean> result) {
-    flutterApi.echoNullableBool(
-        aBool,
-        new FlutterIntegrationCoreApi.Reply<Boolean>() {
-          public void reply(Boolean value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoNullableBool(aBool, result);
   }
 
   @Override
   public void callFlutterEchoNullableInt(@Nullable Long anInt, @NonNull Result<Long> result) {
-    flutterApi.echoNullableInt(
-        anInt,
-        new FlutterIntegrationCoreApi.Reply<Long>() {
-          public void reply(Long value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoNullableInt(anInt, result);
   }
 
   @Override
   public void callFlutterEchoNullableDouble(
       @Nullable Double aDouble, @NonNull Result<Double> result) {
-    flutterApi.echoNullableDouble(
-        aDouble,
-        new FlutterIntegrationCoreApi.Reply<Double>() {
-          public void reply(Double value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoNullableDouble(aDouble, result);
   }
 
   @Override
   public void callFlutterEchoNullableString(
       @Nullable String aString, @NonNull Result<String> result) {
-    flutterApi.echoNullableString(
-        aString,
-        new FlutterIntegrationCoreApi.Reply<String>() {
-          public void reply(String value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoNullableString(aString, result);
   }
 
   @Override
   public void callFlutterEchoNullableUint8List(
       @Nullable byte[] aList, @NonNull Result<byte[]> result) {
-    flutterApi.echoNullableUint8List(
-        aList,
-        new FlutterIntegrationCoreApi.Reply<byte[]>() {
-          public void reply(byte[] value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoNullableUint8List(aList, result);
   }
 
   @Override
   public void callFlutterEchoNullableList(
       @Nullable List<Object> aList, @NonNull Result<List<Object>> result) {
-    flutterApi.echoNullableList(
-        aList,
-        new FlutterIntegrationCoreApi.Reply<List<Object>>() {
-          public void reply(List<Object> value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoNullableList(aList, result);
   }
 
   @Override
   public void callFlutterEchoNullableMap(
       @Nullable Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
-    flutterApi.echoNullableMap(
-        aMap,
-        new FlutterIntegrationCoreApi.Reply<Map<String, Object>>() {
-          public void reply(Map<String, Object> value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoNullableMap(aMap, result);
   }
 
   @Override
   public void callFlutterEchoNullableEnum(@Nullable AnEnum anEnum, @NonNull Result<AnEnum> result) {
-    flutterApi.echoNullableEnum(
-        anEnum,
-        new FlutterIntegrationCoreApi.Reply<AnEnum>() {
-          public void reply(AnEnum value) {
-            result.success(value);
-          }
-        });
+    flutterApi.echoNullableEnum(anEnum, result);
   }
 }
