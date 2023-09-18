@@ -1,3 +1,7 @@
+## 10.2.0
+
+- Adds `onExit` to GoRoute.
+
 ## 10.1.4
 
 - Fixes RouteInformationParser that does not restore full RouteMatchList if
@@ -77,7 +81,7 @@
 
 - Makes namedLocation and route name related APIs case sensitive.
 
-## 8.0.2 
+## 8.0.2
 
 - Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
 
