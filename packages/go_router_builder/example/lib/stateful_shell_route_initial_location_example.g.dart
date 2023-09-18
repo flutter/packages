@@ -18,25 +18,25 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
         StatefulShellBranchData.$branch(
           routes: [
             GoRouteData.$route(
-              path: '/first',
-              factory: $FirstRouteDataExtension._fromState,
+              path: '/home',
+              factory: $HomeRouteDataExtension._fromState,
             ),
           ],
         ),
         StatefulShellBranchData.$branch(
-          initialLocation: SecondShellBranchData.$initialLocation,
+          initialLocation: NotificationsShellBranchData.$initialLocation,
           routes: [
             GoRouteData.$route(
-              path: '/second/:section',
-              factory: $SecondRouteDataExtension._fromState,
+              path: '/notifications/:section',
+              factory: $NotificationsRouteDataExtension._fromState,
             ),
           ],
         ),
         StatefulShellBranchData.$branch(
           routes: [
             GoRouteData.$route(
-              path: '/third',
-              factory: $ThirdRouteDataExtension._fromState,
+              path: '/orders',
+              factory: $OrdersRouteDataExtension._fromState,
             ),
           ],
         ),
@@ -48,12 +48,11 @@ extension $MainShellRouteDataExtension on MainShellRouteData {
       const MainShellRouteData();
 }
 
-extension $FirstRouteDataExtension on FirstRouteData {
-  static FirstRouteData _fromState(GoRouterState state) =>
-      const FirstRouteData();
+extension $HomeRouteDataExtension on HomeRouteData {
+  static HomeRouteData _fromState(GoRouterState state) => const HomeRouteData();
 
   String get location => GoRouteData.$location(
-        '/first',
+        '/home',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -66,14 +65,15 @@ extension $FirstRouteDataExtension on FirstRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $SecondRouteDataExtension on SecondRouteData {
-  static SecondRouteData _fromState(GoRouterState state) => SecondRouteData(
-        section: _$SecondPageSectionEnumMap
+extension $NotificationsRouteDataExtension on NotificationsRouteData {
+  static NotificationsRouteData _fromState(GoRouterState state) =>
+      NotificationsRouteData(
+        section: _$NotificationsPageSectionEnumMap
             ._$fromName(state.pathParameters['section']!),
       );
 
   String get location => GoRouteData.$location(
-        '/second/${Uri.encodeComponent(_$SecondPageSectionEnumMap[section]!)}',
+        '/notifications/${Uri.encodeComponent(_$NotificationsPageSectionEnumMap[section]!)}',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -86,18 +86,18 @@ extension $SecondRouteDataExtension on SecondRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-const _$SecondPageSectionEnumMap = {
-  SecondPageSection.first: 'first',
-  SecondPageSection.second: 'second',
-  SecondPageSection.third: 'third',
+const _$NotificationsPageSectionEnumMap = {
+  NotificationsPageSection.latest: 'latest',
+  NotificationsPageSection.old: 'old',
+  NotificationsPageSection.archive: 'archive',
 };
 
-extension $ThirdRouteDataExtension on ThirdRouteData {
-  static ThirdRouteData _fromState(GoRouterState state) =>
-      const ThirdRouteData();
+extension $OrdersRouteDataExtension on OrdersRouteData {
+  static OrdersRouteData _fromState(GoRouterState state) =>
+      const OrdersRouteData();
 
   String get location => GoRouteData.$location(
-        '/third',
+        '/orders',
       );
 
   void go(BuildContext context) => context.go(location);

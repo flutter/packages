@@ -19,7 +19,7 @@ class App extends StatelessWidget {
 
   final GoRouter _router = GoRouter(
     routes: $appRoutes,
-    initialLocation: '/first',
+    initialLocation: '/home',
   );
 }
 
@@ -34,19 +34,25 @@ class HomeScreen extends StatelessWidget {
 
 @TypedStatefulShellRoute<MainShellRouteData>(
   branches: <TypedStatefulShellBranch<StatefulShellBranchData>>[
-    TypedStatefulShellBranch<FirstShellBranchData>(
+    TypedStatefulShellBranch<HomeShellBranchData>(
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<FirstRouteData>(path: '/first'),
+        TypedGoRoute<HomeRouteData>(
+          path: '/home',
+        ),
       ],
     ),
-    TypedStatefulShellBranch<SecondShellBranchData>(
+    TypedStatefulShellBranch<NotificationsShellBranchData>(
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<SecondRouteData>(path: '/second/:section'),
+        TypedGoRoute<NotificationsRouteData>(
+          path: '/notifications/:section',
+        ),
       ],
     ),
-    TypedStatefulShellBranch<ThirdShellBranchData>(
+    TypedStatefulShellBranch<OrdersShellBranchData>(
       routes: <TypedRoute<RouteData>>[
-        TypedGoRoute<ThirdRouteData>(path: '/third'),
+        TypedGoRoute<OrdersRouteData>(
+          path: '/orders',
+        ),
       ],
     ),
   ],
@@ -66,56 +72,56 @@ class MainShellRouteData extends StatefulShellRouteData {
   }
 }
 
-class FirstShellBranchData extends StatefulShellBranchData {
-  const FirstShellBranchData();
+class HomeShellBranchData extends StatefulShellBranchData {
+  const HomeShellBranchData();
 }
 
-class SecondShellBranchData extends StatefulShellBranchData {
-  const SecondShellBranchData();
+class NotificationsShellBranchData extends StatefulShellBranchData {
+  const NotificationsShellBranchData();
 
-  static String $initialLocation = '/second/second';
+  static String $initialLocation = '/notifications/old';
 }
 
-class ThirdShellBranchData extends StatefulShellBranchData {
-  const ThirdShellBranchData();
+class OrdersShellBranchData extends StatefulShellBranchData {
+  const OrdersShellBranchData();
 }
 
-class FirstRouteData extends GoRouteData {
-  const FirstRouteData();
+class HomeRouteData extends GoRouteData {
+  const HomeRouteData();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const FirstPageView(label: 'First screen');
+    return const HomePageView(label: 'Home page');
   }
 }
 
-enum SecondPageSection {
-  first,
-  second,
-  third,
+enum NotificationsPageSection {
+  latest,
+  old,
+  archive,
 }
 
-class SecondRouteData extends GoRouteData {
-  const SecondRouteData({
+class NotificationsRouteData extends GoRouteData {
+  const NotificationsRouteData({
     required this.section,
   });
 
-  final SecondPageSection section;
+  final NotificationsPageSection section;
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return SecondPageView(
+    return NotificationsPageView(
       section: section,
     );
   }
 }
 
-class ThirdRouteData extends GoRouteData {
-  const ThirdRouteData();
+class OrdersRouteData extends GoRouteData {
+  const OrdersRouteData();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const ThirdPageView(label: 'Third screen');
+    return const OrdersPageView(label: 'Orders page');
   }
 }
 
@@ -134,9 +140,18 @@ class MainPageView extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'First'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Second'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Third'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Notifications',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Orders',
+          ),
         ],
         currentIndex: navigationShell.currentIndex,
         onTap: (int index) => _onTap(context, index),
@@ -152,8 +167,8 @@ class MainPageView extends StatelessWidget {
   }
 }
 
-class FirstPageView extends StatelessWidget {
-  const FirstPageView({
+class HomePageView extends StatelessWidget {
+  const HomePageView({
     required this.label,
     super.key,
   });
@@ -168,38 +183,38 @@ class FirstPageView extends StatelessWidget {
   }
 }
 
-class SecondPageView extends StatelessWidget {
-  const SecondPageView({
+class NotificationsPageView extends StatelessWidget {
+  const NotificationsPageView({
     super.key,
     required this.section,
   });
 
-  final SecondPageSection section;
+  final NotificationsPageSection section;
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
-      initialIndex: SecondPageSection.values.indexOf(section),
+      initialIndex: NotificationsPageSection.values.indexOf(section),
       child: Column(
         children: [
           TabBar(
             tabs: [
               Tab(
                 child: Text(
-                  'First',
+                  'Latest',
                   style: TextStyle(color: Colors.black87),
                 ),
               ),
               Tab(
                 child: Text(
-                  'Second',
+                  'Old',
                   style: TextStyle(color: Colors.black87),
                 ),
               ),
               Tab(
                 child: Text(
-                  'Third',
+                  'Archive',
                   style: TextStyle(color: Colors.black87),
                 ),
               ),
@@ -211,14 +226,14 @@ class SecondPageView extends StatelessWidget {
           Expanded(
             child: TabBarView(
               children: [
-                SecondSubPageView(
-                  label: 'First',
+                NotificationsSubPageView(
+                  label: 'Latest notifications',
                 ),
-                SecondSubPageView(
-                  label: 'Second',
+                NotificationsSubPageView(
+                  label: 'Old notifications',
                 ),
-                SecondSubPageView(
-                  label: 'Third',
+                NotificationsSubPageView(
+                  label: 'Archived notifications',
                 ),
               ],
             ),
@@ -231,8 +246,8 @@ class SecondPageView extends StatelessWidget {
 
 void _onTap(BuildContext context, index) {}
 
-class SecondSubPageView extends StatelessWidget {
-  const SecondSubPageView({
+class NotificationsSubPageView extends StatelessWidget {
+  const NotificationsSubPageView({
     required this.label,
     super.key,
   });
@@ -247,8 +262,8 @@ class SecondSubPageView extends StatelessWidget {
   }
 }
 
-class ThirdPageView extends StatelessWidget {
-  const ThirdPageView({
+class OrdersPageView extends StatelessWidget {
+  const OrdersPageView({
     required this.label,
     super.key,
   });
