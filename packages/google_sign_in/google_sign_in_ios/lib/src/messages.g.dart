@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 enum SignInType {
   /// Default configuration.
   standard,
+
   /// Recommended configuration for game sign in.
   games,
 }
@@ -65,9 +66,8 @@ class UserData {
   UserData({
     this.displayName,
     required this.email,
-    required this.id,
+    required this.userId,
     this.photoUrl,
-    this.idToken,
     this.serverAuthCode,
   });
 
@@ -75,11 +75,9 @@ class UserData {
 
   String email;
 
-  String id;
+  String userId;
 
   String? photoUrl;
-
-  String? idToken;
 
   String? serverAuthCode;
 
@@ -87,9 +85,8 @@ class UserData {
     return <Object?>[
       displayName,
       email,
-      id,
+      userId,
       photoUrl,
-      idToken,
       serverAuthCode,
     ];
   }
@@ -99,10 +96,9 @@ class UserData {
     return UserData(
       displayName: result[0] as String?,
       email: result[1]! as String,
-      id: result[2]! as String,
+      userId: result[2]! as String,
       photoUrl: result[3] as String?,
-      idToken: result[4] as String?,
-      serverAuthCode: result[5] as String?,
+      serverAuthCode: result[4] as String?,
     );
   }
 }
@@ -157,11 +153,11 @@ class _GoogleSignInApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return InitParams.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return TokenData.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return UserData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -205,10 +201,10 @@ class GoogleSignInApi {
   /// Starts a silent sign in.
   Future<UserData> signInSilently() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signInSilently', codec,
+        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signInSilently',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -235,8 +231,7 @@ class GoogleSignInApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signIn', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -259,12 +254,12 @@ class GoogleSignInApi {
   }
 
   /// Requests the access token for the current sign in.
-  Future<TokenData> getAccessToken(String arg_email, bool arg_shouldRecoverAuth) async {
+  Future<TokenData> getAccessToken() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.getAccessToken', codec,
+        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.getAccessToken',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_email, arg_shouldRecoverAuth]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -291,8 +286,7 @@ class GoogleSignInApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signOut', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -312,10 +306,10 @@ class GoogleSignInApi {
   /// Revokes scope grants to the application.
   Future<void> disconnect() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.disconnect', codec,
+        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.disconnect',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -335,10 +329,10 @@ class GoogleSignInApi {
   /// Returns whether the user is currently signed in.
   Future<bool> isSignedIn() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.isSignedIn', codec,
+        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.isSignedIn',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -363,7 +357,8 @@ class GoogleSignInApi {
   /// Requests access to the given scopes.
   Future<bool> requestScopes(List<String?> arg_scopes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.requestScopes', codec,
+        'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.requestScopes',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_scopes]) as List<Object?>?;

@@ -67,9 +67,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   @override
   Future<GoogleSignInTokenData> getTokens(
       {required String email, bool? shouldRecoverAuth = true}) {
-    return _api
-        .getAccessToken(email, shouldRecoverAuth ?? true)
-        .then(_signInTokenDataFromChannelData);
+    return _api.getAccessToken().then(_signInTokenDataFromChannelData);
   }
 
   @override
@@ -101,10 +99,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   GoogleSignInUserData _signInUserDataFromChannelData(UserData data) {
     return GoogleSignInUserData(
       email: data.email,
-      id: data.id,
+      id: data.userId,
       displayName: data.displayName,
       photoUrl: data.photoUrl,
-      idToken: data.idToken,
       serverAuthCode: data.serverAuthCode,
     );
   }

@@ -87,26 +87,16 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
         )),
       ) as _i3.Future<_i2.UserData>);
   @override
-  _i3.Future<_i2.TokenData> getAccessToken(
-    String? arg_email,
-    bool? arg_shouldRecoverAuth,
-  ) =>
-      (super.noSuchMethod(
+  _i3.Future<_i2.TokenData> getAccessToken() => (super.noSuchMethod(
         Invocation.method(
           #getAccessToken,
-          [
-            arg_email,
-            arg_shouldRecoverAuth,
-          ],
+          [],
         ),
         returnValue: _i3.Future<_i2.TokenData>.value(_FakeTokenData_1(
           this,
           Invocation.method(
             #getAccessToken,
-            [
-              arg_email,
-              arg_shouldRecoverAuth,
-            ],
+            [],
           ),
         )),
       ) as _i3.Future<_i2.TokenData>);

@@ -48,18 +48,16 @@ class InitParams {
 class UserData {
   UserData({
     required this.email,
-    required this.id,
+    required this.userId,
     this.displayName,
     this.photoUrl,
-    this.idToken,
     this.serverAuthCode,
   });
 
   final String? displayName;
   final String email;
-  final String id;
+  final String userId;
   final String? photoUrl;
-  final String? idToken;
   final String? serverAuthCode;
 }
 
@@ -79,6 +77,7 @@ class TokenData {
 @HostApi()
 abstract class GoogleSignInApi {
   /// Initializes a sign in request with the given parameters.
+  @ObjCSelector('initializeSignInWithParameters:')
   void init(InitParams params);
 
   /// Starts a silent sign in.
@@ -91,10 +90,9 @@ abstract class GoogleSignInApi {
 
   /// Requests the access token for the current sign in.
   @async
-  TokenData getAccessToken(String email, bool shouldRecoverAuth);
+  TokenData getAccessToken();
 
   /// Signs out the current user.
-  @async
   void signOut();
 
   /// Revokes scope grants to the application.
@@ -106,5 +104,6 @@ abstract class GoogleSignInApi {
 
   /// Requests access to the given scopes.
   @async
+  @ObjCSelector('requestScopes:')
   bool requestScopes(List<String> scopes);
 }

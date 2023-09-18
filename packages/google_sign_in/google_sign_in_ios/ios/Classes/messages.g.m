@@ -60,10 +60,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FSIInitParams
 + (instancetype)makeWithScopes:(NSArray<NSString *> *)scopes
-    hostedDomain:(nullable NSString *)hostedDomain
-    clientId:(nullable NSString *)clientId
-    serverClientId:(nullable NSString *)serverClientId {
-  FSIInitParams* pigeonResult = [[FSIInitParams alloc] init];
+                  hostedDomain:(nullable NSString *)hostedDomain
+                      clientId:(nullable NSString *)clientId
+                serverClientId:(nullable NSString *)serverClientId {
+  FSIInitParams *pigeonResult = [[FSIInitParams alloc] init];
   pigeonResult.scopes = scopes;
   pigeonResult.hostedDomain = hostedDomain;
   pigeonResult.clientId = clientId;
@@ -94,17 +94,15 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FSIUserData
 + (instancetype)makeWithDisplayName:(nullable NSString *)displayName
-    email:(NSString *)email
-    id:(NSString *)id
-    photoUrl:(nullable NSString *)photoUrl
-    idToken:(nullable NSString *)idToken
-    serverAuthCode:(nullable NSString *)serverAuthCode {
-  FSIUserData* pigeonResult = [[FSIUserData alloc] init];
+                              email:(NSString *)email
+                             userId:(NSString *)userId
+                           photoUrl:(nullable NSString *)photoUrl
+                     serverAuthCode:(nullable NSString *)serverAuthCode {
+  FSIUserData *pigeonResult = [[FSIUserData alloc] init];
   pigeonResult.displayName = displayName;
   pigeonResult.email = email;
-  pigeonResult.id = id;
+  pigeonResult.userId = userId;
   pigeonResult.photoUrl = photoUrl;
-  pigeonResult.idToken = idToken;
   pigeonResult.serverAuthCode = serverAuthCode;
   return pigeonResult;
 }
@@ -113,11 +111,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.displayName = GetNullableObjectAtIndex(list, 0);
   pigeonResult.email = GetNullableObjectAtIndex(list, 1);
   NSAssert(pigeonResult.email != nil, @"");
-  pigeonResult.id = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.id != nil, @"");
+  pigeonResult.userId = GetNullableObjectAtIndex(list, 2);
+  NSAssert(pigeonResult.userId != nil, @"");
   pigeonResult.photoUrl = GetNullableObjectAtIndex(list, 3);
-  pigeonResult.idToken = GetNullableObjectAtIndex(list, 4);
-  pigeonResult.serverAuthCode = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.serverAuthCode = GetNullableObjectAtIndex(list, 4);
   return pigeonResult;
 }
 + (nullable FSIUserData *)nullableFromList:(NSArray *)list {
@@ -127,9 +124,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     (self.displayName ?: [NSNull null]),
     (self.email ?: [NSNull null]),
-    (self.id ?: [NSNull null]),
+    (self.userId ?: [NSNull null]),
     (self.photoUrl ?: [NSNull null]),
-    (self.idToken ?: [NSNull null]),
     (self.serverAuthCode ?: [NSNull null]),
   ];
 }
@@ -137,8 +133,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FSITokenData
 + (instancetype)makeWithIdToken:(nullable NSString *)idToken
-    accessToken:(nullable NSString *)accessToken {
-  FSITokenData* pigeonResult = [[FSITokenData alloc] init];
+                    accessToken:(nullable NSString *)accessToken {
+  FSITokenData *pigeonResult = [[FSITokenData alloc] init];
   pigeonResult.idToken = idToken;
   pigeonResult.accessToken = accessToken;
   return pigeonResult;
@@ -165,11 +161,11 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation FSIGoogleSignInApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128: 
+    case 128:
       return [FSIInitParams fromList:[self readValue]];
-    case 129: 
+    case 129:
       return [FSITokenData fromList:[self readValue]];
-    case 130: 
+    case 130:
       return [FSIUserData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -211,27 +207,31 @@ NSObject<FlutterMessageCodec> *FSIGoogleSignInApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FSIGoogleSignInApiCodecReaderWriter *readerWriter = [[FSIGoogleSignInApiCodecReaderWriter alloc] init];
+    FSIGoogleSignInApiCodecReaderWriter *readerWriter =
+        [[FSIGoogleSignInApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FSIGoogleSignInApi> *api) {
+void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+                             NSObject<FSIGoogleSignInApi> *api) {
   /// Initializes a sign in request with the given parameters.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.init"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.init"
         binaryMessenger:binaryMessenger
-        codec:FSIGoogleSignInApiGetCodec()];
+                  codec:FSIGoogleSignInApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(initParams:error:)], @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(initParams:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(initializeSignInWithParameters:error:)],
+                @"FSIGoogleSignInApi api (%@) doesn't respond to "
+                @"@selector(initializeSignInWithParameters:error:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         FSIInitParams *arg_params = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        [api initParams:arg_params error:&error];
+        [api initializeSignInWithParameters:arg_params error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -240,15 +240,18 @@ void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   }
   /// Starts a silent sign in.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signInSilently"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signInSilently"
         binaryMessenger:binaryMessenger
-        codec:FSIGoogleSignInApiGetCodec()];
+                  codec:FSIGoogleSignInApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(signInSilentlyWithCompletion:)], @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(signInSilentlyWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(signInSilentlyWithCompletion:)],
+                @"FSIGoogleSignInApi api (%@) doesn't respond to "
+                @"@selector(signInSilentlyWithCompletion:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api signInSilentlyWithCompletion:^(FSIUserData *_Nullable output, FlutterError *_Nullable error) {
+        [api signInSilentlyWithCompletion:^(FSIUserData *_Nullable output,
+                                            FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -258,13 +261,14 @@ void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   }
   /// Starts a sign in with user interaction.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signIn"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signIn"
         binaryMessenger:binaryMessenger
-        codec:FSIGoogleSignInApiGetCodec()];
+                  codec:FSIGoogleSignInApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(signInWithCompletion:)], @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(signInWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(signInWithCompletion:)],
+                @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(signInWithCompletion:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api signInWithCompletion:^(FSIUserData *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
@@ -276,18 +280,18 @@ void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   }
   /// Requests the access token for the current sign in.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.getAccessToken"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.getAccessToken"
         binaryMessenger:binaryMessenger
-        codec:FSIGoogleSignInApiGetCodec()];
+                  codec:FSIGoogleSignInApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getAccessTokenEmail:shouldRecoverAuth:completion:)], @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(getAccessTokenEmail:shouldRecoverAuth:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(getAccessTokenWithCompletion:)],
+                @"FSIGoogleSignInApi api (%@) doesn't respond to "
+                @"@selector(getAccessTokenWithCompletion:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray *args = message;
-        NSString *arg_email = GetNullableObjectAtIndex(args, 0);
-        NSNumber *arg_shouldRecoverAuth = GetNullableObjectAtIndex(args, 1);
-        [api getAccessTokenEmail:arg_email shouldRecoverAuth:arg_shouldRecoverAuth completion:^(FSITokenData *_Nullable output, FlutterError *_Nullable error) {
+        [api getAccessTokenWithCompletion:^(FSITokenData *_Nullable output,
+                                            FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -297,17 +301,18 @@ void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   }
   /// Signs out the current user.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signOut"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signOut"
         binaryMessenger:binaryMessenger
-        codec:FSIGoogleSignInApiGetCodec()];
+                  codec:FSIGoogleSignInApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(signOutWithCompletion:)], @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(signOutWithCompletion:)", api);
+      NSCAssert([api respondsToSelector:@selector(signOutWithError:)],
+                @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(signOutWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api signOutWithCompletion:^(FlutterError *_Nullable error) {
-          callback(wrapResult(nil, error));
-        }];
+        FlutterError *error;
+        [api signOutWithError:&error];
+        callback(wrapResult(nil, error));
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -315,13 +320,15 @@ void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   }
   /// Revokes scope grants to the application.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.disconnect"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.disconnect"
         binaryMessenger:binaryMessenger
-        codec:FSIGoogleSignInApiGetCodec()];
+                  codec:FSIGoogleSignInApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(disconnectWithCompletion:)], @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(disconnectWithCompletion:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(disconnectWithCompletion:)],
+          @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(disconnectWithCompletion:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api disconnectWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -333,13 +340,14 @@ void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   }
   /// Returns whether the user is currently signed in.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.isSignedIn"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.isSignedIn"
         binaryMessenger:binaryMessenger
-        codec:FSIGoogleSignInApiGetCodec()];
+                  codec:FSIGoogleSignInApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(isSignedInWithError:)], @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(isSignedInWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(isSignedInWithError:)],
+                @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(isSignedInWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api isSignedInWithError:&error];
@@ -351,19 +359,22 @@ void FSIGoogleSignInApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObjec
   }
   /// Requests access to the given scopes.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.requestScopes"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.requestScopes"
         binaryMessenger:binaryMessenger
-        codec:FSIGoogleSignInApiGetCodec()];
+                  codec:FSIGoogleSignInApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(requestScopesScopes:completion:)], @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(requestScopesScopes:completion:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(requestScopes:completion:)],
+          @"FSIGoogleSignInApi api (%@) doesn't respond to @selector(requestScopes:completion:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSArray<NSString *> *arg_scopes = GetNullableObjectAtIndex(args, 0);
-        [api requestScopesScopes:arg_scopes completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
+        [api requestScopes:arg_scopes
+                completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+                  callback(wrapResult(output, error));
+                }];
       }];
     } else {
       [channel setMessageHandler:nil];

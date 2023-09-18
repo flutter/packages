@@ -57,10 +57,9 @@ void main() {
       () async {
     when(api.signInSilently()).thenAnswer((_) async => UserData(
           email: _user.email,
-          id: _user.id,
+          userId: _user.id,
           photoUrl: _user.photoUrl,
           displayName: _user.displayName,
-          idToken: _user.idToken,
           serverAuthCode: _user.serverAuthCode,
         ));
 
@@ -80,10 +79,9 @@ void main() {
   test('signIn transforms platform data to GoogleSignInUserData', () async {
     when(api.signIn()).thenAnswer((_) async => UserData(
           email: _user.email,
-          id: _user.id,
+          userId: _user.id,
           photoUrl: _user.photoUrl,
           displayName: _user.displayName,
-          idToken: _user.idToken,
           serverAuthCode: _user.serverAuthCode,
         ));
 
@@ -101,7 +99,7 @@ void main() {
 
   test('getTokens transforms platform data to GoogleSignInTokenData', () async {
     const bool recoverAuth = false;
-    when(api.getAccessToken(_user.email, recoverAuth)).thenAnswer((_) async =>
+    when(api.getAccessToken()).thenAnswer((_) async =>
         TokenData(idToken: _token.idToken, accessToken: _token.accessToken));
 
     final GoogleSignInTokenData response = await googleSignIn.getTokens(
@@ -156,7 +154,7 @@ void main() {
     expect(passedParams.serverClientId, initParams.serverClientId);
   });
 
-  test('requestScopens passes arguments', () async {
+  test('requestScopes passes arguments', () async {
     const List<String> scopes = <String>['newScope', 'anotherScope'];
     when(api.requestScopes(scopes)).thenAnswer((_) async => true);
 
