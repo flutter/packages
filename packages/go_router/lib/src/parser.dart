@@ -80,11 +80,15 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
 
     late final RouteMatchList initialMatches;
+
+    // Normalize the URI to handle any URL fragments.
+    final Uri normalizedUri = _normalizeUri(routeInformation.uri);
+
     initialMatches =
         // TODO(chunhtai): remove this ignore and migrate the code
         // https://github.com/flutter/flutter/issues/124045.
         // ignore: deprecated_member_use, unnecessary_non_null_assertion
-        configuration.findMatch(routeInformation.location!, extra: state.extra);
+        configuration.findMatch(normalizedUri.toString(), extra: state.extra);
     if (initialMatches.isError) {
       // TODO(chunhtai): remove this ignore and migrate the code
       // https://github.com/flutter/flutter/issues/124045.
@@ -194,5 +198,26 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   ValueKey<String> _getUniqueValueKey() {
     return ValueKey<String>(String.fromCharCodes(
         List<int>.generate(32, (_) => _random.nextInt(33) + 89)));
+  }
+
+  /// Normalize the URI to ensure it accounts for URL fragments.
+  Uri _normalizeUri(Uri initialUri) {
+    String initialPath = initialUri.path;
+
+    // Checks if the main path is root ('/') and a non-empty fragment exists.
+    // This is useful for handling custom URI schemes or deep linking scenarios,
+    // where the fragment might contain the actual navigation path or even some parameters.
+    if (initialPath == '/' && initialUri.fragment.isNotEmpty) {
+      final List<String> fragmentParts = initialUri.fragment.split('?');
+      initialPath = fragmentParts.first;
+
+      // Re-create the full URI by incorporating the query parameters from the fragment.
+      initialUri = Uri.parse(initialPath);
+      if (fragmentParts.length > 1) {
+        initialUri = initialUri.replace(query: fragmentParts[1]);
+      }
+    }
+
+    return initialUri;
   }
 }
