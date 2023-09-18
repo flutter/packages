@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -128,8 +130,8 @@ class OrdersRouteData extends GoRouteData {
 class MainPageView extends StatelessWidget {
   const MainPageView({
     required this.navigationShell,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   final StatefulNavigationShell navigationShell;
 
@@ -196,10 +198,10 @@ class NotificationsPageView extends StatelessWidget {
     return DefaultTabController(
       length: 3,
       initialIndex: NotificationsPageSection.values.indexOf(section),
-      child: Column(
-        children: [
+      child: const Column(
+        children: <Widget>[
           TabBar(
-            tabs: [
+            tabs: <Tab>[
               Tab(
                 child: Text(
                   'Latest',
@@ -219,13 +221,10 @@ class NotificationsPageView extends StatelessWidget {
                 ),
               ),
             ],
-            onTap: (index) {
-              _onTap(context, index);
-            },
           ),
           Expanded(
             child: TabBarView(
-              children: [
+              children: <Widget>[
                 NotificationsSubPageView(
                   label: 'Latest notifications',
                 ),
@@ -243,8 +242,6 @@ class NotificationsPageView extends StatelessWidget {
     );
   }
 }
-
-void _onTap(BuildContext context, index) {}
 
 class NotificationsSubPageView extends StatelessWidget {
   const NotificationsSubPageView({
