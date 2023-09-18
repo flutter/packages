@@ -2,13 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html' as html;
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:url_launcher_web/url_launcher_web.dart';
+import 'package:web/web.dart' as html;
 
 import 'url_launcher_web_test.mocks.dart';
 
@@ -28,7 +27,7 @@ void main() {
       when(mockWindow.navigator).thenReturn(mockNavigator);
 
       // Simulate that window.open does something.
-      when(mockWindow.open(any, any)).thenReturn(MockWindow());
+      when(mockWindow.open('any', 'any')).thenReturn(MockWindow());
 
       when(mockNavigator.userAgent).thenReturn(
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');

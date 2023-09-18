@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_web_plugins/flutter_web_plugins.dart' show Registrar;
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+import 'package:web/web.dart' as html;
 
 import 'src/link.dart';
 
@@ -62,12 +62,11 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   ///
   /// Returns the newly created window.
   @visibleForTesting
-  html.WindowBase openNewWindow(String url, {String? webOnlyWindowName}) {
+  html.Window? openNewWindow(String url, {String? webOnlyWindowName}) {
     // We need to open mailto, tel and sms urls on the _top window context on safari browsers.
     // See https://github.com/flutter/flutter/issues/51461 for reference.
     final String target = webOnlyWindowName ??
         ((_isSafari && _isSafariTargetTopScheme(url)) ? '_top' : '');
-    // ignore: unsafe_html
     return _window.open(url, target);
   }
 

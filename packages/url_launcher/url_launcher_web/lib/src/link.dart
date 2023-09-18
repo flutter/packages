@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:js_util';
 import 'dart:ui_web' as ui_web;
 
@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher_platform_interface/link.dart';
+import 'package:web/web.dart' as html;
 
 /// The unique identifier for the view type to be used for link platform views.
 const String linkViewType = '__url_launcher::link';
@@ -104,7 +105,8 @@ class LinkViewController extends PlatformViewController {
     if (_instances.isEmpty) {
       // This is the first controller being created, attach the global click
       // listener.
-      _clickSubscription = html.window.onClick.listen(_onGlobalClick);
+      _jsListenFunction = _onGlobalClick.toJS;
+      html.window.addEventListener('click', _jsListenFunction);
     }
     _instances[viewId] = this;
   }
@@ -137,7 +139,7 @@ class LinkViewController extends PlatformViewController {
 
   static int? _hitTestedViewId;
 
-  static late StreamSubscription<html.MouseEvent> _clickSubscription;
+  static late JSExportedDartFunction _jsListenFunction;
 
   static void _onGlobalClick(html.MouseEvent event) {
     final int? viewId = getViewIdFromTarget(event);
@@ -164,10 +166,10 @@ class LinkViewController extends PlatformViewController {
   @override
   final int viewId;
 
-  late html.Element _element;
+  late html.HTMLElement _element;
 
   Future<void> _initialize() async {
-    _element = html.Element.tag('a');
+    _element = html.document.createElement('a') as html.HTMLElement;
     setProperty(_element, linkViewIdProperty, viewId);
     _element.style
       ..opacity = '0'
@@ -269,7 +271,7 @@ class LinkViewController extends PlatformViewController {
     assert(_instances[viewId] == this);
     _instances.remove(viewId);
     if (_instances.isEmpty) {
-      await _clickSubscription.cancel();
+      html.window.removeEventListener('click', _jsListenFunction);
     }
     await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
   }
