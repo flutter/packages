@@ -1,6 +1,10 @@
-## 0.9.13+5
+## 0.9.13+6
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
+## 0.9.13+5
+
+* Ignores audio samples until the first video sample arrives.
 
 ## 0.9.13+4
 

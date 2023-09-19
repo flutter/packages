@@ -1,7 +1,15 @@
-## 0.5.0+17
+## 0.5.0+19
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
  
+## 0.5.0+18
+
+* Implements `startVideoCapturing`.
+
+## 0.5.0+17
+
+* Implements resolution configuration for all camera use cases.
+
 ## 0.5.0+16
 
 * Adds pub topics to package metadata.

@@ -1,6 +1,10 @@
-## 0.10.8+9
+## 0.10.8+10
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
+## 0.10.8+9
+
+* Removes usage of `_ambiguate` method in example.
 
 ## 0.10.8+8
 
