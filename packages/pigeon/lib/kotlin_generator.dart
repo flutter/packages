@@ -257,11 +257,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             (int index, final NamedType field) {
           final HostDatatype hostDatatype = _getHostDatatype(root, field);
 
-          // The StandardMessageCodec can give us [Integer, Long] for
-          // a Dart 'int'.  To keep things simple we just use 64bit
-          // longs in Pigeon with Kotlin.
-          final bool isInt = field.type.baseName == 'int';
-
           final String listValue = 'list[$index]';
           final String fieldType = _kotlinTypeForDartType(field.type);
 
@@ -432,8 +427,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   // Nullable enums require special handling.
                   if (isEnum(root, func.returnType) &&
                       func.returnType.isNullable) {
-                    indent.writeScoped('val $output = (it as Int?)?.let {', '}',
-                        () {
+                    indent.writeScoped(
+                        'val $output = (it[0] as Int?)?.let {', '}', () {
                       indent.writeln('${func.returnType.baseName}.ofRaw(it)');
                     });
                   } else {
