@@ -47,6 +47,22 @@ class MockTestCameraControlHostApi extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+  @override
+  _i3.Future<void> setZoomRatio(
+    int? identifier,
+    double? ratio,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setZoomRatio,
+          [
+            identifier,
+            ratio,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].

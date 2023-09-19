@@ -47,6 +47,32 @@ void main() {
       verify(mockApi.enableTorch(cameraControlIdentifier, enableTorch));
     });
 
+    test('setZoomRatio makes call on Java side to set zoom ratio', () async {
+      final MockTestCameraControlHostApi mockApi =
+          MockTestCameraControlHostApi();
+      TestCameraControlHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final CameraControl cameraControl = CameraControl.detached(
+        instanceManager: instanceManager,
+      );
+      const int cameraControlIdentifier = 45;
+
+      instanceManager.addHostCreatedInstance(
+        cameraControl,
+        cameraControlIdentifier,
+        onCopy: (_) => CameraControl.detached(instanceManager: instanceManager),
+      );
+
+      const double zoom = 0.2;
+      await cameraControl.setZoomRatio(zoom);
+
+      verify(mockApi.setZoomRatio(cameraControlIdentifier, zoom));
+    });
+
     test('flutterApiCreate makes call to add instance to instance manager', () {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},

@@ -1753,6 +1753,8 @@ abstract class TestCameraControlHostApi {
 
   Future<void> enableTorch(int identifier, bool torch);
 
+  Future<void> setZoomRatio(int identifier, double ratio);
+
   static void setup(TestCameraControlHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1776,6 +1778,31 @@ abstract class TestCameraControlHostApi {
           assert(arg_torch != null,
               'Argument for dev.flutter.pigeon.CameraControlHostApi.enableTorch was null, expected non-null bool.');
           await api.enableTorch(arg_identifier!, arg_torch!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraControlHostApi.setZoomRatio', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.setZoomRatio was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.setZoomRatio was null, expected non-null int.');
+          final double? arg_ratio = (args[1] as double?);
+          assert(arg_ratio != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.setZoomRatio was null, expected non-null double.');
+          await api.setZoomRatio(arg_identifier!, arg_ratio!);
           return <Object?>[];
         });
       }
