@@ -337,7 +337,7 @@ class CameraService {
       case ResolutionPreset.medium:
         return 48000;
       case ResolutionPreset.low:
-        return 320000;
+        return 32000;
     }
   }
 
