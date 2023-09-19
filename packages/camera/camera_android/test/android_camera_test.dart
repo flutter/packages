@@ -421,8 +421,7 @@ void main() {
       const DeviceOrientationChangedEvent event =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       for (int i = 0; i < 3; i++) {
-        await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .handlePlatformMessage(
                 AndroidCamera.deviceEventChannelName,
                 const StandardMethodCodec().encodeMethodCall(
