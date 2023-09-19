@@ -1,3 +1,7 @@
+## 0.10.8+9
+
+* Removes usage of `_ambiguate` method in example.
+
 ## 0.10.8+8
 
 * Adds pub topics to package metadata.
