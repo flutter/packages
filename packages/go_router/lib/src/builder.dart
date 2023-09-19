@@ -592,10 +592,11 @@ class _PagePopContext {
   /// This assumes always pop the last route match for the page.
   bool onPopPage(Route<dynamic> route, dynamic result) {
     final Page<Object?> page = route.settings as Page<Object?>;
-
     final RouteMatch match = _routeMatchesLookUp[page]!.last;
-    _routeMatchesLookUp[page]!.removeLast();
-
-    return onPopPageWithRouteMatch(route, result, match);
+    if (onPopPageWithRouteMatch(route, result, match)) {
+      _routeMatchesLookUp[page]!.removeLast();
+      return true;
+    }
+    return false;
   }
 }

@@ -15,4 +15,8 @@ extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessi
 /// @return a test sample buffer.
 extern CMSampleBufferRef FLTCreateTestSampleBuffer(void);
 
+/// Creates a test audio sample buffer.
+/// @return a test audio sample buffer.
+extern CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void);
+
 NS_ASSUME_NONNULL_END
