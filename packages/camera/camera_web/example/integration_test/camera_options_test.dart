@@ -63,7 +63,6 @@ void main() {
         const AudioConstraints(enabled: true).toJson(),
         equals(<String, Object>{
           'enabled': true,
-          'bitrate': 28000,
         }),
       );
     });
