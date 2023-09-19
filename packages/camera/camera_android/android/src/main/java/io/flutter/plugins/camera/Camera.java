@@ -1056,16 +1056,19 @@ class Camera
     return cameraFeatures.getResolution().getRecordingProfile();
   }
 
-  int getFps() {
-    return cameraFeatures.getFps().getValue();
+  Integer getFps() {
+    IntFeature fpsFeature = cameraFeatures.getFps();
+    return fpsFeature == null ? null : fpsFeature.getValue();
   }
 
-  int getVideoBitrate() {
-    return cameraFeatures.getVideoBitrate().getValue();
+  Integer getVideoBitrate() {
+    IntFeature videoBitrateFeature = cameraFeatures.getVideoBitrate();
+    return videoBitrateFeature == null ? null : videoBitrateFeature.getValue();
   }
 
-  int getAudioBitrate() {
-    return cameraFeatures.getAudioBitrate().getValue();
+  Integer getAudioBitrate() {
+    IntFeature audioBitrateFeature = cameraFeatures.getAudioBitrate();
+    return audioBitrateFeature == null ? null : audioBitrateFeature.getValue();
   }
 
   /** Shortut to get deviceOrientationListener. */

@@ -225,11 +225,8 @@ class CameraPlugin extends CameraPlatform {
         textureId: textureId,
         cameraService: _cameraService,
         options: CameraOptions(
-          audio: AudioConstraints(
-              enabled: mediaSettings?.enableAudio ?? true,
-              bitrate: mediaSettings?.audioBitrate),
+          audio: AudioConstraints(enabled: mediaSettings?.enableAudio ?? true),
           video: VideoConstraints(
-            bitrate: mediaSettings?.videoBitrate,
             facingMode:
                 cameraType != null ? FacingModeConstraint(cameraType) : null,
             width: VideoSizeConstraint(
@@ -240,6 +237,10 @@ class CameraPlugin extends CameraPlatform {
             ),
             deviceId: cameraMetadata.deviceId,
           ),
+        ),
+        recorderOptions: (
+          audioBitrate: mediaSettings?.audioBitrate,
+          videoBitrate: mediaSettings?.videoBitrate,
         ),
       );
 

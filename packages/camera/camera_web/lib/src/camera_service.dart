@@ -101,14 +101,14 @@ class CameraService {
           throw CameraWebException(
             cameraId,
             CameraErrorCode.unknown,
-            'An unknown error occured when fetching the camera stream.',
+            'An unknown error occurred when fetching the camera stream.',
           );
       }
     } catch (_) {
       throw CameraWebException(
         cameraId,
         CameraErrorCode.unknown,
-        'An unknown error occured when fetching the camera stream.',
+        'An unknown error occurred when fetching the camera stream.',
       );
     }
   }
@@ -224,7 +224,7 @@ class CameraService {
       // The method may not be supported on Firefox.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/getCapabilities#browser_compatibility
       if (!jsUtil.hasProperty(videoTrack, 'getCapabilities')) {
-        // Return null if the video track capabilites are not supported.
+        // Return null if the video track capabilities are not supported.
         return null;
       }
 
@@ -307,20 +307,23 @@ class CameraService {
     return const Size(320, 240);
   }
 
+  static const int _K = 1000;
+  static const int _M = _K * _K;
+
   /// Maps the given [resolutionPreset] to video bitrate.
   int mapResolutionPresetToVideoBitrate(ResolutionPreset resolutionPreset) {
     switch (resolutionPreset) {
       case ResolutionPreset.max:
       case ResolutionPreset.ultraHigh:
-        return 8000000;
+        return 8 * _M;
       case ResolutionPreset.veryHigh:
-        return 4000000;
+        return 4 * _M;
       case ResolutionPreset.high:
-        return 1000000;
+        return 1 * _M;
       case ResolutionPreset.medium:
-        return 400000;
+        return 400 * _K;
       case ResolutionPreset.low:
-        return 200000;
+        return 200 * _K;
     }
   }
 
@@ -329,15 +332,15 @@ class CameraService {
     switch (resolutionPreset) {
       case ResolutionPreset.max:
       case ResolutionPreset.ultraHigh:
-        return 128000;
+        return 128 * _K;
       case ResolutionPreset.veryHigh:
-        return 128000;
+        return 128 * _K;
       case ResolutionPreset.high:
-        return 64000;
+        return 64 * _K;
       case ResolutionPreset.medium:
-        return 48000;
+        return 48 * _K;
       case ResolutionPreset.low:
-        return 32000;
+        return 32 * _K;
     }
   }
 

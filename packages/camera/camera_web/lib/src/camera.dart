@@ -41,11 +41,12 @@ class Camera {
   /// Creates a new instance of [Camera]
   /// with the given [textureId] and optional
   /// [options] and [window].
-  Camera({
-    required this.textureId,
-    required CameraService cameraService,
-    this.options = const CameraOptions(),
-  }) : _cameraService = cameraService;
+  Camera(
+      {required this.textureId,
+      required CameraService cameraService,
+      this.options = const CameraOptions(),
+      this.recorderOptions = const (audioBitrate: null, videoBitrate: null)})
+      : _cameraService = cameraService;
 
   // A torch mode constraint name.
   // See: https://w3c.github.io/mediacapture-image/#dom-mediatracksupportedconstraints-torch
@@ -56,6 +57,9 @@ class Camera {
 
   /// The camera options used to initialize a camera, empty by default.
   final CameraOptions options;
+
+  /// The options used to initialize a MediaRecorder.
+  final ({int? audioBitrate, int? videoBitrate}) recorderOptions;
 
   /// The video element that displays the camera stream.
   /// Initialized in [initialize].
@@ -448,10 +452,10 @@ class Camera {
     mediaRecorder ??=
         html.MediaRecorder(videoElement.srcObject!, <String, Object>{
       'mimeType': _videoMimeType,
-      if (options.audio.bitrate != null)
-        'audioBitsPerSecond': options.audio.bitrate!,
-      if (options.video.bitrate != null)
-        'videoBitsPerSecond': options.video.bitrate!,
+      if (recorderOptions.audioBitrate != null)
+        'audioBitsPerSecond': recorderOptions.audioBitrate!,
+      if (recorderOptions.videoBitrate != null)
+        'videoBitsPerSecond': recorderOptions.videoBitrate!,
     });
 
     _videoAvailableCompleter = Completer<XFile>();
