@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   pointer_interceptor:
     path: ../
+  flutter_web_plugins:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:

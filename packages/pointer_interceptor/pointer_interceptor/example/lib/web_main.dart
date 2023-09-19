@@ -5,12 +5,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:pointer_interceptor_example/example_platform_view.dart';
+import 'package:pointer_interceptor_example/html_element.dart';
 
 const double _videoWidth = 640;
 const double _videoHeight = 480;
 
 void main() {
+  registerWebPlatformView();
   runApp(const MyApp());
 }
 
@@ -79,7 +80,13 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: <Widget>[
-                    ExamplePlatformView(),
+                  kIsWeb?
+                    HtmlElement(
+                      key: const ValueKey<String>('background-widget'),
+                      onClick: () {
+                        _clickedOn('html-element');
+                      },
+                    ) :
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>[
