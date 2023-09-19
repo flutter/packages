@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
-import 'package:flutter/src/painting/image_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_platform_images/ios_platform_images.dart';
 import 'package:ios_platform_images/src/messages.g.dart';
