@@ -30,7 +30,7 @@ void main() {
 
     // Setting up a handler requires bindings to be initialized, and since
     // registerWith is called very early in initialization the bindings won't
-    // have been initialized. While registerWith could intialize them, that
+    // have been initialized. While registerWith could initialize them, that
     // could slow down startup, so instead the handler should be set up lazily.
     final ByteData? response =
         await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
