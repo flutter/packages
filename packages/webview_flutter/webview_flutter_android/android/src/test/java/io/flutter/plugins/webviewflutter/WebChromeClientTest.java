@@ -15,8 +15,8 @@ import static org.mockito.Mockito.when;
 
 import android.net.Uri;
 import android.os.Message;
-import android.webkit.ConsoleMessage;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;

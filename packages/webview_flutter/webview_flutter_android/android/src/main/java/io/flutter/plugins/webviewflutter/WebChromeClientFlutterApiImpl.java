@@ -5,8 +5,8 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
-import android.webkit.ConsoleMessage;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
@@ -177,14 +177,14 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
       @NonNull ConsoleMessage message,
       @NonNull Reply<Void> callback) {
     super.onConsoleMessage(
-      Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
-      new GeneratedAndroidWebView.ConsoleMessage.Builder()
-        .setLineNumber((long) message.lineNumber())
-        .setMessage(message.message())
-        .setLevel(toConsoleMessageLevel(message.messageLevel()))
-        .setSourceId(message.sourceId())
-        .build(),
-      callback);
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        new GeneratedAndroidWebView.ConsoleMessage.Builder()
+            .setLineNumber((long) message.lineNumber())
+            .setMessage(message.message())
+            .setLevel(toConsoleMessageLevel(message.messageLevel()))
+            .setSourceId(message.sourceId())
+            .build(),
+        callback);
   }
 
   private long getIdentifierForClient(WebChromeClient webChromeClient) {
