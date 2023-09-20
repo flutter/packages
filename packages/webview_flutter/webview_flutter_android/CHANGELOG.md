@@ -1,6 +1,6 @@
 ## 3.11.0
 
-* Adds support to register a callback to receive JavaScript console messages. See `AndroidWebViewController.setConsoleLogCallback`.
+* Adds support to register a callback to receive JavaScript console messages. See `AndroidWebViewController.onConsoleMessage`.
 
 ## 3.10.1
 
