@@ -315,15 +315,15 @@ class CameraService {
     switch (resolutionPreset) {
       case ResolutionPreset.max:
       case ResolutionPreset.ultraHigh:
-        return 8 * _M;
+        return 8 * _megaBits;
       case ResolutionPreset.veryHigh:
-        return 4 * _M;
+        return 4 * _megaBits;
       case ResolutionPreset.high:
-        return 1 * _M;
+        return 1 * _megaBits;
       case ResolutionPreset.medium:
-        return 400 * _K;
+        return 400 * _kiloBits;
       case ResolutionPreset.low:
-        return 200 * _K;
+        return 200 * _kiloBits;
     }
   }
 
@@ -332,15 +332,15 @@ class CameraService {
     switch (resolutionPreset) {
       case ResolutionPreset.max:
       case ResolutionPreset.ultraHigh:
-        return 128 * _K;
+        return 128 * _kiloBits;
       case ResolutionPreset.veryHigh:
-        return 128 * _K;
+        return 128 * _kiloBits;
       case ResolutionPreset.high:
-        return 64 * _K;
+        return 64 * _kiloBits;
       case ResolutionPreset.medium:
-        return 48 * _K;
+        return 48 * _kiloBits;
       case ResolutionPreset.low:
-        return 32 * _K;
+        return 32 * _kiloBits;
     }
   }
 

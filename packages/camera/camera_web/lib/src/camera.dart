@@ -41,12 +41,12 @@ class Camera {
   /// Creates a new instance of [Camera]
   /// with the given [textureId] and optional
   /// [options] and [window].
-  Camera(
-      {required this.textureId,
-      required CameraService cameraService,
-      this.options = const CameraOptions(),
-      this.recorderOptions = const (audioBitrate: null, videoBitrate: null),})
-      : _cameraService = cameraService;
+  Camera({
+    required this.textureId,
+    required CameraService cameraService,
+    this.options = const CameraOptions(),
+    this.recorderOptions = const (audioBitrate: null, videoBitrate: null),
+  }) : _cameraService = cameraService;
 
   // A torch mode constraint name.
   // See: https://w3c.github.io/mediacapture-image/#dom-mediatracksupportedconstraints-torch
