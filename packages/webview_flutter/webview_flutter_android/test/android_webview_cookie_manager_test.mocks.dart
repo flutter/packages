@@ -474,6 +474,23 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<void> setCustomWidgetCallbacks({
+    required _i6.OnShowCustomWidgetCallback? onShowCustomWidget,
+    required _i6.OnHideCustomWidgetCallback? onHideCustomWidget,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setCustomWidgetCallbacks,
+          [],
+          {
+            #onShowCustomWidget: onShowCustomWidget,
+            #onHideCustomWidget: onHideCustomWidget,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
   _i5.Future<void> setOnConsoleMessage(
           void Function(_i3.JavaScriptConsoleMessage)? onConsoleMessage) =>
       (super.noSuchMethod(

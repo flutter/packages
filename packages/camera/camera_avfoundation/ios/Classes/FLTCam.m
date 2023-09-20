@@ -500,6 +500,12 @@ NSString *const errorMethod = @"error";
       return;
     }
 
+    // ignore audio samples until the first video sample arrives to avoid black frames
+    // https://github.com/flutter/flutter/issues/57831
+    if (_videoWriter.status != AVAssetWriterStatusWriting && output != _captureVideoOutput) {
+      return;
+    }
+
     CFRetain(sampleBuffer);
     CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 

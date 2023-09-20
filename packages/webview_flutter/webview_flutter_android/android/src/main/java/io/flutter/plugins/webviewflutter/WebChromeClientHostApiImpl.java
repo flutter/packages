@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
 import android.webkit.ConsoleMessage;
+import android.view.View;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
@@ -31,6 +33,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   private final InstanceManager instanceManager;
   private final WebChromeClientCreator webChromeClientCreator;
   private final WebChromeClientFlutterApiImpl flutterApi;
+  private Context context;
 
   /**
    * Implementation of {@link WebChromeClient} that passes arguments of callback methods to Dart.
@@ -55,6 +58,15 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     }
 
     @Override
+    public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
+      flutterApi.onShowCustomView(this, view, callback, reply -> {});
+    }
+
+    @Override
+    public void onHideCustomView() {
+      flutterApi.onHideCustomView(this, reply -> {});
+    }
+
     public void onGeolocationPermissionsShowPrompt(
         @NonNull String origin, @NonNull GeolocationPermissions.Callback callback) {
       flutterApi.onGeolocationPermissionsShowPrompt(this, origin, callback, reply -> {});

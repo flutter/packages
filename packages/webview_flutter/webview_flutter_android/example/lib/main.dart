@@ -152,7 +152,7 @@ Page resource error:
           ''');
           })
           ..setOnNavigationRequest((NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
+            if (request.url.contains('pub.dev')) {
               debugPrint('blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
@@ -235,6 +235,7 @@ enum MenuOptions {
   loadHtmlString,
   transparentBackground,
   setCookie,
+  videoExample,
   logExample,
 }
 
@@ -295,6 +296,9 @@ class SampleMenu extends StatelessWidget {
             break;
           case MenuOptions.setCookie:
             _onSetCookie();
+            break;
+          case MenuOptions.videoExample:
+            _onVideoExample(context);
             break;
           case MenuOptions.logExample:
             _onLogExample();
@@ -358,6 +362,10 @@ class SampleMenu extends StatelessWidget {
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.logExample,
           child: Text('Log example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.videoExample,
+          child: Text('Video example'),
         ),
       ],
     );
@@ -452,6 +460,30 @@ class SampleMenu extends StatelessWidget {
     await webViewController.loadRequest(LoadRequestParams(
       uri: Uri.parse('https://httpbin.org/anything'),
     ));
+  }
+
+  Future<void> _onVideoExample(BuildContext context) {
+    final AndroidWebViewController androidController =
+        webViewController as AndroidWebViewController;
+    // #docregion fullscreen_example
+    androidController.setCustomWidgetCallbacks(
+      onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
+        Navigator.of(context).push(MaterialPageRoute<void>(
+          builder: (BuildContext context) => widget,
+          fullscreenDialog: true,
+        ));
+      },
+      onHideCustomWidget: () {
+        Navigator.of(context).pop();
+      },
+    );
+    // #enddocregion fullscreen_example
+
+    return androidController.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse('https://www.youtube.com/watch?v=4AoFA19gbLo'),
+      ),
+    );
   }
 
   Future<void> _onDoPostRequest() {

@@ -6,6 +6,7 @@ package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
 import android.webkit.ConsoleMessage;
+import android.view.View;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
@@ -136,19 +137,54 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         callback);
   }
 
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onShowCustomView` on the Dart object
+   * representing `instance`.
+   */
+  public void onShowCustomView(
+      @NonNull WebChromeClient instance,
+      @NonNull View view,
+      @NonNull WebChromeClient.CustomViewCallback customViewCallback,
+      @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    new ViewFlutterApiImpl(binaryMessenger, instanceManager).create(view, reply -> {});
+    new CustomViewCallbackFlutterApiImpl(binaryMessenger, instanceManager)
+        .create(customViewCallback, reply -> {});
+
+    onShowCustomView(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(view)),
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(customViewCallback)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onHideCustomView` on the Dart object
+   * representing `instance`.
+   */
+  public void onHideCustomView(
+      @NonNull WebChromeClient instance, @NonNull WebChromeClientFlutterApi.Reply<Void> callback) {
+    super.onHideCustomView(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+        callback);
+  }
+
+  /**
+   * Sends a message to Dart to call `WebChromeClient.onConsoleMessage` on the Dart object
+   * representing `instance`.
+   */
   public void onConsoleMessage(
       @NonNull WebChromeClient instance,
       @NonNull ConsoleMessage message,
       @NonNull Reply<Void> callback) {
     super.onConsoleMessage(
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
-        new GeneratedAndroidWebView.ConsoleMessage.Builder()
-            .setLineNumber((long) message.lineNumber())
-            .setMessage(message.message())
-            .setLevel(toConsoleMessageLevel(message.messageLevel()))
-            .setSourceId(message.sourceId())
-            .build(),
-        callback);
+      Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
+      new GeneratedAndroidWebView.ConsoleMessage.Builder()
+        .setLineNumber((long) message.lineNumber())
+        .setMessage(message.message())
+        .setLevel(toConsoleMessageLevel(message.messageLevel()))
+        .setSourceId(message.sourceId())
+        .build(),
+      callback);
   }
 
   private long getIdentifierForClient(WebChromeClient webChromeClient) {

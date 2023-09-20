@@ -363,6 +363,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     ]);
   }
 
+  /// The camera finished recording a video.
+  @override
+  Stream<VideoRecordedEvent> onVideoRecordedEvent(int cameraId) {
+    return _cameraEvents(cameraId).whereType<VideoRecordedEvent>();
+  }
+
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
   ///
   /// [cameraId] not used.
@@ -507,12 +513,23 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Note that the preset resolution is used to configure the recording, but
   /// 240p ([ResolutionPreset.low]) is unsupported and will fallback to
   /// configure the recording as the next highest available quality.
+  ///
+  /// This method is deprecated in favour of [startVideoCapturing].
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
-    assert(cameraSelector != null);
-    assert(processCameraProvider != null);
+    return startVideoCapturing(
+        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
+  }
 
+  /// Starts a video recording and/or streaming session.
+  ///
+  /// Please see [VideoCaptureOptions] for documentation on the
+  /// configuration options. Currently, maxVideoDuration and streamOptions
+  /// are unsupported due to the limitations of CameraX and the platform
+  /// interface, respectively.
+  @override
+  Future<void> startVideoCapturing(VideoCaptureOptions options) async {
     if (recording != null) {
       // There is currently an active recording, so do not start a new one.
       return;
@@ -527,6 +544,10 @@ class AndroidCameraCameraX extends CameraPlatform {
         await SystemServices.getTempFilePath(videoPrefix, '.temp');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
     recording = await pendingRecording!.start();
+
+    if (options.streamCallback != null) {
+      onStreamedFrameAvailable(options.cameraId).listen(options.streamCallback);
+    }
   }
 
   /// Stops the video recording and returns the file where it was saved.

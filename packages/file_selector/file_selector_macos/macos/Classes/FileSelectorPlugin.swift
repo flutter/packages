@@ -105,12 +105,12 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
         // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
         allowedTypes.append(contentsOf: acceptedTypes.utis.compactMap({ UTType($0!) }))
         allowedTypes.append(
-          contentsOf: acceptedTypes.extensions.flatMap({
-            UTType.types(tag: $0!, tagClass: UTTagClass.filenameExtension, conformingTo: nil)
+          contentsOf: acceptedTypes.extensions.compactMap({
+            UTType.init(filenameExtension: $0!)
           }))
         allowedTypes.append(
-          contentsOf: acceptedTypes.mimeTypes.flatMap({
-            UTType.types(tag: $0!, tagClass: UTTagClass.mimeType, conformingTo: nil)
+          contentsOf: acceptedTypes.mimeTypes.compactMap({
+            UTType.init(mimeType: $0!)
           }))
         if !allowedTypes.isEmpty {
           panel.allowedContentTypes = allowedTypes
