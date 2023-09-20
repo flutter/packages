@@ -7,7 +7,6 @@ import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platf
 
 /// The iOS implementation of the [PointerInterceptorPlatform]
 class PointerInterceptorPluginIOS extends PointerInterceptorPlatform {
-
   static void registerWith() {
     PointerInterceptorPlatform.instance = PointerInterceptorPluginIOS();
   }
@@ -18,6 +17,11 @@ class PointerInterceptorPluginIOS extends PointerInterceptorPlatform {
       bool intercepting = true,
       bool debug = false,
       Key? key}) {
-    return child;
+    return UiKitView(
+      viewType: 'plugins.flutter.dev/pointer_interceptor_ios',
+      creationParams: {
+        'debug': debug,
+      },
+    );
   }
 }
