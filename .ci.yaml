@@ -311,7 +311,7 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      // set up for 34
+      # set up for 34
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
@@ -325,7 +325,7 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      // set up for 34
+      # set up for 34
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
@@ -339,7 +339,7 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      // set up for 34
+      # set up for 34
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
@@ -353,7 +353,7 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      // set up for 34
+      # set up for 34
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
@@ -367,7 +367,7 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      // set up for 34
+      # set up for 34
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
@@ -381,7 +381,7 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      // set up for 34
+      # set up for 34
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
@@ -395,7 +395,7 @@ targets:
       target_file: android_platform_tests_api_33.yaml
       channel: master
       version_file: flutter_master.version
-      // set up for 33
+      # set up for 33
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
@@ -409,7 +409,7 @@ targets:
       target_file: android_platform_tests_api_33.yaml
       channel: master
       version_file: flutter_master.version
-      // set up for 33
+      # set up for 33
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
