@@ -23,5 +23,5 @@ flutter:
   plugin:
     platforms:
       ios:
-        pluginClass: PointerInterceptorPlugin
+        pluginClass: PointerInterceptorIosPlugin
         dartPluginClass: PointerInterceptorPluginIOS
