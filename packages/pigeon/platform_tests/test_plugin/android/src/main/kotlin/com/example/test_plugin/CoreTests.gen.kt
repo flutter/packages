@@ -2286,7 +2286,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
         } else {
-          val output = (it as Int?)?.let {
+          val output = (it[0] as Int?)?.let {
             AnEnum.ofRaw(it)
           }
           callback(Result.success(output));

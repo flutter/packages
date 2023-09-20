@@ -60,7 +60,7 @@ class MultipleArityTests: TestCase() {
             val args = codec.decodeMessage(message) as ArrayList<*>
             val argX = args[0] as Long
             val argY = args[1] as Long
-            val replyData = codec.encodeMessage(argX - argY)
+            val replyData = codec.encodeMessage(listOf(argX - argY))
             replyData?.position(0)
             reply.reply(replyData)
         }
@@ -68,7 +68,7 @@ class MultipleArityTests: TestCase() {
         var didCall = false
         api.subtract(inputX, inputY) {
             didCall = true
-            assertEquals(inputX - inputY, it)
+            assertEquals(inputX - inputY, it.getOrNull())
         }
 
         assertTrue(didCall)

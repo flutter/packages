@@ -57,7 +57,7 @@ class PrimitiveTest: TestCase() {
         var didCall = false
         api.anInt(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)
@@ -105,7 +105,7 @@ class PrimitiveTest: TestCase() {
         var didCall = false
         api.aBool(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)
@@ -185,7 +185,7 @@ class PrimitiveTest: TestCase() {
         var didCall = false
         api.aDouble(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)
@@ -233,7 +233,7 @@ class PrimitiveTest: TestCase() {
         var didCall = false
         api.aMap(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)
@@ -281,7 +281,7 @@ class PrimitiveTest: TestCase() {
         var didCall = false
         api.aList(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)
@@ -329,7 +329,7 @@ class PrimitiveTest: TestCase() {
         var didCall = false
         api.anInt32List(input) {
             didCall = true
-            assertTrue(input.contentEquals(it))
+            assertTrue(input.contentEquals(it.getOrNull()))
         }
 
         assertTrue(didCall)
@@ -377,7 +377,7 @@ class PrimitiveTest: TestCase() {
         var didCall = false
         api.aBoolList(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)
@@ -425,7 +425,7 @@ class PrimitiveTest: TestCase() {
         var didCall = false
         api.aStringIntMap(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)

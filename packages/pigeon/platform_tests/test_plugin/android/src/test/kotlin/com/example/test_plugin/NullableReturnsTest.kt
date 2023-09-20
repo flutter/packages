@@ -55,7 +55,7 @@ class NullableReturnsTest: TestCase() {
         every { binaryMessenger.send(any(), any(), any()) } answers {
             val codec = NullableReturnFlutterApi.codec
             val reply = arg<BinaryMessenger.BinaryReply>(2)
-            val replyData = codec.encodeMessage(output)
+            val replyData = codec.encodeMessage(listOf(output))
             replyData?.position(0)
             reply.reply(replyData)
         }
@@ -63,7 +63,7 @@ class NullableReturnsTest: TestCase() {
         var didCall = false
         api.doit {
             didCall = true
-            assertEquals(output, it)
+            assertEquals(output, it.getOrNull())
         }
 
         assertTrue(didCall)

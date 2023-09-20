@@ -27,7 +27,7 @@ internal class AsyncHandlersTest: TestCase() {
             val message = arg<ByteBuffer>(1)
             val reply = arg<BinaryMessenger.BinaryReply>(2)
             message.position(0)
-            val replyData = codec.encodeMessage(value)
+            val replyData = codec.encodeMessage(listOf(value))
             replyData?.position(0)
             reply.reply(replyData)
         }
@@ -35,7 +35,7 @@ internal class AsyncHandlersTest: TestCase() {
         var didCall = false
         api.echoAsyncString(value) {
             didCall = true
-            assertEquals(it, value)
+            assertEquals(it.getOrNull(), value)
         }
 
         assertTrue(didCall)
