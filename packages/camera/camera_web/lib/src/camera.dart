@@ -45,7 +45,7 @@ class Camera {
       {required this.textureId,
       required CameraService cameraService,
       this.options = const CameraOptions(),
-      this.recorderOptions = const (audioBitrate: null, videoBitrate: null)})
+      this.recorderOptions = const (audioBitrate: null, videoBitrate: null),})
       : _cameraService = cameraService;
 
   // A torch mode constraint name.
