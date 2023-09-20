@@ -391,6 +391,7 @@ targets:
   - name: Linux_android android_platform_tests_api_33_shard_1 master
     recipe: packages/packages
     timeout: 60
+    bringup: true
     properties:
       target_file: android_platform_tests_api_33.yaml
       channel: master
@@ -405,6 +406,7 @@ targets:
   - name: Linux_android android_platform_tests_api_33_shard_2 master
     recipe: packages/packages
     timeout: 60
+    bringup: true
     properties:
       target_file: android_platform_tests_api_33.yaml
       channel: master
