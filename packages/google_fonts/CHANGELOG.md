@@ -1,3 +1,7 @@
+## 6.1.0 - 2023-09-20
+### Added
+- Add an example where one can select any available font
+
 ## 6.0.0 - 2023-09-15
 ### Added
 - `ADLaM Display`
