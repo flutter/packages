@@ -39,11 +39,19 @@ final class URLLauncherTests: XCTestCase {
     var error: FlutterError?
     let result = createPlugin().canLaunchURL("urls can't have spaces", error: &error)
 
-    XCTAssertNil(result)
-    XCTAssertNotNil(error)
-    XCTAssertEqual(error?.code, "argument_error")
-    XCTAssertEqual(error?.message, "Unable to parse URL")
-    XCTAssertEqual(error?.details as? String, "Provided URL: urls can't have spaces")
+    if (error == nil) {
+      // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
+      // fail to parse URLs, so the test must allow for either outcome.
+      XCTAssertNotNil(result)
+      XCTAssertFalse(result?.boolValue ?? true)
+      XCTAssertNil(error)
+    } else {
+      XCTAssertNil(result)
+      XCTAssertNotNil(error)
+      XCTAssertEqual(error?.code, "argument_error")
+      XCTAssertEqual(error?.message, "Unable to parse URL")
+      XCTAssertEqual(error?.details as? String, "Provided URL: urls can't have spaces")
+    }
   }
 
   func testLaunchSuccess() {
@@ -75,11 +83,19 @@ final class URLLauncherTests: XCTestCase {
     let expectation = XCTestExpectation(description: "completion called")
 
     createPlugin().launchURL("urls can't have spaces", universalLinksOnly: false) { result, error in
-      XCTAssertNil(result)
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "argument_error")
-      XCTAssertEqual(error?.message, "Unable to parse URL")
-      XCTAssertEqual(error?.details as? String, "Provided URL: urls can't have spaces")
+      if (error == nil) {
+        // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
+        // fail to parse URLs, so the test must allow for either outcome.
+        XCTAssertNotNil(result)
+        XCTAssertFalse(result?.boolValue ?? true)
+        XCTAssertNil(error)
+      } else {
+        XCTAssertNil(result)
+        XCTAssertNotNil(error)
+        XCTAssertEqual(error?.code, "argument_error")
+        XCTAssertEqual(error?.message, "Unable to parse URL")
+        XCTAssertEqual(error?.details as? String, "Provided URL: urls can't have spaces")
+      }
 
       expectation.fulfill()
     }
