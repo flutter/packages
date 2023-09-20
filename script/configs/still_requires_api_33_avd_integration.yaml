@@ -1,3 +1,0 @@
-# Running the integration tests of these packages on an AVD with Android 34 causes failures.
-- file_selector
-- quick_actions
