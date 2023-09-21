@@ -1046,11 +1046,10 @@ void main() {
       final RouteMatchListCodec codec =
           RouteMatchListCodec(router.configuration);
       await tester.pumpAndSettle();
-      final ImperativeRouteMatch match = router
-          .routerDelegate.currentConfiguration.last as ImperativeRouteMatch;
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/settings', false, codec.encode(match.matches)),
+        IsRouteUpdateCall('/settings', false,
+            codec.encode(router.routerDelegate.currentConfiguration)),
       ]);
       GoRouter.optionURLReflectsImperativeAPIs = false;
     });
