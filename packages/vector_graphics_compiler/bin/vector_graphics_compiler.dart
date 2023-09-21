@@ -9,6 +9,7 @@ import 'package:vector_graphics_compiler/src/svg/colors.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'util/isolate_processor.dart';
+import 'package:path/path.dart' as p;
 
 final ArgParser argParser = ArgParser()
   ..addOption(
@@ -67,6 +68,11 @@ final ArgParser argParser = ArgParser()
     help: 'The path to a directory containing one or more SVGs. '
         'Only includes files that end with .svg. '
         'Cannot be combined with --input or --output.',
+  )
+  ..addOption(
+    'out-dir',
+    help: 'The output directory  path '
+        'use it with --input-dir to specific the output dirictory',
   )
   ..addOption(
     'input',
@@ -144,7 +150,19 @@ Future<void> main(List<String> args) async {
       if (!file.path.endsWith('.svg')) {
         continue;
       }
-      final String outputPath = '${file.path}.vec';
+
+      String outputPath = '${file.path}.vec';
+
+      // to specfic the output directory when parse multi svg
+      if (results.wasParsed('out-dir')) {
+        final Directory outDir = Directory(results['out-dir'] as String);
+        //to add the output dirctory if it exist
+        if (!outDir.existsSync()) {
+          outDir.createSync();
+        }
+        outputPath = p.join(outDir.path, '${p.basename(file.path)}.vec');
+      }
+
       pairs.add(Pair(file.path, outputPath));
     }
   } else {

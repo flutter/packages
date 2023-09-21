@@ -15,6 +15,7 @@ dependencies:
   path_parsing: ^1.0.1
   xml: ^6.3.0
   vector_graphics_codec: 1.1.8
+  path: ^1.8.0
 
 dev_dependencies:
   flutter_lints: ^1.0.0

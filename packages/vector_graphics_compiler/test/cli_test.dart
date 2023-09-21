@@ -4,9 +4,12 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../bin/util/isolate_processor.dart';
 import '../bin/vector_graphics_compiler.dart' as cli;
+import 'package:path/path.dart' as p;
+import 'package:collection/collection.dart';
 
 void main() {
   final File output = File('test_data/example.vec');
@@ -83,6 +86,53 @@ void main() {
       }
       if (outputDebug.existsSync()) {
         outputDebug.deleteSync();
+      }
+    }
+  });
+
+  test('out-dir option works', () async {
+    const String inputTestDir = 'test_data';
+
+    const String outTestDir = 'output_vec';
+
+    try {
+      await cli.main(<String>[
+        '--input-dir',
+        inputTestDir,
+        '--out-dir',
+        outTestDir,
+      ]);
+
+      bool passed = false;
+
+      final Directory inputDir = Directory(inputTestDir);
+      final Directory outDir = Directory(outTestDir);
+
+      if (inputDir.existsSync() && outDir.existsSync()) {
+        final List<String> inputTestFiles = inputDir
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File element) => element.path.endsWith('svg'))
+            .map((File e) => p.basenameWithoutExtension(e.path))
+            .toList();
+
+        final List<String> outTestFiles = outDir
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File element) => element.path.endsWith('vec'))
+            .map((File e) =>
+                p.withoutExtension(p.basenameWithoutExtension(e.path)))
+            .toList();
+
+        if (listEquals(inputTestFiles, outTestFiles)) {
+          passed = true;
+        }
+      }
+
+      expect(passed, true);
+    } finally {
+      if (Directory(outTestDir).existsSync()) {
+        Directory(outTestDir).deleteSync(recursive: true);
       }
     }
   });
