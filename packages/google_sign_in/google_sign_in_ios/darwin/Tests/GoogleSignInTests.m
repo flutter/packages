@@ -61,10 +61,10 @@
 }
 
 - (void)testDisconnectIgnoresError {
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeHasNoAuthInKeychain
-                                   userInfo:nil];
-  [[self.mockSignIn stub] disconnectWithCallback:[OCMArg invokeBlockWithArgs:error, nil]];
+  NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
+                                          code:kGIDSignInErrorCodeHasNoAuthInKeychain
+                                      userInfo:nil];
+  [[self.mockSignIn stub] disconnectWithCallback:[OCMArg invokeBlockWithArgs:sdkError, nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin disconnectWithCompletion:^(FlutterError *error) {
@@ -99,9 +99,9 @@
                                                clientId:nil
                                          serverClientId:nil];
 
-  FlutterError *error;
-  [self.plugin initializeSignInWithParameters:params error:&error];
-  XCTAssertNil(error);
+  FlutterError *initializationError;
+  [self.plugin initializeSignInWithParameters:params error:&initializationError];
+  XCTAssertNil(initializationError);
 
   // Initialization values used in the next sign in request.
   [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error){
@@ -132,9 +132,9 @@
                                                clientId:@"mockClientId"
                                          serverClientId:nil];
 
-  FlutterError *error;
-  [self.plugin initializeSignInWithParameters:params error:&error];
-  XCTAssertNil(error);
+  FlutterError *initializationError;
+  [self.plugin initializeSignInWithParameters:params error:&initializationError];
+  XCTAssertNil(initializationError);
 
   // Initialization values used in the next sign in request.
   [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error){
@@ -154,9 +154,9 @@
                                            hostedDomain:nil
                                                clientId:nil
                                          serverClientId:@"mockServerClientId"];
-  FlutterError *error;
-  [self.plugin initializeSignInWithParameters:params error:&error];
-  XCTAssertNil(error);
+  FlutterError *initializationError;
+  [self.plugin initializeSignInWithParameters:params error:&initializationError];
+  XCTAssertNil(initializationError);
 
   // Initialization values used in the next sign in request.
   [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error){
@@ -215,12 +215,12 @@
 }
 
 - (void)testSignInSilentlyWithError {
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeHasNoAuthInKeychain
-                                   userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
+                                          code:kGIDSignInErrorCodeHasNoAuthInKeychain
+                                      userInfo:nil];
 
   [[self.mockSignIn stub]
-      restorePreviousSignInWithCallback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+      restorePreviousSignInWithCallback:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInSilentlyWithCompletion:^(FSIUserData *user, FlutterError *error) {
@@ -272,13 +272,13 @@
 }
 
 - (void)testSignInWithInitializedScopes {
-  FlutterError *error;
+  FlutterError *initializationError;
   [self.plugin
       initializeSignInWithParameters:[FSIInitParams makeWithScopes:@[ @"initial1", @"initial2" ]
                                                       hostedDomain:nil
                                                           clientId:nil
                                                     serverClientId:nil]
-                               error:&error];
+                               error:&initializationError];
 
   id mockUser = OCMClassMock([GIDGoogleUser class]);
   OCMStub([mockUser userID]).andReturn(@"mockID");
@@ -313,12 +313,12 @@
                 additionalScopes:OCMOCK_ANY
                         callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
 
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeScopesAlreadyGranted
-                                   userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
+                                          code:kGIDSignInErrorCodeScopesAlreadyGranted
+                                      userInfo:nil];
   [self configureMock:[self.mockSignIn stub]
          forAddScopes:OCMOCK_ANY
-             callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+             callback:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error) {
@@ -330,14 +330,14 @@
 }
 
 - (void)testSignInError {
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeCanceled
-                                   userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
+                                          code:kGIDSignInErrorCodeCanceled
+                                      userInfo:nil];
   [self configureMock:[self.mockSignIn stub]
       forSignInWithConfiguration:OCMOCK_ANY
                             hint:nil
                 additionalScopes:OCMOCK_ANY
-                        callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+                        callback:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error) {
@@ -396,11 +396,11 @@
   OCMStub([self.mockSignIn currentUser]).andReturn(mockUser);
 
   id mockAuthentication = OCMClassMock([GIDAuthentication class]);
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeHasNoAuthInKeychain
-                                   userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
+                                          code:kGIDSignInErrorCodeHasNoAuthInKeychain
+                                      userInfo:nil];
   [[mockAuthentication stub]
-      doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+      doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
@@ -418,11 +418,11 @@
   OCMStub([self.mockSignIn currentUser]).andReturn(mockUser);
 
   id mockAuthentication = OCMClassMock([GIDAuthentication class]);
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeCanceled
-                                   userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
+                                          code:kGIDSignInErrorCodeCanceled
+                                      userInfo:nil];
   [[mockAuthentication stub]
-      doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+      doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
@@ -440,9 +440,11 @@
   OCMStub([self.mockSignIn currentUser]).andReturn(mockUser);
 
   id mockAuthentication = OCMClassMock([GIDAuthentication class]);
-  NSError *error = [NSError errorWithDomain:NSURLErrorDomain code:NSURLErrorTimedOut userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:NSURLErrorDomain
+                                          code:NSURLErrorTimedOut
+                                      userInfo:nil];
   [[mockAuthentication stub]
-      doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+      doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
@@ -460,9 +462,9 @@
   OCMStub([self.mockSignIn currentUser]).andReturn(mockUser);
 
   id mockAuthentication = OCMClassMock([GIDAuthentication class]);
-  NSError *error = [NSError errorWithDomain:@"BogusDomain" code:42 userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:@"BogusDomain" code:42 userInfo:nil];
   [[mockAuthentication stub]
-      doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+      doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
@@ -478,12 +480,12 @@
 #pragma mark - Request scopes
 
 - (void)testRequestScopesResultErrorIfNotSignedIn {
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeNoCurrentUser
-                                   userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
+                                          code:kGIDSignInErrorCodeNoCurrentUser
+                                      userInfo:nil];
   [self configureMock:[self.mockSignIn stub]
          forAddScopes:@[ @"mockScope1" ]
-             callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+             callback:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin requestScopes:@[ @"mockScope1" ]
@@ -496,12 +498,12 @@
 }
 
 - (void)testRequestScopesIfNoMissingScope {
-  NSError *error = [NSError errorWithDomain:kGIDSignInErrorDomain
-                                       code:kGIDSignInErrorCodeScopesAlreadyGranted
-                                   userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
+                                          code:kGIDSignInErrorCodeScopesAlreadyGranted
+                                      userInfo:nil];
   [self configureMock:[self.mockSignIn stub]
          forAddScopes:@[ @"mockScope1" ]
-             callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+             callback:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin requestScopes:@[ @"mockScope1" ]
@@ -514,10 +516,10 @@
 }
 
 - (void)testRequestScopesWithUnknownError {
-  NSError *error = [NSError errorWithDomain:@"BogusDomain" code:42 userInfo:nil];
+  NSError *sdkError = [NSError errorWithDomain:@"BogusDomain" code:42 userInfo:nil];
   [self configureMock:[self.mockSignIn stub]
          forAddScopes:@[ @"mockScope1" ]
-             callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
+             callback:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin requestScopes:@[ @"mockScope1" ]
@@ -569,9 +571,9 @@
                                            hostedDomain:nil
                                                clientId:nil
                                          serverClientId:nil];
-  FlutterError *error;
-  [self.plugin initializeSignInWithParameters:params error:&error];
-  XCTAssertNil(error);
+  FlutterError *initializationError;
+  [self.plugin initializeSignInWithParameters:params error:&initializationError];
+  XCTAssertNil(initializationError);
 
   // Include one of the initially requested scopes.
   NSArray<NSString *> *addedScopes = @[ @"initial1", @"addScope1", @"addScope2" ];
