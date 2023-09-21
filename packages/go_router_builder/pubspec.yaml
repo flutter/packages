@@ -2,7 +2,7 @@ name: go_router_builder
 description: >-
   A builder that supports generated strongly-typed route helpers for
   package:go_router
-version: 2.3.1
+version: 2.3.3
 repository: https://github.com/flutter/packages/tree/main/packages/go_router_builder
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+go_router_builder%22
 
@@ -10,7 +10,7 @@ environment:
   sdk: ">=2.19.0 <4.0.0"
 
 dependencies:
-  analyzer: ">=4.4.0 <6.0.0"
+  analyzer: ">=4.4.0 <7.0.0"
   async: ^2.8.0
   build: ^2.0.0
   build_config: ^1.0.0
