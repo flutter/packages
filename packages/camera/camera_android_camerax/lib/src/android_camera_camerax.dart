@@ -488,6 +488,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<XFile> takePicture(int cameraId) async {
     if (_currentFlashMode != null) {
       await imageCapture!.setFlashMode(_currentFlashMode!);
+    } else if (torchEnabled) {
+      // Ensure any previously set flash modes are unset when torch mode has
+      // been enabled.
+      await imageCapture!.setFlashMode(ImageCapture.flashModeOff);
     }
     final String picturePath = await imageCapture!.takePicture();
     return XFile(picturePath);

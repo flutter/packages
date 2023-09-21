@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:flutter/services.dart' show BinaryMessenger, PlatformException;
 import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'system_services.dart';
 
 /// The interface that provides asynchronous operations like zoom and focus &
 /// metering, which affects output of all [UseCase]s currently bound to the
@@ -61,7 +62,12 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
   Future<void> enableTorchFromInstance(
       CameraControl instance, bool torch) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
-    await enableTorch(identifier, torch);
+    try {
+      await enableTorch(identifier, torch);
+    } on PlatformException catch (e) {
+      SystemServices.cameraErrorStreamController
+          .add(e.message ?? 'The camera was unable to change torch modes.');
+    }
   }
 }
 
