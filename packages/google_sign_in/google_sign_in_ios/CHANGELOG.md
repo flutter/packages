@@ -1,3 +1,7 @@
+## 5.7.0
+
+* Adds support for macOS.
+
 ## 5.6.4
 
 * Converts platform communication to Pigeon.
