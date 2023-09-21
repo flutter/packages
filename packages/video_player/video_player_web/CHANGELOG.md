@@ -1,3 +1,8 @@
+## 2.1.1
+
+* Ensures that the `autoplay` attribute of the underlying video element is set
+  to **false**.
+
 ## 2.1.0
 
 * Adds web options to customize the control list and context menu display.
