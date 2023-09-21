@@ -11,6 +11,9 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should [add it to your `pubspec.yaml` as usual][3].
 
+## Migrating to 0.3.0
+To migrate to version 0.3.0 from 0.2.x, have a look at the [migration guide](migration_guide.md).
+
 ## Contributing
 
 This plugin uses

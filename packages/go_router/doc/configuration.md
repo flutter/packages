@@ -30,7 +30,7 @@ GoRoute(
 
 To navigate to this route, use
 [go()](https://pub.dev/documentation/go_router/latest/go_router/GoRouter/go.html).
-To learn more about how navigation, visit the
+To learn more about how navigation works, visit the
 [Navigation](https://pub.dev/documentation/go_router/latest/topics/Navigation-topic.html)
 topic.
 
@@ -55,7 +55,7 @@ after the `?`), use [GoRouterState][]. For example, a URL path such as
 ```dart
 GoRoute(
   path: '/users',
-  builder: (context, state) => const UsersScreen(filter: state.queryParameters['filter']),
+  builder: (context, state) => const UsersScreen(filter: state.uri.queryParameters['filter']),
 ),
 ```
 

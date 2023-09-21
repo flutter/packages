@@ -4,9 +4,6 @@
 
 import 'dart:async';
 import 'dart:html';
-// TODO(a14n): remove this import once Flutter 3.1 or later reaches stable (including flutter/flutter#106316)
-// ignore: unnecessary_import
-import 'dart:ui';
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
@@ -101,24 +98,18 @@ void main() {
         );
       });
 
-      testWidgets('requests video and audio permissions',
-          (WidgetTester tester) async {
+      testWidgets('requests video permissions', (WidgetTester tester) async {
         final List<CameraDescription> _ =
             await CameraPlatform.instance.availableCameras();
 
         verify(
-          () => cameraService.getMediaStreamForOptions(
-            const CameraOptions(
-              audio: AudioConstraints(enabled: true),
-            ),
-          ),
+          () => cameraService.getMediaStreamForOptions(const CameraOptions()),
         ).called(1);
       });
 
       testWidgets(
           'releases the camera stream '
-          'used to request video and audio permissions',
-          (WidgetTester tester) async {
+          'used to request video permissions', (WidgetTester tester) async {
         final MockMediaStreamTrack videoTrack = MockMediaStreamTrack();
 
         bool videoTrackStopped = false;
@@ -127,11 +118,7 @@ void main() {
         });
 
         when(
-          () => cameraService.getMediaStreamForOptions(
-            const CameraOptions(
-              audio: AudioConstraints(enabled: true),
-            ),
-          ),
+          () => cameraService.getMediaStreamForOptions(const CameraOptions()),
         ).thenAnswer(
           (_) => Future<MediaStream>.value(
             FakeMediaStream(<MediaStreamTrack>[videoTrack]),

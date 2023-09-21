@@ -8,11 +8,12 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../go_router.dart';
 import 'configuration.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'route.dart';
+import 'router.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
 ///
@@ -98,6 +99,14 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       if (matchList.isError && onParserException != null) {
         return onParserException!(context, matchList);
       }
+
+      assert(() {
+        if (matchList.isNotEmpty) {
+          assert(!(matchList.last.route as GoRoute).redirectOnly,
+              'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
+        }
+        return true;
+      }());
       return _updateRouteMatchList(
         matchList,
         baseRouteMatchList: state.baseRouteMatchList,
@@ -120,16 +129,21 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     if (configuration.isEmpty) {
       return null;
     }
+    final String location;
     if (GoRouter.optionURLReflectsImperativeAPIs &&
         configuration.matches.last is ImperativeRouteMatch) {
-      configuration =
-          (configuration.matches.last as ImperativeRouteMatch).matches;
+      location = (configuration.matches.last as ImperativeRouteMatch)
+          .matches
+          .uri
+          .toString();
+    } else {
+      location = configuration.uri.toString();
     }
     return RouteInformation(
       // TODO(chunhtai): remove this ignore and migrate the code
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
-      location: configuration.uri.toString(),
+      location: location,
       state: _routeMatchListCodec.encode(configuration),
     );
   }

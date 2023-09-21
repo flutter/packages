@@ -13,6 +13,7 @@ import 'java_object.dart';
 /// A snapshot of the camera state.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraState.
+@immutable
 class CameraState extends JavaObject {
   /// Constructs a [CameraState] that is not automatically attached to a native object.
   CameraState.detached(

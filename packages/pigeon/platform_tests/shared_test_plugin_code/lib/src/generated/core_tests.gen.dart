@@ -18,6 +18,7 @@ enum AnEnum {
   three,
 }
 
+/// A class containing all supported types.
 class AllTypes {
   AllTypes({
     required this.aBool,
@@ -32,6 +33,7 @@ class AllTypes {
     required this.aMap,
     required this.anEnum,
     required this.aString,
+    required this.anObject,
   });
 
   bool aBool;
@@ -58,6 +60,8 @@ class AllTypes {
 
   String aString;
 
+  Object anObject;
+
   Object encode() {
     return <Object?>[
       aBool,
@@ -72,6 +76,7 @@ class AllTypes {
       aMap,
       anEnum.index,
       aString,
+      anObject,
     ];
   }
 
@@ -90,10 +95,12 @@ class AllTypes {
       aMap: result[9]! as Map<Object?, Object?>,
       anEnum: AnEnum.values[result[10]! as int],
       aString: result[11]! as String,
+      anObject: result[12]!,
     );
   }
 }
 
+/// A class containing all supported nullable types.
 class AllNullableTypes {
   AllNullableTypes({
     this.aNullableBool,
@@ -111,6 +118,7 @@ class AllNullableTypes {
     this.nullableMapWithObject,
     this.aNullableEnum,
     this.aNullableString,
+    this.aNullableObject,
   });
 
   bool? aNullableBool;
@@ -143,6 +151,8 @@ class AllNullableTypes {
 
   String? aNullableString;
 
+  Object? aNullableObject;
+
   Object encode() {
     return <Object?>[
       aNullableBool,
@@ -160,6 +170,7 @@ class AllNullableTypes {
       nullableMapWithObject,
       aNullableEnum?.index,
       aNullableString,
+      aNullableObject,
     ];
   }
 
@@ -184,27 +195,40 @@ class AllNullableTypes {
       aNullableEnum:
           result[13] != null ? AnEnum.values[result[13]! as int] : null,
       aNullableString: result[14] as String?,
+      aNullableObject: result[15],
     );
   }
 }
 
-class AllNullableTypesWrapper {
-  AllNullableTypesWrapper({
-    required this.values,
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `AllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `AllTypes` when testing doesn't require both (ie. testing null classes).
+class AllClassesWrapper {
+  AllClassesWrapper({
+    required this.allNullableTypes,
+    this.allTypes,
   });
 
-  AllNullableTypes values;
+  AllNullableTypes allNullableTypes;
+
+  AllTypes? allTypes;
 
   Object encode() {
     return <Object?>[
-      values.encode(),
+      allNullableTypes.encode(),
+      allTypes?.encode(),
     ];
   }
 
-  static AllNullableTypesWrapper decode(Object result) {
+  static AllClassesWrapper decode(Object result) {
     result as List<Object?>;
-    return AllNullableTypesWrapper(
-      values: AllNullableTypes.decode(result[0]! as List<Object?>),
+    return AllClassesWrapper(
+      allNullableTypes: AllNullableTypes.decode(result[0]! as List<Object?>),
+      allTypes: result[1] != null
+          ? AllTypes.decode(result[1]! as List<Object?>)
+          : null,
     );
   }
 }
@@ -235,10 +259,10 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   const _HostIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllNullableTypes) {
+    if (value is AllClassesWrapper) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWrapper) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is AllTypes) {
@@ -256,9 +280,9 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        return AllClassesWrapper.decode(readValue(buffer)!);
       case 129:
-        return AllNullableTypesWrapper.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
       case 130:
         return AllTypes.decode(readValue(buffer)!);
       case 131:
@@ -285,7 +309,8 @@ class HostIntegrationCoreApi {
   /// test basic calling.
   Future<void> noop() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.noop', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -307,7 +332,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllTypes> echoAllTypes(AllTypes arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAllTypes', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_everything]) as List<Object?>?;
@@ -335,7 +361,8 @@ class HostIntegrationCoreApi {
   /// Returns an error, to test error handling.
   Future<Object?> throwError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.throwError', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -357,7 +384,8 @@ class HostIntegrationCoreApi {
   /// Returns an error from a void function, to test error handling.
   Future<void> throwErrorFromVoid() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -379,7 +407,8 @@ class HostIntegrationCoreApi {
   /// Returns a Flutter error, to test error handling.
   Future<Object?> throwFlutterError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterError', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -401,7 +430,8 @@ class HostIntegrationCoreApi {
   /// Returns passed in int.
   Future<int> echoInt(int arg_anInt) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoInt', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
@@ -429,7 +459,8 @@ class HostIntegrationCoreApi {
   /// Returns passed in double.
   Future<double> echoDouble(double arg_aDouble) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoDouble', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aDouble]) as List<Object?>?;
@@ -457,7 +488,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in boolean.
   Future<bool> echoBool(bool arg_aBool) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoBool', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aBool]) as List<Object?>?;
@@ -485,7 +517,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in string.
   Future<String> echoString(String arg_aString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoString', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
@@ -513,7 +546,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in Uint8List.
   Future<Uint8List> echoUint8List(Uint8List arg_aUint8List) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoUint8List', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aUint8List]) as List<Object?>?;
@@ -541,7 +575,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in generic Object.
   Future<Object> echoObject(Object arg_anObject) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoObject', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anObject]) as List<Object?>?;
@@ -569,7 +604,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<Object?>> echoList(List<Object?> arg_aList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoList', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
@@ -597,7 +633,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String?, Object?>> echoMap(Map<String?, Object?> arg_aMap) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoMap', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
@@ -622,11 +659,71 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed map to test nested class serialization and deserialization.
+  Future<AllClassesWrapper> echoClassWrapper(
+      AllClassesWrapper arg_wrapper) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_wrapper]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as AllClassesWrapper?)!;
+    }
+  }
+
+  /// Returns the passed enum to test serialization and deserialization.
+  Future<AnEnum> echoEnum(AnEnum arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllNullableTypes?> echoAllNullableTypes(
       AllNullableTypes? arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_everything]) as List<Object?>?;
@@ -649,9 +746,9 @@ class HostIntegrationCoreApi {
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   Future<String?> extractNestedNullableString(
-      AllNullableTypesWrapper arg_wrapper) async {
+      AllClassesWrapper arg_wrapper) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedNullableString',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -674,10 +771,10 @@ class HostIntegrationCoreApi {
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
-  Future<AllNullableTypesWrapper> createNestedNullableString(
+  Future<AllClassesWrapper> createNestedNullableString(
       String? arg_nullableString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.createNestedNullableString',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -699,7 +796,7 @@ class HostIntegrationCoreApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as AllNullableTypesWrapper?)!;
+      return (replyList[0] as AllClassesWrapper?)!;
     }
   }
 
@@ -707,7 +804,7 @@ class HostIntegrationCoreApi {
   Future<AllNullableTypes> sendMultipleNullableTypes(bool? arg_aNullableBool,
       int? arg_aNullableInt, String? arg_aNullableString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.sendMultipleNullableTypes',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(
@@ -737,7 +834,8 @@ class HostIntegrationCoreApi {
   /// Returns passed in int.
   Future<int?> echoNullableInt(int? arg_aNullableInt) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableInt', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableInt]) as List<Object?>?;
@@ -760,7 +858,8 @@ class HostIntegrationCoreApi {
   /// Returns passed in double.
   Future<double?> echoNullableDouble(double? arg_aNullableDouble) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableDouble', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableDouble]) as List<Object?>?;
@@ -783,7 +882,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in boolean.
   Future<bool?> echoNullableBool(bool? arg_aNullableBool) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableBool', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableBool]) as List<Object?>?;
@@ -806,7 +906,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in string.
   Future<String?> echoNullableString(String? arg_aNullableString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableString', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableString]) as List<Object?>?;
@@ -830,7 +931,7 @@ class HostIntegrationCoreApi {
   Future<Uint8List?> echoNullableUint8List(
       Uint8List? arg_aNullableUint8List) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableUint8List',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -854,7 +955,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in generic Object.
   Future<Object?> echoNullableObject(Object? arg_aNullableObject) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableObject', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableObject]) as List<Object?>?;
@@ -878,7 +980,8 @@ class HostIntegrationCoreApi {
   Future<List<Object?>?> echoNullableList(
       List<Object?>? arg_aNullableList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableList', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableList]) as List<Object?>?;
@@ -902,7 +1005,8 @@ class HostIntegrationCoreApi {
   Future<Map<String?, Object?>?> echoNullableMap(
       Map<String?, Object?>? arg_aNullableMap) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableMap', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableMap]) as List<Object?>?;
@@ -922,11 +1026,37 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AnEnum?> echoNullableEnum(AnEnum? arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   Future<void> noopAsync() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.noopAsync', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -948,7 +1078,8 @@ class HostIntegrationCoreApi {
   /// Returns passed in int asynchronously.
   Future<int> echoAsyncInt(int arg_anInt) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncInt', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
@@ -976,7 +1107,8 @@ class HostIntegrationCoreApi {
   /// Returns passed in double asynchronously.
   Future<double> echoAsyncDouble(double arg_aDouble) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncDouble', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aDouble]) as List<Object?>?;
@@ -1004,7 +1136,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in boolean asynchronously.
   Future<bool> echoAsyncBool(bool arg_aBool) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncBool', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aBool]) as List<Object?>?;
@@ -1032,7 +1165,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed string asynchronously.
   Future<String> echoAsyncString(String arg_aString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
@@ -1060,7 +1194,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in Uint8List asynchronously.
   Future<Uint8List> echoAsyncUint8List(Uint8List arg_aUint8List) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncUint8List', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aUint8List]) as List<Object?>?;
@@ -1088,7 +1223,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in generic Object asynchronously.
   Future<Object> echoAsyncObject(Object arg_anObject) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncObject', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anObject]) as List<Object?>?;
@@ -1113,10 +1249,11 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>> echoAsyncList(List<Object?> arg_aList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncList', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
@@ -1141,11 +1278,12 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<String?, Object?>> echoAsyncMap(
       Map<String?, Object?> arg_aMap) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncMap', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
@@ -1170,10 +1308,40 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnEnum> echoAsyncEnum(AnEnum arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   /// Responds with an error from an async function returning a value.
   Future<Object?> throwAsyncError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -1195,7 +1363,7 @@ class HostIntegrationCoreApi {
   /// Responds with an error from an async void function.
   Future<void> throwAsyncErrorFromVoid() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncErrorFromVoid',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
@@ -1218,7 +1386,7 @@ class HostIntegrationCoreApi {
   /// Responds with a Flutter error from an async function returning a value.
   Future<Object?> throwAsyncFlutterError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterError',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
@@ -1241,7 +1409,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed object, to test async serialization and deserialization.
   Future<AllTypes> echoAsyncAllTypes(AllTypes arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllTypes', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_everything]) as List<Object?>?;
@@ -1270,7 +1439,7 @@ class HostIntegrationCoreApi {
   Future<AllNullableTypes?> echoAsyncNullableAllNullableTypes(
       AllNullableTypes? arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1294,7 +1463,8 @@ class HostIntegrationCoreApi {
   /// Returns passed in int asynchronously.
   Future<int?> echoAsyncNullableInt(int? arg_anInt) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableInt', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
@@ -1317,7 +1487,7 @@ class HostIntegrationCoreApi {
   /// Returns passed in double asynchronously.
   Future<double?> echoAsyncNullableDouble(double? arg_aDouble) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableDouble',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1341,7 +1511,7 @@ class HostIntegrationCoreApi {
   /// Returns the passed in boolean asynchronously.
   Future<bool?> echoAsyncNullableBool(bool? arg_aBool) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableBool',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1365,7 +1535,7 @@ class HostIntegrationCoreApi {
   /// Returns the passed string asynchronously.
   Future<String?> echoAsyncNullableString(String? arg_aString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableString',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1390,7 +1560,7 @@ class HostIntegrationCoreApi {
   Future<Uint8List?> echoAsyncNullableUint8List(
       Uint8List? arg_aUint8List) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableUint8List',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1414,7 +1584,7 @@ class HostIntegrationCoreApi {
   /// Returns the passed in generic Object asynchronously.
   Future<Object?> echoAsyncNullableObject(Object? arg_anObject) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableObject',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1435,10 +1605,10 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>?> echoAsyncNullableList(List<Object?>? arg_aList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableList',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1459,11 +1629,12 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<String?, Object?>?> echoAsyncNullableMap(
       Map<String?, Object?>? arg_aMap) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableMap', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
@@ -1483,9 +1654,36 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnEnum?> echoAsyncNullableEnum(AnEnum? arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   Future<void> callFlutterNoop() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -1506,7 +1704,7 @@ class HostIntegrationCoreApi {
 
   Future<Object?> callFlutterThrowError() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowError',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
@@ -1528,7 +1726,7 @@ class HostIntegrationCoreApi {
 
   Future<void> callFlutterThrowErrorFromVoid() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
@@ -1550,7 +1748,7 @@ class HostIntegrationCoreApi {
 
   Future<AllTypes> callFlutterEchoAllTypes(AllTypes arg_everything) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1576,12 +1774,36 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AllNullableTypes?> callFlutterEchoAllNullableTypes(
+      AllNullableTypes? arg_everything) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_everything]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as AllNullableTypes?);
+    }
+  }
+
   Future<AllNullableTypes> callFlutterSendMultipleNullableTypes(
       bool? arg_aNullableBool,
       int? arg_aNullableInt,
       String? arg_aNullableString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(
@@ -1610,7 +1832,8 @@ class HostIntegrationCoreApi {
 
   Future<bool> callFlutterEchoBool(bool arg_aBool) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoBool', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aBool]) as List<Object?>?;
@@ -1637,7 +1860,8 @@ class HostIntegrationCoreApi {
 
   Future<int> callFlutterEchoInt(int arg_anInt) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoInt', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
@@ -1664,7 +1888,7 @@ class HostIntegrationCoreApi {
 
   Future<double> callFlutterEchoDouble(double arg_aDouble) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoDouble',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1692,7 +1916,7 @@ class HostIntegrationCoreApi {
 
   Future<String> callFlutterEchoString(String arg_aString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoString',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1720,7 +1944,7 @@ class HostIntegrationCoreApi {
 
   Future<Uint8List> callFlutterEchoUint8List(Uint8List arg_aList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoUint8List',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1748,7 +1972,8 @@ class HostIntegrationCoreApi {
 
   Future<List<Object?>> callFlutterEchoList(List<Object?> arg_aList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoList', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
@@ -1776,7 +2001,8 @@ class HostIntegrationCoreApi {
   Future<Map<String?, Object?>> callFlutterEchoMap(
       Map<String?, Object?> arg_aMap) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoMap', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
@@ -1801,9 +2027,37 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AnEnum> callFlutterEchoEnum(AnEnum arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   Future<bool?> callFlutterEchoNullableBool(bool? arg_aBool) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableBool',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1826,7 +2080,7 @@ class HostIntegrationCoreApi {
 
   Future<int?> callFlutterEchoNullableInt(int? arg_anInt) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableInt',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1849,7 +2103,7 @@ class HostIntegrationCoreApi {
 
   Future<double?> callFlutterEchoNullableDouble(double? arg_aDouble) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableDouble',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1872,7 +2126,7 @@ class HostIntegrationCoreApi {
 
   Future<String?> callFlutterEchoNullableString(String? arg_aString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableString',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1896,7 +2150,7 @@ class HostIntegrationCoreApi {
   Future<Uint8List?> callFlutterEchoNullableUint8List(
       Uint8List? arg_aList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableUint8List',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1920,7 +2174,7 @@ class HostIntegrationCoreApi {
   Future<List<Object?>?> callFlutterEchoNullableList(
       List<Object?>? arg_aList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableList',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1944,7 +2198,7 @@ class HostIntegrationCoreApi {
   Future<Map<String?, Object?>?> callFlutterEchoNullableMap(
       Map<String?, Object?>? arg_aMap) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableMap',
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
@@ -1964,16 +2218,41 @@ class HostIntegrationCoreApi {
       return (replyList[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
     }
   }
+
+  Future<AnEnum?> callFlutterEchoNullableEnum(AnEnum? arg_anEnum) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
+    }
+  }
 }
 
 class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
   const _FlutterIntegrationCoreApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllNullableTypes) {
+    if (value is AllClassesWrapper) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWrapper) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is AllTypes) {
@@ -1991,9 +2270,9 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        return AllClassesWrapper.decode(readValue(buffer)!);
       case 129:
-        return AllNullableTypesWrapper.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
       case 130:
         return AllTypes.decode(readValue(buffer)!);
       case 131:
@@ -2023,7 +2302,7 @@ abstract class FlutterIntegrationCoreApi {
   AllTypes echoAllTypes(AllTypes everything);
 
   /// Returns the passed object, to test serialization and deserialization.
-  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
   /// Returns passed in arguments of multiple types.
   ///
@@ -2052,6 +2331,9 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  AnEnum echoEnum(AnEnum anEnum);
+
   /// Returns the passed boolean, to test serialization and deserialization.
   bool? echoNullableBool(bool? aBool);
 
@@ -2073,6 +2355,9 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  AnEnum? echoNullableEnum(AnEnum? anEnum);
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   Future<void> noopAsync();
@@ -2084,7 +2369,8 @@ abstract class FlutterIntegrationCoreApi {
       {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.noop', codec,
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -2098,7 +2384,8 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.throwError', codec,
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -2112,7 +2399,7 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.throwErrorFromVoid',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2127,18 +2414,19 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes', codec,
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final AllTypes? arg_everything = (args[0] as AllTypes?);
           assert(arg_everything != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes was null, expected non-null AllTypes.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes was null, expected non-null AllTypes.');
           final AllTypes output = api.echoAllTypes(arg_everything!);
           return output;
         });
@@ -2146,7 +2434,7 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2154,21 +2442,19 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final AllNullableTypes? arg_everything =
               (args[0] as AllNullableTypes?);
-          assert(arg_everything != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes was null, expected non-null AllNullableTypes.');
-          final AllNullableTypes output =
-              api.echoAllNullableTypes(arg_everything!);
+          final AllNullableTypes? output =
+              api.echoAllNullableTypes(arg_everything);
           return output;
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2176,7 +2462,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final bool? arg_aNullableBool = (args[0] as bool?);
           final int? arg_aNullableInt = (args[1] as int?);
@@ -2189,142 +2475,7 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final bool? arg_aBool = (args[0] as bool?);
-          assert(arg_aBool != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool was null, expected non-null bool.');
-          final bool output = api.echoBool(arg_aBool!);
-          return output;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_anInt = (args[0] as int?);
-          assert(arg_anInt != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt was null, expected non-null int.');
-          final int output = api.echoInt(arg_anInt!);
-          return output;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final double? arg_aDouble = (args[0] as double?);
-          assert(arg_aDouble != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble was null, expected non-null double.');
-          final double output = api.echoDouble(arg_aDouble!);
-          return output;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_aString = (args[0] as String?);
-          assert(arg_aString != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString was null, expected non-null String.');
-          final String output = api.echoString(arg_aString!);
-          return output;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final Uint8List? arg_aList = (args[0] as Uint8List?);
-          assert(arg_aList != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List was null, expected non-null Uint8List.');
-          final Uint8List output = api.echoUint8List(arg_aList!);
-          return output;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final List<Object?>? arg_aList =
-              (args[0] as List<Object?>?)?.cast<Object?>();
-          assert(arg_aList != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList was null, expected non-null List<Object?>.');
-          final List<Object?> output = api.echoList(arg_aList!);
-          return output;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final Map<String?, Object?>? arg_aMap =
-              (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-          assert(arg_aMap != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap was null, expected non-null Map<String?, Object?>.');
-          final Map<String?, Object?> output = api.echoMap(arg_aMap!);
-          return output;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2332,7 +2483,170 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final bool? arg_aBool = (args[0] as bool?);
+          assert(arg_aBool != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool was null, expected non-null bool.');
+          final bool output = api.echoBool(arg_aBool!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_anInt = (args[0] as int?);
+          assert(arg_anInt != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt was null, expected non-null int.');
+          final int output = api.echoInt(arg_anInt!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final double? arg_aDouble = (args[0] as double?);
+          assert(arg_aDouble != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble was null, expected non-null double.');
+          final double output = api.echoDouble(arg_aDouble!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_aString = (args[0] as String?);
+          assert(arg_aString != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString was null, expected non-null String.');
+          final String output = api.echoString(arg_aString!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Uint8List? arg_aList = (args[0] as Uint8List?);
+          assert(arg_aList != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List was null, expected non-null Uint8List.');
+          final Uint8List output = api.echoUint8List(arg_aList!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final List<Object?>? arg_aList =
+              (args[0] as List<Object?>?)?.cast<Object?>();
+          assert(arg_aList != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null, expected non-null List<Object?>.');
+          final List<Object?> output = api.echoList(arg_aList!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final Map<String?, Object?>? arg_aMap =
+              (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+          assert(arg_aMap != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null, expected non-null Map<String?, Object?>.');
+          final Map<String?, Object?> output = api.echoMap(arg_aMap!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AnEnum? arg_anEnum =
+              args[0] == null ? null : AnEnum.values[args[0]! as int];
+          assert(arg_anEnum != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null, expected non-null AnEnum.');
+          final AnEnum output = api.echoEnum(arg_anEnum!);
+          return output.index;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final bool? arg_aBool = (args[0] as bool?);
           final bool? output = api.echoNullableBool(arg_aBool);
@@ -2342,14 +2656,15 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt', codec,
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_anInt = (args[0] as int?);
           final int? output = api.echoNullableInt(arg_anInt);
@@ -2359,7 +2674,7 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2367,7 +2682,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final double? arg_aDouble = (args[0] as double?);
           final double? output = api.echoNullableDouble(arg_aDouble);
@@ -2377,7 +2692,7 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2385,7 +2700,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_aString = (args[0] as String?);
           final String? output = api.echoNullableString(arg_aString);
@@ -2395,7 +2710,7 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2403,7 +2718,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final Uint8List? arg_aList = (args[0] as Uint8List?);
           final Uint8List? output = api.echoNullableUint8List(arg_aList);
@@ -2413,7 +2728,7 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2421,7 +2736,7 @@ abstract class FlutterIntegrationCoreApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final List<Object?>? arg_aList =
               (args[0] as List<Object?>?)?.cast<Object?>();
@@ -2432,14 +2747,15 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap', codec,
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final Map<String?, Object?>? arg_aMap =
               (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
@@ -2450,7 +2766,27 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync', codec,
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AnEnum? arg_anEnum =
+              args[0] == null ? null : AnEnum.values[args[0]! as int];
+          final AnEnum? output = api.echoNullableEnum(arg_anEnum);
+          return output?.index;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -2464,18 +2800,19 @@ abstract class FlutterIntegrationCoreApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString', codec,
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_aString = (args[0] as String?);
           assert(arg_aString != null,
-              'Argument for dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString was null, expected non-null String.');
           final String output = await api.echoAsyncString(arg_aString!);
           return output;
         });
@@ -2497,7 +2834,8 @@ class HostTrivialApi {
 
   Future<void> noop() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostTrivialApi.noop', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -2530,7 +2868,7 @@ class HostSmallApi {
 
   Future<String> echo(String arg_aString) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostSmallApi.echo', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
@@ -2557,7 +2895,8 @@ class HostSmallApi {
 
   Future<void> voidVoid() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.HostSmallApi.voidVoid', codec,
+        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -2609,18 +2948,19 @@ abstract class FlutterSmallApi {
   static void setup(FlutterSmallApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.FlutterSmallApi.echoWrappedList', codec,
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.FlutterSmallApi.echoWrappedList was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final TestMessage? arg_msg = (args[0] as TestMessage?);
           assert(arg_msg != null,
-              'Argument for dev.flutter.pigeon.FlutterSmallApi.echoWrappedList was null, expected non-null TestMessage.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList was null, expected non-null TestMessage.');
           final TestMessage output = api.echoWrappedList(arg_msg!);
           return output;
         });

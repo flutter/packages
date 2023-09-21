@@ -1,5 +1,5 @@
 # path_provider
-<?code-excerpt path-base="excerpts/packages/path_provider_example"?>
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/path_provider.svg)](https://pub.dev/packages/path_provider)
 
@@ -35,6 +35,7 @@ Directories support by platform:
 | Application Support | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 | Application Library | ❌️ | ✔️ | ❌️ | ✔️ | ❌️ |
 | Application Documents | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
+| Application Cache | ✔️ | ✔️ | ✔️ | ✔️ | ✔️ |
 | External Storage | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
 | External Cache Directories | ✔️ | ❌ | ❌ | ❌️ | ❌️ |
 | External Storage Directories | ✔️ | ❌ | ❌ | ❌️ | ❌️ |

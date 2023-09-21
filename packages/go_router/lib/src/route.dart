@@ -2,15 +2,68 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import '../go_router.dart';
 import 'configuration.dart';
 import 'match.dart';
 import 'path_utils.dart';
-import 'typedefs.dart';
+import 'router.dart';
+import 'state.dart';
+
+/// The page builder for [GoRoute].
+typedef GoRouterPageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+);
+
+/// The widget builder for [GoRoute].
+typedef GoRouterWidgetBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+);
+
+/// The widget builder for [ShellRoute].
+typedef ShellRouteBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+);
+
+/// The page builder for [ShellRoute].
+typedef ShellRoutePageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+  Widget child,
+);
+
+/// The widget builder for [StatefulShellRoute].
+typedef StatefulShellRouteBuilder = Widget Function(
+  BuildContext context,
+  GoRouterState state,
+  StatefulNavigationShell navigationShell,
+);
+
+/// The page builder for [StatefulShellRoute].
+typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
+  BuildContext context,
+  GoRouterState state,
+  StatefulNavigationShell navigationShell,
+);
+
+/// Signature for functions used to build Navigators
+typedef NavigatorBuilder = Widget Function(
+    List<NavigatorObserver>? observers, String? restorationScopeId);
+
+/// Signature for function used in [RouteBase.onExit].
+///
+/// If the return value is true or the future resolve to true, the route will
+/// exit as usual. Otherwise, the operation will abort.
+typedef ExitCallback = FutureOr<bool> Function(BuildContext context);
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
@@ -96,7 +149,7 @@ import 'typedefs.dart';
 /// ///
 /// See [main.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 @immutable
-abstract class RouteBase {
+abstract class RouteBase with Diagnosticable {
   const RouteBase._({
     required this.routes,
     required this.parentNavigatorKey,
@@ -117,6 +170,15 @@ abstract class RouteBase {
   static Iterable<RouteBase> routesRecursively(Iterable<RouteBase> routes) {
     return routes.expand(
         (RouteBase e) => <RouteBase>[e, ...routesRecursively(e.routes)]);
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    if (parentNavigatorKey != null) {
+      properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>(
+          'parentNavKey', parentNavigatorKey));
+    }
   }
 }
 
@@ -147,15 +209,23 @@ class GoRoute extends RouteBase {
     this.pageBuilder,
     super.parentNavigatorKey,
     this.redirect,
+    this.onExit,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
         assert(pageBuilder != null || builder != null || redirect != null,
             'builder, pageBuilder, or redirect must be provided'),
+        assert(onExit == null || pageBuilder != null || builder != null,
+            'if onExit is provided, one of pageBuilder or builder must be provided'),
         super._() {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, pathParameters);
   }
+
+  /// Whether this [GoRoute] only redirects to another route.
+  ///
+  /// If this is true, this route must redirect location other than itself.
+  bool get redirectOnly => pageBuilder == null && builder == null;
 
   /// Optional name of the route.
   ///
@@ -309,6 +379,54 @@ class GoRoute extends RouteBase {
   /// re-evaluation will be triggered if the [InheritedWidget] changes.
   final GoRouterRedirect? redirect;
 
+  /// Called when this route is removed from GoRouter's route history.
+  ///
+  /// Some example this callback may be called:
+  ///  * This route is removed as the result of [GoRouter.pop].
+  ///  * This route is no longer in the route history after a [GoRouter.go].
+  ///
+  /// This method can be useful it one wants to launch a dialog for user to
+  /// confirm if they want to exit the screen.
+  ///
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       onExit: (BuildContext context) => showDialog<bool>(
+  ///         context: context,
+  ///         builder: (BuildContext context) {
+  ///           return AlertDialog(
+  ///             title: const Text('Do you want to exit this page?'),
+  ///             actions: <Widget>[
+  ///               TextButton(
+  ///                 style: TextButton.styleFrom(
+  ///                   textStyle: Theme.of(context).textTheme.labelLarge,
+  ///                 ),
+  ///                 child: const Text('Go Back'),
+  ///                 onPressed: () {
+  ///                   Navigator.of(context).pop(false);
+  ///                 },
+  ///               ),
+  ///               TextButton(
+  ///                 style: TextButton.styleFrom(
+  ///                   textStyle: Theme.of(context).textTheme.labelLarge,
+  ///                 ),
+  ///                 child: const Text('Confirm'),
+  ///                 onPressed: () {
+  ///                   Navigator.of(context).pop(true);
+  ///                 },
+  ///               ),
+  ///             ],
+  ///           );
+  ///         },
+  ///       ),
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  final ExitCallback? onExit;
+
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
   RegExpMatch? matchPatternAsPrefix(String loc) =>
@@ -323,8 +441,12 @@ class GoRoute extends RouteBase {
   final List<String> pathParameters = <String>[];
 
   @override
-  String toString() {
-    return 'GoRoute(name: $name, path: $path)';
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(StringProperty('name', name));
+    properties.add(StringProperty('path', path));
+    properties.add(
+        FlagProperty('redirect', value: redirectOnly, ifTrue: 'Redirect Only'));
   }
 
   late final RegExp _pathRE;
@@ -337,6 +459,21 @@ abstract class ShellRouteBase extends RouteBase {
   const ShellRouteBase._(
       {required super.routes, required super.parentNavigatorKey})
       : super._();
+
+  static void _debugCheckSubRouteParentNavigatorKeys(
+      List<RouteBase> subRoutes, GlobalKey<NavigatorState> navigatorKey) {
+    for (final RouteBase route in subRoutes) {
+      assert(
+          route.parentNavigatorKey == null ||
+              route.parentNavigatorKey == navigatorKey,
+          "sub-route's parent navigator key must either be null or has the same navigator key as parent's key");
+      if (route is GoRoute && route.redirectOnly) {
+        // This route does not produce a page, need to check its sub-routes
+        // instead.
+        _debugCheckSubRouteParentNavigatorKeys(route.routes, navigatorKey);
+      }
+    }
+  }
 
   /// Attempts to build the Widget representing this shell route.
   ///
@@ -506,12 +643,11 @@ class ShellRoute extends ShellRouteBase {
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._() {
-    for (final RouteBase route in routes) {
-      if (route is GoRoute) {
-        assert(route.parentNavigatorKey == null ||
-            route.parentNavigatorKey == navigatorKey);
-      }
-    }
+    assert(() {
+      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
+          routes, this.navigatorKey);
+      return true;
+    }());
   }
 
   /// The widget builder for a shell route.
@@ -576,6 +712,13 @@ class ShellRoute extends ShellRouteBase {
   @override
   Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
       <GlobalKey<NavigatorState>>[navigatorKey];
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<GlobalKey<NavigatorState>>(
+        'navigatorKey', navigatorKey));
+  }
 }
 
 /// A route that displays a UI shell with separate [Navigator]s for its
@@ -660,8 +803,8 @@ class StatefulShellRoute extends ShellRouteBase {
     super.parentNavigatorKey,
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
-        assert((pageBuilder != null) ^ (builder != null),
-            'One of builder or pageBuilder must be provided, but not both'),
+        assert((pageBuilder != null) || (builder != null),
+            'One of builder or pageBuilder must be provided'),
         assert(_debugUniqueNavigatorKeys(branches).length == branches.length,
             'Navigator keys must be unique'),
         assert(_debugValidateParentNavigatorKeys(branches)),
@@ -673,7 +816,7 @@ class StatefulShellRoute extends ShellRouteBase {
   ///
   /// This constructor provides an IndexedStack based implementation for the
   /// container ([navigatorContainerBuilder]) used to manage the Widgets
-  /// representing the branch Navigators. A part from that, this constructor
+  /// representing the branch Navigators. Apart from that, this constructor
   /// works the same way as the default constructor.
   ///
   /// See [Stateful Nested Navigation](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/stacked_shell_route.dart)
@@ -828,6 +971,13 @@ class StatefulShellRoute extends ShellRouteBase {
     }
     return true;
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<Iterable<GlobalKey<NavigatorState>>>(
+        'navigatorKeys', _navigatorKeys));
+  }
 }
 
 /// Representation of a separate branch in a stateful navigation tree, used to
@@ -854,7 +1004,13 @@ class StatefulShellBranch {
     this.initialLocation,
     this.restorationScopeId,
     this.observers,
-  }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>();
+  }) : navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>() {
+    assert(() {
+      ShellRouteBase._debugCheckSubRouteParentNavigatorKeys(
+          routes, this.navigatorKey);
+      return true;
+    }());
+  }
 
   /// The [GlobalKey] to be used by the [Navigator] built for this branch.
   ///

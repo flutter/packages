@@ -5,9 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:go_router/src/match.dart';
 import 'package:go_router/src/misc/error_screen.dart';
-import 'package:go_router/src/misc/errors.dart';
 
 import 'test_helpers.dart';
 
