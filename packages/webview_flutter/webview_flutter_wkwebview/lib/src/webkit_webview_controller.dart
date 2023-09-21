@@ -639,7 +639,7 @@ window.addEventListener("error", function(e) {
       // removed above.
       if (!_zoomEnabled) _disableZoom(),
       // Console logs are forwarded with a WKUserScript, so this adds it back
-      // if a console callback was registered with [setConsoleLogCallback].
+      // if a console callback was registered with [setOnConsoleMessage].
       if (_onConsoleMessageCallback != null) _injectConsoleOverride(),
     ]);
   }
