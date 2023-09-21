@@ -92,11 +92,9 @@ class XFile extends XFileBase {
   @override
   String get path => _file.path;
 
-  /// The name extracted from the last part of [File.path].
   @override
   String get name => _file.path.split(Platform.pathSeparator).last;
 
-  /// The [File.length].
   @override
   Future<int> length() {
     if (_length != null) {
