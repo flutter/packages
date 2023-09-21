@@ -18,6 +18,7 @@ import 'test_android_webview.g.dart';
   DownloadListener,
   JavaScriptChannel,
   TestCookieManagerHostApi,
+  TestCustomViewCallbackHostApi,
   TestDownloadListenerHostApi,
   TestGeolocationPermissionsCallbackHostApi,
   TestInstanceManagerHostApi,
@@ -1037,6 +1038,88 @@ void main() {
         expect(callbackParameters, <Object?>[instance, request]);
       });
 
+      test('onShowCustomView', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WebChromeClient instance = WebChromeClient.detached(
+          onShowCustomView: (
+            WebChromeClient instance,
+            View view,
+            CustomViewCallback callback,
+          ) {
+            callbackParameters = <Object?>[
+              instance,
+              view,
+              callback,
+            ];
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WebChromeClientFlutterApiImpl flutterApi =
+            WebChromeClientFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        final View view = View.detached(
+          instanceManager: instanceManager,
+        );
+        const int viewIdentifier = 50;
+        instanceManager.addHostCreatedInstance(view, viewIdentifier);
+
+        final CustomViewCallback callback = CustomViewCallback.detached(
+          instanceManager: instanceManager,
+        );
+        const int callbackIdentifier = 51;
+        instanceManager.addHostCreatedInstance(callback, callbackIdentifier);
+
+        flutterApi.onShowCustomView(
+          instanceIdentifier,
+          viewIdentifier,
+          callbackIdentifier,
+        );
+
+        expect(callbackParameters, <Object?>[
+          instance,
+          view,
+          callback,
+        ]);
+      });
+
+      test('onHideCustomView', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        const int instanceIdentifier = 0;
+        late final List<Object?> callbackParameters;
+        final WebChromeClient instance = WebChromeClient.detached(
+          onHideCustomView: (
+            WebChromeClient instance,
+          ) {
+            callbackParameters = <Object?>[
+              instance,
+            ];
+          },
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        final WebChromeClientFlutterApiImpl flutterApi =
+            WebChromeClientFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        flutterApi.onHideCustomView(instanceIdentifier);
+
+        expect(callbackParameters, <Object?>[instance]);
+      });
+
       test('copy', () {
         expect(WebChromeClient.detached().copy(), isA<WebChromeClient>());
       });
@@ -1085,7 +1168,7 @@ void main() {
         0,
         false,
         const <String>['my', 'list'],
-        FileChooserModeEnumData(value: FileChooserMode.openMultiple),
+        FileChooserMode.openMultiple,
         'filenameHint',
       );
 
@@ -1095,6 +1178,73 @@ void main() {
       expect(instance.acceptTypes, const <String>['my', 'list']);
       expect(instance.mode, FileChooserMode.openMultiple);
       expect(instance.filenameHint, 'filenameHint');
+    });
+
+    group('CustomViewCallback', () {
+      tearDown(() {
+        TestCustomViewCallbackHostApi.setup(null);
+      });
+
+      test('onCustomViewHidden', () async {
+        final MockTestCustomViewCallbackHostApi mockApi =
+            MockTestCustomViewCallbackHostApi();
+        TestCustomViewCallbackHostApi.setup(mockApi);
+
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final CustomViewCallback instance = CustomViewCallback.detached(
+          instanceManager: instanceManager,
+        );
+        const int instanceIdentifier = 0;
+        instanceManager.addHostCreatedInstance(instance, instanceIdentifier);
+
+        await instance.onCustomViewHidden();
+
+        verify(mockApi.onCustomViewHidden(instanceIdentifier));
+      });
+
+      test('FlutterAPI create', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final CustomViewCallbackFlutterApiImpl api =
+            CustomViewCallbackFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        const int instanceIdentifier = 0;
+
+        api.create(instanceIdentifier);
+
+        expect(
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+          isA<CustomViewCallback>(),
+        );
+      });
+    });
+
+    group('View', () {
+      test('FlutterAPI create', () {
+        final InstanceManager instanceManager = InstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
+
+        final ViewFlutterApiImpl api = ViewFlutterApiImpl(
+          instanceManager: instanceManager,
+        );
+
+        const int instanceIdentifier = 0;
+
+        api.create(instanceIdentifier);
+
+        expect(
+          instanceManager.getInstanceWithWeakReference(instanceIdentifier),
+          isA<View>(),
+        );
+      });
     });
   });
 

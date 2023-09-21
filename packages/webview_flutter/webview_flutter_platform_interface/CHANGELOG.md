@@ -1,3 +1,17 @@
+## 2.6.0
+
+* Adds support to register a callback to intercept messages that are written to
+  the JavaScript console. See `PlatformWebViewController.setOnConsoleMessage`.
+
+## 2.5.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.5.0
+
+* Adds support to retrieve the user agent. See `PlatformWebViewController.getUserAgent`.
+
 ## 2.4.0
 
 * Adds support to retrieve the url from a web resource loading error. See `WebResourceError.url`.

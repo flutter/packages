@@ -1,3 +1,25 @@
+## 10.2.0
+
+- Adds `onExit` to GoRoute.
+
+## 10.1.4
+
+- Fixes RouteInformationParser that does not restore full RouteMatchList if
+  the optionURLReflectsImperativeAPIs is set.
+
+## 10.1.3
+
+- Fixes an issue in the documentation that was using `state.queryParameters` instead of `state.uri.queryParameters`.
+
+## 10.1.2
+
+* Adds pub topics to package metadata.
+
+## 10.1.1
+
+- Fixes mapping from `Page` to `RouteMatch`s. 
+- Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 10.1.0
 
 - Supports setting `requestFocus`.
@@ -59,7 +81,7 @@
 
 - Makes namedLocation and route name related APIs case sensitive.
 
-## 8.0.2 
+## 8.0.2
 
 - Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
 

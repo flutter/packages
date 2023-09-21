@@ -37,6 +37,12 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 10),
             ElevatedButton(
               style: style,
+              child: const Text('Open any file'),
+              onPressed: () => Navigator.pushNamed(context, '/open/any'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              style: style,
               child: const Text('Open multiple images'),
               onPressed: () => Navigator.pushNamed(context, '/open/images'),
             ),

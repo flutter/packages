@@ -8,6 +8,8 @@
 #import <Flutter/Flutter.h>
 #endif
 
-@interface FLTGoogleSignInPlugin : NSObject <FlutterPlugin>
+#import "messages.g.h"
+
+@interface FLTGoogleSignInPlugin : NSObject <FlutterPlugin, FSIGoogleSignInApi>
 - (instancetype)init NS_UNAVAILABLE;
 @end
