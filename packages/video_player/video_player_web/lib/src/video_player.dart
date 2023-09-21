@@ -66,8 +66,8 @@ class VideoPlayer {
     // Allows Safari iOS to play the video inline
     _videoElement.setAttribute('playsinline', 'true');
 
-    // Set autoplay to false since most browsers won't autoplay a video unless it is muted
-    _videoElement.setAttribute('autoplay', 'false');
+    // Ensure autoplay is not set through the DOM!
+    _videoElement.removeAttribute('autoplay');
 
     _videoElement.onCanPlay.listen((dynamic _) {
       if (!_isInitialized) {
