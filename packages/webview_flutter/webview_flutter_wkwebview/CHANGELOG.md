@@ -1,6 +1,6 @@
 ## 3.8.0
 
-* Adds support to register a callback to receive JavaScript console messages. See `WebKitWebViewController.setConsoleLogCallback`.
+* Adds support to register a callback to receive JavaScript console messages. See `WebKitWebViewController.setOnConsoleLog`.
 
 ## 3.7.3
 
