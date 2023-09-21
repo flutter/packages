@@ -54,6 +54,7 @@
 // for issue #1, and restore the correct width and height for issue #2.
 @property(readonly, nonatomic) AVPlayerLayer *playerLayer;
 @property(readonly, nonatomic) CADisplayLink *displayLink;
+@property(readonly, nonatomic) CALayer *flutterViewLayer;
 @property(nonatomic) FlutterEventChannel *eventChannel;
 @property(nonatomic) FlutterEventSink eventSink;
 @property(nonatomic) CGAffineTransform preferredTransform;
@@ -152,15 +153,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // Output degrees in between [0, 360]
   return degrees;
 };
-
-NS_INLINE UIViewController *rootViewController(void) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // TODO: (hellohuanlin) Provide a non-deprecated codepath. See
-  // https://github.com/flutter/flutter/issues/104117
-  return UIApplication.sharedApplication.keyWindow.rootViewController;
-#pragma clang diagnostic pop
-}
 
 - (AVMutableVideoComposition *)getVideoCompositionWithTransform:(CGAffineTransform)transform
                                                       withAsset:(AVAsset *)asset
@@ -265,7 +257,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
   // for issue #1, and restore the correct width and height for issue #2.
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-  [rootViewController().view.layer addSublayer:_playerLayer];
+  [self.flutterViewLayer addSublayer:_playerLayer];
 
   [self createVideoOutputAndDisplayLink:frameUpdater];
 
@@ -714,6 +706,20 @@ NS_INLINE UIViewController *rootViewController(void) {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
+#endif
+}
+
+- (CALayer *)flutterViewLayer {
+#if TARGET_OS_OSX
+  return self.registrar.view.layer;
+#else
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(hellohuanlin): Provide a non-deprecated codepath. See
+  // https://github.com/flutter/flutter/issues/104117
+  UIViewController *root = UIApplication.sharedApplication.keyWindow.rootViewController;
+#pragma clang diagnostic pop
+  return root.view.layer;
 #endif
 }
 
