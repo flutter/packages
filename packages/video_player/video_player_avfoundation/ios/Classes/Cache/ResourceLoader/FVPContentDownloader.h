@@ -13,22 +13,22 @@
 + (instancetype)shared;
 
 /**
- * Adds url source to downloadingUrls (NSSet of urls)
+ * Adds url source to downloadingUrls (NSSet of urls).
  */
 - (void)addURL:(NSURL *)url;
 
 /**
- * removes url source from downloadingUrls
+ * Removes url source from downloadingUrls.
  */
 - (void)removeURL:(NSURL *)url;
 
 /**
- * return YES if downloadingUrls contains the given url
+ * Returns YES if downloadingUrls contains the given url.
  */
 - (BOOL)containsURL:(NSURL *)url;
 
 /**
- * return downloadingUrls set
+ * Return downloadingUrls set.
  */
 - (NSSet *)urls;
 
@@ -36,35 +36,35 @@
 
 @interface FVPContentDownloader : NSObject
 
-- (instancetype)initWithURL:(NSURL *)url cacheWorker:(FVPContentCacheWorker *)cacheWorker;
+- (instancetype)initWithURL:(NSURL *)url cacheWorker:(FVPContentCacheWorker *)cacheWorker NS_DESIGNATED_INITIALIZER;
 
 /**
  * @property url
- * url of video
+ * URL of media content.
  */
 @property(nonatomic, strong, readonly) NSURL *url;
 
 /**
  * @property info
- * hold information about the content
+ * Hold information about the content.
  */
 @property(nonatomic, strong) FVPContentInfo *info;
 
 /**
  * @property saveToCache
- * should save to cache
+ * Should save to cache.
  */
 @property(nonatomic, assign) BOOL saveToCache;
 
 /**
- * start download with offset
+ * Start download with offset.
  */
 - (void)downloadTaskFromOffset:(unsigned long long)fromOffset
                         length:(NSUInteger)length
                          toEnd:(BOOL)toEnd;
 
 /**
- * cancels downloading
+ * Cancels downloading.
  */
 - (void)cancel;
 
@@ -80,18 +80,18 @@
 @optional
 
 /**
- * callback when download request received response
+ * Callback when download request received response.
  */
 - (void)contentDownloader:(FVPContentDownloader *)downloader
        didReceiveResponse:(NSURLResponse *)response;
 
 /**
- * callback when received data
+ * Callback when received data.
  */
 - (void)contentDownloader:(FVPContentDownloader *)downloader didReceiveData:(NSData *)data;
 
 /**
- * callback when error received
+ * Callback when error received.
  */
 - (void)contentDownloader:(FVPContentDownloader *)downloader didFinishedWithError:(NSError *)error;
 

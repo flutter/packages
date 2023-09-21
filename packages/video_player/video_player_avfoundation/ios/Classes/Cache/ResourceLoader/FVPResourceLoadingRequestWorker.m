@@ -17,7 +17,7 @@
 
 @end
 
-// to handle the process of downloading and loading media resources for AVAssetResourceLoader in an
+// To handle the process of downloading and loading media resources for AVAssetResourceLoader in an
 // AVPlayer
 @implementation FVPResourceLoadingRequestWorker
 
@@ -101,13 +101,13 @@
  */
 - (void)contentDownloader:(FVPContentDownloader *)downloader
        didReceiveResponse:(NSURLResponse *)response {
-  // when a response has been received we can store essential metadata like e.g. content type and
+  // When a response has been received we can store essential metadata like e.g. content type and
   // content length.
   [self storeMetaData];
 }
 
 - (void)contentDownloader:(FVPContentDownloader *)downloader didReceiveData:(NSData *)data {
-  // when a response has been received we can store essential information like e.g. content type and
+  // When a response has been received we can store essential information like e.g. content type and
   // content length.
   [self.request.dataRequest respondWithData:data];
 }

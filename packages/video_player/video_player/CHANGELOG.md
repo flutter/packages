@@ -2,6 +2,10 @@
 
 * Adds caching functionality for network video.
 
+## 2.7.2
+
+* Adds `isCompleted` event to `VideoPlayerEvent`.
+
 ## 2.7.1
 
 * Adds pub topics to package metadata.

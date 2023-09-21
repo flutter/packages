@@ -25,7 +25,7 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
 @implementation FVPResourceLoader
 
 - (void)dealloc {
-  // cancel the contentDownloader
+  // Cancel the contentDownloader.
   [_contentDownloader cancel];
 }
 
@@ -33,16 +33,16 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
   self = [super init];
   if (self) {
     _url = url;
-    // create a content cache worker that is responsible for caching the downloaded content.
+    // Create a FVPContentCacheWorker that is responsible for caching the downloaded content.
     _cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:url error:error];
-    //
     _contentDownloader = [[FVPContentDownloader alloc] initWithURL:url cacheWorker:_cacheWorker];
     _pendingRequestWorkers = [NSMutableArray array];
   }
   return self;
 }
 
-- (instancetype)init {
+
+- (instancetype)init NS_UNAVAILABLE {
   NSAssert(NO, @"Use - initWithURL: instead");
   return nil;
 }
@@ -96,7 +96,7 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
 #pragma mark - Helper
 
 - (void)startNoCacheWorkerWithRequest:(AVAssetResourceLoadingRequest *)request {
-  // add url to NSSet of downloadingUrls to keep track of urls that are currently downloading.
+  // Add url to NSSet of downloadingUrls to keep track of urls that are currently downloading.
   [[FVPContentDownloaderStatus shared] addURL:self.url];
 
   // create a new contentDownloader
@@ -114,7 +114,7 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
 }
 
 - (void)startWorkerWithRequest:(AVAssetResourceLoadingRequest *)request {
-  // add url to NSSet of downloadingUrls to keep track of urls that are currently downloading.
+  // Add url to NSSet of downloadingUrls to keep track of urls that are currently downloading.
   [[FVPContentDownloaderStatus shared] addURL:self.url];
 
   // Create a requestWorker from the excisting content downloader.

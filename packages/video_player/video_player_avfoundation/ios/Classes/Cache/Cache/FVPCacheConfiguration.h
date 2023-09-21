@@ -22,31 +22,31 @@
 
 /**
  * @property filePath
- * filePath of the stored configuration
+ * FilePath of the stored configuration.
  */
 @property(nonatomic, copy, readonly) NSString *filePath;
 
 /**
  * @property contentInfo
- * information about the content being downloaded or cached
+ * Information about the content being downloaded or cached.
  */
 @property(nonatomic, strong) FVPContentInfo *contentInfo;
 
 /**
  * @property url
- * information about the content url
+ * Information about the content url.
  */
 @property(nonatomic, strong) NSURL *url;
 
 /**
  * @property cacheFragments
- * array of CacheAction objects for a given range
+ * Array of CacheAction objects for a given range.
  */
 - (NSArray<NSValue *> *)cacheFragments;
 
 /**
  * @property progress
- * information progress of the downloaded cache (0-100)
+ * Information progress of the downloaded cache (0-100).
  */
 @property(nonatomic, readonly) float progress;
 

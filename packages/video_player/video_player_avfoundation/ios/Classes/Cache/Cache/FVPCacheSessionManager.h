@@ -5,13 +5,25 @@
 #import <Foundation/Foundation.h>
 
 /**
- * the CacheSessionManager class is a singleton class responsible for managing an NSOperationQueue
- * named downloadQueue, which can be used to handle download operations efficiently. This type of
- * design is commonly used for managing background tasks, such as downloading and caching content
- * for a video player, to ensure proper concurrency and control over the operations. The singleton
- * pattern guarantees that all parts of the application that need access to the download queue use
- * the same instance, avoiding duplication and synchronization issues.
- */
+* `FVPCacheSessionManager` is a singleton class responsible for managing the download operations related to caching media content. It provides a shared instance for coordinating download tasks, ensuring controlled concurrent downloads within the application.
+
+*  Usage:
+*  1. Access the shared instance of `FVPCacheSessionManager` using the `shared` class method.
+*  2. Enqueue download operations using the `downloadQueue` property.
+
+*  Example:
+*  // Access the shared instance of FVPCacheSessionManager
+*  FVPCacheSessionManager *cacheManager = [FVPCacheSessionManager shared];
+
+*  // Create and enqueue a download operation
+*  NSOperation *downloadOperation = [NSBlockOperation blockOperationWithBlock:^{
+*      // Perform the download operation here
+*  }];
+*  [cacheManager.downloadQueue addOperation:downloadOperation];
+* @warning It is recommended to use the shared instance for download operations to ensure efficient resource utilization and control over concurrent downloads.
+*
+* @see NSOperationQueue
+*/
 @interface FVPCacheSessionManager : NSObject
 
 /**

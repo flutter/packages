@@ -49,8 +49,13 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int?> create(
-      DataSource dataSource, VideoPlayerOptions? videoPlayerOptions) {
+  Future<int?> create(DataSource dataSource) {
+    throw UnimplementedError('create() has not been implemented.');
+  }
+
+  /// Creates an instance of a video player with [VideoPlayerParameters] and returns its textureId.
+  Future<int?> createWithParameters(
+      DataSource dataSource, VideoPlayerParameters? videoPlayerParameters) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
@@ -391,8 +396,8 @@ class VideoPlayerOptions {
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.webOptions,
-    this.maxCacheSize = 0,
-    this.maxFileSize = 0,
+    this.maxCacheSize,
+    this.maxFileSize,
     this.enableCache = false,
   });
 
@@ -410,26 +415,44 @@ class VideoPlayerOptions {
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
 
-  /// Enables caching,
+  /// Whether caching is enabled.
   /// All parameters are best-effort, and not all platforms will support all options.
   ///
   /// [enableCache] true (enabled) or false (disabled), default (disabled).
-  /// Add [maxCacheSize] and [maxFileSize], default 0.
+  /// Add [maxCacheSize] and [maxFileSize], default null.
   /// The developer can clear the cache using [clearCache].
   /// The developer can check the support mimetype for cache on the platform by calling [isCacheSupportedForNetworkMedia].
   /// Only enabled for supported mimetypes. For other mimetypes this setting is ignored.
   /// Detection with whatever is set here.
   final bool enableCache;
 
-  /// Will set the size of the total cache. Default maxCacheSize is 0 (no cache enabled).
+  /// Will set the total size of the cache in bytes.
+  /// null means that there is no cache enabled.
   /// 1 * 1024 * 1024 will be 1MB and it will automatically remove oldest used files if the size is reached out.
   /// Detection with whatever is set here.
-  final int maxCacheSize;
+  final int? maxCacheSize;
 
-  /// Will set the size of a cache for one file (uri). Default maxFileSize is 0 (no cache enabled).
+  /// Will set the size of a cache for one file (uri).
+  /// Default maxFileSize is 0 (no cache enabled).
   /// 1 * 1024 * 1024 will be 1MB and it will automatically remove oldest used files if the size is reached out.
   /// Detection with whatever is set here.
-  final int maxFileSize;
+  final int? maxFileSize;
+}
+
+/// [VideoPlayerOptions] can be optionally used to set additional player settings
+@immutable
+class VideoPlayerParameters {
+  /// Set additional optional player settings
+  // TODO(stuartmorgan): Temporarily suppress warnings about not using const
+  // in all of the other video player packages, fix this, and then update
+  // the other packages to use const.
+  // ignore: prefer_const_constructors_in_immutables
+  VideoPlayerParameters({
+    this.videoPlayerOptions,
+  });
+
+  /// Add [VideoPlayerOptions] to the [VideoPlayerParameters]
+  final VideoPlayerOptions? videoPlayerOptions;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings

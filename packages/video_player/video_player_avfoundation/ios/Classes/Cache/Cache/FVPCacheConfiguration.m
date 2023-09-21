@@ -23,18 +23,18 @@ static NSString *kURLKey = @"kURLKey";
 
 @implementation FVPCacheConfiguration
 
-// returns configuration or error
+// Returns configuration or error.
 + (instancetype)configurationWithFilePath:(NSString *)filePath error:(NSError **)error {
-  // filePath for the cache configuration filepath
+  // FilePath for the cache configuration filepath.
   filePath = [filePath stringByAppendingPathExtension:@".cache_configuration"];
 
-  // get the cache confguration
+  // Get the cache confguration.
   NSData *data = [NSData dataWithContentsOfFile:filePath];
   FVPCacheConfiguration *configuration =
       [NSKeyedUnarchiver unarchivedObjectOfClass:[FVPCacheConfiguration class]
                                         fromData:data
                                            error:error];
-  // if there is no cache confguration, create a new one.
+  // If there is no cache confguration, create a new one.
   if (!configuration) {
     configuration = [[FVPCacheConfiguration alloc] init];
     configuration.fileName = [filePath lastPathComponent];
@@ -52,7 +52,7 @@ static NSString *kURLKey = @"kURLKey";
   return _internalCacheFragments;
 }
 
-// returns or creates downloadInfo
+// Returns or creates downloadInfo.
 - (NSArray *)downloadInfo {
   if (!_downloadInfo) {
     _downloadInfo = [NSArray array];
@@ -105,7 +105,7 @@ static NSString *kURLKey = @"kURLKey";
 
 #pragma mark - Update
 
-// save the cache configuration, but cancel "in progress" save.
+// Save the cache configuration, but cancel "in progress" save.
 - (void)save {
   [[self class] cancelPreviousPerformRequestsWithTarget:self
                                                selector:@selector(archiveData)
@@ -113,7 +113,7 @@ static NSString *kURLKey = @"kURLKey";
   [self performSelector:@selector(archiveData) withObject:nil afterDelay:1.0];
 }
 
-// save action, or print error.
+// Save action, or print error.
 - (void)archiveData {
   @synchronized(self.internalCacheFragments) {
     NSError *error;
@@ -201,7 +201,7 @@ static NSString *kURLKey = @"kURLKey";
   }
 }
 
-// store donwloadInfo
+// Store donwloadInfo.
 - (void)addDownloadedBytes:(long long)bytes spent:(NSTimeInterval)time {
   @synchronized(self.downloadInfo) {
     self.downloadInfo = [self.downloadInfo arrayByAddingObject:@[ @(bytes), @(time) ]];

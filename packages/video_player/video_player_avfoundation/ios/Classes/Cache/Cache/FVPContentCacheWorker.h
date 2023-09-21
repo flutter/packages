@@ -8,19 +8,33 @@
 @class FVPCacheAction;
 
 /**
- * Responsible forcaching of content, particularly for a video player or media
+ * Responsible for caching of (video or audio) content, particularly for a video player or media
  * streaming functionality. It implements methods for reading and writing data to a cache file,
  * handling cache fragments, managing cache actions, and tracking cache statistics.
  */
 @interface FVPContentCacheWorker : NSObject
 
-- (instancetype)initWithURL:(NSURL *)url error:(NSError *)error;
+/**
+ * Initializes a FVPContentCacheWorker instance with the provided content URL.
+ *
+ * @param url The URL of the content to be cached.
+ * @param error If an error occurs during initialization, this parameter will contain details about the error.
+ * @return A new FVPContentCacheWorker instance, or nil if initialization fails.
+ */
+- (instancetype)initWithURL:(NSURL *)url error:(NSError *)error NS_DESIGNATED_INITIALIZER;
 
 /**
  * @property cacheConfiguration
  */
 @property(nonatomic, strong, readonly) FVPCacheConfiguration *cacheConfiguration;
 
+/**
+ * Caches data for a specific range within the content (fragment).
+ *
+ * @param data The data to be cached.
+ * @param range The range within the content where the data should be cached.
+ * @param error If an error occurs during caching, this parameter will contain details about the error.
+*/
 - (void)cacheData:(NSData *)data forRange:(NSRange)range error:(NSError **)error;
 
 /**
@@ -56,13 +70,13 @@
 - (void)save;
 
 /**
- * startWritting is used to indicate the start of writing data to the
+ * 'startWritting' is used to indicate the start of writing data to the
  * cache file. They keep track of the writing progress and time taken to write data.
  */
 - (void)startWritting;
 
 /**
- * finishWritting is used to indicate the end of writing data to the
+ * 'finishWritting' is used to indicate the end of writing data to the
  * cache file. They keep track of the writing progress and time taken to write data.
  */
 - (void)finishWritting;

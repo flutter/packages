@@ -17,12 +17,12 @@ static NSString *kMContentCacheDirectory;
   });
 }
 
-// sets NSTemporaryDirectory cacheDirectory with name
+// Sets NSTemporaryDirectory cacheDirectory with name.
 + (void)setCacheDirectory:(NSString *)cacheDirectory {
   kMContentCacheDirectory = cacheDirectory;
 }
 
-// returns cacheDirectory for file (content) url
+// Returns cacheDirectory for file (content) url.
 + (NSString *)cacheDirectory {
   return kMContentCacheDirectory;
 }
@@ -33,8 +33,8 @@ static NSString *kMContentCacheDirectory;
   return [[self cacheDirectory] stringByAppendingPathComponent:pathComponent];
 }
 
-// This method calculates the total size of all the cached files in the cache directory. It iterates
-// through each file in the cache directory, retrieves its attributes (including file size), and
+// This method calculates the total size of all the cached files in the cache directory.
+// It iterates through each file in the cache directory, retrieves its attributes (including file size), and
 // accumulates the total size. If an error occurs during the process, the error parameter will be
 // populated.
 + (unsigned long long)calculateCachedSizeWithError:(NSError **)error {
@@ -61,15 +61,15 @@ static NSString *kMContentCacheDirectory;
 + (void)cleanAllCacheWithError:(NSError **)error {
   NSMutableSet *downloadingFiles = [NSMutableSet set];
 
-  // loop over all downloadingUrls (NSSet)
-  // get the cachedfile and confuguration and add them to downloading files
+  // Loop over all downloadingUrls (NSSet).
+  // Get the cachedfile and confuguration and add them to downloading files.
   [[[FVPContentDownloaderStatus shared] urls]
       enumerateObjectsUsingBlock:^(NSURL *_Nonnull obj, BOOL *_Nonnull stop) {
         NSString *file = [self cachedFilePathForURL:obj];
         [downloadingFiles addObject:file];
       }];
 
-  // Remove files
+  // Remove files.
   NSFileManager *fileManager = [NSFileManager defaultManager];
   NSString *cacheDirectory = [self cacheDirectory];
 

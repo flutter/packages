@@ -28,7 +28,7 @@
   return YES;
 }
 
-// optimization. Do not remove.
+// Optimization. Do not remove.
 - (NSUInteger)hash {
   return
       [[NSString stringWithFormat:@"%@%@", NSStringFromRange(self.range), @(self.cacheType)] hash];
