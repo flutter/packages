@@ -592,8 +592,10 @@ NS_INLINE UIViewController *rootViewController(void) {
 }
 
 - (void)initialize:(FlutterError *__autoreleasing *)error {
+#if TARGET_OS_IOS
   // Allow audio playback when the Ring/Silent switch is set to silent
   [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+#endif
 
   [self.playersByTextureId
       enumerateKeysAndObjectsUsingBlock:^(NSNumber *textureId, FLTVideoPlayer *player, BOOL *stop) {
@@ -702,6 +704,9 @@ NS_INLINE UIViewController *rootViewController(void) {
 
 - (void)setMixWithOthers:(FLTMixWithOthersMessage *)input
                    error:(FlutterError *_Nullable __autoreleasing *)error {
+#if TARGET_OS_OSX
+  // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
+#else
   if (input.mixWithOthers.boolValue) {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback
                                      withOptions:AVAudioSessionCategoryOptionMixWithOthers
@@ -709,6 +714,7 @@ NS_INLINE UIViewController *rootViewController(void) {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
+#endif
 }
 
 @end
