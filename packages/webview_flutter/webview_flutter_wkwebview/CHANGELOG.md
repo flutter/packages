@@ -1,3 +1,7 @@
+## 3.8.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `WebKitWebViewController.setOnConsoleMessage`.
+
 ## 3.7.4
 
 * Adds pub topics to package metadata.
