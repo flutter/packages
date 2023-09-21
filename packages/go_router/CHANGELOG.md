@@ -1,6 +1,19 @@
-## 10.1.3
+## 10.2.1
 
 - Adds optional parameter `overridePlatformDefaultLocation` to override initial route set by platform.
+
+## 10.2.0
+
+- Adds `onExit` to GoRoute.
+
+## 10.1.4
+
+- Fixes RouteInformationParser that does not restore full RouteMatchList if
+  the optionURLReflectsImperativeAPIs is set.
+
+## 10.1.3
+
+- Fixes an issue in the documentation that was using `state.queryParameters` instead of `state.uri.queryParameters`.
 
 ## 10.1.2
 
@@ -72,7 +85,7 @@
 
 - Makes namedLocation and route name related APIs case sensitive.
 
-## 8.0.2 
+## 8.0.2
 
 - Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
 
