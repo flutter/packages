@@ -18,7 +18,11 @@
 @interface FLTFrameUpdater : NSObject
 @property(nonatomic) int64_t textureId;
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
+// The output that this updater is managing.
+@property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
+#if TARGET_OS_IOS
 - (void)onDisplayLink:(CADisplayLink *)link;
+#endif
 @end
 
 @implementation FLTFrameUpdater
@@ -29,10 +33,29 @@
   return self;
 }
 
+#if TARGET_OS_IOS
 - (void)onDisplayLink:(CADisplayLink *)link {
-  [_registry textureFrameAvailable:_textureId];
+  [self displayLinkFired];
+}
+#endif
+
+- (void)displayLinkFired {
+  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
+  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+    [_registry textureFrameAvailable:_textureId];
+  }
 }
 @end
+
+#if TARGET_OS_OSX
+static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now,
+                                    const CVTimeStamp *outputTime, CVOptionFlags flagsIn,
+                                    CVOptionFlags *flagsOut, void *displayLinkContext) {
+  __weak dispatch_source_t source = (__bridge dispatch_source_t)displayLinkContext;
+  dispatch_source_merge_data(source, 1);
+  return kCVReturnSuccess;
+}
+#endif
 
 @interface FVPDefaultPlayerFactory : NSObject <FVPPlayerFactory>
 @end
@@ -53,8 +76,20 @@
 // An invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
 // for issue #1, and restore the correct width and height for issue #2.
 @property(readonly, nonatomic) AVPlayerLayer *playerLayer;
-@property(readonly, nonatomic) CADisplayLink *displayLink;
-@property(readonly, nonatomic) CALayer *flutterViewLayer;
+// TODO(stuartmorgan): Extract and abstract the display link to remove all the display-link-related
+// ifdefs from this file.
+#if TARGET_OS_OSX
+// The display link to trigger frame reads from the video player.
+@property(nonatomic, assign) CVDisplayLinkRef displayLink;
+// A dispatch source to move display link callbacks to the main thread.
+@property(nonatomic, strong) dispatch_source_t displayLinkSource;
+#else
+@property(nonatomic) CADisplayLink *displayLink;
+#endif
+// The plugin registrar, to obtain view information from.
+@property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
+// The CALayer associated with the Flutter view this plugin is associated with, if any.
+@property(nonatomic, readonly) CALayer *flutterViewLayer;
 @property(nonatomic) FlutterEventChannel *eventChannel;
 @property(nonatomic) FlutterEventSink eventSink;
 @property(nonatomic) CGAffineTransform preferredTransform;
@@ -62,10 +97,12 @@
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
 @property(nonatomic, readonly) BOOL isInitialized;
+
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(id<FVPPlayerFactory>)playerFactory;
+              playerFactory:(id<FVPPlayerFactory>)playerFactory
+                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
 
 static void *timeRangeContext = &timeRangeContext;
@@ -78,12 +115,14 @@ static void *rateContext = &rateContext;
 @implementation FLTVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FLTFrameUpdater *)frameUpdater
-                playerFactory:(id<FVPPlayerFactory>)playerFactory {
+                playerFactory:(id<FVPPlayerFactory>)playerFactory
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
   return [self initWithURL:[NSURL fileURLWithPath:path]
               frameUpdater:frameUpdater
                httpHeaders:@{}
-             playerFactory:playerFactory];
+             playerFactory:playerFactory
+                 registrar:registrar];
 }
 
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
@@ -194,28 +233,48 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   };
   _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
 
+#if TARGET_OS_OSX
+  frameUpdater.videoOutput = _videoOutput;
+  self.displayLinkSource =
+      dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue());
+  dispatch_source_set_event_handler(self.displayLinkSource, ^() {
+    @autoreleasepool {
+      [frameUpdater displayLinkFired];
+    }
+  });
+  if (CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink) == kCVReturnSuccess) {
+    CVDisplayLinkSetOutputCallback(_displayLink, &DisplayLinkCallback,
+                                   (__bridge void *)(self.displayLinkSource));
+  }
+#else
   _displayLink = [CADisplayLink displayLinkWithTarget:frameUpdater
                                              selector:@selector(onDisplayLink:)];
   [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
   _displayLink.paused = YES;
+#endif
 }
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FLTFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(id<FVPPlayerFactory>)playerFactory {
+              playerFactory:(id<FVPPlayerFactory>)playerFactory
+                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
   }
   AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
   AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
-  return [self initWithPlayerItem:item frameUpdater:frameUpdater playerFactory:playerFactory];
+  return [self initWithPlayerItem:item
+                     frameUpdater:frameUpdater
+                    playerFactory:playerFactory
+                        registrar:registrar];
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FLTFrameUpdater *)frameUpdater
-                     playerFactory:(id<FVPPlayerFactory>)playerFactory {
+                     playerFactory:(id<FVPPlayerFactory>)playerFactory
+                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
@@ -342,7 +401,23 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [_player pause];
   }
+#if TARGET_OS_OSX
+  if (_displayLink) {
+    if (_isPlaying) {
+      NSScreen *screen = self.registrar.view.window.screen;
+      if (screen) {
+        CGDirectDisplayID viewDisplayID =
+            (CGDirectDisplayID)[screen.deviceDescription[@"NSScreenNumber"] unsignedIntegerValue];
+        CVDisplayLinkSetCurrentCGDisplay(_displayLink, viewDisplayID);
+      }
+      CVDisplayLinkStart(_displayLink);
+    } else {
+      CVDisplayLinkStop(_displayLink);
+    }
+  }
+#else
   _displayLink.paused = !_isPlaying;
+#endif
 }
 
 - (void)setupEventSinkIfReadyToPlay {
@@ -507,7 +582,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   _disposed = YES;
   [_playerLayer removeFromSuperlayer];
+#if TARGET_OS_OSX
+  if (_displayLink) {
+    CVDisplayLinkStop(_displayLink);
+    CVDisplayLinkRelease(_displayLink);
+  }
+  dispatch_source_cancel(_displayLinkSource);
+#else
   [_displayLink invalidate];
+#endif
   AVPlayerItem *currentItem = self.player.currentItem;
   [currentItem removeObserver:self forKeyPath:@"status"];
   [currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
@@ -610,7 +693,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     @try {
       player = [[FLTVideoPlayer alloc] initWithAsset:assetPath
                                         frameUpdater:frameUpdater
-                                       playerFactory:_playerFactory];
+                                       playerFactory:_playerFactory
+                                           registrar:self.registrar];
       return [self onPlayerSetup:player frameUpdater:frameUpdater];
     } @catch (NSException *exception) {
       *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
@@ -620,7 +704,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     player = [[FLTVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
                                      httpHeaders:input.httpHeaders
-                                   playerFactory:_playerFactory];
+                                   playerFactory:_playerFactory
+                                       registrar:self.registrar];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
