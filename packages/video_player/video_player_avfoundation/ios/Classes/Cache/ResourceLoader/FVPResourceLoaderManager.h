@@ -8,11 +8,15 @@
 @protocol FVPResourceLoaderManagerDelegate;
 
 /**
- *  `FVPResourceLoaderManager` is a manager class responsible for coordinating and managing multiple `FVPResourceLoader` instances within the context of an `AVAssetResourceLoader`. It enables seamless integration of media resource loading, caching, and playback with an `AVPlayer` by intercepting and handling resource loading requests.
+ *  `FVPResourceLoaderManager` is a manager class responsible for coordinating and managing multiple
+ * `FVPResourceLoader` instances within the context of an `AVAssetResourceLoader`. It enables
+ * seamless integration of media resource loading, caching, and playback with an `AVPlayer` by
+ * intercepting and handling resource loading requests.
  *
  *  Usage:
  *  1. Initialize an instance of `FVPResourceLoaderManager` to manage resource loading requests.
- *  2. Use the `playerItemWithURL:` method to create an `AVPlayerItem` for playback with URL-based assets.
+ *  2. Use the `playerItemWithURL:` method to create an `AVPlayerItem` for playback with URL-based
+ * assets.
  *  3. Optionally, clean the cache or cancel active loaders when necessary.
  *
  *  Example:
@@ -27,8 +31,9 @@
  *  // Optionally, clean the cache or cancel active loaders
  *  [loaderManager cleanCache];
  *  [loaderManager cancelLoaders];
- *  
- * @warning This class should be used in conjunction with FVPResourceLoader and is not intended for standalone use.
+ *
+ * @warning This class should be used in conjunction with FVPResourceLoader and is not intended for
+ * standalone use.
  *
  * @see FVPResourceLoader
  */
@@ -47,19 +52,20 @@
 - (void)cancelLoaders;
 
 /**
-* Returns assetUrl with the provided URL. Returns nil if no URL provided
-*
-* @param url The URL of the media resource to be played.
-* @return An AVPlayerItem configured for playback of the specified media URL.
-*/
+ * Returns assetUrl with the provided URL. Returns nil if no URL provided
+ *
+ * @param url The URL of the media resource to be played.
+ * @return An AVPlayerItem configured for playback of the specified media URL.
+ */
 + (NSURL *)assetURLWithURL:(NSURL *)url;
 
 /**
-* Creates an AVPlayerItem for playback with the provided URL. This method sets up the necessary resource loader delegate and configurations.
-*
-* @param url The URL of the media resource to be played.
-* @return An AVPlayerItem configured for playback of the specified media URL.
-*/
+ * Creates an AVPlayerItem for playback with the provided URL. This method sets up the necessary
+ * resource loader delegate and configurations.
+ *
+ * @param url The URL of the media resource to be played.
+ * @return An AVPlayerItem configured for playback of the specified media URL.
+ */
 - (AVPlayerItem *)playerItemWithURL:(NSURL *)url;
 
 @end

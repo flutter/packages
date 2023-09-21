@@ -31,8 +31,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> create(
-      DataSource dataSource, VideoPlayerOptions? videoPlayerOptions) async {
+  Future<int?> createWithParameters(DataSource dataSource,
+      VideoPlayerParameters? videoPlayerParameters) async {
     String? asset;
     String? packageName;
     String? uri;
@@ -48,7 +48,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         uri = dataSource.uri;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
-        enableCache = videoPlayerOptions?.enableCache;
+        enableCache = videoPlayerParameters?.videoPlayerOptions?.enableCache;
         break;
       case DataSourceType.file:
         uri = dataSource.uri;

@@ -12,13 +12,13 @@
 @implementation FVPCacheActionTests
 
 - (void)testCacheActionInitialization {
-    NSRange fakeRange = NSMakeRange(0, 100);
-    FVPCacheAction *cacheAction = [[FVPCacheAction alloc] initWithCacheType:FVPCacheTypeUseLocal range:fakeRange];
-    
-    XCTAssertNotNil(cacheAction);
-    XCTAssertEqual(cacheAction.cacheType, FVPCacheTypeUseLocal);
-    XCTAssertTrue(NSEqualRanges(cacheAction.range, fakeRange));
-}
+  NSRange fakeRange = NSMakeRange(0, 100);
+  FVPCacheAction *cacheAction = [[FVPCacheAction alloc] initWithCacheType:FVPCacheTypeUseLocal
+                                                                    range:fakeRange];
 
+  XCTAssertNotNil(cacheAction);
+  XCTAssertEqual(cacheAction.cacheType, FVPCacheTypeUseLocal);
+  XCTAssertTrue(NSEqualRanges(cacheAction.range, fakeRange));
+}
 
 @end

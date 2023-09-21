@@ -5,7 +5,9 @@
 #import <Foundation/Foundation.h>
 
 /**
-* `FVPCacheSessionManager` is a singleton class responsible for managing the download operations related to caching media content. It provides a shared instance for coordinating download tasks, ensuring controlled concurrent downloads within the application.
+* `FVPCacheSessionManager` is a singleton class responsible for managing the download operations
+related to caching media content. It provides a shared instance for coordinating download tasks,
+ensuring controlled concurrent downloads within the application.
 
 *  Usage:
 *  1. Access the shared instance of `FVPCacheSessionManager` using the `shared` class method.
@@ -20,7 +22,8 @@
 *      // Perform the download operation here
 *  }];
 *  [cacheManager.downloadQueue addOperation:downloadOperation];
-* @warning It is recommended to use the shared instance for download operations to ensure efficient resource utilization and control over concurrent downloads.
+* @warning It is recommended to use the shared instance for download operations to ensure efficient
+resource utilization and control over concurrent downloads.
 *
 * @see NSOperationQueue
 */

@@ -13,11 +13,11 @@
 @implementation FVPResourceLoaderTests
 
 - (void)testInitResourceLoader {
-    NSURL *testURL = [NSURL URLWithString:@"https://example.com/test.mp4"];
-    NSError *error = nil;
-    FVPResourceLoader *resourceLoader = [[FVPResourceLoader alloc] initWithURL:testURL error:error];
-    
-    XCTAssertNotNil(resourceLoader);
+  NSURL *testURL = [NSURL URLWithString:@"https://example.com/test.mp4"];
+  NSError *error = nil;
+  FVPResourceLoader *resourceLoader = [[FVPResourceLoader alloc] initWithURL:testURL error:error];
+
+  XCTAssertNotNil(resourceLoader);
 }
 
 @end

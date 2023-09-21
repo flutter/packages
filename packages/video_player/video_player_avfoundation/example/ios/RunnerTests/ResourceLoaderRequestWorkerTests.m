@@ -4,11 +4,11 @@
 
 @import AVFoundation;
 
+#import <Foundation/Foundation.h>
 #import <XCTest/XCTest.h>
-#import "FVPResourceLoadingRequestWorker.h"
 #import "FVPContentDownloader.h"
 #import "FVPContentInfo.h"
-#import <Foundation/Foundation.h>
+#import "FVPResourceLoadingRequestWorker.h"
 
 @interface FVPResourceLoadingRequestWorkerTests : XCTestCase
 
@@ -16,6 +16,6 @@
 
 @implementation FVPResourceLoadingRequestWorkerTests
 
-//currently no usable test
+// currently no usable test
 
 @end

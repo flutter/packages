@@ -12,12 +12,14 @@
 @implementation FVPCacheConfigurationTests
 
 - (void)testConfigurationInitialization {
-    NSString *fakeFilePath = @"fakeTestFilePath";
-    NSError *error;
-    FVPCacheConfiguration *fakeConfiguration = [FVPCacheConfiguration configurationWithFilePath:fakeFilePath error:&error];
-    
-    XCTAssertNotNil(fakeConfiguration);
-    XCTAssertEqualObjects(fakeConfiguration.filePath, [fakeFilePath stringByAppendingPathExtension:@".cache_configuration"]);
+  NSString *fakeFilePath = @"fakeTestFilePath";
+  NSError *error;
+  FVPCacheConfiguration *fakeConfiguration =
+      [FVPCacheConfiguration configurationWithFilePath:fakeFilePath error:&error];
+
+  XCTAssertNotNil(fakeConfiguration);
+  XCTAssertEqualObjects(fakeConfiguration.filePath,
+                        [fakeFilePath stringByAppendingPathExtension:@".cache_configuration"]);
 }
 
 @end

@@ -436,8 +436,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           .setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
-    _textureId = (await _videoPlayerPlatform.create(
-            dataSourceDescription, videoPlayerOptions)) ??
+    _textureId = (await _videoPlayerPlatform.createWithParameters(
+            dataSourceDescription,
+            VideoPlayerParameters(videoPlayerOptions: videoPlayerOptions))) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();

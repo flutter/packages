@@ -177,8 +177,9 @@ class _BumbleBeeRemoteCacheVideoState
 
     _controller = MiniController.network(
         'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-        videoPlayerOptions:
-            VideoPlayerOptions(maxCacheSize: 1500, maxFileSize: 1000));
+        videoPlayerParameters: VideoPlayerParameters(
+            videoPlayerOptions:
+                VideoPlayerOptions(maxCacheSize: 1500, maxFileSize: 1000)));
 
     _controller.addListener(() {
       setState(() {});

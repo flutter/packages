@@ -134,13 +134,11 @@ void main() {
     });
 
     test('create with asset', () async {
-      final int? textureId = await player.create(
-          DataSource(
-            sourceType: DataSourceType.asset,
-            asset: 'someAsset',
-            package: 'somePackage',
-          ),
-          null);
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.asset,
+        asset: 'someAsset',
+        package: 'somePackage',
+      ));
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, 'someAsset');
       expect(log.createMessage?.packageName, 'somePackage');
@@ -148,31 +146,33 @@ void main() {
     });
 
     test('create with network', () async {
-      int? textureId = await player.create(
+      int? textureId = await player.createWithParameters(
           DataSource(
             sourceType: DataSourceType.network,
             uri: 'someUri',
             formatHint: VideoFormat.dash,
           ),
-          VideoPlayerOptions());
+          VideoPlayerParameters(videoPlayerOptions: VideoPlayerOptions()));
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, 'dash');
-      expect(log.createMessage?.maxCacheSize, 0);
-      expect(log.createMessage?.maxFileSize, 0);
+      expect(log.createMessage?.maxCacheSize, null);
+      expect(log.createMessage?.maxFileSize, null);
       expect(log.createMessage?.formatHint, 'dash');
       expect(log.createMessage?.httpHeaders, <String, String>{});
       expect(textureId, 3);
 
-      textureId = await player.create(
+      textureId = await player.createWithParameters(
           DataSource(
             sourceType: DataSourceType.network,
             uri: 'someUri',
             formatHint: VideoFormat.dash,
           ),
-          VideoPlayerOptions(maxCacheSize: 1, maxFileSize: 2));
+          VideoPlayerParameters(
+              videoPlayerOptions:
+                  VideoPlayerOptions(maxCacheSize: 1, maxFileSize: 2)));
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
@@ -192,13 +192,11 @@ void main() {
     });
 
     test('create with network (some headers)', () async {
-      final int? textureId = await player.create(
-          DataSource(
-            sourceType: DataSourceType.network,
-            uri: 'someUri',
-            httpHeaders: <String, String>{'Authorization': 'Bearer token'},
-          ),
-          null);
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'someUri',
+        httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+      ));
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
@@ -218,25 +216,21 @@ void main() {
     });
 
     test('create with file', () async {
-      final int? textureId = await player.create(
-          DataSource(
-            sourceType: DataSourceType.file,
-            uri: 'someUri',
-          ),
-          null);
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.file,
+        uri: 'someUri',
+      ));
       expect(log.log.last, 'create');
       expect(log.createMessage?.uri, 'someUri');
       expect(textureId, 3);
     });
 
     test('create with file (some headers)', () async {
-      final int? textureId = await player.create(
-          DataSource(
-            sourceType: DataSourceType.file,
-            uri: 'someUri',
-            httpHeaders: <String, String>{'Authorization': 'Bearer token'},
-          ),
-          null);
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.file,
+        uri: 'someUri',
+        httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+      ));
       expect(log.log.last, 'create');
       expect(log.createMessage?.uri, 'someUri');
       expect(log.createMessage?.httpHeaders,

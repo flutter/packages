@@ -3,37 +3,38 @@
 // found in the LICENSE file.
 
 #import <XCTest/XCTest.h>
-#import "FVPContentDownloader.h"
 #import "FVPContentCacheWorker.h"
+#import "FVPContentDownloader.h"
 
 @interface FVPContentDownloaderTests : XCTestCase
 
-@property (nonatomic, strong) FVPContentCacheWorker *cacheWorker;
-@property (nonatomic, strong) FVPContentDownloader *contentDownloader;
-@property (nonatomic, strong) XCTestExpectation *expectation;
+@property(nonatomic, strong) FVPContentCacheWorker *cacheWorker;
+@property(nonatomic, strong) FVPContentDownloader *contentDownloader;
+@property(nonatomic, strong) XCTestExpectation *expectation;
 
 @end
 
 @implementation FVPContentDownloaderTests
 
 - (void)setUp {
-    [super setUp];
-    // Initialize cacheWorker and other necessary objects
-    NSURL *testURL = [NSURL URLWithString:@"https://example.com/test-video.mp4"];
-    NSError *error = nil;
-    self.cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:testURL error:error];
-    XCTAssertNotNil(self.cacheWorker);
-    XCTAssertNil(error);
-    
-    self.expectation = [self expectationWithDescription:@"Download completion"];
-    
-    self.contentDownloader = [[FVPContentDownloader alloc] initWithURL:testURL cacheWorker:self.cacheWorker];
+  [super setUp];
+  // Initialize cacheWorker and other necessary objects
+  NSURL *testURL = [NSURL URLWithString:@"https://example.com/test-video.mp4"];
+  NSError *error = nil;
+  self.cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:testURL error:error];
+  XCTAssertNotNil(self.cacheWorker);
+  XCTAssertNil(error);
+
+  self.expectation = [self expectationWithDescription:@"Download completion"];
+
+  self.contentDownloader = [[FVPContentDownloader alloc] initWithURL:testURL
+                                                         cacheWorker:self.cacheWorker];
 }
 
 - (void)tearDown {
-    self.cacheWorker = nil;
-    self.contentDownloader = nil;
-    self.expectation = nil;
-    [super tearDown];
+  self.cacheWorker = nil;
+  self.contentDownloader = nil;
+  self.expectation = nil;
+  [super tearDown];
 }
 @end

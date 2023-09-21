@@ -28,17 +28,17 @@ void main() {
     },
   );
   test(
-    'VideoPlayerOptions maxCacheSize defaults to 0',
+    'VideoPlayerOptions maxCacheSize defaults to null',
     () {
       final VideoPlayerOptions options = VideoPlayerOptions();
-      expect(options.maxCacheSize, 0);
+      expect(options.maxCacheSize, null);
     },
   );
   test(
-    'VideoPlayerOptions mixWithOthers defaults to 0',
+    'VideoPlayerOptions mixWithOthers defaults to null',
     () {
       final VideoPlayerOptions options = VideoPlayerOptions();
-      expect(options.maxFileSize, 0);
+      expect(options.maxFileSize, null);
     },
   );
 

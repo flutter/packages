@@ -173,7 +173,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource, {this.videoPlayerOptions})
+  MiniController.network(this.dataSource, {this.videoPlayerParameters})
       : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -197,7 +197,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   final String? package;
 
   /// Adds cache to the video player. Video will be cached. Cache can be cleared manually.
-  VideoPlayerOptions? videoPlayerOptions;
+  VideoPlayerParameters? videoPlayerParameters;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -246,9 +246,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         break;
     }
 
-    _textureId =
-        (await _platform.create(dataSourceDescription, videoPlayerOptions)) ??
-            kUninitializedTextureId;
+    _textureId = (await _platform.createWithParameters(
+            dataSourceDescription, videoPlayerParameters)) ??
+        kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 

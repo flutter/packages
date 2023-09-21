@@ -7,26 +7,28 @@
 
 @interface FVPCacheSessionManagerTests : XCTestCase
 
-@property (nonatomic, strong) FVPCacheSessionManager *cacheSessionManager;
+@property(nonatomic, strong) FVPCacheSessionManager *cacheSessionManager;
 
 @end
 
 @implementation FVPCacheSessionManagerTests
 
 - (void)setUp {
-    [super setUp];
-    self.cacheSessionManager = [FVPCacheSessionManager shared];
+  [super setUp];
+  self.cacheSessionManager = [FVPCacheSessionManager shared];
 }
 
 - (void)testSharedInstance {
-    XCTAssertNotNil(self.cacheSessionManager);
-    XCTAssertEqual(self.cacheSessionManager, [FVPCacheSessionManager shared]);
+  XCTAssertNotNil(self.cacheSessionManager);
+  XCTAssertEqual(self.cacheSessionManager, [FVPCacheSessionManager shared]);
 }
 
 - (void)testInitialization {
-    XCTAssertNotNil(self.cacheSessionManager.downloadQueue);
-    XCTAssertTrue([self.cacheSessionManager.downloadQueue.name isEqualToString:@"video_player.download_cache_queue"]);
-    XCTAssertEqual(self.cacheSessionManager.downloadQueue.maxConcurrentOperationCount, NSOperationQueueDefaultMaxConcurrentOperationCount);
+  XCTAssertNotNil(self.cacheSessionManager.downloadQueue);
+  XCTAssertTrue([self.cacheSessionManager.downloadQueue.name
+      isEqualToString:@"video_player.download_cache_queue"]);
+  XCTAssertEqual(self.cacheSessionManager.downloadQueue.maxConcurrentOperationCount,
+                 NSOperationQueueDefaultMaxConcurrentOperationCount);
 }
 
 @end

@@ -9,11 +9,15 @@
 @interface FVPResourceLoader : NSObject
 
 /**
-* `FVPResourceLoader` is a class responsible for managing resource loading requests, caching, and downloading media content for AVAssetResourceLoader in an AVPlayer. It is designed to work with `AVURLAsset`.
+* `FVPResourceLoader` is a class responsible for managing resource loading requests, caching, and
+downloading media content for AVAssetResourceLoader in an AVPlayer. It is designed to work with
+`AVURLAsset`.
 
 * Usage:
-* 1. Initialize an instance of `FVPResourceLoader` with a media URL to enable resource loading and caching.
-* 2. Use the `addRequest:` method to handle resource loading requests from an `AVAssetResourceLoadingRequest`.
+* 1. Initialize an instance of `FVPResourceLoader` with a media URL to enable resource loading and
+caching.
+* 2. Use the `addRequest:` method to handle resource loading requests from an
+`AVAssetResourceLoadingRequest`.
 * 3. Optionally, cancel resource loading and clean up resources using the `cancel` method.
 *
 * Example:
@@ -24,10 +28,11 @@
 *
 * // Handle resource loading requests
 * [resourceLoader addRequest:loadingRequest];
- 
+
 * // Optionally, cancel resource loading and clean up resources
 * [resourceLoader cancel];
-* @warning This class should be used in conjunction with FVPContentCacheWorker and FVPContentDownloader.
+* @warning This class should be used in conjunction with FVPContentCacheWorker and
+FVPContentDownloader.
 *
 * @see FVPContentCacheWorker
 * @see FVPContentDownloader
@@ -38,32 +43,32 @@
 @property(nonatomic, weak) id<FVPResourceLoaderDelegate> delegate;
 
 /**
-* Initializes an FVPResourceLoader instance with a media URL.
-*
-* @param url The URL of the media resource to be loaded and played.
-* @param error An error pointer that is set if initialization fails.
-*
-* @return A new FVPResourceLoader instance.
-*/
+ * Initializes an FVPResourceLoader instance with a media URL.
+ *
+ * @param url The URL of the media resource to be loaded and played.
+ * @param error An error pointer that is set if initialization fails.
+ *
+ * @return A new FVPResourceLoader instance.
+ */
 - (instancetype)initWithURL:(NSURL *)url error:(NSError *)error NS_DESIGNATED_INITIALIZER;
 
 /**
-* Adds an AVAssetResourceLoadingRequest for resource loading and caching.
-*
-* @param request An AVAssetResourceLoadingRequest to be handled by the resource loader.
-*/
+ * Adds an AVAssetResourceLoadingRequest for resource loading and caching.
+ *
+ * @param request An AVAssetResourceLoadingRequest to be handled by the resource loader.
+ */
 - (void)addRequest:(AVAssetResourceLoadingRequest *)request;
 
 /**
-* Removed an AVAssetResourceLoadingRequest for resource loading and caching.
-*
-* @param request An AVAssetResourceLoadingRequest to be handled by the resource loader.
-*/
+ * Removed an AVAssetResourceLoadingRequest for resource loading and caching.
+ *
+ * @param request An AVAssetResourceLoadingRequest to be handled by the resource loader.
+ */
 - (void)removeRequest:(AVAssetResourceLoadingRequest *)request;
 
 /**
-* Cancels all resource loading requests and clears associated resources.
-*/
+ * Cancels all resource loading requests and clears associated resources.
+ */
 - (void)cancel;
 
 @end

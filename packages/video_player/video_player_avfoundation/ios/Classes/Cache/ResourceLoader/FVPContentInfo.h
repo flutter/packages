@@ -5,7 +5,9 @@
 #import <Foundation/Foundation.h>
 
 /**
-* `FVPContentInfo` is a model class that represents essential information about cached or downloaded media content. It includes details such as content length, content type, * and whether byte-range access is supported.
+* `FVPContentInfo` is a model class that represents essential information about cached or downloaded
+media content. It includes details such as content length, content type, * and whether byte-range
+access is supported.
 
 *
 *  Usage:

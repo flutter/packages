@@ -25,7 +25,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^9.2.5
+  pigeon: ^11.0.1
 
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
 # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins

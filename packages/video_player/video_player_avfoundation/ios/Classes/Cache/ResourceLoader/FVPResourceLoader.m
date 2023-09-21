@@ -41,7 +41,6 @@ NSString *const mFVPResourceLoaderErrorDomainE = @"FVPFilePlayerResourceLoaderEr
   return self;
 }
 
-
 - (instancetype)init NS_UNAVAILABLE {
   NSAssert(NO, @"Use - initWithURL: instead");
   return nil;

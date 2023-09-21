@@ -34,9 +34,9 @@ static NSString *kMContentCacheDirectory;
 }
 
 // This method calculates the total size of all the cached files in the cache directory.
-// It iterates through each file in the cache directory, retrieves its attributes (including file size), and
-// accumulates the total size. If an error occurs during the process, the error parameter will be
-// populated.
+// It iterates through each file in the cache directory, retrieves its attributes (including file
+// size), and accumulates the total size. If an error occurs during the process, the error parameter
+// will be populated.
 + (unsigned long long)calculateCachedSizeWithError:(NSError **)error {
   NSFileManager *fileManager = [NSFileManager defaultManager];
   NSString *cacheDirectory = [self cacheDirectory];

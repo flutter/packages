@@ -36,7 +36,8 @@
 
 @interface FVPContentDownloader : NSObject
 
-- (instancetype)initWithURL:(NSURL *)url cacheWorker:(FVPContentCacheWorker *)cacheWorker NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url
+                cacheWorker:(FVPContentCacheWorker *)cacheWorker NS_DESIGNATED_INITIALIZER;
 
 /**
  * @property url
