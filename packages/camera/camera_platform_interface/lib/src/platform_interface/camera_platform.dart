@@ -61,9 +61,11 @@ abstract class CameraPlatform extends PlatformInterface {
       );
 
   /// Creates an uninitialized camera instance and returns the cameraId.
+  ///
+  /// Pass MediaSettings() for defaults
   Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
-    MediaSettings? mediaSettings,
+    MediaSettings mediaSettings,
   ) {
     throw UnimplementedError('createCameraWithSettings() is not implemented.');
   }

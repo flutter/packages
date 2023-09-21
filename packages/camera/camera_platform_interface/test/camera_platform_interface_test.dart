@@ -157,6 +157,26 @@ void main() {
 
       // Act & Assert
       expect(
+        () => cameraPlatform.createCamera(
+          const CameraDescription(
+            name: 'back',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 0,
+          ),
+          ResolutionPreset.low,
+        ),
+        throwsUnimplementedError,
+      );
+    });
+
+    test(
+        'Default implementation of createCameraWithSettings() should throw unimplemented error',
+        () {
+      // Arrange
+      final ExtendsCameraPlatform cameraPlatform = ExtendsCameraPlatform();
+
+      // Act & Assert
+      expect(
         () => cameraPlatform.createCameraWithSettings(
           const CameraDescription(
             name: 'back',
