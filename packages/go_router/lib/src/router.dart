@@ -302,10 +302,10 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
-  ///Whether to ignore platform's default initial location when
-  ///`initialLocation` is set.
+  /// Whether to ignore platform's default initial location when
+  /// `initialLocation` is set.
   ///
-  /// When set to [true], the route set as [initialLocation] will take
+  /// When set to [true], the [initialLocation] will take
   /// precedence over the platform's default initial location.
   /// This allows developers to control the starting route of the application
   /// independently of the platform.
@@ -527,13 +527,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   }
 
   String _effectiveInitialLocation(String? initialLocation) {
-    final String platformDefault =
-        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     if (overridePlatformDefaultLocation) {
-      // can force null check as it's already verified by
-      // asset() while initialization
+      // The initialLocation must not be null as it's already 
+      // verified by assert() during the initialization.
       return initialLocation!;
     }
+    final String platformDefault =
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     if (initialLocation == null) {
       return platformDefault;
     } else if (platformDefault == '/') {
