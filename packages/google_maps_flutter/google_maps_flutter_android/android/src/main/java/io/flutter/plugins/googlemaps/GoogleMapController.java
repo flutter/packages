@@ -127,8 +127,12 @@ final class GoogleMapController
     googleMap.moveCamera(cameraUpdate);
   }
 
-  private void animateCamera(CameraUpdate cameraUpdate) {
-    googleMap.animateCamera(cameraUpdate);
+  private void animateCamera(CameraUpdate cameraUpdate, Integer animationDuration) {
+    if (animationDuration != null) {
+      googleMap.animateCamera(cameraUpdate, animationDuration, null);
+    } else {
+      googleMap.animateCamera(cameraUpdate);
+    }
   }
 
   private CameraPosition getCameraPosition() {
