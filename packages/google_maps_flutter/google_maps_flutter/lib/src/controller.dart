@@ -171,7 +171,8 @@ class GoogleMapController {
       cameraUpdate,
       mapId: mapId,
       animationDuration: animationDuration,
-  );
+    );
+  }
 
   /// Changes the map camera position.
   ///
