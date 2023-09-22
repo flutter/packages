@@ -305,7 +305,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// Whether to ignore platform's default initial location when
   /// `initialLocation` is set.
   ///
-  /// When set to [true], the route set as [initialLocation] will take
+  /// When set to [true], the [initialLocation] will take
   /// precedence over the platform's default initial location.
   /// This allows developers to control the starting route of the application
   /// independently of the platform.
