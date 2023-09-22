@@ -265,7 +265,10 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   bool _isDisposed = false;
   StreamSubscription<CameraImageData>? _imageStreamSubscription;
-  FutureOr<bool>? _initCalled;
+  // A Future awaiting an attempt to initialize (e.g. after `initialize` was
+  // just called). If the controller has not been initialized at least once,
+  // this value is null.
+  Future<void>? _initializeFuture;
   StreamSubscription<DeviceOrientationChangedEvent>?
       _deviceOrientationSubscription;
 
@@ -294,6 +297,9 @@ class CameraController extends ValueNotifier<CameraValue> {
         'initialize was called on a disposed CameraController',
       );
     }
+
+    final Completer<void> initializeCompleter = Completer<void>();
+    _initializeFuture = initializeCompleter.future;
 
     try {
       final Completer<CameraInitializedEvent> initializeCompleter =
@@ -344,9 +350,9 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
+    } finally {
+      initializeCompleter.complete();
     }
-
-    _initCalled = true;
   }
 
   /// Prepare the capture session for video recording.
@@ -403,9 +409,8 @@ class CameraController extends ValueNotifier<CameraValue> {
       await CameraPlatform.instance.setDescriptionWhileRecording(description);
       value = value.copyWith(description: description);
     } else {
-      // dispose resources from previous camera description
-      if (_initCalled != null) {
-        await _initCalled;
+      if (_initializeFuture != null) {
+        await _initializeFuture;
         await CameraPlatform.instance.dispose(_cameraId);
       }
 
@@ -848,8 +853,8 @@ class CameraController extends ValueNotifier<CameraValue> {
     _unawaited(_deviceOrientationSubscription?.cancel());
     _isDisposed = true;
     super.dispose();
-    if (_initCalled != null) {
-      await _initCalled;
+    if (_initializeFuture != null) {
+      await _initializeFuture;
       await CameraPlatform.instance.dispose(_cameraId);
     }
   }
