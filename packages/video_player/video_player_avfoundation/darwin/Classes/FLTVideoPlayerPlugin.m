@@ -35,11 +35,14 @@
 
 #if TARGET_OS_IOS
 - (void)onDisplayLink:(CADisplayLink *)link {
-  [self displayLinkFired];
+  // TODO(stuartmorgan): Investigate switching this to displayLinkFired; iOS may also benefit from
+  // the availability check there.
+  [_registry textureFrameAvailable:_textureId];
 }
 #endif
 
 - (void)displayLinkFired {
+  // Only report a new frame if one is actually available.
   CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
   if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
     [_registry textureFrameAvailable:_textureId];
@@ -51,6 +54,7 @@
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now,
                                     const CVTimeStamp *outputTime, CVOptionFlags flagsIn,
                                     CVOptionFlags *flagsOut, void *displayLinkSource) {
+  // Trigger the main-thread dispatch queue, to drive a frame update check.
   __weak dispatch_source_t source = (__bridge dispatch_source_t)displayLinkSource;
   dispatch_source_merge_data(source, 1);
   return kCVReturnSuccess;
@@ -242,6 +246,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 #if TARGET_OS_OSX
   frameUpdater.videoOutput = _videoOutput;
+  // Create and start the main-thread dispatch queue to drive frameUpdater.
   self.displayLinkSource =
       dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue());
   dispatch_source_set_event_handler(self.displayLinkSource, ^() {
