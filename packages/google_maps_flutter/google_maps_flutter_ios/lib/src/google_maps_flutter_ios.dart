@@ -377,6 +377,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _channel(mapId)
         .invokeMethod<void>('camera#animate', <String, Object>{
       'cameraUpdate': cameraUpdate.toJson(),
+      'animationDuration': animationDuration?.inMilliseconds,
     });
   }
 
@@ -387,7 +388,6 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }) {
     return _channel(mapId).invokeMethod<void>('camera#move', <String, dynamic>{
       'cameraUpdate': cameraUpdate.toJson(),      
-      'animationDuration': animationDuration?.inMilliseconds,
     });
   }
 
