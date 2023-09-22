@@ -1,3 +1,7 @@
+## 6.1.20
+
+* Updates play-services-auth version to 20.7.0.
+
 ## 6.1.19
 
 * Adds pub topics to package metadata.
