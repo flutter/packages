@@ -136,6 +136,12 @@ static void *rateContext = &rateContext;
                  registrar:registrar];
 }
 
+- (void)dealloc {
+  if (!_disposed) {
+    [self removeKeyValueObservers];
+  }
+}
+
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
   [item addObserver:self
          forKeyPath:@"loadedTimeRanges"
@@ -607,13 +613,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 #else
   [_displayLink invalidate];
 #endif
-  AVPlayerItem *currentItem = self.player.currentItem;
-  [currentItem removeObserver:self forKeyPath:@"status"];
-  [currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
-  [currentItem removeObserver:self forKeyPath:@"presentationSize"];
-  [currentItem removeObserver:self forKeyPath:@"duration"];
-  [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
-  [self.player removeObserver:self forKeyPath:@"rate"];
+  [self removeKeyValueObservers];
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -622,6 +622,33 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)dispose {
   [self disposeSansEventChannel];
   [_eventChannel setStreamHandler:nil];
+}
+
+- (CALayer *)flutterViewLayer {
+#if TARGET_OS_OSX
+  return self.registrar.view.layer;
+#else
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(hellohuanlin): Provide a non-deprecated codepath. See
+  // https://github.com/flutter/flutter/issues/104117
+  UIViewController *root = UIApplication.sharedApplication.keyWindow.rootViewController;
+#pragma clang diagnostic pop
+  return root.view.layer;
+#endif
+}
+
+/// Removes all key-value observers set up for the player.
+///
+/// This is called from dealloc, so must not use any methods on self.
+- (void)removeKeyValueObservers {
+  AVPlayerItem *currentItem = _player.currentItem;
+  [currentItem removeObserver:self forKeyPath:@"status"];
+  [currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
+  [currentItem removeObserver:self forKeyPath:@"presentationSize"];
+  [currentItem removeObserver:self forKeyPath:@"duration"];
+  [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
+  [_player removeObserver:self forKeyPath:@"rate"];
 }
 
 @end
@@ -807,20 +834,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
-#endif
-}
-
-- (CALayer *)flutterViewLayer {
-#if TARGET_OS_OSX
-  return self.registrar.view.layer;
-#else
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // TODO(hellohuanlin): Provide a non-deprecated codepath. See
-  // https://github.com/flutter/flutter/issues/104117
-  UIViewController *root = UIApplication.sharedApplication.keyWindow.rootViewController;
-#pragma clang diagnostic pop
-  return root.view.layer;
 #endif
 }
 
