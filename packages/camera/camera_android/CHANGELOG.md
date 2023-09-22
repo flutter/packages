@@ -1,7 +1,3 @@
-## NEXT
-
-* Removes usage of `_ambiguate` method in tests.
-
 ## 0.10.8+9
 
 * Removes usage of `_ambiguate` method in example.
