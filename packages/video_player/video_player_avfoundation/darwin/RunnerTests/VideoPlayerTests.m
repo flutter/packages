@@ -488,9 +488,12 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   // [FLTVideoPlayerPlugin dispose:error:] selector is dispatching the [FLTVideoPlayer dispose] call
   // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
   // was truly deallocated.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
   [self expectationForPredicate:[NSPredicate predicateWithFormat:@"self != nil"]
             evaluatedWithObject:weakPlayer
                         handler:nil];
+#pragma clang diagnostic pop
   [self waitForExpectationsWithTimeout:10.0 handler:nil];
 
   [avPlayer willChangeValueForKey:@"rate"];  // No assertions needed. Lack of crash is a success.
@@ -541,9 +544,12 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   // [FLTVideoPlayerPlugin dispose:error:] selector is dispatching the [FLTVideoPlayer dispose] call
   // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
   // was truly deallocated.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
   [self expectationForPredicate:[NSPredicate predicateWithFormat:@"self != nil"]
             evaluatedWithObject:weakPlayer
                         handler:nil];
+#pragma clang diagnostic pop
   [self waitForExpectationsWithTimeout:10.0
                                handler:nil];  // No assertions needed. Lack of crash is a success.
 }
