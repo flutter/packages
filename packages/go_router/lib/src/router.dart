@@ -527,13 +527,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   }
 
   String _effectiveInitialLocation(String? initialLocation) {
-    final String platformDefault =
-        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     if (overridePlatformDefaultLocation) {
       // can force null check as it's already verified by
       // assert() while initialization
       return initialLocation!;
     }
+    final String platformDefault =
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     if (initialLocation == null) {
       return platformDefault;
     } else if (platformDefault == '/') {
