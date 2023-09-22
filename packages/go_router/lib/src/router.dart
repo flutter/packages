@@ -531,7 +531,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
         WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     if (overridePlatformDefaultLocation) {
       // can force null check as it's already verified by
-      // asset() while initialization
+      // assert() while initialization
       return initialLocation!;
     }
     if (initialLocation == null) {
