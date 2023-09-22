@@ -528,8 +528,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   String _effectiveInitialLocation(String? initialLocation) {
     if (overridePlatformDefaultLocation) {
-      // can force null check as it's already verified by
-      // assert() while initialization
+      // The initialLocation must not be null as it's already 
+      // verified by assert() during the initialization.
       return initialLocation!;
     }
     final String platformDefault =
