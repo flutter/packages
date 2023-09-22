@@ -38,4 +38,63 @@
   CFRelease(deliveriedPixelBuffer);
 }
 
+- (void)testDidOutputSampleBufferIgnoreAudioSamplesBeforeVideoSamples {
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+  CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
+  CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
+
+  id connectionMock = OCMClassMock([AVCaptureConnection class]);
+
+  id writerMock = OCMClassMock([AVAssetWriter class]);
+  OCMStub([writerMock alloc]).andReturn(writerMock);
+  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
+      .andReturn(writerMock);
+  __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
+  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
+    status = AVAssetWriterStatusWriting;
+  });
+  OCMStub([writerMock status]).andDo(^(NSInvocation *invocation) {
+    [invocation setReturnValue:&status];
+  });
+
+  __block NSArray *writtenSamples = @[];
+
+  id videoMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
+  OCMStub([videoMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
+                                                sourcePixelBufferAttributes:OCMOCK_ANY])
+      .andReturn(videoMock);
+  OCMStub([videoMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
+      .ignoringNonObjectArgs()
+      .andDo(^(NSInvocation *invocation) {
+        writtenSamples = [writtenSamples arrayByAddingObject:@"video"];
+      });
+
+  id audioMock = OCMClassMock([AVAssetWriterInput class]);
+  OCMStub([audioMock assetWriterInputWithMediaType:[OCMArg isEqual:AVMediaTypeAudio]
+                                    outputSettings:OCMOCK_ANY])
+      .andReturn(audioMock);
+  OCMStub([audioMock isReadyForMoreMediaData]).andReturn(YES);
+  OCMStub([audioMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
+    writtenSamples = [writtenSamples arrayByAddingObject:@"audio"];
+  });
+
+  FLTThreadSafeFlutterResult *result =
+      [[FLTThreadSafeFlutterResult alloc] initWithResult:^(id result){
+      }];
+  [cam startVideoRecordingWithResult:result];
+
+  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:videoSample
+             fromConnection:connectionMock];
+  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+
+  NSArray *expectedSamples = @[ @"video", @"audio" ];
+  XCTAssertEqualObjects(writtenSamples, expectedSamples, @"First appended sample must be video.");
+
+  CFRelease(videoSample);
+  CFRelease(audioSample);
+}
+
 @end
