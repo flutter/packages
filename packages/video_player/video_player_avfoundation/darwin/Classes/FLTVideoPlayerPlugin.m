@@ -50,8 +50,8 @@
 #if TARGET_OS_OSX
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now,
                                     const CVTimeStamp *outputTime, CVOptionFlags flagsIn,
-                                    CVOptionFlags *flagsOut, void *displayLinkContext) {
-  __weak dispatch_source_t source = (__bridge dispatch_source_t)displayLinkContext;
+                                    CVOptionFlags *flagsOut, void *displayLinkSource) {
+  __weak dispatch_source_t source = (__bridge dispatch_source_t)displayLinkSource;
   dispatch_source_merge_data(source, 1);
   return kCVReturnSuccess;
 }
@@ -249,6 +249,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       [frameUpdater displayLinkFired];
     }
   });
+  dispatch_resume(self.displayLinkSource);
   if (CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink) == kCVReturnSuccess) {
     CVDisplayLinkSetOutputCallback(_displayLink, &DisplayLinkCallback,
                                    (__bridge void *)(self.displayLinkSource));
@@ -284,6 +285,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                          registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
+
+  _registrar = registrar;
 
   AVAsset *asset = [item asset];
   void (^assetCompletionHandler)(void) = ^{
@@ -593,6 +596,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   if (_displayLink) {
     CVDisplayLinkStop(_displayLink);
     CVDisplayLinkRelease(_displayLink);
+    _displayLink = NULL;
   }
   dispatch_source_cancel(_displayLinkSource);
 #else
