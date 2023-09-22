@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -97,20 +98,42 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   bool _handlePopPageWithRouteMatch(
       Route<Object?> route, Object? result, RouteMatch? match) {
-    if (!route.didPop(result)) {
-      return false;
+    if (route.willHandlePopInternally) {
+      final bool popped = route.didPop(result);
+      assert(!popped);
+      return popped;
     }
     assert(match != null);
+    final RouteBase routeBase = match!.route;
+    if (routeBase is! GoRoute || routeBase.onExit == null) {
+      route.didPop(result);
+      _completeRouteMatch(result, match);
+      return true;
+    }
+
+    // The _handlePopPageWithRouteMatch is called during draw frame, schedule
+    // a microtask in case the onExit callback want to launch dialog or other
+    // navigator operations.
+    scheduleMicrotask(() async {
+      final bool onExitResult =
+          await routeBase.onExit!(navigatorKey.currentContext!);
+      if (onExitResult) {
+        _completeRouteMatch(result, match);
+      }
+    });
+    return false;
+  }
+
+  void _completeRouteMatch(Object? result, RouteMatch match) {
     if (match is ImperativeRouteMatch) {
       match.complete(result);
     }
-    currentConfiguration = currentConfiguration.remove(match!);
+    currentConfiguration = currentConfiguration.remove(match);
     notifyListeners();
     assert(() {
       _debugAssertMatchListNotEmpty();
       return true;
     }());
-    return true;
   }
 
   /// For use by the Router architecture as part of the RouterDelegate.
@@ -131,15 +154,83 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   /// For use by the Router architecture as part of the RouterDelegate.
+  // This class avoids using async to make sure the route is processed
+  // synchronously if possible.
   @override
   Future<void> setNewRoutePath(RouteMatchList configuration) {
-    if (currentConfiguration != configuration) {
-      currentConfiguration = configuration;
-      notifyListeners();
+    if (currentConfiguration == configuration) {
+      return SynchronousFuture<void>(null);
     }
-    assert(currentConfiguration.isNotEmpty || currentConfiguration.isError);
-    // Use [SynchronousFuture] so that the initial url is processed
-    // synchronously and remove unwanted initial animations on deep-linking
+
+    assert(configuration.isNotEmpty || configuration.isError);
+
+    final BuildContext? navigatorContext = navigatorKey.currentContext;
+    // If navigator is not built or disposed, the GoRoute.onExit is irrelevant.
+    if (navigatorContext != null) {
+      final int compareUntil = math.min(
+        currentConfiguration.matches.length,
+        configuration.matches.length,
+      );
+      int indexOfFirstDiff = 0;
+      for (; indexOfFirstDiff < compareUntil; indexOfFirstDiff++) {
+        if (currentConfiguration.matches[indexOfFirstDiff] !=
+            configuration.matches[indexOfFirstDiff]) {
+          break;
+        }
+      }
+      if (indexOfFirstDiff < currentConfiguration.matches.length) {
+        final List<GoRoute> exitingGoRoutes = currentConfiguration.matches
+            .sublist(indexOfFirstDiff)
+            .map<RouteBase>((RouteMatch match) => match.route)
+            .whereType<GoRoute>()
+            .toList();
+        return _callOnExitStartsAt(exitingGoRoutes.length - 1,
+                navigatorContext: navigatorContext, routes: exitingGoRoutes)
+            .then<void>((bool exit) {
+          if (!exit) {
+            return SynchronousFuture<void>(null);
+          }
+          return _setCurrentConfiguration(configuration);
+        });
+      }
+    }
+
+    return _setCurrentConfiguration(configuration);
+  }
+
+  /// Calls [GoRoute.onExit] starting from the index
+  ///
+  /// The returned future resolves to true if all routes below the index all
+  /// return true. Otherwise, the returned future resolves to false.
+  static Future<bool> _callOnExitStartsAt(int index,
+      {required BuildContext navigatorContext, required List<GoRoute> routes}) {
+    if (index < 0) {
+      return SynchronousFuture<bool>(true);
+    }
+    final GoRoute goRoute = routes[index];
+    if (goRoute.onExit == null) {
+      return _callOnExitStartsAt(index - 1,
+          navigatorContext: navigatorContext, routes: routes);
+    }
+
+    Future<bool> handleOnExitResult(bool exit) {
+      if (exit) {
+        return _callOnExitStartsAt(index - 1,
+            navigatorContext: navigatorContext, routes: routes);
+      }
+      return SynchronousFuture<bool>(false);
+    }
+
+    final FutureOr<bool> exitFuture = goRoute.onExit!(navigatorContext);
+    if (exitFuture is bool) {
+      return handleOnExitResult(exitFuture);
+    }
+    return exitFuture.then<bool>(handleOnExitResult);
+  }
+
+  Future<void> _setCurrentConfiguration(RouteMatchList configuration) {
+    currentConfiguration = configuration;
+    notifyListeners();
     return SynchronousFuture<void>(null);
   }
 }

@@ -327,7 +327,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     log('restoring ${matchList.uri}');
     routeInformationProvider.restore(
       matchList.uri.toString(),
-      encodedMatchList: RouteMatchListCodec(configuration).encode(matchList),
+      matchList: matchList,
     );
   }
 
