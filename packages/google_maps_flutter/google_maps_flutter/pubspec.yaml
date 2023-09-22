@@ -33,7 +33,10 @@ dependencies:
     git:
       url: https://github.com/MichaelA71/packages.git
       path: packages/google_maps_flutter/google_maps_flutter_platform_interface
-  google_maps_flutter_web: ^0.5.2
+  google_maps_flutter_web: 
+    git:
+      url: https://github.com/MichaelA71/packages.git
+      path: packages/google_maps_flutter/google_maps_flutter_web
 
 dev_dependencies:
   flutter_test:
