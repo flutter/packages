@@ -4977,27 +4977,33 @@ void main() {
               ),
           throwsA(const TypeMatcher<AssertionError>()));
     });
-    test('Test override using routeInformationProvider', () {
+    testWidgets('Test override using routeInformationProvider',
+        (WidgetTester tester) async {
+      tester.binding.platformDispatcher.defaultRouteNameTestValue =
+          '/some-route';
       final String platformRoute =
           WidgetsBinding.instance.platformDispatcher.defaultRouteName;
-      const String expectedInitialRoute = '/abc';
+      const String expectedInitialRoute = '/kyc';
       expect(platformRoute != expectedInitialRoute, isTrue);
 
-      final GoRouter router = GoRouter(
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/abc',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+        GoRoute(
+          path: '/bcd',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
         overridePlatformDefaultLocation: true,
-        initialLocation: '/abc',
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/abc',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Placeholder(),
-          ),
-          GoRoute(
-            path: '/bcd',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Placeholder(),
-          ),
-        ],
+        initialLocation: expectedInitialRoute,
       );
       expect(router.routeInformationProvider.value.uri.toString(),
           expectedInitialRoute);

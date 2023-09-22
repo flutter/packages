@@ -302,13 +302,21 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
-  /// When set to [true], the route returned by `getInitialRoute` will take precedence over the
-  /// platform's default initial location. This allows developers to control the starting route
-  /// of the application independently of the platform.
+  ///Whether to ignore platform's default initial location when
+  ///`initialLocation` is set.
   ///
-  /// Setting this parameter to [false] (default) will allow the platform's default initial
-  /// location to be used. It's advisable to only set this to true if you explicitly want to
-  /// ignore the platform's default initial location.
+  /// When set to [true], the route set as [initialLocation] will take
+  /// precedence over the platform's default initial location.
+  /// This allows developers to control the starting route of the application
+  /// independently of the platform.
+  ///
+  /// Platform's initial location is set when the app opens via a deeplink.
+  /// Use [overridePlatformDefaultLocation] only if one wants to override
+  /// platform implemented initial location.
+  ///
+  /// Setting this parameter to [false] (default) will allow the platform's
+  /// default initial location to be used even if the `initialLocation` is set.
+  /// It's advisable to only set this to [true] if one explicitly wants to.
   final bool overridePlatformDefaultLocation;
 
   /// Returns `true` if there is at least two or more route can be pop.
