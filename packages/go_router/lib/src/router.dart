@@ -302,8 +302,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
-  ///Whether to ignore platform's default initial location when
-  ///`initialLocation` is set.
+  /// Whether to ignore platform's default initial location when
+  /// `initialLocation` is set.
   ///
   /// When set to [true], the route set as [initialLocation] will take
   /// precedence over the platform's default initial location.
