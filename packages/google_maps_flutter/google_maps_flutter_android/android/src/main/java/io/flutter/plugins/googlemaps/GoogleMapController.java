@@ -307,7 +307,8 @@ final class GoogleMapController
         {
           final CameraUpdate cameraUpdate =
               Convert.toCameraUpdate(call.argument("cameraUpdate"), density);
-          animateCamera(cameraUpdate);
+          final Integer animationDuration = call.argument("animationDuration");
+          animateCamera(cameraUpdate, animationDuration);
           result.success(null);
           break;
         }
