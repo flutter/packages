@@ -665,7 +665,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 @implementation FLTVideoPlayerPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FLTVideoPlayerPlugin *instance = [[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+#if !TARGET_OS_OSX
+  // TODO(stuartmorgan): Remove the ifdef once >3.13 reaches stable. See
+  // https://github.com/flutter/flutter/issues/135320
   [registrar publish:instance];
+#endif
   FLTAVFoundationVideoPlayerApiSetup(registrar.messenger, instance);
 }
 
