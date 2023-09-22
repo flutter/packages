@@ -25,7 +25,7 @@ dependencies:
   google_maps: ^6.1.0
   google_maps_flutter_platform_interface: 
     git:
-      url: https://github.com/MichaelA71/plugins.git
+      url: https://github.com/MichaelA71/packages.git
       path: packages/google_maps_flutter/google_maps_flutter_platform_interface
   sanitize_html: ^2.0.0
   stream_transform: ^2.0.0
