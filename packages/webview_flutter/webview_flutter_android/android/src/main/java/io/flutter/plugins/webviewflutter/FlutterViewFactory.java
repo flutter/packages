@@ -5,16 +5,17 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.content.Context;
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 
-class FlutterWebViewFactory extends PlatformViewFactory {
+class FlutterViewFactory extends PlatformViewFactory {
   private final InstanceManager instanceManager;
 
-  FlutterWebViewFactory(InstanceManager instanceManager) {
+  FlutterViewFactory(InstanceManager instanceManager) {
     super(StandardMessageCodec.INSTANCE);
     this.instanceManager = instanceManager;
   }
@@ -24,13 +25,26 @@ class FlutterWebViewFactory extends PlatformViewFactory {
   public PlatformView create(Context context, int viewId, @Nullable Object args) {
     final Integer identifier = (Integer) args;
     if (identifier == null) {
-      throw new IllegalStateException("An identifier is required to retrieve WebView instance.");
+      throw new IllegalStateException("An identifier is required to retrieve a View instance.");
     }
 
-    final PlatformView view = instanceManager.getInstance(identifier);
-    if (view == null) {
-      throw new IllegalStateException("Unable to find WebView instance: " + args);
+    final Object instance = instanceManager.getInstance(identifier);
+
+    if (instance instanceof PlatformView) {
+      return (PlatformView) instance;
+    } else if (instance instanceof View) {
+      return new PlatformView() {
+        @Override
+        public View getView() {
+          return (View) instance;
+        }
+
+        @Override
+        public void dispose() {}
+      };
     }
-    return view;
+
+    throw new IllegalStateException(
+        "Unable to find a PlatformView or View instance: " + args + ", " + instance);
   }
 }

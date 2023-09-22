@@ -277,6 +277,15 @@ abstract class PlatformWebViewController extends PlatformInterface {
       'getUserAgent is not implemented on the current platform',
     );
   }
+
+  /// Sets a callback that notifies the host application of any console messages
+  /// written to the JavaScript console.
+  Future<void> setOnConsoleMessage(
+      void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage) {
+    throw UnimplementedError(
+      'setOnConsoleMessage is not implemented on the current platform',
+    );
+  }
 }
 
 /// Describes the parameters necessary for registering a JavaScript channel.

@@ -57,8 +57,13 @@ Future<void> main(List<String> arguments) async {
 
   final ProcessResult result = Process.runSync(
     'flutter',
-    <String>['test', '--coverage'],
+    <String>[
+      'test',
+      '--coverage',
+      if (arguments.isNotEmpty) ...arguments,
+    ],
   );
+
   if (result.exitCode != 0) {
     print(result.stdout);
     print(result.stderr);

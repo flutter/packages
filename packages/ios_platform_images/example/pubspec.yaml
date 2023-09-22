@@ -21,6 +21,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
 
 flutter:
+  assets:
+    - assets/
   uses-material-design: true

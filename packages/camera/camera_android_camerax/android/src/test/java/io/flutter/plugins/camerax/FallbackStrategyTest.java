@@ -11,7 +11,7 @@ import static org.mockito.Mockito.mockStatic;
 
 import androidx.camera.video.FallbackStrategy;
 import androidx.camera.video.Quality;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityConstraint;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQuality;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoResolutionFallbackRule;
 import org.junit.After;
 import org.junit.Before;
@@ -48,11 +48,11 @@ public class FallbackStrategyTest {
 
     try (MockedStatic<FallbackStrategy> mockedFallbackStrategy =
         mockStatic(FallbackStrategy.class)) {
-      for (VideoQualityConstraint videoQualityConstraint : VideoQualityConstraint.values()) {
+      for (VideoQuality videoQuality : VideoQuality.values()) {
         for (VideoResolutionFallbackRule fallbackRule : VideoResolutionFallbackRule.values()) {
-          // Determine expected Quality based on videoQualityConstraint being tested.
+          // Determine expected Quality based on videoQuality being tested.
           Quality convertedQuality = null;
-          switch (videoQualityConstraint) {
+          switch (videoQuality) {
             case SD:
               convertedQuality = Quality.SD;
               break;
@@ -72,10 +72,7 @@ public class FallbackStrategyTest {
               convertedQuality = Quality.HIGHEST;
               break;
             default:
-              fail(
-                  "The VideoQualityConstraint "
-                      + videoQualityConstraint.toString()
-                      + "is unhandled by this test.");
+              fail("The VideoQuality " + videoQuality.toString() + "is unhandled by this test.");
           }
           // Set Quality as final local variable to avoid error about using non-final (or effecitvely final) local variables in lambda expressions.
           final Quality expectedQuality = convertedQuality;
@@ -108,7 +105,7 @@ public class FallbackStrategyTest {
                       + fallbackRule.toString()
                       + "is unhandled by this test.");
           }
-          hostApi.create(instanceIdentifier, videoQualityConstraint, fallbackRule);
+          hostApi.create(instanceIdentifier, videoQuality, fallbackRule);
           assertEquals(instanceManager.getInstance(instanceIdentifier), mockFallbackStrategy);
 
           // Clear/reset FallbackStrategy mock and InstanceManager.
