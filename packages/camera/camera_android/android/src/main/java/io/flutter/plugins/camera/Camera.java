@@ -573,13 +573,14 @@ class Camera
     // Listen for picture being taken.
     pictureImageReader.setOnImageAvailableListener(this, backgroundHandler);
 
-    final AutoFocusFeature autoFocusFeature = cameraFeatures.getAutoFocus();
-    final boolean isAutoFocusSupported = autoFocusFeature.checkIsSupported();
-    if (isAutoFocusSupported && autoFocusFeature.getValue() == FocusMode.auto) {
-      runPictureAutoFocus();
-    } else {
-      runPrecaptureSequence();
-    }
+    //final AutoFocusFeature autoFocusFeature = cameraFeatures.getAutoFocus();
+    //final boolean isAutoFocusSupported = autoFocusFeature.checkIsSupported();
+    //if (isAutoFocusSupported && autoFocusFeature.getValue() == FocusMode.auto) {
+    //  runPictureAutoFocus();
+    //} else {
+    //  runPrecaptureSequence();
+    //}
+    takePictureAfterPrecapture();
   }
 
   /**
