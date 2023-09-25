@@ -1027,6 +1027,23 @@ void main() {
     expect(imageFile.path, equals(testPicturePath));
   });
 
+  test('takePicture turns non-torch flash mode off when torch mode enabled',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 77;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    camera.imageCapture = MockImageCapture();
+    camera.camera = MockCamera();
+
+    when(camera.camera!.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
+
+    await camera.setFlashMode(cameraId, FlashMode.torch);
+    await camera.takePicture(cameraId);
+    verify(camera.imageCapture!.setFlashMode(ImageCapture.flashModeOff));
+  });
+
   test(
       'setFlashMode configures ImageCapture with expected non-torch flash mode',
       () async {
