@@ -444,7 +444,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The supplied [zoom] value should be between the minimum and the maximum
   /// supported zoom level returned by `getMinZoomLevel` and `getMaxZoomLevel`.
   /// Throws a `CameraException` when an illegal zoom level is supplied.
-  // TODO(camsim99): throw the exception
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
     final CameraControl cameraControl = await camera!.getCameraControl();

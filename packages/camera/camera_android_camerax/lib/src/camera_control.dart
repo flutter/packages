@@ -83,7 +83,12 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
   Future<void> setZoomRatioFromInstance(
       CameraControl instance, double ratio) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
-    await setZoomRatio(identifier, ratio);
+    try {
+      await setZoomRatio(identifier, ratio);
+    } on PlatformException catch (e) {
+      SystemServices.cameraErrorStreamController.add(e.message ??
+          'Zoom ratio was unable to be set. If ratio was not out of range, newer value may have been set or the camera is closed.');
+    }
   }
 }
 
