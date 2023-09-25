@@ -24,7 +24,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^9.2.4
+  pigeon: ^11.0.1
 
 topics:
   - video
