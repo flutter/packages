@@ -7,6 +7,7 @@ package io.flutter.plugins.imagepicker;
 import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -630,7 +631,21 @@ public class ImagePickerDelegate
 
   private void handleChooseImageResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_OK && data != null) {
-      String path = fileUtils.getPathFromUri(activity, data.getData());
+      Uri uri = data.getData();
+      // On several pre-Android 13 devices using Android Photo Picker, the Uri from getData() could be null.
+      if (uri == null) {
+        ClipData clipData = data.getClipData();
+        if (clipData != null && clipData.getItemCount() == 1) {
+          uri = clipData.getItemAt(0).getUri();
+        }
+      }
+      // If there's no valid Uri, return an error
+      if (uri == null) {
+        finishWithError("no_valid_image_uri", "Cannot find the selected image.");
+        return;
+      }
+
+      String path = fileUtils.getPathFromUri(activity, uri);
       handleImageResult(path, false);
       return;
     }
@@ -701,7 +716,21 @@ public class ImagePickerDelegate
 
   private void handleChooseVideoResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_OK && data != null) {
-      String path = fileUtils.getPathFromUri(activity, data.getData());
+      Uri uri = data.getData();
+      // On several pre-Android 13 devices using Android Photo Picker, the Uri from getData() could be null.
+      if (uri == null) {
+        ClipData clipData = data.getClipData();
+        if (clipData != null && clipData.getItemCount() == 1) {
+          uri = clipData.getItemAt(0).getUri();
+        }
+      }
+      // If there's no valid Uri, return an error
+      if (uri == null) {
+        finishWithError("no_valid_video_uri", "Cannot find the selected video.");
+        return;
+      }
+
+      String path = fileUtils.getPathFromUri(activity, uri);
       handleVideoResult(path);
       return;
     }
