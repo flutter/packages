@@ -1,3 +1,7 @@
+## 11.0.1
+
+- Fixes the Android back button ignores top level route's onExit.
+
 ## 11.0.0
 
 - Fixes the GoRouter.goBranch so that it doesn't reset extra to null if extra is not serializable.
