@@ -93,6 +93,7 @@ class DynamicGridView extends GridView {
     super.key,
     super.scrollDirection,
     super.reverse,
+    super.shrinkWrap,
     required super.gridDelegate,
     // This creates a SliverChildBuilderDelegate in the super class.
     required super.itemBuilder,
@@ -149,6 +150,7 @@ class DynamicGridView extends GridView {
     super.key,
     super.scrollDirection,
     super.reverse,
+    super.shrinkWrap,
     double mainAxisSpacing = 0.0,
     double crossAxisSpacing = 0.0,
     double childCrossAxisExtent = double.infinity,
@@ -195,6 +197,7 @@ class DynamicGridView extends GridView {
     super.key,
     super.scrollDirection,
     super.reverse,
+    super.shrinkWrap,
     int? crossAxisCount,
     double? maxCrossAxisExtent,
     double mainAxisSpacing = 0.0,
