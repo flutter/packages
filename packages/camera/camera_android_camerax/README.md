@@ -43,10 +43,6 @@ and thus, the plugin will fall back to 480p if configured with a
 
 `setFocusMode` & `setFocusPoint` are unimplemented.
 
-### Zoom configuration \[[Issue #125371][125371]\]
-
-`setZoomLevel` is unimplemented.
-
 ### Setting maximum duration and stream options for video capture
 
 Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
