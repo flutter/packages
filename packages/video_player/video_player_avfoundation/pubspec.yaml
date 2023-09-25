@@ -14,7 +14,7 @@ flutter:
     platforms:
       ios:
         dartPluginClass: AVFoundationVideoPlayer
-        pluginClass: FLTVideoPlayerPlugin
+        pluginClass: FVPVideoPlayerPlugin
 
 dependencies:
   flutter:
