@@ -1,0 +1,26 @@
+# cloudbuild.yaml
+# following example from https://dart.dev/tools/pub/automated-publishing#writing-a-cloud-build-configuration-file
+steps:
+- id: Create temporary token
+  name: gcr.io/cloud-builders/gcloud
+  volumes:
+  - name: temporary-secrets
+    path: /secrets
+  script: |
+    gcloud auth print-identity-token \
+      --impersonate-service-account=pub-dev@$flutter-infra.iam.gserviceaccount.com \
+      --audiences=https://pub.dev \
+      --include-email > /secrets/temporary-pub-token.txt
+  env:
+  - PROJECT_ID=$PROJECT_ID
+- id: Publish to pub.dev
+  name: dart
+  volumes:
+  - name: temporary-secrets
+    path: /secrets
+  script: | 
+    cat /secrets/temporary-pub-token.txt | dart pub token add https://pub.dev
+    git config --global user.name ${{ secrets.USER_NAME }}
+    git config --global user.email ${{ secrets.USER_EMAIL }}
+    dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin pub-publish-flags=--dry-run
+    dart pub publish --force
