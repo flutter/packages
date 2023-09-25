@@ -31,6 +31,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<int?> create(DataSource dataSource) async {
+    return createWithParameters(dataSource, null);
+  }
+
+  @override
   Future<int?> createWithParameters(DataSource dataSource,
       VideoPlayerParameters? videoPlayerParameters) async {
     String? asset;

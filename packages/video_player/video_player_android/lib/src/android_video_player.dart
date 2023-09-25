@@ -77,44 +77,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<int?> create(DataSource dataSource) async {
-    String? asset;
-    String? packageName;
-    String? uri;
-    String? formatHint;
-    int? maxCacheSize;
-    int? maxFileSize;
-
-    Map<String, String> httpHeaders = <String, String>{};
-    switch (dataSource.sourceType) {
-      case DataSourceType.asset:
-        asset = dataSource.asset;
-        packageName = dataSource.package;
-        break;
-      case DataSourceType.network:
-        uri = dataSource.uri;
-        formatHint = _videoFormatStringMap[dataSource.formatHint];
-        httpHeaders = dataSource.httpHeaders;
-        break;
-      case DataSourceType.file:
-        uri = dataSource.uri;
-        httpHeaders = dataSource.httpHeaders;
-        break;
-      case DataSourceType.contentUri:
-        uri = dataSource.uri;
-        break;
-    }
-    final CreateMessage message = CreateMessage(
-      asset: asset,
-      packageName: packageName,
-      uri: uri,
-      maxCacheSize: maxCacheSize,
-      maxFileSize: maxFileSize,
-      httpHeaders: httpHeaders,
-      formatHint: formatHint,
-    );
-
-    final TextureMessage response = await _api.create(message);
-    return response.textureId;
+    return createWithParameters(dataSource, null);
   }
 
   @override

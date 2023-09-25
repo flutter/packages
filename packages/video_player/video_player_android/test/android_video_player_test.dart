@@ -200,8 +200,8 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
-      expect(log.createMessage?.maxCacheSize, 0);
-      expect(log.createMessage?.maxFileSize, 0);
+      expect(log.createMessage?.maxCacheSize, null);
+      expect(log.createMessage?.maxFileSize, null);
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, null);
       expect(log.createMessage?.httpHeaders,
