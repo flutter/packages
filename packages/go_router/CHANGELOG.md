@@ -1,3 +1,10 @@
+## 11.0.0
+
+- Fixes the GoRouter.goBranch so that it doesn't reset extra to null if extra is not serializable.
+- **BREAKING CHANGE**:
+  - Updates the function signature of `GoRouteInformationProvider.restore`.
+  - Adds `NavigationType.restore` to `NavigationType` enum.
+
 ## 10.2.0
 
 - Adds `onExit` to GoRoute.
