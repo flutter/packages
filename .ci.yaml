@@ -323,6 +323,7 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 1 --shardCount 6"
+      presubmit_max_attempts: "2"
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "33"}
@@ -403,6 +404,7 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 1 --shardCount 6"
+      presubmit_max_attempts: "2"
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "33"}
