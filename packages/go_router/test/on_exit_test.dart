@@ -166,4 +166,81 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(home), findsOneWidget);
   });
+
+  testWidgets('android back button respects the last route.',
+      (WidgetTester tester) async {
+    bool allow = false;
+    final UniqueKey home = UniqueKey();
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
+        onExit: (BuildContext context) {
+          return allow;
+        },
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester);
+    expect(find.byKey(home), findsOneWidget);
+
+    // Not allow system pop.
+    expect(await router.routerDelegate.popRoute(), true);
+
+    allow = true;
+    expect(await router.routerDelegate.popRoute(), false);
+  });
+
+  testWidgets('android back button respects the last route. async',
+      (WidgetTester tester) async {
+    bool allow = false;
+    final UniqueKey home = UniqueKey();
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
+        onExit: (BuildContext context) async {
+          return allow;
+        },
+      ),
+    ];
+
+    final GoRouter router = await createRouter(routes, tester);
+    expect(find.byKey(home), findsOneWidget);
+
+    // Not allow system pop.
+    expect(await router.routerDelegate.popRoute(), true);
+
+    allow = true;
+    expect(await router.routerDelegate.popRoute(), false);
+  });
+
+  testWidgets('android back button respects the last route with shell route.',
+      (WidgetTester tester) async {
+    bool allow = false;
+    final UniqueKey home = UniqueKey();
+    final List<RouteBase> routes = <RouteBase>[
+      ShellRoute(builder: (_, __, Widget child) => child, routes: <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: home),
+          onExit: (BuildContext context) {
+            return allow;
+          },
+        ),
+      ])
+    ];
+
+    final GoRouter router = await createRouter(routes, tester);
+    expect(find.byKey(home), findsOneWidget);
+
+    // Not allow system pop.
+    expect(await router.routerDelegate.popRoute(), true);
+
+    allow = true;
+    expect(await router.routerDelegate.popRoute(), false);
+  });
 }
