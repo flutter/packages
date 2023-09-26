@@ -1,6 +1,6 @@
 ## 0.10.8+11
 
-* Downgrade AGP version for compatibility with legacy projects.
+* Downgrades AGP version for compatibility with legacy projects.
 
 ## 0.10.8+10
 
