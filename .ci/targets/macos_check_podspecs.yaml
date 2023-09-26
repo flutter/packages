@@ -4,4 +4,11 @@ tasks:
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: validate iOS and macOS podspecs
     script: script/tool_runner.sh
-    args: ["podspec-check"]
+    # Run with --clear-flutter-cache to avoid using old caches of the published
+    # Flutter Pods, which may not have recently-added APIs.
+    # TODO(stuartmorgan): This can be removed once no plugins are using
+    # recently-added APIs (where "recent" means "since the last time this
+    # command was run on every currently active bot). Having the flag
+    # slightly increases the risk of network flake issues, but prevents
+    # false-positive failures.
+    args: ["podspec-check", "--clear-flutter-cache"]
