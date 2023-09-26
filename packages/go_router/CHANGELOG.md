@@ -1,6 +1,10 @@
-## 11.0.1
+## 11.0.2
 
 - Fixes a bug where the known routes and initial route were logged even when `debugLogDiagnostics` was set to `false`.
+
+## 11.0.1
+
+- Fixes the Android back button ignores top level route's onExit.
 
 ## 11.0.0
 
