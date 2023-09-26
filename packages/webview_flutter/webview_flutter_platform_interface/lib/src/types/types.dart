@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-export 'content_offset_change.dart';
+export 'scroll_position_change.dart';
 export 'http_response_error.dart';
 export 'javascript_message.dart';
 export 'javascript_mode.dart';

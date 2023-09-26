@@ -137,7 +137,7 @@ class WebView extends JavaObject {
   /// any effect and should not be exposed publicly. More info here:
   /// https://github.com/flutter/flutter/issues/108106
   WebView({
-    this.onScrollChanged,
+    this.onScrollPositionChange,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -150,7 +150,7 @@ class WebView extends JavaObject {
   /// create copies.
   @protected
   WebView.detached({
-    this.onScrollChanged,
+    this.onScrollPositionChange,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -163,7 +163,7 @@ class WebView extends JavaObject {
   late final WebSettings settings = WebSettings(this);
 
   /// The [ScrollChangedCallback] object used to listen for scroll changed events.
-  final Function(ContentOffsetChange contentOffsetChange)? onScrollChanged;
+  final Function(ScrollPositionChange scrollPositionChange)? onScrollPositionChange;
 
   /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.
   ///
@@ -453,7 +453,7 @@ class WebView extends JavaObject {
   @override
   WebView copy() {
     return WebView.detached(
-      onScrollChanged: onScrollChanged,
+      onScrollPositionChange: onScrollPositionChange,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );

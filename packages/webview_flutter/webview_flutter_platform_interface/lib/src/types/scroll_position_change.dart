@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Defines the parameters of the content offset change callback.
-class ContentOffsetChange {
-  /// Creates a [ContentOffsetChange].
-  const ContentOffsetChange(this.x, this.y);
+/// Defines the parameters of the scroll position change callback.
+class ScrollPositionChange {
+  /// Creates a [ScrollPositionChange].
+  const ScrollPositionChange(this.x, this.y);
 
   /// The value of horizontal offset with the origin begin at the leftmost of the [WebView]
   final int x;

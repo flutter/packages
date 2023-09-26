@@ -7,7 +7,7 @@ import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
-    show ContentOffsetChange;
+    show ScrollPositionChange;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -402,7 +402,7 @@ class WebViewFlutterApiImpl implements WebViewFlutterApi {
       webViewInstance != null,
       'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
-    webViewInstance!.onScrollChanged?.call(ContentOffsetChange(x, y));
+    webViewInstance!.onScrollPositionChange?.call(ScrollPositionChange(x, y));
   }
 }
 

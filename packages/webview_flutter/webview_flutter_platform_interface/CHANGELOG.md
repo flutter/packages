@@ -4,7 +4,7 @@
 
 ## 2.6.0
 
-* Adds support to track content offset changes. See `PlatformWebViewController.setOnContentOffsetChanged`.
+* Adds support to track scroll position changes. See `PlatformWebViewController.setOnScrollPositionChange`.
 
 ## 2.5.0
 

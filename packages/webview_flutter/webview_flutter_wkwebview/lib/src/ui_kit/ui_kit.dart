@@ -150,7 +150,6 @@ class UIScrollViewDelegate extends NSObject {
   /// Constructs a [UIScrollViewDelegate].
   UIScrollViewDelegate(
       {this.scrollViewDidScroll,
-      super.observeValue,
       super.binaryMessenger,
       super.instanceManager})
       : _scrollViewDelegateApi = UIScrollViewDelegateHostApiImpl(
@@ -168,7 +167,6 @@ class UIScrollViewDelegate extends NSObject {
   /// create copies.
   UIScrollViewDelegate.detached(
       {this.scrollViewDidScroll,
-      super.observeValue,
       super.binaryMessenger,
       super.instanceManager})
       : _scrollViewDelegateApi = UIScrollViewDelegateHostApiImpl(

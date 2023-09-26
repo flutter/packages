@@ -224,8 +224,8 @@ class WebKitWebViewController extends PlatformWebViewController {
         .createUIScrollViewDelegate(
             scrollViewDidScroll: (UIScrollView uiScrollView) async {
       final Point<double> offset = await uiScrollView.getContentOffset();
-      weakThis.target?._onContentOffsetChangedCallback
-          ?.call(ContentOffsetChange(offset.x.toInt(), offset.y.toInt()));
+      weakThis.target?._onScrollPositionChangeCallback
+          ?.call(ScrollPositionChange(offset.x.toInt(), offset.y.toInt()));
     });
     _webView.setScrollViewDelegate(_uiScrollViewDelegate);
   }
@@ -282,8 +282,8 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
-  void Function(ContentOffsetChange contentOffsetChange)?
-      _onContentOffsetChangedCallback;
+  void Function(ScrollPositionChange scrollPositionChange)?
+      _onScrollPositionChangeCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
       params as WebKitWebViewControllerCreationParams;
@@ -562,10 +562,10 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> setOnContentOffsetChanged(
-      void Function(ContentOffsetChange contentOffsetChange)?
-          onOffsetChange) async {
-    _onContentOffsetChangedCallback = onOffsetChange;
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+      onScrollPositionChange) async {
+    _onScrollPositionChangeCallback = onScrollPositionChange;
   }
 
   /// Whether to enable tools for debugging the current WKWebView content.

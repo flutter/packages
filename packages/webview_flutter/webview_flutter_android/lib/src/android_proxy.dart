@@ -28,7 +28,7 @@ class AndroidWebViewProxy {
 
   /// Constructs a [android_webview.WebView].
   final android_webview.WebView Function(
-          {Function(ContentOffsetChange contentOffsetChange)? onScrollChanged})
+          {Function(ScrollPositionChange scrollPositionChange)? onScrollPositionChange})
       createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
