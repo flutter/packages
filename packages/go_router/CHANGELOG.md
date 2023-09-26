@@ -1,3 +1,7 @@
+## 11.0.2
+
+- Fixes a missing `{@end-tool}` doc directive tag for `GoRoute.name`.
+
 ## 11.0.1
 
 - Fixes the Android back button ignores top level route's onExit.
