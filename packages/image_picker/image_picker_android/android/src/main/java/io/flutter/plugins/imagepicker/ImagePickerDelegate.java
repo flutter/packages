@@ -722,7 +722,7 @@ public class ImagePickerDelegate
                 "of the selected images.");
         return;
       }
-      
+
       handleMediaResult(paths);
       return;
     }
@@ -735,12 +735,12 @@ public class ImagePickerDelegate
     if (resultCode == Activity.RESULT_OK && data != null) {
       ArrayList<MediaPath> paths = getPathsFromIntent(data, false);
       // If there's no valid Uri, return an error
-      if (paths == null) {
+      if (paths == null || paths.size() < 1) {
         finishWithError("no_valid_video_uri", "Cannot find the selected video.");
         return;
       }
 
-      handleMediaResult(paths);
+      handleVideoResult(paths.get(0).path);
       return;
     }
 
