@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /** Generated class from Pigeon. */
@@ -324,16 +325,12 @@ public class Messages {
     }
 
     /** Public interface for sending reply. */
-    @SuppressWarnings("UnknownNullness")
-    public interface Result<T> {
-      void reply(T reply);
-    }
     /** The codec used by MessageFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
 
-    public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> callback) {
+    public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -342,18 +339,29 @@ public class Messages {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {
-            if (channelReply == null) {
-              throw FlutterError("channel-error", "Unable to establish connection on channel.");
-            } else if (channelReply.length > 1) {
-              throw FlutterError(
-                  (String) channelReply[0], (String) channelReply[1], (String) channelReply[2]);
-            } else if (channelReply[0] == null) {
-              throw FlutterError(
-                  "null-error", "Flutter api returned null value for non-null return value.");
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                String output = (String) listReply.get(0);
+                result.success(output);
+              }
             } else {
-              @SuppressWarnings("ConstantConditions")
-              String output = (String) channelReply[0];
-              callback.reply(output);
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
             }
           });
     }

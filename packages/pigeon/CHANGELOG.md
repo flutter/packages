@@ -1,3 +1,9 @@
+## 12.0.0
+
+* Adds error handling on Flutter Api methods.
+* **Breaking Change** Removes `Reply` class from all Java method returns.
+* **Breaking Change** Nests all enum returns in Objective-c to allow for `nil` response on error.
+
 ## 11.0.1
 
 * Adds pub topics to package metadata.
