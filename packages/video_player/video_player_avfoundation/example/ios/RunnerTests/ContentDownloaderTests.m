@@ -20,10 +20,8 @@
   [super setUp];
   // Initialize cacheWorker and other necessary objects
   NSURL *testURL = [NSURL URLWithString:@"https://example.com/test-video.mp4"];
-  NSError *error = nil;
-  self.cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:testURL error:error];
+  self.cacheWorker = [[FVPContentCacheWorker alloc] initWithURL:testURL];
   XCTAssertNotNil(self.cacheWorker);
-  XCTAssertNil(error);
 
   self.expectation = [self expectationWithDescription:@"Download completion"];
 

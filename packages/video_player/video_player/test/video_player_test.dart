@@ -1338,6 +1338,13 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<int?> create(DataSource dataSource) async {
     calls.add('create');
+    return createWithParameters(dataSource, null);
+  }
+
+  @override
+  Future<int?> createWithParameters(
+      DataSource dataSource, VideoPlayerParameters? parameters) async {
+    calls.add('createWithParameters');
     final StreamController<VideoEvent> stream = StreamController<VideoEvent>();
     streams[nextTextureId] = stream;
     if (forceInitError) {

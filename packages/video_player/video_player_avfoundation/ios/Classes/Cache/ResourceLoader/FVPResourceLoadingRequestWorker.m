@@ -34,6 +34,12 @@
   return self;
 }
 
+- (instancetype)init NS_UNAVAILABLE {
+  NSAssert(NO, @"Use - initWithContentDownloader: resourceLoadingRequest: instead");
+  return nil;
+}
+
+
 - (void)startWork {
   AVAssetResourceLoadingDataRequest *dataRequest = self.request.dataRequest;
 

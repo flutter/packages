@@ -421,6 +421,11 @@ static NSInteger kBufferSize = 10 * 1024;
   [[FVPContentDownloaderStatus shared] removeURL:self.url];
 }
 
+- (instancetype)init NS_UNAVAILABLE {
+  NSAssert(NO, @"Use - initWithURL:cacheWorker: instead");
+  return nil;
+}
+
 - (instancetype)initWithURL:(NSURL *)url cacheWorker:(FVPContentCacheWorker *)cacheWorker {
   self = [super init];
   if (self) {

@@ -19,8 +19,7 @@ typedef enum { FVPCacheTypeUseLocal = 0, FVPCacheTypeIgnoreLocal } FVPCacheType;
 /**
  * Returns a instance using the provided cacheType and range.
  */
-- (instancetype)initWithCacheType:(FVPCacheType)cacheType
-                            range:(NSRange)range NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCacheType:(FVPCacheType)cacheType range:(NSRange)range;
 
 /**
  * @property cacheType

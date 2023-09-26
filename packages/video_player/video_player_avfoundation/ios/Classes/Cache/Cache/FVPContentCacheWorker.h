@@ -18,11 +18,9 @@
  * Initializes a FVPContentCacheWorker instance with the provided content URL.
  *
  * @param url The URL of the content to be cached.
- * @param error If an error occurs during initialization, this parameter will contain details about
- * the error.
  * @return A new FVPContentCacheWorker instance, or nil if initialization fails.
  */
-- (instancetype)initWithURL:(NSURL *)url error:(NSError *)error NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
 
 /**
  * @property cacheConfiguration

@@ -46,11 +46,10 @@ FVPContentDownloader.
  * Initializes an FVPResourceLoader instance with a media URL.
  *
  * @param url The URL of the media resource to be loaded and played.
- * @param error An error pointer that is set if initialization fails.
  *
  * @return A new FVPResourceLoader instance.
  */
-- (instancetype)initWithURL:(NSURL *)url error:(NSError *)error NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
 
 /**
  * Adds an AVAssetResourceLoadingRequest for resource loading and caching.

@@ -45,7 +45,7 @@
  * @see FVPContentInfo
  */
 
-@interface FVPResourceLoadingRequestWorker : NSObject
+@interface FVPResourceLoadingRequestWorker : NSObject 
 
 /**
  * Initializes an FVPResourceLoadingRequestWorker instance with the provided FVPContentDownloader

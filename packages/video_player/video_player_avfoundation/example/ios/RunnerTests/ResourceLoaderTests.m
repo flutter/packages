@@ -14,9 +14,7 @@
 
 - (void)testInitResourceLoader {
   NSURL *testURL = [NSURL URLWithString:@"https://example.com/test.mp4"];
-  NSError *error = nil;
-  FVPResourceLoader *resourceLoader = [[FVPResourceLoader alloc] initWithURL:testURL error:error];
-
+  FVPResourceLoader *resourceLoader = [[FVPResourceLoader alloc] initWithURL:testURL];
   XCTAssertNotNil(resourceLoader);
 }
 

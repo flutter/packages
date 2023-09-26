@@ -56,7 +56,8 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// Creates an instance of a video player with [VideoPlayerParameters] and returns its textureId.
   Future<int?> createWithParameters(
       DataSource dataSource, VideoPlayerParameters? videoPlayerParameters) {
-    throw UnimplementedError('create() has not been implemented.');
+    throw UnimplementedError(
+        'createWithParameters() has not been implemented.');
   }
 
   /// Returns a Stream of [VideoEventType]s.
