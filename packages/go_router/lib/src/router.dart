@@ -80,6 +80,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     int redirectLimit = 5,
     bool routerNeglect = false,
     String? initialLocation,
+    this.overridePlatformDefaultLocation = false,
     Object? initialExtra,
     List<NavigatorObserver>? observers,
     bool debugLogDiagnostics = false,
@@ -91,6 +92,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
           initialExtra == null || initialLocation != null,
           'initialLocation must be set in order to use initialExtra',
         ),
+        assert(!overridePlatformDefaultLocation || initialLocation != null,
+            'Initial location must be set to override platform default'),
         assert(
             (onException == null ? 0 : 1) +
                     (errorPageBuilder == null ? 0 : 1) +
@@ -299,6 +302,23 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
+  /// Whether to ignore platform's default initial location when
+  /// `initialLocation` is set.
+  ///
+  /// When set to [true], the [initialLocation] will take
+  /// precedence over the platform's default initial location.
+  /// This allows developers to control the starting route of the application
+  /// independently of the platform.
+  ///
+  /// Platform's initial location is set when the app opens via a deeplink.
+  /// Use [overridePlatformDefaultLocation] only if one wants to override
+  /// platform implemented initial location.
+  ///
+  /// Setting this parameter to [false] (default) will allow the platform's
+  /// default initial location to be used even if the `initialLocation` is set.
+  /// It's advisable to only set this to [true] if one explicitly wants to.
+  final bool overridePlatformDefaultLocation;
+
   /// Returns `true` if there is at least two or more route can be pop.
   bool canPop() => routerDelegate.canPop();
 
@@ -327,7 +347,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     log.info('restoring ${matchList.uri}');
     routeInformationProvider.restore(
       matchList.uri.toString(),
-      encodedMatchList: RouteMatchListCodec(configuration).encode(matchList),
+      matchList: matchList,
     );
   }
 
@@ -507,6 +527,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   }
 
   String _effectiveInitialLocation(String? initialLocation) {
+    if (overridePlatformDefaultLocation) {
+      // The initialLocation must not be null as it's already
+      // verified by assert() during the initialization.
+      return initialLocation!;
+    }
     final String platformDefault =
         WidgetsBinding.instance.platformDispatcher.defaultRouteName;
     if (initialLocation == null) {
