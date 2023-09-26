@@ -15,7 +15,7 @@ import 'package:flutter/services.dart';
 List<Object?> wrapResponse(
     {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
-    return [];
+    return <Object?>[];
   }
   if (error == null) {
     return <Object?>[result];

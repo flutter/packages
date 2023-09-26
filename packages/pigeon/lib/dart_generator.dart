@@ -714,7 +714,7 @@ if (replyList == null) {
         'List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {',
         '}', () {
       indent.writeScoped('if (empty) {', '}', () {
-        indent.writeln('return [];');
+        indent.writeln('return <Object?>[];');
       });
       indent.writeScoped('if (error == null) {', '}', () {
         indent.writeln('return <Object?>[result];');
