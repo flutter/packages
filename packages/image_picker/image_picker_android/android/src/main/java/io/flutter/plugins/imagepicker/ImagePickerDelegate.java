@@ -718,8 +718,8 @@ public class ImagePickerDelegate
       ArrayList<MediaPath> paths = getPathsFromIntent(intent, false);
       // If there's no valid Uri, return an error
       if (paths == null) {
-        finishWithError("missing_valid_image_uri", "Cannot find at least one " +
-                "of the selected images.");
+        finishWithError(
+            "missing_valid_image_uri", "Cannot find at least one " + "of the selected images.");
         return;
       }
 
