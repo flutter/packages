@@ -1,3 +1,7 @@
+## 11.1.1
+
+- Fixes a missing `{@end-tool}` doc directive tag for `GoRoute.name`.
+
 ## 11.1.0
 
 - Adds optional parameter `overridePlatformDefaultLocation` to override initial route set by platform.
