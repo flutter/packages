@@ -6,9 +6,16 @@ import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart'
-    show SynchronousFuture, describeIdentity, immutable, objectRuntimeType;
+    show
+        SynchronousFuture,
+        describeIdentity,
+        immutable,
+        objectRuntimeType,
+        visibleForTesting;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+
+import 'src/messages.g.dart';
 
 class _FutureImageStreamCompleter extends ImageStreamCompleter {
   _FutureImageStreamCompleter({
@@ -101,14 +108,22 @@ class _FutureMemoryImage extends ImageProvider<_FutureMemoryImage> {
       '(${describeIdentity(_futureBytes)}, scale: $_futureScale)';
 }
 
+PlatformImagesApi _hostApi = PlatformImagesApi();
+
+/// Sets the [PlatformImagesApi] instance used to implement the static methods
+/// of [IosPlatformImages].
+///
+/// This exists only for unit tests.
+@visibleForTesting
+void setPlatformImageHostApi(PlatformImagesApi api) {
+  _hostApi = api;
+}
+
 // ignore: avoid_classes_with_only_static_members
 /// Class to help loading of iOS platform images into Flutter.
 ///
 /// For example, loading an image that is in `Assets.xcassts`.
 class IosPlatformImages {
-  static const MethodChannel _channel =
-      MethodChannel('plugins.flutter.io/ios_platform_images');
-
   /// Loads an image from asset catalogs.  The equivalent would be:
   /// `[UIImage imageNamed:name]`.
   ///
@@ -116,12 +131,11 @@ class IosPlatformImages {
   ///
   /// See [https://developer.apple.com/documentation/uikit/uiimage/1624146-imagenamed?language=objc]
   static ImageProvider load(String name) {
-    final Future<Map<String, dynamic>?> loadInfo =
-        _channel.invokeMapMethod<String, dynamic>('loadImage', name);
+    final Future<PlatformImageData?> imageData = _hostApi.loadImage(name);
     final Completer<Uint8List> bytesCompleter = Completer<Uint8List>();
     final Completer<double> scaleCompleter = Completer<double>();
-    loadInfo.then((Map<String, dynamic>? map) {
-      if (map == null) {
+    imageData.then((PlatformImageData? image) {
+      if (image == null) {
         scaleCompleter.completeError(
           Exception("Image couldn't be found: $name"),
         );
@@ -130,8 +144,8 @@ class IosPlatformImages {
         );
         return;
       }
-      scaleCompleter.complete(map['scale']! as double);
-      bytesCompleter.complete(map['data']! as Uint8List);
+      scaleCompleter.complete(image.scale);
+      bytesCompleter.complete(image.data);
     });
     return _FutureMemoryImage(bytesCompleter.future, scaleCompleter.future);
   }
@@ -143,7 +157,6 @@ class IosPlatformImages {
   ///
   /// See [https://developer.apple.com/documentation/foundation/nsbundle/1411540-urlforresource?language=objc]
   static Future<String?> resolveURL(String name, {String? extension}) {
-    return _channel
-        .invokeMethod<String>('resolveURL', <Object?>[name, extension]);
+    return _hostApi.resolveUrl(name, extension);
   }
 }
