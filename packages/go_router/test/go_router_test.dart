@@ -4955,6 +4955,60 @@ void main() {
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
     });
   });
+
+  ///Regression tests for https://github.com/flutter/flutter/issues/132557
+  group('overridePlatformDefaultLocation', () {
+    test('No initial location provided', () {
+      expect(
+          () => GoRouter(
+                overridePlatformDefaultLocation: true,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/a',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Placeholder(),
+                  ),
+                  GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Placeholder(),
+                  ),
+                ],
+              ),
+          throwsA(const TypeMatcher<AssertionError>()));
+    });
+    testWidgets('Test override using routeInformationProvider',
+        (WidgetTester tester) async {
+      tester.binding.platformDispatcher.defaultRouteNameTestValue =
+          '/some-route';
+      final String platformRoute =
+          WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+      const String expectedInitialRoute = '/kyc';
+      expect(platformRoute != expectedInitialRoute, isTrue);
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/abc',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+        GoRoute(
+          path: '/bcd',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        overridePlatformDefaultLocation: true,
+        initialLocation: expectedInitialRoute,
+      );
+      expect(router.routeInformationProvider.value.uri.toString(),
+          expectedInitialRoute);
+    });
+  });
 }
 
 class TestInheritedNotifier extends InheritedNotifier<ValueNotifier<String>> {
