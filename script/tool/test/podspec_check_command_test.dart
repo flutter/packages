@@ -424,5 +424,27 @@ void main() {
             <Matcher>[contains('SKIPPING: No podspecs.')],
           ));
     });
+
+    test('clears cache when requested', () async {
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['podspec-check', '--clear-flutter-cache']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('which', const <String>['pod'], packagesDir.path),
+          const ProcessCall(
+              'pod', <String>['cache', 'clean', 'Flutter', '--all'], null),
+          const ProcessCall(
+              'pod', <String>['cache', 'clean', 'FlutterMacOS', '--all'], null),
+        ]),
+      );
+
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[contains('Clearing Cocoapods cache')],
+          ));
+    });
   });
 }

@@ -24,7 +24,16 @@ class PodspecCheckCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
-  });
+  }) {
+    argParser.addFlag(_clearCacheFlag,
+        help: 'Clears the Cocoapods cache for the Flutter framework.\n\n'
+            'This is useful when a plugin uses APIs that were recently added '
+            'to the framework, since the way plugin builds works does not '
+            'allow forcing a specific Flutter version to ensure that an older '
+            'cached version is not used.');
+  }
+
+  static const String _clearCacheFlag = 'clear-flutter-cache';
 
   @override
   final String name = 'podspec-check';
@@ -54,6 +63,16 @@ class PodspecCheckCommand extends PackageLoopingCommand {
     if (result.exitCode != 0) {
       printError('Unable to find "pod". Make sure it is in your path.');
       throw ToolExit(_exitPodNotInstalled);
+    }
+
+    if (getBoolArg(_clearCacheFlag)) {
+      const String flutterPod = 'Flutter';
+      const String flutterMacOSPod = 'FlutterMacOS';
+      print('Clearing Cocoapods cache for $flutterPod and $flutterMacOSPod');
+      for (final String pod in <String>[flutterPod, flutterMacOSPod]) {
+        await processRunner.run('pod', <String>['cache', 'clean', pod, '--all'],
+            logOnError: true);
+      }
     }
   }
 
