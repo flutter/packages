@@ -56,6 +56,7 @@ jobs:
         verbose: false
 
     - name: run release
+      # TODO @jseales - add dry-run to dart publish script command
       run: |
         git config --global user.name ${{ secrets.USER_NAME }}
         git config --global user.email ${{ secrets.USER_EMAIL }}
