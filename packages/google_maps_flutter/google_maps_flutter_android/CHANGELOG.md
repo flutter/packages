@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Adds pub topics to package metadata.
+
 ## 2.5.0
 
 * Adds implementation for `cloudMapId` parameter to support cloud-based map styling.

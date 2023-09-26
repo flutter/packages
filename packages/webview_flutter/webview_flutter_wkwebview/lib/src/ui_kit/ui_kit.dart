@@ -149,9 +149,7 @@ class UIView extends NSObject {
 class UIScrollViewDelegate extends NSObject {
   /// Constructs a [UIScrollViewDelegate].
   UIScrollViewDelegate(
-      {this.scrollViewDidScroll,
-      super.binaryMessenger,
-      super.instanceManager})
+      {this.scrollViewDidScroll, super.binaryMessenger, super.instanceManager})
       : _scrollViewDelegateApi = UIScrollViewDelegateHostApiImpl(
             binaryMessenger: binaryMessenger, instanceManager: instanceManager),
         super.detached() {
@@ -166,9 +164,7 @@ class UIScrollViewDelegate extends NSObject {
   /// This should only be used by subclasses created by this library or to
   /// create copies.
   UIScrollViewDelegate.detached(
-      {this.scrollViewDidScroll,
-      super.binaryMessenger,
-      super.instanceManager})
+      {this.scrollViewDidScroll, super.binaryMessenger, super.instanceManager})
       : _scrollViewDelegateApi = UIScrollViewDelegateHostApiImpl(
             binaryMessenger: binaryMessenger, instanceManager: instanceManager),
         super.detached();

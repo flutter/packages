@@ -1,3 +1,7 @@
+## 1.1.3
+
+- Adds pub topics to package metadata.
+
 ## 1.1.2
 
 - Updates the `Color` documentation link in the README.

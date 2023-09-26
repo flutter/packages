@@ -6,12 +6,11 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i9;
-import 'dart:typed_data' as _i14;
+import 'dart:typed_data' as _i13;
 import 'dart:ui' as _i4;
 
 import 'package:flutter/foundation.dart' as _i11;
 import 'package:flutter/gestures.dart' as _i12;
-import 'package:flutter/material.dart' as _i13;
 import 'package:flutter/services.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:webview_flutter_android/src/android_proxy.dart' as _i10;
@@ -24,7 +23,7 @@ import 'package:webview_flutter_android/src/platform_views_service_proxy.dart'
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     as _i3;
 
-import 'test_android_webview.g.dart' as _i15;
+import 'test_android_webview.g.dart' as _i14;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -679,12 +678,12 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-  _i9.Future<void> setOnContentOffsetChanged(
-          void Function(_i3.ContentOffsetChange)? onOffsetChange) =>
+  _i9.Future<void> setOnScrollPositionChange(
+          void Function(_i3.ScrollPositionChange)? onScrollPositionChange) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setOnContentOffsetChanged,
-          [onOffsetChange],
+          #setOnScrollPositionChange,
+          [onScrollPositionChange],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
@@ -749,6 +748,43 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setCustomWidgetCallbacks({
+    required _i8.OnShowCustomWidgetCallback? onShowCustomWidget,
+    required _i8.OnHideCustomWidgetCallback? onHideCustomWidget,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setCustomWidgetCallbacks,
+          [],
+          {
+            #onShowCustomWidget: onShowCustomWidget,
+            #onHideCustomWidget: onHideCustomWidget,
+          },
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<String?> getUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgent,
+          [],
+        ),
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
+  @override
+  _i9.Future<void> setOnConsoleMessage(
+          void Function(_i3.JavaScriptConsoleMessage)? onConsoleMessage) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnConsoleMessage,
+          [onConsoleMessage],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewProxy].
@@ -758,23 +794,26 @@ class MockAndroidWebViewProxy extends _i1.Mock
     implements _i10.AndroidWebViewProxy {
   @override
   _i2.WebView Function(
-      {dynamic Function(_i3.ContentOffsetChange)?
-          onScrollChanged}) get createAndroidWebView => (super.noSuchMethod(
-        Invocation.getter(#createAndroidWebView),
-        returnValue: (
-                {dynamic Function(_i3.ContentOffsetChange)? onScrollChanged}) =>
-            _FakeWebView_7(
-          this,
-          Invocation.getter(#createAndroidWebView),
-        ),
-        returnValueForMissingStub: (
-                {dynamic Function(_i3.ContentOffsetChange)? onScrollChanged}) =>
-            _FakeWebView_7(
-          this,
-          Invocation.getter(#createAndroidWebView),
-        ),
-      ) as _i2.WebView Function(
-          {dynamic Function(_i3.ContentOffsetChange)? onScrollChanged}));
+          {dynamic Function(_i3.ScrollPositionChange)? onScrollPositionChange})
+      get createAndroidWebView => (super.noSuchMethod(
+            Invocation.getter(#createAndroidWebView),
+            returnValue: (
+                    {dynamic Function(_i3.ScrollPositionChange)?
+                        onScrollPositionChange}) =>
+                _FakeWebView_7(
+              this,
+              Invocation.getter(#createAndroidWebView),
+            ),
+            returnValueForMissingStub: (
+                    {dynamic Function(_i3.ScrollPositionChange)?
+                        onScrollPositionChange}) =>
+                _FakeWebView_7(
+              this,
+              Invocation.getter(#createAndroidWebView),
+            ),
+          ) as _i2.WebView Function(
+              {dynamic Function(_i3.ScrollPositionChange)?
+                  onScrollPositionChange}));
   @override
   _i2.WebChromeClient Function({
     void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
@@ -782,6 +821,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
       String,
       _i2.GeolocationPermissionsCallback,
     )? onGeolocationPermissionsShowPrompt,
+    void Function(_i2.WebChromeClient)? onHideCustomView,
     void Function(
       _i2.WebChromeClient,
       _i2.PermissionRequest,
@@ -790,6 +830,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
       _i2.WebView,
       int,
     )? onProgressChanged,
+    void Function(
+      _i2.WebChromeClient,
+      _i2.View,
+      _i2.CustomViewCallback,
+    )? onShowCustomView,
     _i9.Future<List<String>> Function(
       _i2.WebView,
       _i2.FileChooserParams,
@@ -803,6 +848,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
             String,
             _i2.GeolocationPermissionsCallback,
           )? onGeolocationPermissionsShowPrompt,
+          void Function(_i2.WebChromeClient)? onHideCustomView,
           void Function(
             _i2.WebChromeClient,
             _i2.PermissionRequest,
@@ -811,6 +857,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebView,
             int,
           )? onProgressChanged,
+          void Function(
+            _i2.WebChromeClient,
+            _i2.View,
+            _i2.CustomViewCallback,
+          )? onShowCustomView,
           _i9.Future<List<String>> Function(
             _i2.WebView,
             _i2.FileChooserParams,
@@ -827,6 +878,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
             String,
             _i2.GeolocationPermissionsCallback,
           )? onGeolocationPermissionsShowPrompt,
+          void Function(_i2.WebChromeClient)? onHideCustomView,
           void Function(
             _i2.WebChromeClient,
             _i2.PermissionRequest,
@@ -835,6 +887,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebView,
             int,
           )? onProgressChanged,
+          void Function(
+            _i2.WebChromeClient,
+            _i2.View,
+            _i2.CustomViewCallback,
+          )? onShowCustomView,
           _i9.Future<List<String>> Function(
             _i2.WebView,
             _i2.FileChooserParams,
@@ -850,6 +907,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           String,
           _i2.GeolocationPermissionsCallback,
         )? onGeolocationPermissionsShowPrompt,
+        void Function(_i2.WebChromeClient)? onHideCustomView,
         void Function(
           _i2.WebChromeClient,
           _i2.PermissionRequest,
@@ -858,6 +916,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
           _i2.WebView,
           int,
         )? onProgressChanged,
+        void Function(
+          _i2.WebChromeClient,
+          _i2.View,
+          _i2.CustomViewCallback,
+        )? onShowCustomView,
         _i9.Future<List<String>> Function(
           _i2.WebView,
           _i2.FileChooserParams,
@@ -1311,7 +1374,7 @@ class MockExpensiveAndroidViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-  _i9.Future<void> dispatchPointerEvent(_i13.PointerEvent? event) =>
+  _i9.Future<void> dispatchPointerEvent(_i12.PointerEvent? event) =>
       (super.noSuchMethod(
         Invocation.method(
           #dispatchPointerEvent,
@@ -1714,7 +1777,7 @@ class MockSurfaceAndroidViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-  _i9.Future<void> dispatchPointerEvent(_i13.PointerEvent? event) =>
+  _i9.Future<void> dispatchPointerEvent(_i12.PointerEvent? event) =>
       (super.noSuchMethod(
         Invocation.method(
           #dispatchPointerEvent,
@@ -2006,7 +2069,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   @override
   _i9.Future<void> postUrl(
     String? url,
-    _i14.Uint8List? data,
+    _i13.Uint8List? data,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2421,7 +2484,7 @@ class MockInstanceManager extends _i1.Mock implements _i5.InstanceManager {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i15.TestInstanceManagerHostApi {
+    implements _i14.TestInstanceManagerHostApi {
   @override
   void clear() => super.noSuchMethod(
         Invocation.method(

@@ -57,12 +57,6 @@ enum FileChooserMode {
   save,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class FileChooserModeEnumData {
-  late FileChooserMode value;
-}
-
 class WebResourceRequestData {
   WebResourceRequestData(
     this.url,
@@ -368,6 +362,16 @@ abstract class WebChromeClientFlutterApi {
   /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
   void onPermissionRequest(int instanceId, int requestInstanceId);
 
+  /// Callback to Dart function `WebChromeClient.onShowCustomView`.
+  void onShowCustomView(
+    int instanceId,
+    int viewIdentifier,
+    int callbackIdentifier,
+  );
+
+  /// Callback to Dart function `WebChromeClient.onHideCustomView`.
+  void onHideCustomView(int instanceId);
+
   /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsShowPrompt`.
   void onGeolocationPermissionsShowPrompt(
     int instanceId,
@@ -395,7 +399,7 @@ abstract class FileChooserParamsFlutterApi {
     int instanceId,
     bool isCaptureEnabled,
     List<String> acceptTypes,
-    FileChooserModeEnumData mode,
+    FileChooserMode mode,
     String? filenameHint,
   );
 }
@@ -427,6 +431,45 @@ abstract class PermissionRequestHostApi {
 abstract class PermissionRequestFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int instanceId, List<String> resources);
+}
+
+/// Host API for `CustomViewCallback`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+@HostApi(dartHostTestHandler: 'TestCustomViewCallbackHostApi')
+abstract class CustomViewCallbackHostApi {
+  /// Handles Dart method `CustomViewCallback.onCustomViewHidden`.
+  void onCustomViewHidden(int identifier);
+}
+
+/// Flutter API for `CustomViewCallback`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+@FlutterApi()
+abstract class CustomViewCallbackFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int identifier);
+}
+
+/// Flutter API for `View`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/view/View.
+@FlutterApi()
+abstract class ViewFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int identifier);
 }
 
 /// Host API for `GeolocationPermissionsCallback`.

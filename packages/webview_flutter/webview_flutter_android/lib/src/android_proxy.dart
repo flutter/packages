@@ -28,26 +28,33 @@ class AndroidWebViewProxy {
 
   /// Constructs a [android_webview.WebView].
   final android_webview.WebView Function(
-          {Function(ScrollPositionChange scrollPositionChange)? onScrollPositionChange})
-      createAndroidWebView;
+      {Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange}) createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
-  final android_webview.WebChromeClient Function(
-      {void Function(android_webview.WebView webView, int progress)?
-          onProgressChanged,
-      Future<List<String>> Function(
-        android_webview.WebView webView,
-        android_webview.FileChooserParams params,
-      )? onShowFileChooser,
-      void Function(
-        android_webview.WebChromeClient instance,
-        android_webview.PermissionRequest request,
-      )? onPermissionRequest,
-      Future<void> Function(String origin,
-              android_webview.GeolocationPermissionsCallback callback)?
-          onGeolocationPermissionsShowPrompt,
-      void Function(android_webview.WebChromeClient instance)?
-          onGeolocationPermissionsHidePrompt}) createAndroidWebChromeClient;
+  final android_webview.WebChromeClient Function({
+    void Function(android_webview.WebView webView, int progress)?
+        onProgressChanged,
+    Future<List<String>> Function(
+      android_webview.WebView webView,
+      android_webview.FileChooserParams params,
+    )? onShowFileChooser,
+    void Function(
+      android_webview.WebChromeClient instance,
+      android_webview.PermissionRequest request,
+    )? onPermissionRequest,
+    Future<void> Function(String origin,
+            android_webview.GeolocationPermissionsCallback callback)?
+        onGeolocationPermissionsShowPrompt,
+    void Function(android_webview.WebChromeClient instance)?
+        onGeolocationPermissionsHidePrompt,
+    void Function(
+            android_webview.WebChromeClient instance,
+            android_webview.View view,
+            android_webview.CustomViewCallback callback)?
+        onShowCustomView,
+    void Function(android_webview.WebChromeClient instance)? onHideCustomView,
+  }) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
   final android_webview.WebViewClient Function({

@@ -79,7 +79,7 @@ void main() {
       ]);
     });
 
-    test('handles emtpy', () async {
+    test('handles empty', () async {
       when(api.getEnrolledBiometrics())
           .thenAnswer((_) async => <AuthClassificationWrapper>[]);
 
@@ -92,8 +92,8 @@ void main() {
   group('authenticate', () {
     group('strings', () {
       test('passes default values when nothing is provided', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.success));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.success);
 
         const String reason = 'test reason';
         await plugin.authenticate(
@@ -120,8 +120,8 @@ void main() {
 
       test('passes default values when only other platform values are provided',
           () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.success));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.success);
 
         const String reason = 'test reason';
         await plugin.authenticate(
@@ -148,8 +148,8 @@ void main() {
       });
 
       test('passes all non-default values correctly', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.success));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.success);
 
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
@@ -196,8 +196,8 @@ void main() {
       });
 
       test('passes provided messages with default fallbacks', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.success));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.success);
 
         // These are arbitrary values; all that matters is that:
         // - they are different from the defaults, and
@@ -240,8 +240,8 @@ void main() {
 
     group('options', () {
       test('passes default values', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.success));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.success);
 
         await plugin.authenticate(
             localizedReason: 'reason', authMessages: <AuthMessages>[]);
@@ -256,8 +256,8 @@ void main() {
       });
 
       test('passes provided non-default values', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.success));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.success);
 
         await plugin.authenticate(
             localizedReason: 'reason',
@@ -281,8 +281,8 @@ void main() {
 
     group('return values', () {
       test('handles success', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.success));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.success);
 
         final bool result = await plugin.authenticate(
             localizedReason: 'reason', authMessages: <AuthMessages>[]);
@@ -291,8 +291,8 @@ void main() {
       });
 
       test('handles failure', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.failure));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.failure);
 
         final bool result = await plugin.authenticate(
             localizedReason: 'reason', authMessages: <AuthMessages>[]);
@@ -302,8 +302,8 @@ void main() {
 
       test('converts errorAlreadyInProgress to legacy PlatformException',
           () async {
-        when(api.authenticate(any, any)).thenAnswer((_) async =>
-            AuthResultWrapper(value: AuthResult.errorAlreadyInProgress));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.errorAlreadyInProgress);
 
         expect(
             () async => plugin.authenticate(
@@ -316,8 +316,8 @@ void main() {
       });
 
       test('converts errorNoActivity to legacy PlatformException', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.errorNoActivity));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.errorNoActivity);
 
         expect(
             () async => plugin.authenticate(
@@ -330,8 +330,8 @@ void main() {
 
       test('converts errorNotFragmentActivity to legacy PlatformException',
           () async {
-        when(api.authenticate(any, any)).thenAnswer((_) async =>
-            AuthResultWrapper(value: AuthResult.errorNotFragmentActivity));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.errorNotFragmentActivity);
 
         expect(
             () async => plugin.authenticate(
@@ -344,8 +344,8 @@ void main() {
       });
 
       test('converts errorNotAvailable to legacy PlatformException', () async {
-        when(api.authenticate(any, any)).thenAnswer((_) async =>
-            AuthResultWrapper(value: AuthResult.errorNotAvailable));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.errorNotAvailable);
 
         expect(
             () async => plugin.authenticate(
@@ -357,8 +357,8 @@ void main() {
       });
 
       test('converts errorNotEnrolled to legacy PlatformException', () async {
-        when(api.authenticate(any, any)).thenAnswer(
-            (_) async => AuthResultWrapper(value: AuthResult.errorNotEnrolled));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.errorNotEnrolled);
 
         expect(
             () async => plugin.authenticate(
@@ -371,8 +371,8 @@ void main() {
 
       test('converts errorLockedOutTemporarily to legacy PlatformException',
           () async {
-        when(api.authenticate(any, any)).thenAnswer((_) async =>
-            AuthResultWrapper(value: AuthResult.errorLockedOutTemporarily));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.errorLockedOutTemporarily);
 
         expect(
             () async => plugin.authenticate(
@@ -389,8 +389,8 @@ void main() {
 
       test('converts errorLockedOutPermanently to legacy PlatformException',
           () async {
-        when(api.authenticate(any, any)).thenAnswer((_) async =>
-            AuthResultWrapper(value: AuthResult.errorLockedOutPermanently));
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.errorLockedOutPermanently);
 
         expect(
             () async => plugin.authenticate(

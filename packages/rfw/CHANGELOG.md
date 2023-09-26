@@ -1,3 +1,16 @@
+## 1.0.15
+
+* Updates README.md to point to the CONTRIBUTING.md file.
+* Introduces CONTRIBUTING.md, and adds more information about golden testing.
+
+## 1.0.14
+
+* Adds pub topics to package metadata.
+
+## 1.0.13
+
+* Block comments in RFW's text format. (`/*...*/`)
+
 ## 1.0.12
 
 * Improves web compatibility.

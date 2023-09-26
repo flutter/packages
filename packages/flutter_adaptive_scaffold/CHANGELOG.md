@@ -1,3 +1,7 @@
+## 0.1.7+1
+
+* Adds pub topics to package metadata.
+
 ## 0.1.7
 
 * Fix top padding for NavigationBar.

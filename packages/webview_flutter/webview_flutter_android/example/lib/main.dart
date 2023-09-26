@@ -118,7 +118,7 @@ Page resource error:
           ''');
           })
           ..setOnNavigationRequest((NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
+            if (request.url.contains('pub.dev')) {
               debugPrint('blocking navigation to ${request.url}');
               return NavigationDecision.prevent;
             }
@@ -150,7 +150,7 @@ Page resource error:
       ))
       ..setOnScrollPositionChange((ScrollPositionChange scrollPositionChange) {
         debugPrint(
-            'Scroll offset change to x = ${scrollPositionChange.x}, y = ${scrollPositionChange.y}');
+            'Scroll position change to x = ${scrollPositionChange.x}, y = ${scrollPositionChange.y}');
       });
   }
 
@@ -205,6 +205,7 @@ enum MenuOptions {
   loadHtmlString,
   transparentBackground,
   setCookie,
+  videoExample,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -265,6 +266,9 @@ class SampleMenu extends StatelessWidget {
           case MenuOptions.setCookie:
             _onSetCookie();
             break;
+          case MenuOptions.videoExample:
+            _onVideoExample(context);
+            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -320,6 +324,10 @@ class SampleMenu extends StatelessWidget {
           key: ValueKey<String>('ShowTransparentBackgroundExample'),
           value: MenuOptions.transparentBackground,
           child: Text('Transparent background example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.videoExample,
+          child: Text('Video example'),
         ),
       ],
     );
@@ -414,6 +422,30 @@ class SampleMenu extends StatelessWidget {
     await webViewController.loadRequest(LoadRequestParams(
       uri: Uri.parse('https://httpbin.org/anything'),
     ));
+  }
+
+  Future<void> _onVideoExample(BuildContext context) {
+    final AndroidWebViewController androidController =
+        webViewController as AndroidWebViewController;
+    // #docregion fullscreen_example
+    androidController.setCustomWidgetCallbacks(
+      onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {
+        Navigator.of(context).push(MaterialPageRoute<void>(
+          builder: (BuildContext context) => widget,
+          fullscreenDialog: true,
+        ));
+      },
+      onHideCustomWidget: () {
+        Navigator.of(context).pop();
+      },
+    );
+    // #enddocregion fullscreen_example
+
+    return androidController.loadRequest(
+      LoadRequestParams(
+        uri: Uri.parse('https://www.youtube.com/watch?v=4AoFA19gbLo'),
+      ),
+    );
   }
 
   Future<void> _onDoPostRequest() {

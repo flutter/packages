@@ -316,6 +316,25 @@ class MockTestCookieManagerHostApi extends _i1.Mock
       );
 }
 
+/// A class which mocks [TestCustomViewCallbackHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestCustomViewCallbackHostApi extends _i1.Mock
+    implements _i6.TestCustomViewCallbackHostApi {
+  MockTestCustomViewCallbackHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void onCustomViewHidden(int? identifier) => super.noSuchMethod(
+        Invocation.method(
+          #onCustomViewHidden,
+          [identifier],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [TestDownloadListenerHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.

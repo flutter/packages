@@ -8,3 +8,4 @@ environment:
 
 dependencies:
   lcov_parser: 0.1.1
+  meta: ^1.7.0

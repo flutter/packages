@@ -287,24 +287,17 @@ void main() {
       expect(viewport.mainAxis, Axis.vertical);
       // first child
       TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
-      expect(
-        parentDataOf(viewport.firstChild!).vicinity,
-        vicinity,
-      );
       TableViewParentData parentData = parentDataOf(
-        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
+        viewport.firstChild!,
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, Offset.zero);
       expect(parentData.isVisible, isTrue);
       // after first child
       vicinity = const TableVicinity(column: 1, row: 0);
-      expect(
-        parentDataOf(viewport.childAfter(viewport.firstChild!)!).vicinity,
-        vicinity,
-      );
+
       parentData = parentDataOf(
-        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
+        viewport.childAfter(viewport.firstChild!)!,
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(200, 0.0));
@@ -317,13 +310,7 @@ void main() {
 
       // last child
       vicinity = const TableVicinity(column: 4, row: 4);
-      expect(
-        parentDataOf(viewport.lastChild!).vicinity,
-        vicinity,
-      );
-      parentData = parentDataOf(
-        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
-      );
+      parentData = parentDataOf(viewport.lastChild!);
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(800.0, 800.0));
       expect(parentData.isVisible, isFalse);
@@ -334,12 +321,8 @@ void main() {
       );
       // before last child
       vicinity = const TableVicinity(column: 3, row: 4);
-      expect(
-        parentDataOf(viewport.childBefore(viewport.lastChild!)!).vicinity,
-        vicinity,
-      );
       parentData = parentDataOf(
-        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
+        viewport.childBefore(viewport.lastChild!)!,
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(600.0, 800.0));

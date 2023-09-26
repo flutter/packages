@@ -15,19 +15,30 @@ import 'test_suites.dart';
 /// them fails.
 Future<void> runTests(
   List<String> testsToRun, {
+  bool runFormat = false,
   bool runGeneration = true,
 }) async {
+  final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
   if (runGeneration) {
     // Pre-generate the necessary common output files.
     // TODO(stuartmorgan): Consider making this conditional on the specific
     // tests being run, as not all of them need these files.
-    final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
     print('# Generating platform_test/ output...');
     final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
     if (generateExitCode == 0) {
       print('Generation complete!');
     } else {
       print('Generation failed; see above for errors.');
+    }
+  }
+
+  if (runFormat) {
+    print('Formatting generated output...');
+    final int formatExitCode =
+        await formatAllFiles(repositoryRoot: p.dirname(p.dirname(baseDir)));
+    if (formatExitCode != 0) {
+      print('Formatting failed; see above for errors.');
+      exit(formatExitCode);
     }
   }
 

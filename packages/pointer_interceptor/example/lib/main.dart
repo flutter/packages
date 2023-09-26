@@ -4,11 +4,10 @@
 
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-
-import 'src/shim/dart_ui.dart' as ui;
 
 const String _htmlElementViewType = '_htmlElementViewType';
 const double _videoWidth = 640;
@@ -42,7 +41,7 @@ html.Element htmlElement = html.DivElement()
 //       ..style.border = 'none';
 
 void main() {
-  ui.platformViewRegistry.registerViewFactory(
+  ui_web.platformViewRegistry.registerViewFactory(
     _htmlElementViewType,
     (int viewId) => htmlElement,
   );

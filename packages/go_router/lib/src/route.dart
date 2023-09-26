@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -56,6 +58,12 @@ typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
 /// Signature for functions used to build Navigators
 typedef NavigatorBuilder = Widget Function(
     List<NavigatorObserver>? observers, String? restorationScopeId);
+
+/// Signature for function used in [RouteBase.onExit].
+///
+/// If the return value is true or the future resolve to true, the route will
+/// exit as usual. Otherwise, the operation will abort.
+typedef ExitCallback = FutureOr<bool> Function(BuildContext context);
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
@@ -201,11 +209,14 @@ class GoRoute extends RouteBase {
     this.pageBuilder,
     super.parentNavigatorKey,
     this.redirect,
+    this.onExit,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
         assert(pageBuilder != null || builder != null || redirect != null,
             'builder, pageBuilder, or redirect must be provided'),
+        assert(onExit == null || pageBuilder != null || builder != null,
+            'if onExit is provided, one of pageBuilder or builder must be provided'),
         super._() {
     // cache the path regexp and parameters
     _pathRE = patternToRegExp(path, pathParameters);
@@ -367,6 +378,54 @@ class GoRoute extends RouteBase {
   /// redirection (which is how `of` method is usually implemented), a
   /// re-evaluation will be triggered if the [InheritedWidget] changes.
   final GoRouterRedirect? redirect;
+
+  /// Called when this route is removed from GoRouter's route history.
+  ///
+  /// Some example this callback may be called:
+  ///  * This route is removed as the result of [GoRouter.pop].
+  ///  * This route is no longer in the route history after a [GoRouter.go].
+  ///
+  /// This method can be useful it one wants to launch a dialog for user to
+  /// confirm if they want to exit the screen.
+  ///
+  /// ```
+  /// final GoRouter _router = GoRouter(
+  ///   routes: <GoRoute>[
+  ///     GoRoute(
+  ///       path: '/',
+  ///       onExit: (BuildContext context) => showDialog<bool>(
+  ///         context: context,
+  ///         builder: (BuildContext context) {
+  ///           return AlertDialog(
+  ///             title: const Text('Do you want to exit this page?'),
+  ///             actions: <Widget>[
+  ///               TextButton(
+  ///                 style: TextButton.styleFrom(
+  ///                   textStyle: Theme.of(context).textTheme.labelLarge,
+  ///                 ),
+  ///                 child: const Text('Go Back'),
+  ///                 onPressed: () {
+  ///                   Navigator.of(context).pop(false);
+  ///                 },
+  ///               ),
+  ///               TextButton(
+  ///                 style: TextButton.styleFrom(
+  ///                   textStyle: Theme.of(context).textTheme.labelLarge,
+  ///                 ),
+  ///                 child: const Text('Confirm'),
+  ///                 onPressed: () {
+  ///                   Navigator.of(context).pop(true);
+  ///                 },
+  ///               ),
+  ///             ],
+  ///           );
+  ///         },
+  ///       ),
+  ///     ),
+  ///   ],
+  /// );
+  /// ```
+  final ExitCallback? onExit;
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.

@@ -414,12 +414,12 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
-  _i5.Future<void> setOnContentOffsetChanged(
-          void Function(_i3.ContentOffsetChange)? onOffsetChange) =>
+  _i5.Future<void> setOnScrollPositionChange(
+          void Function(_i3.ScrollPositionChange)? onScrollPositionChange) =>
       (super.noSuchMethod(
         Invocation.method(
-          #setOnContentOffsetChanged,
-          [onOffsetChange],
+          #setOnScrollPositionChange,
+          [onScrollPositionChange],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
@@ -480,6 +480,42 @@ class MockAndroidWebViewController extends _i1.Mock
             #onShowPrompt: onShowPrompt,
             #onHidePrompt: onHidePrompt,
           },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> setCustomWidgetCallbacks({
+    required _i6.OnShowCustomWidgetCallback? onShowCustomWidget,
+    required _i6.OnHideCustomWidgetCallback? onHideCustomWidget,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setCustomWidgetCallbacks,
+          [],
+          {
+            #onShowCustomWidget: onShowCustomWidget,
+            #onHideCustomWidget: onHideCustomWidget,
+          },
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<String?> getUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+  @override
+  _i5.Future<void> setOnConsoleMessage(
+          void Function(_i3.JavaScriptConsoleMessage)? onConsoleMessage) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnConsoleMessage,
+          [onConsoleMessage],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),

@@ -173,7 +173,7 @@ public class Messages {
       Object description = list.get(1);
       pigeonResult.setDescription((String) description);
       Object code = list.get(2);
-      pigeonResult.setCode(code == null ? null : Code.values()[(int) code]);
+      pigeonResult.setCode(Code.values()[(int) code]);
       Object data = list.get(3);
       pigeonResult.setData((Map<String, String>) data);
       return pigeonResult;

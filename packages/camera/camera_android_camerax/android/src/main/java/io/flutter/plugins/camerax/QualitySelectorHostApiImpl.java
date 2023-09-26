@@ -13,7 +13,8 @@ import androidx.camera.video.Quality;
 import androidx.camera.video.QualitySelector;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.QualitySelectorHostApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityConstraint;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQuality;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoQualityData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,12 +35,12 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
   public static class QualitySelectorProxy {
     /** Creates an instance of {@link QualitySelector}. */
     public @NonNull QualitySelector create(
-        @NonNull List<Long> videoQualityConstraintIndexList,
+        @NonNull List<VideoQualityData> videoQualityDataList,
         @Nullable FallbackStrategy fallbackStrategy) {
-      // Convert each index of VideoQualityConstraint to Quality.
+      // Convert each index of VideoQuality to Quality.
       List<Quality> qualityList = new ArrayList<Quality>();
-      for (Long qualityIndex : videoQualityConstraintIndexList) {
-        qualityList.add(getQualityConstant(qualityIndex));
+      for (VideoQualityData videoQualityData : videoQualityDataList) {
+        qualityList.add(getQualityFromVideoQuality(videoQualityData.getQuality()));
       }
 
       boolean fallbackStrategySpecified = fallbackStrategy != null;
@@ -56,12 +57,6 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
       return fallbackStrategySpecified
           ? QualitySelector.fromOrderedList(qualityList, fallbackStrategy)
           : QualitySelector.fromOrderedList(qualityList);
-    }
-
-    /** Converts from index of {@link VideoQualityConstraint} to {@link Quality}. */
-    private Quality getQualityConstant(@NonNull Long qualityIndex) {
-      VideoQualityConstraint quality = VideoQualityConstraint.values()[qualityIndex.intValue()];
-      return getQualityFromVideoQualityConstraint(quality);
     }
   }
 
@@ -93,11 +88,11 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
   @Override
   public void create(
       @NonNull Long identifier,
-      @NonNull List<Long> videoQualityConstraintIndexList,
+      @NonNull List<VideoQualityData> videoQualityDataList,
       @Nullable Long fallbackStrategyIdentifier) {
     instanceManager.addDartCreatedInstance(
         proxy.create(
-            videoQualityConstraintIndexList,
+            videoQualityDataList,
             fallbackStrategyIdentifier == null
                 ? null
                 : Objects.requireNonNull(instanceManager.getInstance(fallbackStrategyIdentifier))),
@@ -110,11 +105,11 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
    */
   @Override
   public @NonNull ResolutionInfo getResolution(
-      @NonNull Long cameraInfoIdentifier, @NonNull VideoQualityConstraint quality) {
+      @NonNull Long cameraInfoIdentifier, @NonNull VideoQuality quality) {
     final Size result =
         QualitySelector.getResolution(
             Objects.requireNonNull(instanceManager.getInstance(cameraInfoIdentifier)),
-            getQualityFromVideoQualityConstraint(quality));
+            getQualityFromVideoQuality(quality));
     return new ResolutionInfo.Builder()
         .setWidth(Long.valueOf(result.getWidth()))
         .setHeight(Long.valueOf(result.getHeight()))
@@ -122,12 +117,11 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
   }
 
   /**
-   * Converts the specified {@link VideoQualityConstraint} to a {@link Quality} that is understood
+   * Converts the specified {@link VideoQuality to a {@link Quality} that is understood
    * by CameraX.
    */
-  public static @NonNull Quality getQualityFromVideoQualityConstraint(
-      @NonNull VideoQualityConstraint videoQualityConstraint) {
-    switch (videoQualityConstraint) {
+  public static @NonNull Quality getQualityFromVideoQuality(@NonNull VideoQuality videoQuality) {
+    switch (videoQuality) {
       case SD:
         return Quality.SD;
       case HD:
@@ -142,8 +136,6 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
         return Quality.HIGHEST;
     }
     throw new IllegalArgumentException(
-        "VideoQualityConstraint "
-            + videoQualityConstraint
-            + " is unhandled by QualitySelectorHostApiImpl.");
+        "VideoQuality " + videoQuality + " is unhandled by QualitySelectorHostApiImpl.");
   }
 }

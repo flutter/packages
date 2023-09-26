@@ -716,8 +716,8 @@ Future<void> main() async {
       );
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(controller.setPlatformNavigationDelegate(delegate));
-      unawaited(controller
-          .setOnScrollPositionChange((ScrollPositionChange scrollPositionChange) {
+      unawaited(controller.setOnScrollPositionChange(
+          (ScrollPositionChange scrollPositionChange) {
         if (!offsetsCompleter.isCompleted) {
           offsetsCompleter.complete(scrollPositionChange);
         }
@@ -1216,6 +1216,48 @@ Future<void> main() async {
       await expectLater(controller.currentUrl(), completion(primaryUrl));
     },
   );
+
+  group('Logging', () {
+    testWidgets('can receive console log messages',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+          </head>
+          <body onload="console.debug('Debug message')">
+            <p>Test page</p>
+          </body>
+          </html>
+         ''';
+
+      final Completer<String> debugMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller
+          .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+        debugMessageReceived
+            .complete('${consoleMessage.level.name}:${consoleMessage.message}');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(
+          debugMessageReceived.future, completion('debug:Debug message'));
+    });
+  });
 }
 
 /// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.

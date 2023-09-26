@@ -337,9 +337,9 @@ class _BlobDecoder {
     }
     // We use multiplication rather than bit shifts because << truncates to 32 bits when compiled to JS:
     // https://dart.dev/guides/language/numbers#bitwise-operations
-    final int a = bytes.getUint32(byteOffset, _blobEndian);
-    final int b = bytes.getInt32(byteOffset + 4, _blobEndian);
-    return a + (b * 0x100000000);
+    final int a = bytes.getUint32(byteOffset, _blobEndian); // dead code on VM target
+    final int b = bytes.getInt32(byteOffset + 4, _blobEndian); // dead code on VM target
+    return a + (b * 0x100000000); // dead code on VM target
   }
 
   double _readBinary64() {
@@ -544,12 +544,12 @@ class _BlobEncoder {
     } else {
       // We use division rather than bit shifts because >> truncates to 32 bits when compiled to JS:
       // https://dart.dev/guides/language/numbers#bitwise-operations
-      if (value >= 0) {
-        _scratchIn.setInt32(0, value, _blobEndian);
-        _scratchIn.setInt32(4, value ~/ 0x100000000, _blobEndian);
+      if (value >= 0) { // dead code on VM target
+        _scratchIn.setInt32(0, value, _blobEndian); // dead code on VM target
+        _scratchIn.setInt32(4, value ~/ 0x100000000, _blobEndian); // dead code on VM target
       } else {
-        _scratchIn.setInt32(0, value, _blobEndian);
-        _scratchIn.setInt32(4, -((-value) ~/ 0x100000000 + 1), _blobEndian);
+        _scratchIn.setInt32(0, value, _blobEndian); // dead code on VM target
+        _scratchIn.setInt32(4, -((-value) ~/ 0x100000000 + 1), _blobEndian); // dead code on VM target
       }
     }
     bytes.add(_scratchOut);

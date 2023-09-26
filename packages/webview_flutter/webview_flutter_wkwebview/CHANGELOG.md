@@ -1,10 +1,15 @@
-## NEXT
+## 3.9.0
 
-* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Adds support for `setOnScrollPositionChange` method to the `WebKitWebViewController`.
 
 ## 3.8.0
 
-* Adds support for `setOnContentOffsetChanged` method to the `WebKitWebViewController`.
+* Adds support to register a callback to receive JavaScript console messages. See `WebKitWebViewController.setOnConsoleMessage`.
+
+## 3.7.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 3.7.3
 

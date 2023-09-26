@@ -1,10 +1,24 @@
-## NEXT
+## 3.11.0
 
-* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Adds support for `setOnScrollPositionChange` method to the `AndroidWebViewController`.
+
+## 3.10.1
+
+* Bumps androidx.annotation:annotation from 1.5.0 to 1.7.0.
 
 ## 3.10.0
 
-* Adds support for `setOnContentOffsetChanged` method to the `AndroidWebViewController`.
+* Adds support for playing video in fullscreen. See
+  `AndroidWebViewController.setCustomWidgetCallbacks`.
+
+## 3.9.5
+
+* Updates pigeon to 11 and removes unneeded enum wrappers.
+
+## 3.9.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 3.9.3
 
