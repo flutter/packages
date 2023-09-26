@@ -59,5 +59,5 @@ jobs:
       run: |
         git config --global user.name ${{ secrets.USER_NAME }}
         git config --global user.email ${{ secrets.USER_EMAIL }}
-        dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin pub-publish-flags=--dry-run
+        dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
       env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}

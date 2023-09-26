@@ -18,9 +18,7 @@ steps:
   volumes:
   - name: temporary-secrets
     path: /secrets
+  # TODO @jseales - replace --dry-run on dart command with --force
   script: | 
     cat /secrets/temporary-pub-token.txt | dart pub token add https://pub.dev
-    git config --global user.name ${{ secrets.USER_NAME }}
-    git config --global user.email ${{ secrets.USER_EMAIL }}
-    dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin pub-publish-flags=--dry-run
-    dart pub publish --force
+    dart pub publish --dry-run
