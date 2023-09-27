@@ -80,16 +80,6 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 // An invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
 // for issue #1, and restore the correct width and height for issue #2.
 @property(readonly, nonatomic) AVPlayerLayer *playerLayer;
-// TODO(stuartmorgan): Extract and abstract the display link to remove all the display-link-related
-// ifdefs from this file.
-#if TARGET_OS_OSX
-// The display link to trigger frame reads from the video player.
-@property(nonatomic, assign) CVDisplayLinkRef displayLink;
-// A dispatch source to move display link callbacks to the main thread.
-@property(nonatomic, strong) dispatch_source_t displayLinkSource;
-#else
-@property(nonatomic) CADisplayLink *displayLink;
-#endif
 // The plugin registrar, to obtain view information from.
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
 // The CALayer associated with the Flutter view this plugin is associated with, if any.
@@ -101,6 +91,16 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
 @property(nonatomic, readonly) BOOL isInitialized;
+// TODO(stuartmorgan): Extract and abstract the display link to remove all the display-link-related
+// ifdefs from this file.
+#if TARGET_OS_OSX
+// The display link to trigger frame reads from the video player.
+@property(nonatomic, assign) CVDisplayLinkRef displayLink;
+// A dispatch source to move display link callbacks to the main thread.
+@property(nonatomic, strong) dispatch_source_t displayLinkSource;
+#else
+@property(nonatomic) CADisplayLink *displayLink;
+#endif
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
