@@ -144,7 +144,8 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       // https://github.com/flutter/flutter/issues/125812
       '--allow-warnings',
       '--use-modular-headers', // Flutter sets use_modular_headers! in its templates.
-      if (libraryLint) '--use-libraries'
+      if (libraryLint) '--use-libraries',
+      '--verbose',
     ];
 
     print('Running "pod ${arguments.join(' ')}"');
