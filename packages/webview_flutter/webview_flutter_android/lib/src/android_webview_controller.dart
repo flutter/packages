@@ -194,7 +194,9 @@ class AndroidWebViewController extends PlatformWebViewController {
       (WeakReference<AndroidWebViewController> weakReference) {
         return (android_webview.WebChromeClient webChromeClient,
             android_webview.ConsoleMessage consoleMessage) async {
-          if (weakReference.target?._onConsoleLogCallback != null) {
+          final void Function(JavaScriptConsoleMessage)? callback =
+              weakReference.target?._onConsoleLogCallback;
+          if (callback != null) {
             JavaScriptLogLevel logLevel;
             switch (consoleMessage.level) {
               // Android maps `console.debug` to `MessageLevel.TIP`, it seems
@@ -213,9 +215,9 @@ class AndroidWebViewController extends PlatformWebViewController {
               case ConsoleMessageLevel.log:
                 logLevel = JavaScriptLogLevel.log;
                 break;
-            }
+            }          
 
-            _onConsoleLogCallback!(JavaScriptConsoleMessage(
+            callback(JavaScriptConsoleMessage(
               level: logLevel,
               message: consoleMessage.message,
             ));
