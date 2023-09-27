@@ -12,7 +12,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import android.content.Context;
 import android.content.Intent;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import java.util.Collections;
 import org.junit.Before;
@@ -26,13 +25,11 @@ public class WebViewActivityTest {
 
   private WebView webView;
   private Context context;
-  private WebResourceRequest webResourceRequest;
 
   @Before
   public void setUp() {
     webView = Mockito.mock(WebView.class);
     context = Mockito.mock(Context.class);
-    webResourceRequest = Mockito.mock(WebResourceRequest.class);
     Mockito.when(webView.getContext()).thenReturn(context);
     Mockito.when(webView.getWebViewClient()).thenReturn(new FlutterWebViewClient());
   }
@@ -84,7 +81,8 @@ public class WebViewActivityTest {
 
   @Test
   public void marketLink_startsActivity() {
-    boolean result = FlutterWebViewClient.urlShouldRunActivity(webView, "market://details?id=com.example.test");
+    boolean result =
+        FlutterWebViewClient.urlShouldRunActivity(webView, "market://details?id=com.example.test");
 
     verify(context, times(1)).startActivity(any(Intent.class));
     assertTrue(result);
@@ -92,7 +90,9 @@ public class WebViewActivityTest {
 
   @Test
   public void contentLink_startsActivity() {
-    boolean result = FlutterWebViewClient.urlShouldRunActivity(webView, "content://media/external/images/media/");
+    boolean result =
+        FlutterWebViewClient.urlShouldRunActivity(
+            webView, "content://media/external/images/media/");
 
     verify(context, times(1)).startActivity(any(Intent.class));
     assertTrue(result);
@@ -100,7 +100,8 @@ public class WebViewActivityTest {
 
   @Test
   public void fileLink_startsActivity() {
-    boolean result = FlutterWebViewClient.urlShouldRunActivity(webView, "file:///sdcard/download/example.jpg");
+    boolean result =
+        FlutterWebViewClient.urlShouldRunActivity(webView, "file:///sdcard/download/example.jpg");
 
     verify(context, times(1)).startActivity(any(Intent.class));
     assertTrue(result);
