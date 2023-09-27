@@ -4,7 +4,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-CGAffineTransform FLTGetStandardizedTransformForTrack(AVAssetTrack *track) {
+CGAffineTransform FVPGetStandardizedTransformForTrack(AVAssetTrack *track) {
   CGAffineTransform t = track.preferredTransform;
   CGSize size = track.naturalSize;
   // Each case of control flows corresponds to a specific

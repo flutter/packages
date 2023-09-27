@@ -10,6 +10,8 @@ import 'package:pigeon/dart_generator.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:test/test.dart';
 
+const String DEFAULT_PACKAGE_NAME = 'test_package';
+
 void main() {
   test('gen one class', () {
     final Class klass = Class(
@@ -30,7 +32,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  dataType1? field1;'));
@@ -51,7 +58,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('enum Foobar'));
     expect(code, contains('  one,'));
@@ -95,7 +107,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<Output> doSomething(Input arg_input)'));
@@ -122,7 +139,12 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<int> add(int arg_x, int arg_y)'));
@@ -150,7 +172,12 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('int add(int x, int y)'));
@@ -188,7 +215,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
       code,
@@ -231,7 +263,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
       code,
@@ -247,7 +284,7 @@ void main() {
     );
   });
 
-  test('flutterapi', () {
+  test('flutterApi', () {
     final Root root = Root(apis: <Api>[
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
@@ -284,7 +321,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('static void setup(Api'));
@@ -319,7 +361,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('Future<void> doSomething'));
     expect(code, contains('return;'));
@@ -353,7 +400,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     // The next line verifies that we're not setting a variable to the value of "doSomething", but
     // ignores the line where we assert the value of the argument isn't null, since on that line
@@ -384,7 +436,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, matches('output.*=.*doSomething[(][)]'));
     expect(code, contains('Output doSomething();'));
@@ -427,7 +484,12 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('enum1?.index,'));
     expect(code, contains('? Enum.values[result[0]! as int]'));
@@ -455,7 +517,12 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('enum Foo {'));
     expect(code, contains('Future<void> bar(Foo? arg_foo) async'));
@@ -499,7 +566,12 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('enum1.index,'));
     expect(code, contains('enum1: Enum.values[result[0]! as int]'));
@@ -527,7 +599,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
   });
@@ -586,7 +663,12 @@ void main() {
     final StringBuffer mainCodeSink = StringBuffer();
     final StringBuffer testCodeSink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, mainCodeSink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      mainCodeSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String mainCode = mainCodeSink.toString();
     expect(mainCode, isNot(contains(r"import 'fo\'o.dart';")));
     expect(mainCode, contains('class Api {'));
@@ -603,6 +685,8 @@ void main() {
       ),
       root,
       testCodeSink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+      dartOutputPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String testCode = testCodeSink.toString();
     expect(testCode, contains(r"import 'fo\'o.dart';"));
@@ -651,7 +735,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
     expect(code, contains('Future<Output> doSomething(Input arg0);'));
@@ -696,7 +785,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(matches('=.s*doSomething')));
     expect(code, contains('await api.doSomething('));
@@ -741,7 +835,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('Output.*doSomething.*Input'));
@@ -770,7 +869,12 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, matches('channel.send[(]null[)]'));
   });
@@ -788,6 +892,7 @@ void main() {
       DartOptions(copyrightHeader: makeIterable('hello world')),
       root,
       sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
@@ -814,7 +919,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  List<int?>? field1;'));
@@ -842,7 +952,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Foobar'));
     expect(code, contains('  Map<String?, int?>? field1;'));
@@ -872,7 +987,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
   });
@@ -901,7 +1021,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('doit(List<int?> arg'));
   });
@@ -926,7 +1051,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
     expect(code,
@@ -962,7 +1092,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('List<int?> doit('));
     expect(
@@ -990,7 +1125,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
     expect(code, contains('return (replyList[0] as int?);'));
@@ -1016,7 +1156,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>?> doit()'));
     expect(code,
@@ -1042,7 +1187,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
     expect(code, contains('return (replyList[0] as int?);'));
@@ -1066,7 +1216,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('int? doit();'));
     expect(code, contains('final int? output = api.doit();'));
@@ -1091,7 +1246,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit();'));
     expect(code, contains('final int? output = await api.doit();'));
@@ -1115,7 +1275,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
@@ -1145,7 +1310,12 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('Future<void> doit(int? arg_foo) async {'));
   });
@@ -1172,12 +1342,20 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('void doit(int? foo);'));
   });
 
-  test('deduces package name', () {
+  test('uses output package name for imports', () {
+    const String overriddenPackageName = 'custom_name';
+    const String outputPackageName = 'some_output_package';
+    assert(outputPackageName != DEFAULT_PACKAGE_NAME);
     final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
     try {
       final Directory foo = Directory(path.join(tempDir.path, 'lib', 'foo'));
@@ -1197,9 +1375,12 @@ name: foobar
         ),
         root,
         sink,
+        dartPackageName: overriddenPackageName,
+        dartOutputPackageName: outputPackageName,
       );
       final String code = sink.toString();
-      expect(code, contains("import 'package:foobar/foo/bar.dart';"));
+      expect(
+          code, contains("import 'package:$outputPackageName/foo/bar.dart';"));
     } finally {
       tempDir.deleteSync(recursive: true);
     }
@@ -1280,7 +1461,12 @@ name: foobar
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     for (final String comment in comments) {
       expect(code, contains('///$comment'));
@@ -1288,7 +1474,7 @@ name: foobar
     expect(code, contains('/// ///'));
   });
 
-  test('doesnt create codecs if no custom datatypes', () {
+  test("doesn't create codecs if no custom datatypes", () {
     final Root root = Root(
       apis: <Api>[
         Api(
@@ -1316,7 +1502,12 @@ name: foobar
     );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(contains('extends StandardMessageCodec')));
     expect(code, contains('StandardMessageCodec'));
@@ -1360,7 +1551,12 @@ name: foobar
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
-    generator.generate(const DartOptions(), root, sink);
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('extends StandardMessageCodec'));
   });
@@ -1407,12 +1603,14 @@ name: foobar
       ),
       root,
       sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+      dartOutputPackageName: DEFAULT_PACKAGE_NAME,
     );
 
     final String testCode = sink.toString();
     expect(
         testCode,
         contains(
-            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0] as int]'));
+            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0]! as int]'));
   });
 }

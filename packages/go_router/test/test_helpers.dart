@@ -149,6 +149,8 @@ Future<GoRouter> createRouter(
   GoRouterWidgetBuilder? errorBuilder,
   String? restorationScopeId,
   GoExceptionHandler? onException,
+  bool requestFocus = true,
+  bool overridePlatformDefaultLocation = false,
 }) async {
   final GoRouter goRouter = GoRouter(
     routes: routes,
@@ -160,6 +162,8 @@ Future<GoRouter> createRouter(
     errorBuilder: errorBuilder,
     navigatorKey: navigatorKey,
     restorationScopeId: restorationScopeId,
+    requestFocus: requestFocus,
+    overridePlatformDefaultLocation: overridePlatformDefaultLocation,
   );
   await tester.pumpWidget(
     MaterialApp.router(

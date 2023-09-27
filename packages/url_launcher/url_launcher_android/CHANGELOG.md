@@ -1,7 +1,24 @@
-## 6.0.37
+## 6.1.1
 
 * Enables in-app Android WebView to open non-https urls, e.g. `mailto:`, `sms:`
 * Enables in-app Android WebView to open `.pdf` documents
+
+## 6.1.0
+
+* Adds support for Android Custom Tabs.
+
+## 6.0.39
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 6.0.38
+
+* Updates android implementation to support api 34 broadcast receiver requirements.
+
+## 6.0.37
+
+* Sets android.defaults.buildfeatures.buildconfig to true for compatibility with AGP 8.0+.
 
 ## 6.0.36
 

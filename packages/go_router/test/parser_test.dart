@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'test_helpers.dart';
+
 RouteInformation createRouteInformation(String location, [Object? extra]) {
   return RouteInformation(
       // TODO(chunhtai): remove this ignore and migrate the code
@@ -79,6 +81,53 @@ void main() {
 
     expect(matches[1].matchedLocation, '/abc');
     expect(matches[1].route, routes[0].routes[0]);
+  });
+
+  testWidgets(
+      'GoRouteInformationParser can restore full route matches if optionURLReflectsImperativeAPIs is true',
+      (WidgetTester tester) async {
+    final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'abc',
+            builder: (_, __) => const Placeholder(),
+          ),
+        ],
+      ),
+    ];
+    GoRouter.optionURLReflectsImperativeAPIs = true;
+    final GoRouter router =
+        await createRouter(routes, tester, navigatorKey: navKey);
+
+    // Generate RouteMatchList with imperative route match
+    router.go('/abc');
+    await tester.pumpAndSettle();
+    router.push('/');
+    await tester.pumpAndSettle();
+    final RouteMatchList matchList = router.routerDelegate.currentConfiguration;
+    expect(matchList.uri.toString(), '/abc');
+    expect(matchList.matches.length, 3);
+
+    final RouteInformation restoredRouteInformation =
+        router.routeInformationParser.restoreRouteInformation(matchList)!;
+    // URL reflects the latest push.
+    // TODO(chunhtai): remove this ignore and migrate the code
+    // https://github.com/flutter/flutter/issues/124045.
+    // ignore: deprecated_member_use
+    expect(restoredRouteInformation.location, '/');
+
+    // Can restore back to original RouteMatchList.
+    final RouteMatchList parsedRouteMatch = await router.routeInformationParser
+        .parseRouteInformationWithDependencies(
+            restoredRouteInformation, navKey.currentContext!);
+    expect(parsedRouteMatch.uri.toString(), '/abc');
+    expect(parsedRouteMatch.matches.length, 3);
+
+    GoRouter.optionURLReflectsImperativeAPIs = false;
   });
 
   test('GoRouteInformationParser can retrieve route by name', () async {
@@ -218,7 +267,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (_, GoRouterState state) {
-        lastRedirectLocation = state.location;
+        lastRedirectLocation = state.uri.toString();
         return null;
       },
     );
@@ -287,7 +336,7 @@ void main() {
       routes: routes,
       redirectLimit: 100,
       redirect: (BuildContext context, GoRouterState state) {
-        if (state.location != '/123/family/345') {
+        if (state.uri.toString() != '/123/family/345') {
           return '/123/family/345';
         }
         return null;
@@ -377,7 +426,8 @@ void main() {
       GoRoute(
         path: '/abc',
         builder: (_, __) => const Placeholder(),
-        redirect: (BuildContext context, GoRouterState state) => state.location,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.uri.toString(),
       ),
     ];
     final GoRouteInformationParser parser = await createParser(

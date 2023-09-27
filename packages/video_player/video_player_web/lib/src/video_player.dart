@@ -45,6 +45,7 @@ class VideoPlayer {
 
   final StreamController<VideoEvent> _eventController;
   final html.VideoElement _videoElement;
+  void Function(html.Event)? _onContextMenu;
 
   bool _isInitialized = false;
   bool _isBuffering = false;
@@ -62,11 +63,12 @@ class VideoPlayer {
       ..autoplay = false
       ..controls = false;
 
-    // Allows Safari iOS to play the video inline
+    // Allows Safari iOS to play the video inline.
+    //
+    // This property is not exposed through dart:html so we use the
+    // HTML Boolean attribute form (when present with any value => true)
+    // See: https://developer.mozilla.org/en-US/docs/Glossary/Boolean/HTML
     _videoElement.setAttribute('playsinline', 'true');
-
-    // Set autoplay to false since most browsers won't autoplay a video unless it is muted
-    _videoElement.setAttribute('autoplay', 'false');
 
     _videoElement.onCanPlay.listen((dynamic _) {
       if (!_isInitialized) {
@@ -202,9 +204,51 @@ class VideoPlayer {
     return Duration(milliseconds: (_videoElement.currentTime * 1000).round());
   }
 
+  /// Sets options
+  Future<void> setOptions(VideoPlayerWebOptions options) async {
+    // In case this method is called multiple times, reset options.
+    _resetOptions();
+
+    if (options.controls.enabled) {
+      _videoElement.controls = true;
+      final String controlsList = options.controls.controlsList;
+      if (controlsList.isNotEmpty) {
+        _videoElement.setAttribute('controlsList', controlsList);
+      }
+
+      if (!options.controls.allowPictureInPicture) {
+        _videoElement.setAttribute('disablePictureInPicture', true);
+      }
+    }
+
+    if (!options.allowContextMenu) {
+      _onContextMenu = (html.Event event) => event.preventDefault();
+      _videoElement.addEventListener('contextmenu', _onContextMenu);
+    }
+
+    if (!options.allowRemotePlayback) {
+      _videoElement.setAttribute('disableRemotePlayback', true);
+    }
+  }
+
+  void _resetOptions() {
+    _videoElement.controls = false;
+    _videoElement.removeAttribute('controlsList');
+    _videoElement.removeAttribute('disablePictureInPicture');
+    if (_onContextMenu != null) {
+      _videoElement.removeEventListener('contextmenu', _onContextMenu);
+      _onContextMenu = null;
+    }
+    _videoElement.removeAttribute('disableRemotePlayback');
+  }
+
   /// Disposes of the current [html.VideoElement].
   void dispose() {
     _videoElement.removeAttribute('src');
+    if (_onContextMenu != null) {
+      _videoElement.removeEventListener('contextmenu', _onContextMenu);
+      _onContextMenu = null;
+    }
     _videoElement.load();
   }
 

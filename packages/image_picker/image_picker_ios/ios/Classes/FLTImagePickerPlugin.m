@@ -173,7 +173,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   [self cancelInProgressCall];
   FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
       initWithResult:^void(NSArray<NSString *> *paths, FlutterError *error) {
-        if (paths && paths.count != 1) {
+        if (paths.count > 1) {
           completion(nil, [FlutterError errorWithCode:@"invalid_result"
                                               message:@"Incorrect number of return paths provided"
                                               details:nil]);
@@ -246,7 +246,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                      (nonnull void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
       initWithResult:^void(NSArray<NSString *> *paths, FlutterError *error) {
-        if (paths && paths.count != 1) {
+        if (paths.count > 1) {
           completion(nil, [FlutterError errorWithCode:@"invalid_result"
                                               message:@"Incorrect number of return paths provided"
                                               details:nil]);
@@ -687,7 +687,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                                                      message:@"pathList's items should not be null"
                                                      details:nil]);
   } else {
-    self.callContext.result(pathList, nil);
+    self.callContext.result(pathList ?: [NSArray array], nil);
   }
   self.callContext = nil;
 }

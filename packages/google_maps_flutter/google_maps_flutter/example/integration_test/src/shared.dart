@@ -19,6 +19,9 @@ const double kInitialZoomLevel = 5;
 const CameraPosition kInitialCameraPosition =
     CameraPosition(target: kInitialMapCenter, zoom: kInitialZoomLevel);
 
+// Dummy map ID
+const String kCloudMapId = '000000000000000'; // Dummy map ID.
+
 /// True if the test is running in an iOS device
 final bool isIOS = defaultTargetPlatform == TargetPlatform.iOS;
 

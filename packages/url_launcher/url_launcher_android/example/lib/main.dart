@@ -83,6 +83,20 @@ class _MyHomePageState extends State<MyHomePage> {
       enableJavaScript: false,
       enableDomStorage: false,
       universalLinksOnly: false,
+      headers: <String, String>{},
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<void> _launchInWebViewWithCustomHeaders(String url) async {
+    if (!await launcher.launch(
+      url,
+      useSafariVC: true,
+      useWebView: true,
+      enableJavaScript: false,
+      enableDomStorage: false,
+      universalLinksOnly: false,
       headers: <String, String>{'my_header_key': 'my_header_value'},
     )) {
       throw Exception('Could not launch $url');
@@ -200,8 +214,13 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched =
-                      _launchInWebViewWithJavaScript(_urlTextController.text);
+                  _launched = _launchInWebViewWithCustomHeaders(_urlTextController.text);
+                }),
+                child: const Text('Launch in app (Custom headers)'),
+              ),
+              ElevatedButton(
+                onPressed: () => setState(() {
+                  _launched = _launchInWebViewWithJavaScript(_urlTextController.text);
                 }),
                 child: const Text('Launch in app (JavaScript ON)'),
               ),

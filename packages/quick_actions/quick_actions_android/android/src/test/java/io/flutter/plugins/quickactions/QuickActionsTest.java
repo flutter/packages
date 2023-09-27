@@ -16,7 +16,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutManager;
-import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
@@ -25,9 +24,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.StandardMethodCodec;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
-import org.junit.After;
 import org.junit.Test;
 
 public class QuickActionsTest {
@@ -75,9 +72,9 @@ public class QuickActionsTest {
       throws NoSuchFieldException, IllegalAccessException {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin();
+    final QuickActionsPlugin plugin =
+        new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
-    setBuildVersion(SUPPORTED_BUILD);
     Field handler = plugin.getClass().getDeclaredField("handler");
     handler.setAccessible(true);
     handler.set(plugin, mock(MethodCallHandlerImpl.class));
@@ -102,13 +99,12 @@ public class QuickActionsTest {
   }
 
   @Test
-  public void onNewIntent_buildVersionUnsupported_doesNotInvokeMethod()
-      throws NoSuchFieldException, IllegalAccessException {
+  public void onNewIntent_buildVersionUnsupported_doesNotInvokeMethod() {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin();
+    final QuickActionsPlugin plugin =
+        new QuickActionsPlugin((version) -> UNSUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
-    setBuildVersion(UNSUPPORTED_BUILD);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
 
     // Act
@@ -120,13 +116,12 @@ public class QuickActionsTest {
   }
 
   @Test
-  public void onNewIntent_buildVersionSupported_invokesLaunchMethod()
-      throws NoSuchFieldException, IllegalAccessException {
+  public void onNewIntent_buildVersionSupported_invokesLaunchMethod() {
     // Arrange
     final TestBinaryMessenger testBinaryMessenger = new TestBinaryMessenger();
-    final QuickActionsPlugin plugin = new QuickActionsPlugin();
+    final QuickActionsPlugin plugin =
+        new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
-    setBuildVersion(SUPPORTED_BUILD);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
     final Activity mockMainActivity = mock(Activity.class);
     when(mockMainActivity.getIntent()).thenReturn(mockIntent);
@@ -160,20 +155,5 @@ public class QuickActionsTest {
     when(mockIntent.hasExtra(EXTRA_ACTION)).thenReturn(true);
     when(mockIntent.getStringExtra(EXTRA_ACTION)).thenReturn(QuickActionsTest.SHORTCUT_TYPE);
     return mockIntent;
-  }
-
-  private void setBuildVersion(int buildVersion)
-      throws NoSuchFieldException, IllegalAccessException {
-    Field buildSdkField = Build.VERSION.class.getField("SDK_INT");
-    buildSdkField.setAccessible(true);
-    final Field modifiersField = Field.class.getDeclaredField("modifiers");
-    modifiersField.setAccessible(true);
-    modifiersField.setInt(buildSdkField, buildSdkField.getModifiers() & ~Modifier.FINAL);
-    buildSdkField.set(null, buildVersion);
-  }
-
-  @After
-  public void tearDown() throws NoSuchFieldException, IllegalAccessException {
-    setBuildVersion(0);
   }
 }

@@ -24,37 +24,8 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final WebKitWebViewController controller = WebKitWebViewController(
-        WebKitWebViewControllerCreationParams(
-          webKitProxy: WebKitProxy(createWebView: (
-            WKWebViewConfiguration configuration, {
-            void Function(
-              String keyPath,
-              NSObject object,
-              Map<NSKeyValueChangeKey, Object?> change,
-            )? observeValue,
-            InstanceManager? instanceManager,
-          }) {
-            final WKWebView webView = WKWebView.detached(
-              instanceManager: testInstanceManager,
-            );
-            testInstanceManager.addDartCreatedInstance(webView);
-            return webView;
-          }, createWebViewConfiguration: ({InstanceManager? instanceManager}) {
-            return MockWKWebViewConfiguration();
-          }, createUIDelegate: ({
-            dynamic onCreateWebView,
-            dynamic requestMediaCapturePermission,
-            InstanceManager? instanceManager,
-          }) {
-            final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();
-            when(mockWKUIDelegate.copy()).thenReturn(MockWKUIDelegate());
-
-            testInstanceManager.addDartCreatedInstance(mockWKUIDelegate);
-            return mockWKUIDelegate;
-          }),
-        ),
-      );
+      final WebKitWebViewController controller =
+          createTestWebViewController(testInstanceManager);
 
       final WebKitWebViewWidget widget = WebKitWebViewWidget(
         WebKitWebViewWidgetCreationParams(
@@ -71,5 +42,167 @@ void main() {
       expect(find.byType(UiKitView), findsOneWidget);
       expect(find.byKey(const Key('keyValue')), findsOneWidget);
     });
+
+    testWidgets('Key of the PlatformView changes when the controller changes',
+        (WidgetTester tester) async {
+      final InstanceManager testInstanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      // Pump WebViewWidget with first controller.
+      final WebKitWebViewController controller1 =
+          createTestWebViewController(testInstanceManager);
+      final WebKitWebViewWidget webViewWidget = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller1,
+          instanceManager: testInstanceManager,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) => webViewWidget.build(context),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
+
+      // Pump WebViewWidget with second controller.
+      final WebKitWebViewController controller2 =
+          createTestWebViewController(testInstanceManager);
+      final WebKitWebViewWidget webViewWidget2 = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller2,
+          instanceManager: testInstanceManager,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) => webViewWidget2.build(context),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(webViewWidget.params != webViewWidget2.params, isTrue);
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget2.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+        'Key of the PlatformView is the same when the creation params are equal',
+        (WidgetTester tester) async {
+      final InstanceManager testInstanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final WebKitWebViewController controller =
+          createTestWebViewController(testInstanceManager);
+
+      final WebKitWebViewWidget webViewWidget = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          instanceManager: testInstanceManager,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) => webViewWidget.build(context),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
+
+      final WebKitWebViewWidget webViewWidget2 = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          instanceManager: testInstanceManager,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) => webViewWidget2.build(context),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Can find the new widget with the key of the first widget.
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
   });
+}
+
+WebKitWebViewController createTestWebViewController(
+  InstanceManager testInstanceManager,
+) {
+  return WebKitWebViewController(
+    WebKitWebViewControllerCreationParams(
+      webKitProxy: WebKitProxy(createWebView: (
+        WKWebViewConfiguration configuration, {
+        void Function(
+          String keyPath,
+          NSObject object,
+          Map<NSKeyValueChangeKey, Object?> change,
+        )? observeValue,
+        InstanceManager? instanceManager,
+      }) {
+        final WKWebView webView = WKWebView.detached(
+          instanceManager: testInstanceManager,
+        );
+        testInstanceManager.addDartCreatedInstance(webView);
+        return webView;
+      }, createWebViewConfiguration: ({InstanceManager? instanceManager}) {
+        return MockWKWebViewConfiguration();
+      }, createUIDelegate: ({
+        dynamic onCreateWebView,
+        dynamic requestMediaCapturePermission,
+        InstanceManager? instanceManager,
+      }) {
+        final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();
+        when(mockWKUIDelegate.copy()).thenReturn(MockWKUIDelegate());
+
+        testInstanceManager.addDartCreatedInstance(mockWKUIDelegate);
+        return mockWKUIDelegate;
+      }),
+    ),
+  );
 }

@@ -309,6 +309,53 @@ void main() {
       expect(find.byKey(settings), findsOneWidget);
     });
 
+    testWidgets('can correctly pop stacks of repeated pages',
+        (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/#132229.
+
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: HomeScreen()),
+        ),
+        GoRoute(
+          path: '/page1',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page1Screen()),
+        ),
+        GoRoute(
+          path: '/page2',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page2Screen()),
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, navigatorKey: navKey);
+      expect(find.byType(HomeScreen), findsOneWidget);
+
+      router.push('/page1');
+      router.push('/page2');
+      router.push('/page1');
+      router.push('/page2');
+      await tester.pumpAndSettle();
+
+      expect(find.byType(HomeScreen), findsNothing);
+      expect(find.byType(Page1Screen), findsNothing);
+      expect(find.byType(Page2Screen), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+
+      final List<RouteMatch> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches.length, 4);
+      expect(find.byType(HomeScreen), findsNothing);
+      expect(find.byType(Page1Screen), findsOneWidget);
+      expect(find.byType(Page2Screen), findsNothing);
+    });
+
     testWidgets('match sub-route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -474,7 +521,7 @@ void main() {
           name: 'home',
           path: '/',
           builder: (BuildContext context, GoRouterState state) {
-            expect(state.location, '/');
+            expect(state.uri.toString(), '/');
             expect(state.matchedLocation, '/');
             expect(state.name, 'home');
             expect(state.path, '/');
@@ -491,7 +538,7 @@ void main() {
               name: 'login',
               path: 'login',
               builder: (BuildContext context, GoRouterState state) {
-                expect(state.location, '/login');
+                expect(state.uri.toString(), '/login');
                 expect(state.matchedLocation, '/login');
                 expect(state.name, 'login');
                 expect(state.path, 'login');
@@ -507,7 +554,7 @@ void main() {
               path: 'family/:fid',
               builder: (BuildContext context, GoRouterState state) {
                 expect(
-                  state.location,
+                  state.uri.toString(),
                   anyOf(<String>['/family/f2', '/family/f2/person/p1']),
                 );
                 expect(state.matchedLocation, '/family/f2');
@@ -524,7 +571,7 @@ void main() {
                   name: 'person',
                   path: 'person/:pid',
                   builder: (BuildContext context, GoRouterState state) {
-                    expect(state.location, '/family/f2/person/p1');
+                    expect(state.uri.toString(), '/family/f2/person/p1');
                     expect(state.matchedLocation, '/family/f2/person/p1');
                     expect(state.name, 'person');
                     expect(state.path, 'person/:pid');
@@ -999,11 +1046,10 @@ void main() {
       final RouteMatchListCodec codec =
           RouteMatchListCodec(router.configuration);
       await tester.pumpAndSettle();
-      final ImperativeRouteMatch match = router
-          .routerDelegate.currentConfiguration.last as ImperativeRouteMatch;
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/settings', false, codec.encode(match.matches)),
+        IsRouteUpdateCall('/settings', false,
+            codec.encode(router.routerDelegate.currentConfiguration)),
       ]);
       GoRouter.optionURLReflectsImperativeAPIs = false;
     });
@@ -1604,7 +1650,7 @@ void main() {
           name: 'page1',
           path: '/page1',
           builder: (BuildContext c, GoRouterState s) {
-            expect(s.queryParameters['param1'], param1);
+            expect(s.uri.queryParameters['param1'], param1);
             return const DummyScreen();
           },
         ),
@@ -1673,7 +1719,7 @@ void main() {
             GoRoute(
                 path: 'dummy',
                 // Return same location.
-                redirect: (_, GoRouterState state) => state.location,
+                redirect: (_, GoRouterState state) => state.uri.toString(),
                 builder: (BuildContext context, GoRouterState state) =>
                     const DummyScreen()),
           ],
@@ -1683,7 +1729,7 @@ void main() {
       final GoRouter router = await createRouter(routes, tester,
           redirect: (BuildContext context, GoRouterState state) {
         // Return same location.
-        return state.location;
+        return state.uri.toString();
       });
 
       expect(router.routerDelegate.currentConfiguration.uri.toString(), '/');
@@ -1950,7 +1996,7 @@ void main() {
         tester,
         redirect: (BuildContext context, GoRouterState state) =>
             state.matchedLocation == '/'
-                ? '/login?from=${state.location}'
+                ? '/login?from=${state.uri}'
                 : state.matchedLocation == '/login'
                     ? '/'
                     : null,
@@ -2009,13 +2055,13 @@ void main() {
         tester,
         initialLocation: '/login?from=/',
         redirect: (BuildContext context, GoRouterState state) {
-          expect(Uri.parse(state.location).queryParameters, isNotEmpty);
+          expect(Uri.parse(state.uri.toString()).queryParameters, isNotEmpty);
           expect(Uri.parse(state.matchedLocation).queryParameters, isEmpty);
           expect(state.path, isNull);
           expect(state.fullPath, '/login');
           expect(state.pathParameters.length, 0);
-          expect(state.queryParameters.length, 1);
-          expect(state.queryParameters['from'], '/');
+          expect(state.uri.queryParameters.length, 1);
+          expect(state.uri.queryParameters['from'], '/');
           return null;
         },
       );
@@ -2066,12 +2112,12 @@ void main() {
         GoRoute(
           path: '/book/:bookId',
           redirect: (BuildContext context, GoRouterState state) {
-            expect(state.location, loc);
+            expect(state.uri.toString(), loc);
             expect(state.matchedLocation, loc);
             expect(state.path, '/book/:bookId');
             expect(state.fullPath, '/book/:bookId');
             expect(state.pathParameters, <String, String>{'bookId': '0'});
-            expect(state.queryParameters.length, 0);
+            expect(state.uri.queryParameters.length, 0);
             return null;
           },
           builder: (BuildContext c, GoRouterState s) => const HomeScreen(),
@@ -2142,7 +2188,7 @@ void main() {
         <GoRoute>[],
         tester,
         redirect: (BuildContext context, GoRouterState state) =>
-            '/${state.location}+',
+            '/${state.uri}+',
         errorBuilder: (BuildContext context, GoRouterState state) =>
             TestErrorScreen(state.error!),
         redirectLimit: 10,
@@ -2164,7 +2210,7 @@ void main() {
         ],
         tester,
         errorBuilder: (_, GoRouterState state) {
-          return Text(state.location);
+          return Text(state.uri.toString());
         },
       );
 
@@ -2230,7 +2276,7 @@ void main() {
         routes,
         tester,
         redirect: (BuildContext context, GoRouterState state) {
-          if (state.location == '/login') {
+          if (state.uri.toString() == '/login') {
             isCallTopRedirect = true;
             expect(state.extra, isNotNull);
           }
@@ -2460,7 +2506,7 @@ void main() {
         GoRoute(
           path: '/family',
           builder: (BuildContext context, GoRouterState state) => FamilyScreen(
-            state.queryParameters['fid']!,
+            state.uri.queryParameters['fid']!,
           ),
         ),
       ];
@@ -2510,7 +2556,7 @@ void main() {
         GoRoute(
           path: '/page1',
           builder: (BuildContext c, GoRouterState s) {
-            expect(s.queryParameters['param1'], param1);
+            expect(s.uri.queryParameters['param1'], param1);
             return const DummyScreen();
           },
         ),
@@ -2561,8 +2607,8 @@ void main() {
             builder: (BuildContext context, GoRouterState state) {
               log.info('id= ${state.pathParameters['id']}');
               expect(state.pathParameters.length, 0);
-              expect(state.queryParameters.length, 1);
-              expect(state.queryParameters['id'], anyOf('0', '1'));
+              expect(state.uri.queryParameters.length, 1);
+              expect(state.uri.queryParameters['id'], anyOf('0', '1'));
               return const HomeScreen();
             },
           ),
@@ -2583,7 +2629,7 @@ void main() {
             path: '/:id',
             builder: (BuildContext context, GoRouterState state) {
               expect(state.pathParameters, <String, String>{'id': '0'});
-              expect(state.queryParameters, <String, String>{'id': '1'});
+              expect(state.uri.queryParameters, <String, String>{'id': '1'});
               return const HomeScreen();
             },
           ),
@@ -2607,15 +2653,15 @@ void main() {
             path: '/family',
             builder: (BuildContext context, GoRouterState state) =>
                 FamilyScreen(
-              state.queryParameters['fid']!,
+              state.uri.queryParameters['fid']!,
             ),
           ),
           GoRoute(
             path: '/person',
             builder: (BuildContext context, GoRouterState state) =>
                 PersonScreen(
-              state.queryParameters['fid']!,
-              state.queryParameters['pid']!,
+              state.uri.queryParameters['fid']!,
+              state.uri.queryParameters['pid']!,
             ),
           ),
         ],
@@ -2797,6 +2843,52 @@ void main() {
       expect(matches.pathParameters['pid'], pid);
     });
 
+    testWidgets('StatefulShellRoute preserve extra when switching branch',
+        (WidgetTester tester) async {
+      StatefulNavigationShell? routeState;
+      Object? latestExtra;
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder: (BuildContext context, GoRouterState state,
+              StatefulNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) {
+                      latestExtra = state.extra;
+                      return const DummyScreen();
+                    }),
+              ],
+            ),
+          ],
+        ),
+      ];
+      final Object expectedExtra = Object();
+
+      await createRouter(routes, tester,
+          initialLocation: '/b', initialExtra: expectedExtra);
+      expect(latestExtra, expectedExtra);
+      routeState!.goBranch(0);
+      await tester.pumpAndSettle();
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(latestExtra, expectedExtra);
+    });
+
     testWidgets('goNames should allow dynamics values for queryParams',
         (WidgetTester tester) async {
       const Map<String, dynamic> queryParametersAll = <String, List<dynamic>>{
@@ -2819,10 +2911,10 @@ void main() {
           name: 'page',
           path: '/page',
           builder: (BuildContext context, GoRouterState state) {
-            expect(state.queryParametersAll, queryParametersAll);
-            expectLocationWithQueryParams(state.location);
+            expect(state.uri.queryParametersAll, queryParametersAll);
+            expectLocationWithQueryParams(state.uri.toString());
             return DummyScreen(
-              queryParametersAll: state.queryParametersAll,
+              queryParametersAll: state.uri.queryParametersAll,
             );
           },
         ),
@@ -2874,10 +2966,10 @@ void main() {
         name: 'page',
         path: '/page',
         builder: (BuildContext context, GoRouterState state) {
-          expect(state.queryParametersAll, queryParametersAll);
-          expectLocationWithQueryParams(state.location);
+          expect(state.uri.queryParametersAll, queryParametersAll);
+          expectLocationWithQueryParams(state.uri.toString());
           return DummyScreen(
-            queryParametersAll: state.queryParametersAll,
+            queryParametersAll: state.uri.queryParametersAll,
           );
         },
       ),
@@ -2925,10 +3017,10 @@ void main() {
         name: 'page',
         path: '/page',
         builder: (BuildContext context, GoRouterState state) {
-          expect(state.queryParametersAll, queryParametersAll);
-          expectLocationWithQueryParams(state.location);
+          expect(state.uri.queryParametersAll, queryParametersAll);
+          expectLocationWithQueryParams(state.uri.toString());
           return DummyScreen(
-            queryParametersAll: state.queryParametersAll,
+            queryParametersAll: state.uri.queryParametersAll,
           );
         },
       ),
@@ -3913,7 +4005,7 @@ void main() {
         initialLocation: '/a',
         navigatorKey: rootNavigatorKey,
         redirect: (_, GoRouterState state) {
-          if (state.location.startsWith('/b')) {
+          if (state.uri.toString().startsWith('/b')) {
             return redirectDestinationBranchB;
           }
           return null;
@@ -4861,6 +4953,60 @@ void main() {
 
       expect(find.text('Screen B Detail'), findsOneWidget);
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
+    });
+  });
+
+  ///Regression tests for https://github.com/flutter/flutter/issues/132557
+  group('overridePlatformDefaultLocation', () {
+    test('No initial location provided', () {
+      expect(
+          () => GoRouter(
+                overridePlatformDefaultLocation: true,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/a',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Placeholder(),
+                  ),
+                  GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Placeholder(),
+                  ),
+                ],
+              ),
+          throwsA(const TypeMatcher<AssertionError>()));
+    });
+    testWidgets('Test override using routeInformationProvider',
+        (WidgetTester tester) async {
+      tester.binding.platformDispatcher.defaultRouteNameTestValue =
+          '/some-route';
+      final String platformRoute =
+          WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+      const String expectedInitialRoute = '/kyc';
+      expect(platformRoute != expectedInitialRoute, isTrue);
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/abc',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+        GoRoute(
+          path: '/bcd',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        overridePlatformDefaultLocation: true,
+        initialLocation: expectedInitialRoute,
+      );
+      expect(router.routeInformationProvider.value.uri.toString(),
+          expectedInitialRoute);
     });
   });
 }

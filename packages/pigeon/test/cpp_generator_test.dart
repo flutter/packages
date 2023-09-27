@@ -8,6 +8,8 @@ import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart' show Error;
 import 'package:test/test.dart';
 
+const String DEFAULT_PACKAGE_NAME = 'test_package';
+
 void main() {
   test('gen one api', () {
     final Root root = Root(apis: <Api>[
@@ -52,7 +54,8 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(code, contains('class Input'));
       expect(code, contains('class Output'));
@@ -67,7 +70,8 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(code, contains('Input::Input()'));
       expect(code, contains('Output::Output'));
@@ -122,7 +126,8 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       // Method name and argument names should be adjusted.
       expect(code, contains(' DoSomething(const Input& some_input)'));
@@ -143,7 +148,8 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
       expect(code, contains('encodable_some_input'));
       expect(code, contains('Output::output_field()'));
@@ -180,6 +186,7 @@ void main() {
         generatorOptions,
         root,
         sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
 
@@ -226,7 +233,8 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(generatorOptions, root, sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME);
       final String code = sink.toString();
 
       expect(
@@ -286,7 +294,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
@@ -299,7 +312,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, isNot(contains('){')));
       expect(code, isNot(contains('const{')));
@@ -331,7 +349,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('''
 #include <flutter/basic_message_channel.h>
@@ -352,7 +375,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(headerIncludePath: 'a_header.h'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('''
 #include "a_header.h"
@@ -394,7 +422,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(namespace: 'foo'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
@@ -407,7 +440,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(namespace: 'foo'),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('namespace foo {'));
       expect(code, contains('}  // namespace foo'));
@@ -474,7 +512,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
 
       // There should be a default constructor.
@@ -521,7 +564,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
 
       // There should be a default constructor.
@@ -645,7 +693,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
 
       // There should not be a default constructor.
@@ -683,7 +736,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
 
       // There should not be a default constructor.
@@ -802,7 +860,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code, contains('ErrorOr<std::optional<bool>> ReturnNullableBool()'));
@@ -913,7 +976,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(code, contains('ErrorOr<bool> ReturnBool()'));
       expect(code, contains('ErrorOr<int64_t> ReturnInt()'));
@@ -1001,7 +1069,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -1022,7 +1095,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // Most types should just use get_if, since the parameter is a pointer,
       // and get_if will automatically handle null values (since a null
@@ -1145,7 +1223,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -1166,7 +1249,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // Most types should extract references. Since the type is non-nullable,
       // there's only one possible type.
@@ -1287,7 +1375,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // Nullable arguments should all be pointers. This will make them somewhat
       // awkward for some uses (literals, values that could be inlined) but
@@ -1323,7 +1416,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // All types pass nulls values when the pointer is null.
       // Standard types are wrapped an EncodableValues.
@@ -1435,7 +1533,12 @@ void main() {
         fileType: FileType.header,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       expect(
           code,
@@ -1464,7 +1567,12 @@ void main() {
         fileType: FileType.source,
         languageOptions: const CppOptions(),
       );
-      generator.generate(generatorOptions, root, sink);
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
       final String code = sink.toString();
       // Standard types are wrapped an EncodableValues.
       expect(code, contains('EncodableValue(a_bool_arg)'));
@@ -1502,7 +1610,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     // A bare 'auto' here would create a copy, not a reference, which is
     // ineffecient.
@@ -1618,7 +1731,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const CppOptions(headerIncludePath: 'foo'),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     for (final String comment in comments) {
       expect(code, contains('//$comment'));
@@ -1659,7 +1777,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
   });
@@ -1707,7 +1830,12 @@ void main() {
       fileType: FileType.header,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains(' : public flutter::StandardCodecSerializer'));
   });
@@ -1782,7 +1910,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(contains('reply(wrap')));
     expect(code, contains('reply(EncodableValue('));
@@ -1842,7 +1975,12 @@ void main() {
       fileType: FileType.source,
       languageOptions: const CppOptions(),
     );
-    generator.generate(generatorOptions, root, sink);
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     // Nothing should be captured by reference for async handlers, since their
     // lifetime is unknown (and expected to be longer than the stack's).

@@ -5,4 +5,5 @@
 set -e
 
 dart ./script/tool/bin/flutter_plugin_tools.dart drive-examples --windows \
-   --exclude=script/configs/exclude_integration_win32.yaml --packages-for-branch --log-timing
+   --exclude=script/configs/exclude_integration_win32.yaml \
+   --packages-for-branch --log-timing $PACKAGE_SHARDING

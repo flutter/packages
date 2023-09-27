@@ -165,6 +165,20 @@ void main() {
     expect(path, contains(r'Documents'));
   }, skip: !Platform.isWindows);
 
+  test('getApplicationCachePath', () async {
+    final PathProviderWindows pathProvider = PathProviderWindows();
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
+      'CompanyName': 'A Company',
+      'ProductName': 'Amazing App',
+    }, encoding: encodingCP1252);
+    final String? path = await pathProvider.getApplicationCachePath();
+    expect(path, isNotNull);
+    if (path != null) {
+      expect(path, endsWith(r'AppData\Local\A Company\Amazing App'));
+      expect(Directory(path).existsSync(), isTrue);
+    }
+  }, skip: !Platform.isWindows);
+
   test('getDownloadsPath', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
     final String? path = await pathProvider.getDownloadsPath();

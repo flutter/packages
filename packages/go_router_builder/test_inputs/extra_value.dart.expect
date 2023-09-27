@@ -6,7 +6,8 @@ RouteBase get $extraValueRoute => GoRouteData.$route(
 extension $ExtraValueRouteExtension on ExtraValueRoute {
   static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
         param:
-            _$convertMapValue('param', state.queryParameters, int.parse) ?? 0,
+            _$convertMapValue('param', state.uri.queryParameters, int.parse) ??
+                0,
         $extra: state.extra as int?,
       );
 

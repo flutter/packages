@@ -1,3 +1,8 @@
+## 2.2.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.2.0
 
 * Adds `clearWithParameters` and `getAllWithParameters` methods.

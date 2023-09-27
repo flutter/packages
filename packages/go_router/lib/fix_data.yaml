@@ -17,6 +17,42 @@
 
 version: 1
 transforms:
+  - title: "Replaces 'location' in 'GoRouterState' with `uri.toString()`"
+    date: 2023-07-06
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      field: 'location'
+      inClass: 'GoRouterState'
+    changes:
+      - kind: 'rename'
+        newName: 'uri.toString()'
+
+  - title: "Replaces 'queryParameters' in 'GoRouterState' with `uri.queryParameters`"
+    date: 2023-07-06
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      field: 'queryParameters'
+      inClass: 'GoRouterState'
+    changes:
+      - kind: 'rename'
+        newName: 'uri.queryParameters'
+
+  - title: "Replaces 'queryParametersAll' in 'GoRouterState' with `uri.queryParametersAll`"
+    date: 2023-07-06
+    bulkApply: true
+    element:
+      # TODO(ahmednfwela): Workaround for https://github.com/dart-lang/sdk/issues/52233
+      uris: [ 'go_router.dart', 'package:go_router/go_router.dart' ]
+      field: 'queryParametersAll'
+      inClass: 'GoRouterState'
+    changes:
+      - kind: 'rename'
+        newName: 'uri.queryParametersAll'
+
   - title: "Replaces 'params' and 'queryParams' in 'GoRouter.replaceNamed' with `pathParameters` and `queryParameters`"
     date: 2023-04-24
     bulkApply: true

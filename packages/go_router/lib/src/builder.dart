@@ -45,6 +45,7 @@ class RouteBuilder {
     required this.restorationScopeId,
     required this.observers,
     required this.onPopPageWithRouteMatch,
+    this.requestFocus = true,
   });
 
   /// Builder function for a go router with Navigator.
@@ -62,6 +63,12 @@ class RouteBuilder {
   /// Restoration ID to save and restore the state of the navigator, including
   /// its history.
   final String? restorationScopeId;
+
+  /// Whether or not the navigator created by this builder and it's new topmost route should request focus
+  /// when the new route is pushed onto the navigator.
+  ///
+  /// Defaults to true.
+  final bool requestFocus;
 
   /// NavigatorObserver used to receive notifications when navigating in between routes.
   /// changes.
@@ -137,6 +144,7 @@ class RouteBuilder {
         navigatorKey,
         observers: observers,
         restorationScopeId: restorationScopeId,
+        requestFocus: requestFocus,
       ),
     );
   }
@@ -164,7 +172,7 @@ class RouteBuilder {
 
       // Every Page should have a corresponding RouteMatch.
       assert(keyToPage.values.flattened.every((Page<Object?> page) =>
-          pagePopContext.getRouteMatchForPage(page) != null));
+          pagePopContext.getRouteMatchesForPage(page) != null));
     }
 
     /// Clean up previous cache to prevent memory leak, making sure any nested
@@ -258,7 +266,10 @@ class RouteBuilder {
 
         // Build the Navigator for this shell route
         Widget buildShellNavigator(
-            List<NavigatorObserver>? observers, String? restorationScopeId) {
+          List<NavigatorObserver>? observers,
+          String? restorationScopeId, {
+          bool requestFocus = true,
+        }) {
           return _buildNavigator(
             pagePopContext.onPopPage,
             keyToPages[shellNavigatorKey]!,
@@ -266,6 +277,7 @@ class RouteBuilder {
             observers: observers ?? const <NavigatorObserver>[],
             restorationScopeId: restorationScopeId,
             heroController: heroController,
+            requestFocus: requestFocus,
           );
         }
 
@@ -287,7 +299,8 @@ class RouteBuilder {
     }
     if (page != null) {
       registry[page] = state;
-      pagePopContext._setRouteMatchForPage(page, match);
+      // Insert the route match in reverse order.
+      pagePopContext._insertRouteMatchAtStartForPage(page, match);
     }
   }
 
@@ -298,6 +311,7 @@ class RouteBuilder {
     List<NavigatorObserver> observers = const <NavigatorObserver>[],
     String? restorationScopeId,
     HeroController? heroController,
+    bool requestFocus = true,
   }) {
     final Widget navigator = Navigator(
       key: navigatorKey,
@@ -305,6 +319,7 @@ class RouteBuilder {
       pages: pages,
       observers: observers,
       onPopPage: onPopPage,
+      requestFocus: requestFocus,
     );
     if (heroController != null) {
       return HeroControllerScope(
@@ -339,7 +354,7 @@ class RouteBuilder {
     }
     return GoRouterState(
       configuration,
-      location: effectiveMatchList.uri.toString(),
+      uri: effectiveMatchList.uri,
       matchedLocation: match.matchedLocation,
       name: name,
       path: path,
@@ -347,8 +362,6 @@ class RouteBuilder {
       pathParameters:
           Map<String, String>.from(effectiveMatchList.pathParameters),
       error: effectiveMatchList.error,
-      queryParameters: effectiveMatchList.uri.queryParameters,
-      queryParametersAll: effectiveMatchList.uri.queryParametersAll,
       extra: effectiveMatchList.extra,
       pageKey: match.pageKey,
     );
@@ -467,7 +480,7 @@ class RouteBuilder {
       name: state.name ?? state.path,
       arguments: <String, String>{
         ...state.pathParameters,
-        ...state.queryParameters
+        ...state.uri.queryParameters
       },
       restorationId: state.pageKey.value,
       child: child,
@@ -491,18 +504,15 @@ class RouteBuilder {
       );
 
   GoRouterState _buildErrorState(RouteMatchList matchList) {
-    final String location = matchList.uri.toString();
     assert(matchList.isError);
     return GoRouterState(
       configuration,
-      location: location,
+      uri: matchList.uri,
       matchedLocation: matchList.uri.path,
       fullPath: matchList.fullPath,
       pathParameters: matchList.pathParameters,
-      queryParameters: matchList.uri.queryParameters,
-      queryParametersAll: matchList.uri.queryParametersAll,
       error: matchList.error,
-      pageKey: ValueKey<String>('$location(error)'),
+      pageKey: ValueKey<String>('${matchList.uri}(error)'),
     );
   }
 
@@ -552,8 +562,10 @@ typedef _PageBuilderForAppType = Page<void> Function({
 class _PagePopContext {
   _PagePopContext._(this.onPopPageWithRouteMatch);
 
-  final Map<Page<dynamic>, RouteMatch> _routeMatchLookUp =
-      <Page<Object?>, RouteMatch>{};
+  /// A page can be mapped to a RouteMatch list, such as a const page being
+  /// pushed multiple times.
+  final Map<Page<dynamic>, List<RouteMatch>> _routeMatchesLookUp =
+      <Page<Object?>, List<RouteMatch>>{};
 
   /// On pop page callback that includes the associated [RouteMatch].
   final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
@@ -562,18 +574,29 @@ class _PagePopContext {
   ///
   /// The [Page] must have been previously built via the [RouteBuilder] that
   /// created this [PagePopContext]; otherwise, this method returns null.
-  RouteMatch? getRouteMatchForPage(Page<Object?> page) =>
-      _routeMatchLookUp[page];
+  List<RouteMatch>? getRouteMatchesForPage(Page<Object?> page) =>
+      _routeMatchesLookUp[page];
 
-  void _setRouteMatchForPage(Page<Object?> page, RouteMatch match) =>
-      _routeMatchLookUp[page] = match;
+  /// This is called in _buildRecursive to insert route matches in reverse order.
+  void _insertRouteMatchAtStartForPage(Page<Object?> page, RouteMatch match) {
+    _routeMatchesLookUp
+        .putIfAbsent(page, () => <RouteMatch>[])
+        .insert(0, match);
+  }
 
   /// Function used as [Navigator.onPopPage] callback when creating Navigators.
   ///
   /// This function forwards to [onPopPageWithRouteMatch], including the
   /// [RouteMatch] associated with the popped route.
+  ///
+  /// This assumes always pop the last route match for the page.
   bool onPopPage(Route<dynamic> route, dynamic result) {
     final Page<Object?> page = route.settings as Page<Object?>;
-    return onPopPageWithRouteMatch(route, result, _routeMatchLookUp[page]);
+    final RouteMatch match = _routeMatchesLookUp[page]!.last;
+    if (onPopPageWithRouteMatch(route, result, match)) {
+      _routeMatchesLookUp[page]!.removeLast();
+      return true;
+    }
+    return false;
   }
 }

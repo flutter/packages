@@ -12,6 +12,7 @@ void main() {
   group('diffs', () {
     // A options instance with every field set, to test diffs against.
     final MapConfiguration diffBase = MapConfiguration(
+      webGestureHandling: WebGestureHandling.auto,
       compassEnabled: false,
       mapToolbarEnabled: false,
       cameraTargetBounds: CameraTargetBounds(LatLngBounds(
@@ -21,6 +22,7 @@ void main() {
       rotateGesturesEnabled: false,
       scrollGesturesEnabled: false,
       tiltGesturesEnabled: false,
+      fortyFiveDegreeImageryEnabled: false,
       trackCameraPosition: false,
       zoomControlsEnabled: false,
       zoomGesturesEnabled: false,
@@ -58,6 +60,23 @@ void main() {
       expect(updated.cloudMapId, null);
     });
 
+    test('handle webGestureHandling', () async {
+      const MapConfiguration diff =
+          MapConfiguration(webGestureHandling: WebGestureHandling.none);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.webGestureHandling, WebGestureHandling.none);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
     test('handle compassEnabled', () async {
       const MapConfiguration diff = MapConfiguration(compassEnabled: true);
 
@@ -66,8 +85,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.compassEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle mapToolbarEnabled', () async {
@@ -78,8 +101,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.mapToolbarEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle cameraTargetBounds', () async {
@@ -93,8 +120,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.cameraTargetBounds, newBounds);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle mapType', () async {
@@ -106,8 +137,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.mapType, MapType.satellite);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle minMaxZoomPreference', () async {
@@ -120,8 +155,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.minMaxZoomPreference, newZoomPref);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle rotateGesturesEnabled', () async {
@@ -133,8 +172,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.rotateGesturesEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle scrollGesturesEnabled', () async {
@@ -146,8 +189,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.scrollGesturesEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle tiltGesturesEnabled', () async {
@@ -158,8 +205,29 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.tiltGesturesEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle fortyFiveDegreeImageryEnabled', () async {
+      const MapConfiguration diff =
+          MapConfiguration(fortyFiveDegreeImageryEnabled: true);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.fortyFiveDegreeImageryEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle trackCameraPosition', () async {
@@ -170,8 +238,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.trackCameraPosition, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle zoomControlsEnabled', () async {
@@ -182,8 +254,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.zoomControlsEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle zoomGesturesEnabled', () async {
@@ -194,8 +270,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.zoomGesturesEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle liteModeEnabled', () async {
@@ -206,8 +286,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.liteModeEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle myLocationEnabled', () async {
@@ -218,8 +302,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.myLocationEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle myLocationButtonEnabled', () async {
@@ -231,8 +319,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.myLocationButtonEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle padding', () async {
@@ -245,8 +337,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.padding, newPadding);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle indoorViewEnabled', () async {
@@ -257,8 +353,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.indoorViewEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle trafficEnabled', () async {
@@ -269,8 +369,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.trafficEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle buildingsEnabled', () async {
@@ -281,8 +385,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.buildingsEnabled, true);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
 
     test('handle cloudMapId', () async {
@@ -293,8 +401,12 @@ void main() {
 
       // A diff applied to empty options should be the diff itself.
       expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
       expect(updated.cloudMapId, _kCloudMapId);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
     });
   });
 

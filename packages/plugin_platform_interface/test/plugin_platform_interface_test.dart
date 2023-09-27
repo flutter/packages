@@ -6,17 +6,34 @@ import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:test/test.dart';
 
-class SamplePluginPlatform extends PlatformInterface {
+// #docregion Example
+abstract class SamplePluginPlatform extends PlatformInterface {
   SamplePluginPlatform() : super(token: _token);
 
   static final Object _token = Object();
 
-  // ignore: avoid_setters_without_getters
+  // A plugin can have a default implementation, as shown here, or `instance`
+  // can be nullable, and the default instance can be null.
+  static SamplePluginPlatform _instance = SamplePluginDefault();
+
+  static SamplePluginPlatform get instance => _instance;
+
+  /// Platform-specific implementations should set this to their own
+  /// platform-specific class that extends [SamplePluginPlatform] when they
+  /// register themselves.
   static set instance(SamplePluginPlatform instance) {
     PlatformInterface.verify(instance, _token);
-    // A real implementation would set a static instance field here.
+    _instance = instance;
   }
+
+  // Methods for the plugin's platform interface would go here, often with
+  // implementations that throw UnimplementedError.
 }
+
+class SamplePluginDefault extends SamplePluginPlatform {
+  // A default real implementation of the platform interface would go here.
+}
+// #enddocregion Example
 
 class ImplementsSamplePluginPlatform extends Mock
     implements SamplePluginPlatform {}
@@ -27,11 +44,13 @@ class ImplementsSamplePluginPlatformUsingNoSuchMethod
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class ImplementsSamplePluginPlatformUsingMockPlatformInterfaceMixin extends Mock
+// #docregion Mock
+class SamplePluginPlatformMock extends Mock
     with MockPlatformInterfaceMixin
     implements SamplePluginPlatform {}
+// #enddocregion Mock
 
-class ImplementsSamplePluginPlatformUsingFakePlatformInterfaceMixin extends Fake
+class SamplePluginPlatformFake extends Fake
     with MockPlatformInterfaceMixin
     implements SamplePluginPlatform {}
 
@@ -112,14 +131,12 @@ void main() {
     });
 
     test('allows mocking with `implements`', () {
-      final SamplePluginPlatform mock =
-          ImplementsSamplePluginPlatformUsingMockPlatformInterfaceMixin();
+      final SamplePluginPlatform mock = SamplePluginPlatformMock();
       SamplePluginPlatform.instance = mock;
     });
 
     test('allows faking with `implements`', () {
-      final SamplePluginPlatform fake =
-          ImplementsSamplePluginPlatformUsingFakePlatformInterfaceMixin();
+      final SamplePluginPlatform fake = SamplePluginPlatformFake();
       SamplePluginPlatform.instance = fake;
     });
 

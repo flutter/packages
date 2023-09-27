@@ -23,6 +23,7 @@ import 'package:pigeon/pigeon.dart';
   // Set this to a unique prefix for your plugin or application, per Objective-C naming conventions.
   objcOptions: ObjcOptions(prefix: 'PGN'),
   copyrightHeader: 'pigeons/copyright.txt',
+  dartPackageName: 'pigeon_example_package',
 ))
 // #enddocregion config
 

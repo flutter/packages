@@ -1,3 +1,24 @@
+## 3.8.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `WebKitWebViewController.setOnConsoleMessage`.
+
+## 3.7.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 3.7.3
+
+* Fixes bug where the `PlatformWebViewWidget` was rebuilt unnecessarily.
+
+## 3.7.2
+
+* Fixes bug where `PlatformWebViewWidget` doesn't rebuild when the controller changes.
+
+## 3.7.1
+
+* Updates pigeon version to `10.1.4`.
+
 ## 3.7.0
 
 * Adds support for `WebResouceError.url`.

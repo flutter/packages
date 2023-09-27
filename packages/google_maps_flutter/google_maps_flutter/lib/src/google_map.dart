@@ -93,6 +93,7 @@ class GoogleMap extends StatefulWidget {
     required this.initialCameraPosition,
     this.onMapCreated,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
+    this.webGestureHandling,
     this.compassEnabled = true,
     this.mapToolbarEnabled = true,
     this.cameraTargetBounds = CameraTargetBounds.unbounded,
@@ -104,6 +105,7 @@ class GoogleMap extends StatefulWidget {
     this.zoomGesturesEnabled = true,
     this.liteModeEnabled = false,
     this.tiltGesturesEnabled = true,
+    this.fortyFiveDegreeImageryEnabled = false,
     this.myLocationEnabled = false,
     this.myLocationButtonEnabled = true,
     this.layoutDirection,
@@ -123,6 +125,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.cloudMapId,
   });
 
   /// Callback method for when the map is ready to be used.
@@ -178,6 +181,9 @@ class GoogleMap extends StatefulWidget {
 
   /// True if the map view should respond to tilt gestures.
   final bool tiltGesturesEnabled;
+
+  /// True if 45 degree imagery should be enabled. Web only.
+  final bool fortyFiveDegreeImageryEnabled;
 
   /// Padding to be set on map. See https://developers.google.com/maps/documentation/android-sdk/map#map_padding for more details.
   final EdgeInsets padding;
@@ -281,6 +287,17 @@ class GoogleMap extends StatefulWidget {
   /// When this set is empty, the map will only handle pointer events for gestures that
   /// were not claimed by any other gesture recognizer.
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers;
+
+  /// This setting controls how the API handles gestures on the map. Web only.
+  ///
+  /// See [WebGestureHandling] for more details.
+  final WebGestureHandling? webGestureHandling;
+
+  /// Identifier that's associated with a specific cloud-based map style.
+  ///
+  /// See https://developers.google.com/maps/documentation/get-map-id
+  /// for more details.
+  final String? cloudMapId;
 
   /// Creates a [State] for this [GoogleMap].
   @override
@@ -518,6 +535,7 @@ class _GoogleMapState extends State<GoogleMap> {
 MapConfiguration _configurationFromMapWidget(GoogleMap map) {
   assert(!map.liteModeEnabled || Platform.isAndroid);
   return MapConfiguration(
+    webGestureHandling: map.webGestureHandling,
     compassEnabled: map.compassEnabled,
     mapToolbarEnabled: map.mapToolbarEnabled,
     cameraTargetBounds: map.cameraTargetBounds,
@@ -526,6 +544,7 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     rotateGesturesEnabled: map.rotateGesturesEnabled,
     scrollGesturesEnabled: map.scrollGesturesEnabled,
     tiltGesturesEnabled: map.tiltGesturesEnabled,
+    fortyFiveDegreeImageryEnabled: map.fortyFiveDegreeImageryEnabled,
     trackCameraPosition: map.onCameraMove != null,
     zoomControlsEnabled: map.zoomControlsEnabled,
     zoomGesturesEnabled: map.zoomGesturesEnabled,
@@ -536,5 +555,6 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
+    cloudMapId: map.cloudMapId,
   );
 }

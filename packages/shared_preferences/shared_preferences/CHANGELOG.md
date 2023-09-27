@@ -1,3 +1,10 @@
+## 2.2.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Fixes the example app to be debuggable on Android.
+* Deletes deprecated splash screen meta-data element.
+
 ## 2.2.0
 
 * Adds `allowList` option to setPrefix.

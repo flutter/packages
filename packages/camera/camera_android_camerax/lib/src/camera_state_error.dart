@@ -13,6 +13,7 @@ import 'java_object.dart';
 /// The error that a camera has encountered.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraState.StateError.
+@immutable
 class CameraStateError extends JavaObject {
   /// Constructs a [CameraStateError] that is not automatically attached to a native object.
   CameraStateError.detached(

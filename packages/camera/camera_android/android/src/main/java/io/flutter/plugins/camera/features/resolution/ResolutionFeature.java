@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugins.camera.CameraProperties;
+import io.flutter.plugins.camera.SdkCapabilityChecker;
 import io.flutter.plugins.camera.features.CameraFeature;
 import java.util.List;
 
@@ -126,7 +127,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     if (preset.ordinal() > ResolutionPreset.high.ordinal()) {
       preset = ResolutionPreset.high;
     }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    if (SdkCapabilityChecker.supportsEncoderProfiles()) {
       EncoderProfiles profile =
           getBestAvailableCamcorderProfileForResolutionPreset(cameraId, preset);
       List<EncoderProfiles.VideoProfile> videoProfiles = profile.getVideoProfiles();
@@ -268,7 +269,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     }
     boolean captureSizeCalculated = false;
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    if (SdkCapabilityChecker.supportsEncoderProfiles()) {
       recordingProfileLegacy = null;
       recordingProfile =
           getBestAvailableCamcorderProfileForResolutionPreset(cameraId, resolutionPreset);

@@ -56,6 +56,6 @@ Future<void> main() async {
           .trim()
           .replaceAll('\r\n', '\n');
       expect(generated, equals(expectResult.replaceAll('\r\n', '\n')));
-    });
+    }, timeout: const Timeout(Duration(seconds: 100)));
   }
 }

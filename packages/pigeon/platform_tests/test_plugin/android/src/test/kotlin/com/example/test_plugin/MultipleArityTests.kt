@@ -22,7 +22,7 @@ class MultipleArityTests: TestCase() {
         val inputX = 10L
         val inputY = 5L
 
-        val channelName = "dev.flutter.pigeon.MultipleArityHostApi.subtract"
+        val channelName = "dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract"
         val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
 
         every { binaryMessenger.setMessageHandler(channelName, capture(handlerSlot)) } returns Unit

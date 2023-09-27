@@ -150,7 +150,7 @@ public class CameraTest {
 
   @After
   public void after() {
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", 0);
+    SdkCapabilityChecker.SDK_VERSION = 0;
     mockHandlerThreadFactory.close();
     mockHandlerFactory.close();
   }
@@ -540,7 +540,7 @@ public class CameraTest {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
     TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", 24);
+    SdkCapabilityChecker.SDK_VERSION = 24;
 
     camera.pauseVideoRecording(mockResult);
 
@@ -552,7 +552,7 @@ public class CameraTest {
   @Test
   public void pauseVideoRecording_shouldSendVideoRecordingFailedErrorWhenVersionCodeSmallerThenN() {
     TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", 23);
+    SdkCapabilityChecker.SDK_VERSION = 23;
     MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
     camera.pauseVideoRecording(mockResult);
@@ -568,7 +568,7 @@ public class CameraTest {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
     TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", 24);
+    SdkCapabilityChecker.SDK_VERSION = 24;
 
     IllegalStateException expectedException = new IllegalStateException("Test error message");
 
@@ -599,7 +599,7 @@ public class CameraTest {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
     TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", 24);
+    SdkCapabilityChecker.SDK_VERSION = 24;
 
     camera.resumeVideoRecording(mockResult);
 
@@ -609,27 +609,40 @@ public class CameraTest {
   }
 
   @Test
-  public void setDescriptionWhileRecording() {
+  public void setDescriptionWhileRecording_errorsWhenUnsupported() {
     MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
     TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
     TestUtils.setPrivateField(camera, "recordingVideo", true);
     TestUtils.setPrivateField(camera, "videoRenderer", mockVideoRenderer);
+    SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.LOLLIPOP;
 
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
     camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
 
-    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
-      verify(mockResult, times(1))
-          .error(
-              eq("setDescriptionWhileRecordingFailed"),
-              eq("Device does not support switching the camera while recording"),
-              eq(null));
-    } else {
-      verify(mockResult, times(1)).success(null);
-      verify(mockResult, never()).error(any(), any(), any());
-    }
+    verify(mockResult, times(1))
+        .error(
+            eq("setDescriptionWhileRecordingFailed"),
+            eq("Device does not support switching the camera while recording"),
+            eq(null));
+  }
+
+  @Test
+  public void setDescriptionWhileRecording_succeedsWhenSupported() {
+    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
+    VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
+    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
+    TestUtils.setPrivateField(camera, "recordingVideo", true);
+    TestUtils.setPrivateField(camera, "videoRenderer", mockVideoRenderer);
+    SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.O;
+
+    final CameraProperties newCameraProperties = mock(CameraProperties.class);
+    camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
+
+    verify(mockResult, times(1)).success(null);
+    verify(mockResult, never()).error(any(), any(), any());
   }
 
   @Test
@@ -767,7 +780,7 @@ public class CameraTest {
   public void
       resumeVideoRecording_shouldSendVideoRecordingFailedErrorWhenVersionCodeSmallerThanN() {
     TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", 23);
+    SdkCapabilityChecker.SDK_VERSION = 23;
 
     MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
@@ -784,7 +797,7 @@ public class CameraTest {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
     TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setFinalStatic(Build.VERSION.class, "SDK_INT", 24);
+    SdkCapabilityChecker.SDK_VERSION = 24;
 
     IllegalStateException expectedException = new IllegalStateException("Test error message");
 

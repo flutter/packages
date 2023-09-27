@@ -17,6 +17,16 @@
 #error File requires ARC to be enabled.
 #endif
 
+@implementation AnEnumBox
+- (instancetype)initWithValue:(AnEnum)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 static NSArray *wrapResult(id result, FlutterError *error) {
   if (error) {
     return @[
@@ -150,9 +160,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
-                        aNullableEnum:(AnEnum)aNullableEnum
+                        aNullableEnum:(nullable AnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
-                      aNullableObject:(id)aNullableObject {
+                      aNullableObject:(nullable id)aNullableObject {
   AllNullableTypes *pigeonResult = [[AllNullableTypes alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
   pigeonResult.aNullableInt = aNullableInt;
@@ -187,7 +197,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.aNullableEnum = [GetNullableObjectAtIndex(list, 13) integerValue];
+  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
+  AnEnumBox *aNullableEnum =
+      aNullableEnumAsNumber == nil
+          ? nil
+          : [[AnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
+  pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
   pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
   return pigeonResult;
@@ -210,7 +225,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.nullableNestedList ?: [NSNull null]),
     (self.nullableMapWithAnnotations ?: [NSNull null]),
     (self.nullableMapWithObject ?: [NSNull null]),
-    @(self.aNullableEnum),
+    (self.aNullableEnum == nil ? [NSNull null]
+                               : [NSNumber numberWithInteger:self.aNullableEnum.value]),
     (self.aNullableString ?: [NSNull null]),
     (self.aNullableObject ?: [NSNull null]),
   ];
@@ -334,7 +350,7 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// test basic calling.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.noop"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -353,7 +369,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed object, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAllTypes"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -375,7 +392,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns an error, to test error handling.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwError"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -395,7 +413,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns an error from a void function, to test error handling.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwErrorFromVoid"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"throwErrorFromVoid"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -415,7 +434,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns a Flutter error, to test error handling.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwFlutterError"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"throwFlutterError"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -435,7 +455,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in int.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoInt"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -456,7 +477,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in double.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoDouble"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -477,7 +499,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in boolean.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoBool"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -498,7 +521,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in string.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoString"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -519,7 +543,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in Uint8List.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoUint8List"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -541,7 +566,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in generic Object.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoObject"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -562,7 +588,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed list, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoList"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -583,7 +610,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed map, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoMap"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -604,7 +632,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed map to test nested class serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoClassWrapper"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoClassWrapper"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -623,10 +652,34 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed enum to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoEnum:error:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to @selector(echoEnum:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        AnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        FlutterError *error;
+        AnEnum enumValue = [api echoEnum:arg_anEnum error:&error];
+        NSNumber *output = [NSNumber numberWithInteger:enumValue];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// Returns the passed object, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAllNullableTypes"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAllNullableTypes"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -649,7 +702,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// sending of nested objects.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.extractNestedNullableString"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"extractNestedNullableString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -672,7 +726,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// sending of nested objects.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.createNestedNullableString"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"createNestedNullableString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -695,7 +750,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in arguments of multiple types.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.sendMultipleNullableTypes"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"sendMultipleNullableTypes"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -723,7 +779,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in int.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableInt"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -745,7 +802,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in double.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableDouble"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoNullableDouble"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -767,7 +825,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in boolean.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableBool"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoNullableBool"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -789,7 +848,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in string.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableString"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoNullableString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -811,7 +871,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in Uint8List.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableUint8List"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoNullableUint8List"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -834,7 +895,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in generic Object.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableObject"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoNullableObject"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -856,7 +918,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed list, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableList"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoNullableList"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -878,7 +941,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed map, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoNullableMap"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -897,11 +961,39 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoNullableEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert(
+          [api respondsToSelector:@selector(echoNullableEnum:error:)],
+          @"HostIntegrationCoreApi api (%@) doesn't respond to @selector(echoNullableEnum:error:)",
+          api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
+        AnEnumBox *arg_anEnum =
+            arg_anEnumAsNumber == nil
+                ? nil
+                : [[AnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
+        FlutterError *error;
+        AnEnumBox *enumBox = [api echoNullableEnum:arg_anEnum error:&error];
+        NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.noopAsync"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -921,7 +1013,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in int asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncInt"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -944,7 +1037,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in double asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncDouble"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -967,7 +1061,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in boolean asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncBool"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -990,7 +1085,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed string asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncString"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1013,7 +1109,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in Uint8List asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncUint8List"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncUint8List"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1037,7 +1134,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in generic Object asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncObject"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1057,10 +1155,11 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncList"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1080,10 +1179,11 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncMap"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1104,10 +1204,36 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAsyncEnum:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAsyncEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        AnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        [api echoAsyncEnum:arg_anEnum
+                completion:^(AnEnum enumValue, FlutterError *_Nullable error) {
+                  NSNumber *output = [NSNumber numberWithInteger:enumValue];
+                  callback(wrapResult(output, error));
+                }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// Responds with an error from an async function returning a value.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncError"
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1127,7 +1253,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Responds with an error from an async void function.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncErrorFromVoid"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"throwAsyncErrorFromVoid"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1147,7 +1274,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Responds with a Flutter error from an async function returning a value.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.throwAsyncFlutterError"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"throwAsyncFlutterError"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1168,7 +1296,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed object, to test async serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncAllTypes"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncAllTypes"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1191,8 +1320,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed object, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableAllNullableTypes"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1216,7 +1345,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in int asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableInt"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableInt"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1239,7 +1369,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns passed in double asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableDouble"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableDouble"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1262,7 +1393,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in boolean asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableBool"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableBool"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1285,7 +1417,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed string asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableString"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1308,7 +1441,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in Uint8List asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableUint8List"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableUint8List"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1332,7 +1466,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns the passed in generic Object asynchronously.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableObject"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableObject"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1352,10 +1487,11 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableList"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableList"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1375,10 +1511,11 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.echoAsyncNullableMap"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableMap"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1399,9 +1536,41 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterNoop"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"echoAsyncNullableEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAsyncNullableEnum:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAsyncNullableEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
+        AnEnumBox *arg_anEnum =
+            arg_anEnumAsNumber == nil
+                ? nil
+                : [[AnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
+        [api
+            echoAsyncNullableEnum:arg_anEnum
+                       completion:^(AnEnumBox *_Nullable enumValue, FlutterError *_Nullable error) {
+                         NSNumber *output =
+                             enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
+                         callback(wrapResult(output, error));
+                       }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1420,7 +1589,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowError"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterThrowError"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1440,7 +1610,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterThrowErrorFromVoid"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1459,7 +1630,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoAllTypes"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoAllTypes"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1481,8 +1653,32 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoAllNullableTypes"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoAllNullableTypes:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoAllNullableTypes:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        AllNullableTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api callFlutterEchoAllNullableTypes:arg_everything
+                                  completion:^(AllNullableTypes *_Nullable output,
+                                               FlutterError *_Nullable error) {
+                                    callback(wrapResult(output, error));
+                                  }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterSendMultipleNullableTypes"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1510,7 +1706,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoBool"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoBool"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1532,7 +1729,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoInt"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoInt"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1554,7 +1752,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoDouble"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoDouble"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1576,7 +1775,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoString"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1598,7 +1798,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoUint8List"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoUint8List"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1621,7 +1822,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoList"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoList"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1643,7 +1845,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoMap"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoMap"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1666,7 +1869,32 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableBool"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoEnum:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        AnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        [api callFlutterEchoEnum:arg_anEnum
+                      completion:^(AnEnum enumValue, FlutterError *_Nullable error) {
+                        NSNumber *output = [NSNumber numberWithInteger:enumValue];
+                        callback(wrapResult(output, error));
+                      }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoNullableBool"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1689,7 +1917,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableInt"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoNullableInt"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1712,7 +1941,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableDouble"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoNullableDouble"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1735,7 +1965,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableString"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoNullableString"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1758,8 +1989,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               @"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableUint8List"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoNullableUint8List"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1782,7 +2013,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableList"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoNullableList"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1805,7 +2037,8 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.HostIntegrationCoreApi.callFlutterEchoNullableMap"
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoNullableMap"
         binaryMessenger:binaryMessenger
                   codec:HostIntegrationCoreApiGetCodec()];
     if (api) {
@@ -1821,6 +2054,37 @@ void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                                           FlutterError *_Nullable error) {
                                callback(wrapResult(output, error));
                              }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                        @"callFlutterEchoNullableEnum"
+        binaryMessenger:binaryMessenger
+                  codec:HostIntegrationCoreApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableEnum:completion:)],
+                @"HostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(callFlutterEchoNullableEnum:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
+        AnEnumBox *arg_anEnum =
+            arg_anEnumAsNumber == nil
+                ? nil
+                : [[AnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
+        [api callFlutterEchoNullableEnum:arg_anEnum
+                              completion:^(AnEnumBox *_Nullable enumValue,
+                                           FlutterError *_Nullable error) {
+                                NSNumber *output =
+                                    enumValue == nil ? nil
+                                                     : [NSNumber numberWithInteger:enumValue.value];
+                                callback(wrapResult(output, error));
+                              }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1905,7 +2169,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 }
 - (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.noop"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:nil
@@ -1915,7 +2180,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 }
 - (void)throwErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.throwError"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:nil
@@ -1926,7 +2192,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 }
 - (void)throwErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.throwErrorFromVoid"
+      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
+                             @"FlutterIntegrationCoreApi.throwErrorFromVoid"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:nil
@@ -1937,7 +2204,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoAllTypes:(AllTypes *)arg_everything
           completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllTypes"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
@@ -1946,11 +2214,12 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                    completion(output, nil);
                  }];
 }
-- (void)echoAllNullableTypes:(AllNullableTypes *)arg_everything
+- (void)echoAllNullableTypes:(nullable AllNullableTypes *)arg_everything
                   completion:
                       (void (^)(AllNullableTypes *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAllNullableTypes"
+      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
+                             @"FlutterIntegrationCoreApi.echoAllNullableTypes"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
@@ -1965,8 +2234,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                             completion:(void (^)(AllNullableTypes *_Nullable,
                                                  FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.FlutterIntegrationCoreApi.sendMultipleNullableTypes"
+      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
+                             @"FlutterIntegrationCoreApi.sendMultipleNullableTypes"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[
@@ -1981,7 +2250,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoBool:(NSNumber *)arg_aBool
       completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoBool"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
@@ -1993,7 +2263,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoInt:(NSNumber *)arg_anInt
      completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoInt"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
@@ -2005,7 +2276,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoDouble:(NSNumber *)arg_aDouble
         completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoDouble"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
@@ -2017,7 +2289,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoString:(NSString *)arg_aString
         completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoString"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
@@ -2030,7 +2303,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
            completion:
                (void (^)(FlutterStandardTypedData *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoUint8List"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
@@ -2042,7 +2316,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoList:(NSArray<id> *)arg_aList
       completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoList"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
@@ -2055,7 +2330,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
      completion:
          (void (^)(NSDictionary<NSString *, id> *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoMap"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
@@ -2064,10 +2340,24 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                    completion(output, nil);
                  }];
 }
+- (void)echoEnum:(AnEnum)arg_anEnum
+      completion:(void (^)(AnEnum, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ [NSNumber numberWithInteger:arg_anEnum] ]
+                 reply:^(id reply) {
+                   AnEnum output = [reply integerValue];
+                   completion(output, nil);
+                 }];
+}
 - (void)echoNullableBool:(nullable NSNumber *)arg_aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableBool"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
@@ -2079,7 +2369,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoNullableInt:(nullable NSNumber *)arg_anInt
              completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableInt"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
@@ -2091,7 +2382,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoNullableDouble:(nullable NSNumber *)arg_aDouble
                 completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableDouble"
+      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
+                             @"FlutterIntegrationCoreApi.echoNullableDouble"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
@@ -2103,7 +2395,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoNullableString:(nullable NSString *)arg_aString
                 completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableString"
+      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
+                             @"FlutterIntegrationCoreApi.echoNullableString"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
@@ -2116,7 +2409,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                    completion:(void (^)(FlutterStandardTypedData *_Nullable,
                                         FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableUint8List"
+      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
+                             @"FlutterIntegrationCoreApi.echoNullableUint8List"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
@@ -2128,7 +2422,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoNullableList:(nullable NSArray<id> *)arg_aList
               completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableList"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
@@ -2141,7 +2436,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
              completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                   FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoNullableMap"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
@@ -2150,9 +2446,28 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                    completion(output, nil);
                  }];
 }
+- (void)echoNullableEnum:(nullable AnEnumBox *)arg_anEnum
+              completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_anEnum == nil ? [NSNull null]
+                                            : [NSNumber numberWithInteger:arg_anEnum.value] ]
+                 reply:^(id reply) {
+                   NSNumber *outputAsNumber = reply == [NSNull null] ? nil : reply;
+                   AnEnumBox *output =
+                       outputAsNumber == nil
+                           ? nil
+                           : [[AnEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
+                   completion(output, nil);
+                 }];
+}
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.noopAsync"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:nil
@@ -2163,7 +2478,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
 - (void)echoAsyncString:(NSString *)arg_aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterIntegrationCoreApi.echoAsyncString"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
@@ -2183,10 +2499,10 @@ NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void) {
 void HostTrivialApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
                          NSObject<HostTrivialApi> *api) {
   {
-    FlutterBasicMessageChannel *channel =
-        [[FlutterBasicMessageChannel alloc] initWithName:@"dev.flutter.pigeon.HostTrivialApi.noop"
-                                         binaryMessenger:binaryMessenger
-                                                   codec:HostTrivialApiGetCodec()];
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop"
+        binaryMessenger:binaryMessenger
+                  codec:HostTrivialApiGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(noopWithError:)],
                 @"HostTrivialApi api (%@) doesn't respond to @selector(noopWithError:)", api);
@@ -2208,10 +2524,10 @@ NSObject<FlutterMessageCodec> *HostSmallApiGetCodec(void) {
 
 void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<HostSmallApi> *api) {
   {
-    FlutterBasicMessageChannel *channel =
-        [[FlutterBasicMessageChannel alloc] initWithName:@"dev.flutter.pigeon.HostSmallApi.echo"
-                                         binaryMessenger:binaryMessenger
-                                                   codec:HostSmallApiGetCodec()];
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo"
+        binaryMessenger:binaryMessenger
+                  codec:HostSmallApiGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoString:completion:)],
                 @"HostSmallApi api (%@) doesn't respond to @selector(echoString:completion:)", api);
@@ -2228,10 +2544,10 @@ void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<Host
     }
   }
   {
-    FlutterBasicMessageChannel *channel =
-        [[FlutterBasicMessageChannel alloc] initWithName:@"dev.flutter.pigeon.HostSmallApi.voidVoid"
-                                         binaryMessenger:binaryMessenger
-                                                   codec:HostSmallApiGetCodec()];
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid"
+        binaryMessenger:binaryMessenger
+                  codec:HostSmallApiGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(voidVoidWithCompletion:)],
                 @"HostSmallApi api (%@) doesn't respond to @selector(voidVoidWithCompletion:)",
@@ -2310,7 +2626,8 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void) {
 - (void)echoWrappedList:(TestMessage *)arg_msg
              completion:(void (^)(TestMessage *_Nullable, FlutterError *_Nullable))completion {
   FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.FlutterSmallApi.echoWrappedList"
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterSmallApiGetCodec()];
   [channel sendMessage:@[ arg_msg ?: [NSNull null] ]

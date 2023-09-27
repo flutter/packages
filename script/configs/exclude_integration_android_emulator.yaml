@@ -1,0 +1,8 @@
+# Hangs due to permission issue, see https://github.com/flutter/flutter/issues/130987
+# TODO(stuartmorgan): Remove once the permission issue is addressed.
+- camera/camera
+- camera_android
+- camera_android_camerax
+# Frequent flaky failures, see https://github.com/flutter/flutter/issues/130986
+# TODO(stuartmorgan): Remove once the flake is fixed.
+- google_maps_flutter_android

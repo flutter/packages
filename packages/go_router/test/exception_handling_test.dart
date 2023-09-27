@@ -69,7 +69,7 @@ void main() {
                 Text('redirected ${state.extra}')),
       ], tester,
           onException: (_, GoRouterState state, GoRouter router) =>
-              router.go('/error', extra: state.location));
+              router.go('/error', extra: state.uri.toString()));
       expect(find.text('redirected /'), findsOneWidget);
 
       router.go('/some-other-location');

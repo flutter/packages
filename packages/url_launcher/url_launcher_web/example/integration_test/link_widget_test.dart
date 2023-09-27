@@ -4,10 +4,10 @@
 
 import 'dart:html' as html;
 import 'dart:js_util';
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_web/src/link.dart';
@@ -69,7 +69,7 @@ void main() {
       // Check that internal route properly prepares using the default
       // [UrlStrategy]
       expect(anchor.getAttribute('href'),
-          urlStrategy?.prepareExternalUrl(uri3.toString()));
+          ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()));
       expect(anchor.getAttribute('target'), '_self');
 
       // Needed when testing on on Chrome98 headless in CI.

@@ -92,6 +92,16 @@ class RepositoryPackage {
     return directory.childDirectory(directoryName);
   }
 
+  /// Returns true if the package is an app that supports [platform].
+  ///
+  /// The "app" prefix on this method is because this currently only works
+  /// for app packages (e.g., examples).
+  // TODO(stuartmorgan): Add support for non-app packages, by parsing the
+  // pubspec for `flutter:platform:` or `platform:` sections.
+  bool appSupportsPlatform(FlutterPlatform platform) {
+    return platformDirectory(platform).existsSync();
+  }
+
   late final Pubspec _parsedPubspec =
       Pubspec.parse(pubspecFile.readAsStringSync());
 

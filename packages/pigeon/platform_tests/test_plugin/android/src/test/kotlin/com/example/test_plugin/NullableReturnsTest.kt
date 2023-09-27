@@ -20,7 +20,7 @@ class NullableReturnsTest: TestCase() {
 
         val output = 1L
 
-        val channelName = "dev.flutter.pigeon.NullableReturnHostApi.doit"
+        val channelName = "dev.flutter.pigeon.pigeon_integration_tests.NullableReturnHostApi.doit"
         val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
 
         every { binaryMessenger.setMessageHandler(channelName, capture(handlerSlot)) } returns Unit

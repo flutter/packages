@@ -96,6 +96,36 @@ class ExposureCompensationRange {
   int maxCompensation;
 }
 
+/// Video quality constraints that will be used by a QualitySelector to choose
+/// an appropriate video resolution.
+///
+/// These are pre-defined quality constants that are universally used for video.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/Quality.
+enum VideoQuality {
+  SD, // 480p
+  HD, // 720p
+  FHD, // 1080p
+  UHD, // 2160p
+  lowest,
+  highest,
+}
+
+/// Convenience class for sending lists of [Quality]s.
+class VideoQualityData {
+  late VideoQuality quality;
+}
+
+/// Fallback rules for selecting video resolution.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
+enum VideoResolutionFallbackRule {
+  higherQualityOrLowerThan,
+  higherQualityThan,
+  lowerQualityOrHigherThan,
+  lowerQualityThan,
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -196,7 +226,7 @@ abstract class SystemServicesFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestPreviewHostApi')
 abstract class PreviewHostApi {
-  void create(int identifier, int? rotation, ResolutionInfo? targetResolution);
+  void create(int identifier, int? rotation, int? resolutionSelectorId);
 
   int setSurfaceProvider(int identifier);
 
@@ -219,7 +249,8 @@ abstract class VideoCaptureFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestRecorderHostApi')
 abstract class RecorderHostApi {
-  void create(int identifier, int? aspectRatio, int? bitRate);
+  void create(
+      int identifier, int? aspectRatio, int? bitRate, int? qualitySelectorId);
 
   int getAspectRatio(int identifier);
 
@@ -261,12 +292,31 @@ abstract class RecordingFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')
 abstract class ImageCaptureHostApi {
-  void create(int identifier, int? flashMode, ResolutionInfo? targetResolution);
+  void create(int identifier, int? flashMode, int? resolutionSelectorId);
 
   void setFlashMode(int identifier, int flashMode);
 
   @async
   String takePicture(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestResolutionStrategyHostApi')
+abstract class ResolutionStrategyHostApi {
+  void create(int identifier, ResolutionInfo? boundSize, int? fallbackRule);
+}
+
+@HostApi(dartHostTestHandler: 'TestResolutionSelectorHostApi')
+abstract class ResolutionSelectorHostApi {
+  void create(
+    int identifier,
+    int? resolutionStrategyIdentifier,
+    int? aspectRatioStrategyIdentifier,
+  );
+}
+
+@HostApi(dartHostTestHandler: 'TestAspectRatioStrategyHostApi')
+abstract class AspectRatioStrategyHostApi {
+  void create(int identifier, int preferredAspectRatio, int fallbackRule);
 }
 
 @FlutterApi()
@@ -289,7 +339,7 @@ abstract class ZoomStateFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
 abstract class ImageAnalysisHostApi {
-  void create(int identifier, ResolutionInfo? targetResolutionIdentifier);
+  void create(int identifier, int? resolutionSelectorId);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
@@ -352,4 +402,18 @@ abstract class ImageProxyFlutterApi {
 @FlutterApi()
 abstract class PlaneProxyFlutterApi {
   void create(int identifier, Uint8List buffer, int pixelStride, int rowStride);
+}
+
+@HostApi(dartHostTestHandler: 'TestQualitySelectorHostApi')
+abstract class QualitySelectorHostApi {
+  void create(int identifier, List<VideoQualityData> videoQualityDataList,
+      int? fallbackStrategyId);
+
+  ResolutionInfo getResolution(int cameraInfoId, VideoQuality quality);
+}
+
+@HostApi(dartHostTestHandler: 'TestFallbackStrategyHostApi')
+abstract class FallbackStrategyHostApi {
+  void create(int identifier, VideoQuality quality,
+      VideoResolutionFallbackRule fallbackRule);
 }

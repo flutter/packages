@@ -5,4 +5,4 @@
 set -e
 
 dart ./script/tool/bin/flutter_plugin_tools.dart native-test --windows \
-   --no-integration --packages-for-branch --log-timing
+   --no-integration --packages-for-branch --log-timing $PACKAGE_SHARDING

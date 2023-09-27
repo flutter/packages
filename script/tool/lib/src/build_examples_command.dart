@@ -176,9 +176,8 @@ class BuildExamplesCommand extends PackageLoopingCommand {
         // supported platforms. For packages, just log and skip any requested
         // platform that a package doesn't have set up.
         if (!isPlugin &&
-            !example.directory
-                .childDirectory(platform.flutterPlatformDirectory)
-                .existsSync()) {
+            !example.appSupportsPlatform(
+                getPlatformByName(platform.pluginPlatform))) {
           print('Skipping ${platform.label} for $packageName; not supported.');
           continue;
         }
@@ -303,11 +302,6 @@ class _PlatformDetails {
 
   /// The `flutter build` build type.
   final String flutterBuildType;
-
-  /// The Flutter platform directory name.
-  // In practice, this is the same as the plugin platform key for all platforms.
-  // If that changes, this can be adjusted.
-  String get flutterPlatformDirectory => pluginPlatform;
 
   /// Any extra flags to pass to `flutter build`.
   final List<String> extraBuildFlags;

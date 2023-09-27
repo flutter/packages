@@ -97,6 +97,16 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, pendingRecordingHostApiImpl);
     videoCaptureHostApiImpl = new VideoCaptureHostApiImpl(binaryMessenger, instanceManager);
     GeneratedCameraXLibrary.VideoCaptureHostApi.setup(binaryMessenger, videoCaptureHostApiImpl);
+    GeneratedCameraXLibrary.ResolutionSelectorHostApi.setup(
+        binaryMessenger, new ResolutionSelectorHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.ResolutionStrategyHostApi.setup(
+        binaryMessenger, new ResolutionStrategyHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.AspectRatioStrategyHostApi.setup(
+        binaryMessenger, new AspectRatioStrategyHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.FallbackStrategyHostApi.setup(
+        binaryMessenger, new FallbackStrategyHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.QualitySelectorHostApi.setup(
+        binaryMessenger, new QualitySelectorHostApiImpl(instanceManager));
   }
 
   @Override

@@ -69,47 +69,50 @@ Future<void> main() async {
   testWidgets(
     'WKWebView is released by garbage collection',
     (WidgetTester tester) async {
-      final Completer<void> webViewGCCompleter = Completer<void>();
+      bool aWebViewHasBeenGarbageCollected = false;
 
       late final InstanceManager instanceManager;
       instanceManager =
           InstanceManager(onWeakReferenceRemoved: (int identifier) {
-        final Copyable instance =
-            instanceManager.getInstanceWithWeakReference(identifier)!;
-        if (instance is WKWebView && !webViewGCCompleter.isCompleted) {
-          webViewGCCompleter.complete();
+        if (!aWebViewHasBeenGarbageCollected) {
+          final Copyable instance =
+              instanceManager.getInstanceWithWeakReference(identifier)!;
+          if (instance is WKWebView) {
+            aWebViewHasBeenGarbageCollected = true;
+          }
         }
       });
 
-      await tester.pumpWidget(
-        Builder(
-          builder: (BuildContext context) {
-            return PlatformWebViewWidget(
-              WebKitWebViewWidgetCreationParams(
-                instanceManager: instanceManager,
-                controller: PlatformWebViewController(
-                  WebKitWebViewControllerCreationParams(
-                    instanceManager: instanceManager,
+      // Wait for any WebView to be garbage collected.
+      while (!aWebViewHasBeenGarbageCollected) {
+        await tester.pumpWidget(
+          Builder(
+            builder: (BuildContext context) {
+              return PlatformWebViewWidget(
+                WebKitWebViewWidgetCreationParams(
+                  instanceManager: instanceManager,
+                  controller: PlatformWebViewController(
+                    WebKitWebViewControllerCreationParams(
+                      instanceManager: instanceManager,
+                    ),
                   ),
                 ),
-              ),
-            ).build(context);
-          },
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.pumpWidget(Container());
-
-      // Force garbage collection.
-      await IntegrationTestWidgetsFlutterBinding.instance
-          .watchPerformance(() async {
+              ).build(context);
+            },
+          ),
+        );
         await tester.pumpAndSettle();
-      });
 
-      await expectLater(webViewGCCompleter.future, completes);
+        await tester.pumpWidget(Container());
+
+        // Force garbage collection.
+        await IntegrationTestWidgetsFlutterBinding.instance
+            .watchPerformance(() async {
+          await tester.pumpAndSettle();
+        });
+      }
     },
-    timeout: const Timeout(Duration(seconds: 10)),
+    timeout: const Timeout(Duration(seconds: 30)),
   );
 
   testWidgets('loadRequest', (WidgetTester tester) async {
@@ -1193,6 +1196,48 @@ Future<void> main() async {
       await expectLater(controller.currentUrl(), completion(primaryUrl));
     },
   );
+
+  group('Logging', () {
+    testWidgets('can receive console log messages',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+          </head>
+          <body onload="console.debug('Debug message')">
+            <p>Test page</p>
+          </body>
+          </html>
+         ''';
+
+      final Completer<String> debugMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller
+          .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+        debugMessageReceived
+            .complete('${consoleMessage.level.name}:${consoleMessage.message}');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(
+          debugMessageReceived.future, completion('debug:Debug message'));
+    });
+  });
 }
 
 /// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.

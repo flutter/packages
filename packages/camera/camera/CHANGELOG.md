@@ -1,3 +1,12 @@
+## 0.10.5+4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.10.5+3
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.10.5+2
 
 * Fixes unawaited_futures violations.

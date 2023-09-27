@@ -22,6 +22,7 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.content.ContextCompat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,7 +117,8 @@ public class WebViewActivity extends Activity {
     webview.setWebChromeClient(new FlutterWebChromeClient());
 
     // Register receiver that may finish this Activity.
-    registerReceiver(broadcastReceiver, closeIntentFilter);
+    ContextCompat.registerReceiver(
+        this, broadcastReceiver, closeIntentFilter, ContextCompat.RECEIVER_EXPORTED);
   }
 
   @VisibleForTesting

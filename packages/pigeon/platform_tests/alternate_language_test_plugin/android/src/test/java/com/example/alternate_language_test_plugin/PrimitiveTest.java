@@ -87,7 +87,9 @@ public class PrimitiveTest {
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger)
-        .setMessageHandler(eq("dev.flutter.pigeon.PrimitiveHostApi.anInt"), handler.capture());
+        .setMessageHandler(
+            eq("dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt"),
+            handler.capture());
     MessageCodec<Object> codec = PrimitiveHostApi.getCodec();
     @SuppressWarnings("unchecked")
     ByteBuffer message = codec.encodeMessage(new ArrayList<Object>(Arrays.asList((Integer) 1)));

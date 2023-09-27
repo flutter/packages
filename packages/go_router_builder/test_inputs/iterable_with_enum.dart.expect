@@ -6,7 +6,7 @@ RouteBase get $iterableWithEnumRoute => GoRouteData.$route(
 extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
   static IterableWithEnumRoute _fromState(GoRouterState state) =>
       IterableWithEnumRoute(
-        param: state.queryParametersAll['param']
+        param: state.uri.queryParametersAll['param']
             ?.map(_$EnumOnlyUsedInIterableEnumMap._$fromName),
       );
 

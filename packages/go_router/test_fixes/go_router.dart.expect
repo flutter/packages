@@ -10,7 +10,7 @@ void main() {
   state.fullPath;
   state.pathParameters;
   state.matchedLocation;
-  state.queryParameters;
+  state.uri.queryParameters;
   state.namedLocation(
     'name',
     pathParameters: <String, String>{},
@@ -41,4 +41,7 @@ void main() {
     pathParameters: <String, String>{},
     queryParameters: <String, String>{},
   );
+
+  state.uri.queryParametersAll;
+  state.uri.toString();
 }

@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import 'ui.dart';
+import '../../google_maps_flutter_platform_interface.dart';
 
 /// Configuration options for the GoogleMaps user interface.
 @immutable
@@ -15,6 +15,7 @@ class MapConfiguration {
   /// as either a full configuration selection, or an update to an existing
   /// configuration where only non-null values are updated.
   const MapConfiguration({
+    this.webGestureHandling,
     this.compassEnabled,
     this.mapToolbarEnabled,
     this.cameraTargetBounds,
@@ -23,6 +24,7 @@ class MapConfiguration {
     this.rotateGesturesEnabled,
     this.scrollGesturesEnabled,
     this.tiltGesturesEnabled,
+    this.fortyFiveDegreeImageryEnabled,
     this.trackCameraPosition,
     this.zoomControlsEnabled,
     this.zoomGesturesEnabled,
@@ -36,6 +38,11 @@ class MapConfiguration {
     this.cloudMapId,
   });
 
+  /// This setting controls how the API handles gestures on the map. Web only.
+  ///
+  /// See [WebGestureHandling] for more details.
+  final WebGestureHandling? webGestureHandling;
+
   /// True if the compass UI should be shown.
   final bool? compassEnabled;
 
@@ -48,17 +55,24 @@ class MapConfiguration {
   /// The type of the map.
   final MapType? mapType;
 
-  /// The prefered zoom range.
+  /// The preferred zoom range.
   final MinMaxZoomPreference? minMaxZoomPreference;
 
   /// True if rotate gestures should be enabled.
   final bool? rotateGesturesEnabled;
 
   /// True if scroll gestures should be enabled.
+  ///
+  /// Android/iOS only. For web, see [webGestureHandling].
   final bool? scrollGesturesEnabled;
 
   /// True if tilt gestures should be enabled.
   final bool? tiltGesturesEnabled;
+
+  /// True if 45 degree imagery should be enabled.
+  ///
+  /// Web only.
+  final bool? fortyFiveDegreeImageryEnabled;
 
   /// True if camera position changes should trigger notifications.
   final bool? trackCameraPosition;
@@ -67,6 +81,8 @@ class MapConfiguration {
   final bool? zoomControlsEnabled;
 
   /// True if zoom gestures should be enabled.
+  ///
+  /// Android/iOS only. For web, see [webGestureHandling].
   final bool? zoomGesturesEnabled;
 
   /// True if the map should use Lite Mode, showing a limited-interactivity
@@ -101,6 +117,9 @@ class MapConfiguration {
   /// that are different from [other].
   MapConfiguration diffFrom(MapConfiguration other) {
     return MapConfiguration(
+      webGestureHandling: webGestureHandling != other.webGestureHandling
+          ? webGestureHandling
+          : null,
       compassEnabled:
           compassEnabled != other.compassEnabled ? compassEnabled : null,
       mapToolbarEnabled: mapToolbarEnabled != other.mapToolbarEnabled
@@ -124,6 +143,10 @@ class MapConfiguration {
       tiltGesturesEnabled: tiltGesturesEnabled != other.tiltGesturesEnabled
           ? tiltGesturesEnabled
           : null,
+      fortyFiveDegreeImageryEnabled:
+          fortyFiveDegreeImageryEnabled != other.fortyFiveDegreeImageryEnabled
+              ? fortyFiveDegreeImageryEnabled
+              : null,
       trackCameraPosition: trackCameraPosition != other.trackCameraPosition
           ? trackCameraPosition
           : null,
@@ -158,6 +181,7 @@ class MapConfiguration {
   /// replacing the previous values.
   MapConfiguration applyDiff(MapConfiguration diff) {
     return MapConfiguration(
+      webGestureHandling: diff.webGestureHandling ?? webGestureHandling,
       compassEnabled: diff.compassEnabled ?? compassEnabled,
       mapToolbarEnabled: diff.mapToolbarEnabled ?? mapToolbarEnabled,
       cameraTargetBounds: diff.cameraTargetBounds ?? cameraTargetBounds,
@@ -168,6 +192,8 @@ class MapConfiguration {
       scrollGesturesEnabled:
           diff.scrollGesturesEnabled ?? scrollGesturesEnabled,
       tiltGesturesEnabled: diff.tiltGesturesEnabled ?? tiltGesturesEnabled,
+      fortyFiveDegreeImageryEnabled:
+          diff.fortyFiveDegreeImageryEnabled ?? fortyFiveDegreeImageryEnabled,
       trackCameraPosition: diff.trackCameraPosition ?? trackCameraPosition,
       zoomControlsEnabled: diff.zoomControlsEnabled ?? zoomControlsEnabled,
       zoomGesturesEnabled: diff.zoomGesturesEnabled ?? zoomGesturesEnabled,
@@ -185,6 +211,7 @@ class MapConfiguration {
 
   /// True if no options are set.
   bool get isEmpty =>
+      webGestureHandling == null &&
       compassEnabled == null &&
       mapToolbarEnabled == null &&
       cameraTargetBounds == null &&
@@ -193,6 +220,7 @@ class MapConfiguration {
       rotateGesturesEnabled == null &&
       scrollGesturesEnabled == null &&
       tiltGesturesEnabled == null &&
+      fortyFiveDegreeImageryEnabled == null &&
       trackCameraPosition == null &&
       zoomControlsEnabled == null &&
       zoomGesturesEnabled == null &&
@@ -214,6 +242,7 @@ class MapConfiguration {
       return false;
     }
     return other is MapConfiguration &&
+        webGestureHandling == other.webGestureHandling &&
         compassEnabled == other.compassEnabled &&
         mapToolbarEnabled == other.mapToolbarEnabled &&
         cameraTargetBounds == other.cameraTargetBounds &&
@@ -222,6 +251,7 @@ class MapConfiguration {
         rotateGesturesEnabled == other.rotateGesturesEnabled &&
         scrollGesturesEnabled == other.scrollGesturesEnabled &&
         tiltGesturesEnabled == other.tiltGesturesEnabled &&
+        fortyFiveDegreeImageryEnabled == other.fortyFiveDegreeImageryEnabled &&
         trackCameraPosition == other.trackCameraPosition &&
         zoomControlsEnabled == other.zoomControlsEnabled &&
         zoomGesturesEnabled == other.zoomGesturesEnabled &&
@@ -236,7 +266,8 @@ class MapConfiguration {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll(<Object?>[
+        webGestureHandling,
         compassEnabled,
         mapToolbarEnabled,
         cameraTargetBounds,
@@ -245,6 +276,7 @@ class MapConfiguration {
         rotateGesturesEnabled,
         scrollGesturesEnabled,
         tiltGesturesEnabled,
+        fortyFiveDegreeImageryEnabled,
         trackCameraPosition,
         zoomControlsEnabled,
         zoomGesturesEnabled,
@@ -256,5 +288,5 @@ class MapConfiguration {
         trafficEnabled,
         buildingsEnabled,
         cloudMapId,
-      );
+      ]);
 }

@@ -124,6 +124,13 @@ class MakeDepsPathBasedCommand extends PackageCommand {
             : topLevelCandidate);
         continue;
       }
+      // Check for a match in the third-party packages directory.
+      final Directory thirdPartyCandidate =
+          thirdPartyPackagesDir.childDirectory(packageName);
+      if (thirdPartyCandidate.existsSync()) {
+        targets[packageName] = RepositoryPackage(thirdPartyCandidate);
+        continue;
+      }
       // If there is no packages/<packageName> directory, then either the
       // packages doesn't exist, or it is a sub-package of a federated plugin.
       // If it's the latter, it will be a directory whose name is a prefix.

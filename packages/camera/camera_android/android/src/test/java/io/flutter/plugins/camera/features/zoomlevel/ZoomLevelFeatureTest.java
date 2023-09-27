@@ -20,8 +20,7 @@ import android.graphics.Rect;
 import android.hardware.camera2.CaptureRequest;
 import android.os.Build;
 import io.flutter.plugins.camera.CameraProperties;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import io.flutter.plugins.camera.SdkCapabilityChecker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -118,7 +117,7 @@ public class ZoomLevelFeatureTest {
   public void getValue_shouldReturnNullIfNotSet() {
     ZoomLevelFeature zoomLevelFeature = new ZoomLevelFeature(mockCameraProperties);
 
-    assertEquals(1.0, (float) zoomLevelFeature.getValue(), 0);
+    assertEquals(1.0, zoomLevelFeature.getValue(), 0);
   }
 
   @Test
@@ -127,7 +126,7 @@ public class ZoomLevelFeatureTest {
 
     zoomLevelFeature.setValue(2.3f);
 
-    assertEquals(2.3f, (float) zoomLevelFeature.getValue(), 0);
+    assertEquals(2.3f, zoomLevelFeature.getValue(), 0);
   }
 
   @Test
@@ -209,11 +208,6 @@ public class ZoomLevelFeatureTest {
   }
 
   static void setSdkVersion(int sdkVersion) throws Exception {
-    Field sdkInt = Build.VERSION.class.getField("SDK_INT");
-    sdkInt.setAccessible(true);
-    Field modifiersField = Field.class.getDeclaredField("modifiers");
-    modifiersField.setAccessible(true);
-    modifiersField.setInt(sdkInt, sdkInt.getModifiers() & ~Modifier.FINAL);
-    sdkInt.set(null, sdkVersion);
+    SdkCapabilityChecker.SDK_VERSION = sdkVersion;
   }
 }

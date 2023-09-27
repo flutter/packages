@@ -37,8 +37,6 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  // Next version of the API.
-
   /// Returns a [PickedFile] with the image that was picked.
   ///
   /// The `source` argument controls where the image comes from. This can
@@ -67,6 +65,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// in this call. You can then call [retrieveLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getImageFromSource instead.')
   Future<PickedFile?> pickImage({
     required ImageSource source,
     double? maxWidth,
@@ -95,6 +94,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// a warning message will be logged.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getMultiImageWithOptions instead.')
   Future<List<PickedFile>?> pickMultiImage({
     double? maxWidth,
     double? maxHeight,
@@ -119,6 +119,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// in this call. You can then call [retrieveLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getVideo instead.')
   Future<PickedFile?> pickVideo({
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
@@ -141,12 +142,11 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// See also:
   /// * [LostData], for what's included in the response.
   /// * [Android Activity Lifecycle](https://developer.android.com/reference/android/app/Activity.html), for more information on MainActivity destruction.
+  @Deprecated('Use getLostData instead.')
   Future<LostData> retrieveLostData() {
     throw UnimplementedError('retrieveLostData() has not been implemented.');
   }
 
-  /// This method is deprecated in favor of [getImageFromSource] and will be removed in a future update.
-  ///
   /// Returns an [XFile] with the image that was picked.
   ///
   /// The `source` argument controls where the image comes from. This can
@@ -175,6 +175,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// in this call. You can then call [getLostData] when your app relaunches to retrieve the lost data.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getImageFromSource instead.')
   Future<XFile?> getImage({
     required ImageSource source,
     double? maxWidth,
@@ -185,8 +186,6 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     throw UnimplementedError('getImage() has not been implemented.');
   }
 
-  /// This method is deprecated in favor of [getMultiImageWithOptions] and will be removed in a future update.
-  ///
   /// Returns a [List<XFile>] with the images that were picked.
   ///
   /// The images come from the [ImageSource.gallery].
@@ -205,6 +204,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// a warning message will be logged.
   ///
   /// If no images were picked, the return value is null.
+  @Deprecated('Use getMultiImageWithOptions instead.')
   Future<List<XFile>?> getMultiImage({
     double? maxWidth,
     double? maxHeight,

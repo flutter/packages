@@ -87,7 +87,8 @@ class ExampleHostApi {
 
   Future<String> getHostLanguage() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ExampleHostApi.getHostLanguage', codec,
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
@@ -113,7 +114,7 @@ class ExampleHostApi {
 
   Future<int> add(int arg_a, int arg_b) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ExampleHostApi.add', codec,
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_a, arg_b]) as List<Object?>?;
@@ -140,7 +141,8 @@ class ExampleHostApi {
 
   Future<bool> sendMessage(MessageData arg_message) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ExampleHostApi.sendMessage', codec,
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_message]) as List<Object?>?;
@@ -175,14 +177,15 @@ abstract class MessageFlutterApi {
       {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.MessageFlutterApi.flutterMethod', codec,
+          'dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.MessageFlutterApi.flutterMethod was null.');
+              'Argument for dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_aString = (args[0] as String?);
           final String output = api.flutterMethod(arg_aString);

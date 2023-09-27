@@ -76,6 +76,23 @@ public class GeneratedCameraXLibrary {
     }
   }
 
+  /**
+   * The types (T) properly wrapped to be used as a LiveData<T>.
+   *
+   * <p>If you need to add another type to support a type S to use a LiveData<S> in this plugin,
+   * ensure the following is done on the Dart side:
+   *
+   * <p>* In `../lib/src/live_data.dart`, add new cases for S in
+   * `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of type S from a
+   * LiveData<S> instance and in `LiveDataFlutterApiImpl#create` to create the expected type of
+   * LiveData<S> when requested.
+   *
+   * <p>On the native side, ensure the following is done:
+   *
+   * <p>* Update `LiveDataHostApiImpl#getValue` is updated to properly return identifiers for
+   * instances of type S. * Update `ObserverFlutterApiWrapper#onChanged` to properly handle
+   * receiving calls with instances of type S if a LiveData<S> instance is observed.
+   */
   public enum LiveDataSupportedType {
     CAMERA_STATE(0),
     ZOOM_STATE(1);
@@ -83,6 +100,47 @@ public class GeneratedCameraXLibrary {
     final int index;
 
     private LiveDataSupportedType(final int index) {
+      this.index = index;
+    }
+  }
+
+  /**
+   * Video quality constraints that will be used by a QualitySelector to choose an appropriate video
+   * resolution.
+   *
+   * <p>These are pre-defined quality constants that are universally used for video.
+   *
+   * <p>See https://developer.android.com/reference/androidx/camera/video/Quality.
+   */
+  public enum VideoQuality {
+    SD(0),
+    HD(1),
+    FHD(2),
+    UHD(3),
+    LOWEST(4),
+    HIGHEST(5);
+
+    final int index;
+
+    private VideoQuality(final int index) {
+      this.index = index;
+    }
+  }
+
+  /**
+   * Fallback rules for selecting video resolution.
+   *
+   * <p>See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
+   */
+  public enum VideoResolutionFallbackRule {
+    HIGHER_QUALITY_OR_LOWER_THAN(0),
+    HIGHER_QUALITY_THAN(1),
+    LOWER_QUALITY_OR_HIGHER_THAN(2),
+    LOWER_QUALITY_THAN(3);
+
+    final int index;
+
+    private VideoResolutionFallbackRule(final int index) {
       this.index = index;
     }
   }
@@ -414,6 +472,59 @@ public class GeneratedCameraXLibrary {
               : ((maxCompensation instanceof Integer)
                   ? (Integer) maxCompensation
                   : (Long) maxCompensation));
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Convenience class for sending lists of [Quality]s.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class VideoQualityData {
+    private @NonNull VideoQuality quality;
+
+    public @NonNull VideoQuality getQuality() {
+      return quality;
+    }
+
+    public void setQuality(@NonNull VideoQuality setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"quality\" is null.");
+      }
+      this.quality = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    VideoQualityData() {}
+
+    public static final class Builder {
+
+      private @Nullable VideoQuality quality;
+
+      public @NonNull Builder setQuality(@NonNull VideoQuality setterArg) {
+        this.quality = setterArg;
+        return this;
+      }
+
+      public @NonNull VideoQualityData build() {
+        VideoQualityData pigeonReturn = new VideoQualityData();
+        pigeonReturn.setQuality(quality);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(quality == null ? null : quality.index);
+      return toListResult;
+    }
+
+    static @NonNull VideoQualityData fromList(@NonNull ArrayList<Object> list) {
+      VideoQualityData pigeonResult = new VideoQualityData();
+      Object quality = list.get(0);
+      pigeonResult.setQuality(quality == null ? null : VideoQuality.values()[(int) quality]);
       return pigeonResult;
     }
   }
@@ -1297,8 +1408,6 @@ public class GeneratedCameraXLibrary {
       switch (type) {
         case (byte) 128:
           return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
-          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -1308,9 +1417,6 @@ public class GeneratedCameraXLibrary {
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
       if (value instanceof ResolutionInfo) {
         stream.write(128);
-        writeValue(stream, ((ResolutionInfo) value).toList());
-      } else if (value instanceof ResolutionInfo) {
-        stream.write(129);
         writeValue(stream, ((ResolutionInfo) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -1322,9 +1428,7 @@ public class GeneratedCameraXLibrary {
   public interface PreviewHostApi {
 
     void create(
-        @NonNull Long identifier,
-        @Nullable Long rotation,
-        @Nullable ResolutionInfo targetResolution);
+        @NonNull Long identifier, @Nullable Long rotation, @Nullable Long resolutionSelectorId);
 
     @NonNull
     Long setSurfaceProvider(@NonNull Long identifier);
@@ -1351,12 +1455,14 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
                 Number rotationArg = (Number) args.get(1);
-                ResolutionInfo targetResolutionArg = (ResolutionInfo) args.get(2);
+                Number resolutionSelectorIdArg = (Number) args.get(2);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
                       (rotationArg == null) ? null : rotationArg.longValue(),
-                      targetResolutionArg);
+                      (resolutionSelectorIdArg == null)
+                          ? null
+                          : resolutionSelectorIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -1544,7 +1650,11 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface RecorderHostApi {
 
-    void create(@NonNull Long identifier, @Nullable Long aspectRatio, @Nullable Long bitRate);
+    void create(
+        @NonNull Long identifier,
+        @Nullable Long aspectRatio,
+        @Nullable Long bitRate,
+        @Nullable Long qualitySelectorId);
 
     @NonNull
     Long getAspectRatio(@NonNull Long identifier);
@@ -1575,11 +1685,13 @@ public class GeneratedCameraXLibrary {
                 Number identifierArg = (Number) args.get(0);
                 Number aspectRatioArg = (Number) args.get(1);
                 Number bitRateArg = (Number) args.get(2);
+                Number qualitySelectorIdArg = (Number) args.get(3);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
                       (aspectRatioArg == null) ? null : aspectRatioArg.longValue(),
-                      (bitRateArg == null) ? null : bitRateArg.longValue());
+                      (bitRateArg == null) ? null : bitRateArg.longValue(),
+                      (qualitySelectorIdArg == null) ? null : qualitySelectorIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -1911,40 +2023,11 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
-
-  private static class ImageCaptureHostApiCodec extends StandardMessageCodec {
-    public static final ImageCaptureHostApiCodec INSTANCE = new ImageCaptureHostApiCodec();
-
-    private ImageCaptureHostApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof ResolutionInfo) {
-        stream.write(128);
-        writeValue(stream, ((ResolutionInfo) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageCaptureHostApi {
 
     void create(
-        @NonNull Long identifier,
-        @Nullable Long flashMode,
-        @Nullable ResolutionInfo targetResolution);
+        @NonNull Long identifier, @Nullable Long flashMode, @Nullable Long resolutionSelectorId);
 
     void setFlashMode(@NonNull Long identifier, @NonNull Long flashMode);
 
@@ -1952,7 +2035,7 @@ public class GeneratedCameraXLibrary {
 
     /** The codec used by ImageCaptureHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return ImageCaptureHostApiCodec.INSTANCE;
+      return new StandardMessageCodec();
     }
     /**
      * Sets up an instance of `ImageCaptureHostApi` to handle messages through the
@@ -1970,12 +2053,14 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
                 Number flashModeArg = (Number) args.get(1);
-                ResolutionInfo targetResolutionArg = (ResolutionInfo) args.get(2);
+                Number resolutionSelectorIdArg = (Number) args.get(2);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
                       (flashModeArg == null) ? null : flashModeArg.longValue(),
-                      targetResolutionArg);
+                      (resolutionSelectorIdArg == null)
+                          ? null
+                          : resolutionSelectorIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -2038,6 +2123,182 @@ public class GeneratedCameraXLibrary {
 
                 api.takePicture(
                     (identifierArg == null) ? null : identifierArg.longValue(), resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+
+  private static class ResolutionStrategyHostApiCodec extends StandardMessageCodec {
+    public static final ResolutionStrategyHostApiCodec INSTANCE =
+        new ResolutionStrategyHostApiCodec();
+
+    private ResolutionStrategyHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof ResolutionInfo) {
+        stream.write(128);
+        writeValue(stream, ((ResolutionInfo) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface ResolutionStrategyHostApi {
+
+    void create(
+        @NonNull Long identifier, @Nullable ResolutionInfo boundSize, @Nullable Long fallbackRule);
+
+    /** The codec used by ResolutionStrategyHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return ResolutionStrategyHostApiCodec.INSTANCE;
+    }
+    /**
+     * Sets up an instance of `ResolutionStrategyHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable ResolutionStrategyHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.ResolutionStrategyHostApi.create", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                ResolutionInfo boundSizeArg = (ResolutionInfo) args.get(1);
+                Number fallbackRuleArg = (Number) args.get(2);
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      boundSizeArg,
+                      (fallbackRuleArg == null) ? null : fallbackRuleArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface ResolutionSelectorHostApi {
+
+    void create(
+        @NonNull Long identifier,
+        @Nullable Long resolutionStrategyIdentifier,
+        @Nullable Long aspectRatioStrategyIdentifier);
+
+    /** The codec used by ResolutionSelectorHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `ResolutionSelectorHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable ResolutionSelectorHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.ResolutionSelectorHostApi.create", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number resolutionStrategyIdentifierArg = (Number) args.get(1);
+                Number aspectRatioStrategyIdentifierArg = (Number) args.get(2);
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (resolutionStrategyIdentifierArg == null)
+                          ? null
+                          : resolutionStrategyIdentifierArg.longValue(),
+                      (aspectRatioStrategyIdentifierArg == null)
+                          ? null
+                          : aspectRatioStrategyIdentifierArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface AspectRatioStrategyHostApi {
+
+    void create(
+        @NonNull Long identifier, @NonNull Long preferredAspectRatio, @NonNull Long fallbackRule);
+
+    /** The codec used by AspectRatioStrategyHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `AspectRatioStrategyHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable AspectRatioStrategyHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.AspectRatioStrategyHostApi.create",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number preferredAspectRatioArg = (Number) args.get(1);
+                Number fallbackRuleArg = (Number) args.get(2);
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (preferredAspectRatioArg == null)
+                          ? null
+                          : preferredAspectRatioArg.longValue(),
+                      (fallbackRuleArg == null) ? null : fallbackRuleArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -2194,37 +2455,10 @@ public class GeneratedCameraXLibrary {
           channelReply -> callback.reply(null));
     }
   }
-
-  private static class ImageAnalysisHostApiCodec extends StandardMessageCodec {
-    public static final ImageAnalysisHostApiCodec INSTANCE = new ImageAnalysisHostApiCodec();
-
-    private ImageAnalysisHostApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof ResolutionInfo) {
-        stream.write(128);
-        writeValue(stream, ((ResolutionInfo) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageAnalysisHostApi {
 
-    void create(@NonNull Long identifier, @Nullable ResolutionInfo targetResolutionIdentifier);
+    void create(@NonNull Long identifier, @Nullable Long resolutionSelectorId);
 
     void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier);
 
@@ -2232,7 +2466,7 @@ public class GeneratedCameraXLibrary {
 
     /** The codec used by ImageAnalysisHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return ImageAnalysisHostApiCodec.INSTANCE;
+      return new StandardMessageCodec();
     }
     /**
      * Sets up an instance of `ImageAnalysisHostApi` to handle messages through the
@@ -2250,11 +2484,13 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                ResolutionInfo targetResolutionIdentifierArg = (ResolutionInfo) args.get(1);
+                Number resolutionSelectorIdArg = (Number) args.get(1);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
-                      targetResolutionIdentifierArg);
+                      (resolutionSelectorIdArg == null)
+                          ? null
+                          : resolutionSelectorIdArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -2799,6 +3035,172 @@ public class GeneratedCameraXLibrary {
           new ArrayList<Object>(
               Arrays.asList(identifierArg, bufferArg, pixelStrideArg, rowStrideArg)),
           channelReply -> callback.reply(null));
+    }
+  }
+
+  private static class QualitySelectorHostApiCodec extends StandardMessageCodec {
+    public static final QualitySelectorHostApiCodec INSTANCE = new QualitySelectorHostApiCodec();
+
+    private QualitySelectorHostApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
+          return VideoQualityData.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof ResolutionInfo) {
+        stream.write(128);
+        writeValue(stream, ((ResolutionInfo) value).toList());
+      } else if (value instanceof VideoQualityData) {
+        stream.write(129);
+        writeValue(stream, ((VideoQualityData) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface QualitySelectorHostApi {
+
+    void create(
+        @NonNull Long identifier,
+        @NonNull List<VideoQualityData> videoQualityDataList,
+        @Nullable Long fallbackStrategyId);
+
+    @NonNull
+    ResolutionInfo getResolution(@NonNull Long cameraInfoId, @NonNull VideoQuality quality);
+
+    /** The codec used by QualitySelectorHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return QualitySelectorHostApiCodec.INSTANCE;
+    }
+    /**
+     * Sets up an instance of `QualitySelectorHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable QualitySelectorHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.QualitySelectorHostApi.create", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                List<VideoQualityData> videoQualityDataListArg =
+                    (List<VideoQualityData>) args.get(1);
+                Number fallbackStrategyIdArg = (Number) args.get(2);
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      videoQualityDataListArg,
+                      (fallbackStrategyIdArg == null) ? null : fallbackStrategyIdArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.QualitySelectorHostApi.getResolution",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number cameraInfoIdArg = (Number) args.get(0);
+                VideoQuality qualityArg =
+                    args.get(1) == null ? null : VideoQuality.values()[(int) args.get(1)];
+                try {
+                  ResolutionInfo output =
+                      api.getResolution(
+                          (cameraInfoIdArg == null) ? null : cameraInfoIdArg.longValue(),
+                          qualityArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface FallbackStrategyHostApi {
+
+    void create(
+        @NonNull Long identifier,
+        @NonNull VideoQuality quality,
+        @NonNull VideoResolutionFallbackRule fallbackRule);
+
+    /** The codec used by FallbackStrategyHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `FallbackStrategyHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable FallbackStrategyHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.FallbackStrategyHostApi.create", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                VideoQuality qualityArg =
+                    args.get(1) == null ? null : VideoQuality.values()[(int) args.get(1)];
+                VideoResolutionFallbackRule fallbackRuleArg =
+                    args.get(2) == null
+                        ? null
+                        : VideoResolutionFallbackRule.values()[(int) args.get(2)];
+                try {
+                  api.create(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      qualityArg,
+                      fallbackRuleArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
 }

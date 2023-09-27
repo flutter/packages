@@ -17,7 +17,7 @@ void main() => runApp(const MyApp());
 /// The route configuration.
 final GoRouter _router = GoRouter(
   onException: (_, GoRouterState state, GoRouter router) {
-    router.go('/404', extra: state.location);
+    router.go('/404', extra: state.uri.toString());
   },
   routes: <RouteBase>[
     GoRoute(

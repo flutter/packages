@@ -5,7 +5,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
-import 'package:meta/meta.dart' show protected;
+import 'package:meta/meta.dart' show immutable, protected;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
@@ -15,6 +15,7 @@ import 'java_object.dart';
 /// A single color plane of image data.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ImageProxy.PlaneProxy.
+@immutable
 class PlaneProxy extends JavaObject {
   /// Constructs a [PlaneProxy] that is not automatically attached to a native object.
   PlaneProxy.detached(

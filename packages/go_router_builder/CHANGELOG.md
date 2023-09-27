@@ -1,3 +1,36 @@
+## 2.3.3
+
+* Adds `initialLocation` for `StatefulShellBranchConfig`
+
+## 2.3.2
+
+* Supports the latest `package:analyzer`.
+
+## 2.3.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.3.0
+
+* Adds Support for StatefulShellRoute
+
+## 2.2.5
+
+* Fixes a bug where shell routes without const constructor were not generated correctly.
+
+## 2.2.4
+
+* Bumps example go_router version to v10.0.0 and migrate example code.
+
+## 2.2.3
+
+* Removes `path_to_regexp` from the dependencies.
+
+## 2.2.2
+
+* Bumps example go_router version and migrate example code.
+
 ## 2.2.1
 
 * Cleans up go_router_builder code.

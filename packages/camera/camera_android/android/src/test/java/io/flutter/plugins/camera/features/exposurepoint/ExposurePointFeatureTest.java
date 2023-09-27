@@ -9,7 +9,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -281,7 +281,7 @@ public class ExposurePointFeatureTest {
   }
 
   @Test
-  public void updateBuilder_shouldNotSetMeteringRectangleWhenNoValidBoundariesAreSupplied() {
+  public void updateBuilder_shoulSetDefaultMeteringRectangleWhenNoValidBoundariesAreSupplied() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);
     when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(1);
     CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
@@ -290,11 +290,11 @@ public class ExposurePointFeatureTest {
 
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
 
-    verify(mockCaptureRequestBuilder, times(1)).set(any(), isNull());
+    verify(mockCaptureRequestBuilder, times(1)).set(any(), any());
   }
 
   @Test
-  public void updateBuilder_shouldNotSetMeteringRectangleWhenNoValidCoordsAreSupplied() {
+  public void updateBuilder_shouldSetDefaultMeteringRectangleWhenNoValidCoordsAreSupplied() {
     CameraProperties mockCameraProperties = mock(CameraProperties.class);
     when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(1);
     CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
@@ -302,12 +302,40 @@ public class ExposurePointFeatureTest {
         new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
     exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
 
+    MeteringRectangle[] defaultRegions =
+        new MeteringRectangle[] {new MeteringRectangle(0, 0, 100, 100, 0)};
+    when(mockCaptureRequestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS))
+        .thenReturn(defaultRegions);
+
     exposurePointFeature.setValue(null);
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
     exposurePointFeature.setValue(new Point(0d, null));
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
     exposurePointFeature.setValue(new Point(null, 0d));
     exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
-    verify(mockCaptureRequestBuilder, times(3)).set(any(), isNull());
+
+    verify(mockCaptureRequestBuilder, times(3)).set(any(), eq(defaultRegions));
+  }
+
+  @Test
+  public void updateBuilder_shouldSetNonNullMeteringRectangleWhenNullValueIsSupplied() {
+    CameraProperties mockCameraProperties = mock(CameraProperties.class);
+    when(mockCameraProperties.getControlMaxRegionsAutoExposure()).thenReturn(1);
+    CaptureRequest.Builder mockCaptureRequestBuilder = mock(CaptureRequest.Builder.class);
+    ExposurePointFeature exposurePointFeature =
+        new ExposurePointFeature(mockCameraProperties, mockSensorOrientationFeature);
+
+    MeteringRectangle[] defaultRegions =
+        new MeteringRectangle[] {new MeteringRectangle(0, 0, 100, 100, 0)};
+    when(mockCaptureRequestBuilder.get(CaptureRequest.CONTROL_AE_REGIONS))
+        .thenReturn(defaultRegions);
+
+    exposurePointFeature.setCameraBoundaries(this.mockCameraBoundaries);
+
+    exposurePointFeature.setValue(null);
+
+    exposurePointFeature.updateBuilder(mockCaptureRequestBuilder);
+
+    verify(mockCaptureRequestBuilder, times(1)).set(any(), eq(exposurePointFeature.defaultRegions));
   }
 }

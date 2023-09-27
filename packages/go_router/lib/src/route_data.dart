@@ -156,6 +156,7 @@ abstract class ShellRouteData extends RouteData {
   static ShellRoute $route<T extends ShellRouteData>({
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? navigatorKey,
+    GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
     List<NavigatorObserver>? observers,
     String? restorationScopeId,
@@ -189,6 +190,7 @@ abstract class ShellRouteData extends RouteData {
     return ShellRoute(
       builder: builder,
       pageBuilder: pageBuilder,
+      parentNavigatorKey: parentNavigatorKey,
       routes: routes,
       navigatorKey: navigatorKey,
       observers: observers,
@@ -234,6 +236,7 @@ abstract class StatefulShellRouteData extends RouteData {
   static StatefulShellRoute $route<T extends StatefulShellRouteData>({
     required T Function(GoRouterState) factory,
     required List<StatefulShellBranch> branches,
+    GlobalKey<NavigatorState>? parentNavigatorKey,
     ShellNavigationContainerBuilder? navigatorContainerBuilder,
     String? restorationScopeId,
   }) {
@@ -269,6 +272,7 @@ abstract class StatefulShellRouteData extends RouteData {
         builder: builder,
         pageBuilder: pageBuilder,
         navigatorContainerBuilder: navigatorContainerBuilder,
+        parentNavigatorKey: parentNavigatorKey,
         restorationScopeId: restorationScopeId,
       );
     }
@@ -276,6 +280,7 @@ abstract class StatefulShellRouteData extends RouteData {
       branches: branches,
       builder: builder,
       pageBuilder: pageBuilder,
+      parentNavigatorKey: parentNavigatorKey,
       restorationScopeId: restorationScopeId,
     );
   }

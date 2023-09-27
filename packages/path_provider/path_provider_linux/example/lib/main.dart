@@ -23,6 +23,7 @@ class _MyAppState extends State<MyApp> {
   String? _tempDirectory = 'Unknown';
   String? _downloadsDirectory = 'Unknown';
   String? _appSupportDirectory = 'Unknown';
+  String? _appCacheDirectory = 'Unknown';
   String? _documentsDirectory = 'Unknown';
   final PathProviderLinux _provider = PathProviderLinux();
 
@@ -37,6 +38,7 @@ class _MyAppState extends State<MyApp> {
     String? tempDirectory;
     String? downloadsDirectory;
     String? appSupportDirectory;
+    String? appCacheDirectory;
     String? documentsDirectory;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
@@ -61,6 +63,12 @@ class _MyAppState extends State<MyApp> {
     } on PlatformException {
       appSupportDirectory = 'Failed to get documents directory.';
     }
+
+    try {
+      appCacheDirectory = await _provider.getApplicationCachePath();
+    } on PlatformException {
+      appCacheDirectory = 'Failed to get cache directory.';
+    }
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -72,6 +80,7 @@ class _MyAppState extends State<MyApp> {
       _tempDirectory = tempDirectory;
       _downloadsDirectory = downloadsDirectory;
       _appSupportDirectory = appSupportDirectory;
+      _appCacheDirectory = appCacheDirectory;
       _documentsDirectory = documentsDirectory;
     });
   }
@@ -90,6 +99,7 @@ class _MyAppState extends State<MyApp> {
               Text('Documents Directory: $_documentsDirectory\n'),
               Text('Downloads Directory: $_downloadsDirectory\n'),
               Text('Application Support Directory: $_appSupportDirectory\n'),
+              Text('Application Cache Directory: $_appCacheDirectory\n'),
             ],
           ),
         ),
