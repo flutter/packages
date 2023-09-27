@@ -52,6 +52,12 @@ public class WebViewActivity extends Activity {
 
   private final WebViewClient webViewClient =
       new WebViewClient() {
+        @Override
+        public void onLoadResource(WebView view, String url) {
+          if (!resourceShouldOpenDocument(view, url)) {
+            super.onLoadResource(view, url);
+          }
+        }
 
         /*
          * This method is deprecated in API 24. Still overridden to support
@@ -61,7 +67,9 @@ public class WebViewActivity extends Activity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
           if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            if (!checkUrlForActivity(view, url)) {
+            if (urlShouldRunActivity(view, url)) {
+              return true;
+            } else {
               view.loadUrl(url);
             }
             return false;
@@ -74,14 +82,16 @@ public class WebViewActivity extends Activity {
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             String url = request.getUrl().toString();
-            if (!checkUrlForActivity(view, url)) {
+            if (urlShouldRunActivity(view, url)) {
+              return true;
+            } else {
               view.loadUrl(url);
             }
           }
           return false;
         }
 
-        private boolean checkUrlForActivity(WebView view, String url) {
+        private boolean resourceShouldOpenDocument(WebView view, String url) {
           // Check if URL is PDF
           if (url.endsWith(".pdf")) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -89,7 +99,10 @@ public class WebViewActivity extends Activity {
             view.getContext().startActivity(intent);
             return true;
           }
+          return false;
+        }
 
+        private boolean urlShouldRunActivity(WebView view, String url) {
           // Check if URL is not an HTTP(S) request
           // Handles mailto:, sms:, etc.
           if (!url.startsWith("http://") && !url.startsWith("https://")) {

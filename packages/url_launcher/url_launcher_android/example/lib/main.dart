@@ -41,6 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _hasCallSupport = false;
   Future<void>? _launched;
   String _phone = '';
+  final TextEditingController _urlTextController =
+      TextEditingController(text: 'https://www.cylog.org/headers/');
 
   @override
   void initState() {
@@ -51,6 +53,12 @@ class _MyHomePageState extends State<MyHomePage> {
         _hasCallSupport = result;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _urlTextController.dispose();
+    super.dispose();
   }
 
   Future<void> _launchInBrowser(String url) async {
@@ -141,7 +149,6 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // onPressed calls using this URL are not gated on a 'canLaunch' check
     // because the assumption is that every device can launch a web URL.
-    const String toLaunch = 'https://www.cylog.org/headers/';
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -168,39 +175,47 @@ class _MyHomePageState extends State<MyHomePage> {
                     ? const Text('Make phone call')
                     : const Text('Calling not supported'),
               ),
-              const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text(toLaunch),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _urlTextController,
+                  decoration: const InputDecoration(
+                    labelText: 'URL to Launch',
+                    hintText: 'Input the URL to launch',
+                  ),
+                ),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInBrowser(toLaunch);
+                  _launched = _launchInBrowser(_urlTextController.text);
                 }),
                 child: const Text('Launch in browser'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebView(toLaunch);
+                  _launched = _launchInWebView(_urlTextController.text);
                 }),
                 child: const Text('Launch in app'),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithJavaScript(toLaunch);
+                  _launched =
+                      _launchInWebViewWithJavaScript(_urlTextController.text);
                 }),
                 child: const Text('Launch in app (JavaScript ON)'),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithDomStorage(toLaunch);
+                  _launched =
+                      _launchInWebViewWithDomStorage(_urlTextController.text);
                 }),
                 child: const Text('Launch in app (DOM storage ON)'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebView(toLaunch);
+                  _launched = _launchInWebView(_urlTextController.text);
                   Timer(const Duration(seconds: 5), () {
                     launcher.closeWebView();
                   });
