@@ -138,7 +138,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   static Size computeBestPreviewSize(int cameraId, ResolutionPreset preset, CaptureMode captureMode, Size[] availableOutputSizes)
       throws IndexOutOfBoundsException {
     // Using max resolution for the preview is not a good use of system resources.
-    // Limiting the max resolution used for the preview to 1080p. is a good balance.
+    // Limiting the max resolution used for the preview to 720p. is a good balance.
     if (preset.ordinal() > ResolutionPreset.high.ordinal()) {
       preset = ResolutionPreset.high;
     }
@@ -370,18 +370,19 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     }
 
     if (captureSize == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-    boolean captureSizeCalculated = false;
+      boolean captureSizeCalculated = false;
 
-    if (SdkCapabilityChecker.supportsEncoderProfiles()) {
-      recordingProfileLegacy = null;
-      recordingProfile =
-          getBestAvailableCamcorderProfileForResolutionPreset(cameraId, resolutionPreset);
-      List<EncoderProfiles.VideoProfile> videoProfiles = recordingProfile.getVideoProfiles();
+      if (SdkCapabilityChecker.supportsEncoderProfiles()) {
+        recordingProfileLegacy = null;
+        recordingProfile =
+            getBestAvailableCamcorderProfileForResolutionPreset(cameraId, resolutionPreset);
+        List<EncoderProfiles.VideoProfile> videoProfiles = recordingProfile.getVideoProfiles();
 
-      EncoderProfiles.VideoProfile defaultVideoProfile = videoProfiles.get(0);
+        EncoderProfiles.VideoProfile defaultVideoProfile = videoProfiles.get(0);
 
-      if (defaultVideoProfile != null) {
-        captureSize = new Size(defaultVideoProfile.getWidth(), defaultVideoProfile.getHeight());
+        if (defaultVideoProfile != null) {
+          captureSize = new Size(defaultVideoProfile.getWidth(), defaultVideoProfile.getHeight());
+        }
       }
     }
 
