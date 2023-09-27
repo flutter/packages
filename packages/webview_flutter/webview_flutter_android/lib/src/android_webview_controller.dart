@@ -215,7 +215,7 @@ class AndroidWebViewController extends PlatformWebViewController {
               case ConsoleMessageLevel.log:
                 logLevel = JavaScriptLogLevel.log;
                 break;
-            }          
+            }
 
             callback(JavaScriptConsoleMessage(
               level: logLevel,
