@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTVideoPlayerPlugin.h"
+#import "FVPVideoPlayerPlugin.h"
 
 #import <AVFoundation/AVFoundation.h>
 
@@ -11,7 +11,7 @@
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem;
 @end
 
-@interface FLTVideoPlayerPlugin ()
+@interface FVPVideoPlayerPlugin ()
 
 - (instancetype)initWithPlayerFactory:(id<FVPPlayerFactory>)playerFactory
                             registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
