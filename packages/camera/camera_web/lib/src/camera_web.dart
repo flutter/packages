@@ -196,6 +196,8 @@ class CameraPlugin extends CameraPlatform {
   Future<int> createCamera(
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
+    // Capture Mode is not currently supported.
+    CaptureMode captureMode = CaptureMode.video,
     bool enableAudio = false,
   }) async {
     try {
