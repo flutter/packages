@@ -92,6 +92,7 @@ class WebView extends StatefulWidget {
     this.onWebResourceError,
     this.debuggingEnabled = false,
     this.gestureNavigationEnabled = false,
+    this.allowsLinkPreview = true,
     this.userAgent,
     this.zoomEnabled = true,
     this.initialMediaPlaybackPolicy =
@@ -260,6 +261,13 @@ class WebView extends StatefulWidget {
   /// By default `gestureNavigationEnabled` is false.
   final bool gestureNavigationEnabled;
 
+  /// Whether pressing a link displays a preview of the destination for the link.
+  ///
+  /// Not supported on all platforms.
+  ///
+  /// By default `allowsLinkPreview` is true.
+  final bool allowsLinkPreview;
+
   /// The value used for the HTTP User-Agent: request header.
   ///
   /// When null the platform's webview default is used for the User-Agent header.
@@ -380,6 +388,7 @@ WebSettings _webSettingsFromWidget(WebView widget) {
     hasProgressTracking: widget.onProgress != null,
     debuggingEnabled: widget.debuggingEnabled,
     gestureNavigationEnabled: widget.gestureNavigationEnabled,
+    allowsLinkPreview: widget.allowsLinkPreview,
     allowsInlineMediaPlayback: widget.allowsInlineMediaPlayback,
     userAgent: WebSetting<String?>.of(widget.userAgent),
     zoomEnabled: widget.zoomEnabled,
@@ -397,6 +406,7 @@ WebSettings _clearUnchangedWebSettings(
   assert(newValue.hasNavigationDelegate != null);
   assert(newValue.debuggingEnabled != null);
   assert(newValue.zoomEnabled != null);
+  assert(newValue.allowsLinkPreview != null);
 
   JavascriptMode? javascriptMode;
   bool? hasNavigationDelegate;
@@ -404,6 +414,7 @@ WebSettings _clearUnchangedWebSettings(
   bool? debuggingEnabled;
   WebSetting<String?> userAgent = const WebSetting<String?>.absent();
   bool? zoomEnabled;
+  bool? allowsLinkPreview;
   if (currentValue.javascriptMode != newValue.javascriptMode) {
     javascriptMode = newValue.javascriptMode;
   }
@@ -422,6 +433,9 @@ WebSettings _clearUnchangedWebSettings(
   if (currentValue.zoomEnabled != newValue.zoomEnabled) {
     zoomEnabled = newValue.zoomEnabled;
   }
+  if (currentValue.allowsLinkPreview != newValue.allowsLinkPreview) {
+    allowsLinkPreview = newValue.allowsLinkPreview;
+  }
 
   return WebSettings(
     javascriptMode: javascriptMode,
@@ -430,6 +444,7 @@ WebSettings _clearUnchangedWebSettings(
     debuggingEnabled: debuggingEnabled,
     userAgent: userAgent,
     zoomEnabled: zoomEnabled,
+    allowsLinkPreview: allowsLinkPreview,
   );
 }
 

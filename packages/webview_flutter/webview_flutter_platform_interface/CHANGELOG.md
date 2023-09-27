@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Adds support for the `allowsLinkPreview` property on iOS.
+
 ## 2.6.0
 
 * Adds support to register a callback to intercept messages that are written to

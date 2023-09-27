@@ -261,6 +261,11 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'setUserAgent is not implemented on the current platform');
   }
 
+  /// Whether to display a preview of the destination for the link
+  ///
+  /// This is not supported by all platforms, so it defaults to a noop
+  Future<void> setAllowsLinkPreview(bool allow) async {}
+
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
   Future<void> setOnPlatformPermissionRequest(

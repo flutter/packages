@@ -1,3 +1,7 @@
+## 3.8.1
+
+* Adds support for the `allowsLinkPreview` property on iOS.
+
 ## 3.8.0
 
 * Adds support to register a callback to receive JavaScript console messages. See `WebKitWebViewController.setOnConsoleMessage`.

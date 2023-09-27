@@ -1,3 +1,7 @@
+## 4.2.5
+
+* Adds support for the `allowsLinkPreview` property on iOS.
+
 ## 4.2.4
 
 * Adds pub topics to package metadata.

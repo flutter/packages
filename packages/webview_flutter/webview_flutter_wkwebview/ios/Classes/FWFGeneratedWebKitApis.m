@@ -2462,6 +2462,32 @@ void FWFWKWebViewHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:
+               @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsLinkPreview"
+        binaryMessenger:binaryMessenger
+                  codec:FWFWKWebViewHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (setAllowsLinkPreviewForWebViewWithIdentifier:isAllowed:error:)],
+                @"FWFWKWebViewHostApi api (%@) doesn't respond to "
+                @"@selector(setAllowsLinkPreviewForWebViewWithIdentifier:isAllowed:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSNumber *arg_identifier = GetNullableObjectAtIndex(args, 0);
+        NSNumber *arg_allow = GetNullableObjectAtIndex(args, 1);
+        FlutterError *error;
+        [api setAllowsLinkPreviewForWebViewWithIdentifier:arg_identifier
+                                                isAllowed:arg_allow
+                                                    error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
                @"dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setCustomUserAgent"
         binaryMessenger:binaryMessenger
                   codec:FWFWKWebViewHostApiGetCodec()];

@@ -353,6 +353,11 @@ class WebViewController {
   Future<void> setUserAgent(String? userAgent) {
     return platform.setUserAgent(userAgent);
   }
+
+  /// Whether to display a preview of the destination for the link
+  Future<void> setAllowsLinkPreview(bool allow) {
+    return platform.setAllowsLinkPreview(allow);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.
