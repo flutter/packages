@@ -287,7 +287,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       '--test',
       'build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk',
       '--timeout',
-      '7m',
+      '8m',
       '--results-bucket=gs://${getStringArg(_gCloudResultsBucketArg)}',
       '--results-dir=$resultsDir',
       for (final String device in getStringListArg('device')) ...<String>[
