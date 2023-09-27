@@ -138,7 +138,7 @@ ${response.httpResponse.body}
         printError('A version must be provided to update this dependency.');
         throw ToolExit(_exitNoTargetVersion);
       } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle.name) {
-        final RegExp validGradleVersionPattern = RegExp(r'^\d+(?:\.\d+){1,2}$');
+        final RegExp validGradleVersionPattern = RegExp(r'^\d+(?:\.\d+){2}$');
         final bool isValidGradleVersion =
             validGradleVersionPattern.stringMatch(version) == version;
         if (!isValidGradleVersion) {
@@ -150,7 +150,7 @@ ${response.httpResponse.body}
               _AndroidDepdencyType.compileSdk.name ||
           _targetAndroidDependency ==
               _AndroidDepdencyType.compileSdkForExamples.name) {
-        final RegExp validSdkVersion = RegExp(r'^\d{1,2}');
+        final RegExp validSdkVersion = RegExp(r'^\d{1,2}$');
         final bool isValidSdkVersion =
             validSdkVersion.stringMatch(version) == version;
         if (!isValidSdkVersion) {
@@ -250,17 +250,12 @@ ${response.httpResponse.body}
   /// an Android dependency.
   Future<PackageResult> _runForAndroidDependency(
       RepositoryPackage package) async {
-    if (_targetAndroidDependency == _AndroidDepdencyType.gradle.name) {
-      return _runForGradleAndroidDependency(package);
-    } else if (_targetAndroidDependency ==
-            _AndroidDepdencyType.compileSdk.name ||
+    if (_targetAndroidDependency == _AndroidDepdencyType.compileSdk.name) {
+      return _runForCompileSdkVersion(package);
+    } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle.name ||
         _targetAndroidDependency ==
             _AndroidDepdencyType.compileSdkForExamples.name) {
-      return _runForCompileSdkAndroidDependency(package);
-    } else if (_targetAndroidDependency ==
-        _AndroidDepdencyType.compileSdkForExamples.name) {
-      return _runForCompileSdkVersionAndroidDependency(
-          package); // TODO(camsim99): should be able to combine logic with gradle
+      return _runForAndroidDependencyOnExample(package);
     }
 
     return PackageResult.fail(<String>[
@@ -268,7 +263,7 @@ ${response.httpResponse.body}
     ]);
   }
 
-  Future<PackageResult> _runForGradleAndroidDependency(
+  Future<PackageResult> _runForAndroidDependencyOnExample(
       RepositoryPackage package) async {
     final Iterable<RepositoryPackage> packageExamples = package.getExamples();
     bool updateRanForExamples = false;
@@ -278,52 +273,78 @@ ${response.httpResponse.body}
       }
 
       updateRanForExamples = true;
-      Directory gradleWrapperPropertiesDirectory =
+      Directory androidDirectory =
           example.platformDirectory(FlutterPlatform.android);
-      if (gradleWrapperPropertiesDirectory
-          .childDirectory('app')
-          .childDirectory('gradle')
-          .existsSync()) {
-        gradleWrapperPropertiesDirectory =
-            gradleWrapperPropertiesDirectory.childDirectory('app');
-      }
-      final File gradleWrapperPropertiesFile = gradleWrapperPropertiesDirectory
-          .childDirectory('gradle')
-          .childDirectory('wrapper')
-          .childFile('gradle-wrapper.properties');
+      File? fileToUpdate;
+      RegExp? dependencyVersionPattern;
+      String? newDependencyVersionEntry;
 
-      final String gradleWrapperPropertiesContents =
-          gradleWrapperPropertiesFile.readAsStringSync();
-      final RegExp validGradleDistributionUrl =
-          RegExp(r'^\s*distributionUrl\s*=\s*.*\.zip', multiLine: true);
-      if (!validGradleDistributionUrl
-          .hasMatch(gradleWrapperPropertiesContents)) {
+      if (_targetAndroidDependency == _AndroidDepdencyType.gradle.name) {
+        if (androidDirectory
+            .childDirectory('app')
+            .childDirectory('gradle')
+            .existsSync()) {
+          androidDirectory = androidDirectory.childDirectory('app');
+        }
+        fileToUpdate = androidDirectory
+            .childDirectory('gradle')
+            .childDirectory('wrapper')
+            .childFile('gradle-wrapper.properties');
+        dependencyVersionPattern =
+            RegExp(r'^\s*distributionUrl\s*=\s*.*\.zip', multiLine: true);
+        // TODO(camsim99): Validate current AGP version against target Gradle
+        // version: https://github.com/flutter/flutter/issues/133887.
+        newDependencyVersionEntry =
+            'distributionUrl=https\\://services.gradle.org/distributions/gradle-$_targetVersion-all.zip';
+      } else if (_targetAndroidDependency ==
+          _AndroidDepdencyType.compileSdkForExamples.name) {
+        fileToUpdate =
+            androidDirectory.childDirectory('app').childFile('build.gradle');
+        dependencyVersionPattern = RegExp(r'compileSdk \d{2}$');
+        newDependencyVersionEntry = 'compileSdk $_targetVersion';
+      }
+
+      final String oldFileToUpdateContents = fileToUpdate!.readAsStringSync();
+
+      if (!dependencyVersionPattern!.hasMatch(oldFileToUpdateContents)) {
         return PackageResult.fail(<String>[
-          'Unable to find a "distributionUrl" entry to update for ${package.displayName}.'
+          'Unable to find a $_targetAndroidDependency version entry to update for ${example.displayName}.'
         ]);
       }
 
       print(
           '${indentation}Updating ${getRelativePosixPath(example.directory, from: package.directory)} to "$_targetVersion"');
-      final String newGradleWrapperPropertiesContents =
-          gradleWrapperPropertiesContents.replaceFirst(
-              validGradleDistributionUrl,
-              'distributionUrl=https\\://services.gradle.org/distributions/gradle-$_targetVersion-all.zip');
-      // TODO(camsim99): Validate current AGP version against target Gradle
-      // version: https://github.com/flutter/flutter/issues/133887.
-      gradleWrapperPropertiesFile
-          .writeAsStringSync(newGradleWrapperPropertiesContents);
+      final String newGradleWrapperPropertiesContents = oldFileToUpdateContents
+          .replaceFirst(dependencyVersionPattern, newDependencyVersionEntry!);
+
+      fileToUpdate.writeAsStringSync(newGradleWrapperPropertiesContents);
     }
     return updateRanForExamples
         ? PackageResult.success()
         : PackageResult.skip('No example apps run on Android.');
   }
 
-  Future<PackageResult> _runForCompileSdkAndroidDependency(
-      RepositoryPackage package) async {}
+  Future<PackageResult> _runForCompileSdkVersion(
+      RepositoryPackage package) async {
+    final File buildConfigurationFile = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('build.gradle');
+    final String buildConfigurationContents =
+        buildConfigurationFile.readAsStringSync();
+    final RegExp validCompileSdkVersion = RegExp(r'compileSdk \d{2}$');
 
-  Future<PackageResult> _runForCompileSdkVersionAndroidDependency(
-      RepositoryPackage package) async {}
+    if (!validCompileSdkVersion.hasMatch(buildConfigurationContents)) {
+      return PackageResult.fail(<String>[
+        'Unable to find "compileSdk" version to update for ${package.displayName}.'
+      ]);
+    }
+    print('${indentation}Updating ${package.directory} to "$_targetVersion"');
+    final String newBuildConfigurationContents = buildConfigurationContents
+        .replaceFirst(validCompileSdkVersion, 'compileSdk $_targetVersion');
+    buildConfigurationFile.writeAsStringSync(newBuildConfigurationContents);
+
+    return PackageResult.success();
+  }
 
   /// Returns information about the current dependency of [package] on
   /// the package named [dependencyName], or null if there is no dependency.
