@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
@@ -19,10 +20,12 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +61,9 @@ public class WebViewActivity extends Activity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
           if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            view.loadUrl(url);
+            if (!checkUrlForActivity(view, url)) {
+              view.loadUrl(url);
+            }
             return false;
           }
           return super.shouldOverrideUrlLoading(view, url);
@@ -68,8 +73,32 @@ public class WebViewActivity extends Activity {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            view.loadUrl(request.getUrl().toString());
+            String url = request.getUrl().toString();
+            if (!checkUrlForActivity(view, url)) {
+              view.loadUrl(url);
+            }
           }
+          return false;
+        }
+
+        private boolean checkUrlForActivity(WebView view, String url) {
+          // Check if URL is PDF
+          if (url.endsWith(".pdf")) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.parse(url), "application/pdf");
+            view.getContext().startActivity(intent);
+            return true;
+          }
+
+          // Check if URL is not an HTTP(S) request
+          // Handles mailto:, sms:, etc.
+          if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            view.getContext().startActivity(intent);
+            return true;
+          }
+
+          // Otherwise, let WebView load URL
           return false;
         }
       };
@@ -174,11 +203,14 @@ public class WebViewActivity extends Activity {
     return super.onKeyDown(keyCode, event);
   }
 
-  @VisibleForTesting static final String URL_EXTRA = "url";
+  @VisibleForTesting
+  static final String URL_EXTRA = "url";
 
-  @VisibleForTesting static final String ENABLE_JS_EXTRA = "enableJavaScript";
+  @VisibleForTesting
+  static final String ENABLE_JS_EXTRA = "enableJavaScript";
 
-  @VisibleForTesting static final String ENABLE_DOM_EXTRA = "enableDomStorage";
+  @VisibleForTesting
+  static final String ENABLE_DOM_EXTRA = "enableDomStorage";
 
   /* Hides the constants used to forward data to the Activity instance. */
   public static @NonNull Intent createIntent(
