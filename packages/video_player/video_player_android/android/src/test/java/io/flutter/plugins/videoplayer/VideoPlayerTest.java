@@ -5,6 +5,9 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
@@ -15,11 +18,23 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.content.Context;
+
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
+import com.google.android.exoplayer2.upstream.FileDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSink;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.SimpleCache;
+
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
+
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
@@ -27,6 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.robolectric.RobolectricTestRunner;
@@ -40,8 +56,18 @@ public class VideoPlayerTest {
   private VideoPlayerOptions fakeVideoPlayerOptionsWitchCache;
   private QueuingEventSink fakeEventSink;
   private DefaultHttpDataSource.Factory httpDataSourceFactorySpy;
-
+  private VideoCache fakeVideoCache;
+  private SimpleCache fakeSimpleCache;
+  @Mock DataSource fakeDataSource;
+  private CacheDataSourceFactory fakeCacheDataSourceFactory;
+  private final long maxCacheSize = 100 * 1024 * 1024; // 100MB
+  private final long maxFileSize = 10 * 1024 * 1024; // 10MB
   @Captor private ArgumentCaptor<HashMap<String, Object>> eventCaptor;
+
+  @Mock
+  Context mockContext;
+
+  @Mock DataSource.Factory mockUpstreamDataSourceFactory;
 
   @Before
   public void before() {
@@ -56,6 +82,50 @@ public class VideoPlayerTest {
     fakeVideoPlayerOptionsWitchCache.maxFileSize = 100L;
     fakeEventSink = mock(QueuingEventSink.class);
     httpDataSourceFactorySpy = spy(new DefaultHttpDataSource.Factory());
+    fakeVideoCache = mock(VideoCache.class);
+
+    // Simulate an existing downloadCache
+    fakeSimpleCache = mock(SimpleCache.class);
+
+    // Simulate an existing dataSource
+    fakeDataSource = mock(DataSource.class);
+    fakeCacheDataSourceFactory = mock(CacheDataSourceFactory.class);
+
+  }
+
+  @Test
+  public void testCreateDataSourceFactory() {
+    CacheDataSourceFactory factory =
+            new CacheDataSourceFactory(
+                    mockContext, maxCacheSize, maxFileSize, mockUpstreamDataSourceFactory);
+
+    assertNotNull(factory);
+  }
+
+  @Test
+  public void testGetInstanceCreatesCache() {
+
+    SimpleCache cache = VideoCache.getInstance(mockContext, maxCacheSize);
+
+    assertNotNull(cache);
+
+    // Ensure that the cache is initialized only once
+    SimpleCache cachedCache = VideoCache.getInstance(mockContext, maxCacheSize);
+    assertEquals(cache, cachedCache);
+  }
+
+  @Test
+  public void testClearVideoCacheFailure() {
+    File mockCacheDir = mock(File.class);
+    when(mockContext.getCacheDir()).thenReturn(mockCacheDir);
+
+    // Simulate an exception during deletion
+    when(mockCacheDir.list()).thenReturn(new String[] {"file1", "file2"});
+    when(mockCacheDir.isDirectory()).thenReturn(true);
+    when(mockCacheDir.isFile()).thenReturn(false);
+    when(mockCacheDir.delete()).thenReturn(false);
+
+    assertFalse(VideoCache.clearVideoCache(mockContext));
   }
 
   @Test
