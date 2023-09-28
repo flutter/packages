@@ -6,23 +6,21 @@ package io.flutter.plugins.imagepickerexample;
 
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.core.app.ActivityScenario;
 import io.flutter.plugins.imagepicker.ImagePickerPlugin;
-import org.junit.Rule;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ImagePickerTest {
-  @Rule
-  public ActivityScenarioRule<ImagePickerTestActivity> myActivityTestRule =
-      new ActivityScenarioRule<>(ImagePickerTestActivity.class);
-
   @Test
+  @Ignore(
+      "This is failing on Firebase Test Lab. See https://github.com/flutter/flutter/issues/135683")
   public void imagePickerPluginIsAdded() {
-    myActivityTestRule
-        .getScenario()
-        .onActivity(
-            activity -> {
-              assertTrue(activity.engine.getPlugins().has(ImagePickerPlugin.class));
-            });
+    final ActivityScenario<ImagePickerTestActivity> scenario =
+        ActivityScenario.launch(ImagePickerTestActivity.class);
+    scenario.onActivity(
+        activity -> {
+          assertTrue(activity.engine.getPlugins().has(ImagePickerPlugin.class));
+        });
   }
 }
