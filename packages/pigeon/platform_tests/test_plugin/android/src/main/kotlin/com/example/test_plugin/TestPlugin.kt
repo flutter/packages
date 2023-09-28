@@ -240,12 +240,10 @@ class TestPlugin: FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
-    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
-    // See issue https://github.com/flutter/flutter/issues/118243
+    flutterApi!!.throwError() { result -> callback(result) }
   }
   override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    // TODO: (tarrinneal) Once flutter api error handling is added, complete these tests.
-    // See issue https://github.com/flutter/flutter/issues/118243
+    flutterApi!!.throwErrorFromVoid() { result -> callback(result) }
   }
 
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
