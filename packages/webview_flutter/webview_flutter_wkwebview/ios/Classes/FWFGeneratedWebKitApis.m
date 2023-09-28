@@ -2697,6 +2697,50 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void) {
                    completion(output, nil);
                  }];
 }
+- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSNumber *)arg_identifier
+                                                 message:(NSString *)arg_message
+                                              completion:(void (^)(
+                                                             FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptAlertPanel"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[arg_identifier ?: [NSNull null], arg_message ?: [NSNull null]] reply:^(id reply) {
+    completion(nil);
+  }];
+}
+- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSNumber *)arg_identifier
+                                                   message:(NSString *)arg_message
+                                                completion:(void (^)(
+                                                               NSNumber *_Nullable,
+                                                               FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptConfirmPanel"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[arg_identifier ?: [NSNull null], arg_message ?: [NSNull null]] reply:^(id reply) {
+    NSNumber *output = reply;
+    completion(output, nil);
+  }];
+}
+- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSNumber *)arg_identifier
+                                                      prompt:(NSString *)arg_prompt
+                                                 defaultText:(nullable NSString *)arg_defaultText
+                                                  completion:(void (^)(
+                                                                 NSString *_Nullable,
+                                                                 FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel =
+    [FlutterBasicMessageChannel
+      messageChannelWithName:@"dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptTextInputPanel"
+      binaryMessenger:self.binaryMessenger
+      codec:FWFWKUIDelegateFlutterApiGetCodec()];
+  [channel sendMessage:@[arg_identifier ?: [NSNull null], arg_prompt ?: [NSNull null], arg_defaultText ?: [NSNull null]] reply:^(id reply) {
+    NSString *output = reply;
+    completion(output, nil);
+  }];
+}
 @end
 
 @interface FWFWKHttpCookieStoreHostApiCodecReader : FlutterStandardReader

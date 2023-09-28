@@ -10,6 +10,8 @@ import android.os.Build;
 import android.os.Message;
 import android.view.View;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -40,6 +42,9 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   public static class WebChromeClientImpl extends SecureWebChromeClient {
     private final WebChromeClientFlutterApiImpl flutterApi;
     private boolean returnValueForOnShowFileChooser = false;
+    private boolean returnValueForOnJsAlert = false;
+    private boolean returnValueForOnJsConfirm = false;
+    private boolean returnValueForOnJsPrompt = false;
 
     /**
      * Creates a {@link WebChromeClient} that passes arguments of callbacks methods to Dart.
@@ -101,6 +106,62 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
       return currentReturnValueForOnShowFileChooser;
     }
 
+    @Override
+    public boolean onJsAlert(
+        WebView view,
+        String url,
+        String message,
+        JsResult result) {
+      final boolean currentReturnValueForOnJsAlert = returnValueForOnJsAlert;
+      flutterApi.onJsAlert(
+          this,
+          message,
+          reply -> result.confirm());
+      return currentReturnValueForOnJsAlert;
+    }
+
+    @Override
+    public boolean onJsConfirm(
+        WebView view,
+        String url,
+        String message,
+        JsResult result) {
+      final boolean currentReturnValueForOnJsConfirm = returnValueForOnJsConfirm;
+      flutterApi.onJsConfirm(
+          this,
+          message,
+          reply -> {
+            if (reply) {
+              result.confirm();
+            } else {
+              result.cancel();
+            }
+          });
+      return currentReturnValueForOnJsConfirm;
+    }
+
+    @Override
+    public boolean onJsPrompt(
+        WebView view,
+        String url,
+        String message,
+        String defaultValue,
+        JsPromptResult result) {
+      final boolean currentReturnValueForOnJsPrompt = returnValueForOnJsPrompt;
+      flutterApi.onJsPrompt(
+          this,
+          message,
+          defaultValue,
+          reply -> {
+            if (reply != null) {
+              result.confirm(reply);
+            } else {
+              result.cancel();
+            }
+          });
+      return currentReturnValueForOnJsPrompt;
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onPermissionRequest(@NonNull PermissionRequest request) {
@@ -110,6 +171,21 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     /** Sets return value for {@link #onShowFileChooser}. */
     public void setReturnValueForOnShowFileChooser(boolean value) {
       returnValueForOnShowFileChooser = value;
+    }
+
+    /** Sets return value for {@link #onJsAlert}. */
+    public void setReturnValueForOnJsAlert(boolean value) {
+      returnValueForOnJsAlert = value;
+    }
+
+    /** Sets return value for {@link #onJsConfirm}. */
+    public void setReturnValueForOnJsConfirm(boolean value) {
+      returnValueForOnJsConfirm = value;
+    }
+
+    /** Sets return value for {@link #onJsPrompt}. */
+    public void setReturnValueForOnJsPrompt(boolean value) {
+      returnValueForOnJsPrompt = value;
     }
   }
 
@@ -245,5 +321,26 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     final WebChromeClientImpl webChromeClient =
         Objects.requireNonNull(instanceManager.getInstance(instanceId));
     webChromeClient.setReturnValueForOnShowFileChooser(value);
+  }
+
+  @Override
+  public void setSynchronousReturnValueForOnJsAlert(@NonNull Long instanceId, @NonNull Boolean value) {
+    final WebChromeClientImpl webChromeClient =
+            Objects.requireNonNull(instanceManager.getInstance(instanceId));
+    webChromeClient.setReturnValueForOnJsAlert(value);
+  }
+
+  @Override
+  public void setSynchronousReturnValueForOnJsConfirm(@NonNull Long instanceId, @NonNull Boolean value) {
+    final WebChromeClientImpl webChromeClient =
+            Objects.requireNonNull(instanceManager.getInstance(instanceId));
+    webChromeClient.setReturnValueForOnJsConfirm(value);
+  }
+
+  @Override
+  public void setSynchronousReturnValueForOnJsPrompt(@NonNull Long instanceId, @NonNull Boolean value) {
+    final WebChromeClientImpl webChromeClient =
+            Objects.requireNonNull(instanceManager.getInstance(instanceId));
+    webChromeClient.setReturnValueForOnJsPrompt(value);
   }
 }

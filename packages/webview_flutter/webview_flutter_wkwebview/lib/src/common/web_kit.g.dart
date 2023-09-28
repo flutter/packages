@@ -2688,6 +2688,16 @@ abstract class WKUIDelegateFlutterApi {
       WKFrameInfoData frame,
       WKMediaCaptureTypeData type);
 
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanelWithMessage`.
+  Future<void> runJavaScriptAlertPanel(int identifier, String message);
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanelWithMessage`.
+  Future<bool> runJavaScriptConfirmPanel(int identifier, String message);
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanelWithPrompt`.
+  Future<String> runJavaScriptTextInputPanel(
+      int identifier, String prompt, String? defaultText);
+
   static void setup(WKUIDelegateFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -2753,6 +2763,78 @@ abstract class WKUIDelegateFlutterApi {
           final WKPermissionDecisionData output =
               await api.requestMediaCapturePermission(arg_identifier!,
                   arg_webViewIdentifier!, arg_origin!, arg_frame!, arg_type!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptAlertPanel',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptAlertPanel was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptAlertPanel was null, expected non-null int.');
+          final String? arg_message = (args[1] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptAlertPanel was null, expected non-null String.');
+          await api.runJavaScriptAlertPanel(arg_identifier!, arg_message!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptConfirmPanel',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptConfirmPanel was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptConfirmPanel was null, expected non-null int.');
+          final String? arg_message = (args[1] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptConfirmPanel was null, expected non-null String.');
+          final bool output = await api.runJavaScriptConfirmPanel(
+              arg_identifier!, arg_message!);
+          return output;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptTextInputPanel',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptTextInputPanel was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptTextInputPanel was null, expected non-null int.');
+          final String? arg_prompt = (args[1] as String?);
+          assert(arg_prompt != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.runJavaScriptTextInputPanel was null, expected non-null String.');
+          final String? arg_defaultText = (args[2] as String?);
+          final String output = await api.runJavaScriptTextInputPanel(
+              arg_identifier!, arg_prompt!, arg_defaultText);
           return output;
         });
       }

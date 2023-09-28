@@ -217,6 +217,29 @@ class WebKitWebViewController extends PlatformWebViewController {
           return decisionCompleter.future;
         }
       },
+      runJavaScriptAlertPanel: (String message) async {
+        final Future<void> Function(String)? callback =
+            weakThis.target?._onJavaScriptAlertDialogCallback;
+        if (callback != null) {
+          return callback.call(message);
+        }
+      },
+      runJavaScriptConfirmPanel: (String message) async {
+        final Future<bool> Function(String)? callback =
+            weakThis.target?._onJavaScriptConfirmDialogCallback;
+        if (callback != null) {
+          return callback.call(message);
+        }
+        return false;
+      },
+      runJavaScriptTextInputPanel: (String prompt, String? defaultText) async {
+        final Future<String> Function(String, String?)? callback =
+            weakThis.target?._onJavaScriptPromptDialogCallback;
+        if (callback != null) {
+          return callback.call(prompt, defaultText);
+        }
+        return '';
+      },
     );
 
     _webView.setUIDelegate(_uiDelegate);
@@ -272,6 +295,9 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   void Function(JavaScriptConsoleMessage)? _onConsoleMessageCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
+  Future<void> Function(String)? _onJavaScriptAlertDialogCallback;
+  Future<bool> Function(String)? _onJavaScriptConfirmDialogCallback;
+  Future<String> Function(String, String?)? _onJavaScriptPromptDialogCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
       params as WebKitWebViewControllerCreationParams;
@@ -649,6 +675,28 @@ window.addEventListener("error", function(e) {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  /// Sets the callback that is invoked when the client should display a javascript alert dialog.
+  @override
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(String message) onJavaScriptAlertDialog) async {
+    _onJavaScriptAlertDialogCallback = onJavaScriptAlertDialog;
+  }
+
+  /// Sets the callback that is invoked when the client should display a javascript confirm dialog.
+  @override
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(String message) onJavaScriptConfirmDialog) async {
+    _onJavaScriptConfirmDialogCallback = onJavaScriptConfirmDialog;
+  }
+
+  /// Sets the callback that is invoked when the client should display a javascript prompt dialog.
+  @override
+  Future<void> setOnJavaScriptPromptDialog(
+      Future<String> Function(String message, String? defaultText)
+          onJavaScriptPromptDialog) async {
+    _onJavaScriptPromptDialogCallback = onJavaScriptPromptDialog;
   }
 
   /// Whether to enable tools for debugging the current WKWebView content.

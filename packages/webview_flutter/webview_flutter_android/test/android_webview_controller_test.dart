@@ -59,6 +59,9 @@ void main() {
         android_webview.WebView webView,
         android_webview.FileChooserParams params,
       )? onShowFileChooser,
+      Future<void> Function(String message)? onJsAlert,
+      Future<bool> Function(String message)? onJsConfirm,
+      Future<String> Function(String message, String? defaultValue)? onJsPrompt,
       android_webview.GeolocationPermissionsShowPrompt?
           onGeolocationPermissionsShowPrompt,
       android_webview.GeolocationPermissionsHidePrompt?
@@ -94,6 +97,11 @@ void main() {
                       android_webview.WebView webView,
                       android_webview.FileChooserParams params,
                     )? onShowFileChooser,
+                    Future<void> Function(String message)? onJsAlert,
+                    Future<bool> Function(String message)? onJsConfirm,
+                    Future<String> Function(
+                            String message, String? defaultValue)?
+                        onJsPrompt,
                     void Function(
                       android_webview.WebChromeClient instance,
                       android_webview.PermissionRequest request,
@@ -601,6 +609,10 @@ void main() {
             android_webview.WebView webView,
             android_webview.FileChooserParams params,
           )? onShowFileChooser,
+          Future<void> Function(String message)? onJsAlert,
+          Future<bool> Function(String message)? onJsConfirm,
+          Future<String> Function(String message, String? defaultValue)?
+              onJsPrompt,
           dynamic onGeolocationPermissionsShowPrompt,
           dynamic onGeolocationPermissionsHidePrompt,
           dynamic onPermissionRequest,
@@ -668,6 +680,9 @@ void main() {
         createWebChromeClient: ({
           dynamic onProgressChanged,
           dynamic onShowFileChooser,
+          dynamic onJsAlert,
+          dynamic onJsConfirm,
+          dynamic onJsPrompt,
           Future<void> Function(String origin,
                   android_webview.GeolocationPermissionsCallback callback)?
               onGeolocationPermissionsShowPrompt,
@@ -740,6 +755,9 @@ void main() {
         createWebChromeClient: ({
           dynamic onProgressChanged,
           dynamic onShowFileChooser,
+          dynamic onJsAlert,
+          dynamic onJsConfirm,
+          dynamic onJsPrompt,
           dynamic onGeolocationPermissionsShowPrompt,
           dynamic onGeolocationPermissionsHidePrompt,
           dynamic onPermissionRequest,
@@ -794,6 +812,9 @@ void main() {
         createWebChromeClient: ({
           dynamic onProgressChanged,
           dynamic onShowFileChooser,
+          dynamic onJsAlert,
+          dynamic onJsConfirm,
+          dynamic onJsPrompt,
           dynamic onGeolocationPermissionsShowPrompt,
           dynamic onGeolocationPermissionsHidePrompt,
           void Function(
@@ -848,6 +869,9 @@ void main() {
         createWebChromeClient: ({
           dynamic onProgressChanged,
           dynamic onShowFileChooser,
+          dynamic onJsAlert,
+          dynamic onJsConfirm,
+          dynamic onJsPrompt,
           dynamic onGeolocationPermissionsShowPrompt,
           dynamic onGeolocationPermissionsHidePrompt,
           void Function(
@@ -1325,6 +1349,9 @@ void main() {
         createWebChromeClient: ({
           dynamic onProgressChanged,
           dynamic onShowFileChooser,
+          dynamic onJsAlert,
+          dynamic onJsConfirm,
+          dynamic onJsPrompt,
           dynamic onGeolocationPermissionsShowPrompt,
           dynamic onGeolocationPermissionsHidePrompt,
           dynamic onPermissionRequest,

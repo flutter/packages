@@ -1,3 +1,10 @@
+## 3.11.0
+
+* Adds support to intercept JavaScript dialog.
+  Sees `PlatformWebViewController.setOnJavaScriptAlertDialog`,
+  `PlatformWebViewController.setOnJavaScriptConfirmDialog`,
+  `PlatformWebViewController.setOnJavaScriptPromptDialog`.
+
 ## 3.10.1
 
 * Bumps androidx.annotation:annotation from 1.5.0 to 1.7.0.

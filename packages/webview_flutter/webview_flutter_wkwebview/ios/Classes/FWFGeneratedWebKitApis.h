@@ -795,6 +795,24 @@ NSObject<FlutterMessageCodec> *FWFWKUIDelegateFlutterApiGetCodec(void);
                                                         (void (^)(
                                                             FWFWKPermissionDecisionData *_Nullable,
                                                             FlutterError *_Nullable))completion;
+/// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanelWithMessage`.
+- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(NSNumber *)identifier
+                                                 message:(NSString *)message
+                                              completion:(void (^)(
+                                                             FlutterError *_Nullable))completion;
+/// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanelWithMessage`.
+- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(NSNumber *)identifier
+                                                   message:(NSString *)message
+                                                completion:(void (^)(
+                                                               NSNumber *_Nullable,
+                                                               FlutterError *_Nullable))completion;
+/// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanelWithPrompt`.
+- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(NSNumber *)identifier
+                                                      prompt:(NSString *)prompt
+                                                 defaultText:(nullable NSString *)defaultText
+                                                  completion:(void (^)(
+                                                                 NSString *_Nullable,
+                                                                 FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFWKHttpCookieStoreHostApi.

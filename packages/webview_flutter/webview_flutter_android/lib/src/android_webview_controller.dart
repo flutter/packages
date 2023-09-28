@@ -188,6 +188,35 @@ class AndroidWebViewController extends PlatformWebViewController {
         };
       },
     ),
+    onJsAlert: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String message) async {
+        if (weakReference.target?._onJavaScriptAlertDialogCallback != null) {
+          return weakReference
+              .target!._onJavaScriptAlertDialogCallback!(message);
+        }
+      };
+    }),
+    onJsConfirm: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String message) async {
+        if (weakReference.target?._onJavaScriptConfirmDialogCallback != null) {
+          return weakReference
+              .target!._onJavaScriptConfirmDialogCallback!(message);
+        }
+        return false;
+      };
+    }),
+    onJsPrompt: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (String message, String? defaultValue) async {
+        if (weakReference.target?._onJavaScriptPromptDialogCallback != null) {
+          return weakReference.target!._onJavaScriptPromptDialogCallback!(
+              message, defaultValue);
+        }
+        return '';
+      };
+    }),
     onPermissionRequest: withWeakReferenceTo(
       this,
       (WeakReference<AndroidWebViewController> weakReference) {
@@ -244,6 +273,12 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   Future<List<String>> Function(FileSelectorParams)?
       _onShowFileSelectorCallback;
+
+  Future<void> Function(String)? _onJavaScriptAlertDialogCallback;
+
+  Future<bool> Function(String)? _onJavaScriptConfirmDialogCallback;
+
+  Future<String> Function(String, String?)? _onJavaScriptPromptDialogCallback;
 
   OnGeolocationPermissionsShowPrompt? _onGeolocationPermissionsShowPrompt;
 
@@ -495,6 +530,33 @@ class AndroidWebViewController extends PlatformWebViewController {
     return _webChromeClient.setSynchronousReturnValueForOnShowFileChooser(
       onShowFileSelector != null,
     );
+  }
+
+  /// Sets the callback that is invoked when the client should display a javascript alert dialog.
+  @override
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(String)? onJavaScriptAlertDialog) {
+    _onJavaScriptAlertDialogCallback = onJavaScriptAlertDialog;
+    return _webChromeClient
+        .setSynchronousReturnValueForOnJsAlert(onJavaScriptAlertDialog != null);
+  }
+
+  /// Sets the callback that is invoked when the client should display a javascript confirm dialog.
+  @override
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(String)? onJavaScriptConfirmDialog) {
+    _onJavaScriptConfirmDialogCallback = onJavaScriptConfirmDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsConfirm(
+        onJavaScriptConfirmDialog != null);
+  }
+
+  /// Sets the callback that is invoked when the client should display a javascript prompt dialog.
+  @override
+  Future<void> setOnJavaScriptPromptDialog(
+      Future<String> Function(String, String?)? onJavaScriptPromptDialog) {
+    _onJavaScriptPromptDialogCallback = onJavaScriptPromptDialog;
+    return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(
+        onJavaScriptPromptDialog != null);
   }
 
   /// Sets a callback that notifies the host application that web content is

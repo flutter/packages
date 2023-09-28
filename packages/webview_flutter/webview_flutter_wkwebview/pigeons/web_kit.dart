@@ -735,6 +735,37 @@ abstract class WKUIDelegateFlutterApi {
     WKFrameInfoData frame,
     WKMediaCaptureTypeData type,
   );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanelWithMessage`.
+  @ObjCSelector(
+    'runJavaScriptAlertPanelForDelegateWithIdentifier:message:',
+  )
+  @async
+  void runJavaScriptAlertPanel(
+    int identifier,
+    String message,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanelWithMessage`.
+  @ObjCSelector(
+    'runJavaScriptConfirmPanelForDelegateWithIdentifier:message:',
+  )
+  @async
+  bool runJavaScriptConfirmPanel(
+    int identifier,
+    String message,
+  );
+
+  /// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanelWithPrompt`.
+  @ObjCSelector(
+    'runJavaScriptTextInputPanelForDelegateWithIdentifier:prompt:defaultText:',
+  )
+  @async
+  String runJavaScriptTextInputPanel(
+    int identifier,
+    String prompt,
+    String? defaultText,
+  );
 }
 
 /// Mirror of WKHttpCookieStore.

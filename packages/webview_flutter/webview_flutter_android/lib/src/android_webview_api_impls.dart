@@ -892,6 +892,39 @@ class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
       value,
     );
   }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsAlertFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsAlert(
+      instanceManager.getIdentifier(instance)!,
+      value,
+    );
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsConfirmFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsConfirm(
+      instanceManager.getIdentifier(instance)!,
+      value,
+    );
+  }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnJsPromptFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnJsPrompt(
+      instanceManager.getIdentifier(instance)!,
+      value,
+    );
+  }
 }
 
 /// Flutter api implementation for [DownloadListener].
@@ -940,6 +973,40 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
     }
 
     return Future<List<String>>.value(const <String>[]);
+  }
+
+  @override
+  Future<void> onJsAlert(int instanceId, String message) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+    if (instance.onJsAlert != null) {
+      return instance.onJsAlert!(message);
+    }
+
+    return Future<void>.value();
+  }
+
+  @override
+  Future<bool> onJsConfirm(int instanceId, String message) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+    if (instance.onJsConfirm != null) {
+      return instance.onJsConfirm!(message);
+    }
+
+    return Future<bool>.value(false);
+  }
+
+  @override
+  Future<String> onJsPrompt(
+      int instanceId, String message, String? defaultValue) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+    if (instance.onJsPrompt != null) {
+      return instance.onJsPrompt!(message, defaultValue);
+    }
+
+    return Future<String>.value('');
   }
 
   @override

@@ -35,6 +35,9 @@ class AndroidWebViewProxy {
       android_webview.WebView webView,
       android_webview.FileChooserParams params,
     )? onShowFileChooser,
+    Future<void> Function(String message)? onJsAlert,
+    Future<bool> Function(String message)? onJsConfirm,
+    Future<String> Function(String message, String? defaultText)? onJsPrompt,
     void Function(
       android_webview.WebChromeClient instance,
       android_webview.PermissionRequest request,

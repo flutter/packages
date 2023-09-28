@@ -90,6 +90,41 @@
                                                             decision));
                                                   }];
 }
+
+- (void)runJavaScriptAlertPanelForDelegateWithIdentifier:(FWFUIDelegate *)instance
+                                                 message:(NSString *)message
+                                       completionHandler:(void (^)(void))completionHandler {
+    [self runJavaScriptAlertPanelForDelegateWithIdentifier:@([self identifierForDelegate:instance])
+                                                   message:message
+                                                completion:^(FlutterError *_Nullable error) {
+                                                  NSAssert(!error, @"%@", error);
+                                                  completionHandler();
+                                                }];
+}
+
+- (void)runJavaScriptConfirmPanelForDelegateWithIdentifier:(FWFUIDelegate *)instance
+                                                   message:(NSString *)message
+                                         completionHandler:(void (^)(BOOL))completionHandler {
+    [self runJavaScriptConfirmPanelForDelegateWithIdentifier:@([self identifierForDelegate:instance])
+                                                     message:message
+                                                  completion:^(NSNumber *_Nullable result, FlutterError *_Nullable error) {
+                                                    NSAssert(!error, @"%@", error);
+                                                    completionHandler(result.boolValue);
+                                                  }];
+}
+
+- (void)runJavaScriptTextInputPanelForDelegateWithIdentifier:(FWFUIDelegate *)instance
+                                                      prompt:(NSString *)prompt
+                                                 defaultText:(NSString *)defaultText
+                                           completionHandler:(void (^)(NSString * _Nullable))completionHandler {
+    [self runJavaScriptTextInputPanelForDelegateWithIdentifier:@([self identifierForDelegate:instance])
+                                                        prompt:prompt
+                                                   defaultText:defaultText
+                                                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error) {
+                                                      NSAssert(!error, @"%@", error);
+                                                      completionHandler(result);
+                                                    }];
+}
 @end
 
 @implementation FWFUIDelegate
@@ -132,6 +167,44 @@
                                                   completion:^(WKPermissionDecision decision) {
                                                     decisionHandler(decision);
                                                   }];
+}
+
+- (void)webView :(WKWebView *)webView
+    runJavaScriptAlertPanelWithMessage:(NSString *)message
+                      initiatedByFrame:(WKFrameInfo *)frame
+                     completionHandler:(void (^)(void))completionHandler {
+  [self.UIDelegateAPI
+          runJavaScriptAlertPanelForDelegateWithIdentifier:self
+                                                   message:message
+                                         completionHandler:^{
+                                           completionHandler();
+                                         }];
+}
+
+- (void)webView:(WKWebView *)webView
+    runJavaScriptConfirmPanelWithMessage:(NSString *)message
+                        initiatedByFrame:(WKFrameInfo *)frame
+                       completionHandler:(void (^)(BOOL))completionHandler {
+  [self.UIDelegateAPI
+          runJavaScriptConfirmPanelForDelegateWithIdentifier:self
+                                                     message:message
+                                           completionHandler:^(BOOL result) {
+                                             completionHandler(result);
+                                           }];
+}
+
+- (void)webView:(WKWebView *)webView
+    runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt
+                              defaultText:(nullable NSString *)defaultText
+                         initiatedByFrame:(WKFrameInfo *)frame
+                        completionHandler:(void (^)(NSString *_Nullable))completionHandler {
+  [self.UIDelegateAPI
+          runJavaScriptTextInputPanelForDelegateWithIdentifier:self
+                                                        prompt:prompt
+                                                   defaultText:defaultText
+                                             completionHandler:^(NSString *_Nullable result) {
+                                               completionHandler(result);
+                                             }];
 }
 @end
 

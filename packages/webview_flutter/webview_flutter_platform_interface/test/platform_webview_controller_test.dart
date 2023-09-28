@@ -414,6 +414,50 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test(
+      'Default implementation of setOnJavaScriptAlertDialog should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setOnJavaScriptAlertDialog((_) async {}),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+      'Default implementation of setOnJavaScriptConfirmDialog should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setOnJavaScriptConfirmDialog((_) async {
+        return false;
+      }),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+      'Default implementation of setOnJavaScriptPromptDialog should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setOnJavaScriptPromptDialog(
+          (String message, String? defaultText) async {
+        return '';
+      }),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform

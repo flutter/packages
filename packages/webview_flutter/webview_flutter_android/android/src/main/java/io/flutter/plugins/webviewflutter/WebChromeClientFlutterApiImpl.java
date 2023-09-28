@@ -11,6 +11,7 @@ import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebChromeClientFlutterApi;
@@ -71,6 +72,41 @@ public class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView)),
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(fileChooserParams)),
+        callback);
+  }
+
+  /** Passes arguments from {@link WebChromeClient#onJsAlert} to Dart. */
+  public void onJsAlert(
+      @NonNull WebChromeClient webChromeClient,
+      @NonNull String message,
+      @NonNull Reply<Void> callback) {
+    onJsAlert(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
+        message,
+        callback);
+  }
+
+  /** Passes arguments from {@link WebChromeClient#onJsConfirm} to Dart. */
+  public void onJsConfirm(
+      @NonNull WebChromeClient webChromeClient,
+      @NonNull String message,
+      @NonNull Reply<Boolean> callback) {
+    onJsConfirm(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
+        message,
+        callback);
+  }
+
+  /** Passes arguments from {@link WebChromeClient#onJsPrompt} to Dart. */
+  public void onJsPrompt(
+      @NonNull WebChromeClient webChromeClient,
+      @NonNull String message,
+      @Nullable String defaultValue,
+      @NonNull Reply<String> callback) {
+    onJsPrompt(
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webChromeClient)),
+        message,
+        defaultValue,
         callback);
   }
 

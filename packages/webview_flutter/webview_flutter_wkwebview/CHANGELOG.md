@@ -1,3 +1,10 @@
+## 3.9.0
+
+* Adds support to intercept JavaScript dialog.
+  Sees `PlatformWebViewController.setOnJavaScriptAlertDialog`,
+  `PlatformWebViewController.setOnJavaScriptConfirmDialog`,
+  `PlatformWebViewController.setOnJavaScriptPromptDialog`.
+
 ## 3.8.0
 
 * Adds support to register a callback to receive JavaScript console messages. See `WebKitWebViewController.setOnConsoleMessage`.

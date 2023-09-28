@@ -1,3 +1,10 @@
+## 4.3.0
+
+* Adds support to intercept JavaScript dialog.
+  Sees `WebViewController.setOnJavaScriptAlertDialog`,
+  `WebViewController.setOnJavaScriptConfirmDialog`,
+  `WebViewController.setOnJavaScriptPromptDialog`.
+
 ## 4.2.4
 
 * Adds pub topics to package metadata.

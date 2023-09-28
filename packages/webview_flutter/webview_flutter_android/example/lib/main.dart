@@ -202,6 +202,9 @@ enum MenuOptions {
   transparentBackground,
   setCookie,
   videoExample,
+  jsAlert,
+  jsConfirm,
+  jsPrompt,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -265,6 +268,15 @@ class SampleMenu extends StatelessWidget {
           case MenuOptions.videoExample:
             _onVideoExample(context);
             break;
+          case MenuOptions.jsAlert:
+            _onJavaScriptAlertExample(context);
+            break;
+          case MenuOptions.jsConfirm:
+            _onJavaScriptConfirmExample(context);
+            break;
+          case MenuOptions.jsPrompt:
+            _onJavaScriptPromptExample(context);
+            break;
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -324,6 +336,18 @@ class SampleMenu extends StatelessWidget {
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.videoExample,
           child: Text('Video example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.jsAlert,
+          child: Text('JavaScript Alert example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.jsConfirm,
+          child: Text('JavaScript Confirm example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.jsPrompt,
+          child: Text('JavaScript Prompt example'),
         ),
       ],
     );
@@ -471,6 +495,98 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _onTransparentBackground() {
     return webViewController.loadHtmlString(kTransparentBackgroundPage);
+  }
+
+  Future<void> _onJavaScriptAlertExample(BuildContext context) {
+    webViewController.setOnJavaScriptAlertDialog((String message) async {
+      await showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (
+            BuildContext context,
+          ) {
+            return AlertDialog(
+              content: Text(message),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('OK'))
+              ],
+            );
+          });
+    });
+    return webViewController
+        .runJavaScript("alert('This is a JavaScript alert dialog');");
+  }
+
+  Future<void> _onJavaScriptConfirmExample(BuildContext context) {
+    webViewController.setOnJavaScriptConfirmDialog((String message) async {
+      final bool? result = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text(message),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text('OK'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
+                  child: const Text('Cancel'),
+                )
+              ],
+            );
+          });
+      debugPrint('result=$result');
+      return result ?? false;
+    });
+    return webViewController
+        .runJavaScript("confirm('This is a JavaScript confirm dialog');");
+  }
+
+  Future<void> _onJavaScriptPromptExample(BuildContext context) {
+    final TextEditingController textEditingController = TextEditingController();
+    webViewController.setOnJavaScriptPromptDialog(
+        (String message, String? defaultText) async {
+      textEditingController.text = defaultText ?? '';
+      final String? result = await showDialog<String>(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(message),
+              content: TextField(
+                controller: textEditingController,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(textEditingController.text);
+                  },
+                  child: const Text('OK'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop('');
+                  },
+                  child: const Text('Cancel'),
+                )
+              ],
+            );
+          });
+      debugPrint('result=$result');
+      return result ?? '';
+    });
+    return webViewController
+        .runJavaScript("prompt('This is a JavaScript prompt dialog');");
   }
 
   Widget _getCookieList(String cookies) {

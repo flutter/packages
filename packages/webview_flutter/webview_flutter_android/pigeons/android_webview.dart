@@ -337,6 +337,21 @@ abstract class WebChromeClientHostApi {
     int instanceId,
     bool value,
   );
+
+  void setSynchronousReturnValueForOnJsAlert(
+    int instanceId,
+    bool value,
+  );
+
+  void setSynchronousReturnValueForOnJsConfirm(
+    int instanceId,
+    bool value,
+  );
+
+  void setSynchronousReturnValueForOnJsPrompt(
+    int instanceId,
+    bool value,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestAssetManagerHostApi')
@@ -356,6 +371,15 @@ abstract class WebChromeClientFlutterApi {
     int webViewInstanceId,
     int paramsInstanceId,
   );
+
+  @async
+  void onJsAlert(int instanceId, String message);
+
+  @async
+  bool onJsConfirm(int instanceId, String message);
+
+  @async
+  String onJsPrompt(int instanceId, String message, String? defaultValue);
 
   /// Callback to Dart function `WebChromeClient.onPermissionRequest`.
   void onPermissionRequest(int instanceId, int requestInstanceId);

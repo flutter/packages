@@ -195,6 +195,9 @@ WebKitWebViewController createTestWebViewController(
       }, createUIDelegate: ({
         dynamic onCreateWebView,
         dynamic requestMediaCapturePermission,
+        dynamic runJavaScriptAlertPanel,
+        dynamic runJavaScriptConfirmPanel,
+        dynamic runJavaScriptTextInputPanel,
         InstanceManager? instanceManager,
       }) {
         final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();

@@ -728,6 +728,9 @@ class WKUIDelegate extends NSObject {
   WKUIDelegate({
     this.onCreateWebView,
     this.requestMediaCapturePermission,
+    this.runJavaScriptAlertPanel,
+    this.runJavaScriptConfirmPanel,
+    this.runJavaScriptTextInputPanel,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -749,6 +752,9 @@ class WKUIDelegate extends NSObject {
   WKUIDelegate.detached({
     this.onCreateWebView,
     this.requestMediaCapturePermission,
+    this.runJavaScriptAlertPanel,
+    this.runJavaScriptConfirmPanel,
+    this.runJavaScriptTextInputPanel,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -779,6 +785,25 @@ class WKUIDelegate extends NSObject {
     WKFrameInfo frame,
     WKMediaCaptureType type,
   )? requestMediaCapturePermission;
+
+  /// Indicates the client should display a javascript alert dialog.
+  ///
+  /// If you do not set this callback,
+  /// the web view will behave as if the user selected the OK button.
+  final Future<void> Function(String message)? runJavaScriptAlertPanel;
+
+  /// Indicates the client should display a javascript confirm dialog.
+  ///
+  /// If you do not set this callback,
+  /// the web view will behave as if the user selected the Cancel button.
+  final Future<bool> Function(String message)? runJavaScriptConfirmPanel;
+
+  /// Indicates the client should display a javascript prompt dialog.
+  ///
+  /// If you do not set this callback,
+  /// the web view will behave as if the user selected the Cancel button.
+  final Future<String> Function(String prompt, String? defaultText)?
+      runJavaScriptTextInputPanel;
 
   @override
   WKUIDelegate copy() {

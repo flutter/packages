@@ -353,6 +353,28 @@ class WebViewController {
   Future<void> setUserAgent(String? userAgent) {
     return platform.setUserAgent(userAgent);
   }
+
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript alert() dialog.
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(String message) onJavaScriptAlertDialog) async {
+    return platform.setOnJavaScriptAlertDialog(onJavaScriptAlertDialog);
+  }
+
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript confirm() dialog.
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(String message) onJavaScriptConfirmDialog) async {
+    return platform.setOnJavaScriptConfirmDialog(onJavaScriptConfirmDialog);
+  }
+
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript prompt() dialog.
+  Future<void> setOnJavaScriptPromptDialog(
+      Future<String> Function(String message, String? defaultText)
+          onJavaScriptPromptDialog) async {
+    return platform.setOnJavaScriptPromptDialog(onJavaScriptPromptDialog);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.
