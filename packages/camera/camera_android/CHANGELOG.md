@@ -1,3 +1,7 @@
+## 0.10.8+11
+
+* Downgrades AGP version for compatibility with legacy projects.
+
 ## 0.10.8+10
 
 * Sets android.defaults.buildfeatures.buildconfig to true for compatibility with AGP 8.0+.

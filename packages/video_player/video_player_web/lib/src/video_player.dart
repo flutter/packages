@@ -63,11 +63,12 @@ class VideoPlayer {
       ..autoplay = false
       ..controls = false;
 
-    // Allows Safari iOS to play the video inline
+    // Allows Safari iOS to play the video inline.
+    //
+    // This property is not exposed through dart:html so we use the
+    // HTML Boolean attribute form (when present with any value => true)
+    // See: https://developer.mozilla.org/en-US/docs/Glossary/Boolean/HTML
     _videoElement.setAttribute('playsinline', 'true');
-
-    // Set autoplay to false since most browsers won't autoplay a video unless it is muted
-    _videoElement.setAttribute('autoplay', 'false');
 
     _videoElement.onCanPlay.listen((dynamic _) {
       if (!_isInitialized) {

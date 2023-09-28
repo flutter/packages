@@ -1,3 +1,15 @@
+## 11.1.2
+
+- Fixes a bug where the known routes and initial route were logged even when `debugLogDiagnostics` was set to `false`.
+
+## 11.1.1
+
+- Fixes a missing `{@end-tool}` doc directive tag for `GoRoute.name`.
+
+## 11.1.0
+
+- Adds optional parameter `overridePlatformDefaultLocation` to override initial route set by platform.
+
 ## 11.0.1
 
 - Fixes the Android back button ignores top level route's onExit.
