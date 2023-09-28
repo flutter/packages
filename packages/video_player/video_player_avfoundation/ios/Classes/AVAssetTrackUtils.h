@@ -11,4 +11,4 @@
  * Note: https://stackoverflow.com/questions/64161544
  * `AVAssetTrack.preferredTransform` can have wrong `tx` and `ty`.
  */
-CGAffineTransform FLTGetStandardizedTransformForTrack(AVAssetTrack* track);
+CGAffineTransform FVPGetStandardizedTransformForTrack(AVAssetTrack* track);

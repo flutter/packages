@@ -1,3 +1,7 @@
+## 3.10.1
+
+* Bumps androidx.annotation:annotation from 1.5.0 to 1.7.0.
+
 ## 3.10.0
 
 * Adds support for playing video in fullscreen. See

@@ -71,8 +71,12 @@ final class URLLauncherTests: XCTestCase {
     createPlugin().launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
       switch result {
       case .success(_):
+        // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
+        // fail to parse URLs, so the test must allow for either outcome.
         XCTFail("Expected an error")
       case .failure(let error):
+        XCTAssertNotNil(error)
+
         let generalError = error as! GeneralError
         XCTAssertEqual(generalError.code, "argument_error")
         XCTAssertEqual(generalError.message, "Unable to parse URL")
