@@ -1,3 +1,7 @@
+## 0.10.6
+
+* Adds `CaptureMode` as a parameter to allow configuring the camera for taking photos or videos. `CaptureMode.photo` selects an appropriate 4:3 aspect ratio depending on the `ResolutionPreset`.
+
 ## 0.10.5+5
 
 * Fixes bug where old camera resources were not disposed when switching between camera descriptions.

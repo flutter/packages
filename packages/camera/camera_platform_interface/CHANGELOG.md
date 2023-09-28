@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Adds `CaptureMode` as a parameter to allow configuring the camera for taking photos or videos. `CaptureMode.photo` selects an appropriate 4:3 aspect ratio depending on the `ResolutionPreset`.
+
 ## 2.6.0
 
 * Adds support to control video fps and bitrate. See `CameraPlatform.createCameraWithSettings`.
