@@ -918,8 +918,13 @@ public class CoreTests {
   }
 
   public interface Result<T> {
-    @SuppressWarnings("UnknownNullness")
-    void success(T result);
+    void success(@NonNull T result);
+
+    void error(@NonNull Throwable error);
+  }
+
+  public interface NullableResult<T> {
+    void success(@Nullable T result);
 
     void error(@NonNull Throwable error);
   }
@@ -1088,46 +1093,48 @@ public class CoreTests {
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result);
     /** Responds with an error from an async function returning a value. */
-    void throwAsyncError(@NonNull Result<Object> result);
+    void throwAsyncError(@NonNull NullableResult<Object> result);
     /** Responds with an error from an async void function. */
     void throwAsyncErrorFromVoid(@NonNull Result<Void> result);
     /** Responds with a Flutter error from an async function returning a value. */
-    void throwAsyncFlutterError(@NonNull Result<Object> result);
+    void throwAsyncFlutterError(@NonNull NullableResult<Object> result);
     /** Returns the passed object, to test async serialization and deserialization. */
     void echoAsyncAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
     /** Returns the passed object, to test serialization and deserialization. */
     void echoAsyncNullableAllNullableTypes(
-        @Nullable AllNullableTypes everything, @NonNull Result<AllNullableTypes> result);
+        @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result);
     /** Returns passed in int asynchronously. */
-    void echoAsyncNullableInt(@Nullable Long anInt, @NonNull Result<Long> result);
+    void echoAsyncNullableInt(@Nullable Long anInt, @NonNull NullableResult<Long> result);
     /** Returns passed in double asynchronously. */
-    void echoAsyncNullableDouble(@Nullable Double aDouble, @NonNull Result<Double> result);
+    void echoAsyncNullableDouble(@Nullable Double aDouble, @NonNull NullableResult<Double> result);
     /** Returns the passed in boolean asynchronously. */
-    void echoAsyncNullableBool(@Nullable Boolean aBool, @NonNull Result<Boolean> result);
+    void echoAsyncNullableBool(@Nullable Boolean aBool, @NonNull NullableResult<Boolean> result);
     /** Returns the passed string asynchronously. */
-    void echoAsyncNullableString(@Nullable String aString, @NonNull Result<String> result);
+    void echoAsyncNullableString(@Nullable String aString, @NonNull NullableResult<String> result);
     /** Returns the passed in Uint8List asynchronously. */
-    void echoAsyncNullableUint8List(@Nullable byte[] aUint8List, @NonNull Result<byte[]> result);
+    void echoAsyncNullableUint8List(
+        @Nullable byte[] aUint8List, @NonNull NullableResult<byte[]> result);
     /** Returns the passed in generic Object asynchronously. */
-    void echoAsyncNullableObject(@Nullable Object anObject, @NonNull Result<Object> result);
+    void echoAsyncNullableObject(@Nullable Object anObject, @NonNull NullableResult<Object> result);
     /** Returns the passed list, to test asynchronous serialization and deserialization. */
-    void echoAsyncNullableList(@Nullable List<Object> aList, @NonNull Result<List<Object>> result);
+    void echoAsyncNullableList(
+        @Nullable List<Object> aList, @NonNull NullableResult<List<Object>> result);
     /** Returns the passed map, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableMap(
-        @Nullable Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+        @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result);
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
-    void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull Result<AnEnum> result);
+    void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
 
     void callFlutterNoop(@NonNull Result<Void> result);
 
-    void callFlutterThrowError(@NonNull Result<Object> result);
+    void callFlutterThrowError(@NonNull NullableResult<Object> result);
 
     void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result);
 
     void callFlutterEchoAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
 
     void callFlutterEchoAllNullableTypes(
-        @Nullable AllNullableTypes everything, @NonNull Result<AllNullableTypes> result);
+        @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result);
 
     void callFlutterSendMultipleNullableTypes(
         @Nullable Boolean aNullableBool,
@@ -1152,23 +1159,28 @@ public class CoreTests {
 
     void callFlutterEchoEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result);
 
-    void callFlutterEchoNullableBool(@Nullable Boolean aBool, @NonNull Result<Boolean> result);
+    void callFlutterEchoNullableBool(
+        @Nullable Boolean aBool, @NonNull NullableResult<Boolean> result);
 
-    void callFlutterEchoNullableInt(@Nullable Long anInt, @NonNull Result<Long> result);
+    void callFlutterEchoNullableInt(@Nullable Long anInt, @NonNull NullableResult<Long> result);
 
-    void callFlutterEchoNullableDouble(@Nullable Double aDouble, @NonNull Result<Double> result);
+    void callFlutterEchoNullableDouble(
+        @Nullable Double aDouble, @NonNull NullableResult<Double> result);
 
-    void callFlutterEchoNullableString(@Nullable String aString, @NonNull Result<String> result);
+    void callFlutterEchoNullableString(
+        @Nullable String aString, @NonNull NullableResult<String> result);
 
-    void callFlutterEchoNullableUint8List(@Nullable byte[] aList, @NonNull Result<byte[]> result);
+    void callFlutterEchoNullableUint8List(
+        @Nullable byte[] aList, @NonNull NullableResult<byte[]> result);
 
     void callFlutterEchoNullableList(
-        @Nullable List<Object> aList, @NonNull Result<List<Object>> result);
+        @Nullable List<Object> aList, @NonNull NullableResult<List<Object>> result);
 
     void callFlutterEchoNullableMap(
-        @Nullable Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result);
+        @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result);
 
-    void callFlutterEchoNullableEnum(@Nullable AnEnum anEnum, @NonNull Result<AnEnum> result);
+    void callFlutterEchoNullableEnum(
+        @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
 
     /** The codec used by HostIntegrationCoreApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -2198,8 +2210,8 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Object> resultCallback =
-                    new Result<Object>() {
+                NullableResult<Object> resultCallback =
+                    new NullableResult<Object>() {
                       public void success(Object result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2256,8 +2268,8 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Object> resultCallback =
-                    new Result<Object>() {
+                NullableResult<Object> resultCallback =
+                    new NullableResult<Object>() {
                       public void success(Object result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2318,8 +2330,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
-                Result<AllNullableTypes> resultCallback =
-                    new Result<AllNullableTypes>() {
+                NullableResult<AllNullableTypes> resultCallback =
+                    new NullableResult<AllNullableTypes>() {
                       public void success(AllNullableTypes result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2349,8 +2361,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number anIntArg = (Number) args.get(0);
-                Result<Long> resultCallback =
-                    new Result<Long>() {
+                NullableResult<Long> resultCallback =
+                    new NullableResult<Long>() {
                       public void success(Long result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2381,8 +2393,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
-                Result<Double> resultCallback =
-                    new Result<Double>() {
+                NullableResult<Double> resultCallback =
+                    new NullableResult<Double>() {
                       public void success(Double result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2412,8 +2424,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
-                Result<Boolean> resultCallback =
-                    new Result<Boolean>() {
+                NullableResult<Boolean> resultCallback =
+                    new NullableResult<Boolean>() {
                       public void success(Boolean result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2443,8 +2455,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
-                Result<String> resultCallback =
-                    new Result<String>() {
+                NullableResult<String> resultCallback =
+                    new NullableResult<String>() {
                       public void success(String result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2474,8 +2486,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aUint8ListArg = (byte[]) args.get(0);
-                Result<byte[]> resultCallback =
-                    new Result<byte[]>() {
+                NullableResult<byte[]> resultCallback =
+                    new NullableResult<byte[]>() {
                       public void success(byte[] result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2505,8 +2517,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Object anObjectArg = args.get(0);
-                Result<Object> resultCallback =
-                    new Result<Object>() {
+                NullableResult<Object> resultCallback =
+                    new NullableResult<Object>() {
                       public void success(Object result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2536,8 +2548,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> aListArg = (List<Object>) args.get(0);
-                Result<List<Object>> resultCallback =
-                    new Result<List<Object>>() {
+                NullableResult<List<Object>> resultCallback =
+                    new NullableResult<List<Object>>() {
                       public void success(List<Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2567,8 +2579,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                Result<Map<String, Object>> resultCallback =
-                    new Result<Map<String, Object>>() {
+                NullableResult<Map<String, Object>> resultCallback =
+                    new NullableResult<Map<String, Object>>() {
                       public void success(Map<String, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2598,8 +2610,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
-                Result<AnEnum> resultCallback =
-                    new Result<AnEnum>() {
+                NullableResult<AnEnum> resultCallback =
+                    new NullableResult<AnEnum>() {
                       public void success(AnEnum result) {
                         wrapped.add(0, result == null ? null : result.index);
                         reply.reply(wrapped);
@@ -2656,8 +2668,8 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Object> resultCallback =
-                    new Result<Object>() {
+                NullableResult<Object> resultCallback =
+                    new NullableResult<Object>() {
                       public void success(Object result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -2747,8 +2759,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
-                Result<AllNullableTypes> resultCallback =
-                    new Result<AllNullableTypes>() {
+                NullableResult<AllNullableTypes> resultCallback =
+                    new NullableResult<AllNullableTypes>() {
                       public void success(AllNullableTypes result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -3064,8 +3076,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Boolean aBoolArg = (Boolean) args.get(0);
-                Result<Boolean> resultCallback =
-                    new Result<Boolean>() {
+                NullableResult<Boolean> resultCallback =
+                    new NullableResult<Boolean>() {
                       public void success(Boolean result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -3095,8 +3107,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number anIntArg = (Number) args.get(0);
-                Result<Long> resultCallback =
-                    new Result<Long>() {
+                NullableResult<Long> resultCallback =
+                    new NullableResult<Long>() {
                       public void success(Long result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -3127,8 +3139,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Double aDoubleArg = (Double) args.get(0);
-                Result<Double> resultCallback =
-                    new Result<Double>() {
+                NullableResult<Double> resultCallback =
+                    new NullableResult<Double>() {
                       public void success(Double result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -3158,8 +3170,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String aStringArg = (String) args.get(0);
-                Result<String> resultCallback =
-                    new Result<String>() {
+                NullableResult<String> resultCallback =
+                    new NullableResult<String>() {
                       public void success(String result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -3189,8 +3201,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 byte[] aListArg = (byte[]) args.get(0);
-                Result<byte[]> resultCallback =
-                    new Result<byte[]>() {
+                NullableResult<byte[]> resultCallback =
+                    new NullableResult<byte[]>() {
                       public void success(byte[] result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -3220,8 +3232,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<Object> aListArg = (List<Object>) args.get(0);
-                Result<List<Object>> resultCallback =
-                    new Result<List<Object>>() {
+                NullableResult<List<Object>> resultCallback =
+                    new NullableResult<List<Object>>() {
                       public void success(List<Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -3251,8 +3263,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Map<String, Object> aMapArg = (Map<String, Object>) args.get(0);
-                Result<Map<String, Object>> resultCallback =
-                    new Result<Map<String, Object>>() {
+                NullableResult<Map<String, Object>> resultCallback =
+                    new NullableResult<Map<String, Object>>() {
                       public void success(Map<String, Object> result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
@@ -3282,8 +3294,8 @@ public class CoreTests {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
-                Result<AnEnum> resultCallback =
-                    new Result<AnEnum>() {
+                NullableResult<AnEnum> resultCallback =
+                    new NullableResult<AnEnum>() {
                       public void success(AnEnum result) {
                         wrapped.add(0, result == null ? null : result.index);
                         reply.reply(wrapped);
@@ -3395,7 +3407,7 @@ public class CoreTests {
           });
     }
     /** Responds with an error from an async function returning a value. */
-    public void throwError(@NonNull Result<Object> result) {
+    public void throwError(@NonNull NullableResult<Object> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3490,7 +3502,8 @@ public class CoreTests {
     }
     /** Returns the passed object, to test serialization and deserialization. */
     public void echoAllNullableTypes(
-        @Nullable AllNullableTypes everythingArg, @NonNull Result<AllNullableTypes> result) {
+        @Nullable AllNullableTypes everythingArg,
+        @NonNull NullableResult<AllNullableTypes> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3855,7 +3868,8 @@ public class CoreTests {
           });
     }
     /** Returns the passed boolean, to test serialization and deserialization. */
-    public void echoNullableBool(@Nullable Boolean aBoolArg, @NonNull Result<Boolean> result) {
+    public void echoNullableBool(
+        @Nullable Boolean aBoolArg, @NonNull NullableResult<Boolean> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3885,7 +3899,7 @@ public class CoreTests {
           });
     }
     /** Returns the passed int, to test serialization and deserialization. */
-    public void echoNullableInt(@Nullable Long anIntArg, @NonNull Result<Long> result) {
+    public void echoNullableInt(@Nullable Long anIntArg, @NonNull NullableResult<Long> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3916,7 +3930,8 @@ public class CoreTests {
           });
     }
     /** Returns the passed double, to test serialization and deserialization. */
-    public void echoNullableDouble(@Nullable Double aDoubleArg, @NonNull Result<Double> result) {
+    public void echoNullableDouble(
+        @Nullable Double aDoubleArg, @NonNull NullableResult<Double> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3946,7 +3961,8 @@ public class CoreTests {
           });
     }
     /** Returns the passed string, to test serialization and deserialization. */
-    public void echoNullableString(@Nullable String aStringArg, @NonNull Result<String> result) {
+    public void echoNullableString(
+        @Nullable String aStringArg, @NonNull NullableResult<String> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -3976,7 +3992,8 @@ public class CoreTests {
           });
     }
     /** Returns the passed byte list, to test serialization and deserialization. */
-    public void echoNullableUint8List(@Nullable byte[] aListArg, @NonNull Result<byte[]> result) {
+    public void echoNullableUint8List(
+        @Nullable byte[] aListArg, @NonNull NullableResult<byte[]> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -4007,7 +4024,7 @@ public class CoreTests {
     }
     /** Returns the passed list, to test serialization and deserialization. */
     public void echoNullableList(
-        @Nullable List<Object> aListArg, @NonNull Result<List<Object>> result) {
+        @Nullable List<Object> aListArg, @NonNull NullableResult<List<Object>> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -4038,7 +4055,8 @@ public class CoreTests {
     }
     /** Returns the passed map, to test serialization and deserialization. */
     public void echoNullableMap(
-        @Nullable Map<String, Object> aMapArg, @NonNull Result<Map<String, Object>> result) {
+        @Nullable Map<String, Object> aMapArg,
+        @NonNull NullableResult<Map<String, Object>> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -4068,7 +4086,8 @@ public class CoreTests {
           });
     }
     /** Returns the passed enum to test serialization and deserialization. */
-    public void echoNullableEnum(@Nullable AnEnum anEnumArg, @NonNull Result<AnEnum> result) {
+    public void echoNullableEnum(
+        @Nullable AnEnum anEnumArg, @NonNull NullableResult<AnEnum> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,

@@ -454,6 +454,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       });
 
       for (final Method func in api.methods) {
+        final String resultType =
+            func.returnType.isNullable ? 'NullableResult' : 'Result';
         final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
             ? 'Void'
@@ -463,7 +465,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             indent, func.documentationComments, _docCommentSpec);
         if (func.arguments.isEmpty) {
           indent.write(
-              'public void ${func.name}(@NonNull Result<$returnType> result) ');
+              'public void ${func.name}(@NonNull $resultType<$returnType> result) ');
           sendArgument = 'null';
         } else {
           final Iterable<String> argTypes = func.arguments
@@ -483,7 +485,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
               map2(argTypes, argNames, (String x, String y) => '$x $y')
                   .join(', ');
           indent.write(
-              'public void ${func.name}($argsSignature, @NonNull Result<$returnType> result) ');
+              'public void ${func.name}($argsSignature, @NonNull $resultType<$returnType> result) ');
         }
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
@@ -634,6 +636,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   ///   int add(int x, int y);
   void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
       Indent indent, Api api, final Method method) {
+    final String resultType =
+        method.returnType.isNullable ? 'NullableResult' : 'Result';
     final String nullableType = method.isAsynchronous
         ? ''
         : _nullabilityAnnotationFromType(method.returnType);
@@ -652,10 +656,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       }));
     }
     if (method.isAsynchronous) {
-      final String resultType = method.returnType.isVoid
+      final String returnType = method.returnType.isVoid
           ? 'Void'
           : _javaTypeForDartType(method.returnType);
-      argSignature.add('@NonNull Result<$resultType> result');
+      argSignature.add('@NonNull $resultType<$returnType> result');
     }
     if (method.documentationComments.isNotEmpty) {
       addDocumentationComments(
@@ -747,10 +751,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     ? ' == null ? null : $resultValue.index'
                     : '.index';
               }
+              final String resultType =
+                  method.returnType.isNullable ? 'NullableResult' : 'Result';
               const String resultName = 'resultCallback';
               indent.format('''
-Result<$returnType> $resultName =
-\t\tnew Result<$returnType>() {
+$resultType<$returnType> $resultName =
+\t\tnew $resultType<$returnType>() {
 \t\t\tpublic void success($returnType result) {
 \t\t\t\twrapped.add(0, $resultValue$enumTag);
 \t\t\t\treply.reply(wrapped);
@@ -869,11 +875,14 @@ Result<$returnType> $resultName =
   void _writeResultInterface(Indent indent) {
     indent.write('public interface Result<T> ');
     indent.addScoped('{', '}', () {
-      // TODO(stuartmorgan): Add a `NullableResult<T>`, and annotate each with
-      // the correct nullability here. See
-      // https://github.com/flutter/flutter/issues/124268
-      indent.writeln('@SuppressWarnings("UnknownNullness")');
-      indent.writeln('void success(T result);');
+      indent.writeln('void success(@NonNull T result);');
+      indent.newln();
+      indent.writeln('void error(@NonNull Throwable error);');
+    });
+
+    indent.write('public interface NullableResult<T> ');
+    indent.addScoped('{', '}', () {
+      indent.writeln('void success(@Nullable T result);');
       indent.newln();
       indent.writeln('void error(@NonNull Throwable error);');
     });

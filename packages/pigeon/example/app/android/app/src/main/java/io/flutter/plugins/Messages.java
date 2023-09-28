@@ -182,8 +182,13 @@ public class Messages {
   }
 
   public interface Result<T> {
-    @SuppressWarnings("UnknownNullness")
-    void success(T result);
+    void success(@NonNull T result);
+
+    void error(@NonNull Throwable error);
+  }
+
+  public interface NullableResult<T> {
+    void success(@Nullable T result);
 
     void error(@NonNull Throwable error);
   }

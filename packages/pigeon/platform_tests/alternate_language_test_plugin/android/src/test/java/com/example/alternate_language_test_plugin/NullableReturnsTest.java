@@ -76,7 +76,7 @@ public class NullableReturnsTest {
     boolean[] didCall = {false};
     api.doit(
         null,
-        new NullableReturns.Result<Long>() {
+        new NullableReturns.NullableResult<Long>() {
           public void success(Long result) {
             didCall[0] = true;
             assertNull(result);

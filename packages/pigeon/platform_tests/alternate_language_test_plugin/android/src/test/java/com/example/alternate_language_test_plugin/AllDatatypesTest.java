@@ -94,7 +94,7 @@ public class AllDatatypesTest {
     boolean[] didCall = {false};
     api.echoAllNullableTypes(
         everything,
-        new CoreTests.Result<AllNullableTypes>() {
+        new CoreTests.NullableResult<AllNullableTypes>() {
           public void success(AllNullableTypes result) {
             didCall[0] = true;
             assertNull(everything.getANullableBool());
@@ -196,7 +196,7 @@ public class AllDatatypesTest {
     boolean[] didCall = {false};
     api.echoAllNullableTypes(
         everything,
-        new CoreTests.Result<AllNullableTypes>() {
+        new CoreTests.NullableResult<AllNullableTypes>() {
           public void success(AllNullableTypes result) {
             didCall[0] = true;
             compareAllNullableTypes(everything, result);
