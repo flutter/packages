@@ -214,13 +214,15 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithCustomHeaders(_urlTextController.text);
+                  _launched = _launchInWebViewWithCustomHeaders(
+                      _urlTextController.text);
                 }),
                 child: const Text('Launch in app (Custom headers)'),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithJavaScript(_urlTextController.text);
+                  _launched =
+                      _launchInWebViewWithJavaScript(_urlTextController.text);
                 }),
                 child: const Text('Launch in app (JavaScript ON)'),
               ),
