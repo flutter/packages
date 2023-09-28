@@ -38,4 +38,4 @@ and then deleting everything but `android/` from it:
 - Replaced `jcenter` in build.gradle with `mavenCentral`, due to the
   jcenter.bintray.com shutdown.
 - Upgraded AGP version from 4.1.0 to 7.0.0 and Gradle version from 6.7
-  to 7.0.2 to accomodate the AGP version bump.
+  to 7.0.2 to accommodate the AGP version bump.
