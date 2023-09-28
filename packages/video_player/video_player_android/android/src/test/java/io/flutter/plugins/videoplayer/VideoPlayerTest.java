@@ -7,7 +7,6 @@ package io.flutter.plugins.videoplayer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
@@ -19,21 +18,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
-
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.upstream.FileDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSink;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,8 +55,7 @@ public class VideoPlayerTest {
   private final long maxFileSize = 10 * 1024 * 1024; // 10MB
   @Captor private ArgumentCaptor<HashMap<String, Object>> eventCaptor;
 
-  @Mock
-  Context mockContext;
+  @Mock Context mockContext;
 
   @Mock DataSource.Factory mockUpstreamDataSourceFactory;
 
@@ -90,14 +80,13 @@ public class VideoPlayerTest {
     // Simulate an existing dataSource
     fakeDataSource = mock(DataSource.class);
     fakeCacheDataSourceFactory = mock(CacheDataSourceFactory.class);
-
   }
 
   @Test
   public void testCreateDataSourceFactory() {
     CacheDataSourceFactory factory =
-            new CacheDataSourceFactory(
-                    mockContext, maxCacheSize, maxFileSize, mockUpstreamDataSourceFactory);
+        new CacheDataSourceFactory(
+            mockContext, maxCacheSize, maxFileSize, mockUpstreamDataSourceFactory);
 
     assertNotNull(factory);
   }

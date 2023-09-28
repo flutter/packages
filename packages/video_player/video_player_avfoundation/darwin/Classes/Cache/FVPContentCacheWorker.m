@@ -17,7 +17,7 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
 @property(nonatomic, strong) NSFileHandle *readFileHandle;
 @property(nonatomic, strong) NSFileHandle *writeFileHandle;
 @property(nonatomic, copy) NSString *filePath;
-@property (nonatomic, strong, readwrite) NSError *setupError;
+@property(nonatomic, strong, readwrite) NSError *setupError;
 @property(nonatomic, strong) FVPCacheConfiguration *internalCacheConfiguration;
 
 @property(nonatomic) long long currentOffset;
@@ -72,8 +72,8 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
         _internalCacheConfiguration.url = url;
       }
     }
-      
-  _setupError = error;
+
+    _setupError = error;
   }
   return self;
 }
@@ -135,8 +135,6 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
         if (intersectionRange.length > 0) {
           NSInteger package = intersectionRange.length / kPackageLength;
           for (NSInteger i = 0; i <= package; i++) {
-              
-              
             FVPCacheAction *action = [FVPCacheAction new];
             action.cacheType = FVPCacheTypeUseLocal;
 

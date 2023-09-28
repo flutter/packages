@@ -39,7 +39,6 @@
   return nil;
 }
 
-
 - (void)startWork {
   AVAssetResourceLoadingDataRequest *dataRequest = self.request.dataRequest;
 

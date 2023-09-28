@@ -125,7 +125,7 @@ static void *rateContext = &rateContext;
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                 playerFactory:(id<FVPPlayerFactory>)playerFactory
-                  enableCache:(NSNumber *)enable 
+                  enableCache:(NSNumber *)enable
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
 #if TARGET_OS_OSX
@@ -284,7 +284,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                frameUpdater:(FVPFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
               playerFactory:(id<FVPPlayerFactory>)playerFactory
-                enableCache:(NSNumber *)cacheEnabled 
+                enableCache:(NSNumber *)cacheEnabled
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
@@ -784,11 +784,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       isCacheSupported = [self isCacheSupported:input.uri];
     }
     BOOL enableCache = input.enableCache.boolValue ? isCacheSupported : NO;
-      player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
+    player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
                                      httpHeaders:input.httpHeaders
                                    playerFactory:_playerFactory
-                                       enableCache:[NSNumber numberWithBool:enableCache]
+                                     enableCache:[NSNumber numberWithBool:enableCache]
                                        registrar:self.registrar];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
@@ -891,7 +891,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)seekTo:(FVPPositionMessage *)input
-   completion:(void (^)(FlutterError *_Nullable))completion {
+    completion:(void (^)(FlutterError *_Nullable))completion {
   FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
   [player seekTo:input.position.intValue
       completionHandler:^(BOOL finished) {

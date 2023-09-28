@@ -139,10 +139,10 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
          formatHint:nil
         enableCache:@NO
         httpHeaders:@{}];
-  FLTTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
+  FVPTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureMessage);
-  FLTVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
+    FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
   XCTAssertNotNil(player);
 
   XCTAssertNotNil(player.playerLayer, @"AVPlayerLayer should be present.");
@@ -154,14 +154,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
       [registry registrarForPlugin:@"testPlayerLayerWorkaroundWithCache"];
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      [[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTCreateMessage *create = [FLTCreateMessage
+    FVPCreateMessage *create = [FVPCreateMessage
       makeWithAsset:nil
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
@@ -223,17 +223,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CanCacheMP4"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.mp4"];
 
-  FLTIsSupportedMessageResponse *response =
+    FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertTrue(response.isSupported.boolValue);
@@ -247,17 +247,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CanCacheFLAC"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/flac/play.flac"];
 
-  FLTIsSupportedMessageResponse *response =
+    FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertTrue(response.isSupported.boolValue);
@@ -271,17 +271,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheM3U8"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
 
-  FLTIsSupportedMessageResponse *response =
+    FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.isSupported.boolValue);
@@ -295,18 +295,18 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheAAC"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/"
                   @"fileSequence0.aac"];
 
-  FLTIsSupportedMessageResponse *response =
+    FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.isSupported.boolValue);
@@ -320,18 +320,18 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheTS"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear1/"
                   @"fileSequence0.ts"];
 
-  FLTIsSupportedMessageResponse *response =
+    FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.isSupported.boolValue);
@@ -345,18 +345,18 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheMKV"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/mkv/"
                   @"android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv"];
 
-  FLTIsSupportedMessageResponse *response =
+    FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.isSupported.boolValue);
@@ -370,18 +370,18 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheWEBM"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/gen-3/screens/"
                   @"dash-vod-single-segment/video-vp9-360.webm"];
 
-  FLTIsSupportedMessageResponse *response =
+FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.isSupported.boolValue);
@@ -395,17 +395,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheMP3"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-0/play.mp3"];
 
-  FLTIsSupportedMessageResponse *response =
+    FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.isSupported.boolValue);
@@ -419,17 +419,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCachOGG"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FLTIsCacheSupportedMessage *message = [FLTIsCacheSupportedMessage
+    FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/ogg/play.ogg"];
 
-  FLTIsSupportedMessageResponse *response =
+    FVPIsSupportedMessageResponse *response =
       [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.isSupported.boolValue);
@@ -443,8 +443,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"canClearCache"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FLTVideoPlayerPlugin *videoPlayerPlugin =
-      (FLTVideoPlayerPlugin *)[[FLTVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
