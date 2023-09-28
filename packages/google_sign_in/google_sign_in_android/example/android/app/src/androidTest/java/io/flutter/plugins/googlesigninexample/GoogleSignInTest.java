@@ -6,20 +6,23 @@ package io.flutter.plugins.googlesigninexample;
 
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.core.app.ActivityScenario;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import io.flutter.plugins.googlesignin.GoogleSignInPlugin;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class GoogleSignInTest {
+  @Rule
+  public ActivityScenarioRule<GoogleSignInTestActivity> myActivityTestRule =
+      new ActivityScenarioRule<>(GoogleSignInTestActivity.class);
+
   @Test
-  @Ignore("Will update if works")
   public void googleSignInPluginIsAdded() {
-    final ActivityScenario<GoogleSignInTestActivity> scenario =
-        ActivityScenario.launch(GoogleSignInTestActivity.class);
-    scenario.onActivity(
-        activity -> {
-          assertTrue(activity.engine.getPlugins().has(GoogleSignInPlugin.class));
-        });
+    myActivityTestRule
+        .getScenario()
+        .onActivity(
+            activity -> {
+              assertTrue(activity.engine.getPlugins().has(GoogleSignInPlugin.class));
+            });
   }
 }

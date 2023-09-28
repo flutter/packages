@@ -6,20 +6,23 @@ package io.flutter.plugins.imagepickerexample;
 
 import static org.junit.Assert.assertTrue;
 
-import androidx.test.core.app.ActivityScenario;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import io.flutter.plugins.imagepicker.ImagePickerPlugin;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class ImagePickerTest {
+  @Rule
+  public ActivityScenarioRule<ImagePickerTestActivity> myActivityTestRule =
+      new ActivityScenarioRule<>(ImagePickerTestActivity.class);
+
   @Test
-  @Ignore("Will update if works")
   public void imagePickerPluginIsAdded() {
-    final ActivityScenario<ImagePickerTestActivity> scenario =
-        ActivityScenario.launch(ImagePickerTestActivity.class);
-    scenario.onActivity(
-        activity -> {
-          assertTrue(activity.engine.getPlugins().has(ImagePickerPlugin.class));
-        });
+    myActivityTestRule
+        .getScenario()
+        .onActivity(
+            activity -> {
+              assertTrue(activity.engine.getPlugins().has(ImagePickerPlugin.class));
+            });
   }
 }
