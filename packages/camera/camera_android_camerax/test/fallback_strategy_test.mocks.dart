@@ -33,7 +33,7 @@ class MockTestFallbackStrategyHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
-    _i3.VideoQualityConstraint? quality,
+    _i3.VideoQuality? quality,
     _i3.VideoResolutionFallbackRule? fallbackRule,
   ) =>
       super.noSuchMethod(

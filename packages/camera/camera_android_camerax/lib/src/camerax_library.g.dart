@@ -49,7 +49,7 @@ enum LiveDataSupportedType {
 /// These are pre-defined quality constants that are universally used for video.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/Quality.
-enum VideoQualityConstraint {
+enum VideoQuality {
   SD,
   HD,
   FHD,
@@ -59,6 +59,8 @@ enum VideoQualityConstraint {
 }
 
 /// Fallback rules for selecting video resolution.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
 enum VideoResolutionFallbackRule {
   higherQualityOrLowerThan,
   higherQualityThan,
@@ -182,6 +184,28 @@ class ExposureCompensationRange {
     return ExposureCompensationRange(
       minCompensation: result[0]! as int,
       maxCompensation: result[1]! as int,
+    );
+  }
+}
+
+/// Convenience class for sending lists of [Quality]s.
+class VideoQualityData {
+  VideoQualityData({
+    required this.quality,
+  });
+
+  VideoQuality quality;
+
+  Object encode() {
+    return <Object?>[
+      quality.index,
+    ];
+  }
+
+  static VideoQualityData decode(Object result) {
+    result as List<Object?>;
+    return VideoQualityData(
+      quality: VideoQuality.values[result[0]! as int],
     );
   }
 }
@@ -2478,6 +2502,9 @@ class _QualitySelectorHostApiCodec extends StandardMessageCodec {
     if (value is ResolutionInfo) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
+    } else if (value is VideoQualityData) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -2488,6 +2515,8 @@ class _QualitySelectorHostApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return ResolutionInfo.decode(readValue(buffer)!);
+      case 129:
+        return VideoQualityData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2506,14 +2535,14 @@ class QualitySelectorHostApi {
 
   Future<void> create(
       int arg_identifier,
-      List<int?> arg_videoQualityConstraintIndexList,
+      List<VideoQualityData?> arg_videoQualityDataList,
       int? arg_fallbackStrategyId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.QualitySelectorHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(<Object?>[
       arg_identifier,
-      arg_videoQualityConstraintIndexList,
+      arg_videoQualityDataList,
       arg_fallbackStrategyId
     ]) as List<Object?>?;
     if (replyList == null) {
@@ -2533,7 +2562,7 @@ class QualitySelectorHostApi {
   }
 
   Future<ResolutionInfo> getResolution(
-      int arg_cameraInfoId, VideoQualityConstraint arg_quality) async {
+      int arg_cameraInfoId, VideoQuality arg_quality) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.QualitySelectorHostApi.getResolution', codec,
         binaryMessenger: _binaryMessenger);
@@ -2571,7 +2600,7 @@ class FallbackStrategyHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, VideoQualityConstraint arg_quality,
+  Future<void> create(int arg_identifier, VideoQuality arg_quality,
       VideoResolutionFallbackRule arg_fallbackRule) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FallbackStrategyHostApi.create', codec,

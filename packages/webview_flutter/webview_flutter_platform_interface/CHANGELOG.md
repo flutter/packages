@@ -1,3 +1,8 @@
+## 2.6.0
+
+* Adds support to register a callback to intercept messages that are written to
+  the JavaScript console. See `PlatformWebViewController.setOnConsoleMessage`.
+
 ## 2.5.1
 
 * Adds pub topics to package metadata.

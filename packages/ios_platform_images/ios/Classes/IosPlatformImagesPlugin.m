@@ -14,35 +14,27 @@
 @implementation IosPlatformImagesPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/ios_platform_images"
-                                  binaryMessenger:[registrar messenger]];
+  FPIPlatformImagesApiSetup(registrar.messenger, [[IosPlatformImagesPlugin alloc] init]);
+}
 
-  [channel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
-    if ([@"loadImage" isEqualToString:call.method]) {
-      NSString *name = call.arguments;
-      UIImage *image = [UIImage imageNamed:name];
-      NSData *data = UIImagePNGRepresentation(image);
-      if (data) {
-        result(@{
-          @"scale" : @(image.scale),
-          @"data" : [FlutterStandardTypedData typedDataWithBytes:data],
-        });
-      } else {
-        result(nil);
-      }
-      return;
-    } else if ([@"resolveURL" isEqualToString:call.method]) {
-      NSArray *args = call.arguments;
-      NSString *name = args[0];
-      NSString *extension = (args[1] == (id)NSNull.null) ? nil : args[1];
+- (nullable FPIPlatformImageData *)
+    loadImageWithName:(nonnull NSString *)name
+                error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  UIImage *image = [UIImage imageNamed:name];
+  NSData *data = UIImagePNGRepresentation(image);
+  if (!data) {
+    return nil;
+  }
+  return [FPIPlatformImageData makeWithData:[FlutterStandardTypedData typedDataWithBytes:data]
+                                      scale:@(image.scale)];
+}
 
-      NSURL *url = [[NSBundle mainBundle] URLForResource:name withExtension:extension];
-      result(url.absoluteString);
-      return;
-    }
-    result(FlutterMethodNotImplemented);
-  }];
+- (nullable NSString *)resolveURLForResource:(nonnull NSString *)name
+                               withExtension:(nullable NSString *)extension
+                                       error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                 error {
+  NSURL *url = [[NSBundle mainBundle] URLForResource:name withExtension:extension];
+  return url.absoluteString;
 }
 
 @end
