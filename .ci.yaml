@@ -380,6 +380,34 @@ targets:
           {"dependency": "android_virtual_device", "version": "33"}
         ]
 
+  - name: Linux_android android_platform_tests_api_33_shard_1 master
+    recipe: packages/packages
+    timeout: 60
+    bringup: true
+    properties:
+      target_file: android_platform_tests_api_33.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
+
+  - name: Linux_android android_platform_tests_api_33_shard_2 master
+    recipe: packages/packages
+    timeout: 60
+    bringup: true
+    properties:
+      target_file: android_platform_tests_api_33.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
+
   - name: Linux_android android_platform_tests_shard_1 stable
     recipe: packages/packages
     presubmit: false
@@ -459,6 +487,34 @@ targets:
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 5 --shardCount 6"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
+
+  - name: Linux_android android_platform_tests_api_33_shard_1 stable
+    recipe: packages/packages
+    timeout: 60
+    bringup: true
+    properties:
+      target_file: android_platform_tests_api_33.yaml
+      channel: master
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      dependencies: >-
+        [
+          {"dependency": "android_virtual_device", "version": "33"}
+        ]
+
+  - name: Linux_android android_platform_tests_api_33_shard_2 stable
+    recipe: packages/packages
+    timeout: 60
+    bringup: true
+    properties:
+      target_file: android_platform_tests_api_33.yaml
+      channel: master
+      version_file: flutter_stable.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "33"}
