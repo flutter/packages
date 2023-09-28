@@ -9,42 +9,49 @@ import XCTest
 
 final class URLLauncherTests: XCTestCase {
 
-  private func createPlugin() -> URLLauncherPlugin {
+  private func createPlugin() -> FLTURLLauncherPlugin {
     let launcher = FakeLauncher()
-    return URLLauncherPlugin(launcher: launcher)
+    return FLTURLLauncherPlugin(launcher: launcher)
   }
 
-  private func createPlugin(launcher: FakeLauncher) -> URLLauncherPlugin {
-    return URLLauncherPlugin(launcher: launcher)
+  private func createPlugin(launcher: FakeLauncher) -> FLTURLLauncherPlugin {
+    FLTURLLauncherPlugin(launcher: launcher)
   }
 
   func testCanLaunchSuccess() {
-    let result = createPlugin().canLaunchUrl(url: "good://url")
+    var error: FlutterError?
+    let result = createPlugin().canLaunchURL("good://url", error: &error)
 
-    XCTAssertTrue(result)
+    XCTAssertNotNil(result)
+    XCTAssertTrue(result?.boolValue ?? false)
+    XCTAssertNil(error)
   }
 
   func testCanLaunchFailure() {
-    let result = createPlugin().canLaunchUrl(url: "bad://url")
+    var error: FlutterError?
+    let result = createPlugin().canLaunchURL("bad://url", error: &error)
 
-    XCTAssertFalse(result)
+    XCTAssertNotNil(result)
+    XCTAssertFalse(result?.boolValue ?? true)
   }
 
   func testCanLaunchFailureWithInvalidURL() {
-    let result = createPlugin().canLaunchUrl(url: "urls can't have spaces")
+    var error: FlutterError?
+    let result = createPlugin().canLaunchURL("urls can't have spaces", error: &error)
 
-    XCTAssertFalse(result)
+    XCTAssertNil(result)
+    XCTAssertNotNil(error)
+    XCTAssertEqual(error?.code, "argument_error")
+    XCTAssertEqual(error?.message, "Unable to parse URL")
+    XCTAssertEqual(error?.details as? String, "Provided URL: urls can't have spaces")
   }
 
   func testLaunchSuccess() {
     let expectation = XCTestExpectation(description: "completion called")
-    createPlugin().launchUrl(url: "good://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
+    createPlugin().launchURL("good://url", universalLinksOnly: false) { result, error in
+      XCTAssertNotNil(result)
+      XCTAssertTrue(result?.boolValue ?? false)
+      XCTAssertNil(error)
       expectation.fulfill()
     }
 
@@ -53,13 +60,11 @@ final class URLLauncherTests: XCTestCase {
 
   func testLaunchFailure() {
     let expectation = XCTestExpectation(description: "completion called")
-    createPlugin().launchUrl(url: "bad://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let success):
-        XCTAssertFalse(success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
+
+    createPlugin().launchURL("bad://url", universalLinksOnly: false) { result, error in
+      XCTAssertNotNil(result)
+      XCTAssertFalse(result?.boolValue ?? true)
+      XCTAssertNil(error)
       expectation.fulfill()
     }
 
@@ -68,16 +73,14 @@ final class URLLauncherTests: XCTestCase {
 
   func testLaunchFailureWithInvalidURL() {
     let expectation = XCTestExpectation(description: "completion called")
-    createPlugin().launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
-      switch result {
-      case .success(_):
-        XCTFail("Expected an error")
-      case .failure(let error):
-        let generalError = error as! GeneralError
-        XCTAssertEqual(generalError.code, "argument_error")
-        XCTAssertEqual(generalError.message, "Unable to parse URL")
-        XCTAssertEqual(generalError.details, "Provided URL: urls can't have spaces")
-      }
+
+    createPlugin().launchURL("urls can't have spaces", universalLinksOnly: false) { result, error in
+      XCTAssertNil(result)
+      XCTAssertNotNil(error)
+      XCTAssertEqual(error?.code, "argument_error")
+      XCTAssertEqual(error?.message, "Unable to parse URL")
+      XCTAssertEqual(error?.details as? String, "Provided URL: urls can't have spaces")
+
       expectation.fulfill()
     }
 
@@ -89,17 +92,13 @@ final class URLLauncherTests: XCTestCase {
     let plugin = createPlugin(launcher: launcher)
 
     let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "good://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
+    plugin.launchURL("good://url", universalLinksOnly: false) { result, error in
+      XCTAssertNil(error)
       expectation.fulfill()
     }
 
     wait(for: [expectation], timeout: 1)
+
     XCTAssertEqual(launcher.passedOptions?[.universalLinksOnly] as? Bool, false)
   }
 
@@ -108,34 +107,31 @@ final class URLLauncherTests: XCTestCase {
     let plugin = createPlugin(launcher: launcher)
 
     let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "good://url", universalLinksOnly: true) { result in
-      switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
+
+    plugin.launchURL("good://url", universalLinksOnly: true) { result, error in
+      XCTAssertNil(error)
       expectation.fulfill()
     }
 
     wait(for: [expectation], timeout: 1)
+
     XCTAssertEqual(launcher.passedOptions?[.universalLinksOnly] as? Bool, true)
   }
 
 }
 
-final private class FakeLauncher: NSObject, Launcher {
+final private class FakeLauncher: NSObject, FULLauncher {
   var passedOptions: [UIApplication.OpenExternalURLOptionsKey: Any]?
 
-  func canOpenURL(_ url: URL) -> Bool {
-    url.scheme == "good"
+  func canOpen(_ url: URL) -> Bool {
+    return url.scheme == "good"
   }
 
-  func openURL(
-    _ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any],
-    completionHandler completion: ((Bool) -> Void)?
+  func open(
+    _ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any] = [:],
+    completionHandler: ((Bool) -> Void)? = nil
   ) {
     self.passedOptions = options
-    completion?(url.scheme == "good")
+    completionHandler?(url.scheme == "good")
   }
 }

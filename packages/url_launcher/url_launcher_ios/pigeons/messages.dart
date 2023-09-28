@@ -6,7 +6,9 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
-  swiftOut: 'ios/Classes/messages.g.swift',
+  objcOptions: ObjcOptions(prefix: 'FUL'),
+  objcHeaderOut: 'ios/Classes/messages.g.h',
+  objcSourceOut: 'ios/Classes/messages.g.m',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 @HostApi()

@@ -1,7 +1,3 @@
-## 6.1.6
-
-* Migrates plugin from Objective-C to Swift.
-
 ## 6.1.5
 
 * Adds pub topics to package metadata.
