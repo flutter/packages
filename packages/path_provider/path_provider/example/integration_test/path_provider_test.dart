@@ -92,17 +92,12 @@ void main() {
   }
 
   testWidgets('getDownloadsDirectory', (WidgetTester tester) async {
-    if (Platform.isAndroid) {
-      final Future<Directory?> result = getDownloadsDirectory();
-      expect(result, throwsA(isInstanceOf<UnsupportedError>()));
-    } else {
-      final Directory? result = await getDownloadsDirectory();
-      // On recent versions of macOS, actually using the downloads directory
-      // requires a user prompt (so will fail on CI), and on some platforms the
-      // directory may not exist. Instead of verifying that it exists, just
-      // check that it returned a path.
-      expect(result?.path, isNotEmpty);
-    }
+    final Directory? result = await getDownloadsDirectory();
+    // On recent versions of macOS, actually using the downloads directory
+    // requires a user prompt (so will fail on CI), and on some platforms the
+    // directory may not exist. Instead of verifying that it exists, just
+    // check that it returned a path.
+    expect(result?.path, isNotEmpty);
   });
 }
 
