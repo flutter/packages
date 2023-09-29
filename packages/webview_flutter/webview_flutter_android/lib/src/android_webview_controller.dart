@@ -617,6 +617,9 @@ class AndroidWebViewController extends PlatformWebViewController {
     return _webChromeClient.setSynchronousReturnValueForOnConsoleMessage(
         _onConsoleLogCallback != null);
   }
+
+  @override
+  Future<String?> getUserAgent() => _webView.settings.getUserAgentString();
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
