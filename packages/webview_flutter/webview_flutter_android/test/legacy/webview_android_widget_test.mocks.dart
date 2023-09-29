@@ -780,6 +780,16 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<void> setSynchronousReturnValueForOnConsoleMessage(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnConsoleMessage,
+          [value],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
   _i2.WebChromeClient copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,

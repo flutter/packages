@@ -739,8 +739,8 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i9.Future<void>);
   @override
   _i9.Future<void> setCustomWidgetCallbacks({
-    _i8.OnShowCustomWidgetCallback? onShowCustomWidget,
-    _i8.OnHideCustomWidgetCallback? onHideCustomWidget,
+    required _i8.OnShowCustomWidgetCallback? onShowCustomWidget,
+    required _i8.OnHideCustomWidgetCallback? onHideCustomWidget,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -754,6 +754,26 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setOnConsoleMessage(
+          void Function(_i3.JavaScriptConsoleMessage)? onConsoleMessage) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnConsoleMessage,
+          [onConsoleMessage],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<String?> getUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgent,
+          [],
+        ),
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
 }
 
 /// A class which mocks [AndroidWebViewProxy].
@@ -775,6 +795,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
       ) as _i2.WebView Function());
   @override
   _i2.WebChromeClient Function({
+    void Function(
+      _i2.WebChromeClient,
+      _i2.ConsoleMessage,
+    )? onConsoleMessage,
     void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
     _i9.Future<void> Function(
       String,
@@ -801,6 +825,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
   }) get createAndroidWebChromeClient => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebChromeClient),
         returnValue: ({
+          void Function(
+            _i2.WebChromeClient,
+            _i2.ConsoleMessage,
+          )? onConsoleMessage,
           void Function(_i2.WebChromeClient)?
               onGeolocationPermissionsHidePrompt,
           _i9.Future<void> Function(
@@ -831,6 +859,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebChromeClient),
         ),
         returnValueForMissingStub: ({
+          void Function(
+            _i2.WebChromeClient,
+            _i2.ConsoleMessage,
+          )? onConsoleMessage,
           void Function(_i2.WebChromeClient)?
               onGeolocationPermissionsHidePrompt,
           _i9.Future<void> Function(
@@ -861,6 +893,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebChromeClient),
         ),
       ) as _i2.WebChromeClient Function({
+        void Function(
+          _i2.WebChromeClient,
+          _i2.ConsoleMessage,
+        )? onConsoleMessage,
         void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
         _i9.Future<void> Function(
           String,
@@ -1774,6 +1810,16 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnShowFileChooser,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
+  _i9.Future<void> setSynchronousReturnValueForOnConsoleMessage(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnConsoleMessage,
           [value],
         ),
         returnValue: _i9.Future<void>.value(),
