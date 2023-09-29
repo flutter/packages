@@ -11,7 +11,8 @@ import 'android_webview.dart';
 import 'android_webview.g.dart';
 import 'instance_manager.dart';
 
-export 'android_webview.g.dart' show FileChooserMode;
+export 'android_webview.g.dart'
+    show ConsoleMessage, ConsoleMessageLevel, FileChooserMode;
 
 /// Converts [WebResourceRequestData] to [WebResourceRequest]
 WebResourceRequest _toWebResourceRequest(WebResourceRequestData data) {
@@ -897,6 +898,17 @@ class WebChromeClientHostApiImpl extends WebChromeClientHostApi {
       value,
     );
   }
+
+  /// Helper method to convert instances ids to objects.
+  Future<void> setSynchronousReturnValueForOnConsoleMessageFromInstance(
+    WebChromeClient instance,
+    bool value,
+  ) {
+    return setSynchronousReturnValueForOnConsoleMessage(
+      instanceManager.getIdentifier(instance)!,
+      value,
+    );
+  }
 }
 
 /// Flutter api implementation for [DownloadListener].
@@ -1021,6 +1033,13 @@ class WebChromeClientFlutterApiImpl extends WebChromeClientFlutterApi {
         instance,
       );
     }
+  }
+
+  @override
+  void onConsoleMessage(int instanceId, ConsoleMessage message) {
+    final WebChromeClient instance =
+        instanceManager.getInstanceWithWeakReference(instanceId)!;
+    instance.onConsoleMessage?.call(instance, message);
   }
 }
 

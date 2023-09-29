@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -269,6 +270,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
+  void Function(JavaScriptConsoleMessage)? _onConsoleMessageCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
@@ -327,7 +329,8 @@ class WebKitWebViewController extends PlatformWebViewController {
         javaScriptChannelParams is WebKitJavaScriptChannelParams
             ? javaScriptChannelParams
             : WebKitJavaScriptChannelParams.fromJavaScriptChannelParams(
-                javaScriptChannelParams);
+                javaScriptChannelParams,
+              );
 
     _javaScriptChannelParams[webKitParams.name] = webKitParams;
 
@@ -512,6 +515,104 @@ class WebKitWebViewController extends PlatformWebViewController {
         .addUserScript(userScript);
   }
 
+  /// Sets a callback that notifies the host application of any log messages
+  /// written to the JavaScript console.
+  ///
+  /// Because the iOS WKWebView doesn't provide a built-in way to access the
+  /// console, setting this callback will inject a custom [WKUserScript] which
+  /// overrides the JavaScript `console.debug`, `console.error`, `console.info`,
+  /// `console.log` and `console.warn` methods and forwards the console message
+  /// via a `JavaScriptChannel` to the host application.
+  @override
+  Future<void> setOnConsoleMessage(
+    void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage,
+  ) {
+    _onConsoleMessageCallback = onConsoleMessage;
+
+    final JavaScriptChannelParams channelParams = WebKitJavaScriptChannelParams(
+        name: 'fltConsoleMessage',
+        webKitProxy: _webKitParams.webKitProxy,
+        onMessageReceived: (JavaScriptMessage message) {
+          if (_onConsoleMessageCallback == null) {
+            return;
+          }
+
+          final Map<String, dynamic> consoleLog =
+              jsonDecode(message.message) as Map<String, dynamic>;
+
+          JavaScriptLogLevel level;
+          switch (consoleLog['level']) {
+            case 'error':
+              level = JavaScriptLogLevel.error;
+              break;
+            case 'warning':
+              level = JavaScriptLogLevel.warning;
+              break;
+            case 'debug':
+              level = JavaScriptLogLevel.debug;
+              break;
+            case 'info':
+              level = JavaScriptLogLevel.info;
+              break;
+            case 'log':
+            default:
+              level = JavaScriptLogLevel.log;
+              break;
+          }
+
+          _onConsoleMessageCallback!(
+            JavaScriptConsoleMessage(
+              level: level,
+              message: consoleLog['message']! as String,
+            ),
+          );
+        });
+
+    addJavaScriptChannel(channelParams);
+    return _injectConsoleOverride();
+  }
+
+  Future<void> _injectConsoleOverride() {
+    const WKUserScript overrideScript = WKUserScript(
+      '''
+function log(type, args) {
+  var message =  Object.values(args)
+      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v) : v.toString())
+      .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
+      .join(", ");
+
+  var log = {
+    level: type,
+    message: message
+  };
+
+  window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
+}
+
+let originalLog = console.log;
+let originalInfo = console.info;
+let originalWarn = console.warn;
+let originalError = console.error;
+let originalDebug = console.debug;
+
+console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
+console.info = function() { log("info", arguments); originalInfo.apply(null, arguments) };
+console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
+console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
+console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };
+
+window.addEventListener("error", function(e) {
+  log("error", e.message + " at " + e.filename + ":" + e.lineno + ":" + e.colno);
+});
+      ''',
+      WKUserScriptInjectionTime.atDocumentStart,
+      isMainFrameOnly: true,
+    );
+
+    return _webView.configuration.userContentController
+        .addUserScript(overrideScript);
+  }
+
   // WKWebView does not support removing a single user script, so all user
   // scripts and all message handlers are removed instead. And the JavaScript
   // channels that shouldn't be removed are re-registered. Note that this
@@ -537,6 +638,9 @@ class WebKitWebViewController extends PlatformWebViewController {
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.
       if (!_zoomEnabled) _disableZoom(),
+      // Console logs are forwarded with a WKUserScript, so this adds it back
+      // if a console callback was registered with [setOnConsoleMessage].
+      if (_onConsoleMessageCallback != null) _injectConsoleOverride(),
     ]);
   }
 
