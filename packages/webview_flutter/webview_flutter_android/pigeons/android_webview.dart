@@ -57,12 +57,6 @@ enum FileChooserMode {
   save,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class FileChooserModeEnumData {
-  late FileChooserMode value;
-}
-
 /// Indicates the type of message logged to the console.
 ///
 /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel.
