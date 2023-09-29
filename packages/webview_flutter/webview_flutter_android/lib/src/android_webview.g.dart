@@ -32,6 +32,42 @@ enum FileChooserMode {
   save,
 }
 
+/// Indicates the type of message logged to the console.
+///
+/// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel.
+enum ConsoleMessageLevel {
+  /// Indicates a message is logged for debugging.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#DEBUG.
+  debug,
+
+  /// Indicates a message is provided as an error.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#ERROR.
+  error,
+
+  /// Indicates a message is provided as a basic log message.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#LOG.
+  log,
+
+  /// Indicates a message is provided as a tip.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#TIP.
+  tip,
+
+  /// Indicates a message is provided as a warning.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#WARNING.
+  warning,
+
+  /// Indicates a message with an unknown level.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
+}
+
 class WebResourceRequestData {
   WebResourceRequestData({
     required this.url,
@@ -127,6 +163,45 @@ class WebViewPoint {
     return WebViewPoint(
       x: result[0]! as int,
       y: result[1]! as int,
+    );
+  }
+}
+
+/// Represents a JavaScript console message from WebCore.
+///
+/// See https://developer.android.com/reference/android/webkit/ConsoleMessage
+class ConsoleMessage {
+  ConsoleMessage({
+    required this.lineNumber,
+    required this.message,
+    required this.level,
+    required this.sourceId,
+  });
+
+  int lineNumber;
+
+  String message;
+
+  ConsoleMessageLevel level;
+
+  String sourceId;
+
+  Object encode() {
+    return <Object?>[
+      lineNumber,
+      message,
+      level.index,
+      sourceId,
+    ];
+  }
+
+  static ConsoleMessage decode(Object result) {
+    result as List<Object?>;
+    return ConsoleMessage(
+      lineNumber: result[0]! as int,
+      message: result[1]! as String,
+      level: ConsoleMessageLevel.values[result[2]! as int],
+      sourceId: result[3]! as String,
     );
   }
 }
@@ -1424,6 +1499,34 @@ class WebSettingsHostApi {
       return;
     }
   }
+
+  Future<String> getUserAgentString(int arg_instanceId) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.getUserAgentString',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_instanceId]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as String?)!;
+    }
+  }
 }
 
 class JavaScriptChannelHostApi {
@@ -1943,6 +2046,30 @@ class WebChromeClientHostApi {
       return;
     }
   }
+
+  Future<void> setSynchronousReturnValueForOnConsoleMessage(
+      int arg_instanceId, bool arg_value) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_instanceId, arg_value]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 class FlutterAssetManagerHostApi {
@@ -2012,8 +2139,31 @@ class FlutterAssetManagerHostApi {
   }
 }
 
+class _WebChromeClientFlutterApiCodec extends StandardMessageCodec {
+  const _WebChromeClientFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ConsoleMessage) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return ConsoleMessage.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 abstract class WebChromeClientFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _WebChromeClientFlutterApiCodec();
 
   void onProgressChanged(int instanceId, int webViewInstanceId, int progress);
 
@@ -2036,6 +2186,9 @@ abstract class WebChromeClientFlutterApi {
 
   /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`.
   void onGeolocationPermissionsHidePrompt(int identifier);
+
+  /// Callback to Dart function `WebChromeClient.onConsoleMessage`.
+  void onConsoleMessage(int instanceId, ConsoleMessage message);
 
   static void setup(WebChromeClientFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -2206,6 +2359,29 @@ abstract class WebChromeClientFlutterApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onGeolocationPermissionsHidePrompt was null, expected non-null int.');
           api.onGeolocationPermissionsHidePrompt(arg_identifier!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onConsoleMessage',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onConsoleMessage was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onConsoleMessage was null, expected non-null int.');
+          final ConsoleMessage? arg_message = (args[1] as ConsoleMessage?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onConsoleMessage was null, expected non-null ConsoleMessage.');
+          api.onConsoleMessage(arg_instanceId!, arg_message!);
           return;
         });
       }
