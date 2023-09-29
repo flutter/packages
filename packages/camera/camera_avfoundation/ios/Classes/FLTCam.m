@@ -845,6 +845,11 @@ NSString *const errorMethod = @"error";
         [_captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
       }
       break;
+    case FLTExposureModeInvalid:
+      // This state is not intended to be reachable; it exists only for error handling during
+      // message deserialization.
+      NSAssert(false, @"");
+      break;
   }
   [_captureDevice unlockForConfiguration];
 }
@@ -883,6 +888,11 @@ NSString *const errorMethod = @"error";
       } else if ([captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
         [captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
       }
+      break;
+    case FLTFocusModeInvalid:
+      // This state is not intended to be reachable; it exists only for error handling during
+      // message deserialization.
+      NSAssert(false, @"");
       break;
   }
   [captureDevice unlockForConfiguration];
