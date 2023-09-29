@@ -45,7 +45,7 @@ jobs:
 
     # The next step waits for all tests, but when there are issues with the
     # hooks it can take a long time for the tests to even be registered. If
-    # "Wait on all tests" runs before that happens, it will pass immidiately
+    # "Wait on all tests" runs before that happens, it will pass immediately
     # because there doesn't appear to be anything to wait for. To avoid that,
     # explicitly wait for one LUCI test by name first.
     - name: Wait for test check-in
