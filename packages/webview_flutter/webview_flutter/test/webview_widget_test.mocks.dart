@@ -381,6 +381,17 @@ class MockPlatformWebViewController extends _i1.Mock
         ),
         returnValue: _i7.Future<String?>.value(),
       ) as _i7.Future<String?>);
+  @override
+  _i7.Future<void> setOnConsoleMessage(
+          void Function(_i2.JavaScriptConsoleMessage)? onConsoleMessage) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnConsoleMessage,
+          [onConsoleMessage],
+        ),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
 }
 
 /// A class which mocks [PlatformWebViewWidget].
