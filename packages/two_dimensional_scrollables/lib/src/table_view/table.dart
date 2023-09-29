@@ -667,12 +667,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }) {
     // TODO(Piinks): Assert here or somewhere else merged cells cannot span
     // pinned and unpinned cells (for merged cell follow-up), https://github.com/flutter/flutter/issues/131224
-    double yPaintOffset = -offset.dy;
+    late double yPaintOffset = -offset.dy;
     for (int row = start.row; row <= end.row; row += 1) {
       double xPaintOffset = -offset.dx;
       final double rowHeight = _rowMetrics[row]!.extent;
+      yPaintOffset += _rowMetrics[row]!.configuration.padding.leading;
       for (int column = start.column; column <= end.column; column += 1) {
         final double columnWidth = _columnMetrics[column]!.extent;
+        xPaintOffset += _columnMetrics[column]!.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
         // TODO(Piinks): Add back merged cells, https://github.com/flutter/flutter/issues/131224
@@ -689,9 +691,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           cell.layout(cellConstraints);
           cellParentData.layoutOffset = Offset(xPaintOffset, yPaintOffset);
         }
-        xPaintOffset += columnWidth;
+        xPaintOffset += columnWidth +
+            _columnMetrics[column]!.configuration.padding.trailing;
       }
-      yPaintOffset += rowHeight;
+      yPaintOffset +=
+          rowHeight + _rowMetrics[row]!.configuration.padding.trailing;
     }
   }
 

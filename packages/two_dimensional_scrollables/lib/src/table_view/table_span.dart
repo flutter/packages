@@ -10,6 +10,37 @@ import 'package:flutter/widgets.dart';
 
 import 'table.dart';
 
+/// Defines the leading and trailing padding values of a [TableSpan].
+class TableSpanPadding {
+  /// Creates a padding configuration for a [TableSpan].
+  const TableSpanPadding({
+    this.leading = 0.0,
+    this.trailing = 0.0,
+  });
+
+  /// The leading amount of pixels to pad a [TableSpan] by.
+  ///
+  /// If the [TableSpan] is a row and the vertical [Axis] is not reversed, this
+  /// offset will be applied above the row. If the vertical [Axis] is reversed,
+  /// this will be applied below the row.
+  ///
+  /// If the [TableSpan] is a column and the horizontal [Axis] is not reversed,
+  /// this offset will be applied to the left the column. If the horizontal
+  /// [Axis] is reversed, this will be applied to the right of the column.
+  final double leading;
+
+  /// The trailing amount of pixels to pad a [TableSpan] by.
+  ///
+  /// If the [TableSpan] is a row and the vertical [Axis] is not reversed, this
+  /// offset will be applied below the row. If the vertical [Axis] is reversed,
+  /// this will be applied above the row.
+  ///
+  /// If the [TableSpan] is a column and the horizontal [Axis] is not reversed,
+  /// this offset will be applied to the right the column. If the horizontal
+  /// [Axis] is reversed, this will be applied to the left of the column.
+  final double trailing;
+}
+
 /// Defines the extent, visual appearance, and gesture handling of a row or
 /// column in a [TableView].
 ///
@@ -20,6 +51,7 @@ class TableSpan {
   /// The [extent] argument must be provided.
   const TableSpan({
     required this.extent,
+    this.padding = const TableSpanPadding(),
     this.recognizerFactories = const <Type, GestureRecognizerFactory>{},
     this.onEnter,
     this.onExit,
@@ -33,6 +65,11 @@ class TableSpan {
   /// If the span represents a row, this is the height of the row. If it
   /// represents a column, this is the width of the column.
   final TableSpanExtent extent;
+
+  /// Defines the leading and or trailing extent to pad the row or column by.
+  ///
+  /// Defaults to no padding.
+  final TableSpanPadding padding;
 
   /// Factory for creating [GestureRecognizer]s that want to compete for
   /// gestures within the [extent] of the span.

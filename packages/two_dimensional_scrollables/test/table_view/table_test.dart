@@ -329,6 +329,124 @@ void main() {
       expect(parentData.isVisible, isFalse);
     });
 
+    testWidgets('TableSpanPadding', (WidgetTester tester) async {
+      final Map<TableVicinity, UniqueKey> childKeys =
+          <TableVicinity, UniqueKey>{};
+      const TableSpan columnSpan = TableSpan(
+        extent: FixedTableSpanExtent(200),
+        padding: TableSpanPadding(
+          leading: 10.0,
+          trailing: 20.0,
+        ),
+      );
+      const TableSpan rowSpan = TableSpan(
+        extent: FixedTableSpanExtent(200),
+        padding: TableSpanPadding(
+          leading: 30.0,
+          trailing: 40.0,
+        ),
+      );
+      TableView tableView = TableView.builder(
+        rowCount: 2,
+        columnCount: 2,
+        columnBuilder: (_) => columnSpan,
+        rowBuilder: (_) => rowSpan,
+        cellBuilder: (_, TableVicinity vicinity) {
+          childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
+          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+        },
+      );
+      TableViewParentData parentDataOf(RenderBox child) {
+        return child.parentData! as TableViewParentData;
+      }
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      RenderTwoDimensionalViewport viewport = getViewport(
+        tester,
+        childKeys.values.first,
+      );
+      // first child
+      TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
+      TableViewParentData parentData = parentDataOf(
+        viewport.firstChild!,
+      );
+      expect(parentData.vicinity, vicinity);
+      expect(
+          parentData.layoutOffset,
+          const Offset(
+            10.0, // Leading 10 pixels before first column
+            30.0, // leading 30 pixels before first row
+          ));
+      // after first child
+      vicinity = const TableVicinity(column: 1, row: 0);
+
+      parentData = parentDataOf(
+        viewport.childAfter(viewport.firstChild!)!,
+      );
+      expect(parentData.vicinity, vicinity);
+      expect(
+          parentData.layoutOffset,
+          const Offset(
+            240, // 10 leading + 200 first column + 20 trailing + 10 leading
+            30.0, // leading 30 pixels before first row
+          ));
+
+      // last child
+      vicinity = const TableVicinity(column: 1, row: 1);
+      parentData = parentDataOf(viewport.lastChild!);
+      expect(parentData.vicinity, vicinity);
+      expect(
+          parentData.layoutOffset,
+          const Offset(
+            240.0, // 10 leading + 200 first column + 20 trailing + 10 leading
+            300.0, // 30 leading + 200 first row + 40 trailing + 30 leading
+          ));
+
+      // reverse
+      tableView = TableView.builder(
+        rowCount: 2,
+        columnCount: 2,
+        verticalDetails: const ScrollableDetails.vertical(reverse: true),
+        horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+        columnBuilder: (_) => columnSpan,
+        rowBuilder: (_) => rowSpan,
+        cellBuilder: (_, TableVicinity vicinity) {
+          childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
+          return SizedBox.square(key: childKeys[vicinity], dimension: 200);
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      viewport = getViewport(
+        tester,
+        childKeys.values.first,
+      );
+      // first child
+      vicinity = const TableVicinity(column: 0, row: 0);
+      parentData = parentDataOf(
+        viewport.firstChild!,
+      );
+      expect(parentData.vicinity, vicinity);
+      // layoutOffset is later corrected for reverse in the paintOffset
+      expect(parentData.paintOffset, const Offset(590.0, 370.0));
+      // after first child
+      vicinity = const TableVicinity(column: 1, row: 0);
+
+      parentData = parentDataOf(
+        viewport.childAfter(viewport.firstChild!)!,
+      );
+      expect(parentData.vicinity, vicinity);
+      expect(parentData.paintOffset, const Offset(360.0, 370.0));
+
+      // last child
+      vicinity = const TableVicinity(column: 1, row: 1);
+      parentData = parentDataOf(viewport.lastChild!);
+      expect(parentData.vicinity, vicinity);
+      expect(parentData.paintOffset, const Offset(360.0, 100.0));
+    });
+
     testWidgets('TableSpan gesture hit testing', (WidgetTester tester) async {
       int tapCounter = 0;
       // Rows
