@@ -480,6 +480,21 @@ class MockTestWebChromeClientHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  void setSynchronousReturnValueForOnConsoleMessage(
+    int? instanceId,
+    bool? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnConsoleMessage,
+          [
+            instanceId,
+            value,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestWebSettingsHostApi].
@@ -1175,6 +1190,16 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnShowFileChooser,
+          [value],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> setSynchronousReturnValueForOnConsoleMessage(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnConsoleMessage,
           [value],
         ),
         returnValue: _i5.Future<void>.value(),

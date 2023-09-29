@@ -475,8 +475,8 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i5.Future<void>);
   @override
   _i5.Future<void> setCustomWidgetCallbacks({
-    _i6.OnShowCustomWidgetCallback? onShowCustomWidget,
-    _i6.OnHideCustomWidgetCallback? onHideCustomWidget,
+    required _i6.OnShowCustomWidgetCallback? onShowCustomWidget,
+    required _i6.OnHideCustomWidgetCallback? onHideCustomWidget,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -490,6 +490,25 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> setOnConsoleMessage(
+          void Function(_i3.JavaScriptConsoleMessage)? onConsoleMessage) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnConsoleMessage,
+          [onConsoleMessage],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+  @override
+  _i5.Future<String?> getUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
