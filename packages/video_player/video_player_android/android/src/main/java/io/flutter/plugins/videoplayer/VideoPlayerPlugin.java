@@ -18,10 +18,8 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
-import io.flutter.plugins.videoplayer.Messages.ClearCacheMessageResponse;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.plugins.videoplayer.Messages.IsCacheSupportedMessage;
-import io.flutter.plugins.videoplayer.Messages.IsSupportedMessageResponse;
 import io.flutter.plugins.videoplayer.Messages.LoopingMessage;
 import io.flutter.plugins.videoplayer.Messages.MixWithOthersMessage;
 import io.flutter.plugins.videoplayer.Messages.PlaybackSpeedMessage;
@@ -184,12 +182,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @NonNull
-  public ClearCacheMessageResponse clearCache() {
-
-    boolean hasSucceeded = VideoCache.clearVideoCache(flutterState.applicationContext);
-    ClearCacheMessageResponse response =
-        new ClearCacheMessageResponse.Builder().setHasSucceeded(hasSucceeded).build();
-    return response;
+  public Boolean clearCache() {
+    //clear the media content cache directory and send back the response if it is a success or failed.
+    return VideoCache.clearVideoCache(flutterState.applicationContext);
   }
 
   public void setVolume(@NonNull VolumeMessage arg) {
@@ -234,10 +229,8 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @NonNull
-  public IsSupportedMessageResponse isCacheSupportedForNetworkMedia(
-      @NonNull IsCacheSupportedMessage arg) {
-    boolean isSupported = isCacheSupported(Uri.parse(arg.getUri()));
-    return new IsSupportedMessageResponse.Builder().setIsSupported(isSupported).build();
+  public Boolean isCacheSupportedForNetworkMedia(@NonNull IsCacheSupportedMessage arg) {
+    return isCacheSupported(Uri.parse(arg.getUri()));
   }
 
   private interface KeyForAssetFn {

@@ -846,7 +846,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   player.isLooping = input.isLooping.boolValue;
 }
 
-- (FVPClearCacheMessageResponse *)clearCache:(FlutterError *__autoreleasing *)error {
+- (NSNumber *)clearCache:(FlutterError *__autoreleasing *)error {
   //  [player.resourceLoaderManager cleanCache];
   unsigned long long fileSize = [FVPCacheManager calculateCachedSizeWithError:nil];
   NSLog(@"file cache size: %@", @(fileSize));
@@ -855,9 +855,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   if (error2) {
     NSLog(@"clean cache failure: %@", error2);
-    return [FVPClearCacheMessageResponse makeWithHasSucceeded:@NO];
+      return @NO;
   }
-  return [FVPClearCacheMessageResponse makeWithHasSucceeded:@YES];
+  return @YES;
 }
 
 - (void)setVolume:(FVPVolumeMessage *)input error:(FlutterError **)error {
@@ -882,12 +882,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return result;
 }
 
-- (FVPIsSupportedMessageResponse *)isCacheSupportedForNetworkMedia:(FVPIsCacheSupportedMessage *)msg
+- (NSNumber *)isCacheSupportedForNetworkMedia:(FVPIsCacheSupportedMessage *)msg
                                                              error:(FlutterError **)error {
   BOOL isSupported = [self isCacheSupported:msg.uri];
-  FVPIsSupportedMessageResponse *result =
-      [FVPIsSupportedMessageResponse makeWithIsSupported:[NSNumber numberWithBool:isSupported]];
-  return result;
+  return [NSNumber numberWithBool:isSupported];
 }
 
 - (void)seekTo:(FVPPositionMessage *)input

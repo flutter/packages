@@ -58,48 +58,6 @@ class LoopingMessage {
   }
 }
 
-class IsSupportedMessageResponse {
-  IsSupportedMessageResponse({
-    required this.isSupported,
-  });
-
-  bool isSupported;
-
-  Object encode() {
-    return <Object?>[
-      isSupported,
-    ];
-  }
-
-  static IsSupportedMessageResponse decode(Object result) {
-    result as List<Object?>;
-    return IsSupportedMessageResponse(
-      isSupported: result[0]! as bool,
-    );
-  }
-}
-
-class ClearCacheMessageResponse {
-  ClearCacheMessageResponse({
-    required this.hasSucceeded,
-  });
-
-  bool hasSucceeded;
-
-  Object encode() {
-    return <Object?>[
-      hasSucceeded,
-    ];
-  }
-
-  static ClearCacheMessageResponse decode(Object result) {
-    result as List<Object?>;
-    return ClearCacheMessageResponse(
-      hasSucceeded: result[0]! as bool,
-    );
-  }
-}
-
 class IsCacheSupportedMessage {
   IsCacheSupportedMessage({
     required this.uri,
@@ -240,8 +198,7 @@ class CreateMessage {
       packageName: result[2] as String?,
       formatHint: result[3] as String?,
       enableCache: result[4]! as bool,
-      httpHeaders:
-          (result[5] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      httpHeaders: (result[5] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
 }
@@ -271,35 +228,29 @@ class _AVFoundationVideoPlayerApiCodec extends StandardMessageCodec {
   const _AVFoundationVideoPlayerApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is ClearCacheMessageResponse) {
+    if (value is CreateMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is CreateMessage) {
+    } else if (value is IsCacheSupportedMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is IsCacheSupportedMessage) {
+    } else if (value is LoopingMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is IsSupportedMessageResponse) {
+    } else if (value is MixWithOthersMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is LoopingMessage) {
+    } else if (value is PlaybackSpeedMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is MixWithOthersMessage) {
+    } else if (value is PositionMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlaybackSpeedMessage) {
+    } else if (value is TextureMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PositionMessage) {
-      buffer.putUint8(135);
-      writeValue(buffer, value.encode());
-    } else if (value is TextureMessage) {
-      buffer.putUint8(136);
-      writeValue(buffer, value.encode());
     } else if (value is VolumeMessage) {
-      buffer.putUint8(137);
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -309,25 +260,21 @@ class _AVFoundationVideoPlayerApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return ClearCacheMessageResponse.decode(readValue(buffer)!);
-      case 129:
+      case 128: 
         return CreateMessage.decode(readValue(buffer)!);
-      case 130:
+      case 129: 
         return IsCacheSupportedMessage.decode(readValue(buffer)!);
-      case 131:
-        return IsSupportedMessageResponse.decode(readValue(buffer)!);
-      case 132:
+      case 130: 
         return LoopingMessage.decode(readValue(buffer)!);
-      case 133:
+      case 131: 
         return MixWithOthersMessage.decode(readValue(buffer)!);
-      case 134:
+      case 132: 
         return PlaybackSpeedMessage.decode(readValue(buffer)!);
-      case 135:
+      case 133: 
         return PositionMessage.decode(readValue(buffer)!);
-      case 136:
+      case 134: 
         return TextureMessage.decode(readValue(buffer)!);
-      case 137:
+      case 135: 
         return VolumeMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -347,10 +294,10 @@ class AVFoundationVideoPlayerApi {
 
   Future<void> initialize() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.initialize',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.initialize', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -369,8 +316,7 @@ class AVFoundationVideoPlayerApi {
 
   Future<TextureMessage> create(CreateMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.create',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.create', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -397,8 +343,7 @@ class AVFoundationVideoPlayerApi {
 
   Future<void> dispose(TextureMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.dispose',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.dispose', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -420,8 +365,7 @@ class AVFoundationVideoPlayerApi {
 
   Future<void> setLooping(LoopingMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setLooping',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setLooping', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -441,12 +385,12 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<ClearCacheMessageResponse> clearCache() async {
+  Future<bool> clearCache() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.clearCache',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.clearCache', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -464,14 +408,13 @@ class AVFoundationVideoPlayerApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as ClearCacheMessageResponse?)!;
+      return (replyList[0] as bool?)!;
     }
   }
 
   Future<void> setVolume(VolumeMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setVolume',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setVolume', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -491,11 +434,9 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<IsSupportedMessageResponse> isCacheSupportedForNetworkMedia(
-      IsCacheSupportedMessage arg_msg) async {
+  Future<bool> isCacheSupportedForNetworkMedia(IsCacheSupportedMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -516,14 +457,13 @@ class AVFoundationVideoPlayerApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as IsSupportedMessageResponse?)!;
+      return (replyList[0] as bool?)!;
     }
   }
 
   Future<void> setPlaybackSpeed(PlaybackSpeedMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setPlaybackSpeed',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setPlaybackSpeed', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -545,8 +485,7 @@ class AVFoundationVideoPlayerApi {
 
   Future<void> play(TextureMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.play',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.play', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -568,8 +507,7 @@ class AVFoundationVideoPlayerApi {
 
   Future<PositionMessage> position(TextureMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.position',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.position', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -596,8 +534,7 @@ class AVFoundationVideoPlayerApi {
 
   Future<void> seekTo(PositionMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.seekTo',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.seekTo', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -619,8 +556,7 @@ class AVFoundationVideoPlayerApi {
 
   Future<void> pause(TextureMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.pause',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.pause', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;
@@ -642,8 +578,7 @@ class AVFoundationVideoPlayerApi {
 
   Future<void> setMixWithOthers(MixWithOthersMessage arg_msg) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setMixWithOthers',
-        codec,
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setMixWithOthers', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_msg]) as List<Object?>?;

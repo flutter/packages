@@ -65,10 +65,9 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  IsSupportedMessageResponse isCacheSupportedForNetworkMedia(
-      IsCacheSupportedMessage msg) {
+  bool isCacheSupportedForNetworkMedia(IsCacheSupportedMessage msg) {
     log.add('isCacheSupportedForNetworkMedia');
-    return IsSupportedMessageResponse(isSupported: true);
+    return true;
   }
 
   @override
@@ -96,9 +95,9 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  ClearCacheMessageResponse clearCache() {
+  bool clearCache() {
     log.add('clearCache');
-    return ClearCacheMessageResponse(hasSucceeded: true);
+    return true;
   }
 }
 

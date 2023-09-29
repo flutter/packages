@@ -90,15 +90,13 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<bool> clearCache() async {
-    final ClearCacheMessageResponse response = await _api.clearCache();
-    return response.hasSucceeded;
+    return _api.clearCache();
   }
 
   @override
   Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
-    final IsSupportedMessageResponse response = await _api
+    return _api
         .isCacheSupportedForNetworkMedia(IsCacheSupportedMessage(uri: uri));
-    return response.isSupported;
   }
 
   @override
