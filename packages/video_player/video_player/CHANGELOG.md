@@ -1,6 +1,9 @@
-## 2.8.0
+## 2.9.0
 
 * Adds caching functionality for network video.
+
+## 2.8.0
+* Adds support for macOS.
 
 ## 2.7.2
 
