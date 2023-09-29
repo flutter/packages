@@ -1045,7 +1045,9 @@ void main() {
       // TODO(Piinks): Rewrite this to remove golden files from this repo when
       //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
       // foreground, background, and precedence per mainAxis
-      TableView tableView = TableView.builder(
+      final TableView tableView = TableView.builder(
+        verticalDetails: const ScrollableDetails.vertical(reverse: true),
+        horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
         rowCount: 2,
         pinnedRowCount: 1,
         columnCount: 2,
