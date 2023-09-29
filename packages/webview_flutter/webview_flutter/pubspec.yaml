@@ -34,8 +34,3 @@ topics:
   - html
   - webview
   - webview-flutter
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-  {webview_flutter_android: {path: ../../webview_flutter/webview_flutter_android}, webview_flutter_platform_interface: {path: ../../webview_flutter/webview_flutter_platform_interface}, webview_flutter_wkwebview: {path: ../../webview_flutter/webview_flutter_wkwebview}}
