@@ -1,3 +1,7 @@
+## 2.8.0
+
+* Adds support for macOS.
+
 ## 2.7.2
 
 * Adds `isCompleted` event to `VideoPlayerEvent`.
