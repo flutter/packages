@@ -297,7 +297,7 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
   return runXcodeBuild(
     '$examplePath/ios',
     sdk: 'iphonesimulator',
-    destination: 'platform=iOS Simulator,name=iPhone 14',
+    destination: 'platform=iOS Simulator,name=Flutter-iPhone,OS=16.4',
     extraArguments: <String>['test'],
   );
 }

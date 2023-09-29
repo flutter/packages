@@ -12,4 +12,6 @@ readonly DEVICE=com.apple.CoreSimulator.SimDeviceType.iPhone-14
 readonly OS=com.apple.CoreSimulator.SimRuntime.iOS-16-4
 
 xcrun simctl list
+echo "\n\nCreating $DEVICE_NAME $DEVICE $OS ...\n\n"
 xcrun simctl create "$DEVICE_NAME" "$DEVICE" "$OS" | xargs xcrun simctl boot
+xcrun simctl list
