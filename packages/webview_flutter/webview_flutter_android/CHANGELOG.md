@@ -1,6 +1,10 @@
-## 3.11.0
+## 3.12.0
 
 * Adds support for `PlatformWebViewController.getUserAgent`.
+
+## 3.11.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `AndroidWebViewController.onConsoleMessage`.
 
 ## 3.10.1
 
