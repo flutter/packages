@@ -1,3 +1,7 @@
+## 4.3.0
+
+* Adds support to retrieve the user agent. See `WebViewController.getUserAgent`.
+
 ## 4.2.4
 
 * Adds pub topics to package metadata.

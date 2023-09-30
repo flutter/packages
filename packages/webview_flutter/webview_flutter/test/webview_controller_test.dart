@@ -387,6 +387,23 @@ void main() {
     requestCallback(const TestPlatformWebViewPermissionRequest());
     expect(permissionRequestCallbackCalled, isTrue);
   });
+
+  test('getUserAgent', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    const String userAgent = 'str';
+
+    when(mockPlatformWebViewController.getUserAgent()).thenAnswer(
+      (_) => Future<String?>.value(userAgent),
+    );
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    await expectLater(webViewController.getUserAgent(), completion(userAgent));
+  });
 }
 
 class TestPlatformWebViewPermissionRequest
