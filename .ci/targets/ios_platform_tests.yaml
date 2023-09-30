@@ -22,6 +22,10 @@ tasks:
   - name: native test
     script: script/tool_runner.sh
     args: ["native-test", "--ios", "--ios-destination", "platform=iOS Simulator,name=Flutter-iPhone,OS=16.4"]
+  - name: boot simulator
+    # Ensure simulator is still booted
+    script: .ci/scripts/boot_simulator.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
   - name: drive examples
     # `drive-examples` contains integration tests, which changes the UI of the application.
     # This UI change sometimes affects `xctest`.
