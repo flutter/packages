@@ -1,6 +1,10 @@
-## 0.10.8+12
+## 0.10.8+13
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
+## 0.10.8+12
+
+* Fixes handling of autofocus state when taking a picture.
 
 ## 0.10.8+11
 

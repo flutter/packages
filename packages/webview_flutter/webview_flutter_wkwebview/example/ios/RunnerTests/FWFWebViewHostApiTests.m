@@ -95,7 +95,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setUserAgentForWebViewWithIdentifier:@0 userAgent:@"userA" error:&error];
+  [hostAPI setCustomUserAgentForWebViewWithIdentifier:@0 userAgent:@"userA" error:&error];
   OCMVerify([mockWebView setCustomUserAgent:@"userA"]);
   XCTAssertNil(error);
 }
@@ -485,6 +485,25 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   FlutterError *error;
   [hostAPI setInspectableForWebViewWithIdentifier:@0 inspectable:@YES error:&error];
   OCMVerify([mockWebView setInspectable:YES]);
+  XCTAssertNil(error);
+}
+
+- (void)testCustomUserAgent {
+  FWFWebView *mockWebView = OCMClassMock([FWFWebView class]);
+
+  NSString *userAgent = @"str";
+  OCMStub([mockWebView customUserAgent]).andReturn(userAgent);
+
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:0];
+
+  FWFWebViewHostApiImpl *hostAPI = [[FWFWebViewHostApiImpl alloc]
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+
+  FlutterError *error;
+  XCTAssertEqualObjects([hostAPI customUserAgentForWebViewWithIdentifier:@0 error:&error],
+                        userAgent);
   XCTAssertNil(error);
 }
 @end

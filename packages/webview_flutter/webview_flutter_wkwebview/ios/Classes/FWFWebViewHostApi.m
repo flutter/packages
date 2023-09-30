@@ -134,10 +134,11 @@
   [[self webViewForIdentifier:identifier] loadRequest:urlRequest];
 }
 
-- (void)setUserAgentForWebViewWithIdentifier:(nonnull NSNumber *)identifier
-                                   userAgent:(nullable NSString *)userAgent
-                                       error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
-                                                 error {
+- (void)setCustomUserAgentForWebViewWithIdentifier:(nonnull NSNumber *)identifier
+                                         userAgent:(nullable NSString *)userAgent
+                                             error:
+                                                 (FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                     error {
   [[self webViewForIdentifier:identifier] setCustomUserAgent:userAgent];
 }
 
@@ -298,5 +299,12 @@
     titleForWebViewWithIdentifier:(nonnull NSNumber *)identifier
                             error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return [[self webViewForIdentifier:identifier] title];
+}
+
+- (nullable NSString *)
+    customUserAgentForWebViewWithIdentifier:(nonnull NSNumber *)identifier
+                                      error:
+                                          (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return [[self webViewForIdentifier:identifier] customUserAgent];
 }
 @end

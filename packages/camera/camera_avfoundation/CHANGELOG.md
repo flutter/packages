@@ -1,6 +1,10 @@
-## 0.9.13+6
+## 0.9.13+7
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
+## 0.9.13+6
+
+* Fixes incorrect use of `NSError` that could cause crashes on launch.
 
 ## 0.9.13+5
 
