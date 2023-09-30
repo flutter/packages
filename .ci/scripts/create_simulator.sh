@@ -21,7 +21,7 @@ while [[ $RESULT == 0 ]]; do
         echo -e "Deleted $DEVICE_NAME"
     fi
 done
-echo -e "\n"
+echo -e ""
 
 xcrun simctl list
 echo -e "\nCreating $DEVICE_NAME $DEVICE $OS ...\n"

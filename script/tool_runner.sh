@@ -18,6 +18,11 @@ readonly TOOL_PATH="$REPO_DIR/script/tool/bin/flutter_plugin_tools.dart"
 
 # The tool expects to be run from the repo root.
 cd "$REPO_DIR"
+
+xcrun simctl list
+
+flutter devices --machine
+
 # Run from the in-tree source.
 # PACKAGE_SHARDING is (optionally) set from Cirrus. See .cirrus.yml
 dart run "$TOOL_PATH" "$@" --packages-for-branch --log-timing $PACKAGE_SHARDING
