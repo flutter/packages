@@ -8,7 +8,6 @@ import 'package:plaform_example/main.dart';
 
 void main() {
   testWidgets('smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
     expect(find.text('Platform Example'), findsOneWidget);

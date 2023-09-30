@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:platform/platform.dart';
 
-/// This sample app shows how to single view the platform details.
+/// This sample app shows the platform details of the device it is running on.
 void main() => runApp(const MyApp());
 
 /// The main app.
@@ -118,9 +118,7 @@ class MyApp extends StatelessWidget {
 
 /// A widget to format the details.
 class FormatDetails extends StatelessWidget {
-  /// Constructs a [FormatDetails]
-  /// [title] is the title of the field.
-  /// [value] is the value of the field.
+  /// Constructs a [FormatDetails].
   const FormatDetails({
     super.key,
     required this.title,

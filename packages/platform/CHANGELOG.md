@@ -1,6 +1,6 @@
 ## 3.1.3
 
-* Adds example app
+* Adds example app.
 
 ## 3.1.2
 
