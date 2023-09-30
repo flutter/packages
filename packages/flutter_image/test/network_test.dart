@@ -140,12 +140,12 @@ void assertThatImageLoadingFails(
   NetworkImageWithRetry subject,
   List<FlutterErrorDetails> errorLog,
 ) {
-  final ImageStreamCompleter completer = subject.load(
+  final ImageStreamCompleter completer = subject.loadBuffer(
     subject,
-    // TODO(cyanglaz): migrate to use the new APIs
-    // https://github.com/flutter/flutter/issues/105336
+    // TODO(LongCatIsLooong): migrate to use new `instantiateImageCodecWithSize` API.
+    // https://github.com/flutter/flutter/issues/132856
     // ignore: deprecated_member_use
-    PaintingBinding.instance.instantiateImageCodec,
+    PaintingBinding.instance.instantiateImageCodecFromBuffer,
   );
   completer.addListener(ImageStreamListener(
     (ImageInfo image, bool synchronousCall) {},
@@ -160,12 +160,12 @@ void assertThatImageLoadingFails(
 void assertThatImageLoadingSucceeds(
   NetworkImageWithRetry subject,
 ) {
-  final ImageStreamCompleter completer = subject.load(
+  final ImageStreamCompleter completer = subject.loadBuffer(
     subject,
-    // TODO(cyanglaz): migrate to use the new APIs
-    // https://github.com/flutter/flutter/issues/105336
+    // TODO(LongCatIsLooong): migrate to use new `instantiateImageCodecWithSize` API.
+    // https://github.com/flutter/flutter/issues/132856
     // ignore: deprecated_member_use
-    PaintingBinding.instance.instantiateImageCodec,
+    PaintingBinding.instance.instantiateImageCodecFromBuffer,
   );
   completer.addListener(ImageStreamListener(
     expectAsync2((ImageInfo image, bool synchronousCall) {

@@ -15,8 +15,11 @@ import static org.mockito.Mockito.when;
 
 import android.net.Uri;
 import android.os.Message;
+import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebView.WebViewTransport;
@@ -126,6 +129,25 @@ public class WebChromeClientTest {
   }
 
   @Test
+  public void onShowCustomView() {
+    final View mockView = mock(View.class);
+    instanceManager.addDartCreatedInstance(mockView, 10);
+
+    final WebChromeClient.CustomViewCallback mockCustomViewCallback =
+        mock(WebChromeClient.CustomViewCallback.class);
+    instanceManager.addDartCreatedInstance(mockView, 12);
+
+    webChromeClient.onShowCustomView(mockView, mockCustomViewCallback);
+    verify(mockFlutterApi)
+        .onShowCustomView(eq(webChromeClient), eq(mockView), eq(mockCustomViewCallback), any());
+  }
+
+  @Test
+  public void onHideCustomView() {
+    webChromeClient.onHideCustomView();
+    verify(mockFlutterApi).onHideCustomView(eq(webChromeClient), any());
+  }
+
   public void onGeolocationPermissionsShowPrompt() {
     final GeolocationPermissions.Callback mockCallback =
         mock(GeolocationPermissions.Callback.class);
@@ -140,5 +162,18 @@ public class WebChromeClientTest {
   public void onGeolocationPermissionsHidePrompt() {
     webChromeClient.onGeolocationPermissionsHidePrompt();
     verify(mockFlutterApi).onGeolocationPermissionsHidePrompt(eq(webChromeClient), any());
+  }
+
+  @Test
+  public void onConsoleMessage() {
+    webChromeClient.onConsoleMessage(
+        new ConsoleMessage("message", "sourceId", 23, ConsoleMessage.MessageLevel.ERROR));
+    verify(mockFlutterApi).onConsoleMessage(eq(webChromeClient), any(), any());
+  }
+
+  @Test
+  public void setReturnValueForOnConsoleMessage() {
+    webChromeClient.setReturnValueForOnConsoleMessage(true);
+    assertTrue(webChromeClient.onConsoleMessage(null));
   }
 }

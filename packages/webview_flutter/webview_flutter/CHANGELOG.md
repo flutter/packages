@@ -1,6 +1,20 @@
-## 4.3.0
+## 4.4.0
 
 * Adds support to register a callback to receive JavaScript console messages. See `WebViewController.setConsoleLogCallback`.
+
+## 4.3.0
+
+* Adds support to retrieve the user agent. See `WebViewController.getUserAgent`.
+
+## 4.2.4
+
+* Adds pub topics to package metadata.
+
+## 4.2.3
+
+* Fixes the code sample in the dartdocs for `WebViewController.addJavaScriptChannel`.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+>>>>>>> upstream/main
 
 ## 4.2.2
 

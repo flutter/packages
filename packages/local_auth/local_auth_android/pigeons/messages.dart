@@ -84,13 +84,6 @@ class AuthOptions {
   final bool useErrorDialgs;
 }
 
-// TODO(stuartmorgan): Remove this when
-// https://github.com/flutter/flutter/issues/87307 is implemented.
-class AuthResultWrapper {
-  AuthResultWrapper({required this.value});
-  final AuthResult value;
-}
-
 /// Pigeon equivalent of the subset of BiometricType used by Android.
 enum AuthClassification { weak, strong }
 
@@ -123,5 +116,5 @@ abstract class LocalAuthApi {
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
   @async
-  AuthResultWrapper authenticate(AuthOptions options, AuthStrings strings);
+  AuthResult authenticate(AuthOptions options, AuthStrings strings);
 }

@@ -411,7 +411,7 @@ $resultAt != null
                     final String leftHandSide = 'final $argType? $argName';
                     if (customEnumNames.contains(arg.type.baseName)) {
                       indent.writeln(
-                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count] as int];');
+                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
                     } else {
                       indent.writeln(
                           '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
@@ -442,10 +442,15 @@ $resultAt != null
                   } else {
                     indent.writeln('final $returnType output = $call;');
                   }
+
                   const String returnExpression = 'output';
+                  final String nullability =
+                      func.returnType.isNullable ? '?' : '';
+                  final String valueExtraction =
+                      isEnum(root, func.returnType) ? '$nullability.index' : '';
                   final String returnStatement = isMockHandler
-                      ? 'return <Object?>[$returnExpression];'
-                      : 'return $returnExpression;';
+                      ? 'return <Object?>[$returnExpression$valueExtraction];'
+                      : 'return $returnExpression$valueExtraction;';
                   indent.writeln(returnStatement);
                 }
               });
@@ -487,6 +492,8 @@ $resultAt != null
       codecName = _getCodecName(api);
       _writeCodec(indent, codecName, api, root);
     }
+    final List<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toList();
     indent.newln();
     bool first = true;
     addDocumentationComments(
@@ -553,9 +560,21 @@ final BinaryMessenger? _binaryMessenger;
           final String nullHandler = func.returnType.isNullable
               ? (genericCastCall.isEmpty ? '' : '?')
               : '!';
-          final String returnStatement = func.returnType.isVoid
-              ? 'return;'
-              : 'return $nullablyTypedAccessor$nullHandler$genericCastCall;';
+          String returnStatement = 'return';
+          if (customEnumNames.contains(returnType)) {
+            if (func.returnType.isNullable) {
+              returnStatement =
+                  '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
+            } else {
+              returnStatement =
+                  '$returnStatement $returnType.values[$accessor! as int]';
+            }
+          } else if (!func.returnType.isVoid) {
+            returnStatement =
+                '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+          }
+          returnStatement = '$returnStatement;';
+
           indent.format('''
 final List<Object?>? replyList =
 \t\tawait channel.send($sendArgument) as List<Object?>?;

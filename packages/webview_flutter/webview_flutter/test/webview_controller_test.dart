@@ -391,6 +391,7 @@ void main() {
   test('setConsoleLogCallback', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
+
     final WebViewController webViewController = WebViewController.fromPlatform(
       mockPlatformWebViewController,
     );
@@ -400,6 +401,22 @@ void main() {
     await webViewController.setOnConsoleMessage(onConsoleMessage);
 
     verify(mockPlatformWebViewController.setOnConsoleMessage(onConsoleMessage));
+  });
+
+  test('getUserAgent', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    const String userAgent = 'str';
+
+    when(mockPlatformWebViewController.getUserAgent()).thenAnswer(
+      (_) => Future<String?>.value(userAgent),
+    );
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+    await expectLater(webViewController.getUserAgent(), completion(userAgent));
   });
 }
 

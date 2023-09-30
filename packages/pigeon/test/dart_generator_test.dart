@@ -1611,6 +1611,6 @@ name: foobar
     expect(
         testCode,
         contains(
-            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0] as int]'));
+            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0]! as int]'));
   });
 }

@@ -2,11 +2,11 @@ name: animations
 description: Fancy pre-built animations that can easily be integrated into any Flutter application.
 repository: https://github.com/flutter/packages/tree/main/packages/animations
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+animations%22
-version: 2.0.7
+version: 2.0.8
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-  flutter: ">=3.3.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
 
 dependencies:
   flutter:
@@ -16,6 +16,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   vector_math: ^2.1.0
+
+topics:
+  - animation
+  - ui
 
 screenshots:
   - description: 'Examples of the container transform pattern.'

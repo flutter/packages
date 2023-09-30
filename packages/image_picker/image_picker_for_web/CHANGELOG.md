@@ -1,3 +1,8 @@
+## 3.0.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 3.0.0
 
 * **BREAKING CHANGE:** Removes all code and tests mentioning `PickedFile`.

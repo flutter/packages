@@ -292,8 +292,27 @@ Future<void> main() async {
       },
     ));
 
-    final String customUserAgent2 = await _getUserAgent(controller);
-    expect(customUserAgent2, 'Custom_User_Agent1');
+    final String? customUserAgent = await controller.getUserAgent();
+    expect(customUserAgent, 'Custom_User_Agent1');
+  });
+
+  testWidgets(
+      'getUserAgent returns a default value when custom value is not set',
+      (WidgetTester tester) async {
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    final String? userAgent = await controller.getUserAgent();
+    expect(userAgent, isNotNull);
   });
 
   group('Video playback policy', () {
@@ -1196,12 +1215,48 @@ Future<void> main() async {
       await expectLater(controller.currentUrl(), completion(primaryUrl));
     },
   );
-}
 
-/// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.
-Future<String> _getUserAgent(PlatformWebViewController controller) async {
-  return await controller.runJavaScriptReturningResult('navigator.userAgent;')
-      as String;
+  group('Logging', () {
+    testWidgets('can receive console log messages',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+          </head>
+          <body onload="console.debug('Debug message')">
+            <p>Test page</p>
+          </body>
+          </html>
+         ''';
+
+      final Completer<String> debugMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller
+          .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+        debugMessageReceived
+            .complete('${consoleMessage.level.name}:${consoleMessage.message}');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(
+          debugMessageReceived.future, completion('debug:Debug message'));
+    });
+  });
 }
 
 class ResizableWebView extends StatefulWidget {

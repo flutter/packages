@@ -33,7 +33,6 @@ void main() {
     });
 
     test(
-        // ignore: lines_longer_than_80_chars
         'Default implementation of purchaseStream should throw unimplemented error',
         () {
       final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
@@ -46,7 +45,6 @@ void main() {
     });
 
     test(
-        // ignore: lines_longer_than_80_chars
         'Default implementation of isAvailable should throw unimplemented error',
         () {
       final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
@@ -59,7 +57,6 @@ void main() {
     });
 
     test(
-        // ignore: lines_longer_than_80_chars
         'Default implementation of queryProductDetails should throw unimplemented error',
         () {
       final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
@@ -72,7 +69,6 @@ void main() {
     });
 
     test(
-        // ignore: lines_longer_than_80_chars
         'Default implementation of buyNonConsumable should throw unimplemented error',
         () {
       final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
@@ -87,7 +83,6 @@ void main() {
     });
 
     test(
-        // ignore: lines_longer_than_80_chars
         'Default implementation of buyConsumable should throw unimplemented error',
         () {
       final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
@@ -102,7 +97,6 @@ void main() {
     });
 
     test(
-        // ignore: lines_longer_than_80_chars
         'Default implementation of completePurchase should throw unimplemented error',
         () {
       final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
@@ -115,7 +109,6 @@ void main() {
     });
 
     test(
-        // ignore: lines_longer_than_80_chars
         'Default implementation of restorePurchases should throw unimplemented error',
         () {
       final ExtendsInAppPurchasePlatform inAppPurchasePlatform =

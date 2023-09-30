@@ -356,6 +356,14 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<String?> getUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+  @override
   _i5.Future<void> setOnConsoleMessage(
           void Function(_i2.JavaScriptConsoleMessage)? onConsoleMessage) =>
       (super.noSuchMethod(

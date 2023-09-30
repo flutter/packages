@@ -1,3 +1,16 @@
+## 2.8.0
+
+* Adds support for macOS.
+
+## 2.7.2
+
+* Adds `isCompleted` event to `VideoPlayerEvent`.
+
+## 2.7.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.7.0
 
 * Adds an `Uri` typed factory method `VideoPlayerController.networkUrl` to avoid common mistakes with `String` URIs. The method

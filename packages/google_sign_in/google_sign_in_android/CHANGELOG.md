@@ -1,3 +1,12 @@
+## 6.1.20
+
+* Updates play-services-auth version to 20.7.0.
+
+## 6.1.19
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 6.1.18
 
 * Updates play-services-auth version to 20.6.0.

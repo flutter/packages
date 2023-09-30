@@ -1,6 +1,11 @@
-## NEXT
+## 5.6.4
 
-* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Converts platform communication to Pigeon.
+
+## 5.6.3
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 5.6.2
 

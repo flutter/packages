@@ -136,7 +136,10 @@ enum SimulatedLayout {
         ),
       ),
       home: MediaQuery(
-        data: MediaQueryData(size: size),
+        data: MediaQueryData(
+          size: size,
+          padding: const EdgeInsets.only(top: 30),
+        ),
         child: TestScaffold(
           initialIndex: initialIndex,
           isAnimated: animations,

@@ -266,8 +266,8 @@ class WebViewController {
   /// ```dart
   /// final WebViewController controller = WebViewController();
   /// controller.addJavaScriptChannel(
-  ///   name: 'Print',
-  ///   onMessageReceived: (JavascriptMessage message) {
+  ///   'Print',
+  ///   onMessageReceived: (JavaScriptMessage message) {
   ///     print(message.message);
   ///   },
   /// );
@@ -368,6 +368,11 @@ class WebViewController {
   Future<void> setOnConsoleMessage(
       void Function(JavaScriptConsoleMessage message) onConsoleMessage) {
     return platform.setOnConsoleMessage(onConsoleMessage);
+  }
+
+  /// Gets the value used for the HTTP `User-Agent:` request header.
+  Future<String?> getUserAgent() {
+    return platform.getUserAgent();
   }
 }
 
