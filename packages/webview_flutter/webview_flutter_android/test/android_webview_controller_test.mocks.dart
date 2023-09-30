@@ -766,15 +766,6 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
-  _i9.Future<String?> getUserAgent() => (super.noSuchMethod(
-        Invocation.method(
-          #getUserAgent,
-          [],
-        ),
-        returnValue: _i9.Future<String?>.value(),
-        returnValueForMissingStub: _i9.Future<String?>.value(),
-      ) as _i9.Future<String?>);
-  @override
   _i9.Future<void> setOnConsoleMessage(
           void Function(_i3.JavaScriptConsoleMessage)? onConsoleMessage) =>
       (super.noSuchMethod(
@@ -785,6 +776,15 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<String?> getUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgent,
+          [],
+        ),
+        returnValue: _i9.Future<String?>.value(),
+        returnValueForMissingStub: _i9.Future<String?>.value(),
+      ) as _i9.Future<String?>);
 }
 
 /// A class which mocks [AndroidWebViewProxy].
@@ -816,6 +816,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
                   onScrollPositionChange}));
   @override
   _i2.WebChromeClient Function({
+    void Function(
+      _i2.WebChromeClient,
+      _i2.ConsoleMessage,
+    )? onConsoleMessage,
     void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
     _i9.Future<void> Function(
       String,
@@ -842,6 +846,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
   }) get createAndroidWebChromeClient => (super.noSuchMethod(
         Invocation.getter(#createAndroidWebChromeClient),
         returnValue: ({
+          void Function(
+            _i2.WebChromeClient,
+            _i2.ConsoleMessage,
+          )? onConsoleMessage,
           void Function(_i2.WebChromeClient)?
               onGeolocationPermissionsHidePrompt,
           _i9.Future<void> Function(
@@ -872,6 +880,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebChromeClient),
         ),
         returnValueForMissingStub: ({
+          void Function(
+            _i2.WebChromeClient,
+            _i2.ConsoleMessage,
+          )? onConsoleMessage,
           void Function(_i2.WebChromeClient)?
               onGeolocationPermissionsHidePrompt,
           _i9.Future<void> Function(
@@ -902,6 +914,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
           Invocation.getter(#createAndroidWebChromeClient),
         ),
       ) as _i2.WebChromeClient Function({
+        void Function(
+          _i2.WebChromeClient,
+          _i2.ConsoleMessage,
+        )? onConsoleMessage,
         void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
         _i9.Future<void> Function(
           String,
@@ -1821,6 +1837,16 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
   @override
+  _i9.Future<void> setSynchronousReturnValueForOnConsoleMessage(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnConsoleMessage,
+          [value],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+  @override
   _i2.WebChromeClient copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
@@ -1969,6 +1995,15 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+  @override
+  _i9.Future<String> getUserAgentString() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgentString,
+          [],
+        ),
+        returnValue: _i9.Future<String>.value(''),
+        returnValueForMissingStub: _i9.Future<String>.value(''),
+      ) as _i9.Future<String>);
   @override
   _i2.WebSettings copy() => (super.noSuchMethod(
         Invocation.method(

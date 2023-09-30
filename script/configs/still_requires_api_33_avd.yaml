@@ -1,0 +1,4 @@
+# Running the somes tests from these packages on an AVD with Android 34 causes failures.
+- file_selector
+- quick_actions
+- webview_flutter

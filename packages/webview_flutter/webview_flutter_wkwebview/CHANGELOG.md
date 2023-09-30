@@ -1,6 +1,10 @@
-## 3.9.0
+## 3.10.0
 
 * Adds support for `setOnScrollPositionChange` method to the `WebKitWebViewController`.
+
+## 3.9.0
+
+* Adds support for `PlatformWebViewController.getUserAgent`.
 
 ## 3.8.0
 

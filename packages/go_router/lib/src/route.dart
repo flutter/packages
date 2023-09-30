@@ -260,6 +260,7 @@ class GoRoute extends RouteBase {
   ///   queryParameters: <String, String>{'qid': 'quid'},
   /// );
   /// ```
+  /// {@end-tool}
   ///
   /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/named_routes.dart)
   /// for a complete runnable app.
