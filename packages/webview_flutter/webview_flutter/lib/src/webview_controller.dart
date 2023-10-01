@@ -363,7 +363,7 @@ class WebViewController {
   /// On iOS setting this callback will inject a custom [WKUserScript] which
   /// overrides the default implementation of `console.debug`, `console.error`,
   /// `console.info`, `console.log` and `console.warning` methods. The iOS
-  /// WebKit framework unfortunately doesn't provide a build in method to
+  /// WebKit framework unfortunately doesn't provide a built-in method to
   /// forward console messages.
   Future<void> setOnConsoleMessage(
       void Function(JavaScriptConsoleMessage message) onConsoleMessage) {
