@@ -446,6 +446,15 @@ class MarkdownBuilder implements md.NodeVisitor {
           decoration: styleSheet.codeblockDecoration!,
           child: child,
         );
+        if (styleSheet.codeblockDecoration is BoxDecoration) {
+          BoxDecoration b = styleSheet.codeblockDecoration as BoxDecoration;
+          if (b.borderRadius != null) {
+            child = ClipRRect(
+              borderRadius: b.borderRadius!,
+              child: child,
+            );
+          }
+        }
       } else if (tag == 'hr') {
         child = Container(decoration: styleSheet.horizontalRuleDecoration);
       }
