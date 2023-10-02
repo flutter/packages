@@ -370,7 +370,7 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                              (void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+extern void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                         NSObject<HostIntegrationCoreApi> *_Nullable api);
 
 /// The codec used by FlutterIntegrationCoreApi.
@@ -470,7 +470,7 @@ NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void);
 - (void)noopWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void HostTrivialApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+extern void SetUpHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
                                 NSObject<HostTrivialApi> *_Nullable api);
 
 /// The codec used by HostSmallApi.
@@ -483,7 +483,7 @@ NSObject<FlutterMessageCodec> *HostSmallApiGetCodec(void);
 - (void)voidVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-extern void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+extern void SetUpHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
                               NSObject<HostSmallApi> *_Nullable api);
 
 /// The codec used by FlutterSmallApi.

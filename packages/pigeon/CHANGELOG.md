@@ -4,6 +4,7 @@
 * **Breaking Change** Removes `Reply` class from all Java method returns.
 * **Breaking Change** Adds `NullableResult` class for all nullable Java method returns.
 * **Breaking Change** Nests all enum returns in Objective-c to allow for `nil` response on error.
+* **Breaking Change** Renames `<api>Setup` to `SetUp<api>` in Objective-C.
 
 ## 11.0.1
 

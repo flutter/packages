@@ -413,7 +413,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln('@end');
     indent.newln();
     indent.writeln(
-        'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
+        'extern void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
     indent.newln();
   }
 }
@@ -674,7 +674,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
     const String channelName = 'channel';
     indent.write(
-        'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
+        'void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
     indent.addScoped('{', '}', () {
       for (final Method func in api.methods) {
         addDocumentationComments(

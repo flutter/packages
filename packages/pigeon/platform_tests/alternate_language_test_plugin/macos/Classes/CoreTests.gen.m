@@ -344,7 +344,7 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void) {
   return sSharedObject;
 }
 
-void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                  NSObject<HostIntegrationCoreApi> *api) {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
@@ -2915,7 +2915,7 @@ NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void) {
   return sSharedObject;
 }
 
-void HostTrivialApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+void SetUpHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
                          NSObject<HostTrivialApi> *api) {
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
@@ -2941,7 +2941,7 @@ NSObject<FlutterMessageCodec> *HostSmallApiGetCodec(void) {
   return sSharedObject;
 }
 
-void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<HostSmallApi> *api) {
+void SetUpHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<HostSmallApi> *api) {
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:@"dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo"

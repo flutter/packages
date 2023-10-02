@@ -16,7 +16,7 @@
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
-  HostIntegrationCoreApiSetup(registrar.messenger, plugin);
+  SetUpHostIntegrationCoreApi(registrar.messenger, plugin);
   plugin.flutterAPI =
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:registrar.messenger];
 }
