@@ -181,15 +181,20 @@ public class Messages {
     }
   }
 
+  /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
+    /** Success case callback method for handling returns. */
     void success(@NonNull T result);
 
+    /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
-
+  /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
+    /** Success case callback method for handling returns. */
     void success(@Nullable T result);
 
+    /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
 
@@ -235,7 +240,7 @@ public class Messages {
       return ExampleHostApiCodec.INSTANCE;
     }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(

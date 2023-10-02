@@ -179,7 +179,7 @@ class MessageFlutterApi {
   init(binaryMessenger: FlutterBinaryMessenger){
     self.binaryMessenger = binaryMessenger
   }
-  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void) {
+  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod", binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {

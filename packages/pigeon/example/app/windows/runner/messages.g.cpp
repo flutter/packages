@@ -278,7 +278,7 @@ void MessageFlutterApi::FlutterMethod(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
