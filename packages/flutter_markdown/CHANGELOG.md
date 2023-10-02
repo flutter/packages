@@ -1,6 +1,6 @@
 ## 0.6.17+4
 
-* Fixes an incorrect behavior of code block decoration.
+* Fixes an overlapping content of a code block for its decoration.
 
 ## 0.6.17+3
 
