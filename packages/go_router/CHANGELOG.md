@@ -1,3 +1,26 @@
+## 11.1.2
+
+- Fixes a bug where the known routes and initial route were logged even when `debugLogDiagnostics` was set to `false`.
+
+## 11.1.1
+
+- Fixes a missing `{@end-tool}` doc directive tag for `GoRoute.name`.
+
+## 11.1.0
+
+- Adds optional parameter `overridePlatformDefaultLocation` to override initial route set by platform.
+
+## 11.0.1
+
+- Fixes the Android back button ignores top level route's onExit.
+
+## 11.0.0
+
+- Fixes the GoRouter.goBranch so that it doesn't reset extra to null if extra is not serializable.
+- **BREAKING CHANGE**:
+  - Updates the function signature of `GoRouteInformationProvider.restore`.
+  - Adds `NavigationType.restore` to `NavigationType` enum.
+
 ## 10.2.0
 
 - Adds `onExit` to GoRoute.

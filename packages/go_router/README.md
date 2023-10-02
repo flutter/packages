@@ -37,6 +37,7 @@ See the API documentation for details on the following topics:
 - [Error handling](https://pub.dev/documentation/go_router/latest/topics/Error%20handling-topic.html)
 
 ## Migration Guides
+- [Migrating to 11.0.0](https://flutter.dev/go/go-router-v11-breaking-changes).
 - [Migrating to 10.0.0](https://flutter.dev/go/go-router-v10-breaking-changes).
 - [Migrating to 9.0.0](https://flutter.dev/go/go-router-v9-breaking-changes).
 - [Migrating to 8.0.0](https://flutter.dev/go/go-router-v8-breaking-changes).
