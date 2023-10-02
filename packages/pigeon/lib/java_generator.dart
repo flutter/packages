@@ -574,7 +574,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   /// Example:
   /// public interface Foo {
   ///   int add(int x, int y);
-  ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
+  ///   static void setUp(BinaryMessenger binaryMessenger, Foo api) {...}
   /// }
   @override
   void writeHostApi(
@@ -615,10 +615,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.writeln(
           '${_docCommentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`.$_docCommentSuffix');
       indent.write(
-          'static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) ');
+          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) ');
       indent.addScoped('{', '}', () {
         for (final Method method in api.methods) {
-          _writeMethodSetup(
+          _writeMethodSetUp(
             generatorOptions,
             root,
             indent,
@@ -673,10 +673,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
 
-  /// Write a static setup function in the interface.
+  /// Write a static setUp function in the interface.
   /// Example:
-  ///   static void setup(BinaryMessenger binaryMessenger, Foo api) {...}
-  void _writeMethodSetup(
+  ///   static void setUp(BinaryMessenger binaryMessenger, Foo api) {...}
+  void _writeMethodSetUp(
     JavaOptions generatorOptions,
     Root root,
     Indent indent,

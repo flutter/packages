@@ -1190,7 +1190,7 @@ public class CoreTests {
      * Sets up an instance of `HostIntegrationCoreApi` to handle messages through the
      * `binaryMessenger`.
      */
-    static void setup(
+    static void setUp(
         @NonNull BinaryMessenger binaryMessenger, @Nullable HostIntegrationCoreApi api) {
       {
         BasicMessageChannel<Object> channel =
@@ -4200,7 +4200,7 @@ public class CoreTests {
       return new StandardMessageCodec();
     }
     /** Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable HostTrivialApi api) {
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable HostTrivialApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -4242,7 +4242,7 @@ public class CoreTests {
       return new StandardMessageCodec();
     }
     /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable HostSmallApi api) {
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable HostSmallApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(

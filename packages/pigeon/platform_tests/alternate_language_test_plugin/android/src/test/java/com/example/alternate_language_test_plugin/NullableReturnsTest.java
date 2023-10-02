@@ -19,7 +19,7 @@ public class NullableReturnsTest {
   public void nullArgHostApi() {
     NullableReturns.NullableArgHostApi mockApi = mock(NullableReturns.NullableArgHostApi.class);
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    NullableReturns.NullableArgHostApi.setup(binaryMessenger, mockApi);
+    NullableReturns.NullableArgHostApi.setUp(binaryMessenger, mockApi);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger).setMessageHandler(anyString(), handler.capture());

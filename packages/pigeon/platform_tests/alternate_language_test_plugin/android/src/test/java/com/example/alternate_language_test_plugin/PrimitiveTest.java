@@ -97,7 +97,7 @@ public class PrimitiveTest {
     PrimitiveHostApi mockApi = mock(PrimitiveHostApi.class);
     when(mockApi.anInt(1L)).thenReturn(1L);
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    PrimitiveHostApi.setup(binaryMessenger, mockApi);
+    PrimitiveHostApi.setUp(binaryMessenger, mockApi);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger)

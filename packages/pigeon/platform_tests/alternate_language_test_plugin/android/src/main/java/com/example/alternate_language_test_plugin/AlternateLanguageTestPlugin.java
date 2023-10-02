@@ -24,7 +24,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    HostIntegrationCoreApi.setup(binding.getBinaryMessenger(), this);
+    HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this);
     flutterApi = new FlutterIntegrationCoreApi(binding.getBinaryMessenger());
   }
 
