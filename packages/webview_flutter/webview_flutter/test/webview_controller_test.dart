@@ -388,6 +388,21 @@ void main() {
     expect(permissionRequestCallbackCalled, isTrue);
   });
 
+  test('setConsoleLogCallback', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    void onConsoleMessage(JavaScriptConsoleMessage message) {}
+
+    await webViewController.setOnConsoleMessage(onConsoleMessage);
+
+    verify(mockPlatformWebViewController.setOnConsoleMessage(onConsoleMessage));
+  });
+
   test('getUserAgent', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
@@ -401,7 +416,6 @@ void main() {
     final WebViewController webViewController = WebViewController.fromPlatform(
       mockPlatformWebViewController,
     );
-
     await expectLater(webViewController.getUserAgent(), completion(userAgent));
   });
 }
