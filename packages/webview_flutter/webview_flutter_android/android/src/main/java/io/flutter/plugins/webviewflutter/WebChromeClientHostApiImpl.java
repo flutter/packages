@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
@@ -40,6 +41,7 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
   public static class WebChromeClientImpl extends SecureWebChromeClient {
     private final WebChromeClientFlutterApiImpl flutterApi;
     private boolean returnValueForOnShowFileChooser = false;
+    private boolean returnValueForOnConsoleMessage = false;
 
     /**
      * Creates a {@link WebChromeClient} that passes arguments of callbacks methods to Dart.
@@ -107,9 +109,20 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
       flutterApi.onPermissionRequest(this, request, reply -> {});
     }
 
+    @Override
+    public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+      flutterApi.onConsoleMessage(this, consoleMessage, reply -> {});
+      return returnValueForOnConsoleMessage;
+    }
+
     /** Sets return value for {@link #onShowFileChooser}. */
     public void setReturnValueForOnShowFileChooser(boolean value) {
       returnValueForOnShowFileChooser = value;
+    }
+
+    /** Sets return value for {@link #onConsoleMessage}. */
+    public void setReturnValueForOnConsoleMessage(boolean value) {
+      returnValueForOnConsoleMessage = value;
     }
   }
 
@@ -245,5 +258,13 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     final WebChromeClientImpl webChromeClient =
         Objects.requireNonNull(instanceManager.getInstance(instanceId));
     webChromeClient.setReturnValueForOnShowFileChooser(value);
+  }
+
+  @Override
+  public void setSynchronousReturnValueForOnConsoleMessage(
+      @NonNull Long instanceId, @NonNull Boolean value) {
+    final WebChromeClientImpl webChromeClient =
+        Objects.requireNonNull(instanceManager.getInstance(instanceId));
+    webChromeClient.setReturnValueForOnConsoleMessage(value);
   }
 }
