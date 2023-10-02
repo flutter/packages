@@ -1,3 +1,7 @@
+## 0.6.17+4
+
+* Fixes an incorrect behavior of code block decoration.
+
 ## 0.6.17+3
 
 * Fixes an incorrect note about SDK versions in the 0.6.17+2 CHANGELOG.md entry.
