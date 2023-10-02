@@ -2,6 +2,10 @@
 
 * Adds support for `footnote`.
 
+## 0.6.17+4
+
+* Fixes an issue where a code block would overlap its container decoration.
+
 ## 0.6.17+3
 
 * Fixes an incorrect note about SDK versions in the 0.6.17+2 CHANGELOG.md entry.
