@@ -168,7 +168,7 @@ void main() {
     expect(
         code,
         contains(
-            'Enum1Box *enum1 = enum1AsNumber == nil ? nil : [[Enum1Box alloc] initWithValue: [enum1AsNumber integerValue]];'));
+            'Enum1Box *enum1 = enum1AsNumber == nil ? nil : [[Enum1Box alloc] initWithValue:[enum1AsNumber integerValue]];'));
   });
 
   test('primitive enum host', () {

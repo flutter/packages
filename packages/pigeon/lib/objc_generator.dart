@@ -593,7 +593,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             indent.writeln(
                 'NSNumber *${field.name}AsNumber = GetNullableObjectAtIndex(list, $index);');
             indent.writeln(
-                '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue: [${field.name}AsNumber integerValue]];');
+                '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
             indent.writeln('$resultName.${field.name} = ${field.name};');
           } else {
             indent.writeln(
@@ -724,7 +724,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             indent.writeln(
                 'NSNumber *${argName}AsNumber = GetNullableObjectAtIndex(args, $count);');
             indent.writeln(
-                '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue: [${argName}AsNumber integerValue]];');
+                '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
           } else {
             indent.writeln(
                 '$className $argName = [GetNullableObjectAtIndex(args, $count) integerValue];');
@@ -1103,12 +1103,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
             indent.writeln(
                 'completion($valueOnErrorResponse[FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);');
           }, addTrailingNewline: false);
-          if (!func.returnType.isNullable && !func.returnType.isVoid) {
-            indent.addScoped('else if (reply[0] == nil) {', '} ', () {
-              indent.writeln(
-                  'completion($valueOnErrorResponse[FlutterError errorWithCode:@"null-error" message:@"Flutter api returned null value for non-null return value." details:@""]);');
-            }, addTrailingNewline: false);
-          }
           indent.addScoped('else {', '}', () {
             const String nullCheck =
                 'reply[0] == [NSNull null] ? nil : reply[0]';
@@ -1116,9 +1110,11 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
               indent.writeln('completion(nil);');
             } else {
               if (isEnum(root, func.returnType)) {
+                final String enumName = _enumName(returnType.baseName,
+                    prefix: languageOptions.prefix, box: true);
                 indent.writeln('NSNumber *outputAsNumber = $nullCheck;');
                 indent.writeln(
-                    '${_enumName(returnType.baseName, suffix: ' *', prefix: languageOptions.prefix, box: true)}output = outputAsNumber == nil ? nil : [[${_enumName(returnType.baseName, prefix: languageOptions.prefix, box: true)} alloc] initWithValue: [outputAsNumber integerValue]];');
+                    '$enumName *output = outputAsNumber == nil ? nil : [[$enumName alloc] initWithValue:[outputAsNumber integerValue]];');
               } else {
                 indent.writeln('${returnType.withPtr}output = $nullCheck;');
               }

@@ -886,7 +886,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
               'std::unique_ptr<EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);');
           indent.writeln('const auto& $encodedReplyName = *response;');
           indent.writeln(
-              'const auto& $listReplyName = std::get_if<EncodableList>(&$encodedReplyName);');
+              'const auto* $listReplyName = std::get_if<EncodableList>(&$encodedReplyName);');
           indent.writeScoped('if ($listReplyName) {', '} ', () {
             indent.writeScoped('if ($listReplyName->size() > 1) {', '} ', () {
               indent.writeln(

@@ -2249,33 +2249,24 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_everything ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  AllTypes *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       AllTypes *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 - (void)echoAllNullableTypes:(nullable AllNullableTypes *)arg_everything
                   completion:
@@ -2314,36 +2305,27 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                              @"FlutterIntegrationCoreApi.sendMultipleNullableTypes"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[
-        arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
-        arg_aNullableString ?: [NSNull null]
-      ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  AllNullableTypes *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[
+    arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
+    arg_aNullableString ?: [NSNull null]
+  ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       AllNullableTypes *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 - (void)echoBool:(NSNumber *)arg_aBool
       completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
@@ -2352,33 +2334,24 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aBool ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 - (void)echoInt:(NSNumber *)arg_anInt
      completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
@@ -2387,33 +2360,24 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_anInt ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 - (void)echoDouble:(NSNumber *)arg_aDouble
         completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
@@ -2422,33 +2386,24 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aDouble ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSNumber *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 - (void)echoString:(NSString *)arg_aString
         completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
@@ -2457,33 +2412,24 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aString ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 - (void)echoUint8List:(FlutterStandardTypedData *)arg_aList
            completion:
@@ -2501,14 +2447,6 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                   completion(nil, [FlutterError errorWithCode:reply[0]
                                                       message:reply[1]
                                                       details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
                 } else {
                   FlutterStandardTypedData *output = reply[0] == [NSNull null] ? nil : reply[0];
                   completion(output, nil);
@@ -2528,33 +2466,24 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aList ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  NSArray<id> *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSArray<id> *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 - (void)echoMap:(NSDictionary<NSString *, id> *)arg_aMap
      completion:
@@ -2572,14 +2501,6 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                   completion(nil, [FlutterError errorWithCode:reply[0]
                                                       message:reply[1]
                                                       details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
                 } else {
                   NSDictionary<NSString *, id> *output = reply[0] == [NSNull null] ? nil : reply[0];
                   completion(output, nil);
@@ -2599,37 +2520,28 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ [NSNumber numberWithInteger:arg_anEnum] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  NSNumber *outputAsNumber = reply[0] == [NSNull null] ? nil : reply[0];
-                  AnEnumBox *output =
-                      outputAsNumber == nil
-                          ? nil
-                          : [[AnEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ [NSNumber numberWithInteger:arg_anEnum] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSNumber *outputAsNumber = reply[0] == [NSNull null] ? nil : reply[0];
+                       AnEnumBox *output =
+                           outputAsNumber == nil
+                               ? nil
+                               : [[AnEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 - (void)echoNullableBool:(nullable NSNumber *)arg_aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
@@ -2879,33 +2791,24 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aString ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 @end
 
@@ -3049,32 +2952,23 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterSmallApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_msg ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else if (reply[0] == nil) {
-                  completion(
-                      nil,
-                      [FlutterError
-                          errorWithCode:@"null-error"
-                                message:
-                                    @"Flutter api returned null value for non-null return value."
-                                details:@""]);
-                } else {
-                  TestMessage *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
+  [channel sendMessage:@[ arg_msg ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       TestMessage *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
                                                message:@"Unable to establish connection on channel."
                                                details:@""]);
-              }
-            }];
+                   }
+                 }];
 }
 @end

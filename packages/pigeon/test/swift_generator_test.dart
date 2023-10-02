@@ -353,8 +353,8 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(
-        code, contains('completion: @escaping (Result<Void, Error>) -> Void'));
+    expect(code,
+        contains('completion: @escaping (Result<Void, FlutterError>) -> Void'));
     expect(code, contains('completion(.success(Void()))'));
   });
 
@@ -426,7 +426,7 @@ void main() {
     expect(
         code,
         contains(
-            'func doSomething(completion: @escaping (Result<Output, Error>) -> Void)'));
+            'func doSomething(completion: @escaping (Result<Output, FlutterError>) -> Void)'));
     expect(code, contains('channel.sendMessage(nil'));
   });
 
@@ -888,7 +888,7 @@ void main() {
     expect(
         code,
         contains(
-            'func doit(completion: @escaping (Result<[Int64?], Error>) -> Void)'));
+            'func doit(completion: @escaping (Result<[Int64?], FlutterError>) -> Void)'));
     expect(code, contains('let result = listResponse[0] as! [Int64?]'));
     expect(code, contains('completion(.success(result))'));
   });
@@ -974,7 +974,7 @@ void main() {
     expect(
         code,
         contains(
-            'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Result<Int64, Error>) -> Void)'));
+            'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Result<Int64, FlutterError>) -> Void)'));
     expect(code,
         contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
   });
@@ -1110,7 +1110,7 @@ void main() {
     expect(
         code,
         contains(
-            'func doit(foo fooArg: Int64?, completion: @escaping (Result<Void, Error>) -> Void)'));
+            'func doit(foo fooArg: Int64?, completion: @escaping (Result<Void, FlutterError>) -> Void)'));
   });
 
   test('nonnull fields', () {

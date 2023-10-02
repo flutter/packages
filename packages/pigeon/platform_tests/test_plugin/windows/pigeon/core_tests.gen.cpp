@@ -3630,7 +3630,7 @@ void FlutterIntegrationCoreApi::Noop(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3664,7 +3664,7 @@ void FlutterIntegrationCoreApi::ThrowError(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3699,7 +3699,7 @@ void FlutterIntegrationCoreApi::ThrowErrorFromVoid(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3736,7 +3736,7 @@ void FlutterIntegrationCoreApi::EchoAllTypes(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3775,7 +3775,7 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypes(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3820,7 +3820,7 @@ void FlutterIntegrationCoreApi::SendMultipleNullableTypes(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3858,7 +3858,7 @@ void FlutterIntegrationCoreApi::EchoBool(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3895,7 +3895,7 @@ void FlutterIntegrationCoreApi::EchoInt(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3932,7 +3932,7 @@ void FlutterIntegrationCoreApi::EchoDouble(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -3970,7 +3970,7 @@ void FlutterIntegrationCoreApi::EchoString(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4009,7 +4009,7 @@ void FlutterIntegrationCoreApi::EchoUint8List(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4048,7 +4048,7 @@ void FlutterIntegrationCoreApi::EchoList(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4087,7 +4087,7 @@ void FlutterIntegrationCoreApi::EchoMap(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4125,7 +4125,7 @@ void FlutterIntegrationCoreApi::EchoEnum(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4163,7 +4163,7 @@ void FlutterIntegrationCoreApi::EchoNullableBool(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4200,7 +4200,7 @@ void FlutterIntegrationCoreApi::EchoNullableInt(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4242,7 +4242,7 @@ void FlutterIntegrationCoreApi::EchoNullableDouble(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4281,7 +4281,7 @@ void FlutterIntegrationCoreApi::EchoNullableString(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4320,7 +4320,7 @@ void FlutterIntegrationCoreApi::EchoNullableUint8List(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4359,7 +4359,7 @@ void FlutterIntegrationCoreApi::EchoNullableList(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4398,7 +4398,7 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4436,7 +4436,7 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4477,7 +4477,7 @@ void FlutterIntegrationCoreApi::NoopAsync(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4514,7 +4514,7 @@ void FlutterIntegrationCoreApi::EchoAsyncString(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {
@@ -4729,7 +4729,7 @@ void FlutterSmallApi::EchoWrappedList(
     std::unique_ptr<EncodableValue> response =
         GetCodec().DecodeMessage(reply, reply_size);
     const auto& encodable_return_value = *response;
-    const auto& list_return_value =
+    const auto* list_return_value =
         std::get_if<EncodableList>(&encodable_return_value);
     if (list_return_value) {
       if (list_return_value->size() > 1) {

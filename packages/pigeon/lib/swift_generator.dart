@@ -327,7 +327,7 @@ import FlutterMacOS
 
         if (func.arguments.isEmpty) {
           indent.write(
-              'func ${func.name}(completion: @escaping (Result<$returnType, Error>) -> Void) ');
+              'func ${func.name}(completion: @escaping (Result<$returnType, FlutterError>) -> Void) ');
           sendArgument = 'nil';
         } else {
           final Iterable<String> argTypes = func.arguments
@@ -352,7 +352,7 @@ import FlutterMacOS
               (String type, String label, String name) =>
                   '$label $name: $type').join(', ');
           indent.write(
-              'func ${components.name}($argsSignature, completion: @escaping (Result<$returnType, Error>) -> Void) ');
+              'func ${components.name}($argsSignature, completion: @escaping (Result<$returnType, FlutterError>) -> Void) ');
         }
         indent.addScoped('{', '}', () {
           const String channel = 'channel';

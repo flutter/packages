@@ -521,22 +521,24 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     indent.writeln('result.success(null);');
                   } else {
                     const String output = 'output';
+                    String outputExpression;
                     indent.writeln('@SuppressWarnings("ConstantConditions")');
                     if (func.returnType.baseName == 'int') {
-                      indent.writeln(
-                          '$returnType $output = listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();');
+                      outputExpression =
+                          'listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();';
                     } else if (isEnum(root, func.returnType)) {
                       if (func.returnType.isNullable) {
-                        indent.writeln(
-                            '$returnType $output = listReply.get(0) == null ? null : $returnType.values()[(int) listReply.get(0)];');
+                        outputExpression =
+                            'listReply.get(0) == null ? null : $returnType.values()[(int) listReply.get(0)];';
                       } else {
-                        indent.writeln(
-                            '$returnType $output = $returnType.values()[(int) listReply.get(0)];');
+                        outputExpression =
+                            '$returnType.values()[(int) listReply.get(0)];';
                       }
                     } else {
-                      indent.writeln(
-                          '$returnType $output = ${_cast('listReply.get(0)', javaType: returnType)};');
+                      outputExpression =
+                          '${_cast('listReply.get(0)', javaType: returnType)};';
                     }
+                    indent.writeln('$returnType $output = $outputExpression');
                     indent.writeln('result.success($output);');
                   }
                 });
@@ -564,7 +566,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             api.methods.any((Method it) => it.isAsynchronous) ||
         api.location == ApiLocation.flutter)) {
       indent.newln();
-      _writeResultInterface(indent);
+      _writeResultInterfaces(indent);
     }
     super.writeApis(generatorOptions, root, indent,
         dartPackageName: dartPackageName);
@@ -872,18 +874,30 @@ $resultType<$returnType> $resultName =
     indent.newln();
   }
 
-  void _writeResultInterface(Indent indent) {
+  void _writeResultInterfaces(Indent indent) {
+    indent.writeln(
+        '/** Asynchronous error handling return type for non-nullable API method returns. */');
     indent.write('public interface Result<T> ');
     indent.addScoped('{', '}', () {
+      indent
+          .writeln('/** Success case callback method for handling returns. */');
       indent.writeln('void success(@NonNull T result);');
       indent.newln();
+      indent
+          .writeln('/** Failure case callback method for handling errors. */');
       indent.writeln('void error(@NonNull Throwable error);');
     });
 
+    indent.writeln(
+        '/** Asynchronous error handling return type for nullable API method returns. */');
     indent.write('public interface NullableResult<T> ');
     indent.addScoped('{', '}', () {
+      indent
+          .writeln('/** Success case callback method for handling returns. */');
       indent.writeln('void success(@Nullable T result);');
       indent.newln();
+      indent
+          .writeln('/** Failure case callback method for handling errors. */');
       indent.writeln('void error(@NonNull Throwable error);');
     });
   }

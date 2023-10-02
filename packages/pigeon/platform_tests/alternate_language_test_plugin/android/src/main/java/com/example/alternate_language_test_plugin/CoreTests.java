@@ -917,15 +917,20 @@ public class CoreTests {
     }
   }
 
+  /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
+    /** Success case callback method for handling returns. */
     void success(@NonNull T result);
 
+    /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
-
+  /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
+    /** Success case callback method for handling returns. */
     void success(@Nullable T result);
 
+    /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
 
