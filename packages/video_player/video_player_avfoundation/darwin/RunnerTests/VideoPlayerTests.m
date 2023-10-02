@@ -10,6 +10,15 @@
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
 #import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
 
+// TODO(stuartmorgan): Convert to using mock registrars instead.
+NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
+#if TARGET_OS_IOS
+  return (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
+#else
+  return (FlutterViewController *)NSApplication.sharedApplication.windows[0].contentViewController;
+#endif
+}
+
 @interface FVPVideoPlayer : NSObject <FlutterStreamHandler>
 @property(readonly, nonatomic) AVPlayer *player;
 @property(readonly, nonatomic) AVPlayerLayer *playerLayer;
@@ -23,6 +32,7 @@
     NSMutableDictionary<NSNumber *, FVPVideoPlayer *> *playersByTextureId;
 @end
 
+#if TARGET_OS_IOS
 @interface FakeAVAssetTrack : AVAssetTrack
 @property(readonly, nonatomic) CGAffineTransform preferredTransform;
 @property(readonly, nonatomic) CGSize naturalSize;
@@ -60,6 +70,7 @@
 }
 
 @end
+#endif
 
 @interface VideoPlayerTests : XCTestCase
 @end
@@ -112,10 +123,8 @@
   // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
   // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
   // for issue #1, and restore the correct width and height for issue #2.
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"testPlayerLayerWorkaround"];
+      [GetPluginRegistry() registrarForPlugin:@"testPlayerLayerWorkaround"];
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
@@ -142,25 +151,24 @@
 - (void)testSeekToInvokesTextureFrameAvailableOnTextureRegistry {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"SeekToInvokestextureFrameAvailable"];
+      [GetPluginRegistry() registrarForPlugin:@"SeekToInvokestextureFrameAvailable"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:partialRegistrar];
 
-  FlutterError *error;
-  [videoPlayerPlugin initialize:&error];
-  XCTAssertNil(error);
+  FlutterError *initalizationError;
+  [videoPlayerPlugin initialize:&initalizationError];
+  XCTAssertNil(initalizationError);
   FVPCreateMessage *create = [FVPCreateMessage
       makeWithAsset:nil
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
         packageName:nil
          formatHint:nil
         httpHeaders:@{}];
-  FVPTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&error];
+  FlutterError *createError;
+  FVPTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&createError];
   NSNumber *textureId = textureMessage.textureId;
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
@@ -177,10 +185,8 @@
 }
 
 - (void)testDeregistersFromPlayer {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"testDeregistersFromPlayer"];
+      [GetPluginRegistry() registrarForPlugin:@"testDeregistersFromPlayer"];
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
@@ -210,10 +216,8 @@
 }
 
 - (void)testBufferingStateFromPlayer {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"testLiveStreamBufferEndFromPlayer"];
+      [GetPluginRegistry() registrarForPlugin:@"testLiveStreamBufferEndFromPlayer"];
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
@@ -256,9 +260,8 @@
 }
 
 - (void)testVideoControls {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestVideoControls"];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"TestVideoControls"];
 
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
@@ -272,9 +275,8 @@
 }
 
 - (void)testAudioControls {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestAudioControls"];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"TestAudioControls"];
 
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
@@ -289,9 +291,8 @@
 }
 
 - (void)testHLSControls {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestHLSControls"];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"TestHLSControls"];
 
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
@@ -304,6 +305,7 @@
   XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
 }
 
+#if TARGET_OS_IOS
 - (void)testTransformFix {
   [self validateTransformFixForOrientation:UIImageOrientationUp];
   [self validateTransformFixForOrientation:UIImageOrientationDown];
@@ -314,11 +316,11 @@
   [self validateTransformFixForOrientation:UIImageOrientationLeftMirrored];
   [self validateTransformFixForOrientation:UIImageOrientationRightMirrored];
 }
+#endif
 
 - (void)testSeekToleranceWhenNotSeekingToEnd {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"TestSeekTolerance"];
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"TestSeekTolerance"];
 
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPPlayerFactory *stubFVPPlayerFactory =
@@ -326,9 +328,9 @@
   FVPVideoPlayerPlugin *pluginWithMockAVPlayer =
       [[FVPVideoPlayerPlugin alloc] initWithPlayerFactory:stubFVPPlayerFactory registrar:registrar];
 
-  FlutterError *error;
-  [pluginWithMockAVPlayer initialize:&error];
-  XCTAssertNil(error);
+  FlutterError *initializationError;
+  [pluginWithMockAVPlayer initialize:&initializationError];
+  XCTAssertNil(initializationError);
 
   FVPCreateMessage *create = [FVPCreateMessage
       makeWithAsset:nil
@@ -336,7 +338,8 @@
         packageName:nil
          formatHint:nil
         httpHeaders:@{}];
-  FVPTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
+  FlutterError *createError;
+  FVPTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&createError];
   NSNumber *textureId = textureMessage.textureId;
 
   XCTestExpectation *initializedExpectation =
@@ -353,10 +356,8 @@
 }
 
 - (void)testSeekToleranceWhenSeekingToEnd {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"TestSeekToEndTolerance"];
+      [GetPluginRegistry() registrarForPlugin:@"TestSeekToEndTolerance"];
 
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPPlayerFactory *stubFVPPlayerFactory =
@@ -364,9 +365,9 @@
   FVPVideoPlayerPlugin *pluginWithMockAVPlayer =
       [[FVPVideoPlayerPlugin alloc] initWithPlayerFactory:stubFVPPlayerFactory registrar:registrar];
 
-  FlutterError *error;
-  [pluginWithMockAVPlayer initialize:&error];
-  XCTAssertNil(error);
+  FlutterError *initializationError;
+  [pluginWithMockAVPlayer initialize:&initializationError];
+  XCTAssertNil(initializationError);
 
   FVPCreateMessage *create = [FVPCreateMessage
       makeWithAsset:nil
@@ -374,7 +375,8 @@
         packageName:nil
          formatHint:nil
         httpHeaders:@{}];
-  FVPTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&error];
+  FlutterError *createError;
+  FVPTextureMessage *textureMessage = [pluginWithMockAVPlayer create:create error:&createError];
   NSNumber *textureId = textureMessage.textureId;
 
   XCTestExpectation *initializedExpectation =
@@ -449,13 +451,11 @@
 //
 // Failing to de-register results in a crash in [AVPlayer willChangeValueForKey:].
 - (void)testDoesNotCrashOnRateObservationAfterDisposal {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"testDoesNotCrashOnRateObservationAfterDisposal"];
+      [GetPluginRegistry() registrarForPlugin:@"testDoesNotCrashOnRateObservationAfterDisposal"];
 
   AVPlayer *avPlayer = nil;
-  __weak FVPVideoPlayer *player = nil;
+  __weak FVPVideoPlayer *weakPlayer = nil;
 
   // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
   @autoreleasepool {
@@ -476,8 +476,9 @@
     XCTAssertNil(error);
     XCTAssertNotNil(textureMessage);
 
-    player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
+    FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
     XCTAssertNotNil(player);
+    weakPlayer = player;
     avPlayer = player.player;
 
     [videoPlayerPlugin dispose:textureMessage error:&error];
@@ -487,9 +488,12 @@
   // [FVPVideoPlayerPlugin dispose:error:] selector is dispatching the [FVPVideoPlayer dispose] call
   // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
   // was truly deallocated.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
   [self expectationForPredicate:[NSPredicate predicateWithFormat:@"self != nil"]
-            evaluatedWithObject:player
+            evaluatedWithObject:weakPlayer
                         handler:nil];
+#pragma clang diagnostic pop
   [self waitForExpectationsWithTimeout:10.0 handler:nil];
 
   [avPlayer willChangeValueForKey:@"rate"];  // No assertions needed. Lack of crash is a success.
@@ -502,12 +506,10 @@
 // Both of these methods dispatch [FVPVideoPlayer dispose] on the main thread
 // leading to a possible crash when de-registering observers twice.
 - (void)testHotReloadDoesNotCrash {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"testHotReloadDoesNotCrash"];
+      [GetPluginRegistry() registrarForPlugin:@"testHotReloadDoesNotCrash"];
 
-  __weak FVPVideoPlayer *player = nil;
+  __weak FVPVideoPlayer *weakPlayer = nil;
 
   // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
   @autoreleasepool {
@@ -528,8 +530,9 @@
     XCTAssertNil(error);
     XCTAssertNotNil(textureMessage);
 
-    player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
+    FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureMessage.textureId];
     XCTAssertNotNil(player);
+    weakPlayer = player;
 
     [player onTextureUnregistered:nil];
     XCTAssertNil(error);
@@ -541,13 +544,17 @@
   // [FVPVideoPlayerPlugin dispose:error:] selector is dispatching the [FVPVideoPlayer dispose] call
   // with a 1-second delay keeping a strong reference to the player. The polling ensures the player
   // was truly deallocated.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
   [self expectationForPredicate:[NSPredicate predicateWithFormat:@"self != nil"]
-            evaluatedWithObject:player
+            evaluatedWithObject:weakPlayer
                         handler:nil];
+#pragma clang diagnostic pop
   [self waitForExpectationsWithTimeout:10.0
                                handler:nil];  // No assertions needed. Lack of crash is a success.
 }
 
+#if TARGET_OS_IOS
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
   AVAssetTrack *track = [[FakeAVAssetTrack alloc] initWithOrientation:orientation];
   CGAffineTransform t = FVPGetStandardizedTransformForTrack(track);
@@ -590,5 +597,6 @@
   XCTAssertEqual(t.tx, expectX);
   XCTAssertEqual(t.ty, expectY);
 }
+#endif
 
 @end
