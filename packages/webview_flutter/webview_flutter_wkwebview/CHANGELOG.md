@@ -1,9 +1,13 @@
-## 3.9.0
+## 3.10.0
 
 * Adds support to intercept JavaScript dialog.
   Sees `PlatformWebViewController.setOnJavaScriptAlertDialog`,
   `PlatformWebViewController.setOnJavaScriptConfirmDialog`,
   `PlatformWebViewController.setOnJavaScriptPromptDialog`.
+
+## 3.9.0
+
+* Adds support for `PlatformWebViewController.getUserAgent`.
 
 ## 3.8.0
 

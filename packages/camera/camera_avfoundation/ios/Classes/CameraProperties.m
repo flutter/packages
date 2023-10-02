@@ -16,13 +16,7 @@ FLTFlashMode FLTGetFLTFlashModeForString(NSString *mode) {
   } else if ([mode isEqualToString:@"torch"]) {
     return FLTFlashModeTorch;
   } else {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : [NSString
-                                           stringWithFormat:@"Unknown flash mode %@", mode]
-                                     }];
-    @throw error;
+    return FLTFlashModeInvalid;
   }
 }
 
@@ -48,14 +42,11 @@ NSString *FLTGetStringForFLTExposureMode(FLTExposureMode mode) {
       return @"auto";
     case FLTExposureModeLocked:
       return @"locked";
+    case FLTExposureModeInvalid:
+      // This value should never actually be used.
+      return nil;
   }
-  NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                       code:NSURLErrorUnknown
-                                   userInfo:@{
-                                     NSLocalizedDescriptionKey : [NSString
-                                         stringWithFormat:@"Unknown string for exposure mode"]
-                                   }];
-  @throw error;
+  return nil;
 }
 
 FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode) {
@@ -64,13 +55,7 @@ FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode) {
   } else if ([mode isEqualToString:@"locked"]) {
     return FLTExposureModeLocked;
   } else {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : [NSString
-                                           stringWithFormat:@"Unknown exposure mode %@", mode]
-                                     }];
-    @throw error;
+    return FLTExposureModeInvalid;
   }
 }
 
@@ -82,14 +67,11 @@ NSString *FLTGetStringForFLTFocusMode(FLTFocusMode mode) {
       return @"auto";
     case FLTFocusModeLocked:
       return @"locked";
+    case FLTFocusModeInvalid:
+      // This value should never actually be used.
+      return nil;
   }
-  NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                       code:NSURLErrorUnknown
-                                   userInfo:@{
-                                     NSLocalizedDescriptionKey : [NSString
-                                         stringWithFormat:@"Unknown string for focus mode"]
-                                   }];
-  @throw error;
+  return nil;
 }
 
 FLTFocusMode FLTGetFLTFocusModeForString(NSString *mode) {
@@ -98,13 +80,7 @@ FLTFocusMode FLTGetFLTFocusModeForString(NSString *mode) {
   } else if ([mode isEqualToString:@"locked"]) {
     return FLTFocusModeLocked;
   } else {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : [NSString
-                                           stringWithFormat:@"Unknown focus mode %@", mode]
-                                     }];
-    @throw error;
+    return FLTFocusModeInvalid;
   }
 }
 
@@ -120,14 +96,7 @@ UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation) {
   } else if ([orientation isEqualToString:@"portraitUp"]) {
     return UIDeviceOrientationPortrait;
   } else {
-    NSError *error = [NSError
-        errorWithDomain:NSCocoaErrorDomain
-                   code:NSURLErrorUnknown
-               userInfo:@{
-                 NSLocalizedDescriptionKey :
-                     [NSString stringWithFormat:@"Unknown device orientation %@", orientation]
-               }];
-    @throw error;
+    return UIDeviceOrientationUnknown;
   }
 }
 
@@ -163,13 +132,7 @@ FLTResolutionPreset FLTGetFLTResolutionPresetForString(NSString *preset) {
   } else if ([preset isEqualToString:@"max"]) {
     return FLTResolutionPresetMax;
   } else {
-    NSError *error = [NSError errorWithDomain:NSCocoaErrorDomain
-                                         code:NSURLErrorUnknown
-                                     userInfo:@{
-                                       NSLocalizedDescriptionKey : [NSString
-                                           stringWithFormat:@"Unknown resolution preset %@", preset]
-                                     }];
-    @throw error;
+    return FLTResolutionPresetInvalid;
   }
 }
 

@@ -1,9 +1,17 @@
-## 4.3.0
+## 4.5.0
 
 * Adds support to intercept JavaScript dialog.
   Sees `WebViewController.setOnJavaScriptAlertDialog`,
   `WebViewController.setOnJavaScriptConfirmDialog`,
   `WebViewController.setOnJavaScriptPromptDialog`.
+
+## 4.4.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `WebViewController.setConsoleLogCallback`.
+
+## 4.3.0
+
+* Adds support to retrieve the user agent. See `WebViewController.getUserAgent`.
 
 ## 4.2.4
 
