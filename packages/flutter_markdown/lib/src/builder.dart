@@ -444,7 +444,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       } else if (tag == 'pre') {
         child = Container(
           clipBehavior: Clip.hardEdge,
-          decoration: styleSheet.codeblockDecoration!,
+          decoration: styleSheet.codeblockDecoration,
           child: child,
         );
       } else if (tag == 'hr') {
