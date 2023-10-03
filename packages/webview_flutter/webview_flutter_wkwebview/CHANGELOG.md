@@ -5,6 +5,10 @@
   `PlatformWebViewController.setOnJavaScriptConfirmDialog`,
   `PlatformWebViewController.setOnJavaScriptPromptDialog`.
 
+## 3.9.1
+
+* Fixes bug where `WebkitWebViewController.getUserAgent` was incorrectly returning an empty String.
+
 ## 3.9.0
 
 * Adds support for `PlatformWebViewController.getUserAgent`.
