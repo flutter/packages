@@ -292,6 +292,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
   AVPlayerItem *item;
   if (cacheEnabled.boolValue) {
+    NSLog(@"cache enabled");
     // cache is enabled, start the resource loader manager to mage loading and caching content
     // during playback. it is tied to the player. If a new player is created, a new
     // resourceloadermanager for that player is created. If the player is deallocated, the
@@ -847,6 +848,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (NSNumber *)clearCache:(FlutterError *__autoreleasing *)error {
+  NSLog(@"clean cache");
   //  [player.resourceLoaderManager cleanCache];
   unsigned long long fileSize = [FVPCacheManager calculateCachedSizeWithError:nil];
   NSLog(@"file cache size: %@", @(fileSize));
@@ -855,7 +857,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   if (error2) {
     NSLog(@"clean cache failure: %@", error2);
-      return @NO;
+    return @NO;
   }
   return @YES;
 }
@@ -883,7 +885,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (NSNumber *)isCacheSupportedForNetworkMedia:(FVPIsCacheSupportedMessage *)msg
-                                                             error:(FlutterError **)error {
+                                        error:(FlutterError **)error {
   BOOL isSupported = [self isCacheSupported:msg.uri];
   return [NSNumber numberWithBool:isSupported];
 }

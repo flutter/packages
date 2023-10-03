@@ -12,6 +12,13 @@
 @interface FVPCacheConfiguration : NSObject <NSCopying>
 
 /**
+ * Returns a CacheConfiguration based on the provided url.
+ *
+ * @param filePath of the configuration
+ */
++ (NSString *)configurationFilePathForFilePath:(NSString *)filePath;
+
+/**
  * Instanciates a CacheConfiguration based on the provided url. It
  * attempts to unarchive a previously saved configuration from the file. If the file does not exist
  * or the unarchiving fails, a new CacheConfiguration is created and returned.

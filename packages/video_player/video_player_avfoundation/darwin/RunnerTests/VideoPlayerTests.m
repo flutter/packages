@@ -233,8 +233,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.mp4"];
 
-  NSNumber *isSupported =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *isSupported = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertTrue(isSupported);
 }
@@ -257,8 +256,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/flac/play.flac"];
 
-  NSNumber *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertTrue(response.boolValue);
 }
@@ -281,8 +279,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
 
-  NSNumber *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.boolValue);
 }
@@ -306,8 +303,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/"
                   @"fileSequence0.aac"];
 
-  NSNumber *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.boolValue);
 }
@@ -331,8 +327,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       makeWithUri:@"https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear1/"
                   @"fileSequence0.ts"];
 
-  NSNumber *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.boolValue);
 }
@@ -356,8 +351,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/mkv/"
                   @"android-screens-lavf-56.36.100-aac-avc-main-1280x720.mkv"];
 
-  NSNumber *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.boolValue);
 }
@@ -381,8 +375,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/gen-3/screens/"
                   @"dash-vod-single-segment/video-vp9-360.webm"];
 
-  NSNumber *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.boolValue);
 }
@@ -405,8 +398,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-0/play.mp3"];
 
-  NSNumber *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.boolValue);
 }
@@ -429,8 +421,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPIsCacheSupportedMessage *message = [FVPIsCacheSupportedMessage
       makeWithUri:@"https://storage.googleapis.com/exoplayer-test-media-1/ogg/play.ogg"];
 
-  NSNumber *response =
-      [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
+  NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
   XCTAssertFalse(response.boolValue);
 }

@@ -45,6 +45,10 @@ static NSString *kURLKey = @"kURLKey";
   return configuration;
 }
 
++ (NSString *)configurationFilePathForFilePath:(NSString *)filePath {
+  return [filePath stringByAppendingPathExtension:@"fvp_cont_cfg"];
+}
+
 - (NSArray<NSValue *> *)internalCacheFragments {
   if (!_internalCacheFragments) {
     _internalCacheFragments = [NSArray array];
@@ -122,11 +126,11 @@ static NSString *kURLKey = @"kURLKey";
                                                          error:&error];
 
     if (error) {
-      NSLog(@"%@", error);
+      NSLog(@"ERROR 1 %@", error);
     }
     [data writeToFile:self.filePath options:NSDataWritingAtomic error:&error];
     if (error) {
-      NSLog(@"%@", error);
+      NSLog(@"ERROR 2 %@", error);
     }
   }
 }
@@ -201,7 +205,7 @@ static NSString *kURLKey = @"kURLKey";
   }
 }
 
-// Store donwloadInfo.
+// Store downloadInfo.
 - (void)addDownloadedBytes:(long long)bytes spent:(NSTimeInterval)time {
   @synchronized(self.downloadInfo) {
     self.downloadInfo = [self.downloadInfo arrayByAddingObject:@[ @(bytes), @(time) ]];

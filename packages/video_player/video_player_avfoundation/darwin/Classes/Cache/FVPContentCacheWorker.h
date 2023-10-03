@@ -38,6 +38,11 @@
 - (void)cacheData:(NSData *)data forRange:(NSRange)range error:(NSError **)error;
 
 /**
+ * Exposes the error during initialisation processes for debugging purposes.
+ */
+@property(nonatomic, strong, readonly) NSError *setupError;
+
+/**
  * Returns an array of CacheAction objects for a given range. It identifies the cached
  * fragments within the range and returns an array of CacheAction objects, representing refreshing
  * cache actions.

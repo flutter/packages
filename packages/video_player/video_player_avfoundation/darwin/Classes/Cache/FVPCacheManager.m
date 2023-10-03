@@ -5,6 +5,8 @@
 #import "FVPCacheManager.h"
 #import "FVPContentDownloader.h"
 
+NSString *FVPCacheConfigurationKey = @"FVPCacheConfigurationKey";
+
 static NSString *kMContentCacheDirectory;
 
 @implementation FVPCacheManager
@@ -28,7 +30,7 @@ static NSString *kMContentCacheDirectory;
 }
 
 + (NSString *)cachedFilePathForURL:(NSURL *)url {
-  //  NSLog(@"%@", url);
+  NSLog(@"%@", url);
   NSString *pathComponent = url.absoluteString;
   return [[self cacheDirectory] stringByAppendingPathComponent:pathComponent];
 }
@@ -37,6 +39,14 @@ static NSString *kMContentCacheDirectory;
 // It iterates through each file in the cache directory, retrieves its attributes (including file
 // size), and accumulates the total size. If an error occurs during the process, the error parameter
 // will be populated.
+
++ (FVPCacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error {
+  NSString *filePath = [self cachedFilePathForURL:url];
+  FVPCacheConfiguration *configuration = [FVPCacheConfiguration configurationWithFilePath:filePath
+                                                                                    error:error];
+  return configuration;
+}
+
 + (unsigned long long)calculateCachedSizeWithError:(NSError **)error {
   NSFileManager *fileManager = [NSFileManager defaultManager];
   NSString *cacheDirectory = [self cacheDirectory];
@@ -59,6 +69,7 @@ static NSString *kMContentCacheDirectory;
 }
 
 + (void)cleanAllCacheWithError:(NSError **)error {
+  // Find downloading file
   NSMutableSet *downloadingFiles = [NSMutableSet set];
 
   // Loop over all downloadingUrls (NSSet).
@@ -67,6 +78,8 @@ static NSString *kMContentCacheDirectory;
       enumerateObjectsUsingBlock:^(NSURL *_Nonnull obj, BOOL *_Nonnull stop) {
         NSString *file = [self cachedFilePathForURL:obj];
         [downloadingFiles addObject:file];
+        NSString *configurationPath = [FVPCacheConfiguration configurationFilePathForFilePath:file];
+        [downloadingFiles addObject:configurationPath];
       }];
 
   // Remove files.

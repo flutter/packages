@@ -78,6 +78,11 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
   return self;
 }
 
+// Returns FVPCacheConfiguration
+- (FVPCacheConfiguration *)cacheConfiguration {
+  return self.internalCacheConfiguration;
+}
+
 // Stores (cache) data for fragement or NSError
 - (void)cacheData:(NSData *)data forRange:(NSRange)range error:(NSError **)error {
   @synchronized(self.writeFileHandle) {

@@ -8,12 +8,18 @@
 /**
  * Responsible for managing caching (directory) of content.
  */
+
+extern NSString *CacheConfigurationKey;
+extern NSString *CacheFinishedErrorKey;
+
 @interface FVPCacheManager : NSObject
 
 /**
  * Returns cache filepath for content url.
  */
 + (NSString *)cachedFilePathForURL:(NSURL *)url;
+
++ (FVPCacheConfiguration *)cacheConfigurationForURL:(NSURL *)url error:(NSError **)error;
 
 /**
  * Removes all files in cache directory and all downloading (in progress) files.
