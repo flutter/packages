@@ -521,7 +521,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     indent.writeln('result.success(null);');
                   } else {
                     const String output = 'output';
-                    String outputExpression;
+                    final String outputExpression;
                     indent.writeln('@SuppressWarnings("ConstantConditions")');
                     if (func.returnType.baseName == 'int') {
                       outputExpression =

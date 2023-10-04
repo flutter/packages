@@ -4,9 +4,9 @@
 * **Breaking Change** [kotlin] Flutter API methods now return `Result<return-type>`.
 * **Breaking Change** [swift] Flutter API methods now return `Result<return-type, FlutterError>`.
 * **Breaking Change** [java] Removes `Reply` class from all method returns and replaces it with `Result`.
-  Changes required: Replace all `Reply` callbacks with `Result` classes that contain both `success` and `failure` methods.
+  * Changes required: Replace all `Reply` callbacks with `Result` classes that contain both `success` and `failure` methods.
 * **Breaking Change** [java] Adds `NullableResult` class for all nullable method returns.
-  Changes required: Any method that returns a nullable type will need to be updated to return `NullableResult` rather than `Result`.
+  * Changes required: Any method that returns a nullable type will need to be updated to return `NullableResult` rather than `Result`.
 * **Breaking Change** [java] Renames Host API `setup` method to `setUp`.
 * **Breaking Change** [objc] Boxes all enum returns to allow for `nil` response on error.
 * **Breaking Change** [objc] Renames `<api>Setup` to `SetUp<api>`.
