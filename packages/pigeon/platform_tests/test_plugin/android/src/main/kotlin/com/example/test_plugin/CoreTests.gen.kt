@@ -1921,41 +1921,83 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
    * A no-op function taking no arguments and returning no value, to sanity
    * test basic calling.
    */
-  fun noop(callback: () -> Unit) {
+  fun noop(callback: (Result<Unit>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop", codec)
     channel.send(null) {
-      callback()
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          callback(Result.success(Unit));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Responds with an error from an async function returning a value. */
-  fun throwError(callback: (Any?) -> Unit) {
+  fun throwError(callback: (Result<Any?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError", codec)
     channel.send(null) {
-      val result = it
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0]
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Responds with an error from an async void function. */
-  fun throwErrorFromVoid(callback: () -> Unit) {
+  fun throwErrorFromVoid(callback: (Result<Unit>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid", codec)
     channel.send(null) {
-      callback()
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          callback(Result.success(Unit));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllTypes(everythingArg: AllTypes, callback: (AllTypes) -> Unit) {
+  fun echoAllTypes(everythingArg: AllTypes, callback: (Result<AllTypes>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes", codec)
     channel.send(listOf(everythingArg)) {
-      val result = it as AllTypes
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as AllTypes
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed object, to test serialization and deserialization. */
-  fun echoAllNullableTypes(everythingArg: AllNullableTypes?, callback: (AllNullableTypes?) -> Unit) {
+  fun echoAllNullableTypes(everythingArg: AllNullableTypes?, callback: (Result<AllNullableTypes?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes", codec)
     channel.send(listOf(everythingArg)) {
-      val result = it as AllNullableTypes?
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0] as AllNullableTypes?
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /**
@@ -1963,159 +2005,331 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
    *
    * Tests multiple-arity FlutterApi handling.
    */
-  fun sendMultipleNullableTypes(aNullableBoolArg: Boolean?, aNullableIntArg: Long?, aNullableStringArg: String?, callback: (AllNullableTypes) -> Unit) {
+  fun sendMultipleNullableTypes(aNullableBoolArg: Boolean?, aNullableIntArg: Long?, aNullableStringArg: String?, callback: (Result<AllNullableTypes>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes", codec)
     channel.send(listOf(aNullableBoolArg, aNullableIntArg, aNullableStringArg)) {
-      val result = it as AllNullableTypes
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as AllNullableTypes
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed boolean, to test serialization and deserialization. */
-  fun echoBool(aBoolArg: Boolean, callback: (Boolean) -> Unit) {
+  fun echoBool(aBoolArg: Boolean, callback: (Result<Boolean>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool", codec)
     channel.send(listOf(aBoolArg)) {
-      val result = it as Boolean
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as Boolean
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed int, to test serialization and deserialization. */
-  fun echoInt(anIntArg: Long, callback: (Long) -> Unit) {
+  fun echoInt(anIntArg: Long, callback: (Result<Long>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt", codec)
     channel.send(listOf(anIntArg)) {
-      val result = if (it is Int) it.toLong() else it as Long
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0].let { if (it is Int) it.toLong() else it as Long }
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed double, to test serialization and deserialization. */
-  fun echoDouble(aDoubleArg: Double, callback: (Double) -> Unit) {
+  fun echoDouble(aDoubleArg: Double, callback: (Result<Double>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble", codec)
     channel.send(listOf(aDoubleArg)) {
-      val result = it as Double
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as Double
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed string, to test serialization and deserialization. */
-  fun echoString(aStringArg: String, callback: (String) -> Unit) {
+  fun echoString(aStringArg: String, callback: (Result<String>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString", codec)
     channel.send(listOf(aStringArg)) {
-      val result = it as String
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
-  fun echoUint8List(aListArg: ByteArray, callback: (ByteArray) -> Unit) {
+  fun echoUint8List(aListArg: ByteArray, callback: (Result<ByteArray>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List", codec)
     channel.send(listOf(aListArg)) {
-      val result = it as ByteArray
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as ByteArray
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoList(aListArg: List<Any?>, callback: (List<Any?>) -> Unit) {
+  fun echoList(aListArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList", codec)
     channel.send(listOf(aListArg)) {
-      val result = it as List<Any?>
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as List<Any?>
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoMap(aMapArg: Map<String?, Any?>, callback: (Map<String?, Any?>) -> Unit) {
+  fun echoMap(aMapArg: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap", codec)
     channel.send(listOf(aMapArg)) {
-      val result = it as Map<String?, Any?>
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as Map<String?, Any?>
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoEnum(anEnumArg: AnEnum, callback: (AnEnum) -> Unit) {
+  fun echoEnum(anEnumArg: AnEnum, callback: (Result<AnEnum>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum", codec)
     channel.send(listOf(anEnumArg.raw)) {
-      val result = AnEnum.ofRaw(it as Int)!!
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = AnEnum.ofRaw(it[0] as Int)!!
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed boolean, to test serialization and deserialization. */
-  fun echoNullableBool(aBoolArg: Boolean?, callback: (Boolean?) -> Unit) {
+  fun echoNullableBool(aBoolArg: Boolean?, callback: (Result<Boolean?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool", codec)
     channel.send(listOf(aBoolArg)) {
-      val result = it as Boolean?
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0] as Boolean?
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed int, to test serialization and deserialization. */
-  fun echoNullableInt(anIntArg: Long?, callback: (Long?) -> Unit) {
+  fun echoNullableInt(anIntArg: Long?, callback: (Result<Long?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt", codec)
     channel.send(listOf(anIntArg)) {
-      val result = if (it is Int) it.toLong() else it as Long?
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0].let { if (it is Int) it.toLong() else it as Long? }
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed double, to test serialization and deserialization. */
-  fun echoNullableDouble(aDoubleArg: Double?, callback: (Double?) -> Unit) {
+  fun echoNullableDouble(aDoubleArg: Double?, callback: (Result<Double?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble", codec)
     channel.send(listOf(aDoubleArg)) {
-      val result = it as Double?
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0] as Double?
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed string, to test serialization and deserialization. */
-  fun echoNullableString(aStringArg: String?, callback: (String?) -> Unit) {
+  fun echoNullableString(aStringArg: String?, callback: (Result<String?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString", codec)
     channel.send(listOf(aStringArg)) {
-      val result = it as String?
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0] as String?
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
-  fun echoNullableUint8List(aListArg: ByteArray?, callback: (ByteArray?) -> Unit) {
+  fun echoNullableUint8List(aListArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List", codec)
     channel.send(listOf(aListArg)) {
-      val result = it as ByteArray?
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0] as ByteArray?
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-  fun echoNullableList(aListArg: List<Any?>?, callback: (List<Any?>?) -> Unit) {
+  fun echoNullableList(aListArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList", codec)
     channel.send(listOf(aListArg)) {
-      val result = it as List<Any?>?
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0] as List<Any?>?
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed map, to test serialization and deserialization. */
-  fun echoNullableMap(aMapArg: Map<String?, Any?>?, callback: (Map<String?, Any?>?) -> Unit) {
+  fun echoNullableMap(aMapArg: Map<String?, Any?>?, callback: (Result<Map<String?, Any?>?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap", codec)
     channel.send(listOf(aMapArg)) {
-      val result = it as Map<String?, Any?>?
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = it[0] as Map<String?, Any?>?
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed enum to test serialization and deserialization. */
-  fun echoNullableEnum(anEnumArg: AnEnum?, callback: (AnEnum?) -> Unit) {
+  fun echoNullableEnum(anEnumArg: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum", codec)
     channel.send(listOf(anEnumArg?.raw)) {
-      val result = (it as Int?)?.let {
-        AnEnum.ofRaw(it)
-      }
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          val output = (it[0] as Int?)?.let {
+            AnEnum.ofRaw(it)
+          }
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /**
    * A no-op function taking no arguments and returning no value, to sanity
    * test basic asynchronous calling.
    */
-  fun noopAsync(callback: () -> Unit) {
+  fun noopAsync(callback: (Result<Unit>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync", codec)
     channel.send(null) {
-      callback()
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else {
+          callback(Result.success(Unit));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
   /** Returns the passed in generic Object asynchronously. */
-  fun echoAsyncString(aStringArg: String, callback: (String) -> Unit) {
+  fun echoAsyncString(aStringArg: String, callback: (Result<String>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString", codec)
     channel.send(listOf(aStringArg)) {
-      val result = it as String
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
 }
@@ -2248,11 +2462,21 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
       FlutterSmallApiCodec
     }
   }
-  fun echoWrappedList(msgArg: TestMessage, callback: (TestMessage) -> Unit) {
+  fun echoWrappedList(msgArg: TestMessage, callback: (Result<TestMessage>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList", codec)
     channel.send(listOf(msgArg)) {
-      val result = it as TestMessage
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as TestMessage
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
 }
