@@ -20,6 +20,8 @@
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
 // The output that this updater is managing.
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
+// The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.
+@property(nonatomic, assign) CMTime lastKnownAvailableTime;
 #if TARGET_OS_IOS
 - (void)onDisplayLink:(CADisplayLink *)link;
 #endif
@@ -30,6 +32,7 @@
   NSAssert(self, @"super init cannot be nil");
   if (self == nil) return nil;
   _registry = registry;
+  _lastKnownAvailableTime = kCMTimeInvalid;
   return self;
 }
 
@@ -45,6 +48,7 @@
   // Only report a new frame if one is actually available.
   CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
   if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+    _lastKnownAvailableTime = outputItemTime;
     [_registry textureFrameAvailable:_textureId];
   }
 }
@@ -91,6 +95,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
 @property(nonatomic, readonly) BOOL isInitialized;
+@property(nonatomic) FVPFrameUpdater *frameUpdater;
 // TODO(stuartmorgan): Extract and abstract the display link to remove all the display-link-related
 // ifdefs from this file.
 #if TARGET_OS_OSX
@@ -298,6 +303,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   NSAssert(self, @"super init cannot be nil");
 
   _registrar = registrar;
+  _frameUpdater = frameUpdater;
 
   AVAsset *asset = [item asset];
   void (^assetCompletionHandler)(void) = ^{
@@ -562,6 +568,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
     return [_videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
   } else {
+    // If the current time isn't available yet, use the time that was checked when informing the
+    // engine that a frame was available (if any).
+    CMTime lastAvailableTime = self.frameUpdater.lastKnownAvailableTime;
+    if (CMTIME_IS_VALID(lastAvailableTime)) {
+      return [_videoOutput copyPixelBufferForItemTime:lastAvailableTime itemTimeForDisplay:NULL];
+    }
     return NULL;
   }
 }
