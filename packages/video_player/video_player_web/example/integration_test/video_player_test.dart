@@ -31,8 +31,11 @@ void main() {
 
       expect(video.controls, isFalse,
           reason: 'Video is controlled through code');
-      expect(video.getAttribute('autoplay'), 'false',
-          reason: 'Cannot autoplay on the web');
+      expect(video.autoplay, isFalse,
+          reason: 'autoplay attribute on HTMLVideoElement MUST be false');
+      // see: https://developer.mozilla.org/en-US/docs/Glossary/Boolean/HTML
+      expect(video.getAttribute('autoplay'), isNull,
+          reason: 'autoplay attribute on video tag must NOT be set');
       expect(video.getAttribute('playsinline'), 'true',
           reason: 'Needed by safari iOS');
     });

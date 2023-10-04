@@ -143,7 +143,8 @@ void main() {
       NullableArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
         resultCompleter.complete(
-          NullableArgFlutterApi.codec.decodeMessage(data)! as int,
+          (NullableArgFlutterApi.codec.decodeMessage(data)! as List<Object?>)
+              .first! as int,
         );
       },
     );
@@ -167,8 +168,9 @@ void main() {
       NullableCollectionArgFlutterApi.codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
         resultCompleter.complete(
-          (NullableCollectionArgFlutterApi.codec.decodeMessage(data)!
-                  as List<Object?>)
+          ((NullableCollectionArgFlutterApi.codec.decodeMessage(data)!
+                      as List<Object?>)
+                  .first! as List<Object?>)
               .cast<String>(),
         );
       },
