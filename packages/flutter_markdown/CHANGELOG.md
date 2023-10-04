@@ -1,3 +1,7 @@
+## 0.6.18
+
+* Adds support for `footnote`.
+
 ## 0.6.17+4
 
 * Fixes an issue where a code block would overlap its container decoration.
