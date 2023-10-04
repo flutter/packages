@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #import "FVPCacheConfiguration.h"
-#import <MobileCoreServices/MobileCoreServices.h>
 #import "FVPCacheManager.h"
 
 static NSString *kFileNameKey = @"kFileNameKey";

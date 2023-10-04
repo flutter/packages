@@ -6,7 +6,9 @@
 #import "FVPCacheAction.h"
 #import "FVPCacheManager.h"
 
-@import UIKit;
+#if TARGET_OS_IOS
+#import <UIKit/UIKit.h>
+#endif
 
 static NSInteger const kPackageLength = 512 * 1024;  // 512 kb per package
 static NSString *kMCMediaCacheResponseKey = @"kContentCacheResponseKey";
@@ -229,10 +231,12 @@ static NSString *MediaCacheErrorDomain = @"video_player_cache";
 
 - (void)startWritting {
   if (!self.isWritting) {
+#if TARGET_OS_IOS
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationDidEnterBackground:)
                                                  name:UIApplicationDidEnterBackgroundNotification
                                                object:nil];
+#endif
   }
   self.isWritting = YES;
   self.startWriteDate = [NSDate date];

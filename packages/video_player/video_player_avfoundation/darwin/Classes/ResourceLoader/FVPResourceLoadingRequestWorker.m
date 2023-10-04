@@ -6,9 +6,9 @@
 #import "FVPContentDownloader.h"
 #import "FVPContentInfo.h"
 
-@import MobileCoreServices;
+#import <CoreServices/CoreServices.h>
+
 @import AVFoundation;
-@import UIKit;
 
 @interface FVPResourceLoadingRequestWorker () <FVPContentDownloaderDelegate>
 
@@ -49,11 +49,15 @@
   }
 
   BOOL toEnd = NO;
+#if TARGET_OS_IOS
   if ([[UIDevice currentDevice].systemVersion floatValue] >= 9.0) {
     if (dataRequest.requestsAllDataToEndOfResource) {
       toEnd = YES;
     }
   }
+#elif TARGET_OS_OSX
+  toEnd = YES;
+#endif
   [self.contentDownloader downloadTaskFromOffset:offset length:length toEnd:toEnd];
 }
 

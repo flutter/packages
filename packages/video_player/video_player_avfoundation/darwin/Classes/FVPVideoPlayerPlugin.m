@@ -11,7 +11,7 @@
 #import "AVAssetTrackUtils.h"
 #import "messages.g.h"
 
-#import <MobileCoreServices/MobileCoreServices.h>
+#import <CoreServices/CoreServices.h>
 #import "VideoPlayerCache.h"
 
 #if !__has_feature(objc_arc)
@@ -298,6 +298,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     // resourceloadermanager for that player is created. If the player is deallocated, the
     // resourceloadermanager for that player will be cleaned up by the garbage collector.
     // NSLog(@"cache enabled %@", url);
+
     FVPResourceLoaderManager *resourceLoaderManager = [FVPResourceLoaderManager new];
     self.resourceLoaderManager = resourceLoaderManager;
     //
@@ -804,6 +805,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, NULL);
   NSString *contentType = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass(
       (__bridge CFStringRef)UTI, kUTTagClassMIMEType);
+
   if (!contentType) {
     return @"application/octet-stream";
   }
@@ -811,6 +813,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (BOOL)isCacheSupported:(NSString *)path {
+#if TARGET_OS_OSX
+  return NO;
+#else
   NSString *mimeType = [self mimeTypeForFileAtPath:path];
   NSArray *supportedMimetypes = @[ @"video/mp4", @"audio/flac" ];
   if ([supportedMimetypes containsObject:mimeType]) {
@@ -818,6 +823,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     return NO;
   }
+#endif
 }
 
 - (void)dispose:(FVPTextureMessage *)input error:(FlutterError **)error {

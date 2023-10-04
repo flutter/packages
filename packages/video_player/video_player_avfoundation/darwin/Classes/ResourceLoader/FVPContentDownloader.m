@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #import "FVPContentDownloader.h"
-#import <MobileCoreServices/MobileCoreServices.h>
+#import <CoreServices/CoreServices.h>
 #import "FVPCacheSessionManager.h"
 #import "FVPContentInfo.h"
 
