@@ -694,7 +694,7 @@ void main() {
     expect(testCode, contains('abstract class ApiMock'));
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
     expect(testCode, contains('output'));
-    expect(testCode, contains('return <Object?>[];'));
+    expect(testCode, contains('return <Object?>[output];'));
   });
 
   test('gen one async Flutter Api', () {

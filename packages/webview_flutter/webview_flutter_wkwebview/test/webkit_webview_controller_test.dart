@@ -825,6 +825,21 @@ void main() {
       );
     });
 
+    test('getUserAgent', () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      const String userAgent = 'str';
+
+      when(mockWebView.getCustomUserAgent()).thenAnswer(
+        (_) => Future<String?>.value(userAgent),
+      );
+      expect(controller.getUserAgent(), completion(userAgent));
+    });
+
     test('setPlatformNavigationDelegate', () {
       final MockWKWebView mockWebView = MockWKWebView();
 
