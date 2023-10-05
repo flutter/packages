@@ -58,25 +58,33 @@
 }
 @end
 
-@interface FVPDefaultPlayerFactory : NSObject <FVPPlayerFactory>
+@interface FVPDefaultAVFactory : NSObject <FVPAVFactory>
 @end
 
-@implementation FVPDefaultPlayerFactory
+@implementation FVPDefaultAVFactory
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
   return [AVPlayer playerWithPlayerItem:playerItem];
+}
+- (AVPlayerItemVideoOutput*)videoOutputWithPixelBufferAttributes:(NSDictionary<NSString *, id> *)attributes {
+  return [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
+}
+@end
+
+/** Non-test implementation of the diplay link factory. */
+@interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
+@end
+
+@implementation FVPDefaultDisplayLinkFactory
+- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback { 
+  return [[FVPDisplayLink alloc] initWithRegistrar:registrar callback:callback];
 }
 
 @end
 
-@interface FVPVideoPlayer : NSObject <FlutterTexture, FlutterStreamHandler>
-@property(readonly, nonatomic) AVPlayer *player;
+#pragma mark -
+
+@interface FVPVideoPlayer()
 @property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
-// This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
-// (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some video
-// streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116).
-// An invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
-// for issue #1, and restore the correct width and height for issue #2.
-@property(readonly, nonatomic) AVPlayerLayer *playerLayer;
 // The plugin registrar, to obtain view information from.
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
 // The CALayer associated with the Flutter view this plugin is associated with, if any.
@@ -99,8 +107,9 @@
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
+                displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(id<FVPPlayerFactory>)playerFactory
+              avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
 
@@ -114,7 +123,8 @@ static void *rateContext = &rateContext;
 @implementation FVPVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
-                playerFactory:(id<FVPPlayerFactory>)playerFactory
+                  displayLink:(FVPDisplayLink *)displayLink
+                avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
 #if TARGET_OS_OSX
@@ -126,8 +136,9 @@ static void *rateContext = &rateContext;
 #endif
   return [self initWithURL:[NSURL fileURLWithPath:path]
               frameUpdater:frameUpdater
+               displayLink:displayLink
                httpHeaders:@{}
-             playerFactory:playerFactory
+             avFactory:avFactory
                  registrar:registrar];
 }
 
@@ -238,28 +249,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return videoComposition;
 }
 
-- (void)createVideoOutputAndDisplayLink:(FVPFrameUpdater *)frameUpdater {
-  NSDictionary *pixBuffAttributes = @{
-    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
-  };
-  _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
-
-
-  frameUpdater.videoOutput = _videoOutput;
-#if TARGET_OS_IOS
-  // See TODO on this property in FVPFrameUpdater.
-  frameUpdater.skipBufferAvailabilityCheck = YES;
-#endif
-  self.displayLink = [[FVPDisplayLink alloc] initWithRegistrar:self.registrar callback:^() {
-    [frameUpdater displayLinkFired];
-  }];
-}
-
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
+                displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              playerFactory:(id<FVPPlayerFactory>)playerFactory
+              avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
@@ -269,13 +263,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
   return [self initWithPlayerItem:item
                      frameUpdater:frameUpdater
-                    playerFactory:playerFactory
+                      displayLink:(FVPDisplayLink *)displayLink
+                    avFactory:avFactory
                         registrar:registrar];
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
-                     playerFactory:(id<FVPPlayerFactory>)playerFactory
+                       displayLink:(FVPDisplayLink *)displayLink
+                        avFactory:(id<FVPAVFactory>)avFactory
                          registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
@@ -312,7 +308,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
   };
 
-  _player = [playerFactory playerWithPlayerItem:item];
+  _player = [avFactory playerWithPlayerItem:item];
   _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
 
   // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
@@ -323,7 +319,18 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
   [self.flutterViewLayer addSublayer:_playerLayer];
 
-  [self createVideoOutputAndDisplayLink:frameUpdater];
+  // Configure output.
+  _displayLink = displayLink;
+  NSDictionary *pixBuffAttributes = @{
+    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+  };
+  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+  frameUpdater.videoOutput = _videoOutput;
+#if TARGET_OS_IOS
+  // See TODO on this property in FVPFrameUpdater.
+  frameUpdater.skipBufferAvailabilityCheck = YES;
+#endif
 
   [self addObserversForItem:item player:_player];
 
@@ -644,13 +651,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 @end
 
-@interface FVPVideoPlayerPlugin () <FVPAVFoundationVideoPlayerApi>
+@interface FVPVideoPlayerPlugin ()
 @property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry> *registry;
 @property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
-@property(readonly, strong, nonatomic)
-    NSMutableDictionary<NSNumber *, FVPVideoPlayer *> *playersByTextureId;
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
-@property(nonatomic, strong) id<FVPPlayerFactory> playerFactory;
+@property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
+@property(nonatomic, strong) id<FVPAVFactory> avFactory;
 @end
 
 @implementation FVPVideoPlayerPlugin
@@ -665,17 +671,21 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithPlayerFactory:[[FVPDefaultPlayerFactory alloc] init] registrar:registrar];
+  return [self initWithAVFactory:[[FVPDefaultAVFactory alloc] init]
+                  displayLinkFactory:[[FVPDefaultDisplayLinkFactory alloc] init]
+                           registrar:registrar];
 }
 
-- (instancetype)initWithPlayerFactory:(id<FVPPlayerFactory>)playerFactory
+- (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
+                   displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
                             registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = [registrar textures];
   _messenger = [registrar messenger];
   _registrar = registrar;
-  _playerFactory = playerFactory;
+  _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
+  _avFactory = avFactory ?: [[FVPDefaultAVFactory alloc] init];
   _playersByTextureId = [NSMutableDictionary dictionaryWithCapacity:1];
   return self;
 }
@@ -720,6 +730,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (FVPTextureMessage *)create:(FVPCreateMessage *)input error:(FlutterError **)error {
   FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
+  FVPDisplayLink *displayLink = [self.displayLinkFactory displayLinkWithRegistrar:_registrar callback:^() {
+    [frameUpdater displayLinkFired];
+  }];
+
   FVPVideoPlayer *player;
   if (input.asset) {
     NSString *assetPath;
@@ -731,7 +745,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     @try {
       player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
                                         frameUpdater:frameUpdater
-                                       playerFactory:_playerFactory
+                                         displayLink:displayLink
+                                       avFactory:_avFactory
                                            registrar:self.registrar];
       return [self onPlayerSetup:player frameUpdater:frameUpdater];
     } @catch (NSException *exception) {
@@ -741,8 +756,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else if (input.uri) {
     player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
+                                     displayLink:displayLink
                                      httpHeaders:input.httpHeaders
-                                   playerFactory:_playerFactory
+                                   avFactory:_avFactory
                                        registrar:self.registrar];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
