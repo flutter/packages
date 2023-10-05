@@ -4,12 +4,12 @@
 
 #import "../FVPDisplayLink.h"
 
-#import <CoreAnimation/CoreAnimation.h>
 #import <Foundation/Foundation.h>
+#import <QuartzCore/QuartzCore.h>
 
 /** A proxy object to act as a CADisplayLink target, to avoid retain loops. */
 @interface FVPDisplayLinkTarget : NSObject
-@property(nonatomic) (void (^)(void))callback;
+@property(nonatomic) void (^callback)(void);
 
 /** Initializes a target object that runs the given callback when onDisplayLink: is called. */
 - (instancetype)initWithCallback:(void (^)(void))callback;
@@ -42,7 +42,7 @@
 
 @implementation FVPDisplayLink
 
-- (instancetype)initWithCallback:(void (^)(void))callback {
+- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback {
   self = [super init];
   if (self) {
     _target = [[FVPDisplayLinkTarget alloc] initWithCallback:callback];

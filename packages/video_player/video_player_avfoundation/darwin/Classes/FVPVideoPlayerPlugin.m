@@ -88,8 +88,14 @@
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
 @property(nonatomic, readonly) BOOL isInitialized;
+// The updater that drives callbacks to the engine to indicate that a new frame is ready.
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
+// The display link that drives frameUpdater.
 @property(nonatomic) FVPDisplayLink *displayLink;
+// Whether a new frame needs to be provided to the engine regardless of the current play/pause state
+// (e.g., after a seek while paused). If YES, the display link should continue to run until the next
+// frame is successfully provided.
+@property(nonatomic, assign) BOOL waitingForFrame;
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
@@ -245,7 +251,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // See TODO on this property in FVPFrameUpdater.
   frameUpdater.skipBufferAvailabilityCheck = YES;
 #endif
-  self.displayLink = [[FVPDisplayLink alloc] initWithCallback:^() {
+  self.displayLink = [[FVPDisplayLink alloc] initWithRegistrar:self.registrar callback:^() {
     [frameUpdater displayLinkFired];
   }];
 }
@@ -484,7 +490,19 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [_player seekToTime:locationCMT
         toleranceBefore:tolerance
          toleranceAfter:tolerance
-      completionHandler:completionHandler];
+    completionHandler:^(BOOL completed) {
+    // Ensure that a frame is drawn once available, even if currently paused. In theory a race is
+    // possible here where the new frame has already drawn by the time this code runs, and the
+    // display link stays on indefinitely, but that should be relatively harmless. This must use
+    // the display link rather than just informing the engine that a new frame is available because
+    // the seek completing doesn't guarantee that the pixel buffer is already available.
+    self.waitingForFrame = YES;
+    self.displayLink.running = YES;
+
+    if (completionHandler) {
+      completionHandler(completed);
+    }
+  }];
 }
 
 - (void)setIsLooping:(BOOL)isLooping {
@@ -520,18 +538,29 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
+  CVPixelBufferRef buffer = NULL;
   CMTime outputItemTime = [_videoOutput itemTimeForHostTime:CACurrentMediaTime()];
   if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    return [_videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
+    buffer = [_videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
   } else {
     // If the current time isn't available yet, use the time that was checked when informing the
     // engine that a frame was available (if any).
     CMTime lastAvailableTime = self.frameUpdater.lastKnownAvailableTime;
     if (CMTIME_IS_VALID(lastAvailableTime)) {
-      return [_videoOutput copyPixelBufferForItemTime:lastAvailableTime itemTimeForDisplay:NULL];
+      buffer = [_videoOutput copyPixelBufferForItemTime:lastAvailableTime itemTimeForDisplay:NULL];
     }
-    return NULL;
   }
+
+  if (self.waitingForFrame && buffer) {
+    self.waitingForFrame = NO;
+    // If the display link was only running temporarily to pick up a new frame while the video was
+    // paused, stop it again.
+    if (!self.isPlaying) {
+      self.displayLink.running = NO;
+    }
+  }
+
+  return buffer;
 }
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture {
@@ -774,7 +803,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [player seekTo:input.position.intValue
       completionHandler:^(BOOL finished) {
         dispatch_async(dispatch_get_main_queue(), ^{
-          [self.registry textureFrameAvailable:input.textureId.intValue];
           completion(nil);
         });
       }];
