@@ -481,23 +481,26 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)seekTo:(int)location completionHandler:(void (^)(BOOL))completionHandler {
-  CMTime locationCMT = CMTimeMake(location, 1000);
+  CMTime previousCMTime = _player.currentTime;
+  CMTime targetCMTime = CMTimeMake(location, 1000);
   CMTimeValue duration = _player.currentItem.asset.duration.value;
   // Without adding tolerance when seeking to duration,
   // seekToTime will never complete, and this call will hang.
   // see issue https://github.com/flutter/flutter/issues/124475.
   CMTime tolerance = location == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
-  [_player seekToTime:locationCMT
+  [_player seekToTime:targetCMTime
         toleranceBefore:tolerance
          toleranceAfter:tolerance
     completionHandler:^(BOOL completed) {
-    // Ensure that a frame is drawn once available, even if currently paused. In theory a race is
-    // possible here where the new frame has already drawn by the time this code runs, and the
-    // display link stays on indefinitely, but that should be relatively harmless. This must use
-    // the display link rather than just informing the engine that a new frame is available because
-    // the seek completing doesn't guarantee that the pixel buffer is already available.
-    self.waitingForFrame = YES;
-    self.displayLink.running = YES;
+    if (CMTimeCompare(self.player.currentTime, previousCMTime) != 0) {
+      // Ensure that a frame is drawn once available, even if currently paused. In theory a race is
+      // possible here where the new frame has already drawn by the time this code runs, and the
+      // display link stays on indefinitely, but that should be relatively harmless. This must use
+      // the display link rather than just informing the engine that a new frame is available
+      // because the seek completing doesn't guarantee that the pixel buffer is already available.
+      self.waitingForFrame = YES;
+      self.displayLink.running = YES;
+    }
 
     if (completionHandler) {
       completionHandler(completed);

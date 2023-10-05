@@ -57,6 +57,9 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 }
 
 - (void)setRunning:(BOOL)running {
+  if (CVDisplayLinkIsRunning(self.displayLink) == running) {
+    return;
+  }
   if (running) {
     // TODO(stuartmorgan): Move this to init + a screen change listener; this won't correctly
     // handle windows being dragged to another screen until the next pause/play cycle. That will
