@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Fixes flickering and seek-while-paused on macOS.
+
 ## 2.5.0
 
 * Adds support for macOS.
