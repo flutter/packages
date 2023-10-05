@@ -287,7 +287,7 @@ abstract class PlatformWebViewController extends PlatformInterface {
     );
   }
 
-  /// Set the listener for content offset changes.
+  /// Sets the listener for content offset changes.
   Future<void> setOnScrollPositionChange(
       void Function(ScrollPositionChange scrollPositionChange)?
           onScrollPositionChange) {

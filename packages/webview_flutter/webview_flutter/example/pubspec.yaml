@@ -41,7 +41,7 @@ flutter:
 dependency_overrides:
   webview_flutter_android:
     path: ../../webview_flutter_android
-  webview_flutter_wkwebview:
-    path: ../../webview_flutter_wkwebview
   webview_flutter_platform_interface:
     path: ../../webview_flutter_platform_interface
+  webview_flutter_wkwebview:
+    path: ../../webview_flutter_wkwebview
