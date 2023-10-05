@@ -429,6 +429,25 @@ class MockTestUIScrollViewHostApi extends _i1.Mock
       );
 }
 
+/// A class which mocks [TestUIScrollViewDelegateHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestUIScrollViewDelegateHostApi extends _i1.Mock
+    implements _i2.TestUIScrollViewDelegateHostApi {
+  MockTestUIScrollViewDelegateHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void create(int? identifier) => super.noSuchMethod(
+        Invocation.method(
+          #create,
+          [identifier],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [TestUIViewHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.

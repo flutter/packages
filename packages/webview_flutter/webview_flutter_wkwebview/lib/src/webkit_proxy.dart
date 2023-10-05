@@ -92,7 +92,7 @@ class WebKitProxy {
   }) createUIDelegate;
 
   /// Constructs a [UIScrollViewDelegate].
-  final UIScrollViewDelegate Function(
-          {void Function(UIScrollView scrollView)? scrollViewDidScroll})
-      createUIScrollViewDelegate;
+  final UIScrollViewDelegate Function({
+    void Function(UIScrollView scrollView)? scrollViewDidScroll,
+  }) createUIScrollViewDelegate;
 }

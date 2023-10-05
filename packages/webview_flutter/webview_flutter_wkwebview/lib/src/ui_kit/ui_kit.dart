@@ -148,10 +148,14 @@ class UIView extends NSObject {
 @immutable
 class UIScrollViewDelegate extends NSObject {
   /// Constructs a [UIScrollViewDelegate].
-  UIScrollViewDelegate(
-      {this.scrollViewDidScroll, super.binaryMessenger, super.instanceManager})
-      : _scrollViewDelegateApi = UIScrollViewDelegateHostApiImpl(
-            binaryMessenger: binaryMessenger, instanceManager: instanceManager),
+  UIScrollViewDelegate({
+    this.scrollViewDidScroll,
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _scrollViewDelegateApi = UIScrollViewDelegateHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
         super.detached() {
     // Ensures FlutterApis for the WebKit library are set up.
     WebKitFlutterApis.instance.ensureSetUp();
@@ -163,10 +167,14 @@ class UIScrollViewDelegate extends NSObject {
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
-  UIScrollViewDelegate.detached(
-      {this.scrollViewDidScroll, super.binaryMessenger, super.instanceManager})
-      : _scrollViewDelegateApi = UIScrollViewDelegateHostApiImpl(
-            binaryMessenger: binaryMessenger, instanceManager: instanceManager),
+  UIScrollViewDelegate.detached({
+    this.scrollViewDidScroll,
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _scrollViewDelegateApi = UIScrollViewDelegateHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
         super.detached();
 
   final UIScrollViewDelegateHostApiImpl _scrollViewDelegateApi;
@@ -175,4 +183,13 @@ class UIScrollViewDelegate extends NSObject {
   ///
   /// {@macro webview_flutter_wkwebview.foundation.callbacks}
   final void Function(UIScrollView scrollView)? scrollViewDidScroll;
+
+  @override
+  UIScrollViewDelegate copy() {
+    return UIScrollViewDelegate.detached(
+      scrollViewDidScroll: scrollViewDidScroll,
+      binaryMessenger: _scrollViewDelegateApi.binaryMessenger,
+      instanceManager: _scrollViewDelegateApi.instanceManager,
+    );
+  }
 }

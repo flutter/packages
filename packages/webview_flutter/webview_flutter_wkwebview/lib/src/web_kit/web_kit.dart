@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -994,13 +992,6 @@ class WKWebView extends UIView {
   /// Sets [WKWebView.UIDelegate](https://developer.apple.com/documentation/webkit/wkwebview/1415009-uidelegate?language=objc).
   Future<void> setUIDelegate(WKUIDelegate? delegate) {
     return _webViewApi.setUIDelegateForInstances(this, delegate);
-  }
-
-  /// Used to set a scroll view delegate to a web view's scroll view.
-  ///
-  /// Sets [UIScrollView.UIScrollViewDelegate](https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc).
-  Future<void> setScrollViewDelegate(UIScrollViewDelegate? delegate) {
-    return scrollView.setDelegate(delegate);
   }
 
   /// The object you use to manage navigation behavior for the web view.

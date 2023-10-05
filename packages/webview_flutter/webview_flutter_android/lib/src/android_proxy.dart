@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
-
 import 'android_webview.dart' as android_webview;
 
 /// Handles constructing objects and calling static methods for the Android
@@ -27,9 +25,9 @@ class AndroidWebViewProxy {
   });
 
   /// Constructs a [android_webview.WebView].
-  final android_webview.WebView Function(
-      {Function(ScrollPositionChange scrollPositionChange)?
-          onScrollPositionChange}) createAndroidWebView;
+  final android_webview.WebView Function({
+    Function(int left, int top, int oldLeft, int oldTop)? onScrollChanged,
+  }) createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
   final android_webview.WebChromeClient Function({

@@ -261,7 +261,8 @@ class WebKitFlutterApis {
           instanceManager: instanceManager,
         ),
         uiScrollViewDelegate = UIScrollViewDelegateFlutterApiImpl(
-            instanceManager: instanceManager);
+          instanceManager: instanceManager,
+        );
 
   static WebKitFlutterApis _instance = WebKitFlutterApis();
 

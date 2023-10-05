@@ -100,12 +100,12 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The native [android_webview.WebView] being controlled.
   late final android_webview.WebView _webView =
       _androidWebViewParams.androidWebViewProxy.createAndroidWebView(
-          onScrollPositionChange: withWeakReferenceTo(this,
+          onScrollChanged: withWeakReferenceTo(this,
               (WeakReference<AndroidWebViewController> weakReference) {
-    return (ScrollPositionChange scrollPositionChange) async {
+    return (int left, int top, int oldLeft, int oldTop) async {
       final Function(ScrollPositionChange)? callback =
-          weakReference.target?._onContentOffsetChangedCallback;
-      callback?.call(scrollPositionChange);
+          weakReference.target?._onScrollPositionChangedCallback;
+      callback?.call(ScrollPositionChange(left, top));
     };
   }));
 
@@ -303,7 +303,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   void Function(JavaScriptConsoleMessage consoleMessage)? _onConsoleLogCallback;
 
   void Function(ScrollPositionChange scrollPositionChange)?
-      _onContentOffsetChangedCallback;
+      _onScrollPositionChangedCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -528,7 +528,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setOnScrollPositionChange(
       void Function(ScrollPositionChange scrollPositionChange)?
           onScrollPositionChange) async {
-    _onContentOffsetChangedCallback = onScrollPositionChange;
+    _onScrollPositionChangedCallback = onScrollPositionChange;
   }
 
   /// Sets the restrictions that apply on automatic media playback.

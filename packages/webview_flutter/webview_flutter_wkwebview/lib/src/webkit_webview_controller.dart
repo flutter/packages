@@ -221,14 +221,6 @@ class WebKitWebViewController extends PlatformWebViewController {
     );
 
     _webView.setUIDelegate(_uiDelegate);
-    _uiScrollViewDelegate = _webKitParams.webKitProxy
-        .createUIScrollViewDelegate(
-            scrollViewDidScroll: (UIScrollView uiScrollView) async {
-      final Point<double> offset = await uiScrollView.getContentOffset();
-      weakThis.target?._onScrollPositionChangeCallback
-          ?.call(ScrollPositionChange(offset.x.toInt(), offset.y.toInt()));
-    });
-    _webView.setScrollViewDelegate(_uiScrollViewDelegate);
   }
 
   /// The WebKit WebView being controlled.
@@ -273,7 +265,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   late final WKUIDelegate _uiDelegate;
 
-  late final UIScrollViewDelegate _uiScrollViewDelegate;
+  late final UIScrollViewDelegate? _uiScrollViewDelegate;
 
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
       <String, WebKitJavaScriptChannelParams>{};
@@ -670,6 +662,23 @@ window.addEventListener("error", function(e) {
       void Function(ScrollPositionChange scrollPositionChange)?
           onScrollPositionChange) async {
     _onScrollPositionChangeCallback = onScrollPositionChange;
+
+    if (onScrollPositionChange != null) {
+      final WeakReference<WebKitWebViewController> weakThis =
+          WeakReference<WebKitWebViewController>(this);
+      _uiScrollViewDelegate =
+          _webKitParams.webKitProxy.createUIScrollViewDelegate(
+        scrollViewDidScroll: (UIScrollView uiScrollView) async {
+          final Point<double> offset = await uiScrollView.getContentOffset();
+          weakThis.target?._onScrollPositionChangeCallback
+              ?.call(ScrollPositionChange(offset.x.toInt(), offset.y.toInt()));
+        },
+      );
+      return _webView.scrollView.setDelegate(_uiScrollViewDelegate);
+    } else {
+      _uiScrollViewDelegate = null;
+      return _webView.scrollView.setDelegate(null);
+    }
   }
 
   /// Whether to enable tools for debugging the current WKWebView content.

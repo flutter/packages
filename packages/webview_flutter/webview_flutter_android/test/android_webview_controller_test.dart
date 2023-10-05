@@ -121,8 +121,8 @@ void main() {
                       MockWebChromeClient(),
               createAndroidWebView: (
                       {dynamic Function(
-                              ScrollPositionChange scrollPositionChange)?
-                          onScrollPositionChange}) =>
+                              int left, int top, int oldLeft, int oldTop)?
+                          onScrollChanged}) =>
                   nonNullMockWebView,
               createAndroidWebViewClient: ({
                 void Function(android_webview.WebView webView, String url)?

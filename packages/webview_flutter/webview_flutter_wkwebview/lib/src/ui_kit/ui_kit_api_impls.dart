@@ -146,8 +146,8 @@ class UIScrollViewDelegateFlutterApiImpl
         _getDelegate(identifier).scrollViewDidScroll;
     final UIScrollView? uiScrollView = instanceManager
         .getInstanceWithWeakReference(uiScrollViewIdentifier) as UIScrollView?;
-    assert(uiScrollView != null && callback != null);
-    callback!.call(uiScrollView!);
+    assert(uiScrollView != null);
+    callback?.call(uiScrollView!);
   }
 }
 

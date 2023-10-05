@@ -501,16 +501,6 @@ class MockWKWebView extends _i1.Mock implements _i4.WKWebView {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
-  _i5.Future<void> setScrollViewDelegate(_i3.UIScrollViewDelegate? delegate) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setScrollViewDelegate,
-          [delegate],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-  @override
   _i5.Future<void> setNavigationDelegate(_i4.WKNavigationDelegate? delegate) =>
       (super.noSuchMethod(
         Invocation.method(

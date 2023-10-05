@@ -6,8 +6,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/services.dart' show BinaryMessenger;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
-    show ScrollPositionChange;
 
 import 'android_webview.dart';
 import 'android_webview.g.dart';
@@ -409,14 +407,14 @@ class WebViewFlutterApiImpl implements WebViewFlutterApi {
 
   @override
   void onScrollChanged(
-      int webViewInstanceId, int x, int y, int oldX, int oldY) {
+      int webViewInstanceId, int left, int top, int oldLeft, int oldTop) {
     final WebView? webViewInstance = instanceManager
         .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       webViewInstance != null,
       'InstanceManager does not contain a WebView with instanceId: $webViewInstanceId',
     );
-    webViewInstance!.onScrollPositionChange?.call(ScrollPositionChange(x, y));
+    webViewInstance!.onScrollChanged?.call(left, top, oldLeft, oldTop);
   }
 }
 

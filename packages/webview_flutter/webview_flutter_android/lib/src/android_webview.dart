@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show BinaryMessenger;
 
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
@@ -133,12 +132,8 @@ class GeolocationPermissionsCallback extends JavaObject {
 /// When a [WebView] is no longer needed [release] must be called.
 class WebView extends View {
   /// Constructs a new WebView.
-  ///
-  /// Due to changes in Flutter 3.0 the [useHybridComposition] doesn't have
-  /// any effect and should not be exposed publicly. More info here:
-  /// https://github.com/flutter/flutter/issues/108106
   WebView({
-    this.onScrollPositionChange,
+    this.onScrollChanged,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -151,7 +146,7 @@ class WebView extends View {
   /// create copies.
   @protected
   WebView.detached({
-    this.onScrollPositionChange,
+    this.onScrollChanged,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -163,9 +158,17 @@ class WebView extends View {
   /// The [WebSettings] object used to control the settings for this WebView.
   late final WebSettings settings = WebSettings(this);
 
-  /// The [ScrollChangedCallback] object used to listen for scroll changed events.
-  final Function(ScrollPositionChange scrollPositionChange)?
-      onScrollPositionChange;
+  /// Called in response to an internal scroll in this view
+  /// (i.e., the view scrolled its own contents).
+  ///
+  /// This is typically as a result of [scrollBy] or [scrollTo]
+  /// having been called.
+  final Function(
+    int left,
+    int top,
+    int oldLeft,
+    int oldTop,
+  )? onScrollChanged;
 
   /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.
   ///
@@ -455,7 +458,7 @@ class WebView extends View {
   @override
   WebView copy() {
     return WebView.detached(
-      onScrollPositionChange: onScrollPositionChange,
+      onScrollChanged: onScrollChanged,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );

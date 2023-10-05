@@ -61,12 +61,12 @@
   [[self scrollViewForIdentifier:identifier]
       setContentOffset:CGPointMake(x.doubleValue, y.doubleValue)];
 }
+
 - (void)setDelegateForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
-                uiScrollViewDelegateIdentifier:(NSNumber *)uiScrollViewDelegateIdentifier
+                uiScrollViewDelegateIdentifier:(nullable NSNumber *)uiScrollViewDelegateIdentifier
                                          error:(FlutterError *_Nullable *_Nonnull)error {
   [[self scrollViewForIdentifier:identifier]
-      setDelegate:(FWFScrollViewDelegate *)[self.instanceManager
-                      instanceForIdentifier:uiScrollViewDelegateIdentifier.longValue]];
+      setDelegate:uiScrollViewDelegateIdentifier ? (FWFScrollViewDelegate *)[self.instanceManager
+                      instanceForIdentifier:uiScrollViewDelegateIdentifier.longValue] : nil];
 }
-
 @end

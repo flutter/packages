@@ -57,8 +57,9 @@ class _FakeUIScrollView_2 extends _i1.SmartFake implements _i4.UIScrollView {
         );
 }
 
-class _FakeWKPreferences_3 extends _i1.SmartFake implements _i5.WKPreferences {
-  _FakeWKPreferences_3(
+class _FakeUIScrollViewDelegate_3 extends _i1.SmartFake
+    implements _i4.UIScrollViewDelegate {
+  _FakeUIScrollViewDelegate_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -67,9 +68,19 @@ class _FakeWKPreferences_3 extends _i1.SmartFake implements _i5.WKPreferences {
         );
 }
 
-class _FakeWKUserContentController_4 extends _i1.SmartFake
+class _FakeWKPreferences_4 extends _i1.SmartFake implements _i5.WKPreferences {
+  _FakeWKPreferences_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWKUserContentController_5 extends _i1.SmartFake
     implements _i5.WKUserContentController {
-  _FakeWKUserContentController_4(
+  _FakeWKUserContentController_5(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -78,9 +89,9 @@ class _FakeWKUserContentController_4 extends _i1.SmartFake
         );
 }
 
-class _FakeWKHttpCookieStore_5 extends _i1.SmartFake
+class _FakeWKHttpCookieStore_6 extends _i1.SmartFake
     implements _i5.WKHttpCookieStore {
-  _FakeWKHttpCookieStore_5(
+  _FakeWKHttpCookieStore_6(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -89,9 +100,9 @@ class _FakeWKHttpCookieStore_5 extends _i1.SmartFake
         );
 }
 
-class _FakeWKWebsiteDataStore_6 extends _i1.SmartFake
+class _FakeWKWebsiteDataStore_7 extends _i1.SmartFake
     implements _i5.WKWebsiteDataStore {
-  _FakeWKWebsiteDataStore_6(
+  _FakeWKWebsiteDataStore_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -100,9 +111,9 @@ class _FakeWKWebsiteDataStore_6 extends _i1.SmartFake
         );
 }
 
-class _FakeWKWebViewConfiguration_7 extends _i1.SmartFake
+class _FakeWKWebViewConfiguration_8 extends _i1.SmartFake
     implements _i5.WKWebViewConfiguration {
-  _FakeWKWebViewConfiguration_7(
+  _FakeWKWebViewConfiguration_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -111,8 +122,8 @@ class _FakeWKWebViewConfiguration_7 extends _i1.SmartFake
         );
 }
 
-class _FakeWKWebView_8 extends _i1.SmartFake implements _i5.WKWebView {
-  _FakeWKWebView_8(
+class _FakeWKWebView_9 extends _i1.SmartFake implements _i5.WKWebView {
+  _FakeWKWebView_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -121,9 +132,9 @@ class _FakeWKWebView_8 extends _i1.SmartFake implements _i5.WKWebView {
         );
 }
 
-class _FakeWKScriptMessageHandler_9 extends _i1.SmartFake
+class _FakeWKScriptMessageHandler_10 extends _i1.SmartFake
     implements _i5.WKScriptMessageHandler {
-  _FakeWKScriptMessageHandler_9(
+  _FakeWKScriptMessageHandler_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -325,6 +336,20 @@ class MockUIScrollViewDelegate extends _i1.Mock
   }
 
   @override
+  _i4.UIScrollViewDelegate copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeUIScrollViewDelegate_3(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i4.UIScrollViewDelegate);
+  @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
     required String? keyPath,
@@ -356,20 +381,6 @@ class MockUIScrollViewDelegate extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
-  @override
-  _i2.NSObject copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeNSObject_0(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
 }
 
 /// A class which mocks [WKPreferences].
@@ -396,7 +407,7 @@ class MockWKPreferences extends _i1.Mock implements _i5.WKPreferences {
           #copy,
           [],
         ),
-        returnValue: _FakeWKPreferences_3(
+        returnValue: _FakeWKPreferences_4(
           this,
           Invocation.method(
             #copy,
@@ -508,7 +519,7 @@ class MockWKUserContentController extends _i1.Mock
           #copy,
           [],
         ),
-        returnValue: _FakeWKUserContentController_4(
+        returnValue: _FakeWKUserContentController_5(
           this,
           Invocation.method(
             #copy,
@@ -563,7 +574,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
   @override
   _i5.WKHttpCookieStore get httpCookieStore => (super.noSuchMethod(
         Invocation.getter(#httpCookieStore),
-        returnValue: _FakeWKHttpCookieStore_5(
+        returnValue: _FakeWKHttpCookieStore_6(
           this,
           Invocation.getter(#httpCookieStore),
         ),
@@ -589,7 +600,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
           #copy,
           [],
         ),
-        returnValue: _FakeWKWebsiteDataStore_6(
+        returnValue: _FakeWKWebsiteDataStore_7(
           this,
           Invocation.method(
             #copy,
@@ -643,7 +654,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
   @override
   _i5.WKWebViewConfiguration get configuration => (super.noSuchMethod(
         Invocation.getter(#configuration),
-        returnValue: _FakeWKWebViewConfiguration_7(
+        returnValue: _FakeWKWebViewConfiguration_8(
           this,
           Invocation.getter(#configuration),
         ),
@@ -661,16 +672,6 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
       (super.noSuchMethod(
         Invocation.method(
           #setUIDelegate,
-          [delegate],
-        ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
-  @override
-  _i6.Future<void> setScrollViewDelegate(_i4.UIScrollViewDelegate? delegate) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setScrollViewDelegate,
           [delegate],
         ),
         returnValue: _i6.Future<void>.value(),
@@ -851,7 +852,7 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
           #copy,
           [],
         ),
-        returnValue: _FakeWKWebView_8(
+        returnValue: _FakeWKWebView_9(
           this,
           Invocation.method(
             #copy,
@@ -924,7 +925,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
   @override
   _i5.WKUserContentController get userContentController => (super.noSuchMethod(
         Invocation.getter(#userContentController),
-        returnValue: _FakeWKUserContentController_4(
+        returnValue: _FakeWKUserContentController_5(
           this,
           Invocation.getter(#userContentController),
         ),
@@ -932,7 +933,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
   @override
   _i5.WKPreferences get preferences => (super.noSuchMethod(
         Invocation.getter(#preferences),
-        returnValue: _FakeWKPreferences_3(
+        returnValue: _FakeWKPreferences_4(
           this,
           Invocation.getter(#preferences),
         ),
@@ -940,7 +941,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
   @override
   _i5.WKWebsiteDataStore get websiteDataStore => (super.noSuchMethod(
         Invocation.getter(#websiteDataStore),
-        returnValue: _FakeWKWebsiteDataStore_6(
+        returnValue: _FakeWKWebsiteDataStore_7(
           this,
           Invocation.getter(#websiteDataStore),
         ),
@@ -982,7 +983,7 @@ class MockWKWebViewConfiguration extends _i1.Mock
           #copy,
           [],
         ),
-        returnValue: _FakeWKWebViewConfiguration_7(
+        returnValue: _FakeWKWebViewConfiguration_8(
           this,
           Invocation.method(
             #copy,
@@ -1054,7 +1055,7 @@ class MockWKScriptMessageHandler extends _i1.Mock
           #copy,
           [],
         ),
-        returnValue: _FakeWKScriptMessageHandler_9(
+        returnValue: _FakeWKScriptMessageHandler_10(
           this,
           Invocation.method(
             #copy,

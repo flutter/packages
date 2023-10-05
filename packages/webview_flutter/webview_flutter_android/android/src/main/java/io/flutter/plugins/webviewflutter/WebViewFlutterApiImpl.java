@@ -60,17 +60,17 @@ public class WebViewFlutterApiImpl {
 
   public void onScrollChanged(
       @NonNull WebView instance,
-      @NonNull Long x,
-      @NonNull Long y,
-      @NonNull Long oldX,
-      @NonNull Long oldY,
+      @NonNull Long left,
+      @NonNull Long top,
+      @NonNull Long oldLeft,
+      @NonNull Long oldTop,
       @NonNull WebViewFlutterApi.Reply<Void> callback) {
     api.onScrollChanged(
         Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(instance)),
-        x,
-        y,
-        oldX,
-        oldY,
+        left,
+        top,
+        oldLeft,
+        oldTop,
         callback);
   }
 }
