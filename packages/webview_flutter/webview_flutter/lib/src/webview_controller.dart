@@ -374,6 +374,13 @@ class WebViewController {
   Future<String?> getUserAgent() {
     return platform.getUserAgent();
   }
+
+  /// Sets a listener for scroll position changes.
+  Future<void> setOnScrollPositionChange(
+    void Function(ScrollPositionChange change) onScrollPositionChange,
+  ) {
+    return platform.setOnScrollPositionChange(onScrollPositionChange);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.

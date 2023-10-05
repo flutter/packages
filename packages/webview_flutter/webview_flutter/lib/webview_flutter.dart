@@ -21,6 +21,7 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         PlatformWebViewPermissionRequest,
         PlatformWebViewWidgetCreationParams,
         ProgressCallback,
+        ScrollPositionChange,
         UrlChange,
         WebResourceError,
         WebResourceErrorCallback,

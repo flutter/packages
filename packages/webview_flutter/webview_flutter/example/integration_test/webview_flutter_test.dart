@@ -530,10 +530,17 @@ Future<void> main() async {
 
       final Completer<void> pageLoaded = Completer<void>();
       final WebViewController controller = WebViewController();
+      Completer<ScrollPositionChange> offsetsCompleter =
+          Completer<ScrollPositionChange>();
       unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
       unawaited(controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
       )));
+      unawaited(controller.setOnScrollPositionChange(
+          (ScrollPositionChange contentOffsetChange) {
+        offsetsCompleter.complete(contentOffsetChange);
+      }));
+
       unawaited(controller.loadRequest(Uri.parse(
         'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
       )));
@@ -559,12 +566,21 @@ Future<void> main() async {
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL);
       expect(scrollPos.dy, Y_SCROLL);
+      await expectLater(
+          offsetsCompleter.future.then(
+              (ScrollPositionChange change) => <double>[change.x, change.y]),
+          completion(<double>[X_SCROLL.toDouble(), Y_SCROLL.toDouble()]));
 
       // Check scrollBy() (on top of scrollTo())
+      offsetsCompleter = Completer<ScrollPositionChange>();
       await controller.scrollBy(X_SCROLL, Y_SCROLL);
       scrollPos = await controller.getScrollPosition();
       expect(scrollPos.dx, X_SCROLL * 2);
       expect(scrollPos.dy, Y_SCROLL * 2);
+      await expectLater(
+          offsetsCompleter.future.then(
+              (ScrollPositionChange change) => <double>[change.x, change.y]),
+          completion(<int>[X_SCROLL * 2, Y_SCROLL * 2]));
     });
   });
 

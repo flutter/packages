@@ -40,6 +40,8 @@ void main() {
       // ignore: unnecessary_statements
       main_file.ProgressCallback;
       // ignore: unnecessary_statements
+      main_file.ScrollPositionChange;
+      // ignore: unnecessary_statements
       main_file.WebViewPermissionResourceType;
       // ignore: unnecessary_statements
       main_file.WebResourceError;

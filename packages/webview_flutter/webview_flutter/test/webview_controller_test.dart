@@ -388,7 +388,7 @@ void main() {
     expect(permissionRequestCallbackCalled, isTrue);
   });
 
-  test('setConsoleLogCallback', () async {
+  test('setOnConsoleMessage', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
 
@@ -417,6 +417,24 @@ void main() {
       mockPlatformWebViewController,
     );
     await expectLater(webViewController.getUserAgent(), completion(userAgent));
+  });
+
+  test('setOnScrollPositionChange', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    void onScrollPositionChange(ScrollPositionChange change) {}
+
+    await webViewController.setOnScrollPositionChange(onScrollPositionChange);
+
+    verify(
+      mockPlatformWebViewController
+          .setOnScrollPositionChange(onScrollPositionChange),
+    );
   });
 }
 

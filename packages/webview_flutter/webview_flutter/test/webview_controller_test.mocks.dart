@@ -374,6 +374,17 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+  @override
+  _i5.Future<void> setOnScrollPositionChange(
+          void Function(_i2.ScrollPositionChange)? onScrollPositionChange) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnScrollPositionChange,
+          [onScrollPositionChange],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [PlatformNavigationDelegate].
