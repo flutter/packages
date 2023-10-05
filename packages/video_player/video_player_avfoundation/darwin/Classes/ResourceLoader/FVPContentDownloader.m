@@ -484,10 +484,15 @@ static NSInteger kBufferSize = 10 * 1024;
       info.contentLength = [[[HTTPURLResponse.allHeaderFields[@"Content-Range"]
           componentsSeparatedByString:@"/"] lastObject] longLongValue];
     }
+
+#if TARGET_OS_IOS
+    // Get the MIMEtype.
     NSString *mimeType = response.MIMEType;
     CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(
         kUTTagClassMIMEType, (__bridge CFStringRef)(mimeType), NULL);
     info.contentType = CFBridgingRelease(contentType);
+#endif
+
     self.info = info;
 
     NSError *error;

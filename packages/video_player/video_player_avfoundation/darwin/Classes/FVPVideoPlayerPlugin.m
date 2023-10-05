@@ -799,12 +799,20 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
-- (NSString *)mimeTypeForFileAtPath:(NSString *)path {
+- (NSString *)contentTypeForFileAtPath:(NSString *)path {
   NSString *fileExtension = [path pathExtension];
+
+  NSString *contentType;
+
+#if TARGET_OS_IOS
+
   NSString *UTI = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(
       kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, NULL);
-  NSString *contentType = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass(
+
+  contentType = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass(
       (__bridge CFStringRef)UTI, kUTTagClassMIMEType);
+
+#endif
 
   if (!contentType) {
     return @"application/octet-stream";
@@ -816,7 +824,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 #if TARGET_OS_OSX
   return NO;
 #else
-  NSString *mimeType = [self mimeTypeForFileAtPath:path];
+  NSString *mimeType = [self contentTypeForFileAtPath:path];
   NSArray *supportedMimetypes = @[ @"video/mp4", @"audio/flac" ];
   if ([supportedMimetypes containsObject:mimeType]) {
     return YES;
