@@ -671,7 +671,7 @@ window.addEventListener("error", function(e) {
         scrollViewDidScroll: (UIScrollView uiScrollView) async {
           final Point<double> offset = await uiScrollView.getContentOffset();
           weakThis.target?._onScrollPositionChangeCallback
-              ?.call(ScrollPositionChange(offset.x.toInt(), offset.y.toInt()));
+              ?.call(ScrollPositionChange(offset.x, offset.y));
         },
       );
       return _webView.scrollView.setDelegate(_uiScrollViewDelegate);

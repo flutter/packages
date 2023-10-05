@@ -7,9 +7,11 @@ class ScrollPositionChange {
   /// Creates a [ScrollPositionChange].
   const ScrollPositionChange(this.x, this.y);
 
-  /// The value of horizontal offset with the origin begin at the leftmost of the [WebView]
-  final int x;
+  /// The value of the horizontal offset with the origin being at the leftmost
+  /// of the `WebView`.
+  final double x;
 
-  /// The value of vertical offset with the origin begin at the topmost of the [WebView]
-  final int y;
+  /// The value of the vertical offset with the origin being at the topmost of
+  /// the `WebView`.
+  final double y;
 }
