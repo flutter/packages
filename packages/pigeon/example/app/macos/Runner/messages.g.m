@@ -127,7 +127,7 @@ NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void PGNExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
                             NSObject<PGNExampleHostApi> *api) {
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
@@ -220,9 +220,22 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
              binaryMessenger:self.binaryMessenger
                        codec:PGNMessageFlutterApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
-                 reply:^(id reply) {
-                   NSString *output = reply;
-                   completion(output, nil);
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+                   }
                  }];
 }
 @end
