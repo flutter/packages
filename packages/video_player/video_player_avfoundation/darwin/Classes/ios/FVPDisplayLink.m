@@ -34,7 +34,7 @@
 
 #pragma mark -
 
-@interface FVPDisplayLink()
+@interface FVPDisplayLink ()
 // The underlying display link implementation.
 @property(nonatomic) CADisplayLink *displayLink;
 @property(nonatomic) FVPDisplayLinkTarget *target;
@@ -42,12 +42,12 @@
 
 @implementation FVPDisplayLink
 
-- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback {
+- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                         callback:(void (^)(void))callback {
   self = [super init];
   if (self) {
     _target = [[FVPDisplayLinkTarget alloc] initWithCallback:callback];
-    _displayLink = [CADisplayLink displayLinkWithTarget:_target
-                                               selector:@selector(onDisplayLink:)];
+    _displayLink = [CADisplayLink displayLinkWithTarget:_target selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     _displayLink.paused = YES;
   }

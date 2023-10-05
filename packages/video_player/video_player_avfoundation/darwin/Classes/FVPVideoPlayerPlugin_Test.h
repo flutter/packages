@@ -13,12 +13,14 @@
 @protocol FVPAVFactory
 @required
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem;
-- (AVPlayerItemVideoOutput*)videoOutputWithPixelBufferAttributes:(NSDictionary<NSString *, id> *)attributes;
+- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
+    (NSDictionary<NSString *, id> *)attributes;
 @end
 
 // Protocol for an AVPlayer instance factory. Used for injecting display links in tests.
 @protocol FVPDisplayLinkFactory
-- (FVPDisplayLink*)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback;
+- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                                    callback:(void (^)(void))callback;
 @end
 
 #pragma mark -
@@ -45,7 +47,7 @@
     NSMutableDictionary<NSNumber *, FVPVideoPlayer *> *playersByTextureId;
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
-                   displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
-                            registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+               displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
+                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 @end

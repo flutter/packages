@@ -7,7 +7,7 @@
 #import <CoreVideo/CoreVideo.h>
 #import <Foundation/Foundation.h>
 
-@interface FVPDisplayLink()
+@interface FVPDisplayLink ()
 // The underlying display link implementation.
 @property(nonatomic, assign) CVDisplayLinkRef displayLink;
 // A dispatch source to move display link callbacks to the main thread.
@@ -27,7 +27,8 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 
 @implementation FVPDisplayLink
 
-- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback {
+- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                         callback:(void (^)(void))callback {
   self = [super init];
   if (self) {
     _registrar = registrar;

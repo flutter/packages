@@ -23,9 +23,11 @@
 /**
  * Initializes a display link that calls the given callback when fired.
  *
- * The display link starts paused, so must be started, by setting 'running' to YES, before the callback will fire.
+ * The display link starts paused, so must be started, by setting 'running' to YES, before the
+ * callback will fire.
  */
-- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                         callback:(void (^)(void))callback NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)init NS_UNAVAILABLE;
 

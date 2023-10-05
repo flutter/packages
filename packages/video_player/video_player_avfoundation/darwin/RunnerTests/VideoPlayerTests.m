@@ -77,7 +77,10 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   _beforeTolerance = [NSNumber numberWithLong:toleranceBefore.value];
   _afterTolerance = [NSNumber numberWithLong:toleranceAfter.value];
   _lastSeekTime = time;
-  [super seekToTime:time toleranceBefore:toleranceBefore toleranceAfter:toleranceAfter completionHandler:completionHandler];
+  [super seekToTime:time
+        toleranceBefore:toleranceBefore
+         toleranceAfter:toleranceAfter
+      completionHandler:completionHandler];
 }
 
 @end
@@ -87,7 +90,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 @property(nonatomic, strong) StubAVPlayer *stubAVPlayer;
 @property(nonatomic, strong) AVPlayerItemVideoOutput *output;
 
-- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer output:(AVPlayerItemVideoOutput*)output;
+- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer
+                        output:(AVPlayerItemVideoOutput *)output;
 
 @end
 
@@ -95,7 +99,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 // Creates a factory that returns the given items. Any items that are nil will instead return
 // a real object just as the non-test implementation would.
-- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer output:(AVPlayerItemVideoOutput*)output {
+- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer
+                        output:(AVPlayerItemVideoOutput *)output {
   self = [super init];
   _stubAVPlayer = stubAVPlayer;
   _output = output;
@@ -106,10 +111,10 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   return _stubAVPlayer ?: [AVPlayer playerWithPlayerItem:playerItem];
 }
 
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:(NSDictionary<NSString *,id> *)attributes { 
+- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
+    (NSDictionary<NSString *, id> *)attributes {
   return _output ?: [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
 }
-
 
 @end
 
@@ -131,7 +136,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   _displayLink = displayLink;
   return self;
 }
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback {
+- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                                    callback:(void (^)(void))callback {
   return self.displayLink;
 }
 
@@ -142,7 +148,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 @end
 
 @implementation FVPDefaultDisplayLinkFactory
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback {
+- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                                    callback:(void (^)(void))callback {
   return [[FVPDisplayLink alloc] initWithRegistrar:registrar callback:callback];
 }
 
@@ -190,13 +197,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       [GetPluginRegistry() registrarForPlugin:@"SeekToInvokestextureFrameAvailable"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FVPDisplayLink* mockDisplayLink = OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar callback:^() {}]);
-  StubFVPDisplayLinkFactory* stubDisplayLinkFactory =[[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  FVPDisplayLink *mockDisplayLink =
+      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
+                                                      callback:^(){
+                                                      }]);
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
+      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
-  FVPVideoPlayerPlugin *videoPlayerPlugin =
-      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
-                                       displayLinkFactory:stubDisplayLinkFactory
-                                                registrar:partialRegistrar];
+  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+      displayLinkFactory:stubDisplayLinkFactory
+               registrar:partialRegistrar];
 
   FlutterError *initalizationError;
   [videoPlayerPlugin initialize:&initalizationError];
@@ -212,7 +223,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSNumber *textureId = textureMessage.textureId;
 
   // Ensure that the video playback is paused before seeking.
-  FlutterError* pauseError;
+  FlutterError *pauseError;
   [videoPlayerPlugin pause:textureMessage error:&pauseError];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
@@ -230,10 +241,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertEqual([player position], 1234);
 
   // Simulate a buffer being available.
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero]).ignoringNonObjectArgs().andReturn(YES);
+  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
+      .ignoringNonObjectArgs()
+      .andReturn(YES);
   // Any non-zero value is fine here since it won't actually be used, just NULL-checked.
   CVPixelBufferRef fakeBufferRef = (CVPixelBufferRef)1;
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL]).ignoringNonObjectArgs().andReturn(fakeBufferRef);
+  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
+      .ignoringNonObjectArgs()
+      .andReturn(fakeBufferRef);
   // Simulate a callback from the engine to request a new frame.
   [player copyPixelBuffer];
   // Since a frame was found, and the video is paused, the display link should be paused again.
@@ -247,13 +262,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       [GetPluginRegistry() registrarForPlugin:@"SeekToInvokestextureFrameAvailable"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
-  FVPDisplayLink* mockDisplayLink = OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar callback:^() {}]);
-  StubFVPDisplayLinkFactory* stubDisplayLinkFactory =[[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  FVPDisplayLink *mockDisplayLink =
+      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
+                                                      callback:^(){
+                                                      }]);
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
+      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
-  FVPVideoPlayerPlugin *videoPlayerPlugin =
-      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
-                                       displayLinkFactory:stubDisplayLinkFactory
-                                                registrar:partialRegistrar];
+  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+      displayLinkFactory:stubDisplayLinkFactory
+               registrar:partialRegistrar];
 
   FlutterError *initalizationError;
   [videoPlayerPlugin initialize:&initalizationError];
@@ -269,7 +288,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSNumber *textureId = textureMessage.textureId;
 
   // Ensure that the video is playing before seeking.
-  FlutterError* pauseError;
+  FlutterError *pauseError;
   [videoPlayerPlugin play:textureMessage error:&pauseError];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
@@ -285,10 +304,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertEqual([player position], 1234);
 
   // Simulate a buffer being available.
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero]).ignoringNonObjectArgs().andReturn(YES);
+  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
+      .ignoringNonObjectArgs()
+      .andReturn(YES);
   // Any non-zero value is fine here since it won't actually be used, just NULL-checked.
   CVPixelBufferRef fakeBufferRef = (CVPixelBufferRef)1;
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL]).ignoringNonObjectArgs().andReturn(fakeBufferRef);
+  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
+      .ignoringNonObjectArgs()
+      .andReturn(fakeBufferRef);
   // Simulate a callback from the engine to request a new frame.
   [player copyPixelBuffer];
   // Since the video was playing, the display link should not be paused after getting a buffer.
@@ -434,12 +457,12 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       [GetPluginRegistry() registrarForPlugin:@"TestSeekTolerance"];
 
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
-  StubFVPAVFactory *stubAVFactory =
-      [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer output:nil];
+  StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
+                                                                      output:nil];
   FVPVideoPlayerPlugin *pluginWithMockAVPlayer =
       [[FVPVideoPlayerPlugin alloc] initWithAVFactory:stubAVFactory
-                                       displayLinkFactory:nil
-                                                registrar:registrar];
+                                   displayLinkFactory:nil
+                                            registrar:registrar];
 
   FlutterError *initializationError;
   [pluginWithMockAVPlayer initialize:&initializationError];
@@ -473,12 +496,12 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       [GetPluginRegistry() registrarForPlugin:@"TestSeekToEndTolerance"];
 
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
-  StubFVPAVFactory *stubAVFactory =
-      [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer  output:nil];
+  StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
+                                                                      output:nil];
   FVPVideoPlayerPlugin *pluginWithMockAVPlayer =
       [[FVPVideoPlayerPlugin alloc] initWithAVFactory:stubAVFactory
-                                       displayLinkFactory:nil
-                                                registrar:registrar];
+                                   displayLinkFactory:nil
+                                            registrar:registrar];
 
   FlutterError *initializationError;
   [pluginWithMockAVPlayer initialize:&initializationError];

@@ -65,7 +65,8 @@
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
   return [AVPlayer playerWithPlayerItem:playerItem];
 }
-- (AVPlayerItemVideoOutput*)videoOutputWithPixelBufferAttributes:(NSDictionary<NSString *, id> *)attributes {
+- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
+    (NSDictionary<NSString *, id> *)attributes {
   return [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
 }
 @end
@@ -75,7 +76,8 @@
 @end
 
 @implementation FVPDefaultDisplayLinkFactory
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar callback:(void (^)(void))callback { 
+- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                                    callback:(void (^)(void))callback {
   return [[FVPDisplayLink alloc] initWithRegistrar:registrar callback:callback];
 }
 
@@ -83,7 +85,7 @@
 
 #pragma mark -
 
-@interface FVPVideoPlayer()
+@interface FVPVideoPlayer ()
 @property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
 // The plugin registrar, to obtain view information from.
 @property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
@@ -109,7 +111,7 @@
                frameUpdater:(FVPFrameUpdater *)frameUpdater
                 displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              avFactory:(id<FVPAVFactory>)avFactory
+                  avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
 
@@ -124,7 +126,7 @@ static void *rateContext = &rateContext;
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                   displayLink:(FVPDisplayLink *)displayLink
-                avFactory:(id<FVPAVFactory>)avFactory
+                    avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
 #if TARGET_OS_OSX
@@ -138,7 +140,7 @@ static void *rateContext = &rateContext;
               frameUpdater:frameUpdater
                displayLink:displayLink
                httpHeaders:@{}
-             avFactory:avFactory
+                 avFactory:avFactory
                  registrar:registrar];
 }
 
@@ -253,7 +255,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                frameUpdater:(FVPFrameUpdater *)frameUpdater
                 displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-              avFactory:(id<FVPAVFactory>)avFactory
+                  avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
@@ -264,14 +266,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return [self initWithPlayerItem:item
                      frameUpdater:frameUpdater
                       displayLink:(FVPDisplayLink *)displayLink
-                    avFactory:avFactory
+                        avFactory:avFactory
                         registrar:registrar];
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
                        displayLink:(FVPDisplayLink *)displayLink
-                        avFactory:(id<FVPAVFactory>)avFactory
+                         avFactory:(id<FVPAVFactory>)avFactory
                          registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
@@ -498,21 +500,22 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [_player seekToTime:targetCMTime
         toleranceBefore:tolerance
          toleranceAfter:tolerance
-    completionHandler:^(BOOL completed) {
-    if (CMTimeCompare(self.player.currentTime, previousCMTime) != 0) {
-      // Ensure that a frame is drawn once available, even if currently paused. In theory a race is
-      // possible here where the new frame has already drawn by the time this code runs, and the
-      // display link stays on indefinitely, but that should be relatively harmless. This must use
-      // the display link rather than just informing the engine that a new frame is available
-      // because the seek completing doesn't guarantee that the pixel buffer is already available.
-      self.waitingForFrame = YES;
-      self.displayLink.running = YES;
-    }
+      completionHandler:^(BOOL completed) {
+        if (CMTimeCompare(self.player.currentTime, previousCMTime) != 0) {
+          // Ensure that a frame is drawn once available, even if currently paused. In theory a race
+          // is possible here where the new frame has already drawn by the time this code runs, and
+          // the display link stays on indefinitely, but that should be relatively harmless. This
+          // must use the display link rather than just informing the engine that a new frame is
+          // available because the seek completing doesn't guarantee that the pixel buffer is
+          // already available.
+          self.waitingForFrame = YES;
+          self.displayLink.running = YES;
+        }
 
-    if (completionHandler) {
-      completionHandler(completed);
-    }
-  }];
+        if (completionHandler) {
+          completionHandler(completed);
+        }
+      }];
 }
 
 - (void)setIsLooping:(BOOL)isLooping {
@@ -672,13 +675,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   return [self initWithAVFactory:[[FVPDefaultAVFactory alloc] init]
-                  displayLinkFactory:[[FVPDefaultDisplayLinkFactory alloc] init]
-                           registrar:registrar];
+              displayLinkFactory:[[FVPDefaultDisplayLinkFactory alloc] init]
+                       registrar:registrar];
 }
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
-                   displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
-                            registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+               displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
+                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = [registrar textures];
@@ -730,9 +733,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (FVPTextureMessage *)create:(FVPCreateMessage *)input error:(FlutterError **)error {
   FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
-  FVPDisplayLink *displayLink = [self.displayLinkFactory displayLinkWithRegistrar:_registrar callback:^() {
-    [frameUpdater displayLinkFired];
-  }];
+  FVPDisplayLink *displayLink =
+      [self.displayLinkFactory displayLinkWithRegistrar:_registrar
+                                               callback:^() {
+                                                 [frameUpdater displayLinkFired];
+                                               }];
 
   FVPVideoPlayer *player;
   if (input.asset) {
@@ -746,7 +751,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
                                         frameUpdater:frameUpdater
                                          displayLink:displayLink
-                                       avFactory:_avFactory
+                                           avFactory:_avFactory
                                            registrar:self.registrar];
       return [self onPlayerSetup:player frameUpdater:frameUpdater];
     } @catch (NSException *exception) {
@@ -758,7 +763,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                     frameUpdater:frameUpdater
                                      displayLink:displayLink
                                      httpHeaders:input.httpHeaders
-                                   avFactory:_avFactory
+                                       avFactory:_avFactory
                                        registrar:self.registrar];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
