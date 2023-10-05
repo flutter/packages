@@ -16,21 +16,27 @@ class AllDatatypesTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
 
     api.echoNullable(everything) { result in
-      XCTAssertNotNil(result)
-      XCTAssertNil(result!.aNullableBool)
-      XCTAssertNil(result!.aNullableInt)
-      XCTAssertNil(result!.aNullableDouble)
-      XCTAssertNil(result!.aNullableString)
-      XCTAssertNil(result!.aNullableByteArray)
-      XCTAssertNil(result!.aNullable4ByteArray)
-      XCTAssertNil(result!.aNullable8ByteArray)
-      XCTAssertNil(result!.aNullableFloatArray)
-      XCTAssertNil(result!.aNullableList)
-      XCTAssertNil(result!.aNullableMap)
-      XCTAssertNil(result!.nullableNestedList)
-      XCTAssertNil(result!.nullableMapWithAnnotations)
-      XCTAssertNil(result!.nullableMapWithObject)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertNotNil(res)
+          XCTAssertNil(res!.aNullableBool)
+          XCTAssertNil(res!.aNullableInt)
+          XCTAssertNil(res!.aNullableDouble)
+          XCTAssertNil(res!.aNullableString)
+          XCTAssertNil(res!.aNullableByteArray)
+          XCTAssertNil(res!.aNullable4ByteArray)
+          XCTAssertNil(res!.aNullable8ByteArray)
+          XCTAssertNil(res!.aNullableFloatArray)
+          XCTAssertNil(res!.aNullableList)
+          XCTAssertNil(res!.aNullableMap)
+          XCTAssertNil(res!.nullableNestedList)
+          XCTAssertNil(res!.nullableMapWithAnnotations)
+          XCTAssertNil(res!.nullableMapWithObject)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+        
+      }
     }
 
     wait(for: [expectation], timeout: 1.0)
@@ -59,24 +65,28 @@ class AllDatatypesTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
 
     api.echoNullable(everything) { result in
-      XCTAssertNotNil(result)
-      XCTAssertEqual(result!.aNullableBool, everything.aNullableBool)
-      XCTAssertEqual(result!.aNullableInt, everything.aNullableInt)
-      XCTAssertEqual(result!.aNullableDouble, everything.aNullableDouble)
-      XCTAssertEqual(result!.aNullableString, everything.aNullableString)
-      XCTAssertEqual(result!.aNullableByteArray, everything.aNullableByteArray)
-      XCTAssertEqual(result!.aNullable4ByteArray, everything.aNullable4ByteArray)
-      XCTAssertEqual(result!.aNullable8ByteArray, everything.aNullable8ByteArray)
-      XCTAssertEqual(result!.aNullableFloatArray, everything.aNullableFloatArray)
-      XCTAssert(equalsList(result!.aNullableList, everything.aNullableList))
-      XCTAssert(equalsDictionary(result!.aNullableMap, everything.aNullableMap))
-      XCTAssertEqual(result!.nullableNestedList, everything.nullableNestedList)
-      XCTAssertEqual(result!.nullableMapWithAnnotations, everything.nullableMapWithAnnotations)
-      XCTAssert(equalsDictionary(result!.nullableMapWithObject, everything.nullableMapWithObject))
-
-      expectation.fulfill()
+     switch result {
+        case .success(let res) :
+          XCTAssertNotNil(res)
+          XCTAssertEqual(res!.aNullableBool, everything.aNullableBool)
+          XCTAssertEqual(res!.aNullableInt, everything.aNullableInt)
+          XCTAssertEqual(res!.aNullableDouble, everything.aNullableDouble)
+          XCTAssertEqual(res!.aNullableString, everything.aNullableString)
+          XCTAssertEqual(res!.aNullableByteArray, everything.aNullableByteArray)
+          XCTAssertEqual(res!.aNullable4ByteArray, everything.aNullable4ByteArray)
+          XCTAssertEqual(res!.aNullable8ByteArray, everything.aNullable8ByteArray)
+          XCTAssertEqual(res!.aNullableFloatArray, everything.aNullableFloatArray)
+          XCTAssert(equalsList(res!.aNullableList, everything.aNullableList))
+          XCTAssert(equalsDictionary(res!.aNullableMap, everything.aNullableMap))
+          XCTAssertEqual(res!.nullableNestedList, everything.nullableNestedList)
+          XCTAssertEqual(res!.nullableMapWithAnnotations, everything.nullableMapWithAnnotations)
+          XCTAssert(equalsDictionary(res!.nullableMapWithObject, everything.nullableMapWithObject))
+          expectation.fulfill()
+          return
+        case .failure(_) :
+          return
+      }
     }
-
     wait(for: [expectation], timeout: 1.0)
   }
 }

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -27,7 +29,8 @@ const List<String> _kBlockTags = <String>[
   'table',
   'thead',
   'tbody',
-  'tr'
+  'tr',
+  'section',
 ];
 
 const List<String> _kListTags = <String>['ul', 'ol'];
@@ -512,6 +515,29 @@ class MarkdownBuilder implements md.NodeVisitor {
         _ambiguate(_tables.single.rows.last.children)!.add(child);
       } else if (tag == 'a') {
         _linkHandlers.removeLast();
+      } else if (tag == 'sup') {
+        final Widget c = current.children.last;
+        TextSpan? textSpan;
+        if (c is RichText && c.text is TextSpan) {
+          textSpan = c.text as TextSpan;
+        } else if (c is SelectableText && c.textSpan is TextSpan) {
+          textSpan = c.textSpan;
+        }
+        if (textSpan != null) {
+          final Widget richText = _buildRichText(
+            TextSpan(
+              recognizer: textSpan.recognizer,
+              text: element.textContent,
+              style: textSpan.style?.copyWith(
+                fontFeatures: <FontFeature>[
+                  const FontFeature.enable('sups'),
+                ],
+              ),
+            ),
+          );
+          current.children.removeLast();
+          current.children.add(richText);
+        }
       }
 
       if (current.children.isNotEmpty) {
