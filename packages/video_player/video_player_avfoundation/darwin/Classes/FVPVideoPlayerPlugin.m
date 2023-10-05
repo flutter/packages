@@ -800,12 +800,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (NSString *)contentTypeForFileAtPath:(NSString *)path {
-  NSString *fileExtension = [path pathExtension];
-
   NSString *contentType;
 
 #if TARGET_OS_IOS
-
+  NSString *fileExtension = [path pathExtension];
   NSString *UTI = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(
       kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, NULL);
 
