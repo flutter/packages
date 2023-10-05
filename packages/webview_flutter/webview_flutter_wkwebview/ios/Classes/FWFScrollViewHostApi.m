@@ -66,7 +66,9 @@
                 uiScrollViewDelegateIdentifier:(nullable NSNumber *)uiScrollViewDelegateIdentifier
                                          error:(FlutterError *_Nullable *_Nonnull)error {
   [[self scrollViewForIdentifier:identifier]
-      setDelegate:uiScrollViewDelegateIdentifier ? (FWFScrollViewDelegate *)[self.instanceManager
-                      instanceForIdentifier:uiScrollViewDelegateIdentifier.longValue] : nil];
+      setDelegate:uiScrollViewDelegateIdentifier
+                      ? (FWFScrollViewDelegate *)[self.instanceManager
+                            instanceForIdentifier:uiScrollViewDelegateIdentifier.longValue]
+                      : nil];
 }
 @end

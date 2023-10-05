@@ -130,9 +130,9 @@ void main() {
         List<Object?>? args;
         final UIScrollViewDelegate scrollViewDelegate =
             UIScrollViewDelegate.detached(
-              scrollViewDidScroll: (UIScrollView scrollView) {
-                args = <Object?>[scrollView];
-              },
+          scrollViewDidScroll: (UIScrollView scrollView) {
+            args = <Object?>[scrollView];
+          },
           instanceManager: instanceManager,
         );
         instanceManager.addHostCreatedInstance(scrollViewDelegate, 1);

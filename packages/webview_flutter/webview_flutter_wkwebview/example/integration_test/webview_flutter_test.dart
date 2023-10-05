@@ -780,8 +780,7 @@ Future<void> main() async {
       expect(scrollPos.dy, Y_SCROLL);
       await expectLater(
           offsetsCompleter.future.then(
-              (ScrollPositionChange change) =>
-                  <double>[change.x, change.y]),
+              (ScrollPositionChange change) => <double>[change.x, change.y]),
           completion(<double>[X_SCROLL.toDouble(), Y_SCROLL.toDouble()]));
 
       // Check scrollBy() (on top of scrollTo())
@@ -792,8 +791,7 @@ Future<void> main() async {
       expect(scrollPos.dy, Y_SCROLL * 2);
       await expectLater(
           offsetsCompleter.future.then(
-              (ScrollPositionChange change) =>
-                  <double>[change.x, change.y]),
+              (ScrollPositionChange change) => <double>[change.x, change.y]),
           completion(<double>[X_SCROLL * 2, Y_SCROLL * 2]));
     });
   });
