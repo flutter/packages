@@ -9,6 +9,7 @@
 #import <GLKit/GLKit.h>
 
 #import "AVAssetTrackUtils.h"
+#import "FVPDisplayLink.h"
 #import "messages.g.h"
 
 #if !__has_feature(objc_arc)
@@ -22,9 +23,12 @@
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
 // The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.
 @property(nonatomic, assign) CMTime lastKnownAvailableTime;
-#if TARGET_OS_IOS
-- (void)onDisplayLink:(CADisplayLink *)link;
-#endif
+// If YES, the engine is informed that a new texture is available any time the display link
+// callback is fired, regardless of the videoOutput state.
+//
+// TODO(stuartmorgan): Investigate removing this; it exists only to preserve existing iOS behavior
+// while implementing macOS, but iOS should very likely be doing the check as well.
+@property(nonatomic, assign) BOOL skipBufferAvailabilityCheck;
 @end
 
 @implementation FVPFrameUpdater
@@ -36,34 +40,23 @@
   return self;
 }
 
-#if TARGET_OS_IOS
-- (void)onDisplayLink:(CADisplayLink *)link {
-  // TODO(stuartmorgan): Investigate switching this to displayLinkFired; iOS may also benefit from
-  // the availability check there.
-  [_registry textureFrameAvailable:_textureId];
-}
-#endif
-
 - (void)displayLinkFired {
-  // Only report a new frame if one is actually available.
-  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
-  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    _lastKnownAvailableTime = outputItemTime;
+  // Only report a new frame if one is actually available, or the check is being skipped.
+  BOOL reportFrame = NO;
+  if (self.skipBufferAvailabilityCheck) {
+    reportFrame = YES;
+  } else {
+    CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
+    if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+      _lastKnownAvailableTime = outputItemTime;
+      reportFrame = YES;
+    }
+  }
+  if (reportFrame) {
     [_registry textureFrameAvailable:_textureId];
   }
 }
 @end
-
-#if TARGET_OS_OSX
-static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now,
-                                    const CVTimeStamp *outputTime, CVOptionFlags flagsIn,
-                                    CVOptionFlags *flagsOut, void *displayLinkSource) {
-  // Trigger the main-thread dispatch queue, to drive a frame update check.
-  __weak dispatch_source_t source = (__bridge dispatch_source_t)displayLinkSource;
-  dispatch_source_merge_data(source, 1);
-  return kCVReturnSuccess;
-}
-#endif
 
 @interface FVPDefaultPlayerFactory : NSObject <FVPPlayerFactory>
 @end
@@ -96,16 +89,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 @property(nonatomic) BOOL isLooping;
 @property(nonatomic, readonly) BOOL isInitialized;
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
-// TODO(stuartmorgan): Extract and abstract the display link to remove all the display-link-related
-// ifdefs from this file.
-#if TARGET_OS_OSX
-// The display link to trigger frame reads from the video player.
-@property(nonatomic, assign) CVDisplayLinkRef displayLink;
-// A dispatch source to move display link callbacks to the main thread.
-@property(nonatomic, strong) dispatch_source_t displayLinkSource;
-#else
-@property(nonatomic) CADisplayLink *displayLink;
-#endif
+@property(nonatomic) FVPDisplayLink *displayLink;
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
@@ -255,27 +239,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   };
   _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
 
-#if TARGET_OS_OSX
+
   frameUpdater.videoOutput = _videoOutput;
-  // Create and start the main-thread dispatch queue to drive frameUpdater.
-  self.displayLinkSource =
-      dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue());
-  dispatch_source_set_event_handler(self.displayLinkSource, ^() {
-    @autoreleasepool {
-      [frameUpdater displayLinkFired];
-    }
-  });
-  dispatch_resume(self.displayLinkSource);
-  if (CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink) == kCVReturnSuccess) {
-    CVDisplayLinkSetOutputCallback(_displayLink, &DisplayLinkCallback,
-                                   (__bridge void *)(self.displayLinkSource));
-  }
-#else
-  _displayLink = [CADisplayLink displayLinkWithTarget:frameUpdater
-                                             selector:@selector(onDisplayLink:)];
-  [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-  _displayLink.paused = YES;
+#if TARGET_OS_IOS
+  // See TODO on this property in FVPFrameUpdater.
+  frameUpdater.skipBufferAvailabilityCheck = YES;
 #endif
+  self.displayLink = [[FVPDisplayLink alloc] initWithCallback:^() {
+    [frameUpdater displayLinkFired];
+  }];
 }
 
 - (instancetype)initWithURL:(NSURL *)url
@@ -428,23 +400,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     [_player pause];
   }
-#if TARGET_OS_OSX
-  if (_displayLink) {
-    if (_isPlaying) {
-      NSScreen *screen = self.registrar.view.window.screen;
-      if (screen) {
-        CGDirectDisplayID viewDisplayID =
-            (CGDirectDisplayID)[screen.deviceDescription[@"NSScreenNumber"] unsignedIntegerValue];
-        CVDisplayLinkSetCurrentCGDisplay(_displayLink, viewDisplayID);
-      }
-      CVDisplayLinkStart(_displayLink);
-    } else {
-      CVDisplayLinkStop(_displayLink);
-    }
-  }
-#else
-  _displayLink.paused = !_isPlaying;
-#endif
+  _displayLink.running = _isPlaying;
 }
 
 - (void)setupEventSinkIfReadyToPlay {
@@ -615,16 +571,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   _disposed = YES;
   [_playerLayer removeFromSuperlayer];
-#if TARGET_OS_OSX
-  if (_displayLink) {
-    CVDisplayLinkStop(_displayLink);
-    CVDisplayLinkRelease(_displayLink);
-    _displayLink = NULL;
-  }
-  dispatch_source_cancel(_displayLinkSource);
-#else
-  [_displayLink invalidate];
-#endif
+  _displayLink = nil;
   [self removeKeyValueObservers];
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
