@@ -888,7 +888,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         WKWebView webView,
         WKNavigationAction action,
       ) async {
-        if (weakThis.target?._onNavigationRequest != null) {
+        if (weakThis.target?._onNavigationRequest != null && action.navigationType != WKNavigationType.other) {
           final NavigationDecision decision =
               await weakThis.target!._onNavigationRequest!(NavigationRequest(
             url: action.request.url,
