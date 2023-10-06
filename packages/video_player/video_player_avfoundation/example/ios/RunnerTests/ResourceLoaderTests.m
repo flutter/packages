@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 @import AVFoundation;
-#import <XCTest/XCTest.h>
+@import video_player_avfoundation;
+@import XCTest;
 #import "FVPResourceLoader.h"
 
 @interface FVPResourceLoaderTests : XCTestCase
