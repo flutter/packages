@@ -1,3 +1,7 @@
+## 1.3.6
+
+* Updates doc reference finishPurchase to completePurchase.
+
 ## 1.3.5
 
 * Adds pub topics to package metadata.
