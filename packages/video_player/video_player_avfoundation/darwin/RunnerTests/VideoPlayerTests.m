@@ -150,10 +150,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testInitWithCache {
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
   NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"testPlayerLayerWorkaroundWithCache"];
+      [GetPluginRegistry() registrarForPlugin:@"testPlayerLayerWorkaroundWithCache"];
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
@@ -216,11 +214,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testIsCacheSupported_yesForMP4 {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CanCacheMP4"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [mockTextureRegistry registrarForPlugin:@"CanCacheMP4"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -239,11 +235,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testIsCacheSupported_yesForFLAC {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CanCacheFLAC"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [mockTextureRegistry registrarForPlugin:@"CanCacheFLAC"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -258,15 +252,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
+#if PLATFORM_OS_IOS
   XCTAssertTrue(response.boolValue);
+#else
+  XCTAssertFalse(response.boolValue);
+#endif
 }
 
 - (void)testIsCacheSupported_noForM3U8 {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheM3U8"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [mockTextureRegistry registrarForPlugin:@"CantCacheM3U8"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -285,11 +281,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testIsCacheSupported_noForAAC {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheAAC"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [mockTextureRegistry registrarForPlugin:@"CantCacheAAC"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -309,11 +303,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testIsCacheSupported_noForTS {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheTS"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [mockTextureRegistry registrarForPlugin:@"CantCacheTS"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -333,11 +325,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testIsCacheSupported_noForMKV {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheMKV"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [mockTextureRegistry registrarForPlugin:@"CantCacheMKV"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -357,11 +347,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testIsCacheSupported_noForWEBM {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheWEBM"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"CantCacheWEBM"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -381,11 +369,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testIsCacheSupported_noForMP3 {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCacheMP3"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"CantCacheMP3"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -404,11 +390,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testIsCacheSupported_noForOGG {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"CantCachOGG"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"CantCachOGG"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -427,11 +411,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testClearCache {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistry> *registry =
-      (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:@"canClearCache"];
+  NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"canClearCache"];
   NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
   OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
   FVPVideoPlayerPlugin *videoPlayerPlugin =

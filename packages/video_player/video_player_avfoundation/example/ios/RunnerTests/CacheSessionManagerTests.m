@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <XCTest/XCTest.h>
+@import AVFoundation;
+@import video_player_avfoundation;
+@import XCTest;
 #import "FVPCacheSessionManager.h"
 
 @interface FVPCacheSessionManagerTests : XCTestCase

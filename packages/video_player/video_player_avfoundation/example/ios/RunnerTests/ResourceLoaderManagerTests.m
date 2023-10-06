@@ -2,8 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <XCTest/XCTest.h>
+@import AVFoundation;
+@import video_player_avfoundation;
+@import XCTest;
+#if PLATFORM_OS_IOS
 #import "FVPResourceLoaderManager.h"
+#endif
 
 @interface FVPResourceLoaderManagerTests : XCTestCase
 

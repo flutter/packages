@@ -3,12 +3,13 @@
 // found in the LICENSE file.
 
 @import AVFoundation;
-
-#import <Foundation/Foundation.h>
-#import <XCTest/XCTest.h>
+@import video_player_avfoundation;
+@import XCTest;
+#if PLATFORM_IS_IOS
 #import "FVPContentDownloader.h"
 #import "FVPContentInfo.h"
 #import "FVPResourceLoadingRequestWorker.h"
+#endif
 
 @interface FVPResourceLoadingRequestWorkerTests : XCTestCase
 
