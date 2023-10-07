@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// Protocol for UIApplication methods relating to launching URLs.
+///
+/// This protocol exists to allow injecting an alternate implementation for testing.
 protocol Launcher {
   func canOpenURL(_ url: URL) -> Bool
   func openURL(
@@ -9,6 +12,7 @@ protocol Launcher {
     completionHandler completion: ((Bool) -> Void)?)
 }
 
+/// Default implementation of Launcher, using UIApplication.
 final class UIApplicationLauncher: Launcher {
   func canOpenURL(_ url: URL) -> Bool {
     UIApplication.shared.canOpenURL(url)

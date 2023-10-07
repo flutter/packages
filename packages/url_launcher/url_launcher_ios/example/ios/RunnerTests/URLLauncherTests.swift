@@ -41,10 +41,10 @@ final class URLLauncherTests: XCTestCase {
       let result = try createPlugin().canLaunchUrl(url: "urls can't have spaces")
       XCTAssertFalse(result)
     } catch {
-      let generalError = error as? GeneralError
+      let generalError = error as? FlutterError
       XCTAssertEqual(generalError?.code, "argument_error")
       XCTAssertEqual(generalError?.message, "Unable to parse URL")
-      XCTAssertEqual(generalError?.details, "Provided URL: urls can't have spaces")
+      XCTAssertEqual(generalError?.details as? String, "Provided URL: urls can't have spaces")
     }
   }
 
@@ -89,10 +89,10 @@ final class URLLauncherTests: XCTestCase {
       case .failure(let error):
         XCTAssertNotNil(error)
 
-        let generalError = error as! GeneralError
-        XCTAssertEqual(generalError.code, "argument_error")
-        XCTAssertEqual(generalError.message, "Unable to parse URL")
-        XCTAssertEqual(generalError.details, "Provided URL: urls can't have spaces")
+        let generalError = error as? FlutterError
+        XCTAssertEqual(generalError?.code, "argument_error")
+        XCTAssertEqual(generalError?.message, "Unable to parse URL")
+        XCTAssertEqual(generalError?.details as? String, "Provided URL: urls can't have spaces")
       }
       expectation.fulfill()
     }

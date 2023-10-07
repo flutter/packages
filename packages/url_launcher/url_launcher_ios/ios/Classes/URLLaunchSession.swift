@@ -2,34 +2,36 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import SafariServices
 
-typealias OpenInSafariVCResponse = (Result<Bool, Error>) -> Void
+typealias OpenInSafariCompletionHandler = (Result<Bool, Error>) -> Void
 
 final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
 
-  private let completion: OpenInSafariVCResponse
+  private let completion: OpenInSafariCompletionHandler
   private let url: URL
-  let safari: SFSafariViewController
+  let safariViewController: SFSafariViewController
   var didFinish: (() -> Void)?
 
-  init(url: URL, completion: @escaping OpenInSafariVCResponse) {
+  init(url: URL, completion: @escaping OpenInSafariCompletionHandler) {
     self.url = url
     self.completion = completion
-    self.safari = SFSafariViewController(url: url)
+    self.safariViewController = SFSafariViewController(url: url)
     super.init()
-    self.safari.delegate = self
+    self.safariViewController.delegate = self
   }
 
   func safariViewController(
     _ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool
   ) {
     if didLoadSuccessfully {
-      completion(Result.success(true))
+      completion(.success(true))
     } else {
       completion(
-        Result.failure(
-          GeneralError(code: "Error", message: "Error while launching \(url)", details: nil)))
+        .failure(
+          FlutterError(code: "Error", message: "Error while launching \(url)", details: nil))
+      )
     }
   }
 
@@ -39,6 +41,6 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
   }
 
   func close() {
-    safariViewControllerDidFinish(safari)
+    safariViewControllerDidFinish(safariViewController)
   }
 }

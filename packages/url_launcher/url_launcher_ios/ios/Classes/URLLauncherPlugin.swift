@@ -15,6 +15,12 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
   private var currentSession: URLLaunchSession?
   private let launcher: Launcher
 
+  var topViewController: UIViewController? {
+    // TODO(stuartmorgan) Provide a non-deprecated codepath. See
+    // https://github.com/flutter/flutter/issues/104117
+    UIApplication.shared.keyWindow?.rootViewController?.topViewController
+  }
+
   init(launcher: Launcher = UIApplicationLauncher()) {
     self.launcher = launcher
   }
@@ -47,23 +53,17 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
       return
     }
 
-    currentSession = URLLaunchSession(url: url, completion: completion)
-    guard let session = currentSession else { return }
+    let session = URLLaunchSession(url: url, completion: completion)
+    currentSession = session
 
     session.didFinish = { [weak self] in
       self?.currentSession = nil
     }
-    topViewController?.present(session.safari, animated: true, completion: nil)
+    topViewController?.present(session.safariViewController, animated: true, completion: nil)
   }
 
   func closeSafariViewController() throws {
     currentSession?.close()
-  }
-
-  var topViewController: UIViewController? {
-    // TODO(stuartmorgan) Provide a non-deprecated codepath. See
-    // https://github.com/flutter/flutter/issues/104117
-    UIApplication.shared.keyWindow?.rootViewController?.topViewController
   }
 
   /**
@@ -73,13 +73,13 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     * @return The error to return
     */
   func invalidURLError(for url: String) -> Error {
-    GeneralError(
+    FlutterError(
       code: "argument_error", message: "Unable to parse URL", details: "Provided URL: \(url)")
   }
 }
 
-/// This method recursively iterate through the view hierarchy
-/// to return the top most view controller.
+/// This method recursively iterates through the view hierarchy
+/// to return the top-most view controller.
 ///
 /// It supports the following scenarios:
 ///
@@ -104,14 +104,4 @@ extension UIViewController {
   }
 }
 
-class GeneralError: Error {
-  let code: String
-  let message: String
-  let details: String?
-
-  init(code: String, message: String, details: String? = nil) {
-    self.code = code
-    self.message = message
-    self.details = details
-  }
-}
+extension FlutterError: Error {}
