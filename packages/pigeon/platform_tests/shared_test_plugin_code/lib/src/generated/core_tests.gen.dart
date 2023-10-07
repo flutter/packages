@@ -12,6 +12,17 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 enum AnEnum {
   one,
   two,
@@ -2376,9 +2387,15 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          api.noop();
-          return;
+          try {
+            api.noop();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2391,9 +2408,15 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          final Object? output = api.throwError();
-          return output;
+          try {
+            final Object? output = api.throwError();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2406,9 +2429,15 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          api.throwErrorFromVoid();
-          return;
+          try {
+            api.throwErrorFromVoid();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2427,8 +2456,15 @@ abstract class FlutterIntegrationCoreApi {
           final AllTypes? arg_everything = (args[0] as AllTypes?);
           assert(arg_everything != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes was null, expected non-null AllTypes.');
-          final AllTypes output = api.echoAllTypes(arg_everything!);
-          return output;
+          try {
+            final AllTypes output = api.echoAllTypes(arg_everything!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2446,9 +2482,16 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final AllNullableTypes? arg_everything =
               (args[0] as AllNullableTypes?);
-          final AllNullableTypes? output =
-              api.echoAllNullableTypes(arg_everything);
-          return output;
+          try {
+            final AllNullableTypes? output =
+                api.echoAllNullableTypes(arg_everything);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2467,9 +2510,16 @@ abstract class FlutterIntegrationCoreApi {
           final bool? arg_aNullableBool = (args[0] as bool?);
           final int? arg_aNullableInt = (args[1] as int?);
           final String? arg_aNullableString = (args[2] as String?);
-          final AllNullableTypes output = api.sendMultipleNullableTypes(
-              arg_aNullableBool, arg_aNullableInt, arg_aNullableString);
-          return output;
+          try {
+            final AllNullableTypes output = api.sendMultipleNullableTypes(
+                arg_aNullableBool, arg_aNullableInt, arg_aNullableString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2488,8 +2538,15 @@ abstract class FlutterIntegrationCoreApi {
           final bool? arg_aBool = (args[0] as bool?);
           assert(arg_aBool != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool was null, expected non-null bool.');
-          final bool output = api.echoBool(arg_aBool!);
-          return output;
+          try {
+            final bool output = api.echoBool(arg_aBool!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2508,8 +2565,15 @@ abstract class FlutterIntegrationCoreApi {
           final int? arg_anInt = (args[0] as int?);
           assert(arg_anInt != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt was null, expected non-null int.');
-          final int output = api.echoInt(arg_anInt!);
-          return output;
+          try {
+            final int output = api.echoInt(arg_anInt!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2528,8 +2592,15 @@ abstract class FlutterIntegrationCoreApi {
           final double? arg_aDouble = (args[0] as double?);
           assert(arg_aDouble != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble was null, expected non-null double.');
-          final double output = api.echoDouble(arg_aDouble!);
-          return output;
+          try {
+            final double output = api.echoDouble(arg_aDouble!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2548,8 +2619,15 @@ abstract class FlutterIntegrationCoreApi {
           final String? arg_aString = (args[0] as String?);
           assert(arg_aString != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString was null, expected non-null String.');
-          final String output = api.echoString(arg_aString!);
-          return output;
+          try {
+            final String output = api.echoString(arg_aString!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2568,8 +2646,15 @@ abstract class FlutterIntegrationCoreApi {
           final Uint8List? arg_aList = (args[0] as Uint8List?);
           assert(arg_aList != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List was null, expected non-null Uint8List.');
-          final Uint8List output = api.echoUint8List(arg_aList!);
-          return output;
+          try {
+            final Uint8List output = api.echoUint8List(arg_aList!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2589,8 +2674,15 @@ abstract class FlutterIntegrationCoreApi {
               (args[0] as List<Object?>?)?.cast<Object?>();
           assert(arg_aList != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null, expected non-null List<Object?>.');
-          final List<Object?> output = api.echoList(arg_aList!);
-          return output;
+          try {
+            final List<Object?> output = api.echoList(arg_aList!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2610,8 +2702,15 @@ abstract class FlutterIntegrationCoreApi {
               (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           assert(arg_aMap != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null, expected non-null Map<String?, Object?>.');
-          final Map<String?, Object?> output = api.echoMap(arg_aMap!);
-          return output;
+          try {
+            final Map<String?, Object?> output = api.echoMap(arg_aMap!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2631,8 +2730,15 @@ abstract class FlutterIntegrationCoreApi {
               args[0] == null ? null : AnEnum.values[args[0]! as int];
           assert(arg_anEnum != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null, expected non-null AnEnum.');
-          final AnEnum output = api.echoEnum(arg_anEnum!);
-          return output.index;
+          try {
+            final AnEnum output = api.echoEnum(arg_anEnum!);
+            return wrapResponse(result: output.index);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2649,8 +2755,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final bool? arg_aBool = (args[0] as bool?);
-          final bool? output = api.echoNullableBool(arg_aBool);
-          return output;
+          try {
+            final bool? output = api.echoNullableBool(arg_aBool);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2667,8 +2780,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_anInt = (args[0] as int?);
-          final int? output = api.echoNullableInt(arg_anInt);
-          return output;
+          try {
+            final int? output = api.echoNullableInt(arg_anInt);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2685,8 +2805,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final double? arg_aDouble = (args[0] as double?);
-          final double? output = api.echoNullableDouble(arg_aDouble);
-          return output;
+          try {
+            final double? output = api.echoNullableDouble(arg_aDouble);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2703,8 +2830,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_aString = (args[0] as String?);
-          final String? output = api.echoNullableString(arg_aString);
-          return output;
+          try {
+            final String? output = api.echoNullableString(arg_aString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2721,8 +2855,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final Uint8List? arg_aList = (args[0] as Uint8List?);
-          final Uint8List? output = api.echoNullableUint8List(arg_aList);
-          return output;
+          try {
+            final Uint8List? output = api.echoNullableUint8List(arg_aList);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2740,8 +2881,15 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final List<Object?>? arg_aList =
               (args[0] as List<Object?>?)?.cast<Object?>();
-          final List<Object?>? output = api.echoNullableList(arg_aList);
-          return output;
+          try {
+            final List<Object?>? output = api.echoNullableList(arg_aList);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2759,8 +2907,15 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final Map<String?, Object?>? arg_aMap =
               (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-          final Map<String?, Object?>? output = api.echoNullableMap(arg_aMap);
-          return output;
+          try {
+            final Map<String?, Object?>? output = api.echoNullableMap(arg_aMap);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2778,8 +2933,15 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final AnEnum? arg_anEnum =
               args[0] == null ? null : AnEnum.values[args[0]! as int];
-          final AnEnum? output = api.echoNullableEnum(arg_anEnum);
-          return output?.index;
+          try {
+            final AnEnum? output = api.echoNullableEnum(arg_anEnum);
+            return wrapResponse(result: output?.index);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2792,9 +2954,15 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          await api.noopAsync();
-          return;
+          try {
+            await api.noopAsync();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2813,8 +2981,15 @@ abstract class FlutterIntegrationCoreApi {
           final String? arg_aString = (args[0] as String?);
           assert(arg_aString != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString was null, expected non-null String.');
-          final String output = await api.echoAsyncString(arg_aString!);
-          return output;
+          try {
+            final String output = await api.echoAsyncString(arg_aString!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2961,8 +3136,15 @@ abstract class FlutterSmallApi {
           final TestMessage? arg_msg = (args[0] as TestMessage?);
           assert(arg_msg != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList was null, expected non-null TestMessage.');
-          final TestMessage output = api.echoWrappedList(arg_msg!);
-          return output;
+          try {
+            final TestMessage output = api.echoWrappedList(arg_msg!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }

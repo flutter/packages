@@ -57,6 +57,42 @@ enum FileChooserMode {
   save,
 }
 
+/// Indicates the type of message logged to the console.
+///
+/// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel.
+enum ConsoleMessageLevel {
+  /// Indicates a message is logged for debugging.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#DEBUG.
+  debug,
+
+  /// Indicates a message is provided as an error.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#ERROR.
+  error,
+
+  /// Indicates a message is provided as a basic log message.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#LOG.
+  log,
+
+  /// Indicates a message is provided as a tip.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#TIP.
+  tip,
+
+  /// Indicates a message is provided as a warning.
+  ///
+  /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#WARNING.
+  warning,
+
+  /// Indicates a message with an unknown level.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
+}
+
 class WebResourceRequestData {
   WebResourceRequestData(
     this.url,
@@ -87,6 +123,16 @@ class WebViewPoint {
 
   int x;
   int y;
+}
+
+/// Represents a JavaScript console message from WebCore.
+///
+/// See https://developer.android.com/reference/android/webkit/ConsoleMessage
+class ConsoleMessage {
+  late int lineNumber;
+  late String message;
+  late ConsoleMessageLevel level;
+  late String sourceId;
 }
 
 /// Handles methods calls to the native Java Object class.
@@ -253,6 +299,8 @@ abstract class WebSettingsHostApi {
   void setAllowFileAccess(int instanceId, bool enabled);
 
   void setTextZoom(int instanceId, int textZoom);
+
+  String getUserAgentString(int instanceId);
 }
 
 @HostApi(dartHostTestHandler: 'TestJavaScriptChannelHostApi')
@@ -337,6 +385,11 @@ abstract class WebChromeClientHostApi {
     int instanceId,
     bool value,
   );
+
+  void setSynchronousReturnValueForOnConsoleMessage(
+    int instanceId,
+    bool value,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestAssetManagerHostApi')
@@ -379,6 +432,9 @@ abstract class WebChromeClientFlutterApi {
 
   /// Callback to Dart function `WebChromeClient.onGeolocationPermissionsHidePrompt`.
   void onGeolocationPermissionsHidePrompt(int identifier);
+
+  /// Callback to Dart function `WebChromeClient.onConsoleMessage`.
+  void onConsoleMessage(int instanceId, ConsoleMessage message);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebStorageHostApi')

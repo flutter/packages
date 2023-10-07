@@ -32,7 +32,7 @@ class RouteConfiguration {
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
     assert(_debugCheckStatefulShellBranchDefaultLocations(routes));
     _cacheNameToPath('', routes);
-    log.info(debugKnownRoutes());
+    log(debugKnownRoutes());
   }
 
   static bool _debugCheckPath(List<RouteBase> routes, bool isTopLevel) {
@@ -234,7 +234,7 @@ class RouteConfiguration {
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) {
     assert(() {
-      log.info('getting location for name: '
+      log('getting location for name: '
           '"$name"'
           '${pathParameters.isEmpty ? '' : ', pathParameters: $pathParameters'}'
           '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
@@ -492,7 +492,7 @@ class RouteConfiguration {
       _addRedirect(redirectHistory, newMatch, previousLocation);
       return newMatch;
     } on GoException catch (e) {
-      log.info('Redirection exception: ${e.message}');
+      log('Redirection exception: ${e.message}');
       return _errorRouteMatchList(previousLocation, e);
     }
   }
@@ -522,7 +522,7 @@ class RouteConfiguration {
 
     redirects.add(newMatch);
 
-    log.info('redirecting to $newMatch');
+    log('redirecting to $newMatch');
   }
 
   String _formatRedirectionHistory(List<RouteMatchList> redirections) {
