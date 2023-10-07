@@ -19,8 +19,10 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     self.launcher = launcher
   }
 
-  func canLaunchUrl(url: String) -> Bool {
-    guard let url = URL(string: url) else { return false }
+  func canLaunchUrl(url: String) throws -> Bool {
+    guard let url = URL(string: url) else {
+      throw invalidURLError(for: url)
+    }
     return launcher.canOpenURL(url)
   }
 
@@ -54,7 +56,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     topViewController?.present(session.safari, animated: true, completion: nil)
   }
 
-  func closeSafariViewController() {
+  func closeSafariViewController() throws {
     currentSession?.close()
   }
 

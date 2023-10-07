@@ -19,21 +19,33 @@ final class URLLauncherTests: XCTestCase {
   }
 
   func testCanLaunchSuccess() {
-    let result = createPlugin().canLaunchUrl(url: "good://url")
-
-    XCTAssertTrue(result)
+    do {
+      let result = try createPlugin().canLaunchUrl(url: "good://url")
+      XCTAssertTrue(result)
+    } catch {
+      XCTFail("Unexpected error: \(error)")
+    }
   }
 
   func testCanLaunchFailure() {
-    let result = createPlugin().canLaunchUrl(url: "bad://url")
-
-    XCTAssertFalse(result)
+    do {
+      let result = try createPlugin().canLaunchUrl(url: "bad://url")
+      XCTAssertFalse(result)
+    } catch {
+      XCTFail("Unexpected error: \(error)")
+    }
   }
 
   func testCanLaunchFailureWithInvalidURL() {
-    let result = createPlugin().canLaunchUrl(url: "urls can't have spaces")
-
-    XCTAssertFalse(result)
+    do {
+      let result = try createPlugin().canLaunchUrl(url: "urls can't have spaces")
+      XCTAssertFalse(result)
+    } catch {
+      let generalError = error as? GeneralError
+      XCTAssertEqual(generalError?.code, "argument_error")
+      XCTAssertEqual(generalError?.message, "Unable to parse URL")
+      XCTAssertEqual(generalError?.details, "Provided URL: urls can't have spaces")
+    }
   }
 
   func testLaunchSuccess() {
