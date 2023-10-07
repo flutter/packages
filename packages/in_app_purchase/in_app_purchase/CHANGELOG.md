@@ -1,3 +1,7 @@
+## 3.1.11
+
+* Updates doc reference finishPurchase to completePurchase.
+
 ## 3.1.10
 
 * Updates example code for current versions of Flutter.
