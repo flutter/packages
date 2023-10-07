@@ -84,7 +84,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
       markerPosition = newPosition;
       if (!_onDragXcodeUITestHelperText.contains('\n_onMarkerDrag called')) {
         // _onMarkerDrag can be called multiple times during a single drag.
-        // Only log n_onMarkerDrag once per dragging action to reduce noises in UI.
+        // Only log _onMarkerDrag once per dragging action to reduce noises in UI.
         _onDragXcodeUITestHelperText += '\n_onMarkerDrag called';
       }
     });

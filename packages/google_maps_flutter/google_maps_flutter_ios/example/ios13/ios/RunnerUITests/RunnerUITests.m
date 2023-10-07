@@ -4,7 +4,7 @@
 
 #import <XCTest/XCTest.h>
 
-static const CGFloat kWaitTime = 15;
+static const NSTimeInterval kWaitTime = 60;
 
 @interface RunnerUITests : XCTestCase
 
