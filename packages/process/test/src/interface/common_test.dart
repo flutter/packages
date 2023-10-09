@@ -28,7 +28,12 @@ void main() {
     }
 
     tearDown(() {
-      for (final Directory directory in <Directory>[workingDir, dir1, dir2, dir3]) {
+      for (final Directory directory in <Directory>[
+        workingDir,
+        dir1,
+        dir2,
+        dir3
+      ]) {
         directory.deleteSync(recursive: true);
       }
     });

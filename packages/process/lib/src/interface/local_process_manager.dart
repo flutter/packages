@@ -122,8 +122,7 @@ class LocalProcessManager implements ProcessManager {
 
   @override
   bool canRun(covariant String executable, {String? workingDirectory}) =>
-      getExecutablePath(executable, workingDirectory) !=
-      null;
+      getExecutablePath(executable, workingDirectory) != null;
 
   @override
   bool killPid(int pid, [ProcessSignal signal = ProcessSignal.sigterm]) {
