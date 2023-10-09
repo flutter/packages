@@ -23,7 +23,7 @@ internal class EchoBinaryMessenger(private val codec: MessageCodec<Any?>): Binar
     ) {
         message?.rewind()
         val args = codec.decodeMessage(message) as ArrayList<*>
-        val replyData = codec.encodeMessage(args[0])
+        val replyData = codec.encodeMessage(args)
         replyData?.position(0)
         callback?.reply(replyData)
     }

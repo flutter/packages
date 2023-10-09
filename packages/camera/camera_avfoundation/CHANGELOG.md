@@ -1,3 +1,7 @@
+## 0.9.13+6
+
+* Fixes incorrect use of `NSError` that could cause crashes on launch.
+
 ## 0.9.13+5
 
 * Ignores audio samples until the first video sample arrives.
