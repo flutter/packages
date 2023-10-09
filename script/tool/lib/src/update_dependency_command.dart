@@ -42,16 +42,16 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
     argParser.addOption(_androidDependency,
         help: 'An Android dependency to update.',
         allowed: <String>[
-          _AndroidDepdencyType.gradle.name,
-          _AndroidDepdencyType.compileSdk.name,
-          _AndroidDepdencyType.compileSdkForExamples.name,
+          _AndroidDepdencyType.gradle,
+          _AndroidDepdencyType.compileSdk,
+          _AndroidDepdencyType.compileSdkForExamples,
         ],
         allowedHelp: <String, String>{
-          _AndroidDepdencyType.gradle.name:
+          _AndroidDepdencyType.gradle:
               'Updates Gradle version used in plugin example apps.',
-          _AndroidDepdencyType.compileSdk.name:
+          _AndroidDepdencyType.compileSdk:
               'Updates compileSdk version used to compile plugins.',
-          _AndroidDepdencyType.compileSdkForExamples.name:
+          _AndroidDepdencyType.compileSdkForExamples:
               'Updates compileSdk version used to compile plugin examples',
         });
     argParser.addOption(
@@ -137,8 +137,8 @@ ${response.httpResponse.body}
       if (version == null) {
         printError('A version must be provided to update this dependency.');
         throw ToolExit(_exitNoTargetVersion);
-      } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle.name) {
-        final RegExp validGradleVersionPattern = RegExp(r'^\d+(?:\.\d+){2}$');
+      } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle) {
+        final RegExp validGradleVersionPattern = RegExp(r'^\d+(?:\.\d+){1,2}$');
         final bool isValidGradleVersion =
             validGradleVersionPattern.stringMatch(version) == version;
         if (!isValidGradleVersion) {
@@ -146,15 +146,15 @@ ${response.httpResponse.body}
               'A version with a valid format (maximum 2-3 numbers separated by period) must be provided.');
           throw ToolExit(_exitInvalidTargetVersion);
         }
-      } else if (_targetAndroidDependency ==
-              _AndroidDepdencyType.compileSdk.name ||
+      } else if (_targetAndroidDependency == _AndroidDepdencyType.compileSdk ||
           _targetAndroidDependency ==
-              _AndroidDepdencyType.compileSdkForExamples.name) {
+              _AndroidDepdencyType.compileSdkForExamples) {
         final RegExp validSdkVersion = RegExp(r'^\d{1,2}$');
         final bool isValidSdkVersion =
             validSdkVersion.stringMatch(version) == version;
         if (!isValidSdkVersion) {
-          printError('An Android SDK version number must be provided.');
+          printError(
+              'A valid Android SDK version number (1-2 digit numbers) must be provided.');
           throw ToolExit(_exitInvalidTargetVersion);
         }
       } else {
@@ -250,11 +250,11 @@ ${response.httpResponse.body}
   /// an Android dependency.
   Future<PackageResult> _runForAndroidDependency(
       RepositoryPackage package) async {
-    if (_targetAndroidDependency == _AndroidDepdencyType.compileSdk.name) {
+    if (_targetAndroidDependency == _AndroidDepdencyType.compileSdk) {
       return _runForCompileSdkVersion(package);
-    } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle.name ||
+    } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle ||
         _targetAndroidDependency ==
-            _AndroidDepdencyType.compileSdkForExamples.name) {
+            _AndroidDepdencyType.compileSdkForExamples) {
       return _runForAndroidDependencyOnExample(package);
     }
 
@@ -279,7 +279,7 @@ ${response.httpResponse.body}
       RegExp? dependencyVersionPattern;
       String? newDependencyVersionEntry;
 
-      if (_targetAndroidDependency == _AndroidDepdencyType.gradle.name) {
+      if (_targetAndroidDependency == _AndroidDepdencyType.gradle) {
         if (androidDirectory
             .childDirectory('app')
             .childDirectory('gradle')
@@ -297,7 +297,7 @@ ${response.httpResponse.body}
         newDependencyVersionEntry =
             'distributionUrl=https\\://services.gradle.org/distributions/gradle-$_targetVersion-all.zip';
       } else if (_targetAndroidDependency ==
-          _AndroidDepdencyType.compileSdkForExamples.name) {
+          _AndroidDepdencyType.compileSdkForExamples) {
         fileToUpdate =
             androidDirectory.childDirectory('app').childFile('build.gradle');
         dependencyVersionPattern = RegExp(r'compileSdk \d{2}$');
@@ -326,6 +326,10 @@ ${response.httpResponse.body}
 
   Future<PackageResult> _runForCompileSdkVersion(
       RepositoryPackage package) async {
+    if (!package.platformDirectory(FlutterPlatform.android).existsSync()) {
+      return PackageResult.skip(
+          'Package ${package.displayName} does not run on Android.');
+    }
     final File buildConfigurationFile = package
         .platformDirectory(FlutterPlatform.android)
         .childFile('build.gradle');
@@ -473,4 +477,8 @@ class _PubDependencyInfo {
 
 enum _PubDependencyType { normal, dev }
 
-enum _AndroidDepdencyType { gradle, compileSdk, compileSdkForExamples }
+class _AndroidDepdencyType {
+  static const String gradle = 'gradle';
+  static const String compileSdk = 'compileSdk';
+  static const String compileSdkForExamples = 'compileSdkForExamples';
+}
