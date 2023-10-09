@@ -1,3 +1,8 @@
+## 2.2.1
+
+* Adds permissions to read images, video, and audio files to ensure external
+  directories exist in testing.
+
 ## 2.2.0
 
 * Adds implementation of `getDownloadsDirectory()`.
