@@ -1,3 +1,7 @@
+## 0.6.18+1
+
+* Fix typo in README.
+
 ## 0.6.18
 
 * Adds support for `footnote`.
