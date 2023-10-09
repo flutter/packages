@@ -117,8 +117,5 @@ void _verifySampleFile(Directory? directory, String name) {
 
   file.writeAsStringSync('Hello world!');
   expect(file.readAsStringSync(), 'Hello world!');
-  // if (!Platform.isAndroid) {
-  //   expect(directory.listSync(), isNotEmpty);
-  // }
   file.deleteSync();
 }
