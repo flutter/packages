@@ -36,14 +36,14 @@ void main() {
       _verifySampleFile(result, 'library');
     } else if (Platform.isAndroid) {
       final Future<Directory?> result = getLibraryDirectory();
-      await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
+      expect(result, throwsA(isInstanceOf<UnsupportedError>()));
     }
   });
 
   testWidgets('getExternalStorageDirectory', (WidgetTester tester) async {
     if (Platform.isIOS) {
       final Future<Directory?> result = getExternalStorageDirectory();
-      await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
+      expect(result, throwsA(isInstanceOf<UnsupportedError>()));
     } else if (Platform.isAndroid) {
       final Directory? result = await getExternalStorageDirectory();
       _verifySampleFile(result, 'externalStorage');
@@ -53,7 +53,7 @@ void main() {
   testWidgets('getExternalCacheDirectories', (WidgetTester tester) async {
     if (Platform.isIOS) {
       final Future<List<Directory>?> result = getExternalCacheDirectories();
-      await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
+      expect(result, throwsA(isInstanceOf<UnsupportedError>()));
     } else if (Platform.isAndroid) {
       final List<Directory>? directories = await getExternalCacheDirectories();
       expect(directories, isNotNull);
@@ -79,7 +79,7 @@ void main() {
         (WidgetTester tester) async {
       if (Platform.isIOS) {
         final Future<List<Directory>?> result = getExternalStorageDirectories();
-        await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
+        expect(result, throwsA(isInstanceOf<UnsupportedError>()));
       } else if (Platform.isAndroid) {
         final List<Directory>? directories =
             await getExternalStorageDirectories(type: type);
@@ -117,5 +117,6 @@ void _verifySampleFile(Directory? directory, String name) {
 
   file.writeAsStringSync('Hello world!');
   expect(file.readAsStringSync(), 'Hello world!');
+  expect(directory.listSync(), isNotEmpty);
   file.deleteSync();
 }
