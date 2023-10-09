@@ -205,31 +205,37 @@ void main() {
       test('not found with throwOnFailure throws exception with match state',
           () {
         const String command = 'foo.exe';
-        io.ProcessException error;
-        try {
-          getExecutablePath(
-            command,
-            workingDir.path,
-            platform: platform,
-            fs: fs,
-            throwOnFailure: true,
-          );
-          fail('Expected to throw');
-        } on io.ProcessException catch (err) {
-          error = err;
-        }
-
-        expect(error, isA<ProcessPackageExecutableNotFoundException>());
-        final ProcessPackageExecutableNotFoundException notFoundException =
-            error as ProcessPackageExecutableNotFoundException;
-        expect(notFoundException.candidates, isEmpty);
-        expect(notFoundException.workingDirectory, equals(workingDir.path));
         expect(
-            error.toString(),
-            contains('  Working Directory: C:\\.tmp_rand0\\work_dir_rand0\n'
-                '  Search Path:\n'
-                '    C:\\.tmp_rand0\\dir1_rand0\n'
-                '    C:\\.tmp_rand0\\dir2_rand0\n'));
+            () => getExecutablePath(
+                  command,
+                  workingDir.path,
+                  platform: platform,
+                  fs: fs,
+                  throwOnFailure: true,
+                ),
+            throwsA(isA<ProcessPackageExecutableNotFoundException>()
+                .having(
+                    (ProcessPackageExecutableNotFoundException
+                            notFoundException) =>
+                        notFoundException.candidates,
+                    'candidates',
+                    isEmpty)
+                .having(
+                    (ProcessPackageExecutableNotFoundException
+                            notFoundException) =>
+                        notFoundException.workingDirectory,
+                    'workingDirectory',
+                    equals(workingDir.path))
+                .having(
+                    (ProcessPackageExecutableNotFoundException
+                            notFoundException) =>
+                        notFoundException.toString(),
+                    'toString',
+                    contains(
+                        '  Working Directory: C:\\.tmp_rand0\\work_dir_rand0\n'
+                        '  Search Path:\n'
+                        '    C:\\.tmp_rand0\\dir1_rand0\n'
+                        '    C:\\.tmp_rand0\\dir2_rand0\n'))));
       });
 
       test('when path has spaces', () {
@@ -341,31 +347,36 @@ void main() {
       test('not found with throwOnFailure throws exception with match state',
           () {
         const String command = 'foo';
-        io.ProcessException error;
-        try {
-          getExecutablePath(
-            command,
-            workingDir.path,
-            platform: platform,
-            fs: fs,
-            throwOnFailure: true,
-          );
-          fail('Expected to throw');
-        } on io.ProcessException catch (err) {
-          error = err;
-        }
-
-        expect(error, isA<ProcessPackageExecutableNotFoundException>());
-        final ProcessPackageExecutableNotFoundException notFoundException =
-            error as ProcessPackageExecutableNotFoundException;
-        expect(notFoundException.candidates, isEmpty);
-        expect(notFoundException.workingDirectory, equals(workingDir.path));
         expect(
-            error.toString(),
-            contains('  Working Directory: /.tmp_rand0/work_dir_rand0\n'
-                '  Search Path:\n'
-                '    /.tmp_rand0/dir1_rand0\n'
-                '    /.tmp_rand0/dir2_rand0\n'));
+            () => getExecutablePath(
+                  command,
+                  workingDir.path,
+                  platform: platform,
+                  fs: fs,
+                  throwOnFailure: true,
+                ),
+            throwsA(isA<ProcessPackageExecutableNotFoundException>()
+                .having(
+                    (ProcessPackageExecutableNotFoundException
+                            notFoundException) =>
+                        notFoundException.candidates,
+                    'candidates',
+                    isEmpty)
+                .having(
+                    (ProcessPackageExecutableNotFoundException
+                            notFoundException) =>
+                        notFoundException.workingDirectory,
+                    'workingDirectory',
+                    equals(workingDir.path))
+                .having(
+                    (ProcessPackageExecutableNotFoundException
+                            notFoundException) =>
+                        notFoundException.toString(),
+                    'toString',
+                    contains('  Working Directory: /.tmp_rand0/work_dir_rand0\n'
+                        '  Search Path:\n'
+                        '    /.tmp_rand0/dir1_rand0\n'
+                        '    /.tmp_rand0/dir2_rand0\n'))));
       });
 
       test('when path has spaces', () {
@@ -477,52 +488,48 @@ void main() {
       // All executable permissions, but not readable
       io.Process.runSync('chmod', <String>['0311', '--', command4.path]);
 
-      io.ProcessException error;
-      try {
-        getExecutablePath(
-          'command',
-          tmpDir.path,
-          platform: platform,
-          fs: fs,
-          throwOnFailure: true,
-        );
-        fail('Expected to throw');
-      } on io.ProcessException catch (err) {
-        error = err;
-      }
-
-      expect(error, isA<ProcessPackageExecutableNotFoundException>());
-      final ProcessPackageExecutableNotFoundException notFoundException =
-          error as ProcessPackageExecutableNotFoundException;
       expect(
-          notFoundException.candidates,
-          equals(<String>[
-            '${tmpDir.path}/path1/command',
-            '${tmpDir.path}/path2/command',
-            '${tmpDir.path}/path3/command',
-            '${tmpDir.path}/path4/command',
-            '${tmpDir.path}/path5/command',
-          ]));
-      expect(
-        error.toString(),
-        equals(
-          'ProcessPackageExecutableNotFoundException: Found candidates, but lacked sufficient permissions to execute "command".\n'
-          '  Command: command\n'
-          '  Working Directory: ${tmpDir.path}\n'
-          '  Candidates:\n'
-          '    ${tmpDir.path}/path1/command\n'
-          '    ${tmpDir.path}/path2/command\n'
-          '    ${tmpDir.path}/path3/command\n'
-          '    ${tmpDir.path}/path4/command\n'
-          '    ${tmpDir.path}/path5/command\n'
-          '  Search Path:\n'
-          '    ${tmpDir.path}/path1\n'
-          '    ${tmpDir.path}/path2\n'
-          '    ${tmpDir.path}/path3\n'
-          '    ${tmpDir.path}/path4\n'
-          '    ${tmpDir.path}/path5\n',
-        ),
-      );
+          () => getExecutablePath(
+                'command',
+                tmpDir.path,
+                platform: platform,
+                fs: fs,
+                throwOnFailure: true,
+              ),
+          throwsA(isA<ProcessPackageExecutableNotFoundException>()
+              .having(
+                  (ProcessPackageExecutableNotFoundException
+                          notFoundException) =>
+                      notFoundException.candidates,
+                  'candidates',
+                  equals(<String>[
+                    '${tmpDir.path}/path1/command',
+                    '${tmpDir.path}/path2/command',
+                    '${tmpDir.path}/path3/command',
+                    '${tmpDir.path}/path4/command',
+                    '${tmpDir.path}/path5/command',
+                  ]))
+              .having(
+                  (ProcessPackageExecutableNotFoundException
+                          notFoundException) =>
+                      notFoundException.toString(),
+                  'toString',
+                  contains(
+                      'ProcessPackageExecutableNotFoundException: Found candidates, but lacked sufficient permissions to execute "command".\n'
+                      '  Command: command\n'
+                      '  Working Directory: ${tmpDir.path}\n'
+                      '  Candidates:\n'
+                      '    ${tmpDir.path}/path1/command\n'
+                      '    ${tmpDir.path}/path2/command\n'
+                      '    ${tmpDir.path}/path3/command\n'
+                      '    ${tmpDir.path}/path4/command\n'
+                      '    ${tmpDir.path}/path5/command\n'
+                      '  Search Path:\n'
+                      '    ${tmpDir.path}/path1\n'
+                      '    ${tmpDir.path}/path2\n'
+                      '    ${tmpDir.path}/path3\n'
+                      '    ${tmpDir.path}/path4\n'
+                      '    ${tmpDir.path}/path5\n'))));
     });
 
     test('Test that finding no executable paths throws with proper information',
@@ -533,37 +540,36 @@ void main() {
         return;
       }
 
-      io.ProcessException error;
-      try {
-        getExecutablePath(
-          'non-existent-command',
-          tmpDir.path,
-          platform: platform,
-          fs: fs,
-          throwOnFailure: true,
-        );
-        fail('Expected to throw');
-      } on io.ProcessException catch (err) {
-        error = err;
-      }
-
-      expect(error, isA<ProcessPackageExecutableNotFoundException>());
-      final ProcessPackageExecutableNotFoundException notFoundException =
-          error as ProcessPackageExecutableNotFoundException;
-      expect(notFoundException.candidates, isEmpty);
       expect(
-        error.toString(),
-        equals(
-            'ProcessPackageExecutableNotFoundException: Failed to find "non-existent-command" in the search path.\n'
-            '  Command: non-existent-command\n'
-            '  Working Directory: ${tmpDir.path}\n'
-            '  Search Path:\n'
-            '    ${tmpDir.path}/path1\n'
-            '    ${tmpDir.path}/path2\n'
-            '    ${tmpDir.path}/path3\n'
-            '    ${tmpDir.path}/path4\n'
-            '    ${tmpDir.path}/path5\n'),
-      );
+          () => getExecutablePath(
+                'non-existent-command',
+                tmpDir.path,
+                platform: platform,
+                fs: fs,
+                throwOnFailure: true,
+              ),
+          throwsA(isA<ProcessPackageExecutableNotFoundException>()
+              .having(
+                  (ProcessPackageExecutableNotFoundException
+                          notFoundException) =>
+                      notFoundException.candidates,
+                  'candidates',
+                  isEmpty)
+              .having(
+                  (ProcessPackageExecutableNotFoundException
+                          notFoundException) =>
+                      notFoundException.toString(),
+                  'toString',
+                  contains(
+                      'ProcessPackageExecutableNotFoundException: Failed to find "non-existent-command" in the search path.\n'
+                      '  Command: non-existent-command\n'
+                      '  Working Directory: ${tmpDir.path}\n'
+                      '  Search Path:\n'
+                      '    ${tmpDir.path}/path1\n'
+                      '    ${tmpDir.path}/path2\n'
+                      '    ${tmpDir.path}/path3\n'
+                      '    ${tmpDir.path}/path4\n'
+                      '    ${tmpDir.path}/path5\n'))));
     });
   });
 }
