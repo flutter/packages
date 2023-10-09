@@ -122,7 +122,7 @@ class LocalProcessManager implements ProcessManager {
 
   @override
   bool canRun(covariant String executable, {String? workingDirectory}) =>
-      getExecutablePath(executable, workingDirectory, throwOnFailure: false) !=
+      getExecutablePath(executable, workingDirectory) !=
       null;
 
   @override
@@ -133,7 +133,7 @@ class LocalProcessManager implements ProcessManager {
 
 String _getExecutable(
     List<dynamic> command, String? workingDirectory, bool runInShell) {
-  String commandName = command.first.toString();
+  final String commandName = command.first.toString();
   if (runInShell) {
     return commandName;
   }

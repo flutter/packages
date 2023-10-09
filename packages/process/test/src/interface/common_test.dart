@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 
 import 'dart:io' as io;
-import 'package:file/local.dart';
+
 import 'package:file/file.dart';
+import 'package:file/local.dart';
 import 'package:file/memory.dart';
 import 'package:platform/platform.dart';
 import 'package:process/process.dart';
@@ -27,7 +28,7 @@ void main() {
     }
 
     tearDown(() {
-      for (var directory in <Directory>[workingDir, dir1, dir2, dir3]) {
+      for (final Directory directory in <Directory>[workingDir, dir1, dir2, dir3]) {
         directory.deleteSync(recursive: true);
       }
     });
@@ -49,7 +50,7 @@ void main() {
 
       test('absolute', () {
         String command = fs.path.join(dir3.path, 'bla.exe');
-        String expectedPath = command;
+        final String expectedPath = command;
         fs.file(command).createSync();
 
         String? executablePath = getExecutablePath(
@@ -72,7 +73,7 @@ void main() {
 
       test('in path', () {
         String command = 'bla.exe';
-        String expectedPath = fs.path.join(dir2.path, command);
+        final String expectedPath = fs.path.join(dir2.path, command);
         fs.file(expectedPath).createSync();
 
         String? executablePath = getExecutablePath(
@@ -95,8 +96,8 @@ void main() {
 
       test('in path multiple times', () {
         String command = 'bla.exe';
-        String expectedPath = fs.path.join(dir1.path, command);
-        String wrongPath = fs.path.join(dir2.path, command);
+        final String expectedPath = fs.path.join(dir1.path, command);
+        final String wrongPath = fs.path.join(dir2.path, command);
         fs.file(expectedPath).createSync();
         fs.file(wrongPath).createSync();
 
@@ -120,7 +121,7 @@ void main() {
 
       test('in subdir of work dir', () {
         String command = fs.path.join('.', 'foo', 'bla.exe');
-        String expectedPath = fs.path.join(workingDir.path, command);
+        final String expectedPath = fs.path.join(workingDir.path, command);
         fs.file(expectedPath).createSync(recursive: true);
 
         String? executablePath = getExecutablePath(
@@ -143,8 +144,8 @@ void main() {
 
       test('in work dir', () {
         String command = fs.path.join('.', 'bla.exe');
-        String expectedPath = fs.path.join(workingDir.path, command);
-        String wrongPath = fs.path.join(dir2.path, command);
+        final String expectedPath = fs.path.join(workingDir.path, command);
+        final String wrongPath = fs.path.join(dir2.path, command);
         fs.file(expectedPath).createSync();
         fs.file(wrongPath).createSync();
 
@@ -167,15 +168,15 @@ void main() {
       });
 
       test('with multiple extensions', () {
-        String command = 'foo';
-        String expectedPath = fs.path.join(dir1.path, '$command.exe');
-        String wrongPath1 = fs.path.join(dir1.path, '$command.bat');
-        String wrongPath2 = fs.path.join(dir2.path, '$command.exe');
+        const String command = 'foo';
+        final String expectedPath = fs.path.join(dir1.path, '$command.exe');
+        final String wrongPath1 = fs.path.join(dir1.path, '$command.bat');
+        final String wrongPath2 = fs.path.join(dir2.path, '$command.exe');
         fs.file(expectedPath).createSync();
         fs.file(wrongPath1).createSync();
         fs.file(wrongPath2).createSync();
 
-        String? executablePath = getExecutablePath(
+        final String? executablePath = getExecutablePath(
           command,
           workingDir.path,
           platform: platform,
@@ -185,9 +186,9 @@ void main() {
       });
 
       test('not found', () {
-        String command = 'foo.exe';
+        const String command = 'foo.exe';
 
-        String? executablePath = getExecutablePath(
+        final String? executablePath = getExecutablePath(
           command,
           workingDir.path,
           platform: platform,
@@ -198,7 +199,7 @@ void main() {
 
       test('not found with throwOnFailure throws exception with match state',
           () {
-        String command = 'foo.exe';
+        const String command = 'foo.exe';
         io.ProcessException error;
         try {
           getExecutablePath(
@@ -214,7 +215,7 @@ void main() {
         }
 
         expect(error, isA<ProcessPackageExecutableNotFoundException>());
-        ProcessPackageExecutableNotFoundException notFoundException =
+        final ProcessPackageExecutableNotFoundException notFoundException =
             error as ProcessPackageExecutableNotFoundException;
         expect(notFoundException.candidates, isEmpty);
         expect(notFoundException.workingDirectory, equals(workingDir.path));
@@ -249,12 +250,12 @@ void main() {
       });
 
       test('with absolute path when currentDirectory getter throws', () {
-        FileSystem fsNoCwd = MemoryFileSystemNoCwd(fs);
-        String command = fs.path.join(dir3.path, 'bla.exe');
-        String expectedPath = command;
+        final FileSystem fsNoCwd = MemoryFileSystemNoCwd(fs);
+        final String command = fs.path.join(dir3.path, 'bla.exe');
+        final String expectedPath = command;
         fs.file(command).createSync();
 
-        String? executablePath = getExecutablePath(
+        final String? executablePath = getExecutablePath(
           command,
           null,
           platform: platform,
@@ -264,10 +265,10 @@ void main() {
       });
 
       test('with relative path when currentDirectory getter throws', () {
-        FileSystem fsNoCwd = MemoryFileSystemNoCwd(fs);
-        String command = fs.path.join('.', 'bla.exe');
+        final FileSystem fsNoCwd = MemoryFileSystemNoCwd(fs);
+        final String command = fs.path.join('.', 'bla.exe');
 
-        String? executablePath = getExecutablePath(
+        final String? executablePath = getExecutablePath(
           command,
           null,
           platform: platform,
@@ -289,13 +290,13 @@ void main() {
       });
 
       test('absolute', () {
-        String command = fs.path.join(dir3.path, 'bla');
-        String expectedPath = command;
-        String wrongPath = fs.path.join(dir3.path, 'bla.bat');
+        final String command = fs.path.join(dir3.path, 'bla');
+        final String expectedPath = command;
+        final String wrongPath = fs.path.join(dir3.path, 'bla.bat');
         fs.file(command).createSync();
         fs.file(wrongPath).createSync();
 
-        String? executablePath = getExecutablePath(
+        final String? executablePath = getExecutablePath(
           command,
           workingDir.path,
           platform: platform,
@@ -305,13 +306,13 @@ void main() {
       });
 
       test('in path multiple times', () {
-        String command = 'xxx';
-        String expectedPath = fs.path.join(dir1.path, command);
-        String wrongPath = fs.path.join(dir2.path, command);
+        const String command = 'xxx';
+        final String expectedPath = fs.path.join(dir1.path, command);
+        final String wrongPath = fs.path.join(dir2.path, command);
         fs.file(expectedPath).createSync();
         fs.file(wrongPath).createSync();
 
-        String? executablePath = getExecutablePath(
+        final String? executablePath = getExecutablePath(
           command,
           workingDir.path,
           platform: platform,
@@ -321,9 +322,9 @@ void main() {
       });
 
       test('not found', () {
-        String command = 'foo';
+        const String command = 'foo';
 
-        String? executablePath = getExecutablePath(
+        final String? executablePath = getExecutablePath(
           command,
           workingDir.path,
           platform: platform,
@@ -334,7 +335,7 @@ void main() {
 
       test('not found with throwOnFailure throws exception with match state',
           () {
-        String command = 'foo';
+        const String command = 'foo';
         io.ProcessException error;
         try {
           getExecutablePath(
@@ -350,7 +351,7 @@ void main() {
         }
 
         expect(error, isA<ProcessPackageExecutableNotFoundException>());
-        ProcessPackageExecutableNotFoundException notFoundException =
+        final ProcessPackageExecutableNotFoundException notFoundException =
             error as ProcessPackageExecutableNotFoundException;
         expect(notFoundException.candidates, isEmpty);
         expect(notFoundException.workingDirectory, equals(workingDir.path));
@@ -390,7 +391,7 @@ void main() {
     late FileSystem fs;
 
     setUp(() {
-      fs = LocalFileSystem();
+      fs = const LocalFileSystem();
       tmpDir = fs.systemTempDirectory.createTempSync();
       pathDir1 = tmpDir.childDirectory('path1')..createSync();
       pathDir2 = tmpDir.childDirectory('path2')..createSync();
@@ -429,17 +430,17 @@ void main() {
 
       // Make the second command in the path executable, but not the first.
       // No executable permissions
-      io.Process.runSync("chmod", <String>["0644", "--", command1.path]);
+      io.Process.runSync('chmod', <String>['0644', '--', command1.path]);
       // Only group executable permissions
-      io.Process.runSync("chmod", <String>["0645", "--", command2.path]);
+      io.Process.runSync('chmod', <String>['0645', '--', command2.path]);
       // Only other executable permissions
-      io.Process.runSync("chmod", <String>["0654", "--", command3.path]);
+      io.Process.runSync('chmod', <String>['0654', '--', command3.path]);
       // All executable permissions, but not readable
-      io.Process.runSync("chmod", <String>["0311", "--", command4.path]);
+      io.Process.runSync('chmod', <String>['0311', '--', command4.path]);
       // All executable permissions
-      io.Process.runSync("chmod", <String>["0755", "--", command5.path]);
+      io.Process.runSync('chmod', <String>['0755', '--', command5.path]);
 
-      String? executablePath = getExecutablePath(
+      final String? executablePath = getExecutablePath(
         'command',
         tmpDir.path,
         platform: platform,
@@ -463,13 +464,13 @@ void main() {
 
       // Make the second command in the path executable, but not the first.
       // No executable permissions
-      io.Process.runSync("chmod", <String>["0644", "--", command1.path]);
+      io.Process.runSync('chmod', <String>['0644', '--', command1.path]);
       // Only group executable permissions
-      io.Process.runSync("chmod", <String>["0645", "--", command2.path]);
+      io.Process.runSync('chmod', <String>['0645', '--', command2.path]);
       // Only other executable permissions
-      io.Process.runSync("chmod", <String>["0654", "--", command3.path]);
+      io.Process.runSync('chmod', <String>['0654', '--', command3.path]);
       // All executable permissions, but not readable
-      io.Process.runSync("chmod", <String>["0311", "--", command4.path]);
+      io.Process.runSync('chmod', <String>['0311', '--', command4.path]);
 
       io.ProcessException error;
       try {
@@ -486,7 +487,7 @@ void main() {
       }
 
       expect(error, isA<ProcessPackageExecutableNotFoundException>());
-      ProcessPackageExecutableNotFoundException notFoundException =
+      final ProcessPackageExecutableNotFoundException notFoundException =
           error as ProcessPackageExecutableNotFoundException;
       expect(
           notFoundException.candidates,
@@ -542,7 +543,7 @@ void main() {
       }
 
       expect(error, isA<ProcessPackageExecutableNotFoundException>());
-      ProcessPackageExecutableNotFoundException notFoundException =
+      final ProcessPackageExecutableNotFoundException notFoundException =
           error as ProcessPackageExecutableNotFoundException;
       expect(notFoundException.candidates, isEmpty);
       expect(
@@ -568,10 +569,10 @@ void _expectSamePath(String? actual, String? expected) {
 }
 
 class MemoryFileSystemNoCwd extends ForwardingFileSystem {
-  MemoryFileSystemNoCwd(FileSystem delegate) : super(delegate);
+  MemoryFileSystemNoCwd(super.delegate);
 
   @override
   Directory get currentDirectory {
-    throw FileSystemException('Access denied');
+    throw const FileSystemException('Access denied');
   }
 }

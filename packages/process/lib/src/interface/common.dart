@@ -66,11 +66,11 @@ String? getExecutablePath(
     // the cwd path. In this case, fall back on '.'.
     workingDirectory ??= '.';
   }
-  Context context = Context(style: fs.path.style, current: workingDirectory);
+  final Context context = Context(style: fs.path.style, current: workingDirectory);
 
   // TODO(goderbauer): refactor when github.com/google/platform.dart/issues/2
   //     is available.
-  String pathSeparator = platform.isWindows ? ';' : ':';
+  final String pathSeparator = platform.isWindows ? ';' : ':';
 
   List<String> extensions = <String>[];
   if (platform.isWindows && context.extension(executable).isEmpty) {
@@ -87,9 +87,9 @@ String? getExecutablePath(
   }
   candidates = _getCandidatePaths(executable, searchPath, extensions, context);
   final List<String> foundCandidates = <String>[];
-  for (String path in candidates) {
+  for (final String path in candidates) {
     final File candidate = fs.file(path);
-    FileStat stat = candidate.statSync();
+    final FileStat stat = candidate.statSync();
     // Only return files or links that exist.
     if (stat.type == FileSystemEntityType.notFound ||
         stat.type == FileSystemEntityType.directory) {
@@ -149,7 +149,7 @@ List<String> _getCandidatePaths(
   List<String> extensions,
   Context context,
 ) {
-  List<String> withExtensions = extensions.isNotEmpty
+  final List<String> withExtensions = extensions.isNotEmpty
       ? extensions.map((String ext) => '$command$ext').toList()
       : <String>[command];
   if (context.isAbsolute(command)) {

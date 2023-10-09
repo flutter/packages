@@ -48,6 +48,7 @@ void main() {
         process.stdout
             .transform<String>(utf8.decoder)
             .transform<String>(const LineSplitter())
+            // ignore: avoid_print
             .listen(print);
         delegate.exitCodeCompleter.complete(0);
         await delegate.stdoutController.close();

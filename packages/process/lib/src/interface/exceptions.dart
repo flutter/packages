@@ -28,7 +28,7 @@ class ProcessPackageException extends ProcessException {
   const ProcessPackageException(
     String executable, {
     List<String> arguments = const <String>[],
-    String message = "",
+    String message = '',
     int errorCode = 0,
     this.workingDirectory,
   }) : super(executable, arguments, message, errorCode);
@@ -67,20 +67,14 @@ class ProcessPackageExecutableNotFoundException
   ///
   /// See [ProcessPackageException] for more information.
   const ProcessPackageExecutableNotFoundException(
-    String executable, {
-    List<String> arguments = const <String>[],
-    String message = "",
-    int errorCode = 0,
-    String? workingDirectory,
+    super.executable, {
+    super.arguments,
+    super.message,
+    super.errorCode,
+    super.workingDirectory,
     this.candidates = const <String>[],
     this.searchPath = const <String>[],
-  }) : super(
-          executable,
-          arguments: arguments,
-          message: message,
-          errorCode: errorCode,
-          workingDirectory: workingDirectory,
-        );
+  });
 
   /// The list of non-viable executable candidates found.
   final List<String> candidates;
@@ -90,7 +84,8 @@ class ProcessPackageExecutableNotFoundException
 
   @override
   String toString() {
-    StringBuffer buffer = StringBuffer('$runtimeType: $message\n');
+    final StringBuffer buffer =
+        StringBuffer('ProcessPackageExecutableNotFoundException: $message\n');
     // Don't add an extra space if there are no arguments.
     final String args = arguments.isNotEmpty ? ' ${arguments.join(' ')}' : '';
     buffer.writeln('  Command: $executable$args');
