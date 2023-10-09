@@ -36,14 +36,14 @@ void main() {
       _verifySampleFile(result, 'library');
     } else if (Platform.isAndroid) {
       final Future<Directory?> result = getLibraryDirectory();
-      expect(result, throwsA(isInstanceOf<UnsupportedError>()));
+      await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
     }
   });
 
   testWidgets('getExternalStorageDirectory', (WidgetTester tester) async {
     if (Platform.isIOS) {
       final Future<Directory?> result = getExternalStorageDirectory();
-      expect(result, throwsA(isInstanceOf<UnsupportedError>()));
+      await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
     } else if (Platform.isAndroid) {
       final Directory? result = await getExternalStorageDirectory();
       _verifySampleFile(result, 'externalStorage');
@@ -53,7 +53,7 @@ void main() {
   testWidgets('getExternalCacheDirectories', (WidgetTester tester) async {
     if (Platform.isIOS) {
       final Future<List<Directory>?> result = getExternalCacheDirectories();
-      expect(result, throwsA(isInstanceOf<UnsupportedError>()));
+      await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
     } else if (Platform.isAndroid) {
       final List<Directory>? directories = await getExternalCacheDirectories();
       expect(directories, isNotNull);
@@ -79,7 +79,7 @@ void main() {
         (WidgetTester tester) async {
       if (Platform.isIOS) {
         final Future<List<Directory>?> result = getExternalStorageDirectories();
-        expect(result, throwsA(isInstanceOf<UnsupportedError>()));
+        await expectLater(result, throwsA(isInstanceOf<UnsupportedError>()));
       } else if (Platform.isAndroid) {
         final List<Directory>? directories =
             await getExternalStorageDirectories(type: type);
