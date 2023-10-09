@@ -7,6 +7,8 @@ set -e
 # The name here must match create_simulator.sh
 readonly DEVICE_NAME=Flutter-iPhone
 
+# Allow boot to fail; cases like "Unable to boot device in current state: Booted"
+# exit with failure.
 xcrun simctl boot "$DEVICE_NAME" || :
 echo -e ""
 xcrun simctl list
