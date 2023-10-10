@@ -2,55 +2,49 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart' show BinaryMessenger;
+import 'package:flutter/services.dart' show BinaryMessenger, PlatformException;
 import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
-import 'camera_control.dart';
-import 'camera_info.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'system_services.dart';
 
-/// The interface used to control the flow of data of use cases, control the
-/// camera, and publich the state of the camera.
+/// The interface that provides asynchronous operations like zoom and focus &
+/// metering, which affects output of all [UseCase]s currently bound to the
+/// corresponding [Camera] instance.
 ///
-/// See https://developer.android.com/reference/androidx/camera/core/Camera.
+/// See https://developer.android.com/reference/androidx/camera/core/CameraControl.
 @immutable
-class Camera extends JavaObject {
-  /// Constructs a [Camera] that is not automatically attached to a native object.
-  Camera.detached(
+class CameraControl extends JavaObject {
+  /// Constructs a [CameraControl] that is not automatically attached to a native object.
+  CameraControl.detached(
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
-    _api = _CameraHostApiImpl(
+    _api = _CameraControlHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  late final _CameraHostApiImpl _api;
+  late final _CameraControlHostApiImpl _api;
 
-  /// Retrieves the [CameraInfo] instance that contains information about this
-  /// instance.
-  Future<CameraInfo> getCameraInfo() async {
-    return _api.getCameraInfoFromInstance(this);
-  }
-
-  /// Retrieves the [CameraControl] instance that provides asynchronous
-  /// operations like zoom and focus & metering for this instance.
-  Future<CameraControl> getCameraControl() async {
-    return _api.getCameraControlFromInstance(this);
+  /// Enables or disables the torch of related [Camera] instance.
+  Future<void> enableTorch(bool torch) async {
+    return _api.enableTorchFromInstance(this, torch);
   }
 }
 
-/// Host API implementation of [Camera].
-class _CameraHostApiImpl extends CameraHostApi {
-  /// Constructs a [_CameraHostApiImpl].
+/// Host API implementation of [CameraControl].
+class _CameraControlHostApiImpl extends CameraControlHostApi {
+  /// Constructs a [_CameraControlHostApiImpl].
   ///
   /// An [instanceManager] is typically passed when a copy of an instance
   /// contained by an [InstanceManager] is being created.
-  _CameraHostApiImpl({this.binaryMessenger, InstanceManager? instanceManager})
+  _CameraControlHostApiImpl(
+      {this.binaryMessenger, InstanceManager? instanceManager})
       : super(binaryMessenger: binaryMessenger) {
     this.instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
   }
@@ -64,28 +58,22 @@ class _CameraHostApiImpl extends CameraHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// Gets the [CameraInfo] associated with the specified [Camera] instance.
-  Future<CameraInfo> getCameraInfoFromInstance(Camera instance) async {
+  /// Enables or disables the torch for the specified [CameraControl] instance.
+  Future<void> enableTorchFromInstance(
+      CameraControl instance, bool torch) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
-    final int cameraInfoId = await getCameraInfo(identifier);
-
-    return instanceManager
-        .getInstanceWithWeakReference<CameraInfo>(cameraInfoId)!;
-  }
-
-  /// Gets the [CameraControl] associated with the specified [Camera] instance.
-  Future<CameraControl> getCameraControlFromInstance(Camera instance) async {
-    final int identifier = instanceManager.getIdentifier(instance)!;
-    final int cameraControlId = await getCameraControl(identifier);
-
-    return instanceManager
-        .getInstanceWithWeakReference<CameraControl>(cameraControlId)!;
+    try {
+      await enableTorch(identifier, torch);
+    } on PlatformException catch (e) {
+      SystemServices.cameraErrorStreamController
+          .add(e.message ?? 'The camera was unable to change torch modes.');
+    }
   }
 }
 
-/// Flutter API implementation of [Camera].
-class CameraFlutterApiImpl implements CameraFlutterApi {
-  /// Constructs a [CameraFlutterApiImpl].
+/// Flutter API implementation of [CameraControl].
+class CameraControlFlutterApiImpl extends CameraControlFlutterApi {
+  /// Constructs a [CameraControlFlutterApiImpl].
   ///
   /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
   /// which routes to the host platform.
@@ -93,7 +81,7 @@ class CameraFlutterApiImpl implements CameraFlutterApi {
   /// An [instanceManager] is typically passed when a copy of an instance
   /// contained by an [InstanceManager] is being created. If left null, it
   /// will default to the global instance defined in [JavaObject].
-  CameraFlutterApiImpl({
+  CameraControlFlutterApiImpl({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
   })  : _binaryMessenger = binaryMessenger,
@@ -108,11 +96,11 @@ class CameraFlutterApiImpl implements CameraFlutterApi {
   @override
   void create(int identifier) {
     _instanceManager.addHostCreatedInstance(
-      Camera.detached(
+      CameraControl.detached(
           binaryMessenger: _binaryMessenger, instanceManager: _instanceManager),
       identifier,
-      onCopy: (Camera original) {
-        return Camera.detached(
+      onCopy: (CameraControl original) {
+        return CameraControl.detached(
             binaryMessenger: _binaryMessenger,
             instanceManager: _instanceManager);
       },
