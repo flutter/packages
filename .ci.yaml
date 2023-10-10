@@ -385,7 +385,7 @@ targets:
     timeout: 60
     bringup: true
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 0 --shardCount 2"
@@ -399,7 +399,7 @@ targets:
     timeout: 60
     bringup: true
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 1 --shardCount 2"
