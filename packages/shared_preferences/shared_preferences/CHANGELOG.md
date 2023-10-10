@@ -1,3 +1,7 @@
+## 2.2.2
+
+* Updates documentation for `containsKey`.
+
 ## 2.2.1
 
 * Adds pub topics to package metadata.
