@@ -152,6 +152,7 @@ ${response.httpResponse.body}
         final RegExp validSdkVersion = RegExp(r'^\d{1,2}$');
         final bool isValidSdkVersion =
             validSdkVersion.stringMatch(version) == version;
+        print(isValidSdkVersion);
         if (!isValidSdkVersion) {
           printError(
               'A valid Android SDK version number (1-2 digit numbers) must be provided.');
@@ -300,7 +301,8 @@ ${response.httpResponse.body}
           _AndroidDepdencyType.compileSdkForExamples) {
         fileToUpdate =
             androidDirectory.childDirectory('app').childFile('build.gradle');
-        dependencyVersionPattern = RegExp(r'compileSdk \d{2}$');
+        dependencyVersionPattern =
+            RegExp(r'(compileSdk|compileSdkVersion) \d{1,2}\n');
         newDependencyVersionEntry = 'compileSdk $_targetVersion';
       }
 
@@ -329,17 +331,23 @@ ${response.httpResponse.body}
     if (!package.platformDirectory(FlutterPlatform.android).existsSync()) {
       return PackageResult.skip(
           'Package ${package.displayName} does not run on Android.');
+    } else if (package.getEnclosingPackage() != null) {
+      // TODO: define isExample so we know for sure
+      // We skip examples in this command.
+      return PackageResult.skip(
+          'Package ${package.displayName} is an example; run with "compileSdkForExamples" to update.');
     }
     final File buildConfigurationFile = package
         .platformDirectory(FlutterPlatform.android)
         .childFile('build.gradle');
     final String buildConfigurationContents =
         buildConfigurationFile.readAsStringSync();
-    final RegExp validCompileSdkVersion = RegExp(r'compileSdk \d{2}$');
+    final RegExp validCompileSdkVersion =
+        RegExp(r'(compileSdk|compileSdkVersion) \d{1,2}\n');
 
     if (!validCompileSdkVersion.hasMatch(buildConfigurationContents)) {
       return PackageResult.fail(<String>[
-        'Unable to find "compileSdk" version to update for ${package.displayName}.'
+        'Unable to find a compileSdk version entry to update for ${package.displayName}.'
       ]);
     }
     print('${indentation}Updating ${package.directory} to "$_targetVersion"');
