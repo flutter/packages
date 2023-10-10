@@ -939,7 +939,7 @@ class SvgParser {
   /// `<style/>`, `<title/>`, and `<desc/>` elements.
   void unhandledElement(XmlStartElementEvent event) {
     final String errorMessage =
-        'unhandled element ${event.name}; Picture key: $_key';
+        'unhandled element <${event.name}/>; Picture key: $_key';
     if (_warningsAsErrors) {
       // Throw error instead of log warning.
       throw UnimplementedError(errorMessage);
