@@ -319,7 +319,7 @@ import FlutterMacOS
 
         final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
-            ? ''
+            ? 'Void'
             : _nullsafeSwiftTypeForDartType(func.returnType);
         String sendArgument;
         addDocumentationComments(
@@ -327,7 +327,7 @@ import FlutterMacOS
 
         if (func.arguments.isEmpty) {
           indent.write(
-              'func ${func.name}(completion: @escaping ($returnType) -> Void) ');
+              'func ${func.name}(completion: @escaping (Result<$returnType, FlutterError>) -> Void) ');
           sendArgument = 'nil';
         } else {
           final Iterable<String> argTypes = func.arguments
@@ -351,13 +351,8 @@ import FlutterMacOS
               argNames,
               (String type, String label, String name) =>
                   '$label $name: $type').join(', ');
-          if (func.returnType.isVoid) {
-            indent.write(
-                'func ${components.name}($argsSignature, completion: @escaping () -> Void) ');
-          } else {
-            indent.write(
-                'func ${components.name}($argsSignature, completion: @escaping ($returnType) -> Void) ');
-          }
+          indent.write(
+              'func ${components.name}($argsSignature, completion: @escaping (Result<$returnType, FlutterError>) -> Void) ');
         }
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
@@ -366,18 +361,43 @@ import FlutterMacOS
           indent.write('$channel.sendMessage($sendArgument) ');
           if (func.returnType.isVoid) {
             indent.addScoped('{ _ in', '}', () {
-              indent.writeln('completion()');
+              indent.writeln('completion(.success(Void()))');
             });
           } else {
             indent.addScoped('{ response in', '}', () {
-              _writeDecodeCasting(
-                root: root,
-                indent: indent,
-                value: 'response',
-                variableName: 'result',
-                type: func.returnType,
-              );
-              indent.writeln('completion(result)');
+              indent.writeScoped(
+                  'guard let listResponse = response as? [Any?] else {', '}',
+                  () {
+                indent.writeln(
+                    'completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))');
+                indent.writeln('return');
+              });
+              indent.writeScoped('if (listResponse.count > 1) {', '} ', () {
+                indent.writeln('let code: String = listResponse[0] as! String');
+                indent.writeln(
+                    'let message: String? = nilOrValue(listResponse[1])');
+                indent.writeln(
+                    'let details: String? = nilOrValue(listResponse[2])');
+                indent.writeln(
+                    'completion(.failure(FlutterError(code: code, message: message, details: details)));');
+              }, addTrailingNewline: false);
+              if (!func.returnType.isNullable && !func.returnType.isVoid) {
+                indent.addScoped('else if (listResponse[0] == nil) {', '} ',
+                    () {
+                  indent.writeln(
+                      'completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
+                }, addTrailingNewline: false);
+              }
+              indent.addScoped('else {', '}', () {
+                _writeDecodeCasting(
+                  root: root,
+                  indent: indent,
+                  value: 'listResponse[0]',
+                  variableName: 'result',
+                  type: func.returnType,
+                );
+                indent.writeln('completion(.success(result))');
+              });
             });
           }
         });

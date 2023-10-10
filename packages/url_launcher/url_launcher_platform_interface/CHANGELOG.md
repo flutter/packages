@@ -1,3 +1,7 @@
+## 2.1.5
+
+* Updates documentation to mention support for Android Custom Tabs.
+
 ## 2.1.4
 
 * Adds pub topics to package metadata.

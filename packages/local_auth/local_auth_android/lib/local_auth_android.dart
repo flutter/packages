@@ -35,14 +35,13 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
     assert(localizedReason.isNotEmpty);
-    final AuthResult result = (await _api.authenticate(
-            AuthOptions(
-                biometricOnly: options.biometricOnly,
-                sensitiveTransaction: options.sensitiveTransaction,
-                sticky: options.stickyAuth,
-                useErrorDialgs: options.useErrorDialogs),
-            _pigeonStringsFromAuthMessages(localizedReason, authMessages)))
-        .value;
+    final AuthResult result = await _api.authenticate(
+        AuthOptions(
+            biometricOnly: options.biometricOnly,
+            sensitiveTransaction: options.sensitiveTransaction,
+            sticky: options.stickyAuth,
+            useErrorDialgs: options.useErrorDialogs),
+        _pigeonStringsFromAuthMessages(localizedReason, authMessages));
     // TODO(stuartmorgan): Replace this with structured errors, coordinated
     // across all platform implementations, per
     // https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#platform-exception-handling

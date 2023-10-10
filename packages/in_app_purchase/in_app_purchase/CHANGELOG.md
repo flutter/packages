@@ -1,3 +1,7 @@
+## 3.1.10
+
+* Updates example code for current versions of Flutter.
+
 ## 3.1.9
 
 * Adds pub topics to package metadata.

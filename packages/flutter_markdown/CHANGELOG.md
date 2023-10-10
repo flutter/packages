@@ -1,7 +1,18 @@
+## 0.6.18
+
+* Adds support for `footnote`.
+
+## 0.6.17+4
+
+* Fixes an issue where a code block would overlap its container decoration.
+
+## 0.6.17+3
+
+* Fixes an incorrect note about SDK versions in the 0.6.17+2 CHANGELOG.md entry.
+
 ## 0.6.17+2
 
 * Adds pub topics to package metadata.
-* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 0.6.17+1
 

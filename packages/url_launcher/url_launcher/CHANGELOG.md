@@ -1,3 +1,7 @@
+## 6.1.14
+
+* Updates documentation to mention support for Android Custom Tabs.
+
 ## 6.1.13
 
 * Adds pub topics to package metadata.

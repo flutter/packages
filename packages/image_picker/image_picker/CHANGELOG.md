@@ -1,3 +1,7 @@
+## 1.0.4
+
+* Updates README to fix broken link.
+
 ## 1.0.3
 
 * Adds pub topics to package metadata.

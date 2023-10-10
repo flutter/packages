@@ -102,8 +102,10 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   Future<List<File>> _podspecsToLint(RepositoryPackage package) async {
     final List<File> podspecs =
         await getFilesForPackage(package).where((File entity) {
-      final String filePath = entity.path;
-      return path.extension(filePath) == '.podspec';
+      final String filename = entity.basename;
+      return path.extension(filename) == '.podspec' &&
+          filename != 'Flutter.podspec' &&
+          filename != 'FlutterMacOS.podspec';
     }).toList();
 
     podspecs.sort((File a, File b) => a.basename.compareTo(b.basename));

@@ -57,10 +57,10 @@ class MockQualitySelector extends _i1.Mock implements _i4.QualitySelector {
   }
 
   @override
-  List<_i2.VideoQualityConstraint> get qualityList => (super.noSuchMethod(
+  List<_i2.VideoQualityData> get qualityList => (super.noSuchMethod(
         Invocation.getter(#qualityList),
-        returnValue: <_i2.VideoQualityConstraint>[],
-      ) as List<_i2.VideoQualityConstraint>);
+        returnValue: <_i2.VideoQualityData>[],
+      ) as List<_i2.VideoQualityData>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
@@ -94,7 +94,7 @@ class MockTestFallbackStrategyHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
-    _i2.VideoQualityConstraint? quality,
+    _i2.VideoQuality? quality,
     _i2.VideoResolutionFallbackRule? fallbackRule,
   ) =>
       super.noSuchMethod(
@@ -183,7 +183,7 @@ class MockTestQualitySelectorHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
-    List<int?>? videoQualityConstraintIndexList,
+    List<_i2.VideoQualityData?>? videoQualityDataList,
     int? fallbackStrategyId,
   ) =>
       super.noSuchMethod(
@@ -191,7 +191,7 @@ class MockTestQualitySelectorHostApi extends _i1.Mock
           #create,
           [
             identifier,
-            videoQualityConstraintIndexList,
+            videoQualityDataList,
             fallbackStrategyId,
           ],
         ),
@@ -200,7 +200,7 @@ class MockTestQualitySelectorHostApi extends _i1.Mock
   @override
   _i2.ResolutionInfo getResolution(
     int? cameraInfoId,
-    _i2.VideoQualityConstraint? quality,
+    _i2.VideoQuality? quality,
   ) =>
       (super.noSuchMethod(
         Invocation.method(

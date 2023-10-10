@@ -294,11 +294,54 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
     return compileCode;
   }
 
+  const String deviceName = 'Pigeon-Test-iPhone';
+  const String deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
+  const String deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-16-4';
+  const String deviceOS = '16.4';
+  await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
     sdk: 'iphonesimulator',
-    destination: 'platform=iOS Simulator,name=iPhone 14',
+    destination: 'platform=iOS Simulator,name=$deviceName,OS=$deviceOS',
     extraArguments: <String>['test'],
+  ).whenComplete(() => _deleteSimulator(deviceName));
+}
+
+Future<int> _createSimulator(
+  String deviceName,
+  String deviceType,
+  String deviceRuntime,
+) async {
+  // Delete any existing simulators with the same name until it fails. It will
+  // fail once there are no simulators with the name. Having more than one may
+  // cause issues when builds target the device.
+  int deleteResult = 0;
+  while (deleteResult == 0) {
+    deleteResult = await _deleteSimulator(deviceName);
+  }
+  return runProcess(
+    'xcrun',
+    <String>[
+      'simctl',
+      'create',
+      deviceName,
+      deviceType,
+      deviceRuntime,
+    ],
+    streamOutput: false,
+    logFailure: true,
+  );
+}
+
+Future<int> _deleteSimulator(String deviceName) async {
+  return runProcess(
+    'xcrun',
+    <String>[
+      'simctl',
+      'delete',
+      deviceName,
+    ],
+    streamOutput: false,
   );
 }
 
@@ -313,9 +356,30 @@ Future<int> _runWindowsUnitTests() async {
     return compileCode;
   }
 
-  return runProcess(
-      '$examplePath/build/windows/plugins/test_plugin/Debug/test_plugin_test.exe',
-      <String>[]);
+  // Depending on the Flutter version, the build output path is different. To
+  // handle both master and stable, and to future-proof against the changes
+  // that will happen in https://github.com/flutter/flutter/issues/129807
+  // - Try arm64, to future-proof against arm64 support.
+  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts
+  //   running newer versions of Flutter.
+  // - Fall back to the pre-arch path, to support running against stable.
+  // TODO(stuartmorgan): Remove all this when these tests no longer need to
+  // support a version of Flutter without
+  // https://github.com/flutter/flutter/issues/129807, and just construct the
+  // version of the path with the current architecture.
+  const String buildDirBase = '$examplePath/build/windows';
+  const String buildRelativeBinaryPath =
+      'plugins/test_plugin/Debug/test_plugin_test.exe';
+  const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
+  const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
+  const String oldPath = '$buildDirBase/$buildRelativeBinaryPath';
+  if (File(arm64Path).existsSync()) {
+    return runProcess(arm64Path, <String>[]);
+  } else if (File(x64Path).existsSync()) {
+    return runProcess(x64Path, <String>[]);
+  } else {
+    return runProcess(oldPath, <String>[]);
+  }
 }
 
 Future<int> _runWindowsIntegrationTests() async {

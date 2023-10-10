@@ -1,3 +1,7 @@
+## 2.2.0
+
+* Adds implementation of `getDownloadsDirectory()`.
+
 ## 2.1.1
 
 * Adds pub topics to package metadata.

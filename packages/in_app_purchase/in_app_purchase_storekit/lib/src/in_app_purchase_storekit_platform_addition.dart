@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
-
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import '../in_app_purchase_storekit.dart';
 
@@ -31,6 +29,7 @@ class InAppPurchaseStoreKitPlatformAddition
           serverVerificationData: receipt,
           source: kIAPSource);
     } catch (e) {
+      // ignore: avoid_print
       print(
           'Something is wrong while fetching the receipt, this normally happens when the app is '
           'running on a simulator: $e');

@@ -1,3 +1,7 @@
+## 0.3.6+7
+
+* Updates example code for current versions of Flutter.
+
 ## 0.3.6+6
 
 * Adds pub topics to package metadata.

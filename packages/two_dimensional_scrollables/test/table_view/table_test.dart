@@ -287,24 +287,17 @@ void main() {
       expect(viewport.mainAxis, Axis.vertical);
       // first child
       TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
-      expect(
-        parentDataOf(viewport.firstChild!).vicinity,
-        vicinity,
-      );
       TableViewParentData parentData = parentDataOf(
-        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
+        viewport.firstChild!,
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, Offset.zero);
       expect(parentData.isVisible, isTrue);
       // after first child
       vicinity = const TableVicinity(column: 1, row: 0);
-      expect(
-        parentDataOf(viewport.childAfter(viewport.firstChild!)!).vicinity,
-        vicinity,
-      );
+
       parentData = parentDataOf(
-        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
+        viewport.childAfter(viewport.firstChild!)!,
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(200, 0.0));
@@ -317,13 +310,7 @@ void main() {
 
       // last child
       vicinity = const TableVicinity(column: 4, row: 4);
-      expect(
-        parentDataOf(viewport.lastChild!).vicinity,
-        vicinity,
-      );
-      parentData = parentDataOf(
-        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
-      );
+      parentData = parentDataOf(viewport.lastChild!);
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(800.0, 800.0));
       expect(parentData.isVisible, isFalse);
@@ -334,12 +321,8 @@ void main() {
       );
       // before last child
       vicinity = const TableVicinity(column: 3, row: 4);
-      expect(
-        parentDataOf(viewport.childBefore(viewport.lastChild!)!).vicinity,
-        vicinity,
-      );
       parentData = parentDataOf(
-        tester.renderObject<RenderBox>(find.byKey(childKeys[vicinity]!)),
+        viewport.childBefore(viewport.lastChild!)!,
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(600.0, 800.0));
@@ -974,11 +957,13 @@ void main() {
         columnBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  trailing: BorderSide(
-            color: Colors.orange,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.orange,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isEven ? Colors.red : null,
           ),
@@ -986,11 +971,13 @@ void main() {
         rowBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  leading: BorderSide(
-            color: Colors.green,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              leading: BorderSide(
+                color: Colors.green,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isOdd ? Colors.blue : null,
           ),
@@ -1019,11 +1006,13 @@ void main() {
         columnBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  trailing: BorderSide(
-            color: Colors.orange,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.orange,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isEven ? Colors.red : null,
           ),
@@ -1031,11 +1020,13 @@ void main() {
         rowBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  leading: BorderSide(
-            color: Colors.green,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              leading: BorderSide(
+                color: Colors.green,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isOdd ? Colors.blue : null,
           ),
@@ -1053,6 +1044,63 @@ void main() {
       await expectLater(
         find.byType(TableView),
         matchesGoldenFile('goldens/tableSpanDecoration.horizontalMainAxis.png'),
+        skip: !runGoldens,
+      );
+    });
+
+    testWidgets('paint rects are correct when reversed and pinned',
+        (WidgetTester tester) async {
+      // TODO(Piinks): Rewrite this to remove golden files from this repo when
+      //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
+      // foreground, background, and precedence per mainAxis
+      final TableView tableView = TableView.builder(
+        verticalDetails: const ScrollableDetails.vertical(reverse: true),
+        horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+        rowCount: 2,
+        pinnedRowCount: 1,
+        columnCount: 2,
+        pinnedColumnCount: 1,
+        columnBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.orange,
+                width: 3,
+              ),
+            ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isEven ? Colors.red : null,
+          ),
+        ),
+        rowBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+            border: TableSpanBorder(
+              leading: BorderSide(
+                color: Colors.green,
+                width: 3,
+              ),
+            ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isOdd ? Colors.blue : null,
+          ),
+        ),
+        cellBuilder: (_, TableVicinity vicinity) {
+          return const SizedBox.square(
+            dimension: 200,
+            child: Center(child: FlutterLogo()),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      await expectLater(
+        find.byType(TableView),
+        matchesGoldenFile('goldens/reversed.pinned.painting.png'),
         skip: !runGoldens,
       );
     });

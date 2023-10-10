@@ -11,11 +11,13 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
 import 'camera.dart';
+import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
 import 'exposure_state.dart';
+import 'fallback_strategy.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
@@ -25,8 +27,11 @@ import 'pending_recording.dart';
 import 'plane_proxy.dart';
 import 'preview.dart';
 import 'process_camera_provider.dart';
+import 'quality_selector.dart';
 import 'recorder.dart';
 import 'recording.dart';
+import 'resolution_selector.dart';
+import 'resolution_strategy.dart';
 import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
@@ -106,6 +111,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The flash mode currently configured for [imageCapture].
   int? _currentFlashMode;
+
+  /// Whether or not torch flash mode has been enabled for the [camera].
+  @visibleForTesting
+  bool torchEnabled = false;
 
   /// The [ImageAnalysis] instance that can be configured to analyze individual
   /// frames.
@@ -224,35 +233,42 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Start listening for device orientation changes preceding camera creation.
     startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, cameraDescription.sensorOrientation);
+    // Determine ResolutionSelector and QualitySelector based on
+    // resolutionPreset for camera UseCases.
+    final ResolutionSelector? presetResolutionSelector =
+        _getResolutionSelectorFromPreset(resolutionPreset);
+    final QualitySelector? presetQualitySelector =
+        _getQualitySelectorFromPreset(resolutionPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
     processCameraProvider!.unbindAll();
 
-    // TODO(camsim99): Implement resolution configuration for UseCases
-    // configured here. https://github.com/flutter/flutter/issues/120462
-
     // Configure Preview instance.
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
-    preview = createPreview(targetRotation);
+    preview = createPreview(
+        targetRotation: targetRotation,
+        resolutionSelector: presetResolutionSelector);
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.
-    imageCapture = createImageCapture(null);
+    imageCapture = createImageCapture(presetResolutionSelector);
+
+    // Configure ImageAnalysis instance.
+    // Defaults to YUV_420_888 image format.
+    imageAnalysis = createImageAnalysis(presetResolutionSelector);
 
     // Configure VideoCapture and Recorder instances.
-    // TODO(gmackall): Enable video capture resolution configuration in createRecorder().
-    recorder = createRecorder();
+    recorder = createRecorder(presetQualitySelector);
     videoCapture = await createVideoCapture(recorder!);
 
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
     // instead of here.
-    camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[preview!, imageCapture!]);
-    await _updateLiveCameraState(flutterSurfaceTextureId);
-    cameraInfo = await camera!.getCameraInfo();
+    camera = await processCameraProvider!.bindToLifecycle(
+        cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
+    await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
     _previewIsPaused = false;
 
     return flutterSurfaceTextureId;
@@ -325,6 +341,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     return _cameraEvents(cameraId).whereType<CameraInitializedEvent>();
   }
 
+  /// The camera's resolution has changed.
+  ///
+  /// This stream currently has no events being added to it from this plugin.
+  @override
+  Stream<CameraResolutionChangedEvent> onCameraResolutionChanged(int cameraId) {
+    return _cameraEvents(cameraId).whereType<CameraResolutionChangedEvent>();
+  }
+
   /// The camera started to close.
   @override
   Stream<CameraClosingEvent> onCameraClosing(int cameraId) {
@@ -342,6 +366,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       }),
       _cameraEvents(cameraId).whereType<CameraErrorEvent>()
     ]);
+  }
+
+  /// The camera finished recording a video.
+  @override
+  Stream<VideoRecordedEvent> onVideoRecordedEvent(int cameraId) {
+    return _cameraEvents(cameraId).whereType<VideoRecordedEvent>();
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
@@ -458,14 +488,37 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<XFile> takePicture(int cameraId) async {
     if (_currentFlashMode != null) {
       await imageCapture!.setFlashMode(_currentFlashMode!);
+    } else if (torchEnabled) {
+      // Ensure any previously set flash modes are unset when torch mode has
+      // been enabled.
+      await imageCapture!.setFlashMode(ImageCapture.flashModeOff);
     }
     final String picturePath = await imageCapture!.takePicture();
     return XFile(picturePath);
   }
 
   /// Sets the flash mode for the selected camera.
+  ///
+  /// When the [FlashMode.torch] is enabled, any previously set [FlashMode] with
+  /// this method will be disabled, just as with any other [FlashMode]; while
+  /// this is not default native Android behavior as defined by the CameraX API,
+  /// this behavior is compliant with the plugin platform interface.
+  ///
+  /// This method combines the notion of setting the flash mode of the
+  /// [imageCapture] UseCase and enabling the camera torch, as described
+  /// by https://developer.android.com/reference/androidx/camera/core/ImageCapture
+  /// and https://developer.android.com/reference/androidx/camera/core/CameraControl#enableTorch(boolean),
+  /// respectively.
   @override
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    CameraControl? cameraControl;
+    // Turn off torch mode if it is enabled and not being redundantly set.
+    if (mode != FlashMode.torch && torchEnabled) {
+      cameraControl = await camera!.getCameraControl();
+      await cameraControl.enableTorch(false);
+      torchEnabled = false;
+    }
+
     switch (mode) {
       case FlashMode.off:
         _currentFlashMode = ImageCapture.flashModeOff;
@@ -477,19 +530,41 @@ class AndroidCameraCameraX extends CameraPlatform {
         _currentFlashMode = ImageCapture.flashModeOn;
         break;
       case FlashMode.torch:
-        // TODO(camsim99): Implement torch mode when CameraControl is wrapped.
+        _currentFlashMode = null;
+        if (torchEnabled) {
+          // Torch mode enabled already.
+          return;
+        }
+        cameraControl = await camera!.getCameraControl();
+        await cameraControl.enableTorch(true);
+        torchEnabled = true;
         break;
     }
   }
 
   /// Configures and starts a video recording. Returns silently without doing
   /// anything if there is currently an active recording.
+  ///
+  /// Note that the preset resolution is used to configure the recording, but
+  /// 240p ([ResolutionPreset.low]) is unsupported and will fallback to
+  /// configure the recording as the next highest available quality.
+  ///
+  /// This method is deprecated in favour of [startVideoCapturing].
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
-    assert(cameraSelector != null);
-    assert(processCameraProvider != null);
+    return startVideoCapturing(
+        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
+  }
 
+  /// Starts a video recording and/or streaming session.
+  ///
+  /// Please see [VideoCaptureOptions] for documentation on the
+  /// configuration options. Currently, maxVideoDuration and streamOptions
+  /// are unsupported due to the limitations of CameraX and the platform
+  /// interface, respectively.
+  @override
+  Future<void> startVideoCapturing(VideoCaptureOptions options) async {
     if (recording != null) {
       // There is currently an active recording, so do not start a new one.
       return;
@@ -504,6 +579,10 @@ class AndroidCameraCameraX extends CameraPlatform {
         await SystemServices.getTempFilePath(videoPrefix, '.temp');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
     recording = await pendingRecording!.start();
+
+    if (options.streamCallback != null) {
+      onStreamedFrameAvailable(options.cameraId).listen(options.streamCallback);
+    }
   }
 
   /// Stops the video recording and returns the file where it was saved.
@@ -568,7 +647,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
     cameraImageDataStreamController = StreamController<CameraImageData>(
-      onListen: _onFrameStreamListen,
+      onListen: () => _onFrameStreamListen(cameraId),
       onCancel: _onFrameStreamCancel,
     );
     return cameraImageDataStreamController!.stream;
@@ -592,13 +671,12 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
-    await _updateLiveCameraState(cameraId);
-    cameraInfo = await camera!.getCameraInfo();
+    await _updateCameraInfoAndLiveCameraState(cameraId);
   }
 
   /// Configures the [imageAnalysis] instance for image streaming and binds it
   /// to camera lifecycle controlled by the [processCameraProvider].
-  Future<void> _configureAndBindImageAnalysisToLifecycle() async {
+  Future<void> _configureAndBindImageAnalysisToLifecycle(int cameraId) async {
     // Create Analyzer that can read image data for image streaming.
     final WeakReference<AndroidCameraCameraX> weakThis =
         WeakReference<AndroidCameraCameraX>(this);
@@ -634,21 +712,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         ? Analyzer.detached(analyze: analyze)
         : Analyzer(analyze: analyze);
 
-    // TODO(camsim99): Support resolution configuration.
-    // Defaults to YUV_420_888 image format.
-    imageAnalysis ??= createImageAnalysis();
-    unawaited(imageAnalysis!.setAnalyzer(analyzer));
-
-    if (await processCameraProvider!.isBound(imageAnalysis!)) {
-      // No need to bind imageAnalysis to lifecycle again.
-      return;
-    }
-
-    // TODO(camsim99): Reset live camera state observers here when
-    // https://github.com/flutter/packages/pull/3419 lands.
-    camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
-    cameraInfo = await camera!.getCameraInfo();
+    await imageAnalysis!.setAnalyzer(analyzer);
   }
 
   /// Unbinds [useCase] from camera lifecycle controlled by the
@@ -666,8 +730,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The [onListen] callback for the stream controller used for image
   /// streaming.
-  Future<void> _onFrameStreamListen() async {
-    await _configureAndBindImageAnalysisToLifecycle();
+  Future<void> _onFrameStreamListen(int cameraId) async {
+    await _configureAndBindImageAnalysisToLifecycle(cameraId);
   }
 
   /// The [onCancel] callback for the stream controller used for image
@@ -695,15 +759,16 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   // Methods concerning camera state:
 
-  /// Adds observers to the [LiveData] of the [CameraState] of the current
+  /// Updates [cameraInfo] to the information corresponding to [camera] and
+  /// adds observers to the [LiveData] of the [CameraState] of the current
   /// [camera], saved as [liveCameraState].
   ///
   /// If a previous [liveCameraState] was stored, existing observers are
   /// removed, as well.
-  Future<void> _updateLiveCameraState(int cameraId) async {
-    final CameraInfo cameraInfo = await camera!.getCameraInfo();
+  Future<void> _updateCameraInfoAndLiveCameraState(int cameraId) async {
+    cameraInfo = await camera!.getCameraInfo();
     await liveCameraState?.removeObservers();
-    liveCameraState = await cameraInfo.getCameraState();
+    liveCameraState = await cameraInfo!.getCameraState();
     await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
   }
 
@@ -774,6 +839,110 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
+  /// Returns the [ResolutionSelector] that maps to the specified resolution
+  /// preset for camera [UseCase]s.
+  ///
+  /// If the specified [preset] is unavailable, the camera will fall back to the
+  /// closest lower resolution available.
+  ResolutionSelector? _getResolutionSelectorFromPreset(
+      ResolutionPreset? preset) {
+    const int fallbackRule = ResolutionStrategy.fallbackRuleClosestLower;
+
+    Size? boundSize;
+    ResolutionStrategy? resolutionStrategy;
+    switch (preset) {
+      case ResolutionPreset.low:
+        boundSize = const Size(320, 240);
+        break;
+      case ResolutionPreset.medium:
+        boundSize = const Size(720, 480);
+        break;
+      case ResolutionPreset.high:
+        boundSize = const Size(1280, 720);
+        break;
+      case ResolutionPreset.veryHigh:
+        boundSize = const Size(1920, 1080);
+        break;
+      case ResolutionPreset.ultraHigh:
+        boundSize = const Size(3840, 2160);
+        break;
+      case ResolutionPreset.max:
+        // Automatically set strategy to choose highest available.
+        resolutionStrategy = _shouldCreateDetachedObjectForTesting
+            ? ResolutionStrategy.detachedHighestAvailableStrategy()
+            : ResolutionStrategy.highestAvailableStrategy();
+        break;
+      case null:
+        // If no preset is specified, default to CameraX's default behavior
+        // for each UseCase.
+        return null;
+    }
+
+    if (_shouldCreateDetachedObjectForTesting) {
+      resolutionStrategy ??= ResolutionStrategy.detached(
+          boundSize: boundSize, fallbackRule: fallbackRule);
+      return ResolutionSelector.detached(
+          resolutionStrategy: resolutionStrategy);
+    }
+
+    resolutionStrategy ??=
+        ResolutionStrategy(boundSize: boundSize!, fallbackRule: fallbackRule);
+    return ResolutionSelector(
+        resolutionStrategy: ResolutionStrategy(
+            boundSize: boundSize!, fallbackRule: fallbackRule));
+  }
+
+  /// Returns the [QualitySelector] that maps to the specified resolution
+  /// preset for the camera used only for video capture.
+  ///
+  /// If the specified [preset] is unavailable, the camera will fall back to the
+  /// closest lower resolution available.
+  QualitySelector? _getQualitySelectorFromPreset(ResolutionPreset? preset) {
+    VideoQuality? videoQuality;
+    switch (preset) {
+      case ResolutionPreset.low:
+      // 240p is not supported by CameraX.
+      case ResolutionPreset.medium:
+        videoQuality = VideoQuality.SD;
+        break;
+      case ResolutionPreset.high:
+        videoQuality = VideoQuality.HD;
+        break;
+      case ResolutionPreset.veryHigh:
+        videoQuality = VideoQuality.FHD;
+        break;
+      case ResolutionPreset.ultraHigh:
+        videoQuality = VideoQuality.UHD;
+        break;
+      case ResolutionPreset.max:
+        videoQuality = VideoQuality.highest;
+        break;
+      case null:
+        // If no preset is specified, default to CameraX's default behavior
+        // for each UseCase.
+        return null;
+    }
+
+    // We will choose the next highest video quality if the one desired
+    // is unavailable.
+    const VideoResolutionFallbackRule fallbackRule =
+        VideoResolutionFallbackRule.lowerQualityThan;
+    final FallbackStrategy fallbackStrategy =
+        _shouldCreateDetachedObjectForTesting
+            ? FallbackStrategy.detached(
+                quality: videoQuality, fallbackRule: fallbackRule)
+            : FallbackStrategy(
+                quality: videoQuality, fallbackRule: fallbackRule);
+
+    return _shouldCreateDetachedObjectForTesting
+        ? QualitySelector.detached(qualityList: <VideoQualityData>[
+            VideoQualityData(quality: videoQuality)
+          ], fallbackStrategy: fallbackStrategy)
+        : QualitySelector.from(
+            quality: VideoQualityData(quality: videoQuality),
+            fallbackStrategy: fallbackStrategy);
+  }
+
   // Methods for calls that need to be tested:
 
   /// Requests camera permissions.
@@ -804,23 +973,26 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Returns a [Preview] configured with the specified target rotation and
-  /// resolution.
+  /// specified [ResolutionSelector].
   @visibleForTesting
-  Preview createPreview(int targetRotation) {
-    return Preview(targetRotation: targetRotation);
+  Preview createPreview(
+      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
+    return Preview(
+        targetRotation: targetRotation, resolutionSelector: resolutionSelector);
   }
 
   /// Returns an [ImageCapture] configured with specified flash mode and
-  /// target resolution.
+  /// the specified [ResolutionSelector].
   @visibleForTesting
-  ImageCapture createImageCapture(int? flashMode) {
-    return ImageCapture(targetFlashMode: flashMode);
+  ImageCapture createImageCapture(ResolutionSelector? resolutionSelector) {
+    return ImageCapture(resolutionSelector: resolutionSelector);
   }
 
-  /// Returns a [Recorder] for use in video capture.
+  /// Returns a [Recorder] for use in video capture configured with the
+  /// specified [QualitySelector].
   @visibleForTesting
-  Recorder createRecorder() {
-    return Recorder();
+  Recorder createRecorder(QualitySelector? qualitySelector) {
+    return Recorder(qualitySelector: qualitySelector);
   }
 
   /// Returns a [VideoCapture] associated with the provided [Recorder].
@@ -829,9 +1001,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     return VideoCapture.withOutput(recorder);
   }
 
-  /// Returns an [ImageAnalysis] configured with specified target resolution.
+  /// Returns an [ImageAnalysis] configured with the specified
+  /// [ResolutionSelector].
   @visibleForTesting
-  ImageAnalysis createImageAnalysis() {
-    return ImageAnalysis();
+  ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
+    return ImageAnalysis(resolutionSelector: resolutionSelector);
   }
 }

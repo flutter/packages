@@ -32,7 +32,7 @@ class RouteConfiguration {
             routes, <GlobalKey<NavigatorState>>[navigatorKey])) {
     assert(_debugCheckStatefulShellBranchDefaultLocations(routes));
     _cacheNameToPath('', routes);
-    log.info(debugKnownRoutes());
+    log(debugKnownRoutes());
   }
 
   static bool _debugCheckPath(List<RouteBase> routes, bool isTopLevel) {
@@ -188,9 +188,14 @@ class RouteConfiguration {
   }
 
   /// The match used when there is an error during parsing.
-  static RouteMatchList _errorRouteMatchList(Uri uri, GoException exception) {
+  static RouteMatchList _errorRouteMatchList(
+    Uri uri,
+    GoException exception, {
+    Object? extra,
+  }) {
     return RouteMatchList(
       matches: const <RouteMatch>[],
+      extra: extra,
       error: exception,
       uri: uri,
       pathParameters: const <String, String>{},
@@ -234,7 +239,7 @@ class RouteConfiguration {
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
   }) {
     assert(() {
-      log.info('getting location for name: '
+      log('getting location for name: '
           '"$name"'
           '${pathParameters.isEmpty ? '' : ', pathParameters: $pathParameters'}'
           '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
@@ -277,7 +282,10 @@ class RouteConfiguration {
 
     if (matches == null) {
       return _errorRouteMatchList(
-          uri, GoException('no routes for location: $uri'));
+        uri,
+        GoException('no routes for location: $uri'),
+        extra: extra,
+      );
     }
     return RouteMatchList(
         matches: matches,
@@ -492,7 +500,7 @@ class RouteConfiguration {
       _addRedirect(redirectHistory, newMatch, previousLocation);
       return newMatch;
     } on GoException catch (e) {
-      log.info('Redirection exception: ${e.message}');
+      log('Redirection exception: ${e.message}');
       return _errorRouteMatchList(previousLocation, e);
     }
   }
@@ -522,7 +530,7 @@ class RouteConfiguration {
 
     redirects.add(newMatch);
 
-    log.info('redirecting to $newMatch');
+    log('redirecting to $newMatch');
   }
 
   String _formatRedirectionHistory(List<RouteMatchList> redirections) {

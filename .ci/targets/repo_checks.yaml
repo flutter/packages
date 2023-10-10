@@ -44,13 +44,14 @@ tasks:
     script: script/tool_runner.sh
     args: ["dependabot-check"]
     always: true
-  - name: publishability
-    script: script/tool_runner.sh
-    args: ["publish-check", "--allow-pre-release"]
-    always: true
   - name: CHANGELOG and version validation
     script: .ci/scripts/check_version.sh
     always: true
   - name: federated safety check
     script: .ci/scripts/check_federated_safety.sh
+    always: true
+  # This is the slowest test, so prefer keeping it last.
+  - name: publishability
+    script: script/tool_runner.sh
+    args: ["publish-check", "--allow-pre-release"]
     always: true

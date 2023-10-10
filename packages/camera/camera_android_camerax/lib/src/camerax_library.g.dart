@@ -49,7 +49,7 @@ enum LiveDataSupportedType {
 /// These are pre-defined quality constants that are universally used for video.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/Quality.
-enum VideoQualityConstraint {
+enum VideoQuality {
   SD,
   HD,
   FHD,
@@ -59,6 +59,8 @@ enum VideoQualityConstraint {
 }
 
 /// Fallback rules for selecting video resolution.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
 enum VideoResolutionFallbackRule {
   higherQualityOrLowerThan,
   higherQualityThan,
@@ -182,6 +184,28 @@ class ExposureCompensationRange {
     return ExposureCompensationRange(
       minCompensation: result[0]! as int,
       maxCompensation: result[1]! as int,
+    );
+  }
+}
+
+/// Convenience class for sending lists of [Quality]s.
+class VideoQualityData {
+  VideoQualityData({
+    required this.quality,
+  });
+
+  VideoQuality quality;
+
+  Object encode() {
+    return <Object?>[
+      quality.index,
+    ];
+  }
+
+  static VideoQualityData decode(Object result) {
+    result as List<Object?>;
+    return VideoQualityData(
+      quality: VideoQuality.values[result[0]! as int],
     );
   }
 }
@@ -733,6 +757,33 @@ class CameraHostApi {
   Future<int> getCameraInfo(int arg_identifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.CameraHostApi.getCameraInfo', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<int> getCameraControl(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CameraHostApi.getCameraControl', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
@@ -2478,6 +2529,9 @@ class _QualitySelectorHostApiCodec extends StandardMessageCodec {
     if (value is ResolutionInfo) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
+    } else if (value is VideoQualityData) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -2488,6 +2542,8 @@ class _QualitySelectorHostApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return ResolutionInfo.decode(readValue(buffer)!);
+      case 129:
+        return VideoQualityData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2506,14 +2562,14 @@ class QualitySelectorHostApi {
 
   Future<void> create(
       int arg_identifier,
-      List<int?> arg_videoQualityConstraintIndexList,
+      List<VideoQualityData?> arg_videoQualityDataList,
       int? arg_fallbackStrategyId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.QualitySelectorHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(<Object?>[
       arg_identifier,
-      arg_videoQualityConstraintIndexList,
+      arg_videoQualityDataList,
       arg_fallbackStrategyId
     ]) as List<Object?>?;
     if (replyList == null) {
@@ -2533,7 +2589,7 @@ class QualitySelectorHostApi {
   }
 
   Future<ResolutionInfo> getResolution(
-      int arg_cameraInfoId, VideoQualityConstraint arg_quality) async {
+      int arg_cameraInfoId, VideoQuality arg_quality) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.QualitySelectorHostApi.getResolution', codec,
         binaryMessenger: _binaryMessenger);
@@ -2571,7 +2627,7 @@ class FallbackStrategyHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, VideoQualityConstraint arg_quality,
+  Future<void> create(int arg_identifier, VideoQuality arg_quality,
       VideoResolutionFallbackRule arg_fallbackRule) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FallbackStrategyHostApi.create', codec,
@@ -2594,6 +2650,68 @@ class FallbackStrategyHostApi {
       );
     } else {
       return;
+    }
+  }
+}
+
+class CameraControlHostApi {
+  /// Constructor for [CameraControlHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  CameraControlHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<void> enableTorch(int arg_identifier, bool arg_torch) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.CameraControlHostApi.enableTorch', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_torch]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+abstract class CameraControlFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier);
+
+  static void setup(CameraControlFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraControlFlutterApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraControlFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraControlFlutterApi.create was null, expected non-null int.');
+          api.create(arg_identifier!);
+          return;
+        });
+      }
     }
   }
 }
