@@ -957,11 +957,13 @@ void main() {
         columnBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  trailing: BorderSide(
-            color: Colors.orange,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.orange,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isEven ? Colors.red : null,
           ),
@@ -969,11 +971,13 @@ void main() {
         rowBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  leading: BorderSide(
-            color: Colors.green,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              leading: BorderSide(
+                color: Colors.green,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isOdd ? Colors.blue : null,
           ),
@@ -1002,11 +1006,13 @@ void main() {
         columnBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  trailing: BorderSide(
-            color: Colors.orange,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.orange,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isEven ? Colors.red : null,
           ),
@@ -1014,11 +1020,13 @@ void main() {
         rowBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  leading: BorderSide(
-            color: Colors.green,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              leading: BorderSide(
+                color: Colors.green,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isOdd ? Colors.blue : null,
           ),
@@ -1055,11 +1063,13 @@ void main() {
         columnBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  trailing: BorderSide(
-            color: Colors.orange,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.orange,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isEven ? Colors.red : null,
           ),
@@ -1067,11 +1077,13 @@ void main() {
         rowBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
-              border: TableSpanBorder(
-                  leading: BorderSide(
-            color: Colors.green,
-            width: 3,
-          ))),
+            border: TableSpanBorder(
+              leading: BorderSide(
+                color: Colors.green,
+                width: 3,
+              ),
+            ),
+          ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isOdd ? Colors.blue : null,
           ),
