@@ -12,10 +12,10 @@ static const NSTimeInterval kWaitTime = 60;
 
 @implementation RunnerUITests
 
-- (void)testDraggableCallbacks {
+- (void)testMarkerDraggingCallbacks {
   XCUIApplication *application = [[XCUIApplication alloc] init];
   [application launch];
-  XCUIElement *placeMarkerButton = application.staticTexts[@"Place marker1"];
+  XCUIElement *placeMarkerButton = application.staticTexts[@"Place marker"];
   if (![placeMarkerButton waitForExistenceWithTimeout:kWaitTime]) {
     NSLog(@"application.debugDescription: %@", application.debugDescription);
     XCTFail(@"Failed to find the Place marker button.");
