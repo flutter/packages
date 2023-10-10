@@ -1,6 +1,6 @@
 ## 4.1.9
 
-* Adds an example app
+* Adds an example app.
 
 ## 4.1.8
 
