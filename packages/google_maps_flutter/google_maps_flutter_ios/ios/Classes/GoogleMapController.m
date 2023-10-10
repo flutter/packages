@@ -543,7 +543,7 @@
   [self.markersController didEndDraggingMarkerWithIdentifier:markerId location:marker.position];
 }
 
-- (void)mapView:(GMSMapView *)mapView didStartDraggingMarker:(GMSMarker *)marker {
+- (void)mapView:(GMSMapView *)mapView didBeginDraggingMarker:(GMSMarker *)marker {
   NSString *markerId = marker.userData[0];
   [self.markersController didStartDraggingMarkerWithIdentifier:markerId location:marker.position];
 }
