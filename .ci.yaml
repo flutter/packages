@@ -391,7 +391,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_api_33_shard_2 master
@@ -405,7 +405,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_1 stable
@@ -503,7 +503,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_api_33_shard_2 stable
@@ -517,7 +517,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   # Device versions of Android integration tests, run via FTL.

@@ -25,30 +25,12 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import androidx.test.uiautomator.UiDevice;
-import org.junit.Before;
-import androidx.test.platform.app.InstrumentationRegistry;
-import java.io.File;
-import java.io.FileOutputStream;
-import androidx.test.core.app.ApplicationProvider;
-import android.content.Context;
-import android.graphics.Bitmap;
-
 public class FileSelectorAndroidTest {
   @Rule
   public ActivityScenarioRule<DriverExtensionActivity> myActivityTestRule =
       new ActivityScenarioRule<>(DriverExtensionActivity.class);
 
   @Rule public IntentsRule intentsRule = new IntentsRule();
-
-  private Context context;
-  private UiDevice device;
-
-    @Before
-  public void setUp() {
-    context = ApplicationProvider.getApplicationContext();
-    device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-  }
 
   @Test
   public void openImageFile() {
@@ -58,24 +40,6 @@ public class FileSelectorAndroidTest {
             new Intent().setData(Uri.parse("content://file_selector_android_test/dummy.png")));
     intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(result);
     onFlutterWidget(withText("Open an image")).perform(click());
-
-    // File dir = context.getFilesDir();
-    // System.out.println("CAMILLE LOOK: " + dir.getAbsolutePath());
-    // device.takeScreenshot(new File(System.getEnv("FLUTTER_LOGS_DIR") + "/file_selector_android_test.png"));
-    final Bitmap bitmap =
-      InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();
-    if (bitmap == null) {
-      throw new RuntimeException("failed to capture screenshot");
-    }
-    int pixelCount = bitmap.getWidth() * bitmap.getHeight();
-    try {
-      // final FileOutputStream out = new FileOutputStream(new File("file_selector_android_test.png"));
-    final FileOutputStream out = new FileOutputStream(new File(System.getenv("FLUTTER_LOGS_DIR") + "/file_selector_android_test.png"));
-      bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-    } catch (Exception e) {
-      System.out.println("Oops!");
-    }
-    
     onFlutterWidget(withText("Press to open an image file(png, jpg)")).perform(click());
     intended(hasAction(Intent.ACTION_OPEN_DOCUMENT));
     onFlutterWidget(withValueKey("result_image_name"))

@@ -99,7 +99,7 @@ public class QuickActionsTest {
             .filter(s -> s.getId().equals(firstShortcut.getId()))
             .findFirst()
             .get();
-    Intent dynamicShortcutIntent = dynamicShortcut.getIntent().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    Intent dynamicShortcutIntent = dynamicShortcut.getIntent();
     AtomicReference<QuickActionsTestActivity> initialActivity = new AtomicReference<>();
     scenario.onActivity(initialActivity::set);
     String appReadySentinel = " has launched";
@@ -118,7 +118,7 @@ public class QuickActionsTest {
         device.hasObject(By.descContains(firstShortcut.getId() + appReadySentinel)));
     // This is Android SingleTop behavior in which Android does not destroy the initial activity and
     // launch a new activity.
-    Assert.assertEquals(initialActivity.get(), currentActivity.get()); // this is not good behavior according to https://developer.android.com/reference/androidx/test/core/app/ActivityScenario#onActivity(androidx.test.core.app.ActivityScenario.ActivityAction%3CA%3E) 
+    Assert.assertEquals(initialActivity.get(), currentActivity.get());
   }
 
   private void ensureAllAppShortcutsAreCreated() {
