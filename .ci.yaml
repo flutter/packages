@@ -312,7 +312,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_2 master
@@ -325,7 +325,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_3 master
@@ -338,7 +338,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_4 master
@@ -351,7 +351,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_5 master
@@ -364,7 +364,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_6 master
@@ -377,7 +377,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_api_33_shard_1 master
@@ -433,7 +433,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_3 stable
@@ -447,7 +447,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_4 stable
@@ -461,7 +461,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_5 stable
@@ -475,7 +475,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_6 stable
@@ -489,7 +489,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_api_33_shard_1 stable
