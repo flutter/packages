@@ -498,6 +498,17 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Sets the flash mode for the selected camera.
+  ///
+  /// When the [FlashMode.torch] is enabled, any previously set [FlashMode] with
+  /// this method will be disabled, just as with any other [FlashMode]; while
+  /// this is not default native Android behavior as defined by the CameraX API,
+  /// this behavior is compliant with the plugin platform interface.
+  ///
+  /// This method combines the notion of setting the flash mode of the
+  /// [imageCapture] UseCase and enabling the camera torch, as described
+  /// by https://developer.android.com/reference/androidx/camera/core/ImageCapture
+  /// and https://developer.android.com/reference/androidx/camera/core/CameraControl#enableTorch(boolean),
+  /// respectively.
   @override
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
     CameraControl? cameraControl;
