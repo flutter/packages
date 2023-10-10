@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   /// Returns the URL to load an asset from this example app as a network source.
-  /// TODO: change it to use an image within this package.
+  // TODO: change it to use an image within this package.
   String getUrlFromAssetAsNetworkSource() {
-    return 'https://github.com/flutter/packages/blob/2e1673307ff7454aff40b47024eaed49a9e77e81/packages/rfw/images/overview1.png';
+    return 'https://github.com/flutter/packages/blob/2e1673307ff7454aff40b47024eaed49a9e77e81/packages/flutter_markdown/example/assets/logo.png';
   }
 
   @override
