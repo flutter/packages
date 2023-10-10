@@ -667,7 +667,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }) {
     // TODO(Piinks): Assert here or somewhere else merged cells cannot span
     // pinned and unpinned cells (for merged cell follow-up), https://github.com/flutter/flutter/issues/131224
-    late double yPaintOffset = -offset.dy;
+    double yPaintOffset = -offset.dy;
     for (int row = start.row; row <= end.row; row += 1) {
       double xPaintOffset = -offset.dx;
       final double rowHeight = _rowMetrics[row]!.extent;
