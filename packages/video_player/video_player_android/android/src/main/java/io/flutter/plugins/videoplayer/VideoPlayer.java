@@ -76,7 +76,10 @@ final class VideoPlayer {
     this.textureEntry = textureEntry;
     this.options = options;
 
-    ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
+    DefaultLoadControl.Builder loadControl = new DefaultLoadControl.Builder()
+                .setBufferDurationsMs(25000, 50000, 1500, 2000).createDefaultLoadControl();
+    
+    ExoPlayer exoPlayer = new ExoPlayer.Builder(context).setLoadControl(loadControl).build();
     Uri uri = Uri.parse(dataSource);
 
     buildHttpDataSourceFactory(httpHeaders);
