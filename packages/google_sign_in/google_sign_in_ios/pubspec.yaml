@@ -44,3 +44,4 @@ false_secrets:
   - /darwin/Tests/GoogleSignInTests.m
   - /example/ios/Runner/GoogleService-Info.plist
   - /example/lib/main.dart
+  - /example/macos/Runner/GoogleService-Info.plist
