@@ -297,8 +297,8 @@ class RouteConfiguration {
   List<RouteMatch>? _getLocRouteMatches(
       Uri uri, Map<String, String> pathParameters) {
     final List<RouteMatch>? result = _getLocRouteRecursively(
-      location: uri.path,
-      remainingLocation: uri.path,
+      location: uri.path.isEmpty ? '/' : uri.path,
+      remainingLocation: uri.path.isEmpty ? '/' : uri.path,
       matchedLocation: '',
       pathParameters: pathParameters,
       routes: routes,

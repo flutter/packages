@@ -1,3 +1,7 @@
+## 11.1.4
+
+- Fixes deep-link with no path on cold start.
+
 ## 11.1.3
 
 - Fixes missing state.extra in onException().
