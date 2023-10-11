@@ -25,31 +25,34 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     self.launcher = launcher
   }
 
-  func canLaunchUrl(url: String) throws -> Bool {
+  func canLaunchUrl(url: String) -> LaunchResultDetails {
     guard let url = URL(string: url) else {
-      throw invalidURLError(for: url)
+      return invalidURLError(for: url)
     }
-    return launcher.canOpenURL(url)
+    let canOpen = launcher.canOpenURL(url)
+    return LaunchResultDetails(result: canOpen ? .success : .failure)
   }
 
   func launchUrl(
-    url: String, universalLinksOnly: Bool, completion: @escaping (Result<Bool, Error>) -> Void
+    url: String, universalLinksOnly: Bool,
+    completion: @escaping (Result<LaunchResultDetails, Error>) -> Void
   ) {
     guard let url = URL(string: url) else {
-      completion(Result.failure(invalidURLError(for: url)))
+      completion(.success(invalidURLError(for: url)))
       return
     }
     let options = [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: universalLinksOnly]
     launcher.openURL(url, options: options) { success in
-      completion(Result.success(success))
+      let result = LaunchResultDetails(result: success ? .success : .failure)
+      completion(.success(result))
     }
   }
 
   func openUrlInSafariViewController(
-    url: String, completion: @escaping (Result<Bool, Error>) -> Void
+    url: String, completion: @escaping (Result<LaunchResultDetails, Error>) -> Void
   ) {
     guard let url = URL(string: url) else {
-      completion(Result.failure(invalidURLError(for: url)))
+      completion(.success(invalidURLError(for: url)))
       return
     }
 
@@ -72,9 +75,10 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     * @param url The invalid URL string
     * @return The error to return
     */
-  func invalidURLError(for url: String) -> Error {
-    FlutterError(
-      code: "argument_error", message: "Unable to parse URL", details: "Provided URL: \(url)")
+  func invalidURLError(for url: String) -> LaunchResultDetails {
+    LaunchResultDetails(
+      result: .invalidUrl, errorMessage: "Unable to parse URL", errorDetails: "Provided URL: \(url)"
+    )
   }
 }
 
@@ -103,5 +107,3 @@ extension UIViewController {
     return self
   }
 }
-
-extension FlutterError: Error {}

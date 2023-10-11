@@ -42,17 +42,95 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+/// Possible outcomes of launching a URL.
+enum LaunchResult: Int {
+  /// The URL was successfully launched.
+  case success = 0
+  /// The URL could not be launched
+  case failure = 1
+  /// The URL was not launched because it is not invalid URL
+  case invalidUrl = 2
+  /// The URL did not load successfully in the SFSafariViewController.
+  case failedToLoad = 3
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct LaunchResultDetails {
+  /// The result of the launch attempt.
+  var result: LaunchResult
+  /// A system-provided error message, if any.
+  var errorMessage: String? = nil
+  /// A system-provided error details, if any.
+  var errorDetails: String? = nil
+
+  static func fromList(_ list: [Any?]) -> LaunchResultDetails? {
+    let result = LaunchResult(rawValue: list[0] as! Int)!
+    let errorMessage: String? = nilOrValue(list[1])
+    let errorDetails: String? = nilOrValue(list[2])
+
+    return LaunchResultDetails(
+      result: result,
+      errorMessage: errorMessage,
+      errorDetails: errorDetails
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      result.rawValue,
+      errorMessage,
+      errorDetails,
+    ]
+  }
+}
+
+private class UrlLauncherApiCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 128:
+      return LaunchResultDetails.fromList(self.readValue() as! [Any?])
+    default:
+      return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class UrlLauncherApiCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? LaunchResultDetails {
+      super.writeByte(128)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class UrlLauncherApiCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return UrlLauncherApiCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return UrlLauncherApiCodecWriter(data: data)
+  }
+}
+
+class UrlLauncherApiCodec: FlutterStandardMessageCodec {
+  static let shared = UrlLauncherApiCodec(readerWriter: UrlLauncherApiCodecReaderWriter())
+}
+
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UrlLauncherApi {
   /// Returns true if the URL can definitely be launched.
-  func canLaunchUrl(url: String) throws -> Bool
+  func canLaunchUrl(url: String) throws -> LaunchResultDetails
   /// Opens the URL externally, returning true if successful.
   func launchUrl(
-    url: String, universalLinksOnly: Bool, completion: @escaping (Result<Bool, Error>) -> Void)
+    url: String, universalLinksOnly: Bool,
+    completion: @escaping (Result<LaunchResultDetails, Error>) -> Void)
   /// Opens the URL in an in-app SFSafariViewController, returning true
   /// when it has loaded successfully.
   func openUrlInSafariViewController(
-    url: String, completion: @escaping (Result<Bool, Error>) -> Void)
+    url: String, completion: @escaping (Result<LaunchResultDetails, Error>) -> Void)
   /// Closes the view controller opened by [openUrlInSafariViewController].
   func closeSafariViewController() throws
 }
@@ -60,12 +138,13 @@ protocol UrlLauncherApi {
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class UrlLauncherApiSetup {
   /// The codec used by UrlLauncherApi.
+  static var codec: FlutterStandardMessageCodec { UrlLauncherApiCodec.shared }
   /// Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UrlLauncherApi?) {
     /// Returns true if the URL can definitely be launched.
     let canLaunchUrlChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.canLaunchUrl",
-      binaryMessenger: binaryMessenger)
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       canLaunchUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -83,7 +162,7 @@ class UrlLauncherApiSetup {
     /// Opens the URL externally, returning true if successful.
     let launchUrlChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.launchUrl",
-      binaryMessenger: binaryMessenger)
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       launchUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -105,7 +184,7 @@ class UrlLauncherApiSetup {
     /// when it has loaded successfully.
     let openUrlInSafariViewControllerChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInSafariViewController",
-      binaryMessenger: binaryMessenger)
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       openUrlInSafariViewControllerChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -125,7 +204,7 @@ class UrlLauncherApiSetup {
     /// Closes the view controller opened by [openUrlInSafariViewController].
     let closeSafariViewControllerChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.closeSafariViewController",
-      binaryMessenger: binaryMessenger)
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       closeSafariViewControllerChannel.setMessageHandler { _, reply in
         do {

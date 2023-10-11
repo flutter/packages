@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/services.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
@@ -26,8 +27,9 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
   final LinkDelegate? linkDelegate = null;
 
   @override
-  Future<bool> canLaunch(String url) {
-    return _hostApi.canLaunchUrl(url);
+  Future<bool> canLaunch(String url) async {
+    final LaunchResultDetails result = await _hostApi.canLaunchUrl(url);
+    return _mapLaunchResults(results: result);
   }
 
   @override
@@ -45,11 +47,39 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     required bool universalLinksOnly,
     required Map<String, String> headers,
     String? webOnlyWindowName,
-  }) {
+  }) async {
+    final LaunchResultDetails result =
+        await _launchUrl(useSafariVC, url, universalLinksOnly);
+    return _mapLaunchResults(results: result);
+  }
+
+  Future<LaunchResultDetails> _launchUrl(
+      bool useSafariVC, String url, bool universalLinksOnly) {
     if (useSafariVC) {
       return _hostApi.openUrlInSafariViewController(url);
     } else {
       return _hostApi.launchUrl(url, universalLinksOnly);
+    }
+  }
+
+  bool _mapLaunchResults({required final LaunchResultDetails results}) {
+    switch (results.result) {
+      case LaunchResult.success:
+        return true;
+      case LaunchResult.failure:
+        return false;
+      case LaunchResult.invalidUrl:
+        throw PlatformException(
+          code: 'invalidUrl',
+          message: results.errorMessage,
+          details: results.errorDetails,
+        );
+      case LaunchResult.failedToLoad:
+        throw PlatformException(
+          code: 'failedToLoad',
+          message: results.errorMessage,
+          details: results.errorDetails,
+        );
     }
   }
 }

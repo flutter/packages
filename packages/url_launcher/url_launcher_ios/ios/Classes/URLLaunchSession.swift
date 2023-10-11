@@ -5,15 +5,25 @@
 import Flutter
 import SafariServices
 
-typealias OpenInSafariCompletionHandler = (Result<Bool, Error>) -> Void
+typealias OpenInSafariCompletionHandler = (Result<LaunchResultDetails, Error>) -> Void
 
+/// A session responsible for launching a URL in Safari and handling its events.
 final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
 
   private let completion: OpenInSafariCompletionHandler
   private let url: URL
+
+  /// The Safari view controller used for displaying the URL.
   let safariViewController: SFSafariViewController
+
+  // A closure to be executed after the Safari view controller finishes.
   var didFinish: (() -> Void)?
 
+  /// Initializes a new URLLaunchSession with the provided URL and completion handler.
+  ///
+  /// - Parameters:
+  ///   - url: The URL to be opened in Safari.
+  ///   - completion: The completion handler to be called after attempting to open the URL.
   init(url: URL, completion: @escaping OpenInSafariCompletionHandler) {
     self.url = url
     self.completion = completion
@@ -22,24 +32,33 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
     self.safariViewController.delegate = self
   }
 
+  /// Called when the Safari view controller completes the initial load.
+  ///
+  /// - Parameters:
+  ///   - controller: The Safari view controller.
+  ///   - didLoadSuccessfully: Indicates if the initial load was successful.
   func safariViewController(
     _ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool
   ) {
     if didLoadSuccessfully {
-      completion(.success(true))
+      completion(.success(LaunchResultDetails(result: .success)))
     } else {
       completion(
-        .failure(
-          FlutterError(code: "Error", message: "Error while launching \(url)", details: nil))
-      )
+        .success(
+          LaunchResultDetails(result: .failedToLoad, errorMessage: "Error while launching \(url)")
+        ))
     }
   }
 
+  /// Called when the user finishes using the Safari view controller.
+  ///
+  /// - Parameter controller: The Safari view controller.
   func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
     controller.dismiss(animated: true, completion: nil)
     didFinish?()
   }
 
+  /// Closes the Safari view controller.
   func close() {
     safariViewControllerDidFinish(safariViewController)
   }

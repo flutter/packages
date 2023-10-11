@@ -19,32 +19,26 @@ final class URLLauncherTests: XCTestCase {
   }
 
   func testCanLaunchSuccess() {
-    do {
-      let result = try createPlugin().canLaunchUrl(url: "good://url")
-      XCTAssertTrue(result)
-    } catch {
-      XCTFail("Unexpected error: \(error)")
-    }
+    let result = createPlugin().canLaunchUrl(url: "good://url")
+    XCTAssertEqual(result.result, .success)
   }
 
   func testCanLaunchFailure() {
-    do {
-      let result = try createPlugin().canLaunchUrl(url: "bad://url")
-      XCTAssertFalse(result)
-    } catch {
-      XCTFail("Unexpected error: \(error)")
-    }
+    let result = createPlugin().canLaunchUrl(url: "bad://url")
+    XCTAssertEqual(result.result, .failure)
   }
 
   func testCanLaunchFailureWithInvalidURL() {
-    do {
-      let result = try createPlugin().canLaunchUrl(url: "urls can't have spaces")
-      XCTAssertFalse(result)
-    } catch {
-      let generalError = error as? FlutterError
-      XCTAssertEqual(generalError?.code, "argument_error")
-      XCTAssertEqual(generalError?.message, "Unable to parse URL")
-      XCTAssertEqual(generalError?.details as? String, "Provided URL: urls can't have spaces")
+    let result = createPlugin().canLaunchUrl(url: "urls can't have spaces")
+    if result.result == .failure {
+      // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
+      // fail to parse URLs, so the test must allow for either outcome.
+      XCTAssertNil(result.errorMessage)
+      XCTAssertNil(result.errorDetails)
+    } else {
+      XCTAssertEqual(result.result, .invalidUrl)
+      XCTAssertEqual(result.errorMessage, "Unable to parse URL")
+      XCTAssertEqual(result.errorDetails, "Provided URL: urls can't have spaces")
     }
   }
 
@@ -52,8 +46,8 @@ final class URLLauncherTests: XCTestCase {
     let expectation = XCTestExpectation(description: "completion called")
     createPlugin().launchUrl(url: "good://url", universalLinksOnly: false) { result in
       switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
+      case .success(let details):
+        XCTAssertEqual(details.result, .success)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -67,8 +61,8 @@ final class URLLauncherTests: XCTestCase {
     let expectation = XCTestExpectation(description: "completion called")
     createPlugin().launchUrl(url: "bad://url", universalLinksOnly: false) { result in
       switch result {
-      case .success(let success):
-        XCTAssertFalse(success)
+      case .success(let details):
+        XCTAssertEqual(details.result, .failure)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -82,17 +76,19 @@ final class URLLauncherTests: XCTestCase {
     let expectation = XCTestExpectation(description: "completion called")
     createPlugin().launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
       switch result {
-      case .success(_):
-        // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
-        // fail to parse URLs, so the test must allow for either outcome.
-        XCTFail("Expected an error")
+      case .success(let details):
+        if details.result == .failure {
+          // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
+          // fail to parse URLs, so the test must allow for either outcome.
+          XCTAssertNil(details.errorMessage)
+          XCTAssertNil(details.errorDetails)
+        } else {
+          XCTAssertEqual(details.result, .invalidUrl)
+          XCTAssertEqual(details.errorMessage, "Unable to parse URL")
+          XCTAssertEqual(details.errorDetails, "Provided URL: urls can't have spaces")
+        }
       case .failure(let error):
-        XCTAssertNotNil(error)
-
-        let generalError = error as? FlutterError
-        XCTAssertEqual(generalError?.code, "argument_error")
-        XCTAssertEqual(generalError?.message, "Unable to parse URL")
-        XCTAssertEqual(generalError?.details as? String, "Provided URL: urls can't have spaces")
+        XCTFail("Unexpected error: \(error)")
       }
       expectation.fulfill()
     }
@@ -107,8 +103,8 @@ final class URLLauncherTests: XCTestCase {
     let expectation = XCTestExpectation(description: "completion called")
     plugin.launchUrl(url: "good://url", universalLinksOnly: false) { result in
       switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
+      case .success(let details):
+        XCTAssertEqual(details.result, .success)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -126,8 +122,8 @@ final class URLLauncherTests: XCTestCase {
     let expectation = XCTestExpectation(description: "completion called")
     plugin.launchUrl(url: "good://url", universalLinksOnly: true) { result in
       switch result {
-      case .success(let success):
-        XCTAssertTrue(success)
+      case .success(let details):
+        XCTAssertEqual(details.result, .success)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }

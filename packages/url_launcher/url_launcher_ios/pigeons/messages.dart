@@ -9,22 +9,55 @@ import 'package:pigeon/pigeon.dart';
   swiftOut: 'ios/Classes/messages.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+
+/// Possible outcomes of launching a URL.
+enum LaunchResult {
+  /// The URL was successfully launched.
+  success,
+
+  /// The URL could not be launched
+  failure,
+
+  /// The URL was not launched because it is not invalid URL
+  invalidUrl,
+
+  /// The URL did not load successfully in the SFSafariViewController.
+  failedToLoad,
+}
+
+class LaunchResultDetails {
+  LaunchResultDetails({
+    required this.result,
+    this.errorMessage,
+    this.errorDetails,
+  });
+
+  /// The result of the launch attempt.
+  final LaunchResult result;
+
+  /// A system-provided error message, if any.
+  final String? errorMessage;
+
+  /// A system-provided error details, if any.
+  final String? errorDetails;
+}
+
 @HostApi()
 abstract class UrlLauncherApi {
   /// Returns true if the URL can definitely be launched.
   @ObjCSelector('canLaunchURL:')
-  bool canLaunchUrl(String url);
+  LaunchResultDetails canLaunchUrl(String url);
 
   /// Opens the URL externally, returning true if successful.
   @async
   @ObjCSelector('launchURL:universalLinksOnly:')
-  bool launchUrl(String url, bool universalLinksOnly);
+  LaunchResultDetails launchUrl(String url, bool universalLinksOnly);
 
   /// Opens the URL in an in-app SFSafariViewController, returning true
   /// when it has loaded successfully.
   @async
   @ObjCSelector('openSafariViewControllerWithURL:')
-  bool openUrlInSafariViewController(String url);
+  LaunchResultDetails openUrlInSafariViewController(String url);
 
   /// Closes the view controller opened by [openUrlInSafariViewController].
   void closeSafariViewController();
