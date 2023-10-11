@@ -520,6 +520,7 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
     super.onShowCustomView,
     super.onHideCustomView,
     super.onPermissionRequest,
+    super.onConsoleMessage,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached() {

@@ -31,11 +31,11 @@ class EchoBinaryMessenger: NSObject, FlutterBinaryMessenger {
       let firstArg = args.first,
       let castedFirstArg: Any? = nilOrValue(firstArg)
     else {
-      callback(self.defaultReturn.flatMap { self.codec.encode($0) })
+      callback(self.defaultReturn.flatMap { self.codec.encode([$0]) })
       return
     }
     
-    callback(self.codec.encode(castedFirstArg))
+    callback(self.codec.encode([castedFirstArg]))
   }
   
   func setMessageHandlerOnChannel(
