@@ -121,6 +121,7 @@
   }
 
   gifProperties[(__bridge NSString *)kCGImagePropertyGIFLoopCount] = @0;
+  gifProperties[(__bridge NSString *)kCGImagePropertyGIFHasGlobalColorMap] = [NSNumber numberWithBool:YES];
 
   CGImageDestinationSetProperties(destination, (__bridge CFDictionaryRef)gifMetaProperties);
 
