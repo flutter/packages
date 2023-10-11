@@ -19,6 +19,8 @@ Uint8List dumpToDebugFormat(Uint8List bytes) {
   if (!response.complete) {
     codec.decode(bytes.buffer.asByteData(), listener, response: response);
   }
+  // Newer versions of Dart will make this a Uint8List and not require the cast.
+  // ignore: unnecessary_cast
   return utf8.encode(listener.buffer.toString()) as Uint8List;
 }
 

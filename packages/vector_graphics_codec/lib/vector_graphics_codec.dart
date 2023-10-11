@@ -600,6 +600,8 @@ class VectorGraphicsCodec {
 
     // font-family
     if (fontFamily != null) {
+      // Newer versions of Dart will make this a Uint8List and not require the cast.
+      // ignore: unnecessary_cast
       final Uint8List encoded = utf8.encode(fontFamily) as Uint8List;
       buffer._putUint16(encoded.length);
       buffer._putUint8List(encoded);
@@ -608,6 +610,8 @@ class VectorGraphicsCodec {
     }
 
     // text-value
+    // Newer versions of Dart will make this a Uint8List and not require the cast.
+    // ignore: unnecessary_cast
     final Uint8List encoded = utf8.encode(text) as Uint8List;
     buffer._putUint16(encoded.length);
     buffer._putUint8List(encoded);
