@@ -1,6 +1,6 @@
 ## 3.1.11
 
-* Updates doc reference finishPurchase to completePurchase.
+* Updates documentation reference of `finishPurchase` to `completePurchase`.
 
 ## 3.1.10
 
