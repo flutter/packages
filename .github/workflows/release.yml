@@ -43,6 +43,22 @@ jobs:
       run: dart pub get
       working-directory: ${{ github.workspace }}/script/tool
 
+    # The next step waits for all tests, but when there are issues with the
+    # hooks it can take a long time for the tests to even be registered. If
+    # "Wait on all tests" runs before that happens, it will pass immediately
+    # because there doesn't appear to be anything to wait for. To avoid that,
+    # explicitly wait for one LUCI test by name first.
+    - name: Wait for test check-in
+      uses: lewagon/wait-on-check-action@e106e5c43e8ca1edea6383a39a01c5ca495fd812
+      with:
+        ref: ${{ github.sha }}
+        check-name: 'Linux ci_yaml packages roller'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 30 # seconds
+        allowed-conclusions: success,neutral
+        # verbose:true will produce too many logs that hang github actions web UI.
+        verbose: false
+
     # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
       uses: lewagon/wait-on-check-action@e106e5c43e8ca1edea6383a39a01c5ca495fd812

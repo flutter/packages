@@ -77,6 +77,21 @@ void main() {
       expect(find.text('redirected /some-other-location'), findsOneWidget);
     });
 
+    testWidgets('can redirect with extra', (WidgetTester tester) async {
+      final GoRouter router = await createRouter(<RouteBase>[
+        GoRoute(
+            path: '/error',
+            builder: (_, GoRouterState state) => Text('extra: ${state.extra}')),
+      ], tester,
+          onException: (_, GoRouterState state, GoRouter router) =>
+              router.go('/error', extra: state.extra));
+      expect(find.text('extra: null'), findsOneWidget);
+
+      router.go('/some-other-location', extra: 'X');
+      await tester.pumpAndSettle();
+      expect(find.text('extra: X'), findsOneWidget);
+    });
+
     testWidgets('stays on the same page if noop.', (WidgetTester tester) async {
       final GoRouter router = await createRouter(
         <RouteBase>[
