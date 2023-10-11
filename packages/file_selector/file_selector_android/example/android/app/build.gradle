@@ -69,7 +69,4 @@ dependencies {
     implementation project(':file_selector_android')
     implementation project(':espresso')
     api 'androidx.test:core:1.4.0'
-
-        androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-
 }
