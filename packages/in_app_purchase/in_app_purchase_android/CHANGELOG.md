@@ -1,3 +1,7 @@
+## 0.3.0+14
+
+* Adds missing network error response code to BillingResponse enum.
+
 ## 0.3.0+13
 
 * Updates example code for current versions of Flutter.
