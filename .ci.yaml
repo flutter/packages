@@ -392,7 +392,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_master.version
       # set up for 33
@@ -406,7 +406,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_master.version
       # set up for 33
@@ -504,7 +504,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 0 --shardCount 2"
@@ -517,7 +517,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 1 --shardCount 2"
