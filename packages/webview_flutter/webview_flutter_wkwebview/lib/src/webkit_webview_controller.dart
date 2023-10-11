@@ -668,10 +668,10 @@ window.addEventListener("error", function(e) {
           WeakReference<WebKitWebViewController>(this);
       _uiScrollViewDelegate =
           _webKitParams.webKitProxy.createUIScrollViewDelegate(
-        scrollViewDidScroll: (UIScrollView uiScrollView) async {
-          final Point<double> offset = await uiScrollView.getContentOffset();
-          weakThis.target?._onScrollPositionChangeCallback
-              ?.call(ScrollPositionChange(offset.x, offset.y));
+        scrollViewDidScroll: (UIScrollView uiScrollView, double x, double y) {
+          weakThis.target?._onScrollPositionChangeCallback?.call(
+            ScrollPositionChange(x, y),
+          );
         },
       );
       return _webView.scrollView.setDelegate(_uiScrollViewDelegate);

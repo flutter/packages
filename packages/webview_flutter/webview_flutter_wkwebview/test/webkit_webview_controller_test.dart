@@ -60,56 +60,57 @@ void main() {
       final PlatformWebViewControllerCreationParams controllerCreationParams =
           WebKitWebViewControllerCreationParams(
         webKitProxy: WebKitProxy(
-            createWebViewConfiguration: ({InstanceManager? instanceManager}) {
-              return nonNullMockWebViewConfiguration;
-            },
-            createWebView: (
-              _, {
-              void Function(
-                String keyPath,
-                NSObject object,
-                Map<NSKeyValueChangeKey, Object?> change,
-              )? observeValue,
-              InstanceManager? instanceManager,
-            }) {
-              nonNullMockWebView = createMockWebView == null
-                  ? MockWKWebView()
-                  : createMockWebView(
-                      nonNullMockWebViewConfiguration,
-                      observeValue: observeValue,
-                    );
-              return nonNullMockWebView;
-            },
-            createUIDelegate: ({
-              void Function(
-                WKWebView webView,
-                WKWebViewConfiguration configuration,
-                WKNavigationAction navigationAction,
-              )? onCreateWebView,
-              Future<WKPermissionDecision> Function(
-                WKUIDelegate instance,
-                WKWebView webView,
-                WKSecurityOrigin origin,
-                WKFrameInfo frame,
-                WKMediaCaptureType type,
-              )? requestMediaCapturePermission,
-              InstanceManager? instanceManager,
-            }) {
-              return uiDelegate ??
-                  CapturingUIDelegate(
-                    onCreateWebView: onCreateWebView,
-                    requestMediaCapturePermission:
-                        requestMediaCapturePermission,
+          createWebViewConfiguration: ({InstanceManager? instanceManager}) {
+            return nonNullMockWebViewConfiguration;
+          },
+          createWebView: (
+            _, {
+            void Function(
+              String keyPath,
+              NSObject object,
+              Map<NSKeyValueChangeKey, Object?> change,
+            )? observeValue,
+            InstanceManager? instanceManager,
+          }) {
+            nonNullMockWebView = createMockWebView == null
+                ? MockWKWebView()
+                : createMockWebView(
+                    nonNullMockWebViewConfiguration,
+                    observeValue: observeValue,
                   );
-            },
-            createScriptMessageHandler: WKScriptMessageHandler.detached,
-            createUIScrollViewDelegate: (
-                {void Function(UIScrollView scrollView)? scrollViewDidScroll}) {
-              return scrollViewDelegate ??
-                  CapturingUIScrollViewDelegate(
-                    scrollViewDidScroll: scrollViewDidScroll,
-                  );
-            }),
+            return nonNullMockWebView;
+          },
+          createUIDelegate: ({
+            void Function(
+              WKWebView webView,
+              WKWebViewConfiguration configuration,
+              WKNavigationAction navigationAction,
+            )? onCreateWebView,
+            Future<WKPermissionDecision> Function(
+              WKUIDelegate instance,
+              WKWebView webView,
+              WKSecurityOrigin origin,
+              WKFrameInfo frame,
+              WKMediaCaptureType type,
+            )? requestMediaCapturePermission,
+            InstanceManager? instanceManager,
+          }) {
+            return uiDelegate ??
+                CapturingUIDelegate(
+                  onCreateWebView: onCreateWebView,
+                  requestMediaCapturePermission: requestMediaCapturePermission,
+                );
+          },
+          createScriptMessageHandler: WKScriptMessageHandler.detached,
+          createUIScrollViewDelegate: ({
+            void Function(UIScrollView, double, double)? scrollViewDidScroll,
+          }) {
+            return scrollViewDelegate ??
+                CapturingUIScrollViewDelegate(
+                  scrollViewDidScroll: scrollViewDidScroll,
+                );
+          },
+        ),
         instanceManager: instanceManager,
       );
 
@@ -1322,16 +1323,13 @@ window.addEventListener("error", function(e) {
 
       final void Function(
         UIScrollView scrollView,
+        double,
+        double,
       ) onScrollViewDidScroll = CapturingUIScrollViewDelegate
           .lastCreatedDelegate.scrollViewDidScroll!;
 
       final MockUIScrollView mockUIScrollView = MockUIScrollView();
-      when(mockUIScrollView.getContentOffset()).thenAnswer(
-        (_) => Future<Point<double>>.value(
-          const Point<double>(1.0, 2.0),
-        ),
-      );
-      onScrollViewDidScroll(mockUIScrollView);
+      onScrollViewDidScroll(mockUIScrollView, 1.0, 2.0);
 
       final ScrollPositionChange change = await changeCompleter.future;
       expect(change.x, 1.0);

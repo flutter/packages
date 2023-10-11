@@ -130,15 +130,15 @@ void main() {
         List<Object?>? args;
         final UIScrollViewDelegate scrollViewDelegate =
             UIScrollViewDelegate.detached(
-          scrollViewDidScroll: (UIScrollView scrollView) {
-            args = <Object?>[scrollView];
+          scrollViewDidScroll: (UIScrollView scrollView, double x, double y) {
+            args = <Object?>[scrollView, x, y];
           },
           instanceManager: instanceManager,
         );
         instanceManager.addHostCreatedInstance(scrollViewDelegate, 1);
 
-        flutterApi.scrollViewDidScroll(1, 0);
-        expect(args, <Object?>[scrollView]);
+        flutterApi.scrollViewDidScroll(1, 0, 5, 6);
+        expect(args, <Object?>[scrollView, 5, 6]);
       });
     });
 

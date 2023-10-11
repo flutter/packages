@@ -23,14 +23,15 @@ WKWebsiteDataStore _defaultWebsiteDataStore() =>
 /// it intends to return.
 class WebKitProxy {
   /// Constructs a [WebKitProxy].
-  const WebKitProxy(
-      {this.createWebView = WKWebView.new,
-      this.createWebViewConfiguration = WKWebViewConfiguration.new,
-      this.createScriptMessageHandler = WKScriptMessageHandler.new,
-      this.defaultWebsiteDataStore = _defaultWebsiteDataStore,
-      this.createNavigationDelegate = WKNavigationDelegate.new,
-      this.createUIDelegate = WKUIDelegate.new,
-      this.createUIScrollViewDelegate = UIScrollViewDelegate.new});
+  const WebKitProxy({
+    this.createWebView = WKWebView.new,
+    this.createWebViewConfiguration = WKWebViewConfiguration.new,
+    this.createScriptMessageHandler = WKScriptMessageHandler.new,
+    this.defaultWebsiteDataStore = _defaultWebsiteDataStore,
+    this.createNavigationDelegate = WKNavigationDelegate.new,
+    this.createUIDelegate = WKUIDelegate.new,
+    this.createUIScrollViewDelegate = UIScrollViewDelegate.new,
+  });
 
   /// Constructs a [WKWebView].
   final WKWebView Function(
@@ -93,6 +94,10 @@ class WebKitProxy {
 
   /// Constructs a [UIScrollViewDelegate].
   final UIScrollViewDelegate Function({
-    void Function(UIScrollView scrollView)? scrollViewDidScroll,
+    void Function(
+      UIScrollView scrollView,
+      double x,
+      double y,
+    )? scrollViewDidScroll,
   }) createUIScrollViewDelegate;
 }

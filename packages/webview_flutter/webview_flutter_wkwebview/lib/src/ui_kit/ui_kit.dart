@@ -182,7 +182,11 @@ class UIScrollViewDelegate extends NSObject {
   /// Called when scroll view did scroll.
   ///
   /// {@macro webview_flutter_wkwebview.foundation.callbacks}
-  final void Function(UIScrollView scrollView)? scrollViewDidScroll;
+  final void Function(
+    UIScrollView scrollView,
+    double x,
+    double y,
+  )? scrollViewDidScroll;
 
   @override
   UIScrollViewDelegate copy() {

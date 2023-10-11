@@ -809,7 +809,12 @@ abstract class UIScrollViewDelegateHostApi {
 @FlutterApi()
 abstract class UIScrollViewDelegateFlutterApi {
   @ObjCSelector(
-    'scrollViewDidScrollWithIdentifier:uiScrollViewIdentifier:',
+    'scrollViewDidScrollWithIdentifier:uiScrollViewIdentifier:x:y:',
   )
-  void scrollViewDidScroll(int identifier, int uiScrollViewIdentifier);
+  void scrollViewDidScroll(
+    int identifier,
+    int uiScrollViewIdentifier,
+    double x,
+    double y,
+  );
 }

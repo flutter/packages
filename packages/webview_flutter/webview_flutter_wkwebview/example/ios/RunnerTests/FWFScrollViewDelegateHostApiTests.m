@@ -68,12 +68,15 @@
 
   OCMStub([mockDelegate scrollViewDelegateAPI]).andReturn(mockFlutterAPI);
   UIScrollView *scrollView = [[UIScrollView alloc] init];
+  scrollView.contentOffset = CGPointMake(1.0, 2.0);
 
   [instanceManager addDartCreatedInstance:scrollView withIdentifier:1];
 
   [mockDelegate scrollViewDidScroll:scrollView];
   OCMVerify([mockFlutterAPI scrollViewDidScrollWithIdentifier:@0
                                        uiScrollViewIdentifier:@1
+                                                            x:@(1.0)
+                                                            y:@(2.0)
                                                    completion:OCMOCK_ANY]);
 }
 @end

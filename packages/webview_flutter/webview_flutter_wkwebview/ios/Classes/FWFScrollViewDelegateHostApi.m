@@ -34,6 +34,8 @@
   [self scrollViewDidScrollWithIdentifier:@([self identifierForDelegate:instance])
                    uiScrollViewIdentifier:@([self.instanceManager
                                               identifierWithStrongReferenceForInstance:scrollView])
+                                        x:@(scrollView.contentOffset.x)
+                                        y:@(scrollView.contentOffset.y)
                                completion:completion];
 }
 @end

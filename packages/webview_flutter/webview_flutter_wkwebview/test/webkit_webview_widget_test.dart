@@ -204,8 +204,9 @@ WebKitWebViewController createTestWebViewController(
 
         testInstanceManager.addDartCreatedInstance(mockWKUIDelegate);
         return mockWKUIDelegate;
-      }, createUIScrollViewDelegate: (
-          {void Function(UIScrollView scrollView)? scrollViewDidScroll}) {
+      }, createUIScrollViewDelegate: ({
+        void Function(UIScrollView, double, double)? scrollViewDidScroll,
+      }) {
         final MockUIScrollViewDelegate mockScrollViewDelegate =
             MockUIScrollViewDelegate();
         when(mockScrollViewDelegate.copy())

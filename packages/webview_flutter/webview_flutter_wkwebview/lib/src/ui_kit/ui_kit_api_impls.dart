@@ -141,13 +141,18 @@ class UIScrollViewDelegateFlutterApiImpl
   }
 
   @override
-  void scrollViewDidScroll(int identifier, int uiScrollViewIdentifier) {
-    final void Function(UIScrollView)? callback =
+  void scrollViewDidScroll(
+    int identifier,
+    int uiScrollViewIdentifier,
+    double x,
+    double y,
+  ) {
+    final void Function(UIScrollView, double, double)? callback =
         _getDelegate(identifier).scrollViewDidScroll;
     final UIScrollView? uiScrollView = instanceManager
         .getInstanceWithWeakReference(uiScrollViewIdentifier) as UIScrollView?;
     assert(uiScrollView != null);
-    callback?.call(uiScrollView!);
+    callback?.call(uiScrollView!, x, y);
   }
 }
 
