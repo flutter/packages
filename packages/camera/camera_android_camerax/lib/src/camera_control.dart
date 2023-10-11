@@ -87,7 +87,7 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
       await setZoomRatio(identifier, ratio);
     } on PlatformException catch (e) {
       SystemServices.cameraErrorStreamController.add(e.message ??
-          'Zoom ratio was unable to be set. If ratio was not out of range, newer value may have been set or the camera is closed.');
+          'Zoom ratio was unable to be set. If ratio was not out of range, newer value may have been set; otherwise, the camera may be closed.');
     }
   }
 }
