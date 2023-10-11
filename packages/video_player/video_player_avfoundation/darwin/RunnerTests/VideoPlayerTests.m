@@ -252,11 +252,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
-#if PLATFORM_OS_OSX
-    XCTAssertFalse(response.boolValue);
-#else
-    XCTAssertTrue(response.boolValue);
-#endif
+  XCTAssertTrue(response.boolValue);
 }
 
 - (void)testIsCacheSupported_noForM3U8 {
