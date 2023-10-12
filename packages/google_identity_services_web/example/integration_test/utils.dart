@@ -62,6 +62,14 @@ void setMockCredentialResponse([String value = 'default_value']) {
   );
 }
 
+void expectFedCMConfig([bool expected = true]) {
+  callMethod(
+    _getGoogleAccountsId(),
+    'expectFedCMConfig',
+    <Object>[expected],
+  );
+}
+
 Object _getGoogleAccountsId() {
   return _getDeepProperty<Object>(domWindow, 'google.accounts.id');
 }

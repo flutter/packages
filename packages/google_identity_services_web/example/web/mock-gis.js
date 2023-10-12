@@ -32,6 +32,9 @@ function callAsync(func, timeout = 100) {
 class Id {
   initialize(config) {
     this.config = config;
+    if (this.expectedFedCMConfig && !this.config.use_fedcm_for_prompt) {
+      throw "Missing `use_fedcm_for_prompt` config value!";
+    }
   }
   renderButton(target, config) {
     // Simulate rendering a button.
@@ -54,6 +57,9 @@ class Id {
         momentListener(USER_CANCEL);
       }
     });
+  }
+  expectFedCMConfig(enabled) {
+    this.expectedFedCMConfig = enabled;
   }
   setMockCredentialResponse(credential, select_by) {
     this.mockCredentialResponse = {

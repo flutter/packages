@@ -31,6 +31,27 @@ void main() async {
     });
   });
 
+  group('initialize', () {
+    testWidgets('can receive `use_fedcm_for_prompt` boolean', (_) async {
+      utils.expectFedCMConfig();
+
+      expect(() {
+        id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
+      }, throwsA(isA<String>()));
+
+      expect(() {
+        id.initialize(
+          IdConfiguration(
+            client_id: 'testing_1-2-3',
+            use_fedcm_for_prompt: true,
+          ),
+        );
+      }, returnsNormally);
+
+      utils.expectFedCMConfig(false);
+    });
+  });
+
   group('prompt', () {
     testWidgets('supports a moment notification callback', (_) async {
       id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
