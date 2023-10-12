@@ -23,4 +23,4 @@ steps:
     cat /secrets/temporary-pub-token.txt | dart pub token add https://pub.dev
     dart pub publish --dry-run
 options:
-  logging: CLOUD_LOGGING_ONLY
+  logging: NONE
