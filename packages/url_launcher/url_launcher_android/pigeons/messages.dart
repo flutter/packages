@@ -33,9 +33,11 @@ abstract class UrlLauncherApi {
   /// Opens the URL externally, returning true if successful.
   bool launchUrl(String url, Map<String, String> headers);
 
-  /// Opens the URL in an in-app WebView, returning true if it opens
-  /// successfully.
-  bool openUrlInWebView(String url, WebViewOptions options);
+  /// Opens the URL in an in-app Custom Tab or WebView, returning true if it
+  /// opens successfully.
+  bool openUrlInApp(String url, bool allowCustomTab, WebViewOptions options);
+
+  bool supportsCustomTabs();
 
   /// Closes the view opened by [openUrlInSafariViewController].
   void closeWebView();
