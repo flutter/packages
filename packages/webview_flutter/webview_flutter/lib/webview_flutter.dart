@@ -6,6 +6,8 @@ library webview_flutter;
 
 export 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     show
+        JavaScriptConsoleMessage,
+        JavaScriptLogLevel,
         JavaScriptMessage,
         JavaScriptMode,
         LoadRequestMethod,

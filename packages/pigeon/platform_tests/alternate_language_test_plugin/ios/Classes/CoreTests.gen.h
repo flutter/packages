@@ -186,7 +186,7 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
 /// Returns the passed enum to test serialization and deserialization.
 ///
 /// @return `nil` only when `error != nil`.
-- (AnEnum)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error;
+- (AnEnumBox *_Nullable)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed object, to test serialization and deserialization.
 - (nullable AllNullableTypes *)echoAllNullableTypes:(nullable AllNullableTypes *)everything
                                               error:(FlutterError *_Nullable *_Nonnull)error;
@@ -268,7 +268,7 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                                FlutterError *_Nullable))completion;
 /// Returns the passed enum, to test asynchronous serialization and deserialization.
 - (void)echoAsyncEnum:(AnEnum)anEnum
-           completion:(void (^)(AnEnum, FlutterError *_Nullable))completion;
+           completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async function returning a value.
 - (void)throwAsyncErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Responds with an error from an async void function.
@@ -343,7 +343,7 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                 completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                      FlutterError *_Nullable))completion;
 - (void)callFlutterEchoEnum:(AnEnum)anEnum
-                 completion:(void (^)(AnEnum, FlutterError *_Nullable))completion;
+                 completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterEchoNullableBool:(nullable NSNumber *)aBool
                          completion:
                              (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -370,7 +370,7 @@ NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
                              (void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-extern void HostIntegrationCoreApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+extern void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                         NSObject<HostIntegrationCoreApi> *_Nullable api);
 
 /// The codec used by FlutterIntegrationCoreApi.
@@ -426,7 +426,8 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
      completion:
          (void (^)(NSDictionary<NSString *, id> *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed enum to test serialization and deserialization.
-- (void)echoEnum:(AnEnum)anEnum completion:(void (^)(AnEnum, FlutterError *_Nullable))completion;
+- (void)echoEnum:(AnEnum)anEnum
+      completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed boolean, to test serialization and deserialization.
 - (void)echoNullableBool:(nullable NSNumber *)aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
@@ -469,7 +470,7 @@ NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void);
 - (void)noopWithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void HostTrivialApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+extern void SetUpHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
                                 NSObject<HostTrivialApi> *_Nullable api);
 
 /// The codec used by HostSmallApi.
@@ -482,7 +483,7 @@ NSObject<FlutterMessageCodec> *HostSmallApiGetCodec(void);
 - (void)voidVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-extern void HostSmallApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+extern void SetUpHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
                               NSObject<HostSmallApi> *_Nullable api);
 
 /// The codec used by FlutterSmallApi.

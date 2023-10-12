@@ -313,6 +313,7 @@ Future<void> main() async {
 
     final String? userAgent = await controller.getUserAgent();
     expect(userAgent, isNotNull);
+    expect(userAgent, isNotEmpty);
   });
 
   group('Video playback policy', () {

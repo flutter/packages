@@ -36,6 +36,14 @@ class MockTestCameraHostApi extends _i1.Mock implements _i2.TestCameraHostApi {
         ),
         returnValue: 0,
       ) as int);
+  @override
+  int getCameraControl(int? identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #getCameraControl,
+          [identifier],
+        ),
+        returnValue: 0,
+      ) as int);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].

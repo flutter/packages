@@ -31,7 +31,12 @@ class URLLauncherUITests: XCTestCase {
       XCTAssertTrue(app.buttons["ForwardButton"].waitForExistence(timeout: 30.0))
       XCTAssertTrue(app.buttons["Share"].exists)
       XCTAssertTrue(app.buttons["OpenInSafariButton"].exists)
-      app.buttons["Done"].tap()
+      let doneButton = app.buttons["Done"]
+      XCTAssertTrue(doneButton.waitForExistence(timeout: 30.0))
+      // This should just be doneButton.tap, but for some reason that stopped working in Xcode 15;
+      // tapping via coordinate works, however.
+      doneButton.coordinate(withNormalizedOffset: CGVector()).withOffset(CGVector(dx: 10, dy: 10))
+        .tap()
     }
   }
 }

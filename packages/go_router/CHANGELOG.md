@@ -1,6 +1,7 @@
 ## 11.1.3
 
-* Fixes missing parameters in the type-safe routes topic documentation.
+- Fixes missing parameters in the type-safe routes topic documentation.
+- Fixes missing state.extra in onException().
 
 ## 11.1.2
 

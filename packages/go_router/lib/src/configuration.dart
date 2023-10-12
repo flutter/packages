@@ -188,9 +188,14 @@ class RouteConfiguration {
   }
 
   /// The match used when there is an error during parsing.
-  static RouteMatchList _errorRouteMatchList(Uri uri, GoException exception) {
+  static RouteMatchList _errorRouteMatchList(
+    Uri uri,
+    GoException exception, {
+    Object? extra,
+  }) {
     return RouteMatchList(
       matches: const <RouteMatch>[],
+      extra: extra,
       error: exception,
       uri: uri,
       pathParameters: const <String, String>{},
@@ -277,7 +282,10 @@ class RouteConfiguration {
 
     if (matches == null) {
       return _errorRouteMatchList(
-          uri, GoException('no routes for location: $uri'));
+        uri,
+        GoException('no routes for location: $uri'),
+        extra: extra,
+      );
     }
     return RouteMatchList(
         matches: matches,
