@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 #import "FVPContentDownloader.h"
-#import <CoreServices/CoreServices.h>
+#if TARGET_OS_IOS
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
 #import "FVPCacheSessionManager.h"
 #import "FVPContentInfo.h"
 
@@ -485,13 +487,13 @@ static NSInteger kBufferSize = 10 * 1024;
           componentsSeparatedByString:@"/"] lastObject] longLongValue];
     }
 
-#if TARGET_OS_IOS
-    // Get the MIMEtype.
+    // #if TARGET_OS_IOS
+    //  Get the MIMEtype.
     NSString *mimeType = response.MIMEType;
     CFStringRef contentType = UTTypeCreatePreferredIdentifierForTag(
         kUTTagClassMIMEType, (__bridge CFStringRef)(mimeType), NULL);
     info.contentType = CFBridgingRelease(contentType);
-#endif
+    // #endif
 
     self.info = info;
 

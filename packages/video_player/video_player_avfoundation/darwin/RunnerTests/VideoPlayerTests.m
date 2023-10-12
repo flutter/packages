@@ -234,7 +234,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertTrue(isSupported);
 }
 
-- (void)testIsCacheSupported_forFLAC {
+- (void)testIsCacheSupported_yesForFLAC {
   NSObject<FlutterPluginRegistry> *mockTextureRegistry = GetPluginRegistry();
   NSObject<FlutterPluginRegistrar> *registrar =
       [mockTextureRegistry registrarForPlugin:@"CanCacheFLAC"];
@@ -252,7 +252,13 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   NSNumber *response = [videoPlayerPlugin isCacheSupportedForNetworkMedia:message error:&error];
   XCTAssertNil(error);
+#if TARGET_OS_IOS
   XCTAssertTrue(response.boolValue);
+#endif
+
+#if TARGET_OS_OSX
+  XCTAssertFalse(response.boolValue);
+#endif
 }
 
 - (void)testIsCacheSupported_noForM3U8 {

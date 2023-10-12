@@ -6,7 +6,9 @@
 #import "FVPContentDownloader.h"
 #import "FVPContentInfo.h"
 
-#import <CoreServices/CoreServices.h>
+#if TARGET_OS_IOS
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
 
 @import AVFoundation;
 

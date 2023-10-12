@@ -10,8 +10,9 @@
 
 #import "AVAssetTrackUtils.h"
 #import "messages.g.h"
-
-#import <CoreServices/CoreServices.h>
+#if TARGET_OS_IOS
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
 #import "VideoPlayerCache.h"
 
 #if !__has_feature(objc_arc)
@@ -52,6 +53,14 @@
   }
 }
 @end
+//
+// const BOOL IS_OSX(void) {
+// #if TARGET_OS_MACCATALYST
+//  return YES;
+// #else
+//  return NO;
+// #endif
+//}
 
 #if TARGET_OS_OSX
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now,
@@ -819,9 +828,26 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (BOOL)isCacheSupported:(NSString *)path {
-#if TARGET_OS_OSX
-  return NO;
-#else
+  //    if (IS_OSX()) {
+  //        NSLog(@" run on mac 1");
+  //    } else {
+  //        NSLog(@" run on iphone 1");
+  //    }
+  //
+  //    #if TARGET_OS_MACCATALYST
+  //        NSLog(@" run on mac 3");
+  //    #endif
+  //
+  //    #if TARGET_OS_IOS
+  //        NSLog(@" run on iphone 3");
+  //    #endif
+
+  //    if (@available(iOS 14.0, *)) {
+  //        if ([NSProcessInfo processInfo].isiOSAppOnMac) {
+  //            NSLog(@"run on mac 2");
+  //            return NO;
+  //        }else{
+  //            NSLog(@" run on iphone 2");
   NSString *mimeType = [self contentTypeForFileAtPath:path];
   NSArray *supportedMimetypes = @[ @"video/mp4", @"audio/flac" ];
   if ([supportedMimetypes containsObject:mimeType]) {
@@ -829,8 +855,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     return NO;
   }
-#endif
 }
+//   }
+//   return NO;
+//}
 
 - (void)dispose:(FVPTextureMessage *)input error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
