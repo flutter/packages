@@ -538,6 +538,17 @@ updates:
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
   - package-ecosystem: "gradle"
+    directory: "/packages/platform/example/android/app"
+    commit-message:
+      prefix: "[platform]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  - package-ecosystem: "gradle"
     directory: "/packages/pigeon/platform_tests/test_plugin/android"
     commit-message:
       prefix: "[pigeon]"

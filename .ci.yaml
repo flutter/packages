@@ -64,7 +64,7 @@ platform_properties:
         [
           {"dependency": "gems", "version": "v3.3.14"}
         ]
-      os: Mac-12
+      os: "Mac-12|Mac-13"
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
@@ -77,7 +77,7 @@ platform_properties:
         [
           {"dependency": "gems", "version": "v3.3.14"}
         ]
-      os: Mac-12
+      os: "Mac-12|Mac-13"
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-

@@ -59,8 +59,6 @@
 - googleapis
 - googleapis_auth
 - json_annotation
-- platform
-- process
 - quiver
 - sanitize_html
 - source_helper
