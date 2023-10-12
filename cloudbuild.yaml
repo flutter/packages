@@ -8,7 +8,7 @@ steps:
     path: /secrets
   script: |
     gcloud auth print-identity-token \
-      --impersonate-service-account=pub-dev@$flutter-infra.iam.gserviceaccount.com \
+      --impersonate-service-account=pub-dev@$packages-release-test.iam.gserviceaccount.com \
       --audiences=https://pub.dev \
       --include-email > /secrets/temporary-pub-token.txt
   env:
