@@ -10,7 +10,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$UrlLauncherLinux', () {
+  group('UrlLauncherLinux', () {
     const MethodChannel channel =
         MethodChannel('plugins.flutter.io/url_launcher_linux');
     final List<MethodCall> log = <MethodCall>[];
@@ -141,6 +141,47 @@ void main() {
       );
 
       expect(launched, false);
+    });
+
+    group('supportsMode', () {
+      test('returns true for platformDefault', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault),
+            true);
+      });
+
+      test('returns true for external application', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        expect(
+            await launcher
+                .supportsMode(PreferredLaunchMode.externalApplication),
+            true);
+      });
+
+      test('returns false for other modes', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        expect(
+            await launcher.supportsMode(
+                PreferredLaunchMode.externalNonBrowserApplication),
+            false);
+        expect(
+            await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+            false);
+        expect(await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
+            false);
+      });
+    });
+
+    test('supportsCloseForMode returns false', () async {
+      final UrlLauncherLinux launcher = UrlLauncherLinux();
+      expect(
+          await launcher
+              .supportsCloseForMode(PreferredLaunchMode.platformDefault),
+          false);
+      expect(
+          await launcher
+              .supportsCloseForMode(PreferredLaunchMode.externalApplication),
+          false);
     });
   });
 }

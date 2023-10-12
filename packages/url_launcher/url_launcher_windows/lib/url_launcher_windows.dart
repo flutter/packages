@@ -45,4 +45,16 @@ class UrlLauncherWindows extends UrlLauncherPlatform {
     // Failure is handled via a PlatformException from `launchUrl`.
     return true;
   }
+
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    return mode == PreferredLaunchMode.platformDefault ||
+        mode == PreferredLaunchMode.externalApplication;
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    // No supported mode is closeable.
+    return false;
+  }
 }
