@@ -101,7 +101,7 @@ void main() {
     );
   });
 
-  test('MediaSettings hash should be Object.hash of passed parameters', () {
+  test('MediaSettings == operator should compare all parameters', () {
     const MediaSettings settings1 = MediaSettings(
       resolutionPreset: ResolutionPreset.low,
       fps: 20,
