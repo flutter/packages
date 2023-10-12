@@ -166,7 +166,6 @@ void main() {
         final MockWKWebViewConfiguration mockConfiguration =
             MockWKWebViewConfiguration();
 
-        // Use default value (false)
         WebKitWebViewControllerCreationParams(
           webKitProxy: WebKitProxy(
             createWebViewConfiguration: ({InstanceManager? instanceManager}) {
