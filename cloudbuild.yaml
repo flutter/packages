@@ -21,7 +21,7 @@ steps:
   # TODO @jseales - replace --dry-run on dart command with --force
   script: | 
     cat /secrets/temporary-pub-token.txt | dart pub token add https://pub.dev
-    script/tool/ dart pub publish --dry-run
+    dart pub publish --dry-run
   dir: script/tool
 options:
   logging: CLOUD_LOGGING_ONLY
