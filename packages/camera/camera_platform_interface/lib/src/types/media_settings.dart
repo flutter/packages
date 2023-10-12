@@ -10,7 +10,7 @@ import 'resolution_preset.dart';
 ///
 /// Used in [CameraPlatform.createCameraWithSettings].
 /// Allows to tune recorded video parameters, such as resolution, frame rate, bitrate.
-/// If [fps], [videoBitrate] and [audioBitrate] passed, they must be greater than zero.
+/// If [fps], [videoBitrate] or [audioBitrate] are passed, they must be greater than zero.
 class MediaSettings {
   /// Creates a [MediaSettings].
   const MediaSettings({
