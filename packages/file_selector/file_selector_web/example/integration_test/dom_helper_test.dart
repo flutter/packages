@@ -2,23 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
+import 'dart:js_interop';
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:file_selector_web/src/dom_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/helpers.dart';
 
 void main() {
   group('dom_helper', () {
     IntegrationTestWidgetsFlutterBinding.ensureInitialized();
     late DomHelper domHelper;
-    late FileUploadInputElement input;
+    late HTMLInputElement input;
 
     FileList? createFileList(List<File> files) {
       final DataTransfer dataTransfer = DataTransfer();
-      files.forEach(dataTransfer.items!.add);
-      return dataTransfer.files as FileList?;
+      files.forEach(dataTransfer.items.add);
+      return dataTransfer.files;
     }
 
     void setFilesAndTriggerEvent(List<File> files, Event event) {
@@ -36,12 +37,13 @@ void main() {
 
     setUp(() {
       domHelper = DomHelper();
-      input = FileUploadInputElement();
+      input = (createElementTag('input') as HTMLInputElement)..type = 'file';
     });
 
     group('getFiles', () {
-      final File mockFile1 = File(<Object>['123456'], 'file1.txt');
-      final File mockFile2 = File(<Object>[], 'file2.txt');
+      final File mockFile1 =
+          File(<Object>['123456'].jsify as JSArray, 'file1.txt');
+      final File mockFile2 = File(<Object>[].jsify as JSArray, 'file2.txt');
 
       testWidgets('works', (_) async {
         final Future<List<XFile>> futureFiles = domHelper.getFiles(
@@ -114,7 +116,7 @@ void main() {
           input: input,
         );
 
-        expect(input.matchesWithAncestors('body'), true);
+        expect(input.matches('body'), true);
         expect(input.accept, accept);
         expect(input.multiple, multiple);
         expect(
@@ -128,7 +130,7 @@ void main() {
         await futureFile;
 
         // It should be already removed from the DOM after the file is resolved.
-        expect(input.parent, isNull);
+        expect(input.parentElement, isNull);
       });
     });
   });
