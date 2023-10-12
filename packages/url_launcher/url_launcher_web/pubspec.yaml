@@ -22,7 +22,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   url_launcher_platform_interface: ^2.0.3
-  web: ^0.2.1-beta
+  web: ^0.3.0
 
 dev_dependencies:
   flutter_test:
