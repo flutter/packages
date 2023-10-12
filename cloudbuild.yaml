@@ -22,7 +22,7 @@ steps:
   script: | 
     dart pub get
     cat /secrets/temporary-pub-token.txt | dart pub token add https://pub.dev
-    dart run /bin/flutter_plugin_tools.dart publish --dry-run
+    dart run ./bin/flutter_plugin_tools.dart publish --dry-run
   dir: script/tool
 options:
   logging: CLOUD_LOGGING_ONLY
