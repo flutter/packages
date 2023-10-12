@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<void> _launchUniversalLinkIos(Uri url) async {
+  Future<void> _launchUniversalLinkIOS(Uri url) async {
     final bool nativeAppLaunchSucceeded = await launchUrl(
       url,
       mode: LaunchMode.externalNonBrowserApplication,
@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!nativeAppLaunchSucceeded) {
       await launchUrl(
         url,
-        mode: LaunchMode.inAppWebView,
+        mode: LaunchMode.inAppBrowserView,
       );
     }
   }
@@ -198,7 +198,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchUniversalLinkIos(toLaunch);
+                  _launched = _launchUniversalLinkIOS(toLaunch);
                 }),
                 child: const Text(
                     'Launch a universal link in a native app, fallback to Safari.(Youtube)'),
