@@ -51,14 +51,9 @@ abstract class CameraPlatform extends PlatformInterface {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
-  }) =>
-      createCameraWithSettings(
-        cameraDescription,
-        MediaSettings(
-          resolutionPreset: resolutionPreset,
-          enableAudio: enableAudio,
-        ),
-      );
+  }) {
+    throw UnimplementedError('createCamera() is not implemented.');
+  }
 
   /// Creates an uninitialized camera instance and returns the cameraId.
   ///
@@ -67,7 +62,7 @@ abstract class CameraPlatform extends PlatformInterface {
     CameraDescription cameraDescription,
     MediaSettings mediaSettings,
   ) {
-    throw UnimplementedError('createCameraWithSettings() is not implemented.');
+    return createCamera(cameraDescription, mediaSettings.resolutionPreset);
   }
 
   /// Initializes the camera on the device.
