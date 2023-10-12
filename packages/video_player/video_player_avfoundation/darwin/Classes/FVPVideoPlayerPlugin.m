@@ -813,11 +813,17 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 #if TARGET_OS_IOS
   NSString *fileExtension = [path pathExtension];
-  NSString *UTI = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(
-      kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, NULL);
 
-  contentType = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass(
-      (__bridge CFStringRef)UTI, kUTTagClassMIMEType);
+  if (@available(iOS 14.0, *)) {
+    UTType *type = ([UTType typeWithFilenameExtension:fileExtension]);
+    contentType = type.preferredMIMEType;
+  } else {
+    NSString *UTI = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(
+        kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, NULL);
+
+    contentType = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass(
+        (__bridge CFStringRef)UTI, kUTTagClassMIMEType);
+  }
 
 #endif
 
