@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: always_specify_types
+
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -101,7 +103,19 @@ void main() {
     );
   });
 
-  test('MediaSettings == operator should compare all parameters', () {
+  group('MediaSettings == operator', () {
+    const ResolutionPreset preset1 = ResolutionPreset.low;
+    const int fps1 = 20;
+    const int videoBitrate1 = 128000;
+    const int audioBitrate1 = 32000;
+    const bool enableAudio1 = true;
+
+    const ResolutionPreset preset2 = ResolutionPreset.high;
+    const int fps2 = fps1 + 10;
+    const int videoBitrate2 = videoBitrate1 * 2;
+    const int audioBitrate2 = audioBitrate1 * 2;
+    const bool enableAudio2 = !enableAudio1;
+
     const MediaSettings settings1 = MediaSettings(
       resolutionPreset: ResolutionPreset.low,
       fps: 20,
@@ -110,33 +124,87 @@ void main() {
       enableAudio: true,
     );
 
-    const MediaSettings settings1Copy = MediaSettings(
-      resolutionPreset: ResolutionPreset.low,
-      fps: 20,
-      videoBitrate: 128000,
-      audioBitrate: 32000,
-      enableAudio: true,
-    );
+    // test operator== on parameters combination.
+    void checkParameters(List<dynamic> args) {
+      final resolutionPreset = args[0] as ResolutionPreset?;
+      final fps = args[1] as int?;
+      final videoBitrate = args[2] as int?;
+      final audioBitrate = args[3] as int?;
+      final enableAudio = args[4]! as bool;
 
-    const MediaSettings settings2 = MediaSettings(
-      resolutionPreset: ResolutionPreset.high,
-      fps: 30,
-      videoBitrate: 256000,
-      audioBitrate: 64000,
-    );
+      final MediaSettings settings2 = MediaSettings(
+          resolutionPreset: resolutionPreset,
+          fps: fps,
+          videoBitrate: videoBitrate,
+          audioBitrate: audioBitrate,
+          enableAudio: enableAudio);
 
-    expect(
-      settings1 == settings1Copy,
-      isTrue,
-      reason:
-          'MediaSettings == operator should return true for equal parameters',
-    );
+      if (resolutionPreset == preset1 &&
+          fps == fps1 &&
+          videoBitrate == videoBitrate1 &&
+          audioBitrate == audioBitrate1 &&
+          enableAudio == enableAudio1) {
+        expect(
+          settings1 == settings2,
+          isTrue,
+          reason:
+              'MediaSettings == operator should return true for equal parameters: $settings1 == $settings2',
+        );
+      } else {
+        expect(
+          settings1 == settings2,
+          isFalse,
+          reason:
+              'MediaSettings == operator should return false for non-equal parameters: $settings1 != $settings2',
+        );
+      }
+    }
 
-    expect(
-      settings1 == settings2,
-      isFalse,
-      reason:
-          'MediaSettings == operator should return false for non-equal parameters',
-    );
+    test(
+        'MediaSettings == operator should be short-circuit AND of all parameters',
+        () {
+      // Sets of various parameters, including those equal and not equal to the corresponding `settings1` parameters
+      final params = [
+        {preset1, preset2, null},
+        {fps1, fps2, null},
+        {videoBitrate1, videoBitrate2, null},
+        {audioBitrate1, audioBitrate2, null},
+        {enableAudio1, enableAudio2},
+      ];
+
+      // recursively check all possible parameters combinations
+      void combine(List<Set<dynamic>> params, List<dynamic> args, int level) {
+        if (params.length == level) {
+          // now args contains all required parameters, so check `operator ==` now
+          checkParameters(args);
+        } else {
+          for (final variant in params[level]) {
+            combine(params, [...args, variant], level + 1);
+          }
+        }
+      }
+
+      combine(params, [], 0);
+    });
+
+    test('Identical objects should be equal', () {
+      const MediaSettings settingsIdentical = settings1;
+
+      expect(
+        settings1 == settingsIdentical,
+        isTrue,
+        reason:
+            'MediaSettings == operator should return true for identical objects',
+      );
+    });
+
+    test('Objects of different types should be non-equal', () {
+      expect(
+        settings1 == Object(),
+        isFalse,
+        reason:
+            'MediaSettings == operator should return false for objects of different types',
+      );
+    });
   });
 }
