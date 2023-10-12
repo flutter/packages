@@ -230,12 +230,40 @@ abstract class IdConfiguration {
     /// the callback is invoked.
     Function? intermediate_iframe_close_callback,
 
-    /// determines if the upgraded One Tap UX should be enabled on browsers
+    /// Determines if the upgraded One Tap UX should be enabled on browsers
     /// that support Intelligent Tracking Prevention (ITP). The default value
     /// is false.
     ///
     /// See: https://developers.google.com/identity/gsi/web/guides/features#upgraded_ux_on_itp_browsers
     bool? itp_support,
+
+    /// If your application knows in advance which user should be signed-in, it
+    /// can provide a login hint to Google.
+    ///
+    /// When successful, account selection is skipped. Accepted values are:
+    ///   * an email address or
+    ///   * an ID token sub field value.
+    ///
+    /// For more information, see:
+    ///   * https://developers.google.com/identity/protocols/oauth2/openid-connect#authenticationuriparameters
+    String? login_hint,
+
+    /// When a user has multiple accounts and should only sign-in with their
+    /// Workspace account use this to provide a domain name hint to Google.
+    ///
+    /// When successful, user accounts displayed during account selection are
+    /// limited to the provided domain.
+    ///
+    /// A wildcard value: `*` offers only Workspace accounts to the user and
+    /// excludes consumer accounts (user@gmail.com) during account selection.
+    ///
+    /// For more information, see:
+    ///   * https://developers.google.com/identity/protocols/oauth2/openid-connect#authenticationuriparameters
+    String? hd,
+
+    /// Allow the browser to control user sign-in prompts and mediate the
+    /// sign-in flow between your website and Google. Defaults to false.
+    bool? use_fedcm_for_prompt,
   });
 }
 
