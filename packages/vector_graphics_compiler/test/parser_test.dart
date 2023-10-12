@@ -4,6 +4,31 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 import 'test_svg_strings.dart';
 
 void main() {
+  test('Reuse ID self-referentially', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <rect x="2" y="2" width="20" height="20" id="path-1"/>
+  </defs>
+  <use id="path-1" fill="#FFFFFF" xlink:href="#path-1"/>
+</svg>
+''');
+
+    expect(instructions.paths.length, 1);
+  });
+
+  test('Self-referentially ID', () {
+    final VectorInstructions instructions = parseWithoutOptimizers('''
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <use id="path-1" fill="#FFFFFF" xlink:href="#path-1"/>
+</svg>
+''');
+
+    expect(instructions.paths.length, 0);
+  });
+
   test('Text transform but no xy', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
 <svg viewBox="0 0 450 150" xmlns="http://www.w3.org/2000/svg">

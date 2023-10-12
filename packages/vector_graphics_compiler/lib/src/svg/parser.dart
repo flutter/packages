@@ -226,7 +226,9 @@ class _Elements {
       maskResolver: parserState._definitions.getDrawable,
       patternResolver: parserState._definitions.getDrawable,
     );
-    parserState.checkForIri(group);
+    if ('#${parserState._currentAttributes.id}' != xlinkHref) {
+      parserState.checkForIri(group);
+    }
     parent!.addChild(
       group,
       clipId: parserState._currentAttributes.clipPathId,
@@ -864,10 +866,11 @@ class SvgParser {
   }
 
   /// Whether this [DrawableStyleable] belongs in the [DrawableDefinitions] or not.
-  bool checkForIri(AttributedNode? drawable) {
+  bool checkForIri(AttributedNode drawable) {
+    assert('#${_currentAttributes.id}' != _currentAttributes.href);
     final String iri = buildUrlIri();
     if (iri != emptyUrlIri) {
-      _definitions.addDrawable(iri, drawable!);
+      _definitions.addDrawable(iri, drawable);
       return true;
     }
     return false;
@@ -1797,6 +1800,9 @@ class _Resolver {
     String? href,
   ) {
     assert(!_sealed);
+    if (_shaders.containsKey(gradient.id)) {
+      return;
+    }
     _shaders[gradient.id] = gradient;
     if (href != null) {
       href = 'url($href)';
@@ -1820,13 +1826,13 @@ class _Resolver {
   /// Add the clip defined by [pathNodes] to the resolver identifier by [ref].
   void addClipPath(String ref, List<Node> pathNodes) {
     assert(!_sealed);
-    _clips[ref] = pathNodes;
+    _clips.putIfAbsent(ref, () => pathNodes);
   }
 
   /// Add the [drawable] to the resolver identifier by [ref].
   void addDrawable(String ref, AttributedNode drawable) {
     assert(!_sealed);
-    _drawables[ref] = drawable;
+    _drawables.putIfAbsent(ref, () => drawable);
   }
 }
 

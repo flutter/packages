@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 1.1.9
+
+- Fix handling of invalid XML `@id` attributes.
+- Fix handling of self-referential `<use/>` elements.
+- Add `--out-dir` option to compiler.
+- Tweak warning message for unhandled eleemnts.
+
 ## 1.1.8
 
 -  Fix bugs in transform parsing.
