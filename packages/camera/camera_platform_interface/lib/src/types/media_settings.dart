@@ -29,18 +29,12 @@ class MediaSettings {
   final ResolutionPreset? resolutionPreset;
 
   /// Rate at which frames should be captured by the camera in frames per second.
-  ///
-  /// Must be null or greater than zero
   final int? fps;
 
   /// The video encoding bit rate for recording.
-  ///
-  /// Must be null or greater than zero
   final int? videoBitrate;
 
   /// The audio encoding bit rate for recording.
-  ///
-  /// Must be null or greater than zero
   final int? audioBitrate;
 
   /// Controls audio presence in recorded video.
