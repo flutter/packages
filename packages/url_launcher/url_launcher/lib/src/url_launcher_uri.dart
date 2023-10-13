@@ -38,7 +38,7 @@ import 'type_conversion.dart';
 /// Default behaviour when unset is to open the url in a new tab.
 ///
 /// Some web browsers, such as Safari, may prevent URL launching if it is not
-/// triggered by a user action (e.g., a button click). Note that even if a user
+/// triggered by a user action (e.g. a button click). Note that even if a user
 /// triggers an action through a button click, if there is a delay due to
 /// awaiting a [Future] before the launch, the browser may still block it. This
 /// is because the browser might perceive the launch as not being a direct
