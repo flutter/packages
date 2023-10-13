@@ -1,6 +1,6 @@
 ## 6.1.15
 
-* Adds a link about web limitations to the `url_launcher_web` package in the `url_launcher` README and `launchUrl` method.
+* Adds a link about web limitations to the `url_launcher_web` package in the `url_launcher` `README.md` and `launchUrl` method.
 
 ## 6.1.14
 
