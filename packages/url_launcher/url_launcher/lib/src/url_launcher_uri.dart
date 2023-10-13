@@ -37,15 +37,10 @@ import 'type_conversion.dart';
 ///  - "_self" opens the new URL in the current tab.
 /// Default behaviour when unset is to open the url in a new tab.
 ///
-/// Some web browsers, such as Safari, may prevent URL launching if it is not
-/// triggered by a user action (e.g. a button click). Even if a user triggers a
-/// launch through a button click, if there is a delay due to awaiting a
-/// [Future] before the launch, the browser may still block it. This is because
-/// the browser might perceive the launch as not being a direct result of user
-/// interaction, particularly if the Future takes too long to complete. In such
-/// cases, you can use the [webOnlyWindowName] argument, setting it to "_self",
-/// to open the URL within the current tab. Another approach is to ensure that
-/// the [uri] is synchronously ready.
+/// Some web browsers, such as Safari, may prevent the launch if it is not
+/// triggered by a user action (e.g. a button click). See
+/// [package:url_launcher_web](https://pub.dev/packages/url_launcher_web#limitations-on-the-web-platform)
+/// for more details.
 ///
 /// Returns true if the URL was launched successful, otherwise either returns
 /// false or throws a [PlatformException] depending on the failure.

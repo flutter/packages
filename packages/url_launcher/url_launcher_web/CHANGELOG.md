@@ -1,3 +1,7 @@
+## 2.0.21
+
+* Adds documentation that a launch needs to be triggered by a user action.
+
 ## 2.0.20
 
 * Migrates to `dart:ui_web` APIs.

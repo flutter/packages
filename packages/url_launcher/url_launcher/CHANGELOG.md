@@ -1,6 +1,6 @@
 ## 6.1.15
 
-* Adds documentation to the `launchUrl` method that a launch needs to be triggered by a user action.
+* Adds a link about web limitations to the `url_launcher_web` package in the `url_launcher` README and `launchUrl` method.
 
 ## 6.1.14
 
