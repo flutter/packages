@@ -55,7 +55,7 @@ class _PlatformImagesApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return PlatformImageData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -75,12 +75,14 @@ class PlatformImagesApi {
 
   /// Returns the URL for the given resource, or null if no such resource is
   /// found.
-  Future<String?> resolveUrl(String arg_resourceName, String? arg_extension) async {
+  Future<String?> resolveUrl(
+      String arg_resourceName, String? arg_extension) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ios_platform_images.PlatformImagesApi.resolveUrl', codec,
+        'dev.flutter.pigeon.ios_platform_images.PlatformImagesApi.resolveUrl',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_resourceName, arg_extension]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_resourceName, arg_extension]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -101,7 +103,8 @@ class PlatformImagesApi {
   /// no such resource is found.
   Future<PlatformImageData?> loadImage(String arg_name) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ios_platform_images.PlatformImagesApi.loadImage', codec,
+        'dev.flutter.pigeon.ios_platform_images.PlatformImagesApi.loadImage',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_name]) as List<Object?>?;
