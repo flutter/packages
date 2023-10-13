@@ -29,23 +29,26 @@ List<double> _parseTransformParams(String params) {
   final List<double> result = <double>[];
   String current = '';
   for (int i = 0; i < params.length; i += 1) {
-    if (params[i] == ' ' || params[i] == '-' || params[i] == ',') {
+    final String char = params[i];
+    final bool isSeparator = char == ' ' || char == '-' || char == ',';
+    final bool isExponent = i > 0 && params[i - 1] == 'e';
+    if (isSeparator && !isExponent) {
       if (current != '') {
         result.add(parseDouble(current)!);
       }
-      if (params[i] == '-') {
+      if (char == '-') {
         current = '-';
       } else {
         current = '';
       }
     } else {
-      if (params[i] == '.') {
+      if (char == '.') {
         if (current.contains('.')) {
           result.add(parseDouble(current)!);
           current = '';
         }
       }
-      current += params[i];
+      current += char;
     }
   }
   if (current.isNotEmpty) {

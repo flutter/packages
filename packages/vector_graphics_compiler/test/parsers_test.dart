@@ -173,6 +173,13 @@ void main() {
     expect(parseDoubleWithUnits('1pt', theme: const SvgTheme()), 1 + 1 / 3);
   });
 
+  test('Parse a transform with scientific notation', () {
+    expect(
+      parseTransform('translate(9e-6,6.5e-4)'),
+      AffineMatrix.identity.translated(9e-6, 6.5e-4),
+    );
+  });
+
   test('Parse a transform with a missing space', () {
     expect(
       parseTransform('translate(0-70)'),
