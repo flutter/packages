@@ -12,6 +12,17 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 class PrimitiveHostApi {
   /// Constructor for [PrimitiveHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -313,8 +324,15 @@ abstract class PrimitiveFlutterApi {
           final int? arg_value = (args[0] as int?);
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt was null, expected non-null int.');
-          final int output = api.anInt(arg_value!);
-          return output;
+          try {
+            final int output = api.anInt(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -333,8 +351,15 @@ abstract class PrimitiveFlutterApi {
           final bool? arg_value = (args[0] as bool?);
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool was null, expected non-null bool.');
-          final bool output = api.aBool(arg_value!);
-          return output;
+          try {
+            final bool output = api.aBool(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -353,8 +378,15 @@ abstract class PrimitiveFlutterApi {
           final String? arg_value = (args[0] as String?);
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString was null, expected non-null String.');
-          final String output = api.aString(arg_value!);
-          return output;
+          try {
+            final String output = api.aString(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -373,8 +405,15 @@ abstract class PrimitiveFlutterApi {
           final double? arg_value = (args[0] as double?);
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble was null, expected non-null double.');
-          final double output = api.aDouble(arg_value!);
-          return output;
+          try {
+            final double output = api.aDouble(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -394,8 +433,15 @@ abstract class PrimitiveFlutterApi {
               (args[0] as Map<Object?, Object?>?);
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap was null, expected non-null Map<Object?, Object?>.');
-          final Map<Object?, Object?> output = api.aMap(arg_value!);
-          return output;
+          try {
+            final Map<Object?, Object?> output = api.aMap(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -414,8 +460,15 @@ abstract class PrimitiveFlutterApi {
           final List<Object?>? arg_value = (args[0] as List<Object?>?);
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList was null, expected non-null List<Object?>.');
-          final List<Object?> output = api.aList(arg_value!);
-          return output;
+          try {
+            final List<Object?> output = api.aList(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -434,8 +487,15 @@ abstract class PrimitiveFlutterApi {
           final Int32List? arg_value = (args[0] as Int32List?);
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List was null, expected non-null Int32List.');
-          final Int32List output = api.anInt32List(arg_value!);
-          return output;
+          try {
+            final Int32List output = api.anInt32List(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -455,8 +515,15 @@ abstract class PrimitiveFlutterApi {
               (args[0] as List<Object?>?)?.cast<bool?>();
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList was null, expected non-null List<bool?>.');
-          final List<bool?> output = api.aBoolList(arg_value!);
-          return output;
+          try {
+            final List<bool?> output = api.aBoolList(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -476,8 +543,15 @@ abstract class PrimitiveFlutterApi {
               (args[0] as Map<Object?, Object?>?)?.cast<String?, int?>();
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap was null, expected non-null Map<String?, int?>.');
-          final Map<String?, int?> output = api.aStringIntMap(arg_value!);
-          return output;
+          try {
+            final Map<String?, int?> output = api.aStringIntMap(arg_value!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }

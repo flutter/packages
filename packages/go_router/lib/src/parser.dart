@@ -89,7 +89,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // TODO(chunhtai): remove this ignore and migrate the code
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
-      log.info('No initial matches: ${routeInformation.location}');
+      log('No initial matches: ${routeInformation.location}');
     }
 
     return debugParserFuture = _redirect(
@@ -193,6 +193,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
             );
       case NavigatingType.go:
         return newMatchList;
+      case NavigatingType.restore:
+        // Still need to consider redirection.
+        return baseRouteMatchList!.uri.toString() == newMatchList.uri.toString()
+            ? baseRouteMatchList
+            : newMatchList;
     }
   }
 

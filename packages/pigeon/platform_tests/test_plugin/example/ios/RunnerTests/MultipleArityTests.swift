@@ -45,10 +45,14 @@ class MultipleArityTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "subtraction")
     api.subtract(x: 30, y: 10) { result in
-      XCTAssertEqual(20, result)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(20, res)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
-
 }
