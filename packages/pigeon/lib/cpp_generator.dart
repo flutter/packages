@@ -878,21 +878,40 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
             '[on_success = std::move(on_success), on_error = std::move(on_error)]'
             '(const uint8_t* reply, size_t reply_size) ');
         indent.addScoped('{', '});', () {
-          final String successCallbackArgument;
-          if (func.returnType.isVoid) {
-            successCallbackArgument = '';
-          } else {
-            successCallbackArgument = 'return_value';
-            final String encodedReplyName =
-                'encodable_$successCallbackArgument';
+          String successCallbackArgument;
+          successCallbackArgument = 'return_value';
+          final String encodedReplyName = 'encodable_$successCallbackArgument';
+          final String listReplyName = 'list_$successCallbackArgument';
+          indent.writeln(
+              'std::unique_ptr<EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);');
+          indent.writeln('const auto& $encodedReplyName = *response;');
+          indent.writeln(
+              'const auto* $listReplyName = std::get_if<EncodableList>(&$encodedReplyName);');
+          indent.writeScoped('if ($listReplyName) {', '} ', () {
+            indent.writeScoped('if ($listReplyName->size() > 1) {', '} ', () {
+              indent.writeln(
+                  'on_error(FlutterError( std::get<std::string>($listReplyName->at(0)),  std::get<std::string>($listReplyName->at(1)), $listReplyName->at(2)));');
+            }, addTrailingNewline: false);
+            indent.addScoped('else {', '}', () {
+              if (func.returnType.isVoid) {
+                successCallbackArgument = '';
+              } else {
+                _writeEncodableValueArgumentUnwrapping(
+                  indent,
+                  root,
+                  returnType,
+                  argName: successCallbackArgument,
+                  encodableArgName: '$listReplyName->at(0)',
+                  apiType: ApiType.flutter,
+                );
+              }
+              indent.writeln('on_success($successCallbackArgument);');
+            });
+          }, addTrailingNewline: false);
+          indent.addScoped('else {', '} ', () {
             indent.writeln(
-                'std::unique_ptr<EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);');
-            indent.writeln('const auto& $encodedReplyName = *response;');
-            _writeEncodableValueArgumentUnwrapping(indent, returnType,
-                argName: successCallbackArgument,
-                encodableArgName: encodedReplyName);
-          }
-          indent.writeln('on_success($successCallbackArgument);');
+                'on_error(FlutterError("channel-error",  "Unable to establish connection on channel.", EncodableValue("")));');
+          });
         });
       });
     }
@@ -968,9 +987,19 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                         indent.writeln('return;');
                       });
                     }
-                    _writeEncodableValueArgumentUnwrapping(indent, hostType,
-                        argName: argName, encodableArgName: encodableArgName);
-                    methodArgument.add(argName);
+                    _writeEncodableValueArgumentUnwrapping(
+                      indent,
+                      root,
+                      hostType,
+                      argName: argName,
+                      encodableArgName: encodableArgName,
+                      apiType: ApiType.host,
+                    );
+                    final String unwrapEnum =
+                        isEnum(root, arg.type) && arg.type.isNullable
+                            ? ' ? &(*$argName) : nullptr'
+                            : '';
+                    methodArgument.add('$argName$unwrapEnum');
                   });
                 }
 
@@ -1198,6 +1227,10 @@ return EncodableValue(EncodableList{
     final String errorGetter;
 
     const String nullValue = 'EncodableValue()';
+    String enumPrefix = '';
+    if (isEnum(root, returnType)) {
+      enumPrefix = '(int) ';
+    }
     if (returnType.isVoid) {
       nonErrorPath = '${prefix}wrapped.push_back($nullValue);';
       errorCondition = 'output.has_value()';
@@ -1205,22 +1238,24 @@ return EncodableValue(EncodableList{
     } else {
       final HostDatatype hostType = getHostDatatype(returnType, root.classes,
           root.enums, _shortBaseCppTypeForBuiltinDartType);
+
       const String extractedValue = 'std::move(output).TakeValue()';
-      final String wrapperType =
-          hostType.isBuiltin ? 'EncodableValue' : 'CustomEncodableValue';
+      final String wrapperType = hostType.isBuiltin || isEnum(root, returnType)
+          ? 'EncodableValue'
+          : 'CustomEncodableValue';
       if (returnType.isNullable) {
         // The value is a std::optional, so needs an extra layer of
         // handling.
         nonErrorPath = '''
 ${prefix}auto output_optional = $extractedValue;
 ${prefix}if (output_optional) {
-$prefix\twrapped.push_back($wrapperType(std::move(output_optional).value()));
+$prefix\twrapped.push_back($wrapperType(${enumPrefix}std::move(output_optional).value()));
 $prefix} else {
 $prefix\twrapped.push_back($nullValue);
 $prefix}''';
       } else {
         nonErrorPath =
-            '${prefix}wrapped.push_back($wrapperType($extractedValue));';
+            '${prefix}wrapped.push_back($wrapperType($enumPrefix$extractedValue));';
       }
       errorCondition = 'output.has_error()';
       errorGetter = 'error';
@@ -1297,9 +1332,11 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
   /// existing EncodableValue variable called [encodableArgName].
   void _writeEncodableValueArgumentUnwrapping(
     Indent indent,
+    Root root,
     HostDatatype hostType, {
     required String argName,
     required String encodableArgName,
+    required ApiType apiType,
   }) {
     if (hostType.isNullable) {
       // Nullable arguments are always pointers, with nullptr corresponding to
@@ -1320,6 +1357,19 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
       } else if (hostType.isBuiltin) {
         indent.writeln(
             'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
+      } else if (hostType.isEnum) {
+        final String valueVarName = '${argName}_value';
+        indent.writeln(
+            'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
+        if (apiType == ApiType.flutter) {
+          indent.writeln(
+              'const ${hostType.datatype} enum_$argName = (${hostType.datatype})$valueVarName;');
+          indent.writeln(
+              'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &enum_$argName;');
+        } else {
+          indent.writeln(
+              'const auto $argName = $encodableArgName.IsNull() ? std::nullopt : std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(${argName}_value));');
+        }
       } else {
         indent.writeln(
             'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName)));');
@@ -1342,6 +1392,9 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
       } else if (hostType.isBuiltin) {
         indent.writeln(
             'const auto& $argName = std::get<${hostType.datatype}>($encodableArgName);');
+      } else if (hostType.isEnum) {
+        indent.writeln(
+            'const ${hostType.datatype}& $argName = (${hostType.datatype})$encodableArgName.LongValue();');
       } else {
         indent.writeln(
             'const auto& $argName = std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName));');
@@ -1390,7 +1443,11 @@ String _getSafeArgumentName(int count, NamedType argument) =>
 /// Returns a non-nullable variant of [type].
 HostDatatype _nonNullableType(HostDatatype type) {
   return HostDatatype(
-      datatype: type.datatype, isBuiltin: type.isBuiltin, isNullable: false);
+    datatype: type.datatype,
+    isBuiltin: type.isBuiltin,
+    isNullable: false,
+    isEnum: type.isEnum,
+  );
 }
 
 String _pascalCaseFromCamelCase(String camelCase) =>

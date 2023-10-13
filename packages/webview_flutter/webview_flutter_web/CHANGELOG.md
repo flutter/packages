@@ -1,5 +1,12 @@
-## NEXT
+## 0.2.2+3
 
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 0.2.2+2
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 * Removes obsolete null checks on non-nullable values.
 * Updates minimum Flutter version to 3.3.
 * Aligns Dart and Flutter SDK constraints.

@@ -57,8 +57,8 @@ public class FileChooserParamsTest {
     final long identifier =
         Objects.requireNonNull(
             instanceManager.getIdentifierForStrongReference(mockFileChooserParams));
-    final ArgumentCaptor<GeneratedAndroidWebView.FileChooserModeEnumData> modeCaptor =
-        ArgumentCaptor.forClass(GeneratedAndroidWebView.FileChooserModeEnumData.class);
+    final ArgumentCaptor<GeneratedAndroidWebView.FileChooserMode> modeCaptor =
+        ArgumentCaptor.forClass(GeneratedAndroidWebView.FileChooserMode.class);
 
     verify(spyFlutterApi)
         .create(
@@ -68,7 +68,6 @@ public class FileChooserParamsTest {
             modeCaptor.capture(),
             eq("filenameHint"),
             any());
-    assertEquals(
-        modeCaptor.getValue().getValue(), GeneratedAndroidWebView.FileChooserMode.OPEN_MULTIPLE);
+    assertEquals(modeCaptor.getValue(), GeneratedAndroidWebView.FileChooserMode.OPEN_MULTIPLE);
   }
 }

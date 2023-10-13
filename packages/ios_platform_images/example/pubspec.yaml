@@ -3,8 +3,8 @@ description: Demonstrates how to use the ios_platform_images plugin.
 publish_to: none
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-  flutter: ">=3.3.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
 
 dependencies:
   cupertino_icons: ^1.0.2
@@ -21,6 +21,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
 
 flutter:
+  assets:
+    - assets/
   uses-material-design: true

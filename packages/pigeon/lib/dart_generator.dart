@@ -384,14 +384,10 @@ $resultAt != null
                 final String returnType =
                     _addGenericTypesNullable(func.returnType);
                 final bool isAsync = func.isAsynchronous;
-                final String emptyReturnStatement = isMockHandler
-                    ? 'return <Object?>[];'
-                    : func.returnType.isVoid
-                        ? 'return;'
-                        : 'return null;';
+                const String emptyReturnStatement =
+                    'return wrapResponse(empty: true);';
                 String call;
                 if (func.arguments.isEmpty) {
-                  indent.writeln('// ignore message');
                   call = 'api.${func.name}()';
                 } else {
                   indent.writeln('assert(message != null,');
@@ -411,7 +407,7 @@ $resultAt != null
                     final String leftHandSide = 'final $argType? $argName';
                     if (customEnumNames.contains(arg.type.baseName)) {
                       indent.writeln(
-                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count] as int];');
+                          '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
                     } else {
                       indent.writeln(
                           '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
@@ -429,25 +425,41 @@ $resultAt != null
                   });
                   call = 'api.${func.name}(${argNames.join(', ')})';
                 }
-                if (func.returnType.isVoid) {
-                  if (isAsync) {
-                    indent.writeln('await $call;');
+                indent.writeScoped('try {', '} ', () {
+                  if (func.returnType.isVoid) {
+                    if (isAsync) {
+                      indent.writeln('await $call;');
+                    } else {
+                      indent.writeln('$call;');
+                    }
+                    indent.writeln(emptyReturnStatement);
                   } else {
-                    indent.writeln('$call;');
+                    if (isAsync) {
+                      indent.writeln('final $returnType output = await $call;');
+                    } else {
+                      indent.writeln('final $returnType output = $call;');
+                    }
+
+                    const String returnExpression = 'output';
+                    final String nullability =
+                        func.returnType.isNullable ? '?' : '';
+                    final String valueExtraction = isEnum(root, func.returnType)
+                        ? '$nullability.index'
+                        : '';
+                    final String returnStatement = isMockHandler
+                        ? 'return <Object?>[$returnExpression$valueExtraction];'
+                        : 'return wrapResponse(result: $returnExpression$valueExtraction);';
+                    indent.writeln(returnStatement);
                   }
-                  indent.writeln(emptyReturnStatement);
-                } else {
-                  if (isAsync) {
-                    indent.writeln('final $returnType output = await $call;');
-                  } else {
-                    indent.writeln('final $returnType output = $call;');
-                  }
-                  const String returnExpression = 'output';
-                  final String returnStatement = isMockHandler
-                      ? 'return <Object?>[$returnExpression];'
-                      : 'return $returnExpression;';
-                  indent.writeln(returnStatement);
-                }
+                }, addTrailingNewline: false);
+                indent.addScoped('on PlatformException catch (e) {', '}', () {
+                  indent.writeln('return wrapResponse(error: e);');
+                }, addTrailingNewline: false);
+
+                indent.writeScoped('catch (e) {', '}', () {
+                  indent.writeln(
+                      "return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));");
+                });
               });
             });
           });
@@ -487,6 +499,8 @@ $resultAt != null
       codecName = _getCodecName(api);
       _writeCodec(indent, codecName, api, root);
     }
+    final List<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toList();
     indent.newln();
     bool first = true;
     addDocumentationComments(
@@ -553,9 +567,21 @@ final BinaryMessenger? _binaryMessenger;
           final String nullHandler = func.returnType.isNullable
               ? (genericCastCall.isEmpty ? '' : '?')
               : '!';
-          final String returnStatement = func.returnType.isVoid
-              ? 'return;'
-              : 'return $nullablyTypedAccessor$nullHandler$genericCastCall;';
+          String returnStatement = 'return';
+          if (customEnumNames.contains(returnType)) {
+            if (func.returnType.isNullable) {
+              returnStatement =
+                  '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
+            } else {
+              returnStatement =
+                  '$returnStatement $returnType.values[$accessor! as int]';
+            }
+          } else if (!func.returnType.isVoid) {
+            returnStatement =
+                '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+          }
+          returnStatement = '$returnStatement;';
+
           indent.format('''
 final List<Object?>? replyList =
 \t\tawait channel.send($sendArgument) as List<Object?>?;
@@ -599,6 +625,7 @@ if (replyList == null) {
     Root root,
     StringSink sink, {
     required String dartPackageName,
+    required String dartOutputPackageName,
   }) {
     final Indent indent = Indent(sink);
     final String sourceOutPath = generatorOptions.sourceOutPath ?? '';
@@ -620,7 +647,7 @@ if (replyList == null) {
     } else {
       final String path =
           relativeDartPath.replaceFirst(RegExp(r'^.*/lib/'), '');
-      indent.writeln("import 'package:$dartPackageName/$path';");
+      indent.writeln("import 'package:$dartOutputPackageName/$path';");
     }
     for (final Api api in root.apis) {
       if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
@@ -669,6 +696,32 @@ if (replyList == null) {
     indent.writeln("import 'package:flutter/services.dart';");
     indent.writeln("import 'package:flutter_test/flutter_test.dart';");
     indent.newln();
+  }
+
+  @override
+  void writeGeneralUtilities(
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    _writeWrapResponse(generatorOptions, root, indent);
+  }
+
+  /// Writes [wrapResponse] method.
+  void _writeWrapResponse(DartOptions opt, Root root, Indent indent) {
+    indent.writeScoped(
+        'List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {',
+        '}', () {
+      indent.writeScoped('if (empty) {', '}', () {
+        indent.writeln('return <Object?>[];');
+      });
+      indent.writeScoped('if (error == null) {', '}', () {
+        indent.writeln('return <Object?>[result];');
+      });
+      indent.writeln(
+          'return <Object?>[error.code, error.message, error.details];');
+    });
   }
 }
 

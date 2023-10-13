@@ -168,7 +168,7 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.enum1 = [GetNullableObjectAtIndex(list, 1) integerValue];'));
+            'Enum1Box *enum1 = enum1AsNumber == nil ? nil : [[Enum1Box alloc] initWithValue:[enum1AsNumber integerValue]];'));
   });
 
   test('primitive enum host', () {
@@ -298,7 +298,8 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
+    expect(code,
+        contains('@property(nonatomic, strong, nullable) Enum1Box * enum1;'));
   });
 
   test('gen one api header', () {
@@ -346,7 +347,7 @@ void main() {
     expect(code, contains('@protocol Api'));
     expect(code, contains('/// @return `nil` only when `error != nil`.'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
-    expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
+    expect(code, matches('SetUpApi.*<Api>.*_Nullable'));
     expect(code, contains('ApiGetCodec(void)'));
   });
 
@@ -395,7 +396,7 @@ void main() {
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
     expect(code, contains('@implementation Output'));
-    expect(code, contains('ApiSetup('));
+    expect(code, contains('SetUpApi('));
     expect(
         code,
         contains(
@@ -702,7 +703,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
-    expect(code, contains('void ABCApiSetup('));
+    expect(code, contains('void SetUpABCApi('));
   });
 
   test('gen flutter api header', () {

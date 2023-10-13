@@ -1,3 +1,16 @@
+## 0.3.0+13
+
+* Updates example code for current versions of Flutter.
+
+## 0.3.0+12
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.0+11
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 0.3.0+10
 
 * Bumps com.android.billingclient:billing from 6.0.0 to 6.0.1.

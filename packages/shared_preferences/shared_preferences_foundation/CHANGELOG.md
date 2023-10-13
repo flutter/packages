@@ -1,3 +1,12 @@
+## 2.3.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.3.3
+
+* Updates Pigeon-generated code to avoid conflicts with `shared_preferences_ios`.
+
 ## 2.3.2
 
 * Updates to the latest version of `pigeon`.

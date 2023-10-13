@@ -12,11 +12,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ButtonStyle style = ElevatedButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: Colors.blue,
-      // ignore: deprecated_member_use
-      onPrimary: Colors.white,
+      backgroundColor: Colors.blue,
+      foregroundColor: Colors.white,
     );
     return Scaffold(
       appBar: AppBar(
@@ -36,6 +33,12 @@ class HomePage extends StatelessWidget {
               style: style,
               child: const Text('Open an image'),
               onPressed: () => Navigator.pushNamed(context, '/open/image'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              style: style,
+              child: const Text('Open any file'),
+              onPressed: () => Navigator.pushNamed(context, '/open/any'),
             ),
             const SizedBox(height: 10),
             ElevatedButton(

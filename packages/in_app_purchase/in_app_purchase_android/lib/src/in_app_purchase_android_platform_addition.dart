@@ -22,7 +22,6 @@ class InAppPurchaseAndroidPlatformAddition
   /// this is handled internally and the [enablePendingPurchase] property will
   /// always return `true`.
   ///
-  // ignore: deprecated_member_use_from_same_package
   /// See also [enablePendingPurchases] for more on pending purchases.
   @Deprecated(
       'The requirement to call `enablePendingPurchases()` has become obsolete '

@@ -686,6 +686,7 @@ void main() {
       root,
       testCodeSink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
+      dartOutputPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String testCode = testCodeSink.toString();
     expect(testCode, contains(r"import 'fo\'o.dart';"));
@@ -693,7 +694,7 @@ void main() {
     expect(testCode, contains('abstract class ApiMock'));
     expect(testCode, isNot(contains('.ApiMock.doSomething')));
     expect(testCode, contains('output'));
-    expect(testCode, contains('return <Object?>[];'));
+    expect(testCode, contains('return <Object?>[output];'));
   });
 
   test('gen one async Flutter Api', () {
@@ -1351,7 +1352,10 @@ void main() {
     expect(code, contains('void doit(int? foo);'));
   });
 
-  test('uses defined package name', () {
+  test('uses output package name for imports', () {
+    const String overriddenPackageName = 'custom_name';
+    const String outputPackageName = 'some_output_package';
+    assert(outputPackageName != DEFAULT_PACKAGE_NAME);
     final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
     try {
       final Directory foo = Directory(path.join(tempDir.path, 'lib', 'foo'));
@@ -1371,10 +1375,12 @@ name: foobar
         ),
         root,
         sink,
-        dartPackageName: DEFAULT_PACKAGE_NAME,
+        dartPackageName: overriddenPackageName,
+        dartOutputPackageName: outputPackageName,
       );
       final String code = sink.toString();
-      expect(code, contains("import 'package:test_package/foo/bar.dart';"));
+      expect(
+          code, contains("import 'package:$outputPackageName/foo/bar.dart';"));
     } finally {
       tempDir.deleteSync(recursive: true);
     }
@@ -1598,12 +1604,13 @@ name: foobar
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
+      dartOutputPackageName: DEFAULT_PACKAGE_NAME,
     );
 
     final String testCode = sink.toString();
     expect(
         testCode,
         contains(
-            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0] as int]'));
+            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0]! as int]'));
   });
 }

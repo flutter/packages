@@ -11,6 +11,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.SizeFCompat;
+import androidx.exifinterface.media.ExifInterface;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -137,7 +138,11 @@ class ImageResizer {
   }
 
   private void copyExif(String filePathOri, String filePathDest) {
-    exifDataCopier.copyExif(filePathOri, filePathDest);
+    try {
+      exifDataCopier.copyExif(new ExifInterface(filePathOri), new ExifInterface(filePathDest));
+    } catch (Exception ex) {
+      Log.e("ImageResizer", "Error preserving Exif data on selected image: " + ex);
+    }
   }
 
   private SizeFCompat readFileDimensions(String path) {
