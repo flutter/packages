@@ -4,7 +4,6 @@
 
 import Flutter
 import Foundation
-import SwiftUI
 
 /// Loads a UIImage from the embedded Flutter project's assets.
 ///
