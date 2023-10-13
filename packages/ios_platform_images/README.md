@@ -32,7 +32,7 @@ Widget build(BuildContext context) {
 }
 ```
 
-`IosPlatformImages.load` functions like [[UIImage imageNamed:]](https://developer.apple.com/documentation/uikit/uiimage/1624146-imagenamed).
+`IosPlatformImages.load` works similarly to [`UIImage(named:)`](https://developer.apple.com/documentation/uikit/uiimage/1624146-imagenamed).
 
 ### Flutter->iOS Example
 
