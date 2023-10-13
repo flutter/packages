@@ -1,3 +1,7 @@
+## 6.1.15
+
+* Adds documentation to the `launchUrl` method that a launch needs to be triggered by a user action.
+
 ## 6.1.14
 
 * Updates documentation to mention support for Android Custom Tabs.
