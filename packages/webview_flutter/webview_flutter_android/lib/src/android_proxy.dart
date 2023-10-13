@@ -44,6 +44,9 @@ class AndroidWebViewProxy {
         onGeolocationPermissionsShowPrompt,
     void Function(android_webview.WebChromeClient instance)?
         onGeolocationPermissionsHidePrompt,
+    void Function(android_webview.WebChromeClient instance,
+            android_webview.ConsoleMessage message)?
+        onConsoleMessage,
     void Function(
             android_webview.WebChromeClient instance,
             android_webview.View view,

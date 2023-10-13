@@ -6,51 +6,63 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ios_platform_images/ios_platform_images.dart';
+import 'package:ios_platform_images/src/messages.g.dart';
 
 void main() {
-  const MethodChannel channel =
-      MethodChannel('plugins.flutter.io/ios_platform_images');
-
-  TestWidgetsFlutterBinding.ensureInitialized();
+  late FakePlatformImagesApi fakeApi;
 
   setUp(() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      if (methodCall.method == 'loadImage') {
-        return <String, Object>{
-          'scale': 1.0,
-          'data': Uint8List.fromList(<int>[1, 2, 3, 4])
-        };
-      } else if (methodCall.method == 'resolveURL') {
-        return '42';
-      }
-      return null;
-    });
+    fakeApi = FakePlatformImagesApi();
+    setPlatformImageHostApi(fakeApi);
   });
 
-  tearDown(() {
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, null);
+  test('resolveURL passes arguments', () async {
+    const String name = 'a name';
+    const String extension = '.extension';
+
+    await IosPlatformImages.resolveURL(name, extension: extension);
+
+    expect(fakeApi.passedName, name);
+    expect(fakeApi.passedExtension, extension);
   });
 
-  test('resolveURL', () async {
-    expect(await IosPlatformImages.resolveURL('foobar'), '42');
+  test('resolveURL returns null', () async {
+    expect(await IosPlatformImages.resolveURL('foobar'), null);
   });
 
-  test('load', () async {
-    expect(IosPlatformImages.load('foobar'), isNotNull);
+  test('resolveURL returns result', () async {
+    const String result = 'a result';
+    fakeApi.resolutionResult = result;
 
-    final ImageProvider<Object> image = IosPlatformImages.load('foobar');
-    expect(image.obtainCacheStatus(configuration: ImageConfiguration.empty),
-        isA<Future<ImageCacheStatus?>>());
-    expect(image.resolve(ImageConfiguration.empty), isA<ImageStream>());
+    expect(await IosPlatformImages.resolveURL('foobar'), result);
+  });
+
+  test('loadImage passes argument', () async {
+    fakeApi.loadResult = PlatformImageData(data: Uint8List(1), scale: 1.0);
+    const String name = 'a name';
+
+    IosPlatformImages.load(name);
+
+    expect(fakeApi.passedName, name);
   });
 }
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+class FakePlatformImagesApi implements PlatformImagesApi {
+  String? passedName;
+  String? passedExtension;
+  String? resolutionResult;
+  PlatformImageData? loadResult;
+
+  @override
+  Future<PlatformImageData?> loadImage(String name) async {
+    passedName = name;
+    return loadResult;
+  }
+
+  @override
+  Future<String?> resolveUrl(String name, String? extension) async {
+    passedName = name;
+    passedExtension = extension;
+    return resolutionResult;
+  }
+}

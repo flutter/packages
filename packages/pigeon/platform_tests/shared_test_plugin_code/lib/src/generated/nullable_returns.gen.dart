@@ -12,6 +12,17 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 class NullableReturnHostApi {
   /// Constructor for [NullableReturnHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -61,9 +72,15 @@ abstract class NullableReturnFlutterApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          final int? output = api.doit();
-          return output;
+          try {
+            final int? output = api.doit();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -112,7 +129,7 @@ class NullableArgHostApi {
 abstract class NullableArgFlutterApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  int doit(int? x);
+  int? doit(int? x);
 
   static void setup(NullableArgFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -129,8 +146,15 @@ abstract class NullableArgFlutterApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_x = (args[0] as int?);
-          final int output = api.doit(arg_x);
-          return output;
+          try {
+            final int? output = api.doit(arg_x);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -186,9 +210,15 @@ abstract class NullableCollectionReturnFlutterApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          final List<String?>? output = api.doit();
-          return output;
+          try {
+            final List<String?>? output = api.doit();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -255,8 +285,15 @@ abstract class NullableCollectionArgFlutterApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final List<String?>? arg_x =
               (args[0] as List<Object?>?)?.cast<String?>();
-          final List<String?> output = api.doit(arg_x);
-          return output;
+          try {
+            final List<String?> output = api.doit(arg_x);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }

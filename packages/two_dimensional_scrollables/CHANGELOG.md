@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Fixes paint issue when axes are reversed and TableView has pinned rows and columns.
+
 ## 0.0.2
 
 * Fixes override of default TwoDimensionalChildBuilderDelegate.addRepaintBoundaries.

@@ -362,9 +362,9 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       String? returnType;
       final String enumReturnType = _enumName(
         returnTypeName.baseName,
-        suffix: func.returnType.isNullable ? ' *_Nullable' : '',
+        suffix: ' *_Nullable',
         prefix: generatorOptions.prefix,
-        box: func.returnType.isNullable,
+        box: true,
       );
       if (func.isAsynchronous) {
         returnType = 'void';
@@ -413,7 +413,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln('@end');
     indent.newln();
     indent.writeln(
-        'extern void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
+        'extern void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
     indent.newln();
   }
 }
@@ -593,7 +593,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             indent.writeln(
                 'NSNumber *${field.name}AsNumber = GetNullableObjectAtIndex(list, $index);');
             indent.writeln(
-                '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue: [${field.name}AsNumber integerValue]];');
+                '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
             indent.writeln('$resultName.${field.name} = ${field.name};');
           } else {
             indent.writeln(
@@ -674,7 +674,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
     const String channelName = 'channel';
     indent.write(
-        'void ${apiName}Setup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
+        'void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
     indent.addScoped('{', '}', () {
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -724,7 +724,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
             indent.writeln(
                 'NSNumber *${argName}AsNumber = GetNullableObjectAtIndex(args, $count);');
             indent.writeln(
-                '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue: [${argName}AsNumber integerValue]];');
+                '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
           } else {
             indent.writeln(
                 '$className $argName = [GetNullableObjectAtIndex(args, $count) integerValue];');
@@ -760,16 +760,12 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         const String callback = 'callback(wrapResult(output, error));';
         String returnTypeString = '${returnType.withPtr}_Nullable output';
         const String numberOutput = 'NSNumber *output =';
-        final String enumConversionExpression = func.returnType.isNullable
-            ? 'enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];'
-            : '[NSNumber numberWithInteger:enumValue];';
+        const String enumConversionExpression =
+            'enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];';
+
         if (isEnum(root, func.returnType)) {
-          if (func.returnType.isNullable) {
-            returnTypeString =
-                '${_enumName(returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
-          } else {
-            returnTypeString = '${returnType.baseName} enumValue';
-          }
+          returnTypeString =
+              '${_enumName(returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
         }
         if (func.arguments.isEmpty) {
           indent.writeScoped(
@@ -800,16 +796,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         indent.writeln('callback(wrapResult(nil, error));');
       } else {
         if (isEnum(root, func.returnType)) {
-          if (func.returnType.isNullable) {
-            indent.writeln(
-                '${_enumName(func.returnType.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)} enumBox = $call;');
-            indent.writeln(
-                'NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];');
-          } else {
-            indent.writeln('${returnType.baseName} enumValue = $call;');
-            indent.writeln(
-                'NSNumber *output = [NSNumber numberWithInteger:enumValue];');
-          }
+          indent.writeln(
+              '${_enumName(func.returnType.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)} enumBox = $call;');
+          indent.writeln(
+              'NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];');
         } else {
           indent.writeln('${returnType.withPtr}output = $call;');
         }
@@ -1104,26 +1094,38 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
           indent.addln('];');
         });
       });
-      indent.write('[channel sendMessage:$sendArgument reply:^(id reply) ');
+      final String valueOnErrorResponse = func.returnType.isVoid ? '' : 'nil, ';
+      indent.write(
+          '[channel sendMessage:$sendArgument reply:^(NSArray<id> *reply) ');
       indent.addScoped('{', '}];', () {
-        if (func.returnType.isVoid) {
-          indent.writeln('completion(nil);');
-        } else {
-          if (isEnum(root, func.returnType)) {
-            if (func.returnType.isNullable) {
-              indent.writeln(
-                  'NSNumber *outputAsNumber = reply == [NSNull null] ? nil : reply;');
-              indent.writeln(
-                  '${_enumName(returnType.baseName, suffix: ' *', prefix: languageOptions.prefix, box: true)}output = outputAsNumber == nil ? nil : [[${_enumName(returnType.baseName, prefix: languageOptions.prefix, box: true)} alloc] initWithValue: [outputAsNumber integerValue]];');
+        indent.writeScoped('if (reply != nil) {', '} ', () {
+          indent.writeScoped('if (reply.count > 1) {', '} ', () {
+            indent.writeln(
+                'completion($valueOnErrorResponse[FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);');
+          }, addTrailingNewline: false);
+          indent.addScoped('else {', '}', () {
+            const String nullCheck =
+                'reply[0] == [NSNull null] ? nil : reply[0]';
+            if (func.returnType.isVoid) {
+              indent.writeln('completion(nil);');
             } else {
-              indent.writeln(
-                  '${returnType.baseName} output = [reply integerValue];');
+              if (isEnum(root, func.returnType)) {
+                final String enumName = _enumName(returnType.baseName,
+                    prefix: languageOptions.prefix, box: true);
+                indent.writeln('NSNumber *outputAsNumber = $nullCheck;');
+                indent.writeln(
+                    '$enumName *output = outputAsNumber == nil ? nil : [[$enumName alloc] initWithValue:[outputAsNumber integerValue]];');
+              } else {
+                indent.writeln('${returnType.withPtr}output = $nullCheck;');
+              }
+              indent.writeln('completion(output, nil);');
             }
-          } else {
-            indent.writeln('${returnType.withPtr}output = reply;');
-          }
-          indent.writeln('completion(output, nil);');
-        }
+          });
+        }, addTrailingNewline: false);
+        indent.addScoped('else {', '} ', () {
+          indent.writeln(
+              'completion($valueOnErrorResponse[FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);');
+        });
       });
     });
   }
@@ -1188,10 +1190,7 @@ String _callbackForType(
   if (type.isVoid) {
     return 'void (^)(FlutterError *_Nullable)';
   } else if (isEnum(root, type)) {
-    if (type.isNullable) {
-      return 'void (^)(${_enumName(objcType.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
-    }
-    return 'void (^)(${_enumName(objcType.baseName, prefix: options.prefix)}, FlutterError *_Nullable)';
+    return 'void (^)(${_enumName(objcType.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
   } else {
     return 'void (^)(${objcType.withPtr}_Nullable, FlutterError *_Nullable)';
   }

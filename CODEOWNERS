@@ -33,6 +33,7 @@ packages/pigeon/**                                       @tarrinneal
 packages/platform/**                                     @stuartmorgan
 packages/plugin_platform_interface/**                    @stuartmorgan
 packages/pointer_interceptor/**                          @ditman
+packages/process/**                                      @stuartmorgan
 packages/quick_actions/**                                @bparrishMines
 packages/rfw/**                                          @Hixie
 packages/shared_preferences/**                           @tarrinneal
