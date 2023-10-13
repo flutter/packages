@@ -8,81 +8,43 @@ import XCTest
 @testable import ios_platform_images
 
 class IosPlatformImagesTests: XCTestCase {
+  let plugin = IosPlatformImagesPlugin()
 
-  func testHandleMethodCall_loadImage() {
+  func testLoadImage() {
     let assetName = "flutter"
+    let imageData = plugin.loadImage(name: assetName)
 
-    let call = FlutterMethodCall(methodName: "loadImage", arguments: assetName)
-    let plugin = IosPlatformImagesPlugin()
-
-    let resultExpectation = expectation(description: "result block must be called.")
-
-    plugin.handle(call) { result in
-      let result = result as? [String: Any]
-      XCTAssertNotNil(result)
-
-      let scale = result?["scale"] as? CGFloat
-      let data = result?["data"] as? FlutterStandardTypedData
-
-      XCTAssertNotNil(scale)
-      XCTAssertNotNil(data)
-
-      resultExpectation.fulfill()
-    }
-
-    waitForExpectations(timeout: 2, handler: nil)
+    XCTAssertNotNil(imageData)
+    XCTAssertNotNil(imageData?.data)
   }
 
-  func testHandleMethodCall_loadImage_notFound() {
-    let assetName = "flutterNotFound"
-
-    let call = FlutterMethodCall(methodName: "loadImage", arguments: [assetName])
-    let plugin = IosPlatformImagesPlugin()
-
-    let resultExpectation = expectation(description: "result block must be called.")
-
-    plugin.handle(call) { result in
-      let result = result as? [String: Any]
-
-      XCTAssertNil(result)
-      resultExpectation.fulfill()
-    }
-
-    waitForExpectations(timeout: 2, handler: nil)
-  }
-
-  func testHandleMethodCall_resolveURL() {
-    let assetName = "textfile"
-
-    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [assetName])
-    let plugin = IosPlatformImagesPlugin()
-
-    let resultExpectation = expectation(description: "result block must be called.")
-
-    plugin.handle(call) { result in
-      let result = result as? String
-      XCTAssertNotNil(result)
-      XCTAssertEqual(result?.components(separatedBy: "/").last, assetName)
-      resultExpectation.fulfill()
-    }
-
-    waitForExpectations(timeout: 1, handler: nil)
-  }
-
-  func testHandleMethodCall_resolveURL_notFound() {
+  func testLoadImageNotFound() {
     let assetName = "notFound"
+    let imageData = plugin.loadImage(name: assetName)
 
-    let call = FlutterMethodCall(methodName: "resolveURL", arguments: [assetName, NSNull()])
-    let plugin = IosPlatformImagesPlugin()
-
-    let resultExpectation = expectation(description: "result block must be called.")
-
-    plugin.handle(call) { result in
-      XCTAssertNil(result)
-      resultExpectation.fulfill()
-    }
-
-    waitForExpectations(timeout: 1, handler: nil)
+    XCTAssertNil(imageData)
   }
 
+  func testResolveURL() {
+    let resourceName = "textfile"
+    let extensionName: String? = nil
+    do {
+      let url = try plugin.resolveUrl(resourceName: resourceName, extension: extensionName)
+      XCTAssertNotNil(url)
+      XCTAssertTrue(url!.contains(resourceName))
+    } catch {
+      XCTFail("Error while resolving URL: \(error)")
+    }
+  }
+
+  func testResolveURLNotFound() {
+    let resourceName = "notFound"
+    let extensionName: String? = nil
+    do {
+      let url = try plugin.resolveUrl(resourceName: resourceName, extension: extensionName)
+      XCTAssertNil(url)
+    } catch {
+      XCTFail("Error while resolving URL: \(error)")
+    }
+  }
 }

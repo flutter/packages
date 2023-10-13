@@ -5,63 +5,34 @@
 import Flutter
 import Foundation
 
-public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin {
-
+public final class IosPlatformImagesPlugin: NSObject, FlutterPlugin, PlatformImagesApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(
-      name: "plugins.flutter.io/ios_platform_images",
-      binaryMessenger: registrar.messenger())
-
     let instance = IosPlatformImagesPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    let messenger = registrar.messenger()
+    PlatformImagesApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "loadImage":
-      loadImage(call, result)
-    case "resolveURL":
-      resolveURL(call, result)
-    default:
-      result(FlutterMethodNotImplemented)
-    }
-  }
-
-  private func loadImage(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-    guard let name = call.arguments as? String else {
-      result(nil)
-      return
-    }
-
+  func loadImage(name: String) -> PlatformImageData? {
     guard let image = UIImage(named: name),
       let data = image.pngData()
     else {
-      result(nil)
-      return
+      return nil
     }
 
-    let imageResult: [String: Any] = [
-      "scale": image.scale,
-      "data": FlutterStandardTypedData(bytes: data),
-    ]
-
-    result(imageResult)
+    return PlatformImageData(
+      data: FlutterStandardTypedData(bytes: data), scale: Double(image.scale))
   }
 
-  private func resolveURL(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-    guard let args = call.arguments as? [String?] else {
-      return result(nil)
+  func resolveUrl(resourceName: String, extension: String?) throws -> String? {
+    guard
+      let url = Bundle.main.url(
+        forResource: resourceName,
+        withExtension: `extension`)
+    else {
+      return nil
     }
 
-    let name = args[0]
-    let extensionName = args.count > 1 && args[1] != nil ? args[1] : nil
-
-    guard let url = Bundle.main.url(forResource: name, withExtension: extensionName) else {
-      return result(nil)
-    }
-
-    result(url.absoluteString)
-
+    return url.absoluteString
   }
 
 }
