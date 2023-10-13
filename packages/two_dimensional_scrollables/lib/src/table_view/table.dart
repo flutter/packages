@@ -667,16 +667,20 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }) {
     // TODO(Piinks): Assert here or somewhere else merged cells cannot span
     // pinned and unpinned cells (for merged cell follow-up), https://github.com/flutter/flutter/issues/131224
+    _Span colSpan, rowSpan;
     double yPaintOffset = -offset.dy;
     for (int row = start.row; row <= end.row; row += 1) {
       double xPaintOffset = -offset.dx;
-      final double rowHeight = _rowMetrics[row]!.extent;
-      yPaintOffset += _rowMetrics[row]!.configuration.padding.leading;
+      rowSpan = _rowMetrics[row]!;
+      final double rowHeight = rowSpan.extent;
+      yPaintOffset += rowSpan.configuration.padding.leading;
       for (int column = start.column; column <= end.column; column += 1) {
-        final double columnWidth = _columnMetrics[column]!.extent;
-        xPaintOffset += _columnMetrics[column]!.configuration.padding.leading;
+        colSpan = _columnMetrics[column]!;
+        final double columnWidth = colSpan.extent;
+        xPaintOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
+        print(vicinity);
         // TODO(Piinks): Add back merged cells, https://github.com/flutter/flutter/issues/131224
 
         final RenderBox? cell = buildOrObtainChildFor(vicinity);
@@ -840,10 +844,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final LinkedHashMap<Rect, TableSpanDecoration> backgroundColumns =
         LinkedHashMap<Rect, TableSpanDecoration>();
 
+    final _Span rowSpan = _rowMetrics[leading.row]!;
     for (int column = leading.column; column <= trailing.column; column++) {
-      final _Span span = _columnMetrics[column]!;
-      if (span.configuration.backgroundDecoration != null ||
-          span.configuration.foregroundDecoration != null) {
+      final _Span columnSpan = _columnMetrics[column]!;
+      if (columnSpan.configuration.backgroundDecoration != null ||
+          columnSpan.configuration.foregroundDecoration != null) {
         final RenderBox leadingCell = getChildFor(
           TableVicinity(column: column, row: leading.row),
         )!;
@@ -852,17 +857,28 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         )!;
 
         final Rect rect = Rect.fromPoints(
-          parentDataOf(leadingCell).paintOffset! + offset,
+          parentDataOf(leadingCell).paintOffset! +
+              offset -
+              Offset(
+                columnSpan.configuration.padding.leading,
+                rowSpan.configuration.padding.leading,
+              ),
           parentDataOf(trailingCell).paintOffset! +
               Offset(trailingCell.size.width, trailingCell.size.height) +
-              offset,
+              offset +
+              Offset(
+                columnSpan.configuration.padding.trailing,
+                rowSpan.configuration.padding.trailing,
+              ),
         );
 
-        if (span.configuration.backgroundDecoration != null) {
-          backgroundColumns[rect] = span.configuration.backgroundDecoration!;
+        if (columnSpan.configuration.backgroundDecoration != null) {
+          backgroundColumns[rect] =
+              columnSpan.configuration.backgroundDecoration!;
         }
-        if (span.configuration.foregroundDecoration != null) {
-          foregroundColumns[rect] = span.configuration.foregroundDecoration!;
+        if (columnSpan.configuration.foregroundDecoration != null) {
+          foregroundColumns[rect] =
+              columnSpan.configuration.foregroundDecoration!;
         }
       }
     }
@@ -873,10 +889,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final LinkedHashMap<Rect, TableSpanDecoration> backgroundRows =
         LinkedHashMap<Rect, TableSpanDecoration>();
 
+    final _Span columnSpan = _columnMetrics[leading.column]!;
     for (int row = leading.row; row <= trailing.row; row++) {
-      final _Span span = _rowMetrics[row]!;
-      if (span.configuration.backgroundDecoration != null ||
-          span.configuration.foregroundDecoration != null) {
+      final _Span rowSpan = _rowMetrics[row]!;
+      if (rowSpan.configuration.backgroundDecoration != null ||
+          rowSpan.configuration.foregroundDecoration != null) {
         final RenderBox leadingCell = getChildFor(
           TableVicinity(column: leading.column, row: row),
         )!;
@@ -885,16 +902,25 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         )!;
 
         final Rect rect = Rect.fromPoints(
-          parentDataOf(leadingCell).paintOffset! + offset,
+          parentDataOf(leadingCell).paintOffset! +
+              offset -
+              Offset(
+                columnSpan.configuration.padding.leading,
+                rowSpan.configuration.padding.leading,
+              ),
           parentDataOf(trailingCell).paintOffset! +
               Offset(trailingCell.size.width, trailingCell.size.height) +
-              offset,
+              offset +
+              Offset(
+                columnSpan.configuration.padding.leading,
+                rowSpan.configuration.padding.trailing,
+              ),
         );
-        if (span.configuration.backgroundDecoration != null) {
-          backgroundRows[rect] = span.configuration.backgroundDecoration!;
+        if (rowSpan.configuration.backgroundDecoration != null) {
+          backgroundRows[rect] = rowSpan.configuration.backgroundDecoration!;
         }
-        if (span.configuration.foregroundDecoration != null) {
-          foregroundRows[rect] = span.configuration.foregroundDecoration!;
+        if (rowSpan.configuration.foregroundDecoration != null) {
+          foregroundRows[rect] = rowSpan.configuration.foregroundDecoration!;
         }
       }
     }
@@ -1032,7 +1058,12 @@ class _Span
   bool get isPinned => _isPinned;
   late bool _isPinned;
 
-  double get trailingOffset => leadingOffset + extent;
+  double get trailingOffset {
+    return leadingOffset +
+        extent +
+        configuration.padding.leading +
+        configuration.padding.trailing;
+  }
 
   // ---- Span Management ----
 

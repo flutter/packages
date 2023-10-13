@@ -686,6 +686,68 @@ void main() {
       expect(rowExtent.delegate.viewportExtent, 600.0);
     });
 
+    testWidgets('Does not lay out extra children on account of padding', (WidgetTester tester) async {
+      final ScrollController verticalController = ScrollController();
+      final ScrollController horizontalController = ScrollController();
+      // Large column padding
+      TableView tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        // This padding is so high, no children should be laid out.
+        columnBuilder: (_) => const TableSpan(
+            extent: FixedTableSpanExtent(100),
+          padding: TableSpanPadding(leading: 1051), // 800 viewport width, 250 cacheExtent.
+        ),
+        rowBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      // All of these children are so offset by the padding they are outside of
+      // the viewport and cache extent
+      expect(find.text('Row: 0 Column: 0'), findsNothing);
+      expect(find.text('Row: 1 Column: 0'), findsNothing);
+      expect(find.text('Row: 0 Column: 1'), findsNothing);
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
+
+      // Large row padding
+      tableView = TableView.builder(
+        rowCount: 50,
+        columnCount: 50,
+        // This padding is so high, no children should be laid out.
+        rowBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(100),
+          padding: TableSpanPadding(leading: 851), // 600 viewport height, + 250 cacheExtent
+        ),
+        columnBuilder: (_) => span,
+        cellBuilder: (_, TableVicinity vicinity) {
+          return SizedBox.square(
+            dimension: 100,
+            child: Text('Row: ${vicinity.row} Column: ${vicinity.column}'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      // All of these children are so offset by the padding they are outside of
+      // the viewport and cache extent
+      expect(find.text('Row: 0 Column: 0'), findsNothing);
+      expect(find.text('Row: 1 Column: 0'), findsNothing);
+      expect(find.text('Row: 0 Column: 1'), findsNothing);
+      expect(find.text('Row: 1 Column: 1'), findsNothing);
+
+      // Check with pinned rows and columns
+
+      // Check with eventually accrued paddings
+    });
+
     testWidgets('regular layout - no pinning', (WidgetTester tester) async {
       final ScrollController verticalController = ScrollController();
       final ScrollController horizontalController = ScrollController();
