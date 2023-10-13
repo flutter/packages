@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_identity_services_web/id.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:js/js.dart';
-import 'package:js/js_util.dart' as js_util show getProperty, allowInterop;
+import 'package:js/js_util.dart' as js_util show getProperty;
 
 import 'src/dom.dart';
 import 'utils.dart' as utils;
