@@ -26,7 +26,7 @@ void main() {
     test('passes getLaunchAction on launch method', () {
       quickActions.initialize((String type) {});
 
-      expect(api.launchAction, LAUNCH_ACTION_STRING);
+      expect(api.getLaunchActionCalled, false);
     });
 
     test('initialize', () async {
@@ -74,18 +74,18 @@ void main() {
 
 class _FakeQuickActionsApi implements AndroidQuickActionsApi {
   List<ShortcutItem> items = <ShortcutItem>[];
-  String? launchAction;
+  bool getLaunchActionCalled = false;
 
   @override
-  Future<void> clearShortcutItems() {
+  Future<void> clearShortcutItems() async {
     items = <ShortcutItem>[];
-    return Future<void>.value();
+    return;
   }
 
   @override
-  Future<String?> getLaunchAction() {
-    launchAction = LAUNCH_ACTION_STRING;
-    return Future<String?>.value(launchAction);
+  Future<String?> getLaunchAction() async {
+    getLaunchActionCalled = true;
+    return LAUNCH_ACTION_STRING;
   }
 
   @override
@@ -95,6 +95,8 @@ class _FakeQuickActionsApi implements AndroidQuickActionsApi {
       if (element != null) {
         items.add(
             QuickActionsAndroid.shortcutItemMessageToShortcutItem(element));
+      } else {
+        throw Exception('ShortcutItemMessage unexpectedly null');
       }
     }
   }

@@ -28,24 +28,24 @@ class ShortcutItemMessage {
   /// Localized title of the item.
   String localizedTitle;
 
-  /// Name of native resource (xcassets etc; NOT a Flutter asset) to be
-  /// displayed as the icon for this item.
+  /// Name of native resource to be displayed as the icon for this item.
   String? icon;
 }
 
 @HostApi()
 abstract class AndroidQuickActionsApi {
-  @async
+  /// Checks for, and returns the action that launched the app.
   String? getLaunchAction();
 
-  @async
+  /// Sets the dynamic shortcuts for the app.
   void setShortcutItems(List<ShortcutItemMessage> itemsList);
 
-  @async
+  /// Removes all dynamic shortcuts.
   void clearShortcutItems();
 }
 
 @FlutterApi()
 abstract class AndroidQuickActionsFlutterApi {
-  void handleCall(String action);
+  /// Sends a string representing a shortcut from the native platform to the app.
+  void launchAction(String action);
 }

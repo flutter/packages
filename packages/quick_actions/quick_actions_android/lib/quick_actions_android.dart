@@ -69,7 +69,7 @@ class QuickActionsAndroid extends QuickActionsPlatform {
 
 class _QuickActionHandlerApi extends AndroidQuickActionsFlutterApi {
   @override
-  void handleCall(String action) {
+  void launchAction(String action) {
     _handler(action);
   }
 }

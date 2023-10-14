@@ -90,10 +90,7 @@ public class Messages {
       this.localizedTitle = setterArg;
     }
 
-    /**
-     * Name of native resource (xcassets etc; NOT a Flutter asset) to be displayed as the icon for
-     * this item.
-     */
+    /** Name of native resource to be displayed as the icon for this item. */
     private @Nullable String icon;
 
     public @Nullable String getIcon() {
@@ -160,13 +157,6 @@ public class Messages {
     }
   }
 
-  public interface Result<T> {
-    @SuppressWarnings("UnknownNullness")
-    void success(T result);
-
-    void error(@NonNull Throwable error);
-  }
-
   private static class AndroidQuickActionsApiCodec extends StandardMessageCodec {
     public static final AndroidQuickActionsApiCodec INSTANCE = new AndroidQuickActionsApiCodec();
 
@@ -195,13 +185,13 @@ public class Messages {
 
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface AndroidQuickActionsApi {
-
-    void getLaunchAction(@NonNull Result<String> result);
-
-    void setShortcutItems(
-        @NonNull List<ShortcutItemMessage> itemsList, @NonNull Result<Void> result);
-
-    void clearShortcutItems(@NonNull Result<Void> result);
+    /** Checks for, and returns the action that launched the app. */
+    @Nullable
+    String getLaunchAction();
+    /** Sets the dynamic shortcuts for the app. */
+    void setShortcutItems(@NonNull List<ShortcutItemMessage> itemsList);
+    /** Removes all dynamic shortcuts. */
+    void clearShortcutItems();
 
     /** The codec used by AndroidQuickActionsApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -223,20 +213,14 @@ public class Messages {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<String> resultCallback =
-                    new Result<String>() {
-                      public void success(String result) {
-                        wrapped.add(0, result);
-                        reply.reply(wrapped);
-                      }
-
-                      public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
-                      }
-                    };
-
-                api.getLaunchAction(resultCallback);
+                try {
+                  String output = api.getLaunchAction();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -254,20 +238,14 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<ShortcutItemMessage> itemsListArg = (List<ShortcutItemMessage>) args.get(0);
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
-                      }
-
-                      public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
-                      }
-                    };
-
-                api.setShortcutItems(itemsListArg, resultCallback);
+                try {
+                  api.setShortcutItems(itemsListArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -283,20 +261,14 @@ public class Messages {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
-                      public void success(Void result) {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
-                      }
-
-                      public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
-                      }
-                    };
-
-                api.clearShortcutItems(resultCallback);
+                try {
+                  api.clearShortcutItems();
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -321,12 +293,12 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
-
-    public void handleCall(@NonNull String actionArg, @NonNull Reply<Void> callback) {
+    /** Sends a string representing a shortcut from the native platform to the app. */
+    public void launchAction(@NonNull String actionArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
-              "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.handleCall",
+              "dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.launchAction",
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(actionArg)),

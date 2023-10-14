@@ -25,8 +25,7 @@ class ShortcutItemMessage {
   /// Localized title of the item.
   String localizedTitle;
 
-  /// Name of native resource (xcassets etc; NOT a Flutter asset) to be
-  /// displayed as the icon for this item.
+  /// Name of native resource to be displayed as the icon for this item.
   String? icon;
 
   Object encode() {
@@ -80,6 +79,7 @@ class AndroidQuickActionsApi {
 
   static const MessageCodec<Object?> codec = _AndroidQuickActionsApiCodec();
 
+  /// Checks for, and returns the action that launched the app.
   Future<String?> getLaunchAction() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.getLaunchAction',
@@ -102,6 +102,7 @@ class AndroidQuickActionsApi {
     }
   }
 
+  /// Sets the dynamic shortcuts for the app.
   Future<void> setShortcutItems(
       List<ShortcutItemMessage?> arg_itemsList) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -126,6 +127,7 @@ class AndroidQuickActionsApi {
     }
   }
 
+  /// Removes all dynamic shortcuts.
   Future<void> clearShortcutItems() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsApi.clearShortcutItems',
@@ -152,13 +154,14 @@ class AndroidQuickActionsApi {
 abstract class AndroidQuickActionsFlutterApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void handleCall(String action);
+  /// Sends a string representing a shortcut from the native platform to the app.
+  void launchAction(String action);
 
   static void setup(AndroidQuickActionsFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.handleCall',
+          'dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.launchAction',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -166,12 +169,12 @@ abstract class AndroidQuickActionsFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.handleCall was null.');
+              'Argument for dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.launchAction was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_action = (args[0] as String?);
           assert(arg_action != null,
-              'Argument for dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.handleCall was null, expected non-null String.');
-          api.handleCall(arg_action!);
+              'Argument for dev.flutter.pigeon.quick_actions_android.AndroidQuickActionsFlutterApi.launchAction was null, expected non-null String.');
+          api.launchAction(arg_action!);
           return;
         });
       }

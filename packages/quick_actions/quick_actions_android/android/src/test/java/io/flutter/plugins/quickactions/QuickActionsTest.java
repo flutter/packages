@@ -24,7 +24,7 @@ import org.junit.Test;
 
 public class QuickActionsTest {
   private static class TestBinaryMessenger implements BinaryMessenger {
-    public boolean handleCallCalled;
+    public boolean launchActionCalled;
 
     @Override
     public void send(@NonNull String channel, @Nullable ByteBuffer message) {
@@ -36,8 +36,8 @@ public class QuickActionsTest {
         @NonNull String channel,
         @Nullable ByteBuffer message,
         @Nullable final BinaryReply callback) {
-      if (channel.contains("handleCall")) {
-        handleCallCalled = true;
+      if (channel.contains("launchAction")) {
+        launchActionCalled = true;
       }
     }
 
@@ -69,13 +69,8 @@ public class QuickActionsTest {
     final QuickActionsPlugin plugin =
         new QuickActionsPlugin((version) -> SUPPORTED_BUILD >= version);
     setUpMessengerAndFlutterPluginBinding(testBinaryMessenger, plugin);
-    //     Field handler = plugin.getClass().getDeclaredField("quickActions");
-    //     final QuickActions mockQuickActions = mock(QuickActions.class);
-    //     handler.setAccessible(true);
-    //     handler.set(plugin, mockQuickActions);
     final Intent mockIntent = createMockIntentWithQuickActionExtra();
     final Activity mockMainActivity = mock(Activity.class);
-    //     when(mockQuickActions.getActivity()).thenReturn(mockMainActivity);
     when(mockMainActivity.getIntent()).thenReturn(mockIntent);
     final ActivityPluginBinding mockActivityPluginBinding = mock(ActivityPluginBinding.class);
     when(mockActivityPluginBinding.getActivity()).thenReturn(mockMainActivity);
@@ -89,7 +84,7 @@ public class QuickActionsTest {
     plugin.onAttachedToActivity(mockActivityPluginBinding);
 
     // Assert
-    assertTrue(testBinaryMessenger.handleCallCalled);
+    assertTrue(testBinaryMessenger.launchActionCalled);
   }
 
   @Test
@@ -105,7 +100,7 @@ public class QuickActionsTest {
     final boolean onNewIntentReturn = plugin.onNewIntent(mockIntent);
 
     // Assert
-    assertFalse(testBinaryMessenger.handleCallCalled);
+    assertFalse(testBinaryMessenger.launchActionCalled);
     assertFalse(onNewIntentReturn);
   }
 
@@ -131,7 +126,7 @@ public class QuickActionsTest {
     final boolean onNewIntentReturn = plugin.onNewIntent(mockIntent);
 
     // Assert
-    assertTrue(testBinaryMessenger.handleCallCalled);
+    assertTrue(testBinaryMessenger.launchActionCalled);
     assertFalse(onNewIntentReturn);
   }
 

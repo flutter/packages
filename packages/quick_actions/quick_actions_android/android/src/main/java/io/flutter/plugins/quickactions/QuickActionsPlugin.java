@@ -65,11 +65,6 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    if (quickActions == null) {
-      Log.wtf(TAG, "Already detached from the engine.");
-      return;
-    }
-
     Messages.AndroidQuickActionsApi.setup(binding.getBinaryMessenger(), null);
     this.quickActions = null;
   }
@@ -89,11 +84,6 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
 
   @Override
   public void onDetachedFromActivity() {
-    if (this.quickActions == null) {
-      Log.wtf(TAG, "quickActions was never set.");
-      return;
-    }
-
     quickActions.setActivity(null);
   }
 
@@ -114,18 +104,17 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
     if (!sdkChecker.sdkIsAtLeast(Build.VERSION_CODES.N_MR1)) {
       return false;
     }
+    Activity activity = this.quickActions.getActivity();
     // Notify the Dart side if the launch intent has the intent extra relevant to quick actions.
-    if (intent.hasExtra(QuickActions.EXTRA_ACTION)) {
-      Context context = this.quickActions.getActivity().getApplicationContext();
+    if (intent.hasExtra(QuickActions.EXTRA_ACTION) && activity != null) {
+      Context context = activity.getApplicationContext();
       ShortcutManager shortcutManager =
           (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
       String shortcutId = intent.getStringExtra(QuickActions.EXTRA_ACTION);
-      quickActionsFlutterApi.handleCall(
+      quickActionsFlutterApi.launchAction(
           shortcutId,
-          new AndroidQuickActionsFlutterApi.Reply<Void>() {
-            public void reply(Void value) {
-              // noop
-            }
+          value -> {
+            // noop
           });
       shortcutManager.reportShortcutUsed(shortcutId);
     }

@@ -17,9 +17,9 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.plugins.quickactions.Messages.AndroidQuickActionsApi;
 import io.flutter.plugins.quickactions.Messages.FlutterError;
-import io.flutter.plugins.quickactions.Messages.Result;
 import io.flutter.plugins.quickactions.Messages.ShortcutItemMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,89 +48,87 @@ final class QuickActions implements AndroidQuickActionsApi {
 
   @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.N_MR1)
   boolean isVersionAllowed() {
-    // We already know that this functionality does not work for anything
-    // lower than API 25 so we chose not to return error. Instead we do nothing.
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1;
   }
 
   @Override
-  public void setShortcutItems(
-      @NonNull List<ShortcutItemMessage> itemsList, @NonNull Result<Void> result) {
-    if (isVersionAllowed()) {
-      ShortcutManager shortcutManager =
-          (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
-      List<ShortcutInfo> shortcuts = ShortcutItemMessageToShortcutInfo(itemsList);
-      Executor uiThreadExecutor = new UiThreadExecutor();
-      ThreadPoolExecutor executor =
-          new ThreadPoolExecutor(0, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
-
-      executor.execute(
-          () -> {
-            boolean dynamicShortcutsSet = false;
-            try {
-              shortcutManager.setDynamicShortcuts(shortcuts);
-              dynamicShortcutsSet = true;
-            } catch (Exception e) {
-              // Leave dynamicShortcutsSet as false
-            }
-
-            final boolean didSucceed = dynamicShortcutsSet;
-
-            // TODO(camsim99): Move re-dispatch below to background thread when Flutter 2.8+ is
-            // stable.
-            uiThreadExecutor.execute(
-                () -> {
-                  if (didSucceed) {
-                    result.success(null);
-                  } else {
-                    result.error(
-                        new FlutterError(
-                            "quick_action_setshortcutitems_failure",
-                            "Exception thrown when setting dynamic shortcuts",
-                            null));
-                  }
-                });
-          });
+  public void setShortcutItems(@NonNull List<ShortcutItemMessage> itemsList) {
+    // We already know that this functionality does not work for anything
+    // lower than API 25 so we chose not to return error. Instead we do nothing.
+    if (!isVersionAllowed()) {
+      return;
     }
-    return;
+    ShortcutManager shortcutManager =
+        (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
+    List<ShortcutInfo> shortcuts = shortcutItemMessageToShortcutInfo(itemsList);
+    Executor uiThreadExecutor = new UiThreadExecutor();
+    ThreadPoolExecutor executor =
+        new ThreadPoolExecutor(0, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+
+    executor.execute(
+        () -> {
+          boolean dynamicShortcutsSet = false;
+          try {
+            shortcutManager.setDynamicShortcuts(shortcuts);
+            dynamicShortcutsSet = true;
+          } catch (Exception e) {
+            // Leave dynamicShortcutsSet as false
+          }
+
+          final boolean didSucceed = dynamicShortcutsSet;
+
+          // TODO(camsim99): Move re-dispatch below to background thread when Flutter 2.8+ is
+          // stable.
+          uiThreadExecutor.execute(
+              () -> {
+                if (!didSucceed) {
+                  throw new FlutterError(
+                      "quick_action_setshortcutitems_failure",
+                      "Exception thrown when setting dynamic shortcuts",
+                      null);
+                }
+              });
+        });
   }
 
   @Override
-  public void clearShortcutItems(@NonNull Result<Void> result) {
-    if (isVersionAllowed()) {
-      ShortcutManager shortcutManager =
-          (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
-      shortcutManager.removeAllDynamicShortcuts();
-      result.success(null);
+  public void clearShortcutItems() {
+    // We already know that this functionality does not work for anything
+    // lower than API 25 so we chose not to return error. Instead we do nothing.
+    if (!isVersionAllowed()) {
+      return;
     }
+    ShortcutManager shortcutManager =
+        (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
+    shortcutManager.removeAllDynamicShortcuts();
   }
 
   @Override
-  public void getLaunchAction(@NonNull Result<String> result) {
-    if (isVersionAllowed()) {
-      ShortcutManager shortcutManager =
-          (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
-      if (activity == null) {
-        result.error(
-            new FlutterError(
-                "quick_action_getlaunchaction_no_activity",
-                "There is no activity available when launching action",
-                null));
-        return;
-      }
-      final Intent intent = activity.getIntent();
-      final String launchAction = intent.getStringExtra(EXTRA_ACTION);
-      if (launchAction != null && !launchAction.isEmpty()) {
-        shortcutManager.reportShortcutUsed(launchAction);
-        intent.removeExtra(EXTRA_ACTION);
-      }
-      result.success(launchAction);
+  public @Nullable String getLaunchAction() {
+    // We already know that this functionality does not work for anything
+    // lower than API 25 so we chose not to return error. Instead we do nothing.
+    if (!isVersionAllowed()) {
+      return null;
     }
-    return;
+    ShortcutManager shortcutManager =
+        (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
+    if (activity == null) {
+      throw new FlutterError(
+          "quick_action_getlaunchaction_no_activity",
+          "There is no activity available when launching action",
+          null);
+    }
+    final Intent intent = activity.getIntent();
+    final String launchAction = intent.getStringExtra(EXTRA_ACTION);
+    if (launchAction != null && !launchAction.isEmpty()) {
+      shortcutManager.reportShortcutUsed(launchAction);
+      intent.removeExtra(EXTRA_ACTION);
+    }
+    return launchAction;
   }
 
   @TargetApi(Build.VERSION_CODES.N_MR1)
-  private List<ShortcutInfo> ShortcutItemMessageToShortcutInfo(
+  private List<ShortcutInfo> shortcutItemMessageToShortcutInfo(
       @NonNull List<ShortcutItemMessage> shortcuts) {
     final List<ShortcutInfo> shortcutInfos = new ArrayList<>();
 
