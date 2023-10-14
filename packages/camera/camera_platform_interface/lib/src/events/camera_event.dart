@@ -34,7 +34,10 @@ abstract class CameraEvent {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is CameraEvent && runtimeType == other.runtimeType && cameraId == other.cameraId;
+      identical(this, other) ||
+      other is CameraEvent &&
+          runtimeType == other.runtimeType &&
+          cameraId == other.cameraId;
 
   @override
   int get hashCode => cameraId.hashCode;
@@ -63,7 +66,8 @@ class CameraInitializedEvent extends CameraEvent {
       : previewWidth = json['previewWidth']! as double,
         previewHeight = json['previewHeight']! as double,
         exposureMode = deserializeExposureMode(json['exposureMode']! as String),
-        exposurePointSupported = (json['exposurePointSupported'] as bool?) ?? false,
+        exposurePointSupported =
+            (json['exposurePointSupported'] as bool?) ?? false,
         focusMode = deserializeFocusMode(json['focusMode']! as String),
         focusPointSupported = (json['focusPointSupported'] as bool?) ?? false,
         super(json['cameraId']! as int);
@@ -178,7 +182,8 @@ class CameraClosingEvent extends CameraEvent {
 
   /// Converts the supplied [Map] to an instance of the [CameraClosingEvent]
   /// class.
-  CameraClosingEvent.fromJson(Map<String, dynamic> json) : super(json['cameraId']! as int);
+  CameraClosingEvent.fromJson(Map<String, dynamic> json)
+      : super(json['cameraId']! as int);
 
   /// Converts the [CameraClosingEvent] instance into a [Map] instance that can
   /// be serialized to JSON.
@@ -188,7 +193,10 @@ class CameraClosingEvent extends CameraEvent {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || super == other && other is CameraClosingEvent && runtimeType == other.runtimeType;
+      identical(this, other) ||
+      super == other &&
+          other is CameraClosingEvent &&
+          runtimeType == other.runtimeType;
 
   @override
   // This is here even though it just calls super to make it less likely that
@@ -246,8 +254,9 @@ class VideoRecordedEvent extends CameraEvent {
   /// class.
   VideoRecordedEvent.fromJson(Map<String, dynamic> json)
       : file = XFile(json['path']! as String),
-        maxVideoDuration =
-            json['maxVideoDuration'] != null ? Duration(milliseconds: json['maxVideoDuration'] as int) : null,
+        maxVideoDuration = json['maxVideoDuration'] != null
+            ? Duration(milliseconds: json['maxVideoDuration'] as int)
+            : null,
         super(json['cameraId']! as int);
 
   /// XFile of the recorded video.
@@ -258,8 +267,11 @@ class VideoRecordedEvent extends CameraEvent {
 
   /// Converts the [VideoRecordedEvent] instance into a [Map] instance that can be
   /// serialized to JSON.
-  Map<String, dynamic> toJson() =>
-      <String, Object?>{'cameraId': cameraId, 'path': file.path, 'maxVideoDuration': maxVideoDuration?.inMilliseconds};
+  Map<String, dynamic> toJson() => <String, Object?>{
+        'cameraId': cameraId,
+        'path': file.path,
+        'maxVideoDuration': maxVideoDuration?.inMilliseconds
+      };
 
   @override
   bool operator ==(Object other) =>
