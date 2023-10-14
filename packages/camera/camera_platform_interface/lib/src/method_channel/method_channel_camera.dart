@@ -20,10 +20,8 @@ const MethodChannel _channel = MethodChannel('plugins.flutter.io/camera');
 class MethodChannelCamera extends CameraPlatform {
   /// Construct a new method channel camera instance.
   MethodChannelCamera() {
-    const MethodChannel channel =
-        MethodChannel('flutter.io/cameraPlugin/device');
-    channel.setMethodCallHandler(
-        (MethodCall call) => handleDeviceMethodCall(call));
+    const MethodChannel channel = MethodChannel('flutter.io/cameraPlugin/device');
+    channel.setMethodCallHandler((MethodCall call) => handleDeviceMethodCall(call));
   }
 
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
@@ -36,8 +34,7 @@ class MethodChannelCamera extends CameraPlatform {
   /// This is only exposed for test purposes. It shouldn't be used by clients of
   /// the plugin as it may break or change at any time.
   @visibleForTesting
-  final StreamController<CameraEvent> cameraEventStreamController =
-      StreamController<CameraEvent>.broadcast();
+  final StreamController<CameraEvent> cameraEventStreamController = StreamController<CameraEvent>.broadcast();
 
   /// The controller we need to broadcast the different events coming
   /// from handleMethodCall, specific to general device events.
@@ -47,8 +44,7 @@ class MethodChannelCamera extends CameraPlatform {
   /// This is only exposed for test purposes. It shouldn't be used by clients of
   /// the plugin as it may break or change at any time.
   @visibleForTesting
-  final StreamController<DeviceEvent> deviceEventStreamController =
-      StreamController<DeviceEvent>.broadcast();
+  final StreamController<DeviceEvent> deviceEventStreamController = StreamController<DeviceEvent>.broadcast();
 
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
@@ -57,14 +53,13 @@ class MethodChannelCamera extends CameraPlatform {
   StreamController<CameraImageData>? _frameStreamController;
 
   Stream<CameraEvent> _cameraEvents(int cameraId) =>
-      cameraEventStreamController.stream
-          .where((CameraEvent event) => event.cameraId == cameraId);
+      cameraEventStreamController.stream.where((CameraEvent event) => event.cameraId == cameraId);
 
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<Map<dynamic, dynamic>>? cameras = await _channel
-          .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
+      final List<Map<dynamic, dynamic>>? cameras =
+          await _channel.invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
 
       if (cameras == null) {
         return <CameraDescription>[];
@@ -73,8 +68,7 @@ class MethodChannelCamera extends CameraPlatform {
       return cameras.map((Map<dynamic, dynamic> camera) {
         return CameraDescription(
           name: camera['name']! as String,
-          lensDirection:
-              parseCameraLensDirection(camera['lensFacing']! as String),
+          lensDirection: parseCameraLensDirection(camera['lensFacing']! as String),
           sensorOrientation: camera['sensorOrientation']! as int,
         );
       }).toList();
@@ -90,12 +84,9 @@ class MethodChannelCamera extends CameraPlatform {
     bool enableAudio = false,
   }) async {
     try {
-      final Map<String, dynamic>? reply = await _channel
-          .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
+      final Map<String, dynamic>? reply = await _channel.invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': resolutionPreset != null
-            ? _serializeResolutionPreset(resolutionPreset)
-            : null,
+        'resolutionPreset': resolutionPreset != null ? _serializeResolutionPreset(resolutionPreset) : null,
         'enableAudio': enableAudio,
       });
 
@@ -109,12 +100,11 @@ class MethodChannelCamera extends CameraPlatform {
   Future<void> initializeCamera(
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
+    ImageExtension imageExtension = ImageExtension.jpeg,
   }) {
     _channels.putIfAbsent(cameraId, () {
-      final MethodChannel channel =
-          MethodChannel('flutter.io/cameraPlugin/camera$cameraId');
-      channel.setMethodCallHandler(
-          (MethodCall call) => handleCameraMethodCall(call, cameraId));
+      final MethodChannel channel = MethodChannel('flutter.io/cameraPlugin/camera$cameraId');
+      channel.setMethodCallHandler((MethodCall call) => handleCameraMethodCall(call, cameraId));
       return channel;
     });
 
@@ -129,6 +119,7 @@ class MethodChannelCamera extends CameraPlatform {
       <String, dynamic>{
         'cameraId': cameraId,
         'imageFormatGroup': imageFormatGroup.name(),
+        'imageExtension': imageExtension.name(),
       },
     ).catchError(
       // TODO(srawlins): This should return a value of the future's type. This
@@ -191,8 +182,7 @@ class MethodChannelCamera extends CameraPlatform {
 
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return deviceEventStreamController.stream
-        .whereType<DeviceOrientationChangedEvent>();
+    return deviceEventStreamController.stream.whereType<DeviceOrientationChangedEvent>();
   }
 
   @override
@@ -202,10 +192,7 @@ class MethodChannelCamera extends CameraPlatform {
   ) async {
     await _channel.invokeMethod<String>(
       'lockCaptureOrientation',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'orientation': serializeDeviceOrientation(orientation)
-      },
+      <String, dynamic>{'cameraId': cameraId, 'orientation': serializeDeviceOrientation(orientation)},
     );
   }
 
@@ -218,14 +205,10 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
-  Future<XFile> takePicture(int cameraId,
-      {ImageExtension imageExtension = ImageExtension.jpeg}) async {
+  Future<XFile> takePicture(int cameraId) async {
     final String? path = await _channel.invokeMethod<String>(
       'takePicture',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'imageExtension': _serializeImageExtension(imageExtension)
-      },
+      <String, dynamic>{'cameraId': cameraId},
     );
 
     if (path == null) {
@@ -239,14 +222,11 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> prepareForVideoRecording() =>
-      _channel.invokeMethod<void>('prepareForVideoRecording');
+  Future<void> prepareForVideoRecording() => _channel.invokeMethod<void>('prepareForVideoRecording');
 
   @override
-  Future<void> startVideoRecording(int cameraId,
-      {Duration? maxVideoDuration}) async {
-    return startVideoCapturing(
-        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
+  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) async {
+    return startVideoCapturing(VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
   }
 
   @override
@@ -290,21 +270,18 @@ class MethodChannelCamera extends CameraPlatform {
       );
 
   @override
-  Future<void> resumeVideoRecording(int cameraId) =>
-      _channel.invokeMethod<void>(
+  Future<void> resumeVideoRecording(int cameraId) => _channel.invokeMethod<void>(
         'resumeVideoRecording',
         <String, dynamic>{'cameraId': cameraId},
       );
 
   @override
-  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
-      {CameraImageStreamOptions? options}) {
+  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId, {CameraImageStreamOptions? options}) {
     _installStreamController(onListen: _onFrameStreamListen);
     return _frameStreamController!.stream;
   }
 
-  StreamController<CameraImageData> _installStreamController(
-      {Function()? onListen}) {
+  StreamController<CameraImageData> _installStreamController({Function()? onListen}) {
     _frameStreamController = StreamController<CameraImageData>(
       onListen: onListen ?? () {},
       onPause: _onFrameStreamPauseResume,
@@ -324,10 +301,8 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   void _startStreamListener() {
-    const EventChannel cameraEventChannel =
-        EventChannel('plugins.flutter.io/camera/imageStream');
-    _platformImageStreamSubscription =
-        cameraEventChannel.receiveBroadcastStream().listen((dynamic imageData) {
+    const EventChannel cameraEventChannel = EventChannel('plugins.flutter.io/camera/imageStream');
+    _platformImageStreamSubscription = cameraEventChannel.receiveBroadcastStream().listen((dynamic imageData) {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         try {
           _channel.invokeMethod<void>('receivedImageStreamData');
@@ -335,8 +310,7 @@ class MethodChannelCamera extends CameraPlatform {
           throw CameraException(e.code, e.message);
         }
       }
-      _frameStreamController!
-          .add(cameraImageFromPlatformData(imageData as Map<dynamic, dynamic>));
+      _frameStreamController!.add(cameraImageFromPlatformData(imageData as Map<dynamic, dynamic>));
     });
   }
 
@@ -348,13 +322,11 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   void _onFrameStreamPauseResume() {
-    throw CameraException('InvalidCall',
-        'Pause and resume are not supported for onStreamedFrameAvailable');
+    throw CameraException('InvalidCall', 'Pause and resume are not supported for onStreamedFrameAvailable');
   }
 
   @override
-  Future<void> setFlashMode(int cameraId, FlashMode mode) =>
-      _channel.invokeMethod<void>(
+  Future<void> setFlashMode(int cameraId, FlashMode mode) => _channel.invokeMethod<void>(
         'setFlashMode',
         <String, dynamic>{
           'cameraId': cameraId,
@@ -363,8 +335,7 @@ class MethodChannelCamera extends CameraPlatform {
       );
 
   @override
-  Future<void> setExposureMode(int cameraId, ExposureMode mode) =>
-      _channel.invokeMethod<void>(
+  Future<void> setExposureMode(int cameraId, ExposureMode mode) => _channel.invokeMethod<void>(
         'setExposureMode',
         <String, dynamic>{
           'cameraId': cameraId,
@@ -432,8 +403,7 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setFocusMode(int cameraId, FocusMode mode) =>
-      _channel.invokeMethod<void>(
+  Future<void> setFocusMode(int cameraId, FocusMode mode) => _channel.invokeMethod<void>(
         'setFocusMode',
         <String, dynamic>{
           'cameraId': cameraId,
@@ -509,8 +479,7 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setDescriptionWhileRecording(
-      CameraDescription description) async {
+  Future<void> setDescriptionWhileRecording(CameraDescription description) async {
     await _channel.invokeMethod<double>(
       'setDescriptionWhileRecording',
       <String, dynamic>{
@@ -556,16 +525,6 @@ class MethodChannelCamera extends CameraPlatform {
     }
   }
 
-  /// Returns the image extension as a String.
-  String _serializeImageExtension(ImageExtension imageExtension) {
-    switch (imageExtension) {
-      case ImageExtension.jpeg:
-        return 'jpeg';
-      case ImageExtension.heic:
-        return 'heic';
-    }
-  }
-
   /// Converts messages received from the native platform into device events.
   ///
   /// This is only exposed for test purposes. It shouldn't be used by clients of
@@ -574,8 +533,8 @@ class MethodChannelCamera extends CameraPlatform {
     switch (call.method) {
       case 'orientation_changed':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        deviceEventStreamController.add(DeviceOrientationChangedEvent(
-            deserializeDeviceOrientation(arguments['orientation']! as String)));
+        deviceEventStreamController
+            .add(DeviceOrientationChangedEvent(deserializeDeviceOrientation(arguments['orientation']! as String)));
         break;
       default:
         throw MissingPluginException();
@@ -599,8 +558,6 @@ class MethodChannelCamera extends CameraPlatform {
           arguments['exposurePointSupported']! as bool,
           deserializeFocusMode(arguments['focusMode']! as String),
           arguments['focusPointSupported']! as bool,
-          imageExtension:
-              deserializeImageExtension(arguments['imageExtension']! as String),
         ));
         break;
       case 'resolution_changed':
@@ -621,9 +578,7 @@ class MethodChannelCamera extends CameraPlatform {
         cameraEventStreamController.add(VideoRecordedEvent(
           cameraId,
           XFile(arguments['path']! as String),
-          arguments['maxVideoDuration'] != null
-              ? Duration(milliseconds: arguments['maxVideoDuration']! as int)
-              : null,
+          arguments['maxVideoDuration'] != null ? Duration(milliseconds: arguments['maxVideoDuration']! as int) : null,
         ));
         break;
       case 'error':

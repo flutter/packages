@@ -10,8 +10,8 @@ void main() {
 
   group('CameraInitializedEvent tests', () {
     test('Constructor should initialize all properties', () {
-      const CameraInitializedEvent event = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent event =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
 
       expect(event.cameraId, 1);
       expect(event.previewWidth, 1024);
@@ -20,12 +20,10 @@ void main() {
       expect(event.focusMode, FocusMode.auto);
       expect(event.exposurePointSupported, true);
       expect(event.focusPointSupported, true);
-      expect(event.imageExtension, ImageExtension.jpeg);
     });
 
     test('fromJson should initialize all properties', () {
-      final CameraInitializedEvent event =
-          CameraInitializedEvent.fromJson(const <String, dynamic>{
+      final CameraInitializedEvent event = CameraInitializedEvent.fromJson(const <String, dynamic>{
         'cameraId': 1,
         'previewWidth': 1024.0,
         'previewHeight': 640.0,
@@ -47,8 +45,14 @@ void main() {
 
     test('toJson should return a map with all fields', () {
       const CameraInitializedEvent event = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true,
-          imageExtension: ImageExtension.heic);
+        1,
+        1024,
+        640,
+        ExposureMode.auto,
+        true,
+        FocusMode.auto,
+        true,
+      );
 
       final Map<String, dynamic> jsonMap = event.toJson();
 
@@ -60,95 +64,99 @@ void main() {
       expect(jsonMap['exposurePointSupported'], true);
       expect(jsonMap['focusMode'], 'auto');
       expect(jsonMap['focusPointSupported'], true);
-      expect(jsonMap['imageFormat'], 'heic');
     });
 
     test('equals should return true if objects are the same', () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
-      const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent secondEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
 
       expect(firstEvent == secondEvent, true);
     });
 
     test('equals should return false if cameraId is different', () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
-      const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          2, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent secondEvent =
+          CameraInitializedEvent(2, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if previewWidth is different', () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
-      const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          1, 2048, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent secondEvent =
+          CameraInitializedEvent(1, 2048, 640, ExposureMode.auto, true, FocusMode.auto, true);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if previewHeight is different', () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
-      const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          1, 1024, 980, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent secondEvent =
+          CameraInitializedEvent(1, 1024, 980, ExposureMode.auto, true, FocusMode.auto, true);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if exposureMode is different', () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
-      const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.locked, true, FocusMode.auto, true);
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent secondEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.locked, true, FocusMode.auto, true);
 
       expect(firstEvent == secondEvent, false);
     });
 
-    test('equals should return false if exposurePointSupported is different',
-        () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
-      const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, false, FocusMode.auto, true);
+    test('equals should return false if exposurePointSupported is different', () {
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent secondEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, false, FocusMode.auto, true);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if focusMode is different', () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
-      const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.locked, true);
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent secondEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.locked, true);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if focusPointSupported is different', () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
-      const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, false);
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent secondEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, false);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return true  if  imageExtension is different', () {
-      const CameraInitializedEvent firstEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent firstEvent =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
       const CameraInitializedEvent secondEvent = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true,
-          imageExtension: ImageExtension.heic);
+        1,
+        1024,
+        640,
+        ExposureMode.auto,
+        true,
+        FocusMode.auto,
+        true,
+      );
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('hashCode should match hashCode of all properties', () {
-      const CameraInitializedEvent event = CameraInitializedEvent(
-          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
+      const CameraInitializedEvent event =
+          CameraInitializedEvent(1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
       final int expectedHashCode = Object.hash(
         event.cameraId.hashCode,
         event.previewWidth,
@@ -157,7 +165,6 @@ void main() {
         event.exposurePointSupported,
         event.focusMode,
         event.focusPointSupported,
-        event.imageExtension,
       );
 
       expect(event.hashCode, expectedHashCode);
@@ -166,8 +173,7 @@ void main() {
 
   group('CameraResolutionChangesEvent tests', () {
     test('Constructor should initialize all properties', () {
-      const CameraResolutionChangedEvent event =
-          CameraResolutionChangedEvent(1, 1024, 640);
+      const CameraResolutionChangedEvent event = CameraResolutionChangedEvent(1, 1024, 640);
 
       expect(event.cameraId, 1);
       expect(event.captureWidth, 1024);
@@ -175,8 +181,7 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final CameraResolutionChangedEvent event =
-          CameraResolutionChangedEvent.fromJson(const <String, dynamic>{
+      final CameraResolutionChangedEvent event = CameraResolutionChangedEvent.fromJson(const <String, dynamic>{
         'cameraId': 1,
         'captureWidth': 1024.0,
         'captureHeight': 640.0,
@@ -188,8 +193,7 @@ void main() {
     });
 
     test('toJson should return a map with all fields', () {
-      const CameraResolutionChangedEvent event =
-          CameraResolutionChangedEvent(1, 1024, 640);
+      const CameraResolutionChangedEvent event = CameraResolutionChangedEvent(1, 1024, 640);
 
       final Map<String, dynamic> jsonMap = event.toJson();
 
@@ -200,44 +204,35 @@ void main() {
     });
 
     test('equals should return true if objects are the same', () {
-      const CameraResolutionChangedEvent firstEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
-      const CameraResolutionChangedEvent secondEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
+      const CameraResolutionChangedEvent firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
+      const CameraResolutionChangedEvent secondEvent = CameraResolutionChangedEvent(1, 1024, 640);
 
       expect(firstEvent == secondEvent, true);
     });
 
     test('equals should return false if cameraId is different', () {
-      const CameraResolutionChangedEvent firstEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
-      const CameraResolutionChangedEvent secondEvent =
-          CameraResolutionChangedEvent(2, 1024, 640);
+      const CameraResolutionChangedEvent firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
+      const CameraResolutionChangedEvent secondEvent = CameraResolutionChangedEvent(2, 1024, 640);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if captureWidth is different', () {
-      const CameraResolutionChangedEvent firstEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
-      const CameraResolutionChangedEvent secondEvent =
-          CameraResolutionChangedEvent(1, 2048, 640);
+      const CameraResolutionChangedEvent firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
+      const CameraResolutionChangedEvent secondEvent = CameraResolutionChangedEvent(1, 2048, 640);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if captureHeight is different', () {
-      const CameraResolutionChangedEvent firstEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
-      const CameraResolutionChangedEvent secondEvent =
-          CameraResolutionChangedEvent(1, 1024, 980);
+      const CameraResolutionChangedEvent firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
+      const CameraResolutionChangedEvent secondEvent = CameraResolutionChangedEvent(1, 1024, 980);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('hashCode should match hashCode of all properties', () {
-      const CameraResolutionChangedEvent event =
-          CameraResolutionChangedEvent(1, 1024, 640);
+      const CameraResolutionChangedEvent event = CameraResolutionChangedEvent(1, 1024, 640);
       final int expectedHashCode = Object.hash(
         event.cameraId.hashCode,
         event.captureWidth,
@@ -256,8 +251,7 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final CameraClosingEvent event =
-          CameraClosingEvent.fromJson(const <String, dynamic>{
+      final CameraClosingEvent event = CameraClosingEvent.fromJson(const <String, dynamic>{
         'cameraId': 1,
       });
 
@@ -304,8 +298,8 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final CameraErrorEvent event = CameraErrorEvent.fromJson(
-          const <String, dynamic>{'cameraId': 1, 'description': 'Error'});
+      final CameraErrorEvent event =
+          CameraErrorEvent.fromJson(const <String, dynamic>{'cameraId': 1, 'description': 'Error'});
 
       expect(event.cameraId, 1);
       expect(event.description, 'Error');
@@ -344,8 +338,7 @@ void main() {
 
     test('hashCode should match hashCode of all properties', () {
       const CameraErrorEvent event = CameraErrorEvent(1, 'Error');
-      final int expectedHashCode =
-          Object.hash(event.cameraId.hashCode, event.description);
+      final int expectedHashCode = Object.hash(event.cameraId.hashCode, event.description);
 
       expect(event.hashCode, expectedHashCode);
     });

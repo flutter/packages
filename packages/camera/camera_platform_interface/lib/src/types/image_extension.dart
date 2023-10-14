@@ -12,24 +12,17 @@ enum ImageExtension {
   heic,
 }
 
-/// Returns the image extension as a String.
-String serializeImageExtension(ImageExtension imageExtension) {
-  switch (imageExtension) {
-    case ImageExtension.jpeg:
-      return 'jpeg';
-    case ImageExtension.heic:
-      return 'heic';
-  }
-}
-
-/// Returns the image extension as a String.
-ImageExtension deserializeImageExtension(String str) {
-  switch (str) {
-    case 'jpeg':
-      return ImageExtension.jpeg;
-    case 'heic':
-      return ImageExtension.heic;
-    default:
-      throw ArgumentError('"$str" is not a valid image extension.');
+/// Extension on [ImageExtension] to stringify the enum
+extension ImageExtensionName on ImageExtension {
+  /// returns a String value for [ImageExtension]
+  /// returns 'jpeg' if platform is not supported
+  /// or if [ImageExtension] is not supported for the platform
+  String name() {
+    switch (this) {
+      case ImageExtension.jpeg:
+        return 'jpeg';
+      case ImageExtension.heic:
+        return 'heic';
+    }
   }
 }

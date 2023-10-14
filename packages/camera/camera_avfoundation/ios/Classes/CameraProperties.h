@@ -140,6 +140,6 @@ typedef NS_ENUM(NSInteger, ImageExtension) {
 /**
  * Gets ImageExtension from its string representation.
  */
-extern ImageExtension FLTGetImageExtensionForString(NSString *imageExtensionString);
+extern ImageExtension FLTGetImageExtensionFromString(NSString *imageExtensionString);
 
 NS_ASSUME_NONNULL_END
