@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic) FLTFlashMode flashMode;
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
-@property(assign, nonatomic, readonly) ImageExtension imageExtension;
+@property(assign, nonatomic) ImageExtension imageExtension;
 
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
@@ -51,6 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result;
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
+- (void)setImageExtension:(ImageExtension)imageExtension;
 /**
  * Starts recording a video with an optional streaming messenger.
  * If the messenger is non-null then it will be called for each
@@ -107,7 +108,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)getMinZoomLevelWithResult:(FLTThreadSafeFlutterResult *)result;
 - (void)setZoomLevel:(CGFloat)zoom Result:(FLTThreadSafeFlutterResult *)result;
 - (void)setUpCaptureSessionForAudio;
-- (void)setImageExtension:(ImageExtension)imageExtension;
 
 @end
 
