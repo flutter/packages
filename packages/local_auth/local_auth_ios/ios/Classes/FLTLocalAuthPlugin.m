@@ -147,9 +147,13 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
 
 - (nullable NSNumber *)isDeviceSupportedWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  // TODO(stuartmorgan): Fix this to check for biometrics or passcode; see
-  // https://github.com/flutter/flutter/issues/116179
-  return @YES;
+  LAContext *context = [[LAContext alloc] init];
+  NSError *authError = nil;
+  if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:&authError]) {
+    return @YES;
+  } else {
+    return @NO;
+  }
 }
 
 #pragma mark Private Methods

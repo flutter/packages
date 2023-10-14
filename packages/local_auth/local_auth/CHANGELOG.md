@@ -1,3 +1,7 @@
+## 2.1.8
+
+* Implement isDeviceSupported for ios.
+
 ## 2.1.7
 
 * Adds pub topics to package metadata.
