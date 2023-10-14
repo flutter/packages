@@ -219,7 +219,7 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
-- (void)setImageExtension:(ImageExtension *)imageExtension {
+- (void)setImageExtension:(ImageExtension)imageExtension {
   _imageExtension = imageExtension;
 }
 
