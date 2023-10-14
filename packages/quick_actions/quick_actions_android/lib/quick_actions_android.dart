@@ -11,7 +11,7 @@ export 'package:quick_actions_platform_interface/types/types.dart';
 
 late QuickActionHandler _handler;
 
-/// An implementation of [QuickActionsPlatform] that for Android.
+/// An implementation of [QuickActionsPlatform] for Android.
 class QuickActionsAndroid extends QuickActionsPlatform {
   /// Creates a new plugin implementation instance.
   QuickActionsAndroid({
