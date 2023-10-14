@@ -237,7 +237,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     this.resolutionPreset, {
     this.enableAudio = true,
     this.imageFormatGroup,
-    this.imageExtension = ImageExtension.jpeg,
+    this.imageExtension,
   }) : super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
@@ -259,9 +259,12 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// When null the imageFormat will fallback to the platforms default.
   final ImageFormatGroup? imageFormatGroup;
 
-  /// The image extension used for the camera.
-  /// For now only [iOS] supports this.
-  final ImageExtension imageExtension;
+  /// The [ImageExtension] describes the compression of the image.
+  ///
+  /// When null the imageExtension will fallback to the platforms default.
+  ///
+  /// Only supported on iOS for now.
+  final ImageExtension? imageExtension;
 
   /// The id of a camera that hasn't been initialized.
   @visibleForTesting
@@ -334,6 +337,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       await CameraPlatform.instance.initializeCamera(
         _cameraId,
         imageFormatGroup: imageFormatGroup ?? ImageFormatGroup.unknown,
+        imageExtension: imageExtension ?? ImageExtension.jpeg,
       );
 
       value = value.copyWith(
