@@ -266,11 +266,11 @@ NSString *const errorMethod = @"error";
 
   if (_imageExtension == ImageExtensionHEIC && @available(iOS 11.0, *)) {
     if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
-        settings = [AVCapturePhotoSettings photoSettingsWithFormat:@{ AVVideoCodecKey : AVVideoCodecTypeHEVC }];
+        settings = [AVCapturePhotoSettings
+        photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
         extension = @"heic";
     }
   }
-
 
   AVCaptureFlashMode avFlashMode = FLTGetAVCaptureFlashModeForFLTFlashMode(_flashMode);
   if (avFlashMode != -1) {

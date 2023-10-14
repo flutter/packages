@@ -186,10 +186,9 @@
       [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
       [_camera start];
       [result sendSuccess];
-    }else if ([@"takePicture" isEqualToString:call.method]) {
+    } else if ([@"takePicture" isEqualToString:call.method]) {
       [_camera captureToFile:result];
-    }
-    else if ([@"dispose" isEqualToString:call.method]) {
+    } else if ([@"dispose" isEqualToString:call.method]) {
       [_registry unregisterTexture:cameraId];
       [_camera close];
       [result sendSuccess];
