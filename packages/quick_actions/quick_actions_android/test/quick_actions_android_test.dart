@@ -26,7 +26,7 @@ void main() {
     test('passes getLaunchAction on launch method', () {
       quickActions.initialize((String type) {});
 
-      expect(api.getLaunchActionCalled, false);
+      expect(api.getLaunchActionCalled, true);
     });
 
     test('initialize', () async {
