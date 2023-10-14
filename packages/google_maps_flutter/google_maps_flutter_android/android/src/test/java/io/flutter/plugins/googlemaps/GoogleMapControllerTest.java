@@ -69,7 +69,15 @@ public class GoogleMapControllerTest {
   public void tearDown() throws Exception {
     mockCloseable.close();
   }
-
+  
+  @Test
+  public void OnPauseReleaseTheMap() throws InterruptedException {
+    googleMapController.onMapReady(mockGoogleMap);
+    assertTrue(googleMapController != null);
+    googleMapController.onPause(activity);
+    assertNull(googleMapController.getView());
+  }
+  
   @Test
   public void DisposeReleaseTheMap() throws InterruptedException {
     googleMapController.onMapReady(mockGoogleMap);
