@@ -48,8 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)start;
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result
-    imageExtensionString:(NSString *)imageExtensionString;
+- (void)captureToFile:(FLTThreadSafeFlutterResult *)result;
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
 /**
