@@ -63,7 +63,7 @@ abstract class CameraPlatform extends PlatformInterface {
   /// On Web this parameter is currently not supported.
   ///
   /// [imageExtension] is used to specify the image extension used.
-  /// [ImageExtension.jpeg] and [ImageExtension.heic] are availables
+  /// [ImageExtension.jpeg] and [ImageExtension.heif] are availables
   /// only in iOS 11.0+.
   Future<void> initializeCamera(
     int cameraId, {
@@ -104,13 +104,11 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Implementations for this:
   /// - Should support all 4 orientations.
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    throw UnimplementedError(
-        'onDeviceOrientationChanged() is not implemented.');
+    throw UnimplementedError('onDeviceOrientationChanged() is not implemented.');
   }
 
   /// Locks the capture orientation.
-  Future<void> lockCaptureOrientation(
-      int cameraId, DeviceOrientation orientation) {
+  Future<void> lockCaptureOrientation(int cameraId, DeviceOrientation orientation) {
     throw UnimplementedError('lockCaptureOrientation() is not implemented.');
   }
 
@@ -147,8 +145,7 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Please see [VideoCaptureOptions] for documentation on the
   /// configuration options.
   Future<void> startVideoCapturing(VideoCaptureOptions options) {
-    return startVideoRecording(options.cameraId,
-        maxVideoDuration: options.maxDuration);
+    return startVideoRecording(options.cameraId, maxVideoDuration: options.maxDuration);
   }
 
   /// Stops the video recording and returns the file where it was saved.
@@ -176,8 +173,7 @@ abstract class CameraPlatform extends PlatformInterface {
   ///
   // TODO(bmparr): Add options to control streaming settings (e.g.,
   // resolution and FPS).
-  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
-      {CameraImageStreamOptions? options}) {
+  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId, {CameraImageStreamOptions? options}) {
     throw UnimplementedError('onStreamedFrameAvailable() is not implemented.');
   }
 
@@ -276,8 +272,7 @@ abstract class CameraPlatform extends PlatformInterface {
 
   /// Sets the active camera while recording.
   Future<void> setDescriptionWhileRecording(CameraDescription description) {
-    throw UnimplementedError(
-        'setDescriptionWhileRecording() is not implemented.');
+    throw UnimplementedError('setDescriptionWhileRecording() is not implemented.');
   }
 
   /// Returns a widget showing a live camera preview.

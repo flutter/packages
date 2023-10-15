@@ -132,7 +132,7 @@ extern OSType FLTGetVideoFormatFromString(NSString *videoFormatString);
  */
 typedef NS_ENUM(NSInteger, ImageExtension) {
   ImageExtensionJPEG,
-  ImageExtensionHEIC,
+  ImageExtensionHEIF,
 };
 
 #pragma mark - image extension

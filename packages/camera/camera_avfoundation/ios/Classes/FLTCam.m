@@ -264,12 +264,12 @@ NSString *const errorMethod = @"error";
     [settings setHighResolutionPhotoEnabled:YES];
   }
 
-  if (_imageExtension == ImageExtensionHEIC) {
+  if (_imageExtension == ImageExtensionHEIF) {
     if (@available(iOS 11.0, *)) {
         if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
             settings = [AVCapturePhotoSettings
                 photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
-            extension = @"heic";
+            extension = @"heif";
       }
     }
   }

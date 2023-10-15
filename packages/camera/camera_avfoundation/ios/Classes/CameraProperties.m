@@ -155,8 +155,8 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
 ImageExtension FLTGetImageExtensionFromString(NSString *extensionString) {
   if ([extensionString isEqualToString:@"jpg"]) {
     return ImageExtensionJPEG;
-  } else if ([extensionString isEqualToString:@"heic"]) {
-    return ImageExtensionHEIC;
+  } else if ([extensionString isEqualToString:@"heif"]) {
+    return ImageExtensionHEIF;
   } else {
     NSError *error = [NSError
         errorWithDomain:NSCocoaErrorDomain

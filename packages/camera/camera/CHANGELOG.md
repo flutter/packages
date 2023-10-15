@@ -1,6 +1,6 @@
 ## 0.10.6
 
-* Add support to HEIC format to iOS
+* Add support to HEIF format to iOS
 
 ## 0.10.5+5
 

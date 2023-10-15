@@ -8,10 +8,10 @@ enum ImageExtension {
   /// Is the widely used format for images.
   jpeg,
 
-  /// It will return the image in HEIC format.
-  /// HEIC is a file format name that refers to High Efficiency Image Format (HEIF).
+  /// It will return the image in HEIF format.
+  /// HEIF is a file format name that refers to High Efficiency Image Format (HEIF).
   /// Will works only iOS 11+.
-  heic,
+  heif,
 }
 
 /// Extension on [ImageExtension] to stringify the enum
@@ -23,8 +23,8 @@ extension ImageExtensionName on ImageExtension {
     switch (this) {
       case ImageExtension.jpeg:
         return 'jpeg';
-      case ImageExtension.heic:
-        return 'heic';
+      case ImageExtension.heif:
+        return 'heif';
     }
   }
 }

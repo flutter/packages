@@ -9,7 +9,7 @@ void main() {
   group('$ImageExtension tests', () {
     test('ImageFormat extension returns correct values', () {
       expect(ImageExtension.jpeg.name(), 'jpeg');
-      expect(ImageExtension.heic.name(), 'heic');
+      expect(ImageExtension.heif.name(), 'heif');
     });
   });
 }

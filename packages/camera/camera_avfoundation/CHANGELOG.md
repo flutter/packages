@@ -1,6 +1,6 @@
 ## NEXT
 
-* Add support to HEIC format
+* Add support to HEIF format
 
 ## 0.9.13+6
 

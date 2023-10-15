@@ -1,6 +1,6 @@
 ## 2.5.3
 
-* Add support to HEIC format to iOS
+* Add support to HEIF format to iOS
 
 ## 2.5.2
 

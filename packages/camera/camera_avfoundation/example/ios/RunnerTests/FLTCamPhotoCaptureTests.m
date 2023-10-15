@@ -99,13 +99,13 @@
     if (@available(iOS 11.0, *)) {
         XCTestExpectation *expectation =
             [self expectationWithDescription:
-                      @"Test must set extension to heic if availablePhotoCodecTypes contains HEVC."];
+                      @"Test must set extension to heif if availablePhotoCodecTypes contains HEVC."];
 
         dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
         dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                                     (void *)FLTCaptureSessionQueueSpecific, NULL);
         FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-        [cam setImageExtension:ImageExtensionHEIC];
+        [cam setImageExtension:ImageExtensionHEIF];
       
         // Set photo settings to HEVC
         AVCapturePhotoSettings *settings =
