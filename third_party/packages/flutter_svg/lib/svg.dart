@@ -496,4 +496,22 @@ class SvgPicture extends StatelessWidget {
       matchTextDirection: matchTextDirection,
     );
   }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+
+    properties.add(StringProperty('bytesLoader', bytesLoader.toString(), showName: false));
+    properties.add(DoubleProperty('width', width, defaultValue: null));
+    properties.add(DoubleProperty('height', height, defaultValue: null));
+    properties.add(EnumProperty<AlignmentGeometry>('alignment', alignment, defaultValue: Alignment.center));
+    properties.add(DiagnosticsProperty<bool>('allowDrawingOutsideViewBox', allowDrawingOutsideViewBox, defaultValue: false));
+    properties.add(EnumProperty<Clip>('clipBehavior', clipBehavior, defaultValue: BoxFit.contain));
+    properties.add(StringProperty('colorFilter', colorFilter.toString(), defaultValue: null));
+    properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: BoxFit.contain));
+    properties.add(DiagnosticsProperty<Function>('placeholderBuilder', placeholderBuilder, defaultValue: null));
+    properties.add(DiagnosticsProperty<bool>('matchTextDirection', matchTextDirection, defaultValue: false));
+    properties.add(DiagnosticsProperty<bool>('excludeFromSemantics', excludeFromSemantics, defaultValue: false));
+    properties.add(StringProperty('semanticsLabel', semanticsLabel, defaultValue: null));
+  }
 }
