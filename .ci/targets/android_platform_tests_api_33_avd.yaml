@@ -11,9 +11,9 @@ tasks:
   - name: build examples
     script: script/tool_runner.sh
     args: ["build-examples", "--apk", "--filter-packages-to=script/configs/still_requires_api_33_avd.yaml"]
-  # - name: lint
-  #   script: script/tool_runner.sh
-  #   args: ["lint-android", "--filter-packages-to=script/configs/still_requires_api_33_avd.yaml"]
+  - name: lint
+    script: script/tool_runner.sh
+    args: ["lint-android", "--filter-packages-to=script/configs/still_requires_api_33_avd.yaml"]
   # Native unit and native integration are split into two steps to allow for
   # different exclusions.
   # TODO(stuartmorgan): Eliminate the native unit test exclusion, and combine
