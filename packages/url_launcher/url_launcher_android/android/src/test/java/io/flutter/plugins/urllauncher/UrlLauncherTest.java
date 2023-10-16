@@ -170,14 +170,14 @@ public class UrlLauncherTest {
     String url = "https://flutter.dev";
 
     boolean result =
-            api.openUrlInApp(
-                    url,
-                    false,
-                    new Messages.WebViewOptions.Builder()
-                            .setEnableJavaScript(false)
-                            .setEnableDomStorage(false)
-                            .setHeaders(new HashMap<>())
-                            .build());
+        api.openUrlInApp(
+            url,
+            false,
+            new Messages.WebViewOptions.Builder()
+                .setEnableJavaScript(false)
+                .setEnableDomStorage(false)
+                .setHeaders(new HashMap<>())
+                .build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -193,14 +193,14 @@ public class UrlLauncherTest {
     String url = "https://flutter.dev";
 
     boolean result =
-            api.openUrlInApp(
-                    url,
-                    true,
-                    new Messages.WebViewOptions.Builder()
-                            .setEnableJavaScript(false)
-                            .setEnableDomStorage(false)
-                            .setHeaders(new HashMap<>())
-                            .build());
+        api.openUrlInApp(
+            url,
+            true,
+            new Messages.WebViewOptions.Builder()
+                .setEnableJavaScript(false)
+                .setEnableDomStorage(false)
+                .setHeaders(new HashMap<>())
+                .build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture(), isNull());
