@@ -38,6 +38,13 @@ dependencies:
       url: https://github.com/MichaelA71/packages.git
       path: packages/google_maps_flutter/google_maps_flutter_web
 
+dependency_overrides:
+  google_maps_flutter_android:
+    git:
+      url: https://github.com/lukaskurz/plugins
+      path: packages/google_maps_flutter/google_maps_flutter_android
+      ref: main
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
