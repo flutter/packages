@@ -1,3 +1,7 @@
+## 3.1.0
+
+* Implements `supportsMode` and `supportsCloseForMode`.
+
 ## 3.0.6
 
 * Adds pub topics to package metadata.

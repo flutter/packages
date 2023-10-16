@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Implements `supportsMode` and `supportsCloseForMode`.
+
 ## 2.0.20
 
 * Migrates to `dart:ui_web` APIs.
