@@ -1,7 +1,7 @@
 ## 6.1.1
 
-* Enables in-app Android WebView to open non-https urls, e.g. `mailto:`, `sms:`
-* Enables in-app Android WebView to open `.pdf` documents
+* Enables in-app Android WebView to open non-https urls, e.g. `mailto:`, `sms:`.
+* Enables in-app Android WebView to open `.pdf` documents.
 
 ## 6.1.0
 

@@ -109,20 +109,38 @@ public class WebViewActivityTest {
   }
 
   @Test
-  public void onLoadResource_allowsWebPageLoad() {
-    String url = "https://www.flutter.dev/";
-    webView.getWebViewClient().onLoadResource(webView, url);
+  public void onLoadResource_allowsWebPageLoadLowerCase() {
+    String lowerCaseUrl = "https://www.flutter.dev/";
+    webView.getWebViewClient().onLoadResource(webView, lowerCaseUrl);
 
     verify(context, times(0)).startActivity(any(Intent.class));
-    assertFalse(FlutterWebViewClient.resourceShouldOpenDocument(webView, url));
+    assertFalse(FlutterWebViewClient.resourceShouldOpenDocument(webView, lowerCaseUrl));
   }
 
   @Test
-  public void onLoadResource_loadsPdf() {
-    String url = "https://www.flutter.dev/test.pdf";
-    webView.getWebViewClient().onLoadResource(webView, url);
+  public void onLoadResource_allowsWebPageLoadUpperCase() {
+    String upperCaseUrl = "HTTPS://WWW.FLUTTER.DEV/";
+    webView.getWebViewClient().onLoadResource(webView, upperCaseUrl);
+
+    verify(context, times(0)).startActivity(any(Intent.class));
+    assertFalse(FlutterWebViewClient.resourceShouldOpenDocument(webView, upperCaseUrl));
+  }
+
+  @Test
+  public void onLoadResource_loadsPdfLowerCase() {
+    String lowerCaseUrl = "https://www.flutter.dev/test.pdf";
+    webView.getWebViewClient().onLoadResource(webView, lowerCaseUrl);
 
     verify(context, times(1)).startActivity(any(Intent.class));
-    assertTrue(FlutterWebViewClient.resourceShouldOpenDocument(webView, url));
+    assertTrue(FlutterWebViewClient.resourceShouldOpenDocument(webView, lowerCaseUrl));
+  }
+
+  @Test
+  public void onLoadResource_loadsPdfUpperCase() {
+    String upperCaseUrl = "HTTPS://WWW.FLUTTER.DEV/TEST.PDF";
+    webView.getWebViewClient().onLoadResource(webView, upperCaseUrl);
+
+    verify(context, times(1)).startActivity(any(Intent.class));
+    assertTrue(FlutterWebViewClient.resourceShouldOpenDocument(webView, upperCaseUrl));
   }
 }
