@@ -73,6 +73,7 @@ abstract class UrlLauncherPlatform extends PlatformInterface {
   Future<bool> launchUrl(String url, LaunchOptions options) {
     final bool isWebURL = url.startsWith('http:') || url.startsWith('https:');
     final bool useWebView = options.mode == PreferredLaunchMode.inAppWebView ||
+        options.mode == PreferredLaunchMode.inAppBrowserView ||
         (isWebURL && options.mode == PreferredLaunchMode.platformDefault);
 
     return launch(
