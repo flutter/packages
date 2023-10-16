@@ -20,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugins.quickactions.Messages.AndroidQuickActionsApi;
 import io.flutter.plugins.quickactions.Messages.FlutterError;
+import io.flutter.plugins.quickactions.Messages.Result;
 import io.flutter.plugins.quickactions.Messages.ShortcutItemMessage;
 import java.util.ArrayList;
 import java.util.List;
