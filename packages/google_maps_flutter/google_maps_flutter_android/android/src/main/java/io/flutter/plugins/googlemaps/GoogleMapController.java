@@ -899,8 +899,20 @@ final class GoogleMapController
     if (mapView == null) {
       return;
     }
-    mapView.onDestroy();
+
+    final MapView mapReference = mapView; // keep a reference to the mapView for the callback
     mapView = null;
+
+    Runnable r =
+        () -> {
+          mapReference.onDestroy();
+        };
+
+    if (preferredRenderer == MapsInitializer.Renderer.LATEST) {
+      handler.post(r);
+    } else {
+      handler.postDelayed(r, 1000);
+    }
   }
 
   public void setIndoorEnabled(boolean indoorEnabled) {
