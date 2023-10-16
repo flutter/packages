@@ -11,36 +11,37 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('UrlLauncherIOS', () {
-    late _FakeUrlLauncherApi api;
+  late _FakeUrlLauncherApi api;
 
-    setUp(() {
-      api = _FakeUrlLauncherApi();
-    });
+  setUp(() {
+    api = _FakeUrlLauncherApi();
+  });
 
-    test('registers instance', () {
-      UrlLauncherIOS.registerWith();
-      expect(UrlLauncherPlatform.instance, isA<UrlLauncherIOS>());
-    });
+  test('registers instance', () {
+    UrlLauncherIOS.registerWith();
+    expect(UrlLauncherPlatform.instance, isA<UrlLauncherIOS>());
+  });
 
-    test('canLaunch success', () async {
+  group('canLaunch', () {
+    test('handles success', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(await launcher.canLaunch('http://example.com/'), true);
     });
 
-    test('canLaunch failure', () async {
+    test('handles failure', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(await launcher.canLaunch('unknown://scheme'), false);
     });
 
-    test('canLaunch invalid URL passes the PlatformException through',
-        () async {
+    test('passes invalid URL PlatformException through', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       await expectLater(launcher.canLaunch('invalid://u r l'),
           throwsA(isA<PlatformException>()));
     });
+  });
 
-    test('launch success', () async {
+  group('legacy launch', () {
+    test('handles success', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
           await launcher.launch(
@@ -56,7 +57,7 @@ void main() {
       expect(api.passedUniversalLinksOnly, false);
     });
 
-    test('launch failure', () async {
+    test('handles failure', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
           await launcher.launch(
@@ -72,7 +73,7 @@ void main() {
       expect(api.passedUniversalLinksOnly, false);
     });
 
-    test('launch invalid URL passes the PlatformException through', () async {
+    test('passes invalid URL PlatformException through', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       await expectLater(
           launcher.launch(
@@ -87,7 +88,7 @@ void main() {
           throwsA(isA<PlatformException>()));
     });
 
-    test('launch force SafariVC', () async {
+    test('force SafariVC is handled', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
           await launcher.launch(
@@ -103,7 +104,7 @@ void main() {
       expect(api.usedSafariViewController, true);
     });
 
-    test('launch universal links only', () async {
+    test('universal links only is handled', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
           await launcher.launch(
@@ -119,7 +120,7 @@ void main() {
       expect(api.passedUniversalLinksOnly, true);
     });
 
-    test('launch force SafariVC to false', () async {
+    test('disallowing SafariVC is handled', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
       expect(
           await launcher.launch(
@@ -134,11 +135,171 @@ void main() {
           true);
       expect(api.usedSafariViewController, false);
     });
+  });
 
-    test('closeWebView default behavior', () async {
+  test('closeWebView calls through', () async {
+    final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+    await launcher.closeWebView();
+    expect(api.closed, true);
+  });
+
+  group('launch without webview', () {
+    test('calls through', () async {
       final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
-      await launcher.closeWebView();
-      expect(api.closed, true);
+      final bool launched = await launcher.launchUrl(
+        'http://example.com/',
+        const LaunchOptions(mode: PreferredLaunchMode.externalApplication),
+      );
+      expect(launched, true);
+      expect(api.usedSafariViewController, false);
+    });
+
+    test('passes invalid URL PlatformException through', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      await expectLater(
+          launcher.launchUrl('invalid://u r l', const LaunchOptions()),
+          throwsA(isA<PlatformException>()));
+    });
+  });
+
+  group('launch with Safari view controller', () {
+    test('calls through with inAppWebView', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      final bool launched = await launcher.launchUrl('http://example.com/',
+          const LaunchOptions(mode: PreferredLaunchMode.inAppWebView));
+      expect(launched, true);
+      expect(api.usedSafariViewController, true);
+    });
+
+    test('calls through with inAppBrowserView', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      final bool launched = await launcher.launchUrl('http://example.com/',
+          const LaunchOptions(mode: PreferredLaunchMode.inAppBrowserView));
+      expect(launched, true);
+      expect(api.usedSafariViewController, true);
+    });
+
+    test('passes invalid URL PlatformException through', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      await expectLater(
+          launcher.launchUrl('invalid://u r l',
+              const LaunchOptions(mode: PreferredLaunchMode.inAppWebView)),
+          throwsA(isA<PlatformException>()));
+    });
+  });
+
+  group('launch with universal links', () {
+    test('calls through', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      final bool launched = await launcher.launchUrl(
+        'http://example.com/',
+        const LaunchOptions(
+            mode: PreferredLaunchMode.externalNonBrowserApplication),
+      );
+      expect(launched, true);
+      expect(api.usedSafariViewController, false);
+      expect(api.passedUniversalLinksOnly, true);
+    });
+
+    test('passes invalid URL PlatformException through', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      await expectLater(
+          launcher.launchUrl(
+              'invalid://u r l',
+              const LaunchOptions(
+                  mode: PreferredLaunchMode.externalNonBrowserApplication)),
+          throwsA(isA<PlatformException>()));
+    });
+  });
+
+  group('launch with platform default', () {
+    test('uses Safari view controller for http', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      final bool launched = await launcher.launchUrl(
+          'http://example.com/', const LaunchOptions());
+      expect(launched, true);
+      expect(api.usedSafariViewController, true);
+    });
+
+    test('uses Safari view controller for https', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      final bool launched = await launcher.launchUrl(
+          'https://example.com/', const LaunchOptions());
+      expect(launched, true);
+      expect(api.usedSafariViewController, true);
+    });
+
+    test('uses standard external for other schemes', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      final bool launched = await launcher.launchUrl(
+          'supportedcustomscheme://example.com/', const LaunchOptions());
+      expect(launched, true);
+      expect(api.usedSafariViewController, false);
+      expect(api.passedUniversalLinksOnly, false);
+    });
+  });
+
+  group('supportsMode', () {
+    test('returns true for platformDefault', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault),
+          true);
+    });
+
+    test('returns true for external application', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(
+          await launcher.supportsMode(PreferredLaunchMode.externalApplication),
+          true);
+    });
+
+    test('returns true for external non-browser application', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(
+          await launcher
+              .supportsMode(PreferredLaunchMode.externalNonBrowserApplication),
+          true);
+    });
+
+    test('returns true for in app web view', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(
+          await launcher.supportsMode(PreferredLaunchMode.inAppWebView), true);
+    });
+
+    test('returns true for in app browser view', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+          true);
+    });
+  });
+
+  group('supportsCloseForMode', () {
+    test('returns true for in app web view', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(
+          await launcher.supportsCloseForMode(PreferredLaunchMode.inAppWebView),
+          true);
+    });
+
+    test('returns true for in app browser view', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(
+          await launcher
+              .supportsCloseForMode(PreferredLaunchMode.inAppBrowserView),
+          true);
+    });
+
+    test('returns false for other modes', () async {
+      final UrlLauncherIOS launcher = UrlLauncherIOS(api: api);
+      expect(
+          await launcher
+              .supportsCloseForMode(PreferredLaunchMode.externalApplication),
+          false);
+      expect(
+          await launcher.supportsCloseForMode(
+              PreferredLaunchMode.externalNonBrowserApplication),
+          false);
     });
   });
 }
@@ -179,6 +340,7 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
     switch (scheme) {
       case 'http':
       case 'https':
+      case 'supportedcustomscheme':
         return true;
       case 'invalid':
         throw PlatformException(code: 'argument_error');
