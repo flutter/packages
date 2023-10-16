@@ -27,14 +27,14 @@ class QuickActionsAndroid extends QuickActionsPlatform {
 
   @override
   Future<void> initialize(QuickActionHandler handler) async {
+    final _QuickActionHandlerApi quickActionsHandlerApi =
+        _QuickActionHandlerApi();
+    AndroidQuickActionsFlutterApi.setup(quickActionsHandlerApi);
     _handler = handler;
     final String? action = await _hostApi.getLaunchAction();
     if (action != null) {
       _handler(action);
     }
-    final _QuickActionHandlerApi quickActionsHandlerApi =
-        _QuickActionHandlerApi();
-    AndroidQuickActionsFlutterApi.setup(quickActionsHandlerApi);
   }
 
   @override
@@ -49,17 +49,6 @@ class QuickActionsAndroid extends QuickActionsPlatform {
 
   ShortcutItemMessage _shortcutItemToShortcutItemMessage(ShortcutItem item) {
     return ShortcutItemMessage(
-      type: item.type,
-      localizedTitle: item.localizedTitle,
-      icon: item.icon,
-    );
-  }
-
-  /// Conversion tool to change [ShortcutItemMessage] back to [ShortcutItem]
-  @visibleForTesting
-  static ShortcutItem shortcutItemMessageToShortcutItem(
-      ShortcutItemMessage item) {
-    return ShortcutItem(
       type: item.type,
       localizedTitle: item.localizedTitle,
       icon: item.icon,

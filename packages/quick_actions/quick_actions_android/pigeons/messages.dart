@@ -38,6 +38,7 @@ abstract class AndroidQuickActionsApi {
   String? getLaunchAction();
 
   /// Sets the dynamic shortcuts for the app.
+  @async
   void setShortcutItems(List<ShortcutItemMessage> itemsList);
 
   /// Removes all dynamic shortcuts.

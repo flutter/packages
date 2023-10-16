@@ -157,6 +157,13 @@ public class Messages {
     }
   }
 
+  public interface Result<T> {
+    @SuppressWarnings("UnknownNullness")
+    void success(T result);
+
+    void error(@NonNull Throwable error);
+  }
+
   private static class AndroidQuickActionsApiCodec extends StandardMessageCodec {
     public static final AndroidQuickActionsApiCodec INSTANCE = new AndroidQuickActionsApiCodec();
 
@@ -189,7 +196,8 @@ public class Messages {
     @Nullable
     String getLaunchAction();
     /** Sets the dynamic shortcuts for the app. */
-    void setShortcutItems(@NonNull List<ShortcutItemMessage> itemsList);
+    void setShortcutItems(
+        @NonNull List<ShortcutItemMessage> itemsList, @NonNull Result<Void> result);
     /** Removes all dynamic shortcuts. */
     void clearShortcutItems();
 
@@ -238,14 +246,20 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 List<ShortcutItemMessage> itemsListArg = (List<ShortcutItemMessage>) args.get(0);
-                try {
-                  api.setShortcutItems(itemsListArg);
-                  wrapped.add(0, null);
-                } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
+                Result<Void> resultCallback =
+                    new Result<Void>() {
+                      public void success(Void result) {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setShortcutItems(itemsListArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

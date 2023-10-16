@@ -11,6 +11,15 @@ import 'package:quick_actions_platform_interface/quick_actions_platform_interfac
 
 const String LAUNCH_ACTION_STRING = 'aString';
 
+/// Conversion tool to change [ShortcutItemMessage] back to [ShortcutItem]
+ShortcutItem shortcutItemMessageToShortcutItem(ShortcutItemMessage item) {
+  return ShortcutItem(
+    type: item.type,
+    localizedTitle: item.localizedTitle,
+    icon: item.icon,
+  );
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -92,12 +101,7 @@ class _FakeQuickActionsApi implements AndroidQuickActionsApi {
   Future<void> setShortcutItems(List<ShortcutItemMessage?> itemsList) async {
     await clearShortcutItems();
     for (final ShortcutItemMessage? element in itemsList) {
-      if (element != null) {
-        items.add(
-            QuickActionsAndroid.shortcutItemMessageToShortcutItem(element));
-      } else {
-        throw Exception('ShortcutItemMessage unexpectedly null');
-      }
+      items.add(shortcutItemMessageToShortcutItem(element!));
     }
   }
 }

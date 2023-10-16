@@ -46,16 +46,18 @@ final class QuickActions implements AndroidQuickActionsApi {
     return this.activity;
   }
 
+  // Returns true when running on a version of Android that supports quick actions.
+  // When this returns false, methods should silently no-op, per the documented behavior (see README.md).
   @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.N_MR1)
   boolean isVersionAllowed() {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1;
   }
 
   @Override
-  public void setShortcutItems(@NonNull List<ShortcutItemMessage> itemsList) {
-    // We already know that this functionality does not work for anything
-    // lower than API 25 so we chose not to return error. Instead we do nothing.
+  public void setShortcutItems(
+      @NonNull List<ShortcutItemMessage> itemsList, @NonNull Result<Void> result) {
     if (!isVersionAllowed()) {
+      result.success(null);
       return;
     }
     ShortcutManager shortcutManager =
@@ -77,15 +79,17 @@ final class QuickActions implements AndroidQuickActionsApi {
 
           final boolean didSucceed = dynamicShortcutsSet;
 
-          // TODO(camsim99): Move re-dispatch below to background thread when Flutter 2.8+ is
-          // stable.
+          // TODO(camsim99): Investigate removing all of the executor logic in favor of background channels.
           uiThreadExecutor.execute(
               () -> {
-                if (!didSucceed) {
-                  throw new FlutterError(
-                      "quick_action_setshortcutitems_failure",
-                      "Exception thrown when setting dynamic shortcuts",
-                      null);
+                if (didSucceed) {
+                  result.success(null);
+                } else {
+                  result.error(
+                      new FlutterError(
+                          "quick_action_setshortcutitems_failure",
+                          "Exception thrown when setting dynamic shortcuts",
+                          null));
                 }
               });
         });
@@ -93,8 +97,6 @@ final class QuickActions implements AndroidQuickActionsApi {
 
   @Override
   public void clearShortcutItems() {
-    // We already know that this functionality does not work for anything
-    // lower than API 25 so we chose not to return error. Instead we do nothing.
     if (!isVersionAllowed()) {
       return;
     }
@@ -105,8 +107,6 @@ final class QuickActions implements AndroidQuickActionsApi {
 
   @Override
   public @Nullable String getLaunchAction() {
-    // We already know that this functionality does not work for anything
-    // lower than API 25 so we chose not to return error. Instead we do nothing.
     if (!isVersionAllowed()) {
       return null;
     }
