@@ -51,7 +51,6 @@ void main() {
           enableDomStorage: false,
           universalLinksOnly: false,
           headers: <String, String>{},
-          showTitle: false,
         ),
         true);
     await launcher.closeWebView();

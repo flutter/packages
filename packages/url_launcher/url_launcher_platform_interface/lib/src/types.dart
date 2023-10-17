@@ -34,6 +34,7 @@ class InAppWebViewConfiguration {
     this.enableJavaScript = true,
     this.enableDomStorage = true,
     this.headers = const <String, String>{},
+    this.showTitle = false,
   });
 
   /// Whether or not JavaScript is enabled for the web content.
@@ -44,6 +45,11 @@ class InAppWebViewConfiguration {
 
   /// Additional headers to pass in the load request.
   final Map<String, String> headers;
+
+  /// Whether or not to show the webpage title when using Chrome Custom Tabs.
+  ///
+  /// Only works on Android.
+  final bool showTitle;
 }
 
 /// Options for [launchUrl].

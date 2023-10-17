@@ -226,7 +226,11 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   @override
   Future<bool> launchUrl(String url, Map<String?, String?> headers) async {
     passedWebViewOptions = WebViewOptions(
-        enableJavaScript: false, enableDomStorage: false, headers: headers);
+      enableJavaScript: false,
+      enableDomStorage: false,
+      headers: headers,
+      showTitle: false,
+    );
     usedWebView = false;
     return _launch(url);
   }

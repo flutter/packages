@@ -13,16 +13,20 @@ import 'package:pigeon/pigeon.dart';
 
 /// Configuration options for an in-app WebView.
 class WebViewOptions {
-  const WebViewOptions(
-      {required this.enableJavaScript,
-      required this.enableDomStorage,
-      this.headers = const <String, String>{}});
+  const WebViewOptions({
+    required this.enableJavaScript,
+    required this.enableDomStorage,
+    this.headers = const <String, String>{},
+    required this.showTitle,
+  });
+
   final bool enableJavaScript;
   final bool enableDomStorage;
   // TODO(stuartmorgan): Declare these as non-nullable generics once
   // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
   // the values will never be null, and the native implementation assumes that.
   final Map<String?, String?> headers;
+  final bool showTitle;
 }
 
 @HostApi()

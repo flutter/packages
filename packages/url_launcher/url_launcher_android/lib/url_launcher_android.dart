@@ -62,17 +62,42 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) async {
-    final bool succeeded;
+    return launchUrl(
+      url,
+      LaunchOptions(
+        webViewConfiguration: InAppWebViewConfiguration(
+          enableJavaScript: enableJavaScript,
+          enableDomStorage: enableDomStorage,
+          headers: headers,
+        ),
+        webOnlyWindowName: webOnlyWindowName,
+      ),
+    );
+  }
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    final bool isWebURL = url.startsWith('http:') || url.startsWith('https:');
+    final bool useWebView = options.mode == PreferredLaunchMode.inAppWebView ||
+        (isWebURL && options.mode == PreferredLaunchMode.platformDefault);
+
+    bool succeeded;
+
     if (useWebView) {
       succeeded = await _hostApi.openUrlInWebView(
-          url,
-          WebViewOptions(
-              enableJavaScript: enableJavaScript,
-              enableDomStorage: enableDomStorage,
-              headers: headers));
+        url,
+        WebViewOptions(
+          enableJavaScript: options.webViewConfiguration.enableJavaScript,
+          enableDomStorage: options.webViewConfiguration.enableDomStorage,
+          headers: options.webViewConfiguration.headers,
+          showTitle: options.webViewConfiguration.showTitle,
+        ),
+      );
     } else {
-      succeeded = await _hostApi.launchUrl(url, headers);
+      succeeded =
+          await _hostApi.launchUrl(url, options.webViewConfiguration.headers);
     }
+
     // TODO(stuartmorgan): Remove this special handling as part of a
     // breaking change to rework failure handling across all platform. The
     // current behavior is backwards compatible with the previous Java error.
@@ -81,6 +106,7 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
           code: 'ACTIVITY_NOT_FOUND',
           message: 'No Activity found to handle intent { $url }');
     }
+
     return succeeded;
   }
 
