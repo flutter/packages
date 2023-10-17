@@ -14,7 +14,7 @@ These packages are also available on [pub](https://pub.dartlang.org/flutter/pack
 ## Issues
 
 Please file any issues, bugs, or feature requests in the [main flutter
-repo](https://github.com/flutter/flutter/issues/new).
+repo](https://github.com/flutter/flutter/issues/new/choose).
 Issues pertaining to this repository are [labeled
 "package"](https://github.com/flutter/flutter/issues?q=is%3Aopen+is%3Aissue+label%3Apackage).
 
