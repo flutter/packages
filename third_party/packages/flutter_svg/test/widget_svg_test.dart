@@ -728,6 +728,54 @@ void main() {
       matchesGoldenFile('golden_widget/two_of_same.png'),
     );
   });
+
+  // This tests https://github.com/dnfield/flutter_svg/issues/990
+  // Where embedded images were being incorrectly cached.
+  testWidgets('SvgPicture - with cached images', (WidgetTester tester) async {
+    // Simple red and blue 10x10 squares.
+    // Borrowed from https://gist.github.com/ondrek/7413434?permalink_comment_id=4674255#gistcomment-4674255
+    final Map<String, String> images = <String, String>{
+      'red':
+          'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC',
+      'blue':
+          'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mNkYPhfz0AEYBxVSF+FAP5FDvcfRYWgAAAAAElFTkSuQmCC',
+    };
+
+    // We keep pumping widgets into the same tester, to ensure the same cache
+    // is used on each iteration.
+    for (final String key in images.keys) {
+      final String image = images[key]!;
+      final String svgStr = '''<svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100">
+        <image width="100" height="100" href="data:image/png;base64,$image" />
+      </svg>''';
+
+      // First try with SvgPicture.string
+      await tester.pumpWidget(RepaintBoundary(
+        child: SvgPicture.string(svgStr),
+      ));
+      await tester.runAsync(() => vg.waitForPendingDecodes());
+      await tester.pumpAndSettle();
+
+      Finder widgetFinder = find.byType(SvgPicture);
+      expect(widgetFinder, findsOneWidget);
+      await expectLater(
+          widgetFinder, matchesGoldenFile('golden_widget/image_$key.png'));
+
+      // Then with SvgPicture.memory
+      await tester.pumpWidget(RepaintBoundary(
+        child: SvgPicture.memory(utf8.encode(svgStr) as Uint8List),
+      ));
+      await tester.runAsync(() => vg.waitForPendingDecodes());
+      await tester.pumpAndSettle();
+
+      widgetFinder = find.byType(SvgPicture);
+      expect(widgetFinder, findsOneWidget);
+      await expectLater(
+          widgetFinder, matchesGoldenFile('golden_widget/image_$key.png'));
+    }
+  });
 }
 
 class FakeAssetBundle extends Fake implements AssetBundle {

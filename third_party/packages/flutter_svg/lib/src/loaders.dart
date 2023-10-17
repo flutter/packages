@@ -237,7 +237,7 @@ class SvgStringLoader extends SvgLoader<void> {
   }
 
   @override
-  int get hashCode => Object.hash(svg, theme, colorMapper);
+  int get hashCode => Object.hash(_svg, theme, colorMapper);
 
   @override
   bool operator ==(Object other) {
@@ -266,7 +266,7 @@ class SvgBytesLoader extends SvgLoader<void> {
   String provideSvg(void message) => utf8.decode(bytes, allowMalformed: true);
 
   @override
-  int get hashCode => Object.hash(svg, theme, colorMapper);
+  int get hashCode => Object.hash(bytes, theme, colorMapper);
 
   @override
   bool operator ==(Object other) {
