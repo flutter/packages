@@ -23,7 +23,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
-
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.test.core.app.ApplicationProvider;
 import java.util.HashMap;
@@ -131,7 +130,6 @@ public class UrlLauncherTest {
     assertTrue(result);
   }
 
-
   @Test
   public void openWebView_opensUrl_inWebView() {
     Activity activity = mock(Activity.class);
@@ -188,7 +186,9 @@ public class UrlLauncherTest {
     assertTrue(result);
     assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
     assertNull(intentCaptor.getValue().getComponent());
-    assertEquals(intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE), CustomTabsIntent.SHOW_PAGE_TITLE);
+    assertEquals(
+        intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE),
+        CustomTabsIntent.SHOW_PAGE_TITLE);
   }
 
   @Test
@@ -340,19 +340,20 @@ public class UrlLauncherTest {
     boolean showTitle = true;
 
     api.openUrlInWebView(
-            "https://flutter.dev",
-            new Messages.WebViewOptions.Builder()
-                    .setEnableJavaScript(false)
-                    .setEnableDomStorage(enableDomStorage)
-                    .setHeaders(headers)
-                    .setShowTitle(showTitle)
-                    .build()
-          );
+        "https://flutter.dev",
+        new Messages.WebViewOptions.Builder()
+            .setEnableJavaScript(false)
+            .setEnableDomStorage(enableDomStorage)
+            .setHeaders(headers)
+            .setShowTitle(showTitle)
+            .build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture(), isNull());
 
-    assertEquals(intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE), CustomTabsIntent.SHOW_PAGE_TITLE);
+    assertEquals(
+        intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE),
+        CustomTabsIntent.SHOW_PAGE_TITLE);
   }
 
   @Test

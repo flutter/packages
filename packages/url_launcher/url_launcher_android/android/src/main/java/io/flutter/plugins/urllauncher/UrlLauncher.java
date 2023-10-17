@@ -133,10 +133,12 @@ final class UrlLauncher implements UrlLauncherApi {
 
   @VisibleForTesting
   public static boolean openCustomTab(
-      @NonNull Context context, @NonNull Uri uri, @NonNull Bundle headersBundle, @NonNull WebViewOptions options) {
-    CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
-            .setShowTitle(options.getShowTitle())
-            .build();
+      @NonNull Context context,
+      @NonNull Uri uri,
+      @NonNull Bundle headersBundle,
+      @NonNull WebViewOptions options) {
+    CustomTabsIntent customTabsIntent =
+        new CustomTabsIntent.Builder().setShowTitle(options.getShowTitle()).build();
 
     customTabsIntent.intent.putExtra(Browser.EXTRA_HEADERS, headersBundle);
 
@@ -182,5 +184,3 @@ final class UrlLauncher implements UrlLauncherApi {
     }
   }
 }
-
-
