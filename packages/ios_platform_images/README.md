@@ -40,7 +40,7 @@ Widget build(BuildContext context) {
 import ios_platform_images
 
 func makeImage() -> UIImageView {
-    let image = flutterImageWithName(withName: "assets/foo.png")
+    let image = UIImage.flutterImageWithName("assets/foo.png")
     return UIImageView(image: image)
 }
 ```
