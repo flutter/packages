@@ -49,8 +49,8 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     return _hostApi.closeWebView();
   }
 
-  // TODO(stuartmorgan): Implement launchUrl, and make this a passthrough
-  // to launchUrl. See also https://github.com/flutter/flutter/issues/66721
+  // TODO(Alex-Usmanov): make this a passthrough via launchUrl after issue
+  // https://github.com/flutter/flutter/issues/66721 is resolved.
   @override
   Future<bool> launch(
     String url, {
@@ -62,17 +62,14 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) async {
-    return launchUrl(
-      url,
-      LaunchOptions(
-        webViewConfiguration: InAppWebViewConfiguration(
-          enableJavaScript: enableJavaScript,
-          enableDomStorage: enableDomStorage,
-          headers: headers,
-        ),
-        webOnlyWindowName: webOnlyWindowName,
-      ),
+    final WebViewOptions webViewOptions = WebViewOptions(
+      enableJavaScript: enableJavaScript,
+      enableDomStorage: enableDomStorage,
+      headers: headers,
+      showTitle: false,
     );
+
+    return _openInWebviewOrLaunch(url, webViewOptions, useWebView);
   }
 
   @override
@@ -81,21 +78,24 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     final bool useWebView = options.mode == PreferredLaunchMode.inAppWebView ||
         (isWebURL && options.mode == PreferredLaunchMode.platformDefault);
 
-    bool succeeded;
+    final WebViewOptions webViewOptions = WebViewOptions(
+      enableJavaScript: options.webViewConfiguration.enableJavaScript,
+      enableDomStorage: options.webViewConfiguration.enableDomStorage,
+      headers: options.webViewConfiguration.headers,
+      showTitle: options.webViewConfiguration.showTitle,
+    );
+
+    return _openInWebviewOrLaunch(url, webViewOptions, useWebView);
+  }
+
+  Future<bool> _openInWebviewOrLaunch(
+      String url, WebViewOptions options, bool useWebView) async {
+    final bool succeeded;
 
     if (useWebView) {
-      succeeded = await _hostApi.openUrlInWebView(
-        url,
-        WebViewOptions(
-          enableJavaScript: options.webViewConfiguration.enableJavaScript,
-          enableDomStorage: options.webViewConfiguration.enableDomStorage,
-          headers: options.webViewConfiguration.headers,
-          showTitle: options.webViewConfiguration.showTitle,
-        ),
-      );
+      succeeded = await _hostApi.openUrlInWebView(url, options);
     } else {
-      succeeded =
-          await _hostApi.launchUrl(url, options.webViewConfiguration.headers);
+      succeeded = await _hostApi.launchUrl(url, options.headers);
     }
 
     // TODO(stuartmorgan): Remove this special handling as part of a

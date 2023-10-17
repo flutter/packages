@@ -64,6 +64,7 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
+
       expect(launched, true);
       expect(api.usedWebView, false);
       expect(api.passedWebViewOptions?.headers, isEmpty);
@@ -243,7 +244,7 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
       enableJavaScript: false,
       enableDomStorage: false,
       headers: headers,
-      showTitle: false,
+      showTitle: true,
     );
     usedWebView = false;
     return _launch(url);
