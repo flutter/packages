@@ -26,25 +26,22 @@ class IosPlatformImagesTests: XCTestCase {
   }
 
   func testResolveURL() {
-    let resourceName = "textfile"
-    let extensionName: String? = nil
     do {
-      let url = try plugin.resolveUrl(resourceName: resourceName, extension: extensionName)
+      let url = try plugin.resolveUrl(resourceName: "textfile", extension: nil)
       XCTAssertNotNil(url)
-      XCTAssertTrue(url!.contains(resourceName))
+      XCTAssertTrue(url?.contains("textfile") ?? false)
     } catch {
       XCTFail("Error while resolving URL: \(error)")
     }
   }
 
   func testResolveURLNotFound() {
-    let resourceName = "notFound"
-    let extensionName: String? = nil
     do {
-      let url = try plugin.resolveUrl(resourceName: resourceName, extension: extensionName)
+      let url = try plugin.resolveUrl(resourceName: "notFound", extension: nil)
       XCTAssertNil(url)
     } catch {
       XCTFail("Error while resolving URL: \(error)")
     }
   }
+
 }
