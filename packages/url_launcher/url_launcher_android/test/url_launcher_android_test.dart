@@ -165,6 +165,20 @@ void main() {
       expect(api.passedWebViewOptions?.enableDomStorage, true);
     });
 
+    test('passes showTitle to webview', () async {
+      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      await launcher.launchUrl(
+        'http://example.com/',
+        const LaunchOptions(
+          webViewConfiguration: InAppWebViewConfiguration(
+            showTitle: true,
+          ),
+        ),
+      );
+
+      expect(api.passedWebViewOptions?.showTitle, true);
+    });
+
     test('passes through no-activity exception', () async {
       final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
       await expectLater(

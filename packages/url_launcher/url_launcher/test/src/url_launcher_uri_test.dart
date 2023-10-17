@@ -54,6 +54,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrl(url), isTrue);
@@ -70,6 +71,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrl(url), isTrue);
@@ -86,6 +88,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrl(url), isTrue);
@@ -102,6 +105,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrl(url), isTrue);
@@ -118,6 +122,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrl(url, mode: LaunchMode.inAppWebView), isTrue);
@@ -134,6 +139,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -151,6 +157,7 @@ void main() {
           universalLinksOnly: true,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -169,6 +176,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -176,6 +184,28 @@ void main() {
               mode: LaunchMode.inAppWebView,
               webViewConfiguration:
                   const WebViewConfiguration(enableJavaScript: false)),
+          isTrue);
+    });
+
+    test('in-app webview with show title', () async {
+      final Uri url = Uri.parse('https://flutter.dev');
+      mock
+        ..setLaunchExpectations(
+          url: url.toString(),
+          launchMode: PreferredLaunchMode.inAppWebView,
+          enableJavaScript: true,
+          enableDomStorage: true,
+          universalLinksOnly: false,
+          headers: <String, String>{},
+          webOnlyWindowName: null,
+          showTitle: true,
+        )
+        ..setResponse(true);
+      expect(
+          await launchUrl(url,
+              mode: LaunchMode.inAppWebView,
+              webViewConfiguration:
+                  const WebViewConfiguration(showTitle: true)),
           isTrue);
     });
 
@@ -190,6 +220,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -211,6 +242,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{'key': 'value'},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -243,6 +275,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrl(emailLaunchUrl), isTrue);

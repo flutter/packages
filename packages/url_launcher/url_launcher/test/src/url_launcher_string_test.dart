@@ -49,6 +49,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
@@ -65,6 +66,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
@@ -81,6 +83,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
@@ -97,6 +100,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
@@ -113,6 +117,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString, mode: LaunchMode.inAppWebView),
@@ -130,6 +135,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -149,6 +155,7 @@ void main() {
           universalLinksOnly: true,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -168,6 +175,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -189,6 +197,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -210,6 +219,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{'key': 'value'},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -239,6 +249,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(emailLaunchUrlString), isTrue);
@@ -257,6 +268,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
