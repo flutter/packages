@@ -43,13 +43,16 @@ void main() {
 
     // Launch a url then close.
     expect(
-        await launcher.launch(primaryUrl,
-            useSafariVC: true,
-            useWebView: true,
-            enableJavaScript: false,
-            enableDomStorage: false,
-            universalLinksOnly: false,
-            headers: <String, String>{}),
+        await launcher.launch(
+          primaryUrl,
+          useSafariVC: true,
+          useWebView: true,
+          enableJavaScript: false,
+          enableDomStorage: false,
+          universalLinksOnly: false,
+          headers: <String, String>{},
+          showTitle: false,
+        ),
         true);
     await launcher.closeWebView();
     // Delay required to catch android side crashes in onDestroy.

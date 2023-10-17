@@ -31,6 +31,8 @@ final class UrlLauncher implements UrlLauncherApi {
 
   private static final String TAG = "UrlLauncher";
 
+  private static final CustomTabsIntentFactory customTabsIntentFactory = new CustomTabsIntentFactoryImpl();
+
   private final @NonNull Context applicationContext;
 
   private final @NonNull IntentResolver intentResolver;
@@ -104,7 +106,7 @@ final class UrlLauncher implements UrlLauncherApi {
     // Try to launch using Custom Tabs if they have the necessary functionality.
     if (!containsRestrictedHeader(options.getHeaders())) {
       Uri uri = Uri.parse(url);
-      if (openCustomTab(activity, uri, headersBundle)) {
+      if (openCustomTab(activity, uri, headersBundle, options)) {
         return true;
       }
     }
@@ -132,9 +134,10 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   private static boolean openCustomTab(
-      @NonNull Context context, @NonNull Uri uri, @NonNull Bundle headersBundle) {
-    CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+      @NonNull Context context, @NonNull Uri uri, @NonNull Bundle headersBundle, @NonNull WebViewOptions options) {
+    CustomTabsIntent customTabsIntent = customTabsIntentFactory.getCustomTabsIntent(options);
     customTabsIntent.intent.putExtra(Browser.EXTRA_HEADERS, headersBundle);
+
     try {
       customTabsIntent.launchUrl(context, uri);
     } catch (ActivityNotFoundException ex) {
@@ -176,3 +179,5 @@ final class UrlLauncher implements UrlLauncherApi {
     }
   }
 }
+
+
