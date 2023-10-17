@@ -23,7 +23,6 @@ while [[ $RESULT == 0 ]]; do
 done
 echo -e ""
 
-xcrun simctl list
 echo -e "\nCreating $DEVICE_NAME $DEVICE $OS ...\n"
 xcrun simctl create "$DEVICE_NAME" "$DEVICE" "$OS" | xargs xcrun simctl boot
 xcrun simctl list

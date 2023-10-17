@@ -3,54 +3,62 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:quick_actions_platform_interface/quick_actions_platform_interface.dart';
+
+import 'src/messages.g.dart';
 
 export 'package:quick_actions_platform_interface/types/types.dart';
 
-const MethodChannel _channel =
-    MethodChannel('plugins.flutter.io/quick_actions_android');
+late QuickActionHandler _handler;
 
-/// An implementation of [QuickActionsPlatform] that for Android.
+/// An implementation of [QuickActionsPlatform] for Android.
 class QuickActionsAndroid extends QuickActionsPlatform {
+  /// Creates a new plugin implementation instance.
+  QuickActionsAndroid({
+    @visibleForTesting AndroidQuickActionsApi? api,
+  }) : _hostApi = api ?? AndroidQuickActionsApi();
+
+  final AndroidQuickActionsApi _hostApi;
+
   /// Registers this class as the default instance of [QuickActionsPlatform].
   static void registerWith() {
     QuickActionsPlatform.instance = QuickActionsAndroid();
   }
 
-  /// The MethodChannel that is being used by this implementation of the plugin.
-  @visibleForTesting
-  MethodChannel get channel => _channel;
-
   @override
   Future<void> initialize(QuickActionHandler handler) async {
-    channel.setMethodCallHandler((MethodCall call) async {
-      assert(call.method == 'launch');
-      handler(call.arguments as String);
-    });
-    final String? action =
-        await channel.invokeMethod<String?>('getLaunchAction');
+    final _QuickActionHandlerApi quickActionsHandlerApi =
+        _QuickActionHandlerApi();
+    AndroidQuickActionsFlutterApi.setup(quickActionsHandlerApi);
+    _handler = handler;
+    final String? action = await _hostApi.getLaunchAction();
     if (action != null) {
-      handler(action);
+      _handler(action);
     }
   }
 
   @override
   Future<void> setShortcutItems(List<ShortcutItem> items) async {
-    final List<Map<String, String?>> itemsList =
-        items.map(_serializeItem).toList();
-    await channel.invokeMethod<void>('setShortcutItems', itemsList);
+    await _hostApi.setShortcutItems(
+      items.map(_shortcutItemToShortcutItemMessage).toList(),
+    );
   }
 
   @override
-  Future<void> clearShortcutItems() =>
-      channel.invokeMethod<void>('clearShortcutItems');
+  Future<void> clearShortcutItems() => _hostApi.clearShortcutItems();
 
-  Map<String, String?> _serializeItem(ShortcutItem item) {
-    return <String, String?>{
-      'type': item.type,
-      'localizedTitle': item.localizedTitle,
-      'icon': item.icon,
-    };
+  ShortcutItemMessage _shortcutItemToShortcutItemMessage(ShortcutItem item) {
+    return ShortcutItemMessage(
+      type: item.type,
+      localizedTitle: item.localizedTitle,
+      icon: item.icon,
+    );
+  }
+}
+
+class _QuickActionHandlerApi extends AndroidQuickActionsFlutterApi {
+  @override
+  void launchAction(String action) {
+    _handler(action);
   }
 }

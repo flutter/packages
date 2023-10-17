@@ -197,6 +197,8 @@ abstract class ProcessCameraProviderFlutterApi {
 @HostApi(dartHostTestHandler: 'TestCameraHostApi')
 abstract class CameraHostApi {
   int getCameraInfo(int identifier);
+
+  int getCameraControl(int identifier);
 }
 
 @FlutterApi()
@@ -416,4 +418,15 @@ abstract class QualitySelectorHostApi {
 abstract class FallbackStrategyHostApi {
   void create(int identifier, VideoQuality quality,
       VideoResolutionFallbackRule fallbackRule);
+}
+
+@HostApi(dartHostTestHandler: 'TestCameraControlHostApi')
+abstract class CameraControlHostApi {
+  @async
+  void enableTorch(int identifier, bool torch);
+}
+
+@FlutterApi()
+abstract class CameraControlFlutterApi {
+  void create(int identifier);
 }
