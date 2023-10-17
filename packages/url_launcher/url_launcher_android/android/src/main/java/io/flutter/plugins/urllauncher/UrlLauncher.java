@@ -31,8 +31,6 @@ final class UrlLauncher implements UrlLauncherApi {
 
   private static final String TAG = "UrlLauncher";
 
-  private static final CustomTabsIntentFactory customTabsIntentFactory = new CustomTabsIntentFactoryImpl();
-
   private final @NonNull Context applicationContext;
 
   private final @NonNull IntentResolver intentResolver;
@@ -133,9 +131,13 @@ final class UrlLauncher implements UrlLauncherApi {
     applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
   }
 
-  private static boolean openCustomTab(
+  @VisibleForTesting
+  public static boolean openCustomTab(
       @NonNull Context context, @NonNull Uri uri, @NonNull Bundle headersBundle, @NonNull WebViewOptions options) {
-    CustomTabsIntent customTabsIntent = customTabsIntentFactory.getCustomTabsIntent(options);
+    CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+            .setShowTitle(options.getShowTitle())
+            .build();
+
     customTabsIntent.intent.putExtra(Browser.EXTRA_HEADERS, headersBundle);
 
     try {
@@ -163,7 +165,8 @@ final class UrlLauncher implements UrlLauncherApi {
     return false;
   }
 
-  private static @NonNull Bundle extractBundle(Map<String, String> headersMap) {
+  @VisibleForTesting
+  public static @NonNull Bundle extractBundle(Map<String, String> headersMap) {
     final Bundle headersBundle = new Bundle();
     for (String key : headersMap.keySet()) {
       final String value = headersMap.get(key);
