@@ -9,6 +9,7 @@ import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
 
+import '../web_helpers/blob_stream.dart';
 import '../web_helpers/web_helpers.dart';
 import 'base.dart';
 
@@ -44,7 +45,7 @@ class XFile extends XFileBase {
         super(path) {
     // Cache `bytes` as Blob, if passed.
     if (bytes != null) {
-      _browserBlob = _createBlobFromBytes(bytes, mimeType);
+      _browserBlob = bytesToBlob(bytes, mimeType);
     }
   }
 
@@ -64,19 +65,26 @@ class XFile extends XFileBase {
         _name = name ?? '',
         super(path) {
     if (path == null) {
-      _browserBlob = _createBlobFromBytes(bytes, mimeType);
+      _browserBlob = bytesToBlob(bytes, mimeType);
       _path = Url.createObjectUrl(_browserBlob);
     } else {
       _path = path;
     }
   }
 
-  // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.
-  Blob _createBlobFromBytes(Uint8List bytes, String? mimeType) {
-    return (mimeType == null)
-        ? Blob(<dynamic>[bytes])
-        : Blob(<dynamic>[bytes], mimeType);
-  }
+  /// Construct a CrossFile from a JS [File] (extends Blob).
+  XFile.fromFile(
+    File file, {
+    String? path,
+    @visibleForTesting CrossFileTestOverrides? overrides,
+  })  : _browserBlob = file,
+        _name = file.name,
+        _mimeType = file.type,
+        _length = file.size,
+        _lastModified = file.lastModifiedDate,
+        _overrides = overrides,
+        _path = path,
+        super(path);
 
   // Overridable (meta) data that can be specified by the constructors.
 
@@ -85,7 +93,7 @@ class XFile extends XFileBase {
   // Name (with extension) of the file (eg: "anim.gif")
   final String _name;
   // Path of the file (must be a valid Blob URL, when set manually!)
-  late String _path;
+  String? _path;
   // The size of the file (in bytes).
   final int? _length;
   // The time the file was last modified.
@@ -115,7 +123,7 @@ class XFile extends XFileBase {
   String get name => _name;
 
   @override
-  String get path => _path;
+  String get path => _path ??= Url.createObjectUrl(_browserBlob);
 
   @override
   Future<DateTime> lastModified() async => _lastModified;
@@ -151,7 +159,7 @@ class XFile extends XFileBase {
 
   @override
   Future<Uint8List> readAsBytes() async {
-    return _blob.then(_blobToByteBuffer);
+    return _blob.then(blobToByteBuffer);
   }
 
   @override
@@ -162,32 +170,9 @@ class XFile extends XFileBase {
     return readAsBytes().then(encoding.decode);
   }
 
-  // TODO(dit): https://github.com/flutter/flutter/issues/91867 Implement openRead properly.
   @override
-  Stream<Uint8List> openRead([int? start, int? end]) async* {
-    final Blob blob = await _blob;
-
-    final Blob slice = blob.slice(start ?? 0, end ?? blob.size, blob.type);
-
-    final Uint8List convertedSlice = await _blobToByteBuffer(slice);
-
-    yield convertedSlice;
-  }
-
-  // Converts an html Blob object to a Uint8List, through a FileReader.
-  Future<Uint8List> _blobToByteBuffer(Blob blob) async {
-    final FileReader reader = FileReader();
-    reader.readAsArrayBuffer(blob);
-
-    await reader.onLoadEnd.first;
-
-    final Uint8List? result = reader.result as Uint8List?;
-
-    if (result == null) {
-      throw Exception('Cannot read bytes from Blob. Is it still available?');
-    }
-
-    return result;
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    return BlobStream(_blob, start, end);
   }
 
   /// Saves the data of this CrossFile at the location indicated by path.
