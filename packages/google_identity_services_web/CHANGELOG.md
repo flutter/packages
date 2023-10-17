@@ -1,3 +1,9 @@
+## 0.2.2
+
+* Adds the following new fields to `IdConfiguration`:
+  * `login_hint`, `hd` as auto-select hints for users with multiple accounts/domains.
+  * `use_fedcm_for_prompt` so FedCM can be enabled.
+
 ## 0.2.1+1
 
 * Adds pub topics to package metadata.
