@@ -124,67 +124,80 @@ void main() {
       enableAudio: true,
     );
 
-    // test operator== on parameters combination.
-    void checkParameters(List<dynamic> args) {
-      final resolutionPreset = args[0] as ResolutionPreset?;
-      final fps = args[1] as int?;
-      final videoBitrate = args[2] as int?;
-      final audioBitrate = args[3] as int?;
-      final enableAudio = args[4]! as bool;
+    test('should compare resolutionPreset', () {
+      const MediaSettings settings2 = MediaSettings(
+        resolutionPreset: preset2,
+        fps: fps1,
+        videoBitrate: videoBitrate1,
+        audioBitrate: audioBitrate1,
+        enableAudio: enableAudio1,
+      );
 
-      final MediaSettings settings2 = MediaSettings(
-          resolutionPreset: resolutionPreset,
-          fps: fps,
-          videoBitrate: videoBitrate,
-          audioBitrate: audioBitrate,
-          enableAudio: enableAudio);
+      expect(settings1 == settings2, isFalse);
+    });
 
-      if (resolutionPreset == preset1 &&
-          fps == fps1 &&
-          videoBitrate == videoBitrate1 &&
-          audioBitrate == audioBitrate1 &&
-          enableAudio == enableAudio1) {
-        expect(
-          settings1 == settings2,
-          isTrue,
-          reason:
-              'MediaSettings == operator should return true for equal parameters: $settings1 == $settings2',
-        );
-      } else {
-        expect(
-          settings1 == settings2,
-          isFalse,
-          reason:
-              'MediaSettings == operator should return false for non-equal parameters: $settings1 != $settings2',
-        );
-      }
-    }
+    test('should compare fps', () {
+      const MediaSettings settings2 = MediaSettings(
+        resolutionPreset: preset1,
+        fps: fps2,
+        videoBitrate: videoBitrate1,
+        audioBitrate: audioBitrate1,
+        enableAudio: enableAudio1,
+      );
 
-    test(
-        'MediaSettings == operator should be short-circuit AND of all parameters',
-        () {
-      // Sets of various parameters, including those equal and not equal to the corresponding `settings1` parameters
-      final params = [
-        {preset1, preset2, null},
-        {fps1, fps2, null},
-        {videoBitrate1, videoBitrate2, null},
-        {audioBitrate1, audioBitrate2, null},
-        {enableAudio1, enableAudio2},
-      ];
+      expect(settings1 == settings2, isFalse);
+    });
 
-      // recursively check all possible parameters combinations
-      void combine(List<Set<dynamic>> params, List<dynamic> args, int level) {
-        if (params.length == level) {
-          // now args contains all required parameters, so check `operator ==` now
-          checkParameters(args);
-        } else {
-          for (final variant in params[level]) {
-            combine(params, [...args, variant], level + 1);
-          }
-        }
-      }
+    test('should compare videoBitrate', () {
+      const MediaSettings settings2 = MediaSettings(
+        resolutionPreset: preset1,
+        fps: fps1,
+        videoBitrate: videoBitrate2,
+        audioBitrate: audioBitrate1,
+        enableAudio: enableAudio1,
+      );
 
-      combine(params, [], 0);
+      expect(settings1 == settings2, isFalse);
+    });
+
+    test('should compare audioBitrate', () {
+      const MediaSettings settings2 = MediaSettings(
+        resolutionPreset: preset1,
+        fps: fps1,
+        videoBitrate: videoBitrate1,
+        audioBitrate: audioBitrate2,
+        enableAudio: enableAudio1,
+      );
+
+      expect(settings1 == settings2, isFalse);
+    });
+
+    test('should compare enableAudio', () {
+      const MediaSettings settings2 = MediaSettings(
+        resolutionPreset: preset1,
+        fps: fps1,
+        videoBitrate: videoBitrate1,
+        audioBitrate: audioBitrate1,
+        // ignore: avoid_redundant_argument_values
+        enableAudio: enableAudio2,
+      );
+
+      expect(settings1 == settings2, isFalse);
+    });
+
+    test('should return true when all parameters are equal', () {
+      const MediaSettings sameSettings = MediaSettings(
+        resolutionPreset: preset1,
+        fps: fps1,
+        videoBitrate: videoBitrate1,
+        audioBitrate: audioBitrate1,
+        enableAudio: enableAudio1,
+      );
+
+      expect(
+        settings1 == sameSettings,
+        isTrue,
+      );
     });
 
     test('Identical objects should be equal', () {
