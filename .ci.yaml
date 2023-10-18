@@ -315,7 +315,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests.yaml
+      target_file: android_legacy_emulator_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 0 --shardCount 6"
@@ -328,7 +328,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests.yaml
+      target_file: android_legacy_emulator_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 1 --shardCount 6"
@@ -341,7 +341,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests.yaml
+      target_file: android_legacy_emulator_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 2 --shardCount 6"
@@ -354,7 +354,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests.yaml
+      target_file: android_legacy_emulator_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 3 --shardCount 6"
@@ -367,7 +367,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests.yaml
+      target_file: android_legacy_emulator_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 4 --shardCount 6"
@@ -380,7 +380,7 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      target_file: android_platform_tests.yaml
+      target_file: android_legacy_emulator_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 5 --shardCount 6"
