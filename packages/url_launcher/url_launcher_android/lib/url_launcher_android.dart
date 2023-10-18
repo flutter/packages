@@ -49,8 +49,8 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     return _hostApi.closeWebView();
   }
 
-  // TODO(Alex-Usmanov): make this a passthrough via launchUrl after issue
-  // https://github.com/flutter/flutter/issues/66721 is resolved.
+  // TODO(stuartmorgan): Implement launchUrl, and make this a passthrough
+  // to launchUrl. See also https://github.com/flutter/flutter/issues/66721
   @override
   Future<bool> launch(
     String url, {
