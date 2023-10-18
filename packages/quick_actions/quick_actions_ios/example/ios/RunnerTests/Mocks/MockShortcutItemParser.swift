@@ -8,9 +8,9 @@ import Foundation
 
 final class MockShortcutItemParser: ShortcutItemParser {
 
-  var parseShortcutItemsStub: ((_ items: [[String: Any]]) -> [UIApplicationShortcutItem])? = nil
+  var parseShortcutItemsStub: ((_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem])? = nil
 
-  func parseShortcutItems(_ items: [[String: Any]]) -> [UIApplicationShortcutItem] {
+  func parseShortcutItems(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem] {
     return parseShortcutItemsStub?(items) ?? []
   }
 }

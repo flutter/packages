@@ -10,11 +10,11 @@ import XCTest
 class DefaultShortcutItemParserTests: XCTestCase {
 
   func testParseShortcutItems() {
-    let rawItem = [
-      "type": "SearchTheThing",
-      "localizedTitle": "Search the thing",
-      "icon": "search_the_thing.png",
-    ]
+    let rawItem = ShortcutItemMessage(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing",
+      icon: "search_the_thing.png"
+    )
 
     let expectedItem = UIApplicationShortcutItem(
       type: "SearchTheThing",
@@ -28,11 +28,10 @@ class DefaultShortcutItemParserTests: XCTestCase {
   }
 
   func testParseShortcutItems_noIcon() {
-    let rawItem: [String: Any] = [
-      "type": "SearchTheThing",
-      "localizedTitle": "Search the thing",
-      "icon": NSNull(),
-    ]
+    let rawItem = ShortcutItemMessage(
+      type: "SearchTheThing",
+      localizedTitle: "Search the thing"
+    )
 
     let expectedItem = UIApplicationShortcutItem(
       type: "SearchTheThing",
@@ -43,25 +42,5 @@ class DefaultShortcutItemParserTests: XCTestCase {
 
     let parser = DefaultShortcutItemParser()
     XCTAssertEqual(parser.parseShortcutItems([rawItem]), [expectedItem])
-  }
-
-  func testParseShortcutItems_noType() {
-    let rawItem = [
-      "localizedTitle": "Search the thing",
-      "icon": "search_the_thing.png",
-    ]
-
-    let parser = DefaultShortcutItemParser()
-    XCTAssertEqual(parser.parseShortcutItems([rawItem]), [])
-  }
-
-  func testParseShortcutItems_noLocalizedTitle() {
-    let rawItem = [
-      "type": "SearchTheThing",
-      "icon": "search_the_thing.png",
-    ]
-
-    let parser = DefaultShortcutItemParser()
-    XCTAssertEqual(parser.parseShortcutItems([rawItem]), [])
   }
 }

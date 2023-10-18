@@ -12,26 +12,24 @@ protocol ShortcutItemParser {
   /// - Parameter items an array of raw shortcut items to be parsed.
   /// - Returns an array of parsed shortcut items to be set.
   ///
-  func parseShortcutItems(_ items: [[String: Any]]) -> [UIApplicationShortcutItem]
+  func parseShortcutItems(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem]
 }
 
 /// A default implementation of the `ShortcutItemParser` protocol.
 final class DefaultShortcutItemParser: ShortcutItemParser {
 
-  func parseShortcutItems(_ items: [[String: Any]]) -> [UIApplicationShortcutItem] {
+  func parseShortcutItems(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem] {
     return items.compactMap { deserializeShortcutItem(with: $0) }
   }
 
-  private func deserializeShortcutItem(with serialized: [String: Any]) -> UIApplicationShortcutItem?
+  private func deserializeShortcutItem(with serialized: ShortcutItemMessage)
+    -> UIApplicationShortcutItem?
   {
-    guard
-      let type = serialized["type"] as? String,
-      let localizedTitle = serialized["localizedTitle"] as? String
-    else {
-      return nil
-    }
 
-    let icon = (serialized["icon"] as? String).map {
+    let type = serialized.type
+    let localizedTitle = serialized.localizedTitle
+    
+    let icon = (serialized.icon).map {
       UIApplicationShortcutIcon(templateImageName: $0)
     }
 

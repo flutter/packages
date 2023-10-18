@@ -4,48 +4,39 @@
 
 import Flutter
 
-public final class QuickActionsPlugin: NSObject, FlutterPlugin {
+public final class QuickActionsPlugin: NSObject, FlutterPlugin, IosQuickActionsApi {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(
-      name: "plugins.flutter.io/quick_actions_ios",
-      binaryMessenger: registrar.messenger())
-    let instance = QuickActionsPlugin(channel: channel)
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    let messenger = registrar.messenger()
+    let instance = QuickActionsPlugin(messenger: messenger)
+    IosQuickActionsApiSetup.setUp(binaryMessenger: messenger, api: instance)
     registrar.addApplicationDelegate(instance)
   }
 
-  private let channel: MethodChannel
   private let shortcutItemProvider: ShortcutItemProviding
   private let shortcutItemParser: ShortcutItemParser
+  private let flutterApi: IosQuickActionsFlutterApi
   /// The type of the shortcut item selected when launching the app.
   private var launchingShortcutType: String? = nil
 
   init(
-    channel: MethodChannel,
+    messenger: FlutterBinaryMessenger,
     shortcutItemProvider: ShortcutItemProviding = UIApplication.shared,
     shortcutItemParser: ShortcutItemParser = DefaultShortcutItemParser()
   ) {
-    self.channel = channel
     self.shortcutItemProvider = shortcutItemProvider
     self.shortcutItemParser = shortcutItemParser
+    self.flutterApi = IosQuickActionsFlutterApi(binaryMessenger: messenger)
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "setShortcutItems":
-      // `arguments` must be an array of dictionaries
-      let items = call.arguments as! [[String: Any]]
-      shortcutItemProvider.shortcutItems = shortcutItemParser.parseShortcutItems(items)
-      result(nil)
-    case "clearShortcutItems":
-      shortcutItemProvider.shortcutItems = []
-      result(nil)
-    case "getLaunchAction":
-      result(nil)
-    case _:
-      result(FlutterMethodNotImplemented)
-    }
+  var testStub: (() -> Void)? = nil
+
+  func setShortcutItems(itemsList: [ShortcutItemMessage]) throws {
+    shortcutItemProvider.shortcutItems = shortcutItemParser.parseShortcutItems(itemsList)
+  }
+
+  func clearShortcutItems() throws {
+    shortcutItemProvider.shortcutItems = []
   }
 
   public func application(
@@ -80,12 +71,14 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin {
   public func applicationDidBecomeActive(_ application: UIApplication) {
     if let shortcutType = launchingShortcutType {
       handleShortcut(shortcutType)
-      launchingShortcutType = nil
+      self.launchingShortcutType = nil
     }
   }
 
-  private func handleShortcut(_ shortcut: String) {
-    channel.invokeMethod("launch", arguments: shortcut)
+  func handleShortcut(_ shortcut: String) {
+    self.testStub?()
+    flutterApi.launchAction(action: shortcut) {
+      // noop
+    }
   }
-
 }
