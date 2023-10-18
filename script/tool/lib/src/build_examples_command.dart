@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:file/file.dart';
 import 'package:yaml/yaml.dart';
 
@@ -269,6 +271,16 @@ class BuildExamplesCommand extends PackageLoopingCommand {
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
 
+    final ProcessResult result = await processRunner.run(
+      flutterCommand,
+      <String>[
+        'clean',
+        '-v',
+      ],
+      workingDir: example.directory,
+    );
+    print('Clean exit code: ${result.exitCode}');
+
     final int exitCode = await processRunner.runAndStream(
       flutterCommand,
       <String>[
@@ -278,6 +290,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
         ..._readExtraBuildFlagsConfiguration(example.directory),
         if (enableExperiment.isNotEmpty)
           '--enable-experiment=$enableExperiment',
+        '-v',
       ],
       workingDir: example.directory,
     );
