@@ -23,7 +23,7 @@ public class FlutterWebViewClient extends WebViewClient {
   }
 
   /*
-   * This method is deprecated in API 24. Still overridden to support
+   * This method is deprecated in API 24. It is still overridden to support
    * earlier Android versions.
    */
   @SuppressWarnings("deprecation")
