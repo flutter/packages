@@ -844,41 +844,45 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final LinkedHashMap<Rect, TableSpanDecoration> backgroundColumns =
         LinkedHashMap<Rect, TableSpanDecoration>();
 
-    final _Span rowSpan = _rowMetrics[leading.row]!;
+    final TableSpan rowSpan = _rowMetrics[leading.row]!.configuration;
     for (int column = leading.column; column <= trailing.column; column++) {
-      final _Span columnSpan = _columnMetrics[column]!;
-      if (columnSpan.configuration.backgroundDecoration != null ||
-          columnSpan.configuration.foregroundDecoration != null) {
+      final TableSpan columnSpan = _columnMetrics[column]!.configuration;
+      if (columnSpan.backgroundDecoration != null ||
+          columnSpan.foregroundDecoration != null) {
         final RenderBox leadingCell = getChildFor(
           TableVicinity(column: column, row: leading.row),
         )!;
         final RenderBox trailingCell = getChildFor(
           TableVicinity(column: column, row: trailing.row),
         )!;
-
-        final Rect rect = Rect.fromPoints(
-          parentDataOf(leadingCell).paintOffset! +
-              offset -
-              Offset(
-                columnSpan.configuration.padding.leading,
-                rowSpan.configuration.padding.leading,
-              ),
-          parentDataOf(trailingCell).paintOffset! +
-              Offset(trailingCell.size.width, trailingCell.size.height) +
-              offset +
-              Offset(
-                columnSpan.configuration.padding.trailing,
-                rowSpan.configuration.padding.trailing,
-              ),
-        );
-
-        if (columnSpan.configuration.backgroundDecoration != null) {
-          backgroundColumns[rect] =
-              columnSpan.configuration.backgroundDecoration!;
+        
+        Rect getColumnRect(bool consumePadding) {
+         return Rect.fromPoints(
+           parentDataOf(leadingCell).paintOffset! +
+               offset -
+               Offset(
+                 consumePadding ? columnSpan.padding.leading : 0.0,
+                 rowSpan.padding.leading,
+               ),
+           parentDataOf(trailingCell).paintOffset! +
+               Offset(trailingCell.size.width, trailingCell.size.height) +
+               offset +
+               Offset(
+                 consumePadding ? columnSpan.padding.trailing : 0.0,
+                 rowSpan.padding.trailing,
+               ),
+         ); 
         }
-        if (columnSpan.configuration.foregroundDecoration != null) {
+
+        if (columnSpan.backgroundDecoration != null) {
+          final Rect rect = getColumnRect(columnSpan.backgroundDecoration!.consumeSpanPadding);
+          backgroundColumns[rect] =
+              columnSpan.backgroundDecoration!;
+        }
+        if (columnSpan.foregroundDecoration != null) {
+          final Rect rect = getColumnRect(columnSpan.foregroundDecoration!.consumeSpanPadding);
           foregroundColumns[rect] =
-              columnSpan.configuration.foregroundDecoration!;
+              columnSpan.foregroundDecoration!;
         }
       }
     }
@@ -889,11 +893,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     final LinkedHashMap<Rect, TableSpanDecoration> backgroundRows =
         LinkedHashMap<Rect, TableSpanDecoration>();
 
-    final _Span columnSpan = _columnMetrics[leading.column]!;
+    final TableSpan columnSpan = _columnMetrics[leading.column]!.configuration;
     for (int row = leading.row; row <= trailing.row; row++) {
-      final _Span rowSpan = _rowMetrics[row]!;
-      if (rowSpan.configuration.backgroundDecoration != null ||
-          rowSpan.configuration.foregroundDecoration != null) {
+      final TableSpan rowSpan = _rowMetrics[row]!.configuration;
+      if (rowSpan.backgroundDecoration != null ||
+          rowSpan.foregroundDecoration != null) {
         final RenderBox leadingCell = getChildFor(
           TableVicinity(column: leading.column, row: row),
         )!;
@@ -901,26 +905,31 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           TableVicinity(column: trailing.column, row: row),
         )!;
 
-        final Rect rect = Rect.fromPoints(
-          parentDataOf(leadingCell).paintOffset! +
-              offset -
-              Offset(
-                columnSpan.configuration.padding.leading,
-                rowSpan.configuration.padding.leading,
-              ),
-          parentDataOf(trailingCell).paintOffset! +
-              Offset(trailingCell.size.width, trailingCell.size.height) +
-              offset +
-              Offset(
-                columnSpan.configuration.padding.leading,
-                rowSpan.configuration.padding.trailing,
-              ),
-        );
-        if (rowSpan.configuration.backgroundDecoration != null) {
-          backgroundRows[rect] = rowSpan.configuration.backgroundDecoration!;
+        Rect getRowRect(bool consumePadding) {
+          return Rect.fromPoints(
+            parentDataOf(leadingCell).paintOffset! +
+                offset -
+                Offset(
+                  columnSpan.padding.leading,
+                  consumePadding ? rowSpan.padding.leading : 0.0,
+                ),
+            parentDataOf(trailingCell).paintOffset! +
+                Offset(trailingCell.size.width, trailingCell.size.height) +
+                offset +
+                Offset(
+                  columnSpan.padding.leading,
+                  consumePadding ? rowSpan.padding.trailing : 0.0,
+                ),
+          );
         }
-        if (rowSpan.configuration.foregroundDecoration != null) {
-          foregroundRows[rect] = rowSpan.configuration.foregroundDecoration!;
+
+        if (rowSpan.backgroundDecoration != null) {
+          final Rect rect = getRowRect(rowSpan.backgroundDecoration!.consumeSpanPadding);
+          backgroundRows[rect] = rowSpan.backgroundDecoration!;
+        }
+        if (rowSpan.foregroundDecoration != null) {
+          final Rect rect = getRowRect(rowSpan.foregroundDecoration!.consumeSpanPadding);
+          foregroundRows[rect] = rowSpan.foregroundDecoration!;
         }
       }
     }
