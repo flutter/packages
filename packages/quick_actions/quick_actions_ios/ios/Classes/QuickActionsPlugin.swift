@@ -29,6 +29,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IosQuickActionsA
     self.flutterApi = IosQuickActionsFlutterApi(binaryMessenger: messenger)
   }
 
+  /// Method to allow for async testing.
   var testStub: (() -> Void)? = nil
 
   func setShortcutItems(itemsList: [ShortcutItemMessage]) throws {
