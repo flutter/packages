@@ -24,6 +24,9 @@ import 'model.dart';
 ///  * end-of-line comments are supported, using the "//" syntax from C (and
 ///    Dart).
 ///
+///  * block comments are supported, using the "/*...*/" syntax from C (and
+///    Dart).
+///
 ///  * map keys may be unquoted when they are alphanumeric.
 ///
 ///  * "null" is not a valid value except as a value in maps, where it is
@@ -152,8 +155,9 @@ import 'model.dart';
 /// binary64 format.
 ///
 /// ```bnf
-/// WS ::= ( <U+0020> | <U+000A> | "//" comment* <U+000A or EOF> )
+/// WS ::= ( <U+0020> | <U+000A> | "//" comment* <U+000A or EOF> | "/*" blockcomment "*/" )
 /// comment ::= <U+0000..U+10FFFF except U+000A>
+/// blockcomment ::= <any number of U+0000..U+10FFFF characters not containing the sequence U+002A U+002F>
 /// ```
 ///
 /// The `WS` token is used to represent where whitespace and comments are
@@ -746,6 +750,8 @@ enum _TokenizerMode {
   endQuote,
   slash,
   comment,
+  blockComment,
+  blockCommentEnd,
 }
 
 String _describeRune(int current) {
@@ -1133,7 +1139,7 @@ Iterable<_Token> _tokenize(String file) sync* {
           case 0x37: // U+0037 DIGIT SEVEN character (7)
           case 0x38: // U+0038 DIGIT EIGHT character (8)
           case 0x39: // U+0039 DIGIT NINE character (9)
-            buffer.add(current);
+            buffer.add(current); // https://github.com/dart-lang/sdk/issues/53349
             break;
           default:
             throw ParserException('Unexpected character ${_describeRune(current)} in integer', line, column);
@@ -2051,6 +2057,9 @@ Iterable<_Token> _tokenize(String file) sync* {
         switch (current) {
           case -1:
             throw ParserException('Unexpected end of file inside comment delimiter', line, column);
+          case 0x2A: // U+002A ASTERISK character (*)
+            mode = _TokenizerMode.blockComment;
+            break;
           case 0x2F: // U+002F SOLIDUS character (/)
             mode = _TokenizerMode.comment;
             break;
@@ -2069,6 +2078,33 @@ Iterable<_Token> _tokenize(String file) sync* {
             break;
           default:
             // ignored, comment
+            break;
+        }
+        break;
+
+      case _TokenizerMode.blockComment:
+        switch (current) {
+          case -1:
+            throw ParserException('Unexpected end of file in block comment', line, column);
+          case 0x2A: // U+002A ASTERISK character (*)
+            mode = _TokenizerMode.blockCommentEnd;
+            break;
+          default:
+            // ignored, comment
+            break;
+        }
+        break;
+
+      case _TokenizerMode.blockCommentEnd:
+        switch (current) {
+          case -1:
+            throw ParserException('Unexpected end of file in block comment', line, column);
+          case 0x2F: // U+002F SOLIDUS character (/)
+            mode = _TokenizerMode.main;
+            break;
+          default:
+            // ignored, comment
+            mode = _TokenizerMode.blockComment;
             break;
         }
         break;

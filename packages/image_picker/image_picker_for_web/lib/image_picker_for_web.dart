@@ -42,102 +42,47 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     ImagePickerPlatform.instance = ImagePickerPlugin();
   }
 
-  /// Returns a [PickedFile] with the image that was picked.
-  ///
-  /// The `source` argument controls where the image comes from. This can
-  /// be either [ImageSource.camera] or [ImageSource.gallery].
-  ///
-  /// Note that the `maxWidth`, `maxHeight` and `imageQuality` arguments are not supported on the web. If any of these arguments is supplied, it'll be silently ignored by the web version of the plugin.
-  ///
-  /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
-  /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
-  /// Defaults to [CameraDevice.rear].
-  ///
-  /// If no images were picked, the return value is null.
+  /// Returns an [XFile] with the image that was picked, or `null` if no images were picked.
   @override
-  Future<PickedFile> pickImage({
+  Future<XFile?> getImageFromSource({
     required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-  }) {
-    final String? capture =
-        computeCaptureAttribute(source, preferredCameraDevice);
-    return pickFile(accept: _kAcceptImageMimeType, capture: capture);
-  }
-
-  /// Returns a [PickedFile] containing the video that was picked.
-  ///
-  /// The [source] argument controls where the video comes from. This can
-  /// be either [ImageSource.camera] or [ImageSource.gallery].
-  ///
-  /// Note that the `maxDuration` argument is not supported on the web. If the argument is supplied, it'll be silently ignored by the web version of the plugin.
-  ///
-  /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
-  /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
-  /// Defaults to [CameraDevice.rear].
-  ///
-  /// If no images were picked, the return value is null.
-  @override
-  Future<PickedFile> pickVideo({
-    required ImageSource source,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
-    Duration? maxDuration,
-  }) {
-    final String? capture =
-        computeCaptureAttribute(source, preferredCameraDevice);
-    return pickFile(accept: _kAcceptVideoMimeType, capture: capture);
-  }
-
-  /// Injects a file input with the specified accept+capture attributes, and
-  /// returns the PickedFile that the user selected locally.
-  ///
-  /// `capture` is only supported in mobile browsers.
-  /// See https://caniuse.com/#feat=html-media-capture
-  @visibleForTesting
-  Future<PickedFile> pickFile({
-    String? accept,
-    String? capture,
-  }) {
-    final html.FileUploadInputElement input =
-        createInputElement(accept, capture) as html.FileUploadInputElement;
-    _injectAndActivate(input);
-    return _getSelectedFile(input);
-  }
-
-  /// Returns an [XFile] with the image that was picked.
-  ///
-  /// The `source` argument controls where the image comes from. This can
-  /// be either [ImageSource.camera] or [ImageSource.gallery].
-  ///
-  /// Note that the `maxWidth`, `maxHeight` and `imageQuality` arguments are not supported on the web. If any of these arguments is supplied, it'll be silently ignored by the web version of the plugin.
-  ///
-  /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
-  /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
-  /// Defaults to [CameraDevice.rear].
-  ///
-  /// If no images were picked, the return value is null.
-  @override
-  Future<XFile> getImage({
-    required ImageSource source,
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-    CameraDevice preferredCameraDevice = CameraDevice.rear,
+    ImagePickerOptions options = const ImagePickerOptions(),
   }) async {
     final String? capture =
-        computeCaptureAttribute(source, preferredCameraDevice);
+        computeCaptureAttribute(source, options.preferredCameraDevice);
     final List<XFile> files = await getFiles(
       accept: _kAcceptImageMimeType,
       capture: capture,
     );
-    return _imageResizer.resizeImageIfNeeded(
-      files.first,
-      maxWidth,
-      maxHeight,
-      imageQuality,
+    return files.isEmpty
+        ? null
+        : _imageResizer.resizeImageIfNeeded(
+            files.first,
+            options.maxWidth,
+            options.maxHeight,
+            options.imageQuality,
+          );
+  }
+
+  /// Returns a [List<XFile>] with the images that were picked, if any.
+  @override
+  Future<List<XFile>> getMultiImageWithOptions({
+    MultiImagePickerOptions options = const MultiImagePickerOptions(),
+  }) async {
+    final List<XFile> images = await getFiles(
+      accept: _kAcceptImageMimeType,
+      multiple: true,
     );
+    final Iterable<Future<XFile>> resized = images.map(
+      (XFile image) => _imageResizer.resizeImageIfNeeded(
+        image,
+        options.imageOptions.maxWidth,
+        options.imageOptions.maxHeight,
+        options.imageOptions.imageQuality,
+      ),
+    );
+
+    return Future.wait<XFile>(resized);
   }
 
   /// Returns an [XFile] containing the video that was picked.
@@ -153,7 +98,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   ///
   /// If no images were picked, the return value is null.
   @override
-  Future<XFile> getVideo({
+  Future<XFile?> getVideo({
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
@@ -164,30 +109,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       accept: _kAcceptVideoMimeType,
       capture: capture,
     );
-    return files.first;
-  }
-
-  /// Injects a file input, and returns a list of XFile images that the user selected locally.
-  @override
-  Future<List<XFile>> getMultiImage({
-    double? maxWidth,
-    double? maxHeight,
-    int? imageQuality,
-  }) async {
-    final List<XFile> images = await getFiles(
-      accept: _kAcceptImageMimeType,
-      multiple: true,
-    );
-    final Iterable<Future<XFile>> resized = images.map(
-      (XFile image) => _imageResizer.resizeImageIfNeeded(
-        image,
-        maxWidth,
-        maxHeight,
-        imageQuality,
-      ),
-    );
-
-    return Future.wait<XFile>(resized);
+    return files.isEmpty ? null : files.first;
   }
 
   /// Injects a file input, and returns a list of XFile media that the user selected locally.
@@ -239,6 +161,58 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     return _getSelectedXFiles(input);
   }
 
+  // Deprecated methods follow...
+
+  /// Returns an [XFile] with the image that was picked.
+  ///
+  /// The `source` argument controls where the image comes from. This can
+  /// be either [ImageSource.camera] or [ImageSource.gallery].
+  ///
+  /// Note that the `maxWidth`, `maxHeight` and `imageQuality` arguments are not supported on the web. If any of these arguments is supplied, it'll be silently ignored by the web version of the plugin.
+  ///
+  /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
+  /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
+  /// Defaults to [CameraDevice.rear].
+  ///
+  /// If no images were picked, the return value is null.
+  @override
+  @Deprecated('Use getImageFromSource instead.')
+  Future<XFile?> getImage({
+    required ImageSource source,
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+    CameraDevice preferredCameraDevice = CameraDevice.rear,
+  }) async {
+    return getImageFromSource(
+        source: source,
+        options: ImagePickerOptions(
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          imageQuality: imageQuality,
+          preferredCameraDevice: preferredCameraDevice,
+        ));
+  }
+
+  /// Injects a file input, and returns a list of XFile images that the user selected locally.
+  @override
+  @Deprecated('Use getMultiImageWithOptions instead.')
+  Future<List<XFile>> getMultiImage({
+    double? maxWidth,
+    double? maxHeight,
+    int? imageQuality,
+  }) async {
+    return getMultiImageWithOptions(
+      options: MultiImagePickerOptions(
+        imageOptions: ImageOptions(
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          imageQuality: imageQuality,
+        ),
+      ),
+    );
+  }
+
   // DOM methods
 
   /// Converts plugin configuration into a proper value for the `capture` attribute.
@@ -267,29 +241,6 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     return input == null ? null : _getFilesFromInput(input);
   }
 
-  /// Monitors an <input type="file"> and returns the selected file.
-  Future<PickedFile> _getSelectedFile(html.FileUploadInputElement input) {
-    final Completer<PickedFile> completer = Completer<PickedFile>();
-    // Observe the input until we can return something
-    input.onChange.first.then((html.Event event) {
-      final List<html.File>? files = _handleOnChangeEvent(event);
-      if (!completer.isCompleted && files != null) {
-        completer.complete(PickedFile(
-          html.Url.createObjectUrl(files.first),
-        ));
-      }
-    });
-    input.onError.first.then((html.Event event) {
-      if (!completer.isCompleted) {
-        completer.completeError(event);
-      }
-    });
-    // Note that we don't bother detaching from these streams, since the
-    // "input" gets re-created in the DOM every time the user needs to
-    // pick a file.
-    return completer.future;
-  }
-
   /// Monitors an <input type="file"> and returns the selected file(s).
   Future<List<XFile>> _getSelectedXFiles(html.FileUploadInputElement input) {
     final Completer<List<XFile>> completer = Completer<List<XFile>>();
@@ -310,6 +261,11 @@ class ImagePickerPlugin extends ImagePickerPlatform {
         }).toList());
       }
     });
+
+    input.addEventListener('cancel', (html.Event _) {
+      completer.complete(<XFile>[]);
+    });
+
     input.onError.first.then((html.Event event) {
       if (!completer.isCompleted) {
         completer.completeError(event);
@@ -361,6 +317,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   void _injectAndActivate(html.Element element) {
     _target.children.clear();
     _target.children.add(element);
+    // TODO(dit): Reimplement this with the showPicker() API, https://github.com/flutter/flutter/issues/130365
     element.click();
   }
 }

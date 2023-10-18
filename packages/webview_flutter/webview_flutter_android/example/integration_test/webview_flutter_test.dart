@@ -342,7 +342,7 @@ Future<void> main() async {
 
     await pageFinished.future;
 
-    final String customUserAgent = await _getUserAgent(controller);
+    final String? customUserAgent = await controller.getUserAgent();
     expect(customUserAgent, 'Custom_User_Agent1');
   });
 
@@ -356,6 +356,19 @@ Future<void> main() async {
       final String videoTest = '''
           <!DOCTYPE html><html>
           <head><title>Video auto play</title>
+            <style>
+              body,
+              html,
+              #container {
+                  height: 100%;
+                  width: 100%;
+              }
+
+              div {
+                height: 50%;
+                width: 100%;
+              }
+            </style>
             <script type="text/javascript">
               function play() {
                 var video = document.getElementById("video");
@@ -374,12 +387,24 @@ Future<void> main() async {
                 var video = document.getElementById("video");
                 return video.webkitDisplayingFullscreen;
               }
+              function toggleFullScreen() {
+                let elem = document.getElementById("video");
+
+                if (!document.fullscreenElement) {
+                  elem.requestFullscreen();
+                } else {
+                  document.exitFullscreen();
+                }
+              }
             </script>
           </head>
           <body onload="play();">
-          <video controls playsinline autoplay id="video">
-            <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
-          </video>
+            <div onclick="toggleFullScreen();" style="background-color: aqua;"></div>
+            <div>
+              <video controls playsinline autoplay id="video" height="100%">
+                <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
+              </video>
+            </div>
           </body>
           </html>
         ''';
@@ -508,6 +533,65 @@ Future<void> main() async {
       final bool fullScreen = await controller
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, false);
+    });
+
+    testWidgets('Video plays fullscreen', (WidgetTester tester) async {
+      final Completer<void> fullscreenEntered = Completer<void>();
+      final Completer<void> fullscreenExited = Completer<void>();
+      final Completer<void> pageLoaded = Completer<void>();
+
+      final AndroidWebViewController controller = AndroidWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      unawaited(controller.setCustomWidgetCallbacks(onHideCustomWidget: () {
+        fullscreenExited.complete();
+      }, onShowCustomWidget:
+          (Widget webView, void Function() onHideCustomView) {
+        fullscreenEntered.complete();
+        onHideCustomView();
+      }));
+
+      await controller.loadRequest(
+        LoadRequestParams(
+          uri: Uri.parse(
+            'data:text/html;charset=utf-8;base64,$videoTestBase64',
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(
+              key: const Key('webview_widget'),
+              controller: controller,
+            ),
+          ).build(context);
+        },
+      ));
+
+      await pageLoaded.future;
+
+      await tester.pumpAndSettle();
+
+      // Due to security reasons, Chrome doesn't allow to programmatically
+      // toggle a video to fullscreen unless the call is directly coming from
+      // a user triggered event.
+      // The top half of the loaded web content contains a clickable div, which
+      // is tapped using the code below, triggering a user event.
+      //
+      // The offset of 20 x 20 is chosen at random.
+      await tester.tapAt(const Offset(20, 20));
+
+      await expectLater(fullscreenEntered.future, completes);
+      await expectLater(fullscreenExited.future, completes);
     });
   });
 
@@ -1226,19 +1310,47 @@ Future<void> main() async {
       );
     },
   );
-}
 
-/// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.
-Future<String> _getUserAgent(PlatformWebViewController controller) async {
-  return _runJavaScriptReturningResult(controller, 'navigator.userAgent;');
-}
+  group('Logging', () {
+    testWidgets('can receive console log messages',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+          </head>
+          <body onload="console.debug('Debug message')">
+            <p>Test page</p>
+          </body>
+          </html>
+         ''';
 
-Future<String> _runJavaScriptReturningResult(
-  PlatformWebViewController controller,
-  String js,
-) async {
-  return jsonDecode(await controller.runJavaScriptReturningResult(js) as String)
-      as String;
+      final Completer<String> debugMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {
+        debugMessageReceived
+            .complete('${message.level.name}:${message.message}');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(
+          debugMessageReceived.future, completion('debug:Debug message'));
+    });
+  });
 }
 
 class ResizableWebView extends StatefulWidget {

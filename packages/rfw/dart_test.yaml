@@ -1,3 +1,0 @@
-# TODO(stuartmorgan): Fix the web failures, and enable. See
-# https://github.com/flutter/flutter/issues/129843
-test_on: vm

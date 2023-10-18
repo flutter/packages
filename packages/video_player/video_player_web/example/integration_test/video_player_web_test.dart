@@ -239,5 +239,15 @@ void main() {
             VideoEventType.bufferingEnd,
           ]));
     });
+
+    testWidgets('can set web options', (WidgetTester tester) async {
+      expect(
+        VideoPlayerPlatform.instance.setWebOptions(
+          await textureId,
+          const VideoPlayerWebOptions(),
+        ),
+        completes,
+      );
+    });
   });
 }

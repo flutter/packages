@@ -3,9 +3,10 @@ description: go_router_builder examples
 publish_to: none
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
+  sdk: ">=2.19.0 <4.0.0"
 
 dependencies:
+  collection: ^1.15.0
   flutter:
     sdk: flutter
   go_router: ^10.0.0

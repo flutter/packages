@@ -50,7 +50,6 @@ const String windowsUnitTests = 'windows_unittests';
 const String windowsIntegrationTests = 'windows_integration_tests';
 const String dartUnitTests = 'dart_unittests';
 const String flutterUnitTests = 'flutter_unittests';
-const String mockHandlerTests = 'mock_handler_tests';
 const String commandLineTests = 'command_line_tests';
 
 const Map<String, TestInfo> testSuites = <String, TestInfo>{
@@ -101,9 +100,6 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
   macOSSwiftIntegrationTests: TestInfo(
       function: _runMacOSSwiftIntegrationTests,
       description: 'Integration tests on generated Swift code on macOS.'),
-  mockHandlerTests: TestInfo(
-      function: _runMockHandlerTests,
-      description: 'Unit tests on generated Dart mock handler code.'),
   commandLineTests: TestInfo(
       function: _runCommandLineTests,
       description: 'Tests running pigeon with various command-line options.'),
@@ -187,21 +183,6 @@ Future<int> _runDartUnitTests() async {
   return exitCode;
 }
 
-/// Generates multiple dart files based on the jobs defined in [jobs] which is
-/// in the format of (key: input pigeon file path, value: output dart file
-/// path).
-Future<int> _generateDart(Map<String, String> jobs) async {
-  for (final MapEntry<String, String> job in jobs.entries) {
-    // TODO(gaaclarke): Make this run the jobs in parallel.  A bug in Dart
-    // blocked this (https://github.com/dart-lang/pub/pull/3285).
-    final int result = await runPigeon(input: job.key, dartOut: job.value);
-    if (result != 0) {
-      return result;
-    }
-  }
-  return 0;
-}
-
 Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
   final String messagePath = '$flutterUnitTestsPath/lib/message.gen.dart';
   final String messageTestPath = '$flutterUnitTestsPath/test/message_test.dart';
@@ -227,28 +208,7 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
 }
 
 Future<int> _runFlutterUnitTests() async {
-  // TODO(stuartmorgan): Migrate Dart unit tests to use the generated output in
-  // shared_test_plugin_code instead of having multiple copies of generation.
-  const String flutterUnitTestsPath =
-      'platform_tests/flutter_null_safe_unit_tests';
-  // Files from the pigeons/ directory to generate output for.
-  const List<String> inputPigeons = <String>[
-    'flutter_unittests',
-    'core_tests',
-    'primitive',
-    'multiple_arity',
-    'non_null_fields',
-    'null_fields',
-    'nullable_returns',
-  ];
-  final int generateCode = await _generateDart(<String, String>{
-    for (final String name in inputPigeons)
-      'pigeons/$name.dart': '$flutterUnitTestsPath/lib/$name.gen.dart'
-  });
-  if (generateCode != 0) {
-    return generateCode;
-  }
-
+  const String flutterUnitTestsPath = 'platform_tests/shared_test_plugin_code';
   final int analyzeCode = await _analyzeFlutterUnitTests(flutterUnitTestsPath);
   if (analyzeCode != 0) {
     return analyzeCode;
@@ -334,34 +294,59 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
     return compileCode;
   }
 
+  const String deviceName = 'Pigeon-Test-iPhone';
+  const String deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
+  const String deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-16-4';
+  const String deviceOS = '16.4';
+  await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
     sdk: 'iphonesimulator',
-    destination: 'platform=iOS Simulator,name=iPhone 14',
+    destination: 'platform=iOS Simulator,name=$deviceName,OS=$deviceOS',
     extraArguments: <String>['test'],
+  ).whenComplete(() => _deleteSimulator(deviceName));
+}
+
+Future<int> _createSimulator(
+  String deviceName,
+  String deviceType,
+  String deviceRuntime,
+) async {
+  // Delete any existing simulators with the same name until it fails. It will
+  // fail once there are no simulators with the name. Having more than one may
+  // cause issues when builds target the device.
+  int deleteResult = 0;
+  while (deleteResult == 0) {
+    deleteResult = await _deleteSimulator(deviceName);
+  }
+  return runProcess(
+    'xcrun',
+    <String>[
+      'simctl',
+      'create',
+      deviceName,
+      deviceType,
+      deviceRuntime,
+    ],
+    streamOutput: false,
+    logFailure: true,
+  );
+}
+
+Future<int> _deleteSimulator(String deviceName) async {
+  return runProcess(
+    'xcrun',
+    <String>[
+      'simctl',
+      'delete',
+      deviceName,
+    ],
+    streamOutput: false,
   );
 }
 
 Future<int> _runIOSSwiftIntegrationTests() async {
   return _runMobileIntegrationTests('iOS', _testPluginRelativePath);
-}
-
-Future<int> _runMockHandlerTests() async {
-  const String unitTestsPath = './mock_handler_tester';
-  final int generateCode = await runPigeon(
-    input: './pigeons/message.dart',
-    dartOut: './mock_handler_tester/test/message.dart',
-    dartTestOut: './mock_handler_tester/test/test.dart',
-  );
-  if (generateCode != 0) {
-    return generateCode;
-  }
-
-  final int testCode = await runFlutterCommand(unitTestsPath, 'test');
-  if (testCode != 0) {
-    return testCode;
-  }
-  return 0;
 }
 
 Future<int> _runWindowsUnitTests() async {
@@ -371,9 +356,30 @@ Future<int> _runWindowsUnitTests() async {
     return compileCode;
   }
 
-  return runProcess(
-      '$examplePath/build/windows/plugins/test_plugin/Debug/test_plugin_test.exe',
-      <String>[]);
+  // Depending on the Flutter version, the build output path is different. To
+  // handle both master and stable, and to future-proof against the changes
+  // that will happen in https://github.com/flutter/flutter/issues/129807
+  // - Try arm64, to future-proof against arm64 support.
+  // - Try x64, to cover pre-arm64 support on arm64 hosts, as well as x64 hosts
+  //   running newer versions of Flutter.
+  // - Fall back to the pre-arch path, to support running against stable.
+  // TODO(stuartmorgan): Remove all this when these tests no longer need to
+  // support a version of Flutter without
+  // https://github.com/flutter/flutter/issues/129807, and just construct the
+  // version of the path with the current architecture.
+  const String buildDirBase = '$examplePath/build/windows';
+  const String buildRelativeBinaryPath =
+      'plugins/test_plugin/Debug/test_plugin_test.exe';
+  const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
+  const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
+  const String oldPath = '$buildDirBase/$buildRelativeBinaryPath';
+  if (File(arm64Path).existsSync()) {
+    return runProcess(arm64Path, <String>[]);
+  } else if (File(x64Path).existsSync()) {
+    return runProcess(x64Path, <String>[]);
+  } else {
+    return runProcess(oldPath, <String>[]);
+  }
 }
 
 Future<int> _runWindowsIntegrationTests() async {
@@ -423,6 +429,13 @@ Future<int> _runCommandLineTests() async {
       '--one_language',
       '--ast_out',
       tempOutput
+    ],
+    // Test writing a file in a directory that doesn't exist.
+    <String>[
+      '--input',
+      'pigeons/message.dart',
+      '--dart_out',
+      '$tempDir/subdirectory/does/not/exist/message.g.dart',
     ],
   ];
 

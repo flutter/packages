@@ -67,6 +67,11 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
   }
 
   @Override
+  public @Nullable String getApplicationCachePath() {
+    return context.getCacheDir().getPath();
+  }
+
+  @Override
   public @Nullable String getExternalStoragePath() {
     return getPathProviderStorageDirectory();
   }

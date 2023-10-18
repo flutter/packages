@@ -1,6 +1,21 @@
-## NEXT
+## 2.1.1
 
-* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Ensures that the `autoplay` attribute of the underlying video element is set
+  to **false**.
+
+## 2.1.0
+
+* Adds web options to customize the control list and context menu display.
+
+## 2.0.18
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 2.0.17
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 2.0.16
 

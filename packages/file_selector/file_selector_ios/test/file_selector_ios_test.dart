@@ -72,13 +72,25 @@ void main() {
           throwsArgumentError);
     });
 
-    test('allows a wildcard group', () async {
+    test('correctly handles no type groups', () async {
+      await expectLater(plugin.openFile(), completes);
+      final VerificationResult result = verify(mockApi.openFile(captureAny));
+      final FileSelectorConfig config =
+          result.captured[0] as FileSelectorConfig;
+      expect(listEquals(config.utis, <String>['public.data']), isTrue);
+    });
+
+    test('correctly handles a wildcard group', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'text',
       );
 
       await expectLater(
           plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      final VerificationResult result = verify(mockApi.openFile(captureAny));
+      final FileSelectorConfig config =
+          result.captured[0] as FileSelectorConfig;
+      expect(listEquals(config.utis, <String>['public.data']), isTrue);
     });
   });
 
@@ -113,6 +125,7 @@ void main() {
           isTrue);
       expect(config.allowMultiSelection, isTrue);
     });
+
     test('throws for a type group that does not support iOS', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'images',
@@ -124,13 +137,25 @@ void main() {
           throwsArgumentError);
     });
 
-    test('allows a wildcard group', () async {
+    test('correctly handles no type groups', () async {
+      await expectLater(plugin.openFiles(), completes);
+      final VerificationResult result = verify(mockApi.openFile(captureAny));
+      final FileSelectorConfig config =
+          result.captured[0] as FileSelectorConfig;
+      expect(listEquals(config.utis, <String>['public.data']), isTrue);
+    });
+
+    test('correctly handles a wildcard group', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'text',
       );
 
       await expectLater(
           plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]), completes);
+      final VerificationResult result = verify(mockApi.openFile(captureAny));
+      final FileSelectorConfig config =
+          result.captured[0] as FileSelectorConfig;
+      expect(listEquals(config.utis, <String>['public.data']), isTrue);
     });
   });
 }

@@ -36,44 +36,21 @@
   [FLTGoogleSignInPlugin registerWithRegistrar:self.mockPluginRegistrar];
 }
 
-- (void)testUnimplementedMethod {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"bogus"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(id result) {
-                           XCTAssertEqualObjects(result, FlutterMethodNotImplemented);
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
-}
-
 - (void)testSignOut {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signOut"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(id result) {
-                           XCTAssertNil(result);
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FlutterError *error;
+  [self.plugin signOutWithError:&error];
   OCMVerify([self.mockSignIn signOut]);
+  XCTAssertNil(error);
 }
 
 - (void)testDisconnect {
   [[self.mockSignIn stub] disconnectWithCallback:[OCMArg invokeBlockWithArgs:[NSNull null], nil]];
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"disconnect"
-                                                                    arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSDictionary *result) {
-                           XCTAssertEqualObjects(result, @{});
-                           [expectation fulfill];
-                         }];
+  [self.plugin disconnectWithCompletion:^(FlutterError *error) {
+    XCTAssertNil(error);
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -82,15 +59,12 @@
                                        code:kGIDSignInErrorCodeHasNoAuthInKeychain
                                    userInfo:nil];
   [[self.mockSignIn stub] disconnectWithCallback:[OCMArg invokeBlockWithArgs:error, nil]];
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"disconnect"
-                                                                    arguments:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSDictionary *result) {
-                           XCTAssertEqualObjects(result, @{});
-                           [expectation fulfill];
-                         }];
+  [self.plugin disconnectWithCompletion:^(FlutterError *error) {
+    XCTAssertNil(error);
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -102,39 +76,29 @@
                                   withGoogleServiceProperties:nil];
 
   // init call does not provide a clientId.
-  FlutterMethodCall *initMethodCall = [FlutterMethodCall methodCallWithMethodName:@"init"
-                                                                        arguments:@{}];
+  FSIInitParams *params = [FSIInitParams makeWithScopes:@[]
+                                           hostedDomain:nil
+                                               clientId:nil
+                                         serverClientId:nil];
 
-  XCTestExpectation *initExpectation =
-      [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:initMethodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"missing-config");
-                           [initExpectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FlutterError *error;
+  [self.plugin initializeSignInWithParameters:params error:&error];
+  XCTAssertEqualObjects(error.code, @"missing-config");
 }
 
 - (void)testInitGoogleServiceInfoPlist {
-  FlutterMethodCall *initMethodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"init"
-                                        arguments:@{@"hostedDomain" : @"example.com"}];
+  FSIInitParams *params = [FSIInitParams makeWithScopes:@[]
+                                           hostedDomain:@"example.com"
+                                               clientId:nil
+                                         serverClientId:nil];
 
-  XCTestExpectation *initExpectation =
-      [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:initMethodCall
-                         result:^(id result) {
-                           XCTAssertNil(result);
-                           [initExpectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FlutterError *error;
+  [self.plugin initializeSignInWithParameters:params error:&error];
+  XCTAssertNil(error);
 
   // Initialization values used in the next sign in request.
-  FlutterMethodCall *signInMethodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                          arguments:nil];
-  [self.plugin handleMethodCall:signInMethodCall
-                         result:^(id r){
-                         }];
+  [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error){
+  }];
   OCMVerify([self.mockSignIn
        signInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
          // Set in example app GoogleService-Info.plist.
@@ -156,25 +120,18 @@
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
                                   withGoogleServiceProperties:nil];
 
-  FlutterMethodCall *initMethodCall = [FlutterMethodCall
-      methodCallWithMethodName:@"init"
-                     arguments:@{@"hostedDomain" : [NSNull null], @"clientId" : @"mockClientId"}];
+  FSIInitParams *params = [FSIInitParams makeWithScopes:@[]
+                                           hostedDomain:nil
+                                               clientId:@"mockClientId"
+                                         serverClientId:nil];
 
-  XCTestExpectation *initExpectation =
-      [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:initMethodCall
-                         result:^(id result) {
-                           XCTAssertNil(result);
-                           [initExpectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FlutterError *error;
+  [self.plugin initializeSignInWithParameters:params error:&error];
+  XCTAssertNil(error);
 
   // Initialization values used in the next sign in request.
-  FlutterMethodCall *signInMethodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                          arguments:nil];
-  [self.plugin handleMethodCall:signInMethodCall
-                         result:^(id r){
-                         }];
+  [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error){
+  }];
   OCMVerify([self.mockSignIn
        signInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
          return configuration.hostedDomain == nil &&
@@ -187,28 +144,17 @@
 }
 
 - (void)testInitDynamicServerClientIdNullDomain {
-  FlutterMethodCall *initMethodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"init"
-                                        arguments:@{
-                                          @"hostedDomain" : [NSNull null],
-                                          @"serverClientId" : @"mockServerClientId"
-                                        }];
-
-  XCTestExpectation *initExpectation =
-      [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:initMethodCall
-                         result:^(id result) {
-                           XCTAssertNil(result);
-                           [initExpectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FSIInitParams *params = [FSIInitParams makeWithScopes:@[]
+                                           hostedDomain:nil
+                                               clientId:nil
+                                         serverClientId:@"mockServerClientId"];
+  FlutterError *error;
+  [self.plugin initializeSignInWithParameters:params error:&error];
+  XCTAssertNil(error);
 
   // Initialization values used in the next sign in request.
-  FlutterMethodCall *signInMethodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                          arguments:nil];
-  [self.plugin handleMethodCall:signInMethodCall
-                         result:^(id r){
-                         }];
+  [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error){
+  }];
   OCMVerify([self.mockSignIn
        signInWithConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *configuration) {
          return configuration.hostedDomain == nil &&
@@ -225,31 +171,19 @@
 - (void)testIsNotSignedIn {
   OCMStub([self.mockSignIn hasPreviousSignIn]).andReturn(NO);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"isSignedIn"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSNumber *result) {
-                           XCTAssertFalse(result.boolValue);
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FlutterError *error;
+  NSNumber *result = [self.plugin isSignedInWithError:&error];
+  XCTAssertNil(error);
+  XCTAssertFalse(result.boolValue);
 }
 
 - (void)testIsSignedIn {
   OCMStub([self.mockSignIn hasPreviousSignIn]).andReturn(YES);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"isSignedIn"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSNumber *result) {
-                           XCTAssertTrue(result.boolValue);
-                           [expectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FlutterError *error;
+  NSNumber *result = [self.plugin isSignedInWithError:&error];
+  XCTAssertNil(error);
+  XCTAssertTrue(result.boolValue);
 }
 
 #pragma mark - Sign in silently
@@ -261,19 +195,17 @@
   [[self.mockSignIn stub]
       restorePreviousSignInWithCallback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signInSilently"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSDictionary<NSString *, NSString *> *result) {
-                           XCTAssertEqualObjects(result[@"displayName"], [NSNull null]);
-                           XCTAssertEqualObjects(result[@"email"], [NSNull null]);
-                           XCTAssertEqualObjects(result[@"id"], @"mockID");
-                           XCTAssertEqualObjects(result[@"photoUrl"], [NSNull null]);
-                           XCTAssertEqualObjects(result[@"serverAuthCode"], [NSNull null]);
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin signInSilentlyWithCompletion:^(FSIUserData *user, FlutterError *error) {
+    XCTAssertNil(error);
+    XCTAssertNotNil(user);
+    XCTAssertNil(user.displayName);
+    XCTAssertNil(user.email);
+    XCTAssertEqualObjects(user.userId, @"mockID");
+    XCTAssertNil(user.photoUrl);
+    XCTAssertNil(user.serverAuthCode);
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -285,15 +217,12 @@
   [[self.mockSignIn stub]
       restorePreviousSignInWithCallback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signInSilently"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"sign_in_required");
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin signInSilentlyWithCompletion:^(FSIUserData *user, FlutterError *error) {
+    XCTAssertNil(user);
+    XCTAssertEqualObjects(error.code, @"sign_in_required");
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -323,38 +252,29 @@
               additionalScopes:@[]
                       callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin
-      handleMethodCall:methodCall
-                result:^(NSDictionary<NSString *, NSString *> *result) {
-                  XCTAssertEqualObjects(result[@"displayName"], @"mockDisplay");
-                  XCTAssertEqualObjects(result[@"email"], @"mock@example.com");
-                  XCTAssertEqualObjects(result[@"id"], @"mockID");
-                  XCTAssertEqualObjects(result[@"photoUrl"], @"https://example.com/profile.png");
-                  XCTAssertEqualObjects(result[@"serverAuthCode"], @"mockAuthCode");
-                  [expectation fulfill];
-                }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error) {
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(user.displayName, @"mockDisplay");
+    XCTAssertEqualObjects(user.email, @"mock@example.com");
+    XCTAssertEqualObjects(user.userId, @"mockID");
+    XCTAssertEqualObjects(user.photoUrl, @"https://example.com/profile.png");
+    XCTAssertEqualObjects(user.serverAuthCode, @"mockAuthCode");
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 
   OCMVerifyAll(self.mockSignIn);
 }
 
 - (void)testSignInWithInitializedScopes {
-  FlutterMethodCall *initMethodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"init"
-                                        arguments:@{@"scopes" : @[ @"initial1", @"initial2" ]}];
-
-  XCTestExpectation *initExpectation =
-      [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:initMethodCall
-                         result:^(id result) {
-                           XCTAssertNil(result);
-                           [initExpectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FlutterError *error;
+  [self.plugin
+      initializeSignInWithParameters:[FSIInitParams makeWithScopes:@[ @"initial1", @"initial2" ]
+                                                      hostedDomain:nil
+                                                          clientId:nil
+                                                    serverClientId:nil]
+                               error:&error];
 
   id mockUser = OCMClassMock([GIDGoogleUser class]);
   OCMStub([mockUser userID]).andReturn(@"mockID");
@@ -369,15 +289,12 @@
               }]
                       callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSDictionary<NSString *, NSString *> *result) {
-                           XCTAssertEqualObjects(result[@"id"], @"mockID");
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error) {
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(user.userId, @"mockID");
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 
   OCMVerifyAll(self.mockSignIn);
@@ -401,15 +318,12 @@
            presentingViewController:OCMOCK_ANY
                            callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSDictionary<NSString *, NSString *> *result) {
-                           XCTAssertEqualObjects(result[@"id"], @"mockID");
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error) {
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(user.userId, @"mockID");
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -424,21 +338,16 @@
               additionalScopes:OCMOCK_ANY
                       callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"sign_in_canceled");
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *error) {
+    XCTAssertNil(user);
+    XCTAssertEqualObjects(error.code, @"sign_in_canceled");
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 - (void)testSignInException {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"signIn"
-                                                                    arguments:nil];
   OCMExpect([self.mockSignIn signInWithConfiguration:OCMOCK_ANY
                             presentingViewController:OCMOCK_ANY
                                                 hint:OCMOCK_ANY
@@ -447,10 +356,11 @@
       .andThrow([NSException exceptionWithName:@"MockName" reason:@"MockReason" userInfo:nil]);
 
   __block FlutterError *error;
-  XCTAssertThrows([self.plugin handleMethodCall:methodCall
-                                         result:^(FlutterError *result) {
-                                           error = result;
-                                         }]);
+  XCTAssertThrows(
+      [self.plugin signInWithCompletion:^(FSIUserData *user, FlutterError *signInError) {
+        XCTAssertNil(user);
+        error = signInError;
+      }]);
 
   XCTAssertEqualObjects(error.code, @"google_sign_in");
   XCTAssertEqualObjects(error.message, @"MockReason");
@@ -470,16 +380,13 @@
       doWithFreshTokens:[OCMArg invokeBlockWithArgs:mockAuthentication, [NSNull null], nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSDictionary<NSString *, NSString *> *result) {
-                           XCTAssertEqualObjects(result[@"idToken"], @"mockIdToken");
-                           XCTAssertEqualObjects(result[@"accessToken"], @"mockAccessToken");
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin getAccessTokenWithCompletion:^(FSITokenData *token, FlutterError *error) {
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(token.idToken, @"mockIdToken");
+    XCTAssertEqualObjects(token.accessToken, @"mockAccessToken");
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -495,16 +402,13 @@
       doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"sign_in_required");
-                           XCTAssertEqualObjects(result.message, kGIDSignInErrorDomain);
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin getAccessTokenWithCompletion:^(FSITokenData *token, FlutterError *error) {
+    XCTAssertNil(token);
+    XCTAssertEqualObjects(error.code, @"sign_in_required");
+    XCTAssertEqualObjects(error.message, kGIDSignInErrorDomain);
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -520,16 +424,13 @@
       doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"sign_in_canceled");
-                           XCTAssertEqualObjects(result.message, kGIDSignInErrorDomain);
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin getAccessTokenWithCompletion:^(FSITokenData *token, FlutterError *error) {
+    XCTAssertNil(token);
+    XCTAssertEqualObjects(error.code, @"sign_in_canceled");
+    XCTAssertEqualObjects(error.message, kGIDSignInErrorDomain);
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -543,16 +444,13 @@
       doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"network_error");
-                           XCTAssertEqualObjects(result.message, NSURLErrorDomain);
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin getAccessTokenWithCompletion:^(FSITokenData *token, FlutterError *error) {
+    XCTAssertNil(token);
+    XCTAssertEqualObjects(error.code, @"network_error");
+    XCTAssertEqualObjects(error.message, NSURLErrorDomain);
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -566,16 +464,13 @@
       doWithFreshTokens:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
   OCMStub([mockUser authentication]).andReturn(mockAuthentication);
 
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"getTokens"
-                                                                    arguments:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"sign_in_failed");
-                           XCTAssertEqualObjects(result.message, @"BogusDomain");
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin getAccessTokenWithCompletion:^(FSITokenData *token, FlutterError *error) {
+    XCTAssertNil(token);
+    XCTAssertEqualObjects(error.code, @"sign_in_failed");
+    XCTAssertEqualObjects(error.message, @"BogusDomain");
+    [expectation fulfill];
+  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -589,16 +484,13 @@
            presentingViewController:OCMOCK_ANY
                            callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
-  FlutterMethodCall *methodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
-                                        arguments:@{@"scopes" : @[ @"mockScope1" ]}];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"sign_in_required");
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin requestScopes:@[ @"mockScope1" ]
+                  completion:^(NSNumber *success, FlutterError *error) {
+                    XCTAssertNil(success);
+                    XCTAssertEqualObjects(error.code, @"sign_in_required");
+                    [expectation fulfill];
+                  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -610,16 +502,13 @@
            presentingViewController:OCMOCK_ANY
                            callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
-  FlutterMethodCall *methodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
-                                        arguments:@{@"scopes" : @[ @"mockScope1" ]}];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSNumber *result) {
-                           XCTAssertTrue(result.boolValue);
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin requestScopes:@[ @"mockScope1" ]
+                  completion:^(NSNumber *success, FlutterError *error) {
+                    XCTAssertNil(error);
+                    XCTAssertTrue(success.boolValue);
+                    [expectation fulfill];
+                  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
@@ -629,31 +518,27 @@
            presentingViewController:OCMOCK_ANY
                            callback:[OCMArg invokeBlockWithArgs:[NSNull null], error, nil]];
 
-  FlutterMethodCall *methodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
-                                        arguments:@{@"scopes" : @[ @"mockScope1" ]}];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSNumber *result) {
-                           XCTAssertFalse(result.boolValue);
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin requestScopes:@[ @"mockScope1" ]
+                  completion:^(NSNumber *success, FlutterError *error) {
+                    XCTAssertNil(error);
+                    XCTAssertFalse(success.boolValue);
+                    [expectation fulfill];
+                  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 - (void)testRequestScopesException {
-  FlutterMethodCall *methodCall = [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
-                                                                    arguments:nil];
   OCMExpect([self.mockSignIn addScopes:@[] presentingViewController:OCMOCK_ANY callback:OCMOCK_ANY])
       .andThrow([NSException exceptionWithName:@"MockName" reason:@"MockReason" userInfo:nil]);
 
-  [self.plugin handleMethodCall:methodCall
-                         result:^(FlutterError *result) {
-                           XCTAssertEqualObjects(result.code, @"request_scopes");
-                           XCTAssertEqualObjects(result.message, @"MockReason");
-                           XCTAssertEqualObjects(result.details, @"MockName");
-                         }];
+  [self.plugin requestScopes:@[]
+                  completion:^(NSNumber *success, FlutterError *error) {
+                    XCTAssertNil(success);
+                    XCTAssertEqualObjects(error.code, @"request_scopes");
+                    XCTAssertEqualObjects(error.message, @"MockReason");
+                    XCTAssertEqualObjects(error.details, @"MockName");
+                  }];
 }
 
 - (void)testRequestScopesReturnsFalseIfOnlySubsetGranted {
@@ -668,43 +553,31 @@
            presentingViewController:OCMOCK_ANY
                            callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
 
-  FlutterMethodCall *methodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
-                                        arguments:@{@"scopes" : requestedScopes}];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns false"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSNumber *result) {
-                           XCTAssertFalse(result.boolValue);
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin requestScopes:requestedScopes
+                  completion:^(NSNumber *success, FlutterError *error) {
+                    XCTAssertNil(error);
+                    XCTAssertFalse(success.boolValue);
+                    [expectation fulfill];
+                  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 - (void)testRequestsInitializedScopes {
-  FlutterMethodCall *initMethodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"init"
-                                        arguments:@{@"scopes" : @[ @"initial1", @"initial2" ]}];
-
-  XCTestExpectation *initExpectation =
-      [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:initMethodCall
-                         result:^(id result) {
-                           XCTAssertNil(result);
-                           [initExpectation fulfill];
-                         }];
-  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  FSIInitParams *params = [FSIInitParams makeWithScopes:@[ @"initial1", @"initial2" ]
+                                           hostedDomain:nil
+                                               clientId:nil
+                                         serverClientId:nil];
+  FlutterError *error;
+  [self.plugin initializeSignInWithParameters:params error:&error];
+  XCTAssertNil(error);
 
   // Include one of the initially requested scopes.
   NSArray<NSString *> *addedScopes = @[ @"initial1", @"addScope1", @"addScope2" ];
 
-  FlutterMethodCall *methodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
-                                        arguments:@{@"scopes" : addedScopes}];
-
-  [self.plugin handleMethodCall:methodCall
-                         result:^(id result){
-                         }];
+  [self.plugin requestScopes:addedScopes
+                  completion:^(NSNumber *success, FlutterError *error){
+                  }];
 
   // All four scopes are requested.
   [[self.mockSignIn verify]
@@ -729,16 +602,13 @@
            presentingViewController:OCMOCK_ANY
                            callback:[OCMArg invokeBlockWithArgs:mockUser, [NSNull null], nil]];
 
-  FlutterMethodCall *methodCall =
-      [FlutterMethodCall methodCallWithMethodName:@"requestScopes"
-                                        arguments:@{@"scopes" : requestedScopes}];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
-  [self.plugin handleMethodCall:methodCall
-                         result:^(NSNumber *result) {
-                           XCTAssertTrue(result.boolValue);
-                           [expectation fulfill];
-                         }];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin requestScopes:requestedScopes
+                  completion:^(NSNumber *success, FlutterError *error) {
+                    XCTAssertNil(error);
+                    XCTAssertTrue(success.boolValue);
+                    [expectation fulfill];
+                  }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
