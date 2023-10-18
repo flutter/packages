@@ -19,11 +19,11 @@ const int kElementWaitingTime = 30;
 
 - (void)setUp {
   [super setUp];
-  // Delete the app if already exists, to test permission popups
 
   self.continueAfterFailure = NO;
   self.app = [[XCUIApplication alloc] init];
   if (@available(iOS 13.4, *)) {
+    // Reset the authorization status for Photos to test permission popups
     [self.app resetAuthorizationStatusForResource:XCUIProtectedResourcePhotos];
   }
   [self.app launch];
@@ -99,7 +99,7 @@ const int kElementWaitingTime = 30;
     XCUIElement *allowButton = springboardApp.buttons[self.allowAccessPermissionText];
     if (![allowButton waitForExistenceWithTimeout:kElementWaitingTime]) {
       os_log_error(OS_LOG_DEFAULT, "%@", self.app.debugDescription);
-      XCTFail(@"Failed due to not able to find allow button with %@ seconds",
+      XCTFail(@"Failed due to not able to find Allow Access button with %@ seconds",
               @(kElementWaitingTime));
     }
     [allowButton tap];
