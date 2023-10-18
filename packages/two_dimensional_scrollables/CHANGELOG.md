@@ -1,3 +1,7 @@
+## NEXT
+
+* Adds assertions against pinned row and column configurations that exceed the viewport or block additional cells.
+
 ## 0.0.3
 
 * Fixes paint issue when axes are reversed and TableView has pinned rows and columns.

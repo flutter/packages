@@ -588,6 +588,58 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
   }
 
+  bool _debugCheckPinnedSpanExtents() {
+    // Ensure pinned spans do not exceed the viewport dimensions. Pinned spans
+    // do not scroll.
+    assert(
+      _pinnedRowsExtent <= viewportDimension.height,
+      'The extent of pinned rows has overflowed the viewport by '
+      '${_pinnedRowsExtent - viewportDimension.height} pixels.',
+    );
+    assert(
+      _pinnedColumnsExtent <= viewportDimension.width,
+      'The extent of pinned columns has overflowed the viewport by '
+      '${_pinnedColumnsExtent - viewportDimension.width} pixels.',
+    );
+    // If pinned rows or columns take up the full extent of the viewport, and
+    // there are additional rows and columns that follow,
+    assert(() {
+      if (_pinnedRowsExtent == viewportDimension.height &&
+          _firstNonPinnedRow != null) {
+        throw FlutterError.fromParts(<DiagnosticsNode>[
+          ErrorSummary(
+            'The extent of pinned rows in the TableView has consumed the '
+            'full extent of the viewport.',
+          ),
+          ErrorDescription(
+            'The unpinned rows that follow will not be visible in the '
+            'viewport as the pinned extent has taken up all of the '
+            'available space.\n',
+          ),
+        ]);
+      }
+      return true;
+    }());
+    assert(() {
+      if (_pinnedColumnsExtent == viewportDimension.width &&
+          _firstNonPinnedColumn != null) {
+        throw FlutterError.fromParts(<DiagnosticsNode>[
+          ErrorSummary(
+            'The extent of pinned columns in the TableView has consumed the '
+            'full extent of the viewport.',
+          ),
+          ErrorDescription(
+            'The unpinned columns that follow will not be visible in the '
+            'viewport as the pinned extent has taken up all of the '
+            'available space.\n',
+          ),
+        ]);
+      }
+      return true;
+    }());
+    return true;
+  }
+
   @override
   void layoutChildSequence() {
     if (needsDelegateRebuild || didResize) {
@@ -604,6 +656,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       assert(_lastNonPinnedCell == null);
       return;
     }
+
+    assert(_debugCheckPinnedSpanExtents());
 
     final double? offsetIntoColumn = _firstNonPinnedColumn != null
         ? horizontalOffset.pixels -

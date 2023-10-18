@@ -4,6 +4,7 @@
 
 import 'dart:io' show Platform;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -1157,6 +1158,167 @@ void main() {
       expect(
         RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
         SystemMouseCursors.basic,
+      );
+    });
+
+    testWidgets('asserts pinned span extents cannot exceed viewport dimensions',
+        (WidgetTester tester) async {
+      final List<Object> exceptions = <Object>[];
+      final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+      FlutterError.onError = (FlutterErrorDetails details) {
+        exceptions.add(details.exception);
+      };
+      // Row
+      TableView tableView = TableView.builder(
+        rowCount: 1,
+        columnCount: 1,
+        pinnedRowCount: 1,
+        pinnedColumnCount: 1,
+        rowBuilder: (int index) => const TableSpan(
+          // Exceeds the viewport height.
+          extent: FixedTableSpanExtent(1000),
+        ),
+        columnBuilder: (int index) => span,
+        cellBuilder: (BuildContext context, TableVicinity vicinty) => cell,
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      FlutterError.onError = oldHandler;
+      expect(exceptions.length, 2);
+      expect(
+        exceptions[0].toString(),
+        contains('The extent of pinned rows has overflowed the viewport'),
+      );
+
+      await tester.pumpWidget(Container());
+      exceptions.clear();
+      FlutterError.onError = (FlutterErrorDetails details) {
+        exceptions.add(details.exception);
+      };
+      // Column
+      tableView = TableView.builder(
+        rowCount: 1,
+        columnCount: 1,
+        pinnedRowCount: 1,
+        pinnedColumnCount: 1,
+        columnBuilder: (int index) => const TableSpan(
+          // Exceeds the viewport height.
+          extent: FixedTableSpanExtent(1000),
+        ),
+        rowBuilder: (int index) => span,
+        cellBuilder: (BuildContext context, TableVicinity vicinty) => cell,
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      FlutterError.onError = oldHandler;
+      expect(exceptions.length, 2);
+      expect(
+        exceptions[0].toString(),
+        contains('The extent of pinned columns has overflowed the viewport'),
+      );
+    });
+
+    testWidgets('asserts for pinned spans that block additional unpinned spans',
+        (WidgetTester tester) async {
+      final List<Object> exceptions = <Object>[];
+      final FlutterExceptionHandler? oldHandler = FlutterError.onError;
+      FlutterError.onError = (FlutterErrorDetails details) {
+        exceptions.add(details.exception);
+      };
+
+      // Row ----------
+      TableView tableView = TableView.builder(
+        rowCount: 1,
+        columnCount: 1,
+        pinnedRowCount: 1,
+        pinnedColumnCount: 1,
+        rowBuilder: (int index) => const TableSpan(
+          // Exceeds the viewport height.
+          extent: FixedTableSpanExtent(600), // == viewportDimension.height
+        ),
+        columnBuilder: (int index) => span,
+        cellBuilder: (BuildContext context, TableVicinity vicinty) => cell,
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      FlutterError.onError = oldHandler;
+      // No additional rows, so this is ok.
+      expect(exceptions.length, 0);
+      FlutterError.onError = (FlutterErrorDetails details) {
+        exceptions.add(details.exception);
+      };
+      tableView = TableView.builder(
+        rowCount: 2, // One row would be obscured
+        columnCount: 1,
+        pinnedRowCount: 1,
+        pinnedColumnCount: 1,
+        rowBuilder: (int index) => const TableSpan(
+          // Exceeds the viewport height.
+          extent: FixedTableSpanExtent(600), // == viewportDimension.height
+        ),
+        columnBuilder: (int index) => span,
+        cellBuilder: (BuildContext context, TableVicinity vicinty) => cell,
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      FlutterError.onError = oldHandler;
+      expect(exceptions.length, 2);
+      expect(
+        exceptions[0].toString(),
+        contains(
+          'The extent of pinned rows in the TableView has consumed the full '
+          'extent of the viewport.',
+        ),
+      );
+
+      await tester.pumpWidget(Container());
+      exceptions.clear();
+      FlutterError.onError = (FlutterErrorDetails details) {
+        exceptions.add(details.exception);
+      };
+      // Column ----------
+      tableView = TableView.builder(
+        rowCount: 1,
+        columnCount: 1,
+        pinnedRowCount: 1,
+        pinnedColumnCount: 1,
+        columnBuilder: (int index) => const TableSpan(
+          // Exceeds the viewport height.
+          extent: FixedTableSpanExtent(800), // == viewportDimension.width
+        ),
+        rowBuilder: (int index) => span,
+        cellBuilder: (BuildContext context, TableVicinity vicinty) => cell,
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      FlutterError.onError = oldHandler;
+      // No additional rows, so this is ok.
+      expect(exceptions.length, 0);
+      FlutterError.onError = (FlutterErrorDetails details) {
+        exceptions.add(details.exception);
+      };
+      tableView = TableView.builder(
+        rowCount: 1,
+        columnCount: 2, // One column would be obscured
+        pinnedRowCount: 1,
+        pinnedColumnCount: 1,
+        columnBuilder: (int index) => const TableSpan(
+          // Exceeds the viewport height.
+          extent: FixedTableSpanExtent(800), // == viewportDimension.height
+        ),
+        rowBuilder: (int index) => span,
+        cellBuilder: (BuildContext context, TableVicinity vicinty) => cell,
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      FlutterError.onError = oldHandler;
+      expect(exceptions.length, 2);
+      expect(
+        exceptions[0].toString(),
+        contains(
+          'The extent of pinned columns in the TableView has consumed the full '
+          'extent of the viewport.',
+        ),
       );
     });
   });
