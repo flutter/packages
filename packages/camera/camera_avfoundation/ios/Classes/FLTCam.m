@@ -267,9 +267,9 @@ NSString *const errorMethod = @"error";
   if (_outputFormat == OutputFormatHEIF) {
     if (@available(iOS 11.0, *)) {
       if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
-          settings = [AVCapturePhotoSettings
-              photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
-          extension = @"heif";
+        settings = [AVCapturePhotoSettings
+            photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+        extension = @"heif";
       }
     }
   }

@@ -114,9 +114,9 @@
     OCMStub([mockSettings photoSettingsWithFormat:OCMOCK_ANY]).andReturn(settings);
 
     NSString *filePath = @"test";
-    id mockResult = OCMClassMock([FLTThreadSafeFlutterResult class]);
+    id mockResult = OCMClassMock([ FLTThreadSafeFlutterResult class]);
     OCMStub([mockResult sendSuccessWithData:filePath]).andDo(^(NSInvocation *invocation) {
-        [expectation fulfill];
+      [expectation fulfill];
     });
 
     id mockOutput = OCMClassMock([AVCapturePhotoOutput class]);
@@ -124,19 +124,20 @@
     NSArray *codecTypes = @[AVVideoCodecTypeHEVC];
     OCMStub([mockOutput availablePhotoCodecTypes]).andReturn(codecTypes);
     
+
     OCMStub([mockOutput capturePhotoWithSettings:OCMOCK_ANY delegate:OCMOCK_ANY])
         .andDo(^(NSInvocation *invocation) {
-            FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
-            // Completion runs on IO queue.
-            dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
-            dispatch_async(ioQueue, ^{
-                delegate.completionHandler(filePath, nil);
-            });
+          FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
+          // Completion runs on IO queue.
+          dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
+          dispatch_async(ioQueue, ^{
+            delegate.completionHandler(filePath, nil);
+          });
         });
     cam.capturePhotoOutput = mockOutput;
     // `FLTCam::captureToFile` runs on capture session queue.
     dispatch_async(captureSessionQueue, ^{
-        [cam captureToFile:mockResult];
+      [cam captureToFile:mockResult];
     });
     [self waitForExpectationsWithTimeout:1 handler:nil];
   }
