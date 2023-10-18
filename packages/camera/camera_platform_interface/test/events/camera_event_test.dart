@@ -31,7 +31,6 @@ void main() {
         'exposurePointSupported': true,
         'focusMode': 'auto',
         'focusPointSupported': true,
-        'imageFormat': 'jpeg',
       });
 
       expect(event.cameraId, 1);
