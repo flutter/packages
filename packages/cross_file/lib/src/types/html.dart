@@ -73,7 +73,7 @@ class XFile extends XFileBase {
   }
 
   /// Construct a CrossFile from a JS [File] (extends Blob).
-  XFile.fromFile(
+  XFile.fromHtmlFile(
     File file, {
     String? path,
     @visibleForTesting CrossFileTestOverrides? overrides,
@@ -82,6 +82,22 @@ class XFile extends XFileBase {
         _mimeType = file.type,
         _length = file.size,
         _lastModified = file.lastModifiedDate,
+        _overrides = overrides,
+        _path = path,
+        super(path);
+
+  /// Construct a CrossFile from a JS [File] (extends Blob).
+  XFile.fromHtmlBlob(
+    Blob blob, {
+    String? name,
+    DateTime? lastModified,
+    String? path,
+    @visibleForTesting CrossFileTestOverrides? overrides,
+  })  : _browserBlob = blob,
+        _name = name ?? 'unnamed',
+        _mimeType = blob.type,
+        _length = blob.size,
+        _lastModified = lastModified ?? DateTime.now(),
         _overrides = overrides,
         _path = path,
         super(path);
