@@ -18,6 +18,11 @@ class TableSpanPadding {
     this.trailing = 0.0,
   });
 
+  /// Creates padding where both the [leading] and [trailing] are `value`.
+  const TableSpanPadding.all(double value)
+      : leading = value,
+        trailing = value;
+
   /// The leading amount of pixels to pad a [TableSpan] by.
   ///
   /// If the [TableSpan] is a row and the vertical [Axis] is not reversed, this
@@ -308,7 +313,41 @@ class TableSpanDecoration {
   /// [TableSpanPadding.leading] and [TableSpanPadding.trailing] for the row.
   /// This same row decoration will consume any padding from the column spans so
   /// as to decorate the row as one continuous span.
-  /// // TODO(Piinks): Add an example of this!
+  ///
+  /// {@tool snippet}
+  /// This example illustrates how [consumeSpanPadding] affects
+  /// [TableSpanDecoration.color]. By default, the color of the decoration
+  /// consumes the padding, coloring the row fully by including the padding
+  /// around the row. When [consumeSpanPadding] is false, the padded area of
+  /// the row is not decorated.
+  ///
+  /// ```dart
+  /// TableView.builder(
+  ///   rowCount: 4,
+  ///   columnCount: 4,
+  ///   columnBuilder: (int index) => TableSpan(
+  ///     extent: const FixedTableSpanExtent(150.0),
+  ///     padding: const TableSpanPadding(trailing: 10),
+  ///   ),
+  ///   rowBuilder: (int index) => TableSpan(
+  ///     extent: const FixedTableSpanExtent(150.0),
+  ///     padding: TableSpanPadding(leading: 10, trailing: 10),
+  ///     backgroundDecoration: TableSpanDecoration(
+  ///       color: index.isOdd ? Colors.blue : Colors.green,
+  ///       // The background color will not be applied to the padded area.
+  ///       consumeSpanPadding: false,
+  ///     ),
+  ///   ),
+  ///   cellBuilder: (_, TableVicinity vicinity) {
+  ///     return Container(
+  ///       height: 150,
+  ///       width: 150,
+  ///       child: const Center(child: FlutterLogo()),
+  ///     );
+  ///   },
+  /// );
+  /// ```
+  /// {@end-tool}
   final bool consumeSpanPadding;
 
   /// Called to draw the decoration around a span.

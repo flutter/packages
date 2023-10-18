@@ -687,7 +687,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         xPaintOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
-
         // TODO(Piinks): Add back merged cells, https://github.com/flutter/flutter/issues/131224
 
         final RenderBox? cell = buildOrObtainChildFor(vicinity);
@@ -862,34 +861,34 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         final RenderBox trailingCell = getChildFor(
           TableVicinity(column: column, row: trailing.row),
         )!;
-        
+
         Rect getColumnRect(bool consumePadding) {
-         return Rect.fromPoints(
-           parentDataOf(leadingCell).paintOffset! +
-               offset -
-               Offset(
-                 consumePadding ? columnSpan.padding.leading : 0.0,
-                 rowSpan.padding.leading,
-               ),
-           parentDataOf(trailingCell).paintOffset! +
-               Offset(trailingCell.size.width, trailingCell.size.height) +
-               offset +
-               Offset(
-                 consumePadding ? columnSpan.padding.trailing : 0.0,
-                 rowSpan.padding.trailing,
-               ),
-         ); 
+          return Rect.fromPoints(
+            parentDataOf(leadingCell).paintOffset! +
+                offset -
+                Offset(
+                  consumePadding ? columnSpan.padding.leading : 0.0,
+                  rowSpan.padding.leading,
+                ),
+            parentDataOf(trailingCell).paintOffset! +
+                offset +
+                Offset(trailingCell.size.width, trailingCell.size.height) +
+                Offset(
+                  consumePadding ? columnSpan.padding.trailing : 0.0,
+                  rowSpan.padding.trailing,
+                ),
+          );
         }
 
         if (columnSpan.backgroundDecoration != null) {
-          final Rect rect = getColumnRect(columnSpan.backgroundDecoration!.consumeSpanPadding);
-          backgroundColumns[rect] =
-              columnSpan.backgroundDecoration!;
+          final Rect rect = getColumnRect(
+              columnSpan.backgroundDecoration!.consumeSpanPadding);
+          backgroundColumns[rect] = columnSpan.backgroundDecoration!;
         }
         if (columnSpan.foregroundDecoration != null) {
-          final Rect rect = getColumnRect(columnSpan.foregroundDecoration!.consumeSpanPadding);
-          foregroundColumns[rect] =
-              columnSpan.foregroundDecoration!;
+          final Rect rect = getColumnRect(
+              columnSpan.foregroundDecoration!.consumeSpanPadding);
+          foregroundColumns[rect] = columnSpan.foregroundDecoration!;
         }
       }
     }
@@ -921,8 +920,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                   consumePadding ? rowSpan.padding.leading : 0.0,
                 ),
             parentDataOf(trailingCell).paintOffset! +
-                Offset(trailingCell.size.width, trailingCell.size.height) +
                 offset +
+                Offset(trailingCell.size.width, trailingCell.size.height) +
                 Offset(
                   columnSpan.padding.leading,
                   consumePadding ? rowSpan.padding.trailing : 0.0,
@@ -931,11 +930,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         }
 
         if (rowSpan.backgroundDecoration != null) {
-          final Rect rect = getRowRect(rowSpan.backgroundDecoration!.consumeSpanPadding);
+          final Rect rect =
+              getRowRect(rowSpan.backgroundDecoration!.consumeSpanPadding);
           backgroundRows[rect] = rowSpan.backgroundDecoration!;
         }
         if (rowSpan.foregroundDecoration != null) {
-          final Rect rect = getRowRect(rowSpan.foregroundDecoration!.consumeSpanPadding);
+          final Rect rect =
+              getRowRect(rowSpan.foregroundDecoration!.consumeSpanPadding);
           foregroundRows[rect] = rowSpan.foregroundDecoration!;
         }
       }

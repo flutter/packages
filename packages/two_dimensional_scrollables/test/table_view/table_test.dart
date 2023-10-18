@@ -373,11 +373,12 @@ void main() {
       );
       expect(parentData.vicinity, vicinity);
       expect(
-          parentData.layoutOffset,
-          const Offset(
-            10.0, // Leading 10 pixels before first column
-            30.0, // leading 30 pixels before first row
-          ));
+        parentData.layoutOffset,
+        const Offset(
+          10.0, // Leading 10 pixels before first column
+          30.0, // leading 30 pixels before first row
+        ),
+      );
       // after first child
       vicinity = const TableVicinity(column: 1, row: 0);
 
@@ -386,22 +387,24 @@ void main() {
       );
       expect(parentData.vicinity, vicinity);
       expect(
-          parentData.layoutOffset,
-          const Offset(
-            240, // 10 leading + 200 first column + 20 trailing + 10 leading
-            30.0, // leading 30 pixels before first row
-          ));
+        parentData.layoutOffset,
+        const Offset(
+          240, // 10 leading + 200 first column + 20 trailing + 10 leading
+          30.0, // leading 30 pixels before first row
+        ),
+      );
 
       // last child
       vicinity = const TableVicinity(column: 1, row: 1);
       parentData = parentDataOf(viewport.lastChild!);
       expect(parentData.vicinity, vicinity);
       expect(
-          parentData.layoutOffset,
-          const Offset(
-            240.0, // 10 leading + 200 first column + 20 trailing + 10 leading
-            300.0, // 30 leading + 200 first row + 40 trailing + 30 leading
-          ));
+        parentData.layoutOffset,
+        const Offset(
+          240.0, // 10 leading + 200 first column + 20 trailing + 10 leading
+          300.0, // 30 leading + 200 first row + 40 trailing + 30 leading
+        ),
+      );
 
       // reverse
       tableView = TableView.builder(
@@ -686,14 +689,14 @@ void main() {
       expect(rowExtent.delegate.viewportExtent, 600.0);
     });
 
-    testWidgets('First row/column layout based on padding', (WidgetTester tester) async {
+    testWidgets('First row/column layout based on padding',
+        (WidgetTester tester) async {
       // Huge padding, first span layout
       // Column-wise
       TableView tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        columnBuilder: (_) =>
-        const TableSpan(
+        columnBuilder: (_) => const TableSpan(
           extent: FixedTableSpanExtent(100),
           // This padding is so high, only the first column should be laid out.
           padding: TableSpanPadding(leading: 2000),
@@ -725,8 +728,7 @@ void main() {
         rowCount: 50,
         columnCount: 50,
         // This padding is so high, no children should be laid out.
-        rowBuilder: (_) =>
-        const TableSpan(
+        rowBuilder: (_) => const TableSpan(
           extent: FixedTableSpanExtent(100),
           padding: TableSpanPadding(leading: 2000),
         ),
@@ -753,7 +755,8 @@ void main() {
       expect(find.text('Row: 2 Column: 1'), findsNothing);
     });
 
-    testWidgets('lazy layout accounts for gradually accrued padding', (WidgetTester tester) async {
+    testWidgets('lazy layout accounts for gradually accrued padding',
+        (WidgetTester tester) async {
       // Check with gradually accrued paddings
       // Column-wise
       TableView tableView = TableView.builder(
