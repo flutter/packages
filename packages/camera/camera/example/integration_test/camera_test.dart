@@ -313,7 +313,6 @@ void main() {
     skip: !Platform.isIOS,
   );
 
-  //test outputFormat for image
   testWidgets(
     'Capture image with outputFormat',
     (WidgetTester tester) async {
