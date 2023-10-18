@@ -55,7 +55,7 @@ void main() {
 
       final Map<String, dynamic> jsonMap = event.toJson();
 
-      expect(jsonMap.length, 8);
+      expect(jsonMap.length, 7);
       expect(jsonMap['cameraId'], 1);
       expect(jsonMap['previewWidth'], 1024);
       expect(jsonMap['previewHeight'], 640);
