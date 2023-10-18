@@ -195,9 +195,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         return newMatchList;
       case NavigatingType.restore:
         // Still need to consider redirection.
-        return baseRouteMatchList!.uri.toString() == newMatchList.uri.toString()
-            ? baseRouteMatchList
-            : newMatchList;
+        return baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()
+            ? newMatchList
+            : baseRouteMatchList;
     }
   }
 
