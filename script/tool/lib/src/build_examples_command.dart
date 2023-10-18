@@ -271,15 +271,8 @@ class BuildExamplesCommand extends PackageLoopingCommand {
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
 
-    final ProcessResult result = await processRunner.run(
-      flutterCommand,
-      <String>[
-        'clean',
-        '-v',
-      ],
-      workingDir: example.directory,
-    );
-    print('Clean exit code: ${result.exitCode}');
+    final Directory builtApp = example.directory.childDirectory('build').childDirectory('ios').childDirectory('iphoneos').childDirectory('Runner.app');
+    print('Preexisting app at ${builtApp.path}: ${builtApp.existsSync()}');
 
     final int exitCode = await processRunner.runAndStream(
       flutterCommand,
