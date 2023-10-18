@@ -308,6 +308,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     );
   }
 
+  // TODO(Piinks): Pinned rows/cols do not account for what is visible on the
+  //  screen. Ostensibly, we would not want to have pinned rows/columns that
+  //  extend beyond the viewport, we would never see them as they would never
+  //  scroll into view. So this currently implementation is fairly assuming
+  //  we will never have rows/cols that are outside of the viewport. We should
+  //  maybe add an assertion for this during layout.
+  // https://github.com/flutter/flutter/issues/136833
   int? get _lastPinnedRow =>
       delegate.pinnedRowCount > 0 ? delegate.pinnedRowCount - 1 : null;
   int? get _lastPinnedColumn =>
@@ -680,7 +687,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         xPaintOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
-        print(vicinity);
+
         // TODO(Piinks): Add back merged cells, https://github.com/flutter/flutter/issues/131224
 
         final RenderBox? cell = buildOrObtainChildFor(vicinity);

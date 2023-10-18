@@ -51,14 +51,14 @@ class TableSpan {
   /// The [extent] argument must be provided.
   const TableSpan({
     required this.extent,
-    this.padding = const TableSpanPadding(),
+    TableSpanPadding? padding,
     this.recognizerFactories = const <Type, GestureRecognizerFactory>{},
     this.onEnter,
     this.onExit,
     this.cursor = MouseCursor.defer,
     this.backgroundDecoration,
     this.foregroundDecoration,
-  });
+  }) : padding = padding ?? const TableSpanPadding();
 
   /// Defines the extent of the span.
   ///
@@ -288,13 +288,28 @@ class MinTableSpanExtent extends CombiningTableSpanExtent {
 /// A decoration for a [TableSpan].
 class TableSpanDecoration {
   /// Creates a [TableSpanDecoration].
-  const TableSpanDecoration({this.border, this.color});
+  const TableSpanDecoration({
+    this.border,
+    this.color,
+    this.consumeSpanPadding = true,
+  });
 
   /// The border drawn around the span.
   final TableSpanBorder? border;
 
   /// The color to fill the bounds of the span with.
   final Color? color;
+
+  /// Whether or not the decoration should extend to fill the space created by
+  /// the [TableSpanPadding].
+  ///
+  /// Defaults to true, meaning if a [TableSpan] is a row, the decoration will
+  /// apply to the full [TableSpanExtent], including the
+  /// [TableSpanPadding.leading] and [TableSpanPadding.trailing] for the row.
+  /// This same row decoration will consume any padding from the column spans so
+  /// as to decorate the row as one continuous span.
+  /// // TODO(Piinks): Add an example of this!
+  final bool consumeSpanPadding;
 
   /// Called to draw the decoration around a span.
   ///
