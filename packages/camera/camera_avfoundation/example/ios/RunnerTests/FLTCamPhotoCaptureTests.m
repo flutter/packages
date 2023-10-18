@@ -105,7 +105,7 @@
         dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                                     (void *)FLTCaptureSessionQueueSpecific, NULL);
         FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-        [cam setImageExtension:ImageExtensionHEIF];
+        [cam setOutputFormat:OutputFormatHEIF];
       
         // Set photo settings to HEVC
         AVCapturePhotoSettings *settings =

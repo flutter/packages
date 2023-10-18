@@ -152,18 +152,18 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
 
 #pragma mark - video codec
 
-ImageExtension FLTGetImageExtensionFromString(NSString *extensionString) {
-  if ([extensionString isEqualToString:@"jpg"]) {
-    return ImageExtensionJPEG;
-  } else if ([extensionString isEqualToString:@"heif"]) {
-    return ImageExtensionHEIF;
+OutputFormat FLTGetOutputFormatFromString(NSString *outputFormatString) {
+  if ([outputFormatString isEqualToString:@"jpg"]) {
+    return OutputFormatJPEG;
+  } else if ([outputFormatString isEqualToString:@"heif"]) {
+    return OutputFormatHEIF;
   } else {
     NSError *error = [NSError
         errorWithDomain:NSCocoaErrorDomain
                    code:NSURLErrorUnknown
                userInfo:@{
                  NSLocalizedDescriptionKey :
-                     [NSString stringWithFormat:@"Unknown image extension %@", extensionString]
+                     [NSString stringWithFormat:@"Unknown image extension %@", outputFormatString]
                }];
     @throw error;
   }

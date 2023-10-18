@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// The format in which images should be returned from the camera.
-enum ImageExtension {
+enum OutputFormat {
   /// This is the default value. It will return the image in JPEG format.
   /// Is the widely used format for images.
   jpeg,
@@ -14,16 +14,16 @@ enum ImageExtension {
   heif,
 }
 
-/// Extension on [ImageExtension] to stringify the enum
-extension ImageExtensionName on ImageExtension {
-  /// returns a String value for [ImageExtension]
+/// Extension on [OutputFormat] to stringify the enum
+extension OutputFormatName on OutputFormat {
+  /// returns a String value for [OutputFormat]
   /// returns 'jpeg' if platform is not supported
-  /// or if [ImageExtension] is not supported for the platform
+  /// or if [OutputFormat] is not supported for the platform
   String name() {
     switch (this) {
-      case ImageExtension.jpeg:
+      case OutputFormat.jpeg:
         return 'jpeg';
-      case ImageExtension.heif:
+      case OutputFormat.heif:
         return 'heif';
     }
   }

@@ -13,7 +13,7 @@ export 'package:camera_platform_interface/camera_platform_interface.dart'
         ResolutionPreset,
         XFile,
         ImageFormatGroup,
-        ImageExtension;
+        OutputFormat;
 
 export 'src/camera_controller.dart';
 export 'src/camera_image.dart';

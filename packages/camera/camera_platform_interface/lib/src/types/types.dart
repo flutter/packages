@@ -8,7 +8,7 @@ export 'camera_image_data.dart';
 export 'exposure_mode.dart';
 export 'flash_mode.dart';
 export 'focus_mode.dart';
-export 'image_extension.dart';
 export 'image_format_group.dart';
+export 'output_format.dart';
 export 'resolution_preset.dart';
 export 'video_capture_options.dart';
