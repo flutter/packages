@@ -68,7 +68,7 @@ public class FlutterWebViewClient extends WebViewClient {
 
   @VisibleForTesting
   public static boolean urlShouldRunActivity(@NonNull WebView view, @NonNull String url) {
-    // Check if URL is not an HTTP(S) request
+    // Check if URL is not an HTTP(S) request.
     // Handles mailto:, sms:, etc.
     if (!url.toLowerCase().startsWith("http://") && !url.toLowerCase().startsWith("https://")) {
       Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -76,7 +76,7 @@ public class FlutterWebViewClient extends WebViewClient {
       return true;
     }
 
-    // Otherwise, let WebView load URL
+    // Otherwise, let WebView load URL.
     return false;
   }
 }
