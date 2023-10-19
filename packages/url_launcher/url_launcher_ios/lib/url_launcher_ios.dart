@@ -28,8 +28,8 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
 
   @override
   Future<bool> canLaunch(String url) async {
-    final LaunchResultDetails result = await _hostApi.canLaunchUrl(url);
-    return _mapLaunchResults(results: result);
+    final LaunchResult result = await _hostApi.canLaunchUrl(url);
+    return _mapLaunchResults(results: result, url: url);
   }
 
   @override
@@ -48,12 +48,12 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) async {
-    final LaunchResultDetails result =
+    final LaunchResult result =
         await _launchUrl(useSafariVC, url, universalLinksOnly);
-    return _mapLaunchResults(results: result);
+    return _mapLaunchResults(results: result, url: url);
   }
 
-  Future<LaunchResultDetails> _launchUrl(
+  Future<LaunchResult> _launchUrl(
       bool useSafariVC, String url, bool universalLinksOnly) {
     if (useSafariVC) {
       return _hostApi.openUrlInSafariViewController(url);
@@ -62,23 +62,23 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     }
   }
 
-  bool _mapLaunchResults({required final LaunchResultDetails results}) {
-    switch (results.result) {
+  bool _mapLaunchResults({
+    required final LaunchResult results,
+    required String url,
+  }) {
+    // Replace this in https://github.com/flutter/flutter/issues/127665
+    // This is temporary since FlutterError is not a NSError.
+    // The PlatformExceptions thrown here are for compatibility with the
+    // previous Objective-C implementation.
+    switch (results) {
       case LaunchResult.success:
         return true;
-      case LaunchResult.failure:
+      case LaunchResult.failedToLoad:
         return false;
       case LaunchResult.invalidUrl:
         throw PlatformException(
           code: 'invalidUrl',
-          message: results.errorMessage,
-          details: results.errorDetails,
-        );
-      case LaunchResult.failedToLoad:
-        throw PlatformException(
-          code: 'failedToLoad',
-          message: results.errorMessage,
-          details: results.errorDetails,
+          message: 'Unable to parse URL $url',
         );
     }
   }

@@ -15,7 +15,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
   private var currentSession: URLLaunchSession?
   private let launcher: Launcher
 
-  var topViewController: UIViewController? {
+  private var topViewController: UIViewController? {
     // TODO(stuartmorgan) Provide a non-deprecated codepath. See
     // https://github.com/flutter/flutter/issues/104117
     UIApplication.shared.keyWindow?.rootViewController?.topViewController
@@ -25,34 +25,33 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     self.launcher = launcher
   }
 
-  func canLaunchUrl(url: String) -> LaunchResultDetails {
+  func canLaunchUrl(url: String) -> LaunchResult {
     guard let url = URL(string: url) else {
-      return invalidURLError(for: url)
+      return .failedToLoad
     }
     let canOpen = launcher.canOpenURL(url)
-    return LaunchResultDetails(result: canOpen ? .success : .failure)
+    return canOpen ? .success : .failedToLoad
   }
 
   func launchUrl(
     url: String, universalLinksOnly: Bool,
-    completion: @escaping (Result<LaunchResultDetails, Error>) -> Void
+    completion: @escaping (Result<LaunchResult, Error>) -> Void
   ) {
     guard let url = URL(string: url) else {
-      completion(.success(invalidURLError(for: url)))
+      completion(.success(.failedToLoad))
       return
     }
     let options = [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: universalLinksOnly]
-    launcher.openURL(url, options: options) { success in
-      let result = LaunchResultDetails(result: success ? .success : .failure)
-      completion(.success(result))
+    launcher.openURL(url, options: options) { result in
+      completion(.success(result ? .success : .failedToLoad))
     }
   }
 
   func openUrlInSafariViewController(
-    url: String, completion: @escaping (Result<LaunchResultDetails, Error>) -> Void
+    url: String, completion: @escaping (Result<LaunchResult, Error>) -> Void
   ) {
     guard let url = URL(string: url) else {
-      completion(.success(invalidURLError(for: url)))
+      completion(.success(.failedToLoad))
       return
     }
 
@@ -67,18 +66,6 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
 
   func closeSafariViewController() throws {
     currentSession?.close()
-  }
-
-  /**
-    * Creates an error for an invalid URL string.
-    *
-    * @param url The invalid URL string
-    * @return The error to return
-    */
-  func invalidURLError(for url: String) -> LaunchResultDetails {
-    LaunchResultDetails(
-      result: .invalidUrl, errorMessage: "Unable to parse URL", errorDetails: "Provided URL: \(url)"
-    )
   }
 }
 

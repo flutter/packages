@@ -17,70 +17,10 @@ enum LaunchResult {
   success,
 
   /// The URL could not be launched
-  failure,
+  failedToLoad,
 
   /// The URL was not launched because it is not invalid URL
   invalidUrl,
-
-  /// The URL did not load successfully in the SFSafariViewController.
-  failedToLoad,
-}
-
-class LaunchResultDetails {
-  LaunchResultDetails({
-    required this.result,
-    this.errorMessage,
-    this.errorDetails,
-  });
-
-  /// The result of the launch attempt.
-  LaunchResult result;
-
-  /// A system-provided error message, if any.
-  String? errorMessage;
-
-  /// A system-provided error details, if any.
-  String? errorDetails;
-
-  Object encode() {
-    return <Object?>[
-      result.index,
-      errorMessage,
-      errorDetails,
-    ];
-  }
-
-  static LaunchResultDetails decode(Object result) {
-    result as List<Object?>;
-    return LaunchResultDetails(
-      result: LaunchResult.values[result[0]! as int],
-      errorMessage: result[1] as String?,
-      errorDetails: result[2] as String?,
-    );
-  }
-}
-
-class _UrlLauncherApiCodec extends StandardMessageCodec {
-  const _UrlLauncherApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is LaunchResultDetails) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return LaunchResultDetails.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
 }
 
 class UrlLauncherApi {
@@ -91,10 +31,10 @@ class UrlLauncherApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _UrlLauncherApiCodec();
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   /// Returns true if the URL can definitely be launched.
-  Future<LaunchResultDetails> canLaunchUrl(String arg_url) async {
+  Future<LaunchResult> canLaunchUrl(String arg_url) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.canLaunchUrl',
         codec,
@@ -118,12 +58,12 @@ class UrlLauncherApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as LaunchResultDetails?)!;
+      return LaunchResult.values[replyList[0]! as int];
     }
   }
 
   /// Opens the URL externally, returning true if successful.
-  Future<LaunchResultDetails> launchUrl(
+  Future<LaunchResult> launchUrl(
       String arg_url, bool arg_universalLinksOnly) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.launchUrl', codec,
@@ -147,14 +87,13 @@ class UrlLauncherApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as LaunchResultDetails?)!;
+      return LaunchResult.values[replyList[0]! as int];
     }
   }
 
   /// Opens the URL in an in-app SFSafariViewController, returning true
   /// when it has loaded successfully.
-  Future<LaunchResultDetails> openUrlInSafariViewController(
-      String arg_url) async {
+  Future<LaunchResult> openUrlInSafariViewController(String arg_url) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInSafariViewController',
         codec,
@@ -178,7 +117,7 @@ class UrlLauncherApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as LaunchResultDetails?)!;
+      return LaunchResult.values[replyList[0]! as int];
     }
   }
 

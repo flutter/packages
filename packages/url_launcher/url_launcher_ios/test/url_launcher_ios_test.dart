@@ -32,14 +32,14 @@ void main() {
 
     test('canLaunch success', () async {
       when(api.canLaunchUrl(any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.success),
+        (_) async => LaunchResult.success,
       );
       expect(await launcher.canLaunch('http://example.com/'), true);
     });
 
     test('canLaunch failure', () async {
       when(api.canLaunchUrl(any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.failure),
+        (_) async => LaunchResult.failedToLoad,
       );
       expect(await launcher.canLaunch('unknown://scheme'), false);
     });
@@ -47,7 +47,7 @@ void main() {
     test('canLaunch invalid URL passes the PlatformException through',
         () async {
       when(api.canLaunchUrl(any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.invalidUrl),
+        (_) async => LaunchResult.invalidUrl,
       );
       await expectLater(launcher.canLaunch('invalid://u r l'),
           throwsA(isA<PlatformException>()));
@@ -55,7 +55,7 @@ void main() {
 
     test('launch success', () async {
       when(api.launchUrl(any, any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.success),
+        (_) async => LaunchResult.success,
       );
       expect(
           await launcher.launch(
@@ -75,7 +75,7 @@ void main() {
 
     test('launch failure', () async {
       when(api.launchUrl(any, any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.failure),
+        (_) async => LaunchResult.failedToLoad,
       );
       expect(
           await launcher.launch(
@@ -94,7 +94,7 @@ void main() {
 
     test('launch invalid URL passes the PlatformException through', () async {
       when(api.launchUrl(any, any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.invalidUrl),
+        (_) async => LaunchResult.invalidUrl,
       );
       await expectLater(
           launcher.launch(
@@ -109,13 +109,12 @@ void main() {
           throwsA(isA<PlatformException>()));
     });
 
-    test('launch failed to load passes the PlatformException through',
-        () async {
+    test('launch failed to load URL returns false', () async {
       when(api.launchUrl(any, any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.failedToLoad),
+        (_) async => LaunchResult.failedToLoad,
       );
-      await expectLater(
-          launcher.launch(
+      expect(
+          await launcher.launch(
             'invalid://u r l',
             useSafariVC: false,
             useWebView: false,
@@ -124,12 +123,12 @@ void main() {
             universalLinksOnly: false,
             headers: const <String, String>{},
           ),
-          throwsA(isA<PlatformException>()));
+          false);
     });
 
     test('launch force SafariVC', () async {
       when(api.openUrlInSafariViewController(any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.success),
+        (_) async => LaunchResult.success,
       );
       expect(
           await launcher.launch(
@@ -148,7 +147,7 @@ void main() {
 
     test('launch universal links only', () async {
       when(api.launchUrl(any, any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.success),
+        (_) async => LaunchResult.success,
       );
       expect(
           await launcher.launch(
@@ -167,7 +166,7 @@ void main() {
 
     test('launch force SafariVC to false', () async {
       when(api.launchUrl(any, any)).thenAnswer(
-        (_) async => LaunchResultDetails(result: LaunchResult.success),
+        (_) async => LaunchResult.success,
       );
       expect(
           await launcher.launch(

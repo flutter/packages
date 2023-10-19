@@ -20,26 +20,20 @@ final class URLLauncherTests: XCTestCase {
 
   func testCanLaunchSuccess() {
     let result = createPlugin().canLaunchUrl(url: "good://url")
-    XCTAssertEqual(result.result, .success)
+    XCTAssertEqual(result, .success)
   }
 
   func testCanLaunchFailure() {
     let result = createPlugin().canLaunchUrl(url: "bad://url")
-    XCTAssertEqual(result.result, .failure)
+    XCTAssertEqual(result, .failedToLoad)
   }
 
   func testCanLaunchFailureWithInvalidURL() {
     let result = createPlugin().canLaunchUrl(url: "urls can't have spaces")
-    if result.result == .failure {
-      // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
-      // fail to parse URLs, so the test must allow for either outcome.
-      XCTAssertNil(result.errorMessage)
-      XCTAssertNil(result.errorDetails)
-    } else {
-      XCTAssertEqual(result.result, .invalidUrl)
-      XCTAssertEqual(result.errorMessage, "Unable to parse URL")
-      XCTAssertEqual(result.errorDetails, "Provided URL: urls can't have spaces")
-    }
+
+    // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
+    // fail to parse URLs, so the test must allow for either outcome.
+    XCTAssertTrue(result == .failedToLoad || result == .invalidUrl)
   }
 
   func testLaunchSuccess() {
@@ -47,7 +41,7 @@ final class URLLauncherTests: XCTestCase {
     createPlugin().launchUrl(url: "good://url", universalLinksOnly: false) { result in
       switch result {
       case .success(let details):
-        XCTAssertEqual(details.result, .success)
+        XCTAssertEqual(details, .success)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -62,7 +56,7 @@ final class URLLauncherTests: XCTestCase {
     createPlugin().launchUrl(url: "bad://url", universalLinksOnly: false) { result in
       switch result {
       case .success(let details):
-        XCTAssertEqual(details.result, .failure)
+        XCTAssertEqual(details, .failedToLoad)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -77,16 +71,9 @@ final class URLLauncherTests: XCTestCase {
     createPlugin().launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
       switch result {
       case .success(let details):
-        if details.result == .failure {
-          // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
-          // fail to parse URLs, so the test must allow for either outcome.
-          XCTAssertNil(details.errorMessage)
-          XCTAssertNil(details.errorDetails)
-        } else {
-          XCTAssertEqual(details.result, .invalidUrl)
-          XCTAssertEqual(details.errorMessage, "Unable to parse URL")
-          XCTAssertEqual(details.errorDetails, "Provided URL: urls can't have spaces")
-        }
+        // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
+        // fail to parse URLs, so the test must allow for either outcome.
+        XCTAssertTrue(details == .failedToLoad || details == .invalidUrl)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -104,7 +91,7 @@ final class URLLauncherTests: XCTestCase {
     plugin.launchUrl(url: "good://url", universalLinksOnly: false) { result in
       switch result {
       case .success(let details):
-        XCTAssertEqual(details.result, .success)
+        XCTAssertEqual(details, .success)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -123,7 +110,7 @@ final class URLLauncherTests: XCTestCase {
     plugin.launchUrl(url: "good://url", universalLinksOnly: true) { result in
       switch result {
       case .success(let details):
-        XCTAssertEqual(details.result, .success)
+        XCTAssertEqual(details, .success)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -144,7 +131,8 @@ final private class FakeLauncher: NSObject, Launcher {
   }
 
   func openURL(
-    _ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any],
+    _ url: URL,
+    options: [UIApplication.OpenExternalURLOptionsKey: Any],
     completionHandler completion: ((Bool) -> Void)?
   ) {
     self.passedOptions = options

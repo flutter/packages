@@ -19,17 +19,6 @@ import 'package:url_launcher_ios/src/messages.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeLaunchResultDetails_0 extends _i1.SmartFake
-    implements _i2.LaunchResultDetails {
-  _FakeLaunchResultDetails_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
 /// A class which mocks [UrlLauncherApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -39,24 +28,18 @@ class MockUrlLauncherApi extends _i1.Mock implements _i2.UrlLauncherApi {
   }
 
   @override
-  _i3.Future<_i2.LaunchResultDetails> canLaunchUrl(String? arg_url) =>
+  _i3.Future<_i2.LaunchResult> canLaunchUrl(String? arg_url) =>
       (super.noSuchMethod(
         Invocation.method(
           #canLaunchUrl,
           [arg_url],
         ),
-        returnValue: _i3.Future<_i2.LaunchResultDetails>.value(
-            _FakeLaunchResultDetails_0(
-          this,
-          Invocation.method(
-            #canLaunchUrl,
-            [arg_url],
-          ),
-        )),
-      ) as _i3.Future<_i2.LaunchResultDetails>);
+        returnValue:
+            _i3.Future<_i2.LaunchResult>.value(_i2.LaunchResult.success),
+      ) as _i3.Future<_i2.LaunchResult>);
 
   @override
-  _i3.Future<_i2.LaunchResultDetails> launchUrl(
+  _i3.Future<_i2.LaunchResult> launchUrl(
     String? arg_url,
     bool? arg_universalLinksOnly,
   ) =>
@@ -68,36 +51,20 @@ class MockUrlLauncherApi extends _i1.Mock implements _i2.UrlLauncherApi {
             arg_universalLinksOnly,
           ],
         ),
-        returnValue: _i3.Future<_i2.LaunchResultDetails>.value(
-            _FakeLaunchResultDetails_0(
-          this,
-          Invocation.method(
-            #launchUrl,
-            [
-              arg_url,
-              arg_universalLinksOnly,
-            ],
-          ),
-        )),
-      ) as _i3.Future<_i2.LaunchResultDetails>);
+        returnValue:
+            _i3.Future<_i2.LaunchResult>.value(_i2.LaunchResult.success),
+      ) as _i3.Future<_i2.LaunchResult>);
 
   @override
-  _i3.Future<_i2.LaunchResultDetails> openUrlInSafariViewController(
-          String? arg_url) =>
+  _i3.Future<_i2.LaunchResult> openUrlInSafariViewController(String? arg_url) =>
       (super.noSuchMethod(
         Invocation.method(
           #openUrlInSafariViewController,
           [arg_url],
         ),
-        returnValue: _i3.Future<_i2.LaunchResultDetails>.value(
-            _FakeLaunchResultDetails_0(
-          this,
-          Invocation.method(
-            #openUrlInSafariViewController,
-            [arg_url],
-          ),
-        )),
-      ) as _i3.Future<_i2.LaunchResultDetails>);
+        returnValue:
+            _i3.Future<_i2.LaunchResult>.value(_i2.LaunchResult.success),
+      ) as _i3.Future<_i2.LaunchResult>);
 
   @override
   _i3.Future<void> closeSafariViewController() => (super.noSuchMethod(

@@ -5,7 +5,7 @@
 import Flutter
 import SafariServices
 
-typealias OpenInSafariCompletionHandler = (Result<LaunchResultDetails, Error>) -> Void
+typealias OpenInSafariCompletionHandler = (Result<LaunchResult, Error>) -> Void
 
 /// A session responsible for launching a URL in Safari and handling its events.
 final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
@@ -41,12 +41,9 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
     _ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool
   ) {
     if didLoadSuccessfully {
-      completion(.success(LaunchResultDetails(result: .success)))
+      completion(.success(.success))
     } else {
-      completion(
-        .success(
-          LaunchResultDetails(result: .failedToLoad, errorMessage: "Error while launching \(url)")
-        ))
+      completion(.success(.failedToLoad))
     }
   }
 

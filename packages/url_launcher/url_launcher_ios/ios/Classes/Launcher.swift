@@ -6,9 +6,13 @@
 ///
 /// This protocol exists to allow injecting an alternate implementation for testing.
 protocol Launcher {
+  /// Returns a Boolean value that indicates whether an app is available to handle a URL scheme.
   func canOpenURL(_ url: URL) -> Bool
+
+  /// Attempts to asynchronously open the resource at the specified URL.
   func openURL(
-    _ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any],
+    _ url: URL,
+    options: [UIApplication.OpenExternalURLOptionsKey: Any],
     completionHandler completion: ((Bool) -> Void)?)
 }
 
@@ -19,7 +23,8 @@ final class UIApplicationLauncher: Launcher {
   }
 
   func openURL(
-    _ url: URL, options: [UIApplication.OpenExternalURLOptionsKey: Any],
+    _ url: URL,
+    options: [UIApplication.OpenExternalURLOptionsKey: Any],
     completionHandler completion: ((Bool) -> Void)?
   ) {
     UIApplication.shared.open(url, options: options, completionHandler: completion)
