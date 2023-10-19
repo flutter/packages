@@ -176,7 +176,7 @@ class ExampleHostApiSetup {
 protocol MessageFlutterApiProtocol {
   func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void) 
 }
-/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger){

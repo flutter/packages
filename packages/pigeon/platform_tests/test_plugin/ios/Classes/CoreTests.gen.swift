@@ -1793,7 +1793,7 @@ protocol FlutterIntegrationCoreApiProtocol {
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 ///
-/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger){
@@ -2364,7 +2364,7 @@ protocol FlutterSmallApiProtocol {
 }
 /// A simple API called in some unit tests.
 ///
-/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 class FlutterSmallApi: FlutterSmallApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger){
