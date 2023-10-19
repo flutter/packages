@@ -86,7 +86,7 @@ class BenchmarkServer {
   final bool headless;
 
   /// Whether to tree shake icons during the build.
-  /// 
+  ///
   /// When false, '--no-tree-shake-icons' will be passed as a build argument.
   final bool treeShakeIcons;
 
