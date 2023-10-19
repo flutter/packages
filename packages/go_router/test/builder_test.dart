@@ -11,7 +11,7 @@ import 'test_helpers.dart';
 void main() {
   group('RouteBuilder', () {
     testWidgets('Builds GoRoute', (WidgetTester tester) async {
-      final RouteConfiguration config = RouteConfiguration(
+      final RouteConfiguration config = createRouteConfiguration(
         routes: <RouteBase>[
           GoRoute(
             path: '/',
@@ -49,7 +49,7 @@ void main() {
     });
 
     testWidgets('Builds ShellRoute', (WidgetTester tester) async {
-      final RouteConfiguration config = RouteConfiguration(
+      final RouteConfiguration config = createRouteConfiguration(
         routes: <RouteBase>[
           ShellRoute(
               builder:
@@ -94,7 +94,7 @@ void main() {
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
-      final RouteConfiguration config = RouteConfiguration(
+      final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           GoRoute(
@@ -137,7 +137,7 @@ void main() {
           GlobalKey<NavigatorState>(debugLabel: 'root');
       final GlobalKey<NavigatorState> shellNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'shell');
-      final RouteConfiguration config = RouteConfiguration(
+      final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           ShellRoute(
@@ -198,7 +198,7 @@ void main() {
           GlobalKey<NavigatorState>(debugLabel: 'root');
       final GlobalKey<NavigatorState> shellNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'shell');
-      final RouteConfiguration config = RouteConfiguration(
+      final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           ShellRoute(
@@ -264,7 +264,7 @@ void main() {
           GlobalKey<NavigatorState>(debugLabel: 'root');
       final GlobalKey<NavigatorState> shellNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'shell');
-      final RouteConfiguration config = RouteConfiguration(
+      final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
           ShellRoute(

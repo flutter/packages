@@ -1,3 +1,7 @@
+## 0.1.0+7
+
+* Updates `package:process` version constraints.
+
 ## 0.1.0+6
 
 * Adds pub topics to package metadata.

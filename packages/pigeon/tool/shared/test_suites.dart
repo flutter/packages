@@ -294,11 +294,54 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
     return compileCode;
   }
 
+  const String deviceName = 'Pigeon-Test-iPhone';
+  const String deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
+  const String deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-16-4';
+  const String deviceOS = '16.4';
+  await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
     sdk: 'iphonesimulator',
-    destination: 'platform=iOS Simulator,name=iPhone 14',
+    destination: 'platform=iOS Simulator,name=$deviceName,OS=$deviceOS',
     extraArguments: <String>['test'],
+  ).whenComplete(() => _deleteSimulator(deviceName));
+}
+
+Future<int> _createSimulator(
+  String deviceName,
+  String deviceType,
+  String deviceRuntime,
+) async {
+  // Delete any existing simulators with the same name until it fails. It will
+  // fail once there are no simulators with the name. Having more than one may
+  // cause issues when builds target the device.
+  int deleteResult = 0;
+  while (deleteResult == 0) {
+    deleteResult = await _deleteSimulator(deviceName);
+  }
+  return runProcess(
+    'xcrun',
+    <String>[
+      'simctl',
+      'create',
+      deviceName,
+      deviceType,
+      deviceRuntime,
+    ],
+    streamOutput: false,
+    logFailure: true,
+  );
+}
+
+Future<int> _deleteSimulator(String deviceName) async {
+  return runProcess(
+    'xcrun',
+    <String>[
+      'simctl',
+      'delete',
+      deviceName,
+    ],
+    streamOutput: false,
   );
 }
 

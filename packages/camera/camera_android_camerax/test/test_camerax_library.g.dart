@@ -426,6 +426,8 @@ abstract class TestCameraHostApi {
 
   int getCameraInfo(int identifier);
 
+  int getCameraControl(int identifier);
+
   static void setup(TestCameraHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -446,6 +448,28 @@ abstract class TestCameraHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.CameraHostApi.getCameraInfo was null, expected non-null int.');
           final int output = api.getCameraInfo(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraHostApi.getCameraControl', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraHostApi.getCameraControl was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraHostApi.getCameraControl was null, expected non-null int.');
+          final int output = api.getCameraControl(arg_identifier!);
           return <Object?>[output];
         });
       }
@@ -1715,6 +1739,43 @@ abstract class TestFallbackStrategyHostApi {
           assert(arg_fallbackRule != null,
               'Argument for dev.flutter.pigeon.FallbackStrategyHostApi.create was null, expected non-null VideoResolutionFallbackRule.');
           api.create(arg_identifier!, arg_quality!, arg_fallbackRule!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestCameraControlHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<void> enableTorch(int identifier, bool torch);
+
+  static void setup(TestCameraControlHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.CameraControlHostApi.enableTorch', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.enableTorch was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.enableTorch was null, expected non-null int.');
+          final bool? arg_torch = (args[1] as bool?);
+          assert(arg_torch != null,
+              'Argument for dev.flutter.pigeon.CameraControlHostApi.enableTorch was null, expected non-null bool.');
+          await api.enableTorch(arg_identifier!, arg_torch!);
           return <Object?>[];
         });
       }

@@ -1,3 +1,7 @@
+## 0.3.3+6
+
+* Improves documentation about ignored parameters in IO implementation.
+
 ## 0.3.3+5
 
 * Adds pub topics to package metadata.

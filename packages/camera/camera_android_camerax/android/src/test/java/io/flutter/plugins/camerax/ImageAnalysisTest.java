@@ -50,7 +50,7 @@ public class ImageAnalysisTest {
   @Test
   public void hostApiCreate_createsExpectedImageAnalysisInstanceWithExpectedIdentifier() {
     final ImageAnalysisHostApiImpl hostApi =
-        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
+        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
     final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
     final ImageAnalysis.Builder mockImageAnalysisBuilder = mock(ImageAnalysis.Builder.class);
     final ResolutionSelector mockResolutionSelector = mock(ResolutionSelector.class);
@@ -72,8 +72,7 @@ public class ImageAnalysisTest {
   @Test
   public void setAnalyzer_makesCallToSetAnalyzerOnExpectedImageAnalysisInstance() {
     final ImageAnalysisHostApiImpl hostApi =
-        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
-    hostApi.setContext(context);
+        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
 
     final ImageAnalysis.Analyzer mockAnalyzer = mock(ImageAnalysis.Analyzer.class);
     final long analyzerIdentifier = 10;
@@ -90,7 +89,7 @@ public class ImageAnalysisTest {
   @Test
   public void clearAnalyzer_makesCallToClearAnalyzerOnExpectedImageAnalysisInstance() {
     final ImageAnalysisHostApiImpl hostApi =
-        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager);
+        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
     final long instanceIdentifier = 22;
 
     instanceManager.addDartCreatedInstance(mockImageAnalysis, instanceIdentifier);
