@@ -173,16 +173,16 @@ class ExampleHostApiSetup {
     }
   }
 }
+/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
   func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void) 
 }
-/// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger){
     self.binaryMessenger = binaryMessenger
   }
-  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void) {
+  func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void)  {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod", binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {

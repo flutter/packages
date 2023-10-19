@@ -292,6 +292,12 @@ import FlutterMacOS
       _writeCodec(indent, api, root);
     }
 
+    const List<String> generatedComments = <String>[
+      ' Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.'
+    ];
+    addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
+        generatorComments: generatedComments);
+
     indent.addScoped('protocol ${api.name}Protocol {', '}', () {
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -299,12 +305,6 @@ import FlutterMacOS
         indent.writeln(_getMethodSignature(func));
       }
     });
-
-    const List<String> generatedComments = <String>[
-      ' Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.'
-    ];
-    addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
-        generatorComments: generatedComments);
 
     indent.write('class ${api.name}: ${api.name}Protocol ');
     indent.addScoped('{', '}', () {
@@ -324,18 +324,18 @@ import FlutterMacOS
       }
       for (final Method func in api.methods) {
         final String channelName = makeChannelName(api, func, dartPackageName);
-        final Iterable<String> enumSafeArgNames = func.arguments
-            .asMap()
-            .entries
-            .map((MapEntry<int, NamedType> e) =>
-                getEnumSafeArgumentExpression(root, e.key, e.value));
-        final String sendArgument = func.arguments.isEmpty
-            ? 'nil'
-            : '[${enumSafeArgNames.join(', ')}] as [Any?]';
 
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
-        indent.writeScoped('${_getMethodSignature(func)}{', '}', () {
+        indent.writeScoped('${_getMethodSignature(func)} {', '}', () {
+          final Iterable<String> enumSafeArgNames = func.arguments
+              .asMap()
+              .entries
+              .map((MapEntry<int, NamedType> e) =>
+                  getEnumSafeArgumentExpression(root, e.key, e.value));
+          final String sendArgument = func.arguments.isEmpty
+              ? 'nil'
+              : '[${enumSafeArgNames.join(', ')}] as [Any?]';
           const String channel = 'channel';
           indent.writeln(
               'let $channel = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');

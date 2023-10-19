@@ -31,7 +31,9 @@ class RunnerTests: XCTestCase {
     XCTAssertEqual(reply.error, copy?.error)
   }
 
-  func callEchoStringFromProtocol() throws {
+  /// This validates that pigeon clients can easily write tests that mock out Flutter API
+  /// calls using a pigeon-generated protocol.
+  func testEchoStringFromProtocol() throws {
     let api: FlutterApiFromProtocol = FlutterApiFromProtocol()
     let aString = "aString"
     api.echo(aString) { response in
