@@ -18,7 +18,7 @@ void main() {
 }
 
 class Example extends StatefulWidget {
-  const Example({Key? key}) : super(key: key);
+  const Example({super.key});
 
   @override
   State<Example> createState() => _ExampleState();
@@ -87,13 +87,13 @@ class _ExampleState extends State<Example> {
         },
       );
     } else {
-      result = Material(
+      result = const Material(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: const <Widget>[
+              children: <Widget>[
                 Padding(padding: EdgeInsets.only(right: 100.0), child: Text('REMOTE', textAlign: TextAlign.center, style: TextStyle(letterSpacing: 12.0))),
                 Expanded(child: DecoratedBox(decoration: FlutterLogoDecoration(style: FlutterLogoStyle.horizontal))),
                 Padding(padding: EdgeInsets.only(left: 100.0), child: Text('WIDGETS', textAlign: TextAlign.center, style: TextStyle(letterSpacing: 12.0))),

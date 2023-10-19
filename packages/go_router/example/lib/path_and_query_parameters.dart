@@ -9,9 +9,9 @@ import 'package:go_router/go_router.dart';
 //
 // The route segments that start with ':' are treated as path parameters when
 // defining GoRoute[s]. The parameter values can be accessed through
-// GoRouterState.params.
+// GoRouterState.pathParameters.
 //
-// The query parameters are automatically stored in GoRouterState.queryParams.
+// The query parameters are automatically stored in GoRouterState.queryParameters.
 
 /// Family data class.
 class Family {
@@ -59,7 +59,7 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Query Parameters';
@@ -84,8 +84,8 @@ class App extends StatelessWidget {
               path: 'family/:fid',
               builder: (BuildContext context, GoRouterState state) {
                 return FamilyScreen(
-                  fid: state.params['fid']!,
-                  asc: state.queryParams['sort'] == 'asc',
+                  fid: state.pathParameters['fid']!,
+                  asc: state.uri.queryParameters['sort'] == 'asc',
                 );
               }),
         ],
@@ -97,7 +97,7 @@ class App extends StatelessWidget {
 /// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +121,7 @@ class HomeScreen extends StatelessWidget {
 /// The screen that shows a list of persons in a family.
 class FamilyScreen extends StatelessWidget {
   /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.fid, required this.asc, Key? key})
-      : super(key: key);
+  const FamilyScreen({required this.fid, required this.asc, super.key});
 
   /// The family to display.
   final String fid;
@@ -150,7 +149,8 @@ class FamilyScreen extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             onPressed: () => context.goNamed('family',
-                params: <String, String>{'fid': fid}, queryParams: newQueries),
+                pathParameters: <String, String>{'fid': fid},
+                queryParameters: newQueries),
             tooltip: 'sort ascending or descending',
             icon: const Icon(Icons.sort),
           )

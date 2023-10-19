@@ -27,7 +27,10 @@ void defineTests() {
         );
 
         final Iterable<Widget> widgets = tester.allWidgets;
-        expect(widgets.whereType<SingleChildScrollView>(), isNotEmpty);
+        final Iterable<SingleChildScrollView> scrollViews =
+            widgets.whereType<SingleChildScrollView>();
+        expect(scrollViews, isNotEmpty);
+        expect(scrollViews.first.controller, isNotNull);
       },
     );
 
@@ -65,9 +68,11 @@ void defineTests() {
           ),
         );
 
-        final List<Widget> widgets = tester.allWidgets.toList();
-        expectWidgetTypes(widgets.take(3), <Type>[
-          Directionality,
+        final List<Widget> widgets = selfAndDescendantWidgetsOf(
+          find.byType(Markdown),
+          tester,
+        ).toList();
+        expectWidgetTypes(widgets.take(2), <Type>[
           Markdown,
           ListView,
         ]);

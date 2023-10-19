@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router_builder_example/main.dart';
 
@@ -12,9 +13,20 @@ void main() {
     await tester.tap(find.text('Login'));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Push a route'));
+    await _openPopupMenu(tester);
+
+    await tester.tap(find.text('Push w/o return value'));
     await tester.pumpAndSettle();
     expect(find.text('Chris'), findsOneWidget);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+
+    await _openPopupMenu(tester);
+
+    await tester.tap(find.text('Push w/ return value'));
+    await tester.pumpAndSettle();
+    expect(find.text('Family Count'), findsOneWidget);
 
     await tester.pageBack();
     await tester.pumpAndSettle();
@@ -38,4 +50,12 @@ void main() {
 
     expect(find.text('Extra click count: 1'), findsOneWidget);
   });
+}
+
+Future<void> _openPopupMenu(WidgetTester tester) async {
+  final Finder moreButton = find.byIcon(Icons.more_vert);
+  expect(moreButton, findsOneWidget);
+
+  await tester.tap(moreButton);
+  await tester.pumpAndSettle();
 }

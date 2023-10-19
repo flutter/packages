@@ -93,7 +93,7 @@ class SubscriptBuilder extends MarkdownElementBuilder {
 /// accompanying Markdown element builder object to handle subscript tags.
 class SubscriptSyntaxDemo extends StatelessWidget
     implements MarkdownDemoWidget {
-  const SubscriptSyntaxDemo({Key? key}) : super(key: key);
+  const SubscriptSyntaxDemo({super.key});
 
   static const String _title = 'Subscript Syntax Demo';
 

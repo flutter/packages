@@ -1,18 +1,24 @@
 buildscript {
-    ext.kotlin_version = '1.6.0'
+    ext.kotlin_version = '1.7.10'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 allprojects {
     repositories {
+        // See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
+        def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
+        if (System.getenv().containsKey(artifactRepoKey)) {
+            println "Using artifact hub"
+            maven { url System.getenv(artifactRepoKey) }
+        }
         google()
         mavenCentral()
     }
@@ -26,6 +32,6 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
+tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

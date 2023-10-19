@@ -1,6 +1,48 @@
+## 1.0.15
+
+* Updates README.md to point to the CONTRIBUTING.md file.
+* Introduces CONTRIBUTING.md, and adds more information about golden testing.
+
+## 1.0.14
+
+* Adds pub topics to package metadata.
+
+## 1.0.13
+
+* Block comments in RFW's text format. (`/*...*/`)
+
+## 1.0.12
+
+* Improves web compatibility.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Adds more testing to restore coverage to 100%.
+* Removes some dead code.
+
+## 1.0.11
+
+* Adds more documentation in the README.md file!
+* Adds automated verification of the sample code in the README.
+
+## 1.0.10
+
+* Fixes stale ignore: `prefer_const_constructors`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Changes package internals to avoid explicit `as Uint8List` downcast.
+
+## 1.0.9
+
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Aligns Dart and Flutter SDK constraints.
+* Fixes a typo in the API documentation that broke the formatting.
+
+## 1.0.8
+
+* Removes use of `runtimeType.toString()`.
+* Updates code to fix strict-cast violations.
+
 ## 1.0.7
 
-* Update README.
+* Updates README.
 
 ## 1.0.6
 
@@ -25,15 +67,15 @@
 
 ## 1.0.2
 
-* Mention FractionallySizedBox in documentation.
+* Mentions FractionallySizedBox in documentation.
 
 ## 1.0.1
 
-* Improve documentation.
-* Provide constants for the file signatures.
+* Improves documentation.
+* Provides constants for the file signatures.
 * Minor efficiency improvements.
-* Fix `unnecessary_import` lint errors.
-* Add one more core widget, FractionallySizedBox.
+* Fixes `unnecessary_import` lint errors.
+* Adds one more core widget, FractionallySizedBox.
 
 ## 1.0.0
 

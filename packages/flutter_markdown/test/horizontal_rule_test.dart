@@ -17,9 +17,11 @@ void defineTests() {
         const String data = '---';
         await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(
+          find.byType(MarkdownBody),
+          tester,
+        );
         expectWidgetTypes(widgets, <Type>[
-          Directionality,
           MarkdownBody,
           Container,
           DecoratedBox,
@@ -36,9 +38,11 @@ void defineTests() {
         const String data = '-----';
         await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(
+          find.byType(MarkdownBody),
+          tester,
+        );
         expectWidgetTypes(widgets, <Type>[
-          Directionality,
           MarkdownBody,
           Container,
           DecoratedBox,
@@ -55,9 +59,11 @@ void defineTests() {
         const String data = '* * *';
         await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(
+          find.byType(MarkdownBody),
+          tester,
+        );
         expectWidgetTypes(widgets, <Type>[
-          Directionality,
           MarkdownBody,
           Container,
           DecoratedBox,
@@ -74,9 +80,11 @@ void defineTests() {
         const String data = '# h1\n ## h2\n* * *';
         await tester.pumpWidget(boilerplate(const MarkdownBody(data: data)));
 
-        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<Widget> widgets = selfAndDescendantWidgetsOf(
+          find.byType(MarkdownBody),
+          tester,
+        );
         expectWidgetTypes(widgets, <Type>[
-          Directionality,
           MarkdownBody,
           Column,
           Column,

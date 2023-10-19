@@ -122,6 +122,66 @@ void defineTests() {
     );
 
     testWidgets(
+      'table cell vertical alignment should default to middle',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme);
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Table table = tester.widget(find.byType(Table));
+
+        expect(
+            table.defaultVerticalAlignment, TableCellVerticalAlignment.middle);
+      },
+    );
+
+    testWidgets(
+      'table cell vertical alignment should follow stylesheet',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        const TableCellVerticalAlignment tableCellVerticalAlignment =
+            TableCellVerticalAlignment.top;
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+            .copyWith(tableVerticalAlignment: tableCellVerticalAlignment);
+
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Table table = tester.widget(find.byType(Table));
+
+        expect(table.defaultVerticalAlignment, tableCellVerticalAlignment);
+      },
+    );
+
+    testWidgets(
+      'table cell vertical alignment should follow stylesheet for different values',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        const TableCellVerticalAlignment tableCellVerticalAlignment =
+            TableCellVerticalAlignment.bottom;
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+            .copyWith(tableVerticalAlignment: tableCellVerticalAlignment);
+
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Table table = tester.widget(find.byType(Table));
+
+        expect(table.defaultVerticalAlignment, tableCellVerticalAlignment);
+      },
+    );
+
+    testWidgets(
       'table with last row of empty table cells',
       (WidgetTester tester) async {
         final ThemeData theme =
@@ -391,43 +451,18 @@ void defineTests() {
 
           expectTableSize(3, 2);
 
-          if (!newMarkdown) {
-            // For pkg:markdown <= v6.0.1
-            expect(find.byType(RichText), findsNWidgets(6));
-            final List<String?> text = find
-                .byType(RichText)
-                .evaluate()
-                .map((Element e) => e.widget)
-                .cast<RichText>()
-                .map((RichText richText) => richText.text)
-                .cast<TextSpan>()
-                .map((TextSpan e) => e.text)
-                .toList();
-            expect(text[0], 'abc');
-            expect(text[1], 'def');
-            expect(text[2], 'bar');
-            expect(text[3], 'baz');
-            expect(text[4], 'bar');
-            expect(table.defaultColumnWidth, columnWidth);
-
-            // Paragraph text
-            expect(text[5], 'bar');
-          } else {
-            // For pkg:markdown > v6.0.1
-            expect(find.byType(RichText), findsNWidgets(7));
-            final List<String?> text = find
-                .byType(RichText)
-                .evaluate()
-                .map((Element e) => e.widget)
-                .cast<RichText>()
-                .map((RichText richText) => richText.text)
-                .cast<TextSpan>()
-                .map((TextSpan e) => e.text)
-                .toList();
-            expect(
-                text, <String>['abc', 'def', 'bar', 'baz', 'bar', '', 'bar']);
-            expect(table.defaultColumnWidth, columnWidth);
-          }
+          expect(find.byType(RichText), findsNWidgets(7));
+          final List<String?> text = find
+              .byType(RichText)
+              .evaluate()
+              .map((Element e) => e.widget)
+              .cast<RichText>()
+              .map((RichText richText) => richText.text)
+              .cast<TextSpan>()
+              .map((TextSpan e) => e.text)
+              .toList();
+          expect(text, <String>['abc', 'def', 'bar', 'baz', 'bar', '', 'bar']);
+          expect(table.defaultColumnWidth, columnWidth);
         },
       );
 
@@ -460,7 +495,6 @@ void defineTests() {
               .toList();
           expect(text[0], '| abc | def | | --- | | bar |');
         },
-        skip: !newMarkdown,
       );
 
       testWidgets(
@@ -485,39 +519,18 @@ void defineTests() {
 
           expectTableSize(3, 2);
 
-          if (!newMarkdown) {
-            // For pkg:markdown <= v6.0.1
-            expect(find.byType(RichText), findsNWidgets(5));
-            final List<String?> cellText = find
-                .byType(RichText)
-                .evaluate()
-                .map((Element e) => e.widget)
-                .cast<RichText>()
-                .map((RichText richText) => richText.text)
-                .cast<TextSpan>()
-                .map((TextSpan e) => e.text)
-                .toList();
-            expect(cellText[0], 'abc');
-            expect(cellText[1], 'def');
-            expect(cellText[2], 'bar');
-            expect(cellText[3], 'bar');
-            expect(cellText[4], 'baz');
-            expect(table.defaultColumnWidth, columnWidth);
-          } else {
-            // For pkg:markdown > v6.0.1
-            expect(find.byType(RichText), findsNWidgets(6));
-            final List<String?> cellText = find
-                .byType(RichText)
-                .evaluate()
-                .map((Element e) => e.widget)
-                .cast<RichText>()
-                .map((RichText richText) => richText.text)
-                .cast<TextSpan>()
-                .map((TextSpan e) => e.text)
-                .toList();
-            expect(cellText, <String>['abc', 'def', 'bar', '', 'bar', 'baz']);
-            expect(table.defaultColumnWidth, columnWidth);
-          }
+          expect(find.byType(RichText), findsNWidgets(6));
+          final List<String?> cellText = find
+              .byType(RichText)
+              .evaluate()
+              .map((Element e) => e.widget)
+              .cast<RichText>()
+              .map((RichText richText) => richText.text)
+              .cast<TextSpan>()
+              .map((TextSpan e) => e.text)
+              .toList();
+          expect(cellText, <String>['abc', 'def', 'bar', '', 'bar', 'baz']);
+          expect(table.defaultColumnWidth, columnWidth);
         },
       );
 

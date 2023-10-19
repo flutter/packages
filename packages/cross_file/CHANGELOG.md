@@ -1,3 +1,22 @@
+## 0.3.3+6
+
+* Improves documentation about ignored parameters in IO implementation.
+
+## 0.3.3+5
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.3+4
+
+* Reverts an accidental change in a constructor argument's nullability.
+
+## 0.3.3+3
+
+* **RETRACTED**
+* Updates code to fix strict-cast violations.
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 0.3.3+2
 
 * Fixes lint warnings in tests.

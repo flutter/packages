@@ -1,4 +1,4 @@
-<?code-excerpt path-base="excerpts/packages/standard_message_codec_examples"?>
+<?code-excerpt path-base="example/lib"?>
 
 An efficient and schemaless binary format used by the Flutter SDK.
 

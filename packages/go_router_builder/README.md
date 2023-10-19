@@ -8,12 +8,12 @@ To use `go_router_builder`, you need to have the following dependencies in
 ```yaml
 dependencies:
   # ...along with your other dependencies
-  go_router: ^3.1.0
+  go_router: ^9.0.3
 
 dev_dependencies:
   # ...along with your other dev-dependencies
   build_runner: ^2.0.0
-  go_router_builder: ^1.0.0
+  go_router_builder: ^2.3.0
 ```
 
 ### Source code
@@ -46,7 +46,7 @@ Read more about using
 in a URI format into one or more page builders, each that require zero or more
 arguments that are passed as path and query parameters as part of the location.
 `go_router` does a good job of making the path and query parameters available
-via the `params` and `queryParams` properties of the `GoRouterState` object, but
+via the `pathParameters` and `queryParameters` properties of the `GoRouterState` object, but
 often the page builder must first parse the parameters into types that aren't
 `String`s, e.g.
 
@@ -55,7 +55,7 @@ GoRoute(
   path: ':authorId',
   builder: (context, state) {
     // require the authorId to be present and be an integer
-    final authorId = int.parse(state.params['authorId']!);
+    final authorId = int.parse(state.pathParameters['authorId']!);
     return AuthorDetailsScreen(authorId: authorId);
   },
 ),
@@ -85,12 +85,9 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => const HomeScreen();
+  Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 ```
-
-Required parameters are pulled from the route's `path` defined in the route
-tree.
 
 ## Route tree
 
@@ -109,7 +106,7 @@ class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context) => HomeScreen(families: familyData);
+  Widget build(BuildContext context, GoRouterState state) => HomeScreen(families: familyData);
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
@@ -135,7 +132,7 @@ class ErrorRoute extends GoRouteData {
   final Exception error;
 
   @override
-  Widget build(BuildContext context) => ErrorScreen(error: error);
+  Widget build(BuildContext context, GoRouterState state) => ErrorScreen(error: error);
 }
 ```
 
@@ -165,19 +162,49 @@ void _tap() => PersonRoute(pid: 'p1').go(context);
 
 This is the point of typed routing: the error is found statically.
 
-## Query parameters
+## Return value
 
-Optional parameters (named or positional) indicate query parameters:
+Starting from `go_router` 6.5.0, pushing a route and subsequently popping it, can produce
+a return value. The generated routes also follow this functionality.
 
 ```dart
+void _tap() async {
+  final result = await PersonRoute(pid: 'p1').go(context);
+}
+```
+
+## Query parameters
+
+Parameters (named or positional) not listed in the path of `TypedGoRoute` indicate query parameters:
+
+```dart
+@TypedGoRoute(path: '/login')
 class LoginRoute extends GoRouteData {
   LoginRoute({this.from});
   final String? from;
 
   @override
-  Widget build(BuildContext context) => LoginScreen(from: from);
+  Widget build(BuildContext context, GoRouterState state) => LoginScreen(from: from);
 }
 ```
+
+### Default values
+
+For query parameters with a **non-nullable** type, you can define a default value:
+
+```dart
+@TypedGoRoute(path: '/my-route')
+class MyRoute extends GoRouteData {
+  MyRoute({this.queryParameter = 'defaultValue'});
+  final String queryParameter;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => MyScreen(queryParameter: queryParameter);
+}
+```
+
+A query parameter that equals to its default value is not included in the location.
+
 
 ## Extra parameter
 
@@ -190,7 +217,7 @@ class PersonRouteWithExtra extends GoRouteData {
   final int? $extra;
 
   @override
-  Widget build(BuildContext context) => PersonScreen(personId: $extra);
+  Widget build(BuildContext context, GoRouterState state) => PersonScreen(personId: $extra);
 }
 ```
 
@@ -209,6 +236,7 @@ recommended when targeting Flutter web.
 You can, of course, combine the use of path, query and $extra parameters:
 
 ```dart
+@TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
 class HotdogRouteWithEverything extends GoRouteData {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // required path parameter
@@ -216,7 +244,7 @@ class HotdogRouteWithEverything extends GoRouteData {
   final Sauce $extra; // special $extra parameter
 
   @override
-  Widget build(BuildContext context) => HotdogScreen(ketchup, mustard, $extra);
+  Widget build(BuildContext context, GoRouterState state) => HotdogScreen(ketchup, mustard, $extra);
 }
 ```
 
@@ -230,8 +258,8 @@ generator:
 ```dart
 redirect: (state) {
   final loggedIn = loginInfo.loggedIn;
-  final loggingIn = state.subloc == LoginRoute().location;
-  if( !loggedIn && !loggingIn ) return LoginRoute(from: state.subloc).location;
+  final loggingIn = state.matchedLocation == LoginRoute().location;
+  if( !loggedIn && !loggingIn ) return LoginRoute(from: state.matchedLocation).location;
   if( loggedIn && loggingIn ) return HomeRoute().location;
   return null;
 }
@@ -245,14 +273,14 @@ Handle route-level redirects by implementing the `redirect` method on the route:
 class HomeRoute extends GoRouteData {
   // no need to implement [build] when this [redirect] is unconditional
   @override
-  String? redirect() => BooksRoute().location;
+  String? redirect(BuildContext context, GoRouterState state) => BooksRoute().location;
 }
 ```
 
 ## Type conversions
 
 The code generator can convert simple types like `int` and `enum` to/from the
-`String` type of the underlying params:
+`String` type of the underlying pathParameters:
 
 ```dart
 enum BookKind { all, popular, recent }
@@ -262,7 +290,7 @@ class BooksRoute extends GoRouteData {
   final BookKind kind;
 
   @override
-  Widget build(BuildContext context) => BooksScreen(kind: kind);
+  Widget build(BuildContext context, GoRouterState state) => BooksScreen(kind: kind);
 }
 ```
 
@@ -279,14 +307,14 @@ of the page and the `restorationId` of the page.
 
 If you'd like to change how the page is created, e.g. to use a different page
 type, pass non-default parameters when creating the page (like a custom key) or
-access the `GoRouteState` object, you can override the `buildPageWithState`
+access the `GoRouteState` object, you can override the `buildPage`
 method of the base class instead of the `build` method:
 
 ```dart
 class MyMaterialRouteWithKey extends GoRouteData {
   static final _key = LocalKey('my-route-with-key');
   @override
-  MaterialPage<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) =>
     MaterialPage<void>(
       key: _key,
       child: MyPage(),
@@ -296,12 +324,12 @@ class MyMaterialRouteWithKey extends GoRouteData {
 
 ### Custom transitions
 
-Overriding the `buildPageWithState` method is also useful for custom transitions:
+Overriding the `buildPage` method is also useful for custom transitions:
 
 ```dart
 class FancyRoute extends GoRouteData {
   @override
-  MaterialPage<void> buildPageWithState(BuildContext context, GoRouterState state) =>
+  MaterialPage<void> buildPage(BuildContext context, GoRouterState state) =>
     CustomTransitionPage<void>(
       key: state.pageKey,
       child: FancyPage(),
@@ -310,3 +338,50 @@ class FancyRoute extends GoRouteData {
     ),
 }
 ```
+
+## TypedShellRoute and navigator keys
+
+There may be situations where a child route of a shell needs to be displayed on a
+different navigator. This kind of scenarios can be achieved by declaring a
+**static** navigator key named:
+
+- `$navigatorKey` for ShellRoutes
+- `$parentNavigatorKey` for GoRoutes
+
+Example:
+
+```dart
+// For ShellRoutes:
+final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
+
+class MyShellRouteData extends ShellRouteData {
+  const MyShellRouteData();
+
+  static final GlobalKey<NavigatorState> $navigatorKey = shellNavigatorKey;
+
+  @override
+  Widget builder(BuildContext context, GoRouterState state, Widget navigator) {
+    // ...
+  }
+}
+
+// For GoRoutes:
+class MyGoRouteData extends GoRouteData {
+  const MyGoRouteData();
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    // ...
+  }
+}
+```
+
+An example is available [here](https://github.com/flutter/packages/blob/main/packages/go_router_builder/example/lib/shell_route_with_keys_example.dart).
+
+## Run tests
+
+To run unit tests, run command `dart tool/run_tests.dart` from `packages/go_router_builder/`.
+
+To run tests in examples, run `flutter test` from `packages/go_router_builder/example`.

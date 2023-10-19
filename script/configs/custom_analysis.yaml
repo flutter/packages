@@ -6,14 +6,22 @@
 # All entries here shoud include a comment explaining why they use different
 # options.
 
+# DO NOT move or delete this file without updating
+# https://github.com/dart-lang/sdk/blob/master/tools/bots/flutter/analyze_flutter_plugins.sh
+# which references this file from source, but out-of-repo.
+# Contact stuartmorgan or devoncarew for assistance if necessary.
+
+# Opts out of unawaited_futures, matching flutter/flutter's disabling due
+# to interactions with animation.
+- animations
 # Deliberately uses flutter_lints, as that's what it is demonstrating.
 - flutter_lints/example
 # Adopts some flutter_tools rules regarding public api docs due to being an
 # extension of the tool and using tools base code.
 - flutter_migrate
-# Adds unawaited_futures. We should investigating adding this to the root
-# options instead.
-- metrics_center
+# Has some test files that are intentionally broken to conduct dart fix tests.
+# Also opts out of unawaited_futures, matching flutter/flutter.
+- go_router
 # Has some constructions that are currently handled poorly by dart format.
 - rfw/example
 # Disables docs requirements, as it is test code.

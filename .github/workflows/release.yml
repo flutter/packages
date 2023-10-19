@@ -20,33 +20,60 @@ jobs:
       # Github Actions don't support templates so it is hard to share this snippet with another action
       # If we eventually need to use this in more workflow, we could create a shell script that contains this
       # snippet.
+      #
+      # This uses a pinned version of Flutter rather than `stable` so that it is
+      # not subject to out-of-band failures when new releases happen. It does
+      # not use the auto-rolled pin because there's no way for the autoroller
+      # to test the actual release flow, so changes would still show up in
+      # post-submit. A manually-rolled pin means that any changes here must be
+      # made deliberately, so that the person updating it knows to watch the
+      # next actual auto-release to ensure that it works, and knows to revert
+      # the change if it doesn't.
       run: |
         cd $HOME
-        git clone https://github.com/flutter/flutter.git --depth 1 -b stable _flutter
+        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.13.0 _flutter
         echo "$HOME/_flutter/bin" >> $GITHUB_PATH
         cd $GITHUB_WORKSPACE
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+      uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools
-      run: dart pub global activate flutter_plugin_tools 0.13.0
+      run: dart pub get
+      working-directory: ${{ github.workspace }}/script/tool
 
-    # # This workflow should be the last to run. So wait for all the other tests to succeed.
+    # The next step waits for all tests, but when there are issues with the
+    # hooks it can take a long time for the tests to even be registered. If
+    # "Wait on all tests" runs before that happens, it will pass immediately
+    # because there doesn't appear to be anything to wait for. To avoid that,
+    # explicitly wait for one LUCI test by name first.
+    - name: Wait for test check-in
+      uses: lewagon/wait-on-check-action@e106e5c43e8ca1edea6383a39a01c5ca495fd812
+      with:
+        ref: ${{ github.sha }}
+        check-name: 'Linux ci_yaml packages roller'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 30 # seconds
+        allowed-conclusions: success,neutral
+        # verbose:true will produce too many logs that hang github actions web UI.
+        verbose: false
+
+    # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@3a563271c3f8d1611ed7352809303617ee7e54ac
+      uses: lewagon/wait-on-check-action@e106e5c43e8ca1edea6383a39a01c5ca495fd812
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         wait-interval: 180 # seconds
         allowed-conclusions: success,neutral
+        # verbose:true will produce too many logs that hang github actions web UI.
+        verbose: false
 
     - name: run release
       run: |
         git config --global user.name ${{ secrets.USER_NAME }}
         git config --global user.email ${{ secrets.USER_EMAIL }}
-        dart pub global run flutter_plugin_tools publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
+        dart ./script/tool/lib/src/main.dart publish --all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin
       env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}
-

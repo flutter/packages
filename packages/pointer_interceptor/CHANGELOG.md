@@ -1,3 +1,19 @@
+## 0.9.3+6
+
+* Migrates to `dart:ui_web` APIs.
+* Updates minimum supported SDK version to Flutter 3.13.0/Dart 3.1.0.
+
+## 0.9.3+5
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Aligns Dart and Flutter SDK constraints.
+
+##  0.9.3+4
+
+* Removes const keyword from PointerInterceptor's constructor.
+* Updates minimum Flutter version to 3.0.
+
 ## 0.9.3+3
 
 * Fixes lint warnings.

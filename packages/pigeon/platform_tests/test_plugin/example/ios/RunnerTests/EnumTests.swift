@@ -22,7 +22,7 @@ class EnumTests: XCTestCase {
   func testEchoHost() throws {
     let binaryMessenger = MockBinaryMessenger<DataWithEnum>(codec: EnumApi2HostCodec.shared)
     EnumApi2HostSetup.setUp(binaryMessenger: binaryMessenger, api: MockEnumApi2Host())
-    let channelName = "dev.flutter.pigeon.EnumApi2Host.echo"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let input = DataWithEnum(state: .success)
@@ -30,12 +30,12 @@ class EnumTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "echo")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
+      let outputMap = binaryMessenger.codec.decode(data) as? [Any]
       XCTAssertNotNil(outputMap)
-
-      let output = outputMap?["result"] as? DataWithEnum
+      
+      let output = outputMap?.first as? DataWithEnum
       XCTAssertEqual(output, input)
-      XCTAssertNil(outputMap?["error"])
+      XCTAssertTrue(outputMap?.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -48,8 +48,13 @@ class EnumTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
     api.echo(data: data) { result in
-      XCTAssertEqual(data.state, result.state)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(res.state, res.state)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }

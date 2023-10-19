@@ -6,6 +6,8 @@ import 'package:pigeon/ast.dart';
 import 'package:pigeon/swift_generator.dart';
 import 'package:test/test.dart';
 
+import 'dart_generator_test.dart';
+
 void main() {
   test('gen one class', () {
     final Class klass = Class(
@@ -26,21 +28,26 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: Int32? = nil'));
-    expect(code,
-        contains('static func fromMap(_ map: [String: Any?]) -> Foobar?'));
-    expect(code, contains('func toMap() -> [String: Any?]'));
+    expect(code, contains('var field1: Int64? = nil'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Foobar?'));
+    expect(code, contains('func toList() -> [Any?]'));
   });
 
   test('gen one enum', () {
     final Enum anEnum = Enum(
       name: 'Foobar',
-      members: <String>[
-        'one',
-        'two',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
       ],
     );
     final Root root = Root(
@@ -50,7 +57,13 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('enum Foobar: Int'));
     expect(code, contains('  case one = 0'));
@@ -71,11 +84,20 @@ void main() {
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
-      Enum(name: 'Foo', members: <String>['one', 'two'])
+      Enum(name: 'Foo', members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ])
     ]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
     expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)!'));
@@ -118,7 +140,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('protocol Api'));
     expect(code, matches('func doSomething.*Input.*Output'));
@@ -181,16 +209,22 @@ void main() {
 
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('var aBool: Bool? = nil'));
-    expect(code, contains('var aInt: Int32? = nil'));
+    expect(code, contains('var aInt: Int64? = nil'));
     expect(code, contains('var aDouble: Double? = nil'));
     expect(code, contains('var aString: String? = nil'));
-    expect(code, contains('var aUint8List: [UInt8]? = nil'));
-    expect(code, contains('var aInt32List: [Int32]? = nil'));
-    expect(code, contains('var aInt64List: [Int64]? = nil'));
-    expect(code, contains('var aFloat64List: [Float64]? = nil'));
+    expect(code, contains('var aUint8List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aInt32List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aInt64List: FlutterStandardTypedData? = nil'));
+    expect(code, contains('var aFloat64List: FlutterStandardTypedData? = nil'));
   });
 
   test('gen one flutter api', () {
@@ -230,7 +264,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('init(binaryMessenger: FlutterBinaryMessenger)'));
@@ -265,7 +305,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(matches('.*doSomething(.*) ->')));
     expect(code, matches('doSomething(.*)'));
@@ -299,10 +345,17 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('completion: @escaping () -> Void'));
-    expect(code, contains('completion()'));
+    expect(code,
+        contains('completion: @escaping (Result<Void, FlutterError>) -> Void'));
+    expect(code, contains('completion(.success(Void()))'));
   });
 
   test('gen host void argument api', () {
@@ -327,10 +380,16 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('func doSomething() -> Output'));
-    expect(code, contains('let result = api.doSomething()'));
+    expect(code, contains('func doSomething() throws -> Output'));
+    expect(code, contains('let result = try api.doSomething()'));
     expect(code, contains('reply(wrapResult(result))'));
   });
 
@@ -356,10 +415,18 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code,
-        contains('func doSomething(completion: @escaping (Output) -> Void)'));
+    expect(
+        code,
+        contains(
+            'func doSomething(completion: @escaping (Result<Output, FlutterError>) -> Void)'));
     expect(code, contains('channel.sendMessage(nil'));
   });
 
@@ -376,7 +443,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: [Any?]? = nil'));
@@ -395,7 +468,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: [AnyHashable: Any?]? = nil'));
@@ -431,15 +510,20 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('struct Outer'));
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
-    expect(
-        code, contains('static func fromMap(_ map: [String: Any?]) -> Outer?'));
-    expect(code, contains('nested = Nested.fromMap(nestedMap)'));
-    expect(code, contains('func toMap() -> [String: Any?]'));
+    expect(code, contains('static func fromList(_ list: [Any?]) -> Outer?'));
+    expect(code, contains('nested = Nested.fromList(nestedList)'));
+    expect(code, contains('func toList() -> [Any?]'));
   });
 
   test('gen one async Host Api', () {
@@ -480,11 +564,17 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('protocol Api'));
     expect(code, contains('api.doSomething(arg: argArg) { result in'));
-    expect(code, contains('reply(wrapResult(result))'));
+    expect(code, contains('reply(wrapResult(res))'));
   });
 
   test('gen one async Flutter Api', () {
@@ -525,7 +615,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, matches('func doSomething.*Input.*completion.*Output.*Void'));
@@ -534,9 +630,9 @@ void main() {
   test('gen one enum class', () {
     final Enum anEnum = Enum(
       name: 'Enum1',
-      members: <String>[
-        'one',
-        'two',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
       ],
     );
     final Class klass = Class(
@@ -557,7 +653,13 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('enum Enum1: Int'));
     expect(code, contains('case one = 0'));
@@ -574,7 +676,13 @@ void main() {
     final SwiftOptions swiftOptions = SwiftOptions(
       copyrightHeader: makeIterable('hello world'),
     );
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
@@ -600,10 +708,16 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
-    expect(code, contains('var field1: [Int32?]'));
+    expect(code, contains('var field1: [Int64?]'));
   });
 
   test('generics - maps', () {
@@ -628,7 +742,13 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: [String?: String?]'));
@@ -658,9 +778,15 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('func doit(arg: [Int32?]'));
+    expect(code, contains('func doit(arg: [Int64?]'));
   });
 
   test('flutter generics argument', () {
@@ -687,9 +813,15 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('func doit(arg argArg: [Int32?]'));
+    expect(code, contains('func doit(arg argArg: [Int64?]'));
   });
 
   test('host generics return', () {
@@ -712,10 +844,16 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('func doit() -> [Int32?]'));
-    expect(code, contains('let result = api.doit()'));
+    expect(code, contains('func doit() throws -> [Int64?]'));
+    expect(code, contains('let result = try api.doit()'));
     expect(code, contains('reply(wrapResult(result))'));
   });
 
@@ -739,12 +877,20 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
-        code, contains('func doit(completion: @escaping ([Int32?]) -> Void'));
-    expect(code, contains('let result = response as! [Int32?]'));
-    expect(code, contains('completion(result)'));
+        code,
+        contains(
+            'func doit(completion: @escaping (Result<[Int64?], FlutterError>) -> Void)'));
+    expect(code, contains('let result = listResponse[0] as! [Int64?]'));
+    expect(code, contains('completion(.success(result))'));
   });
 
   test('host multiple args', () {
@@ -768,13 +914,25 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('func add(x: Int32, y: Int32) -> Int32'));
+    expect(code, contains('func add(x: Int64, y: Int64) throws -> Int64'));
     expect(code, contains('let args = message as! [Any?]'));
-    expect(code, contains('let xArg = args[0] as! Int32'));
-    expect(code, contains('let yArg = args[1] as! Int32'));
-    expect(code, contains('let result = api.add(x: xArg, y: yArg)'));
+    expect(
+        code,
+        contains(
+            'let xArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)'));
+    expect(
+        code,
+        contains(
+            'let yArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)'));
+    expect(code, contains('let result = try api.add(x: xArg, y: yArg)'));
     expect(code, contains('reply(wrapResult(result))'));
   });
 
@@ -799,16 +957,26 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('let channel = FlutterBasicMessageChannel'));
-    expect(code, contains('let result = response as! Int32'));
-    expect(code, contains('completion(result)'));
     expect(
         code,
         contains(
-            'func add(x xArg: Int32, y yArg: Int32, completion: @escaping (Int32) -> Void)'));
-    expect(code, contains('channel.sendMessage([xArg, yArg]) { response in'));
+            'let result = listResponse[0] is Int64 ? listResponse[0] as! Int64 : Int64(listResponse[0] as! Int32)'));
+    expect(code, contains('completion(.success(result))'));
+    expect(
+        code,
+        contains(
+            'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Result<Int64, FlutterError>) -> Void)'));
+    expect(code,
+        contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
   });
 
   test('return nullable host', () {
@@ -829,9 +997,15 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('func doit() -> Int32?'));
+    expect(code, contains('func doit() throws -> Int64?'));
   });
 
   test('return nullable host async', () {
@@ -853,9 +1027,18 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('func doit(completion: @escaping (Int32?) -> Void'));
+    expect(
+        code,
+        contains(
+            'func doit(completion: @escaping (Result<Int64?, Error>) -> Void'));
   });
 
   test('nullable argument host', () {
@@ -880,9 +1063,18 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
-    expect(code, contains('let fooArg = args[0] as? Int32'));
+    expect(
+        code,
+        contains(
+            'let fooArg: Int64? = isNullish(args[0]) ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))'));
   });
 
   test('nullable argument flutter', () {
@@ -907,12 +1099,18 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(
         code,
         contains(
-            'func doit(foo fooArg: Int32?, completion: @escaping () -> Void'));
+            'func doit(foo fooArg: Int64?, completion: @escaping (Result<Void, FlutterError>) -> Void)'));
   });
 
   test('nonnull fields', () {
@@ -943,7 +1141,13 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains('var input: String\n'));
   });
@@ -955,6 +1159,7 @@ void main() {
       ' class comment',
       ' class field comment',
       ' enum comment',
+      ' enum member comment',
     ];
     int count = 0;
 
@@ -1011,16 +1216,25 @@ void main() {
             comments[count++],
             unspacedComments[unspacedCount++]
           ],
-          members: <String>[
-            'one',
-            'two',
+          members: <EnumMember>[
+            EnumMember(
+              name: 'one',
+              documentationComments: <String>[comments[count++]],
+            ),
+            EnumMember(name: 'two'),
           ],
         ),
       ],
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     for (final String comment in comments) {
       expect(code, contains('///$comment'));
@@ -1028,7 +1242,7 @@ void main() {
     expect(code, contains('/// ///'));
   });
 
-  test('doesnt create codecs if no custom datatypes', () {
+  test("doesn't create codecs if no custom datatypes", () {
     final Root root = Root(
       apis: <Api>[
         Api(
@@ -1056,7 +1270,13 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, isNot(contains(': FlutterStandardReader ')));
   });
@@ -1099,8 +1319,121 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const SwiftOptions swiftOptions = SwiftOptions();
-    generateSwift(swiftOptions, root, sink);
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
     final String code = sink.toString();
     expect(code, contains(': FlutterStandardReader '));
+  });
+
+  test('swift function signature', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+            name: 'set',
+            arguments: <NamedType>[
+              NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
+                name: 'value',
+              ),
+              NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+                name: 'key',
+              ),
+            ],
+            swiftFunction: 'setValue(_:for:)',
+            returnType: const TypeDeclaration.voidDeclaration(),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('func setValue(_ value: Int64, for key: String)'));
+  });
+
+  test('swift function signature with same name argument', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+            name: 'set',
+            arguments: <NamedType>[
+              NamedType(
+                type: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+                name: 'key',
+              ),
+            ],
+            swiftFunction: 'removeValue(key:)',
+            returnType: const TypeDeclaration.voidDeclaration(),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('func removeValue(key: String)'));
+  });
+
+  test('swift function signature with no arguments', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+          Method(
+            name: 'clear',
+            arguments: <NamedType>[],
+            swiftFunction: 'removeAll()',
+            returnType: const TypeDeclaration.voidDeclaration(),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('func removeAll()'));
   });
 }

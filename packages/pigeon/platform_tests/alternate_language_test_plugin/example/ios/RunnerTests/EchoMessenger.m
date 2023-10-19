@@ -20,7 +20,7 @@
   return self;
 }
 
-- (void)cleanupConnection:(FlutterBinaryMessengerConnection)connection {
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
 }
 
 - (void)sendOnChannel:(nonnull NSString *)channel message:(NSData *_Nullable)message {
@@ -30,8 +30,7 @@
               message:(NSData *_Nullable)message
           binaryReply:(FlutterBinaryReply _Nullable)callback {
   NSArray *args = [self.codec decode:message];
-  id firstArg = args[0];
-  callback([self.codec encode:firstArg]);
+  callback([self.codec encode:args]);
 }
 
 - (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel

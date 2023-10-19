@@ -4,15 +4,11 @@
 
 @import XCTest;
 
-#ifdef LEGACY_HARNESS
-#import "Message.gen.h"
-#else
 @import alternate_language_test_plugin;
-#endif
 
 @interface ACMessageSearchReply ()
-+ (ACMessageSearchReply *)fromMap:(NSDictionary *)dict;
-- (NSDictionary *)toMap;
++ (ACMessageSearchReply *)fromList:(NSArray *)list;
+- (NSArray *)toList;
 @end
 
 @interface RunnerTests : XCTestCase
@@ -24,24 +20,24 @@
 - (void)testToMapAndBack {
   ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.result = @"foobar";
-  NSDictionary *dict = [reply toMap];
-  ACMessageSearchReply *copy = [ACMessageSearchReply fromMap:dict];
+  NSArray *list = [reply toList];
+  ACMessageSearchReply *copy = [ACMessageSearchReply fromList:list];
   XCTAssertEqual(reply.result, copy.result);
 }
 
 - (void)testHandlesNull {
   ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.result = nil;
-  NSDictionary *dict = [reply toMap];
-  ACMessageSearchReply *copy = [ACMessageSearchReply fromMap:dict];
+  NSArray *list = [reply toList];
+  ACMessageSearchReply *copy = [ACMessageSearchReply fromList:list];
   XCTAssertNil(copy.result);
 }
 
 - (void)testHandlesNullFirst {
   ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.error = @"foobar";
-  NSDictionary *dict = [reply toMap];
-  ACMessageSearchReply *copy = [ACMessageSearchReply fromMap:dict];
+  NSArray *list = [reply toList];
+  ACMessageSearchReply *copy = [ACMessageSearchReply fromList:list];
   XCTAssertEqual(reply.error, copy.error);
 }
 

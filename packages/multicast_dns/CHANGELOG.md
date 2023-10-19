@@ -1,3 +1,13 @@
+## 0.3.2+4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.3.2+3
+
+* Removes use of `runtimeType.toString()`.
+* Updates minimum SDK version to Flutter 3.0.
+
 ## 0.3.2+2
 
 * Fixes lints warnings.

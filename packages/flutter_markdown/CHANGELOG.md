@@ -1,5 +1,58 @@
-## NEXT
+## 0.6.18+1
 
+* Fixes a typo in README.
+
+## 0.6.18
+
+* Adds support for `footnote`.
+
+## 0.6.17+4
+
+* Fixes an issue where a code block would overlap its container decoration.
+
+## 0.6.17+3
+
+* Fixes an incorrect note about SDK versions in the 0.6.17+2 CHANGELOG.md entry.
+
+## 0.6.17+2
+
+* Adds pub topics to package metadata.
+
+## 0.6.17+1
+
+* Deletes deprecated splash screen meta-data element.
+* Updates README to improve examples of using Markdown.
+
+## 0.6.17
+
+* Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
+  the parent text's `TextStyle`.
+  
+## 0.6.16
+
+* Adds `tableVerticalAlignment` property to allow aligning table cells vertically.
+
+## 0.6.15+1
+
+* Fixes 'The Scrollbar's ScrollController has no ScrollPosition attached' exception when scrolling scrollable code blocks.
+* Fixes stale ignore: prefer_const_constructors.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.6.15
+
+* Fixes unawaited_futures violations.
+* Updates minimum Flutter version to 3.3.
+* Aligns Dart and Flutter SDK constraints.
+* Replace `describeEnum` with the `name` getter.
+* Supports custom rendering of tags without children.
+
+## 0.6.14
+
+* Require `markdown: ^7.0.0`
+
+## 0.6.13+1
+
+* Adjusts code to account for nullability change in Flutter SDK.
 * Updates the example to specify the import for `DropdownMenu`.
 
 ## 0.6.13

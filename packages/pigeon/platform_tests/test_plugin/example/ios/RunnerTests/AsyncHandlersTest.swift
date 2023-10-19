@@ -1,72 +1,76 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
+import Flutter
 import XCTest
 @testable import test_plugin
 
-class MockApi2Host: Api2Host {
-  var output: Int32?
+class MockHostSmallApi: HostSmallApi {
+  var output: String?
 
-  func calculate(value: Value, completion: @escaping (Value) -> Void) {
-    completion(Value(number: output))
+  func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void) {
+    completion(.success(output!))
   }
 
-  func voidVoid(completion: @escaping () -> Void) {
-    completion()
+  func voidVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.success(()))
   }
 }
 
 class AsyncHandlersTest: XCTestCase {
 
   func testAsyncHost2Flutter() throws {
-    let binaryMessenger = MockBinaryMessenger<Value>(codec: Api2FlutterCodec.shared)
-    binaryMessenger.result = Value(number: 2)
-    let api2Flutter = Api2Flutter(binaryMessenger: binaryMessenger)
-    let input = Value(number: 1)
+    let value = "Test"
+    let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterIntegrationCoreApiCodec.shared)
+    binaryMessenger.result = value
+    let flutterApi = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "calculate callback")
-    api2Flutter.calculate(value: input) { output in
-      XCTAssertEqual(output.number, 2)
+    let expectation = XCTestExpectation(description: "callback")
+    flutterApi.echo(value) { result in
+    switch result {
+        case .success(let res) :
+      XCTAssertEqual(res, value)
       expectation.fulfill()
+        case .failure(_) :
+          return
+      }
+
     }
     wait(for: [expectation], timeout: 1.0)
   }
 
   func testAsyncFlutter2HostVoidVoid() throws {
-    let binaryMessenger = MockBinaryMessenger<Value>(codec: Api2HostCodec.shared)
-    let mockApi2Host = MockApi2Host()
-    mockApi2Host.output = 2
-    Api2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
-    let channelName = "dev.flutter.pigeon.Api2Host.voidVoid"
+    let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterStandardMessageCodec.sharedInstance())
+    let mockHostSmallApi = MockHostSmallApi()
+    HostSmallApiSetup.setUp(binaryMessenger: binaryMessenger, api: mockHostSmallApi)
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let expectation = XCTestExpectation(description: "voidvoid callback")
     binaryMessenger.handlers[channelName]?(nil) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertEqual(outputMap?["result"] as! NSNull, NSNull())
-      XCTAssertNil(outputMap?["error"])
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        XCTAssertEqual(outputList?.first as! NSNull, NSNull())
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
   }
 
   func testAsyncFlutter2Host() throws {
-    let binaryMessenger = MockBinaryMessenger<Value>(codec: Api2HostCodec.shared)
-    let mockApi2Host = MockApi2Host()
-    mockApi2Host.output = 2
-    Api2HostSetup.setUp(binaryMessenger: binaryMessenger, api: mockApi2Host)
-    let channelName = "dev.flutter.pigeon.Api2Host.calculate"
+    let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterStandardMessageCodec.sharedInstance())
+    let mockHostSmallApi = MockHostSmallApi()
+    let value = "Test"
+    mockHostSmallApi.output = value
+    HostSmallApiSetup.setUp(binaryMessenger: binaryMessenger, api: mockHostSmallApi)
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
-    let input = Value(number: 1)
-    let inputEncoded = binaryMessenger.codec.encode([input])
+    let inputEncoded = binaryMessenger.codec.encode([value])
 
-    let expectation = XCTestExpectation(description: "calculate callback")
+    let expectation = XCTestExpectation(description: "echo callback")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      let output = outputMap?["result"] as? Value
-      XCTAssertEqual(output?.number, 2)
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        let output = outputList?.first as? String
+      XCTAssertEqual(output, value)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)

@@ -4,10 +4,9 @@
 
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
-
-import 'shim/dart_ui.dart' as ui;
 
 const String _viewType = '__webPointerInterceptorViewType__';
 const String _debug = 'debug__';
@@ -20,7 +19,7 @@ String _getViewType({bool debug = false}) {
 // Registers a viewFactory for this widget.
 void _registerFactory({bool debug = false}) {
   final String viewType = _getViewType(debug: debug);
-  ui.platformViewRegistry.registerViewFactory(viewType, (int viewId) {
+  ui_web.platformViewRegistry.registerViewFactory(viewType, (int viewId) {
     final html.Element htmlElement = html.DivElement()
       ..style.width = '100%'
       ..style.height = '100%';
@@ -40,8 +39,8 @@ class PointerInterceptor extends StatelessWidget {
     required this.child,
     this.intercepting = true,
     this.debug = false,
-    Key? key,
-  }) : super(key: key) {
+    super.key,
+  }) {
     if (!_registered) {
       _register();
     }

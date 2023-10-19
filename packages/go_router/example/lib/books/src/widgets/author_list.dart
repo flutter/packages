@@ -12,8 +12,8 @@ class AuthorList extends StatelessWidget {
   const AuthorList({
     required this.authors,
     this.onTap,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The list of authors to be shown.
   final List<Author> authors;

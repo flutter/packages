@@ -1,0 +1,52 @@
+buildscript {
+    // This version should intentionally be a 1.7.* version and lower than the
+    // version of kotlin-bom defined in packages/camera/camera_android_camerax/android/build.gradle.
+    // This tests that the kotlin version resolution continues to work.
+    ext.kotlin_version = '1.7.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        // See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
+        def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
+        if (System.getenv().containsKey(artifactRepoKey)) {
+            println "Using artifact hub"
+            maven { url System.getenv(artifactRepoKey) }
+        }
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
+// Build the plugin project with warnings enabled. This is here rather than
+// in the plugin itself to avoid breaking clients that have different
+// warnings (e.g., deprecation warnings from a newer SDK than this project
+// builds with).
+gradle.projectsEvaluated {
+    project(":camera_android_camerax") {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" << "-Werror"
+        }
+    }
+}

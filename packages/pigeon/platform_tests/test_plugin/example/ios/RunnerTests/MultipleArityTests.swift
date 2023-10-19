@@ -7,7 +7,7 @@ import XCTest
 @testable import test_plugin
 
 class MockMultipleArityHostApi: MultipleArityHostApi {
-  func subtract(x: Int32, y: Int32) -> Int32 {
+  func subtract(x: Int64, y: Int64) -> Int64 {
     return x - y
   }
 }
@@ -15,9 +15,9 @@ class MockMultipleArityHostApi: MultipleArityHostApi {
 class MultipleArityTests: XCTestCase {
   var codec = FlutterStandardMessageCodec.sharedInstance()
   func testSimpleHost() throws {
-    let binaryMessenger = MockBinaryMessenger<Int32>(codec: EnumApi2HostCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<Int64>(codec: EnumApi2HostCodec.shared)
     MultipleArityHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockMultipleArityHostApi())
-    let channelName = "dev.flutter.pigeon.MultipleArityHostApi.subtract"
+    let channelName = "dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
 
     let inputX = 10
@@ -26,12 +26,12 @@ class MultipleArityTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "subtraction")
     binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputMap = binaryMessenger.codec.decode(data) as? [String: Any]
-      XCTAssertNotNil(outputMap)
-
-      let output = outputMap!["result"] as? Int32
+      let outputList = binaryMessenger.codec.decode(data) as? [Any]
+      XCTAssertNotNil(outputList)
+      
+      let output = outputList![0] as? Int64
       XCTAssertEqual(3, output)
-      XCTAssertNil(outputMap?["error"])
+        XCTAssertTrue(outputList?.count == 1)
       expectation.fulfill()
     }
     wait(for: [expectation], timeout: 1.0)
@@ -45,10 +45,14 @@ class MultipleArityTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "subtraction")
     api.subtract(x: 30, y: 10) { result in
-      XCTAssertEqual(20, result)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(20, res)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
-
 }

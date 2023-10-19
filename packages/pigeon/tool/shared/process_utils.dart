@@ -28,8 +28,10 @@ Future<int> runProcess(String command, List<String> arguments,
   if (exitCode != 0 && logFailure) {
     // ignore: avoid_print
     print('$command $arguments failed:');
-    process.stdout.pipe(stdout);
-    process.stderr.pipe(stderr);
+    await Future.wait(<Future<void>>[
+      process.stdout.pipe(stdout),
+      process.stderr.pipe(stderr),
+    ]);
   }
   return exitCode;
 }

@@ -7,9 +7,8 @@ package com.example.alternate_language_test_plugin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.Test;
 
 public class NullFieldsTest {
@@ -63,38 +62,39 @@ public class NullFieldsTest {
 
   @Test
   public void requestFromMapWithValues() {
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("query", "hello");
-    map.put("identifier", 1L);
-
-    NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromMap(map);
+    ArrayList<Object> list = new ArrayList<Object>();
+    list.add("hello");
+    list.add(1L);
+    NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromList(list);
     assertEquals(request.getQuery(), "hello");
   }
 
   @Test
   public void requestFromMapWithNulls() {
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("query", null);
-    map.put("identifier", 1L);
+    ArrayList<Object> list = new ArrayList<Object>();
+    list.add(null);
+    list.add(1L);
 
-    NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromMap(map);
+    NullFields.NullFieldsSearchRequest request = NullFields.NullFieldsSearchRequest.fromList(list);
     assertNull(request.getQuery());
   }
 
   @Test
   public void replyFromMapWithValues() {
-    HashMap<String, Object> requestMap = new HashMap<>();
-    requestMap.put("query", "hello");
-    requestMap.put("identifier", 1L);
+    ArrayList<Object> requestList = new ArrayList<Object>();
 
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("result", "result");
-    map.put("error", "error");
-    map.put("indices", Arrays.asList(1L, 2L, 3L));
-    map.put("request", requestMap);
-    map.put("type", NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
+    requestList.add("hello");
+    requestList.add(1L);
 
-    NullFields.NullFieldsSearchReply reply = NullFields.NullFieldsSearchReply.fromMap(map);
+    ArrayList<Object> list = new ArrayList<Object>();
+
+    list.add("result");
+    list.add("error");
+    list.add(Arrays.asList(1L, 2L, 3L));
+    list.add(requestList);
+    list.add(NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
+
+    NullFields.NullFieldsSearchReply reply = NullFields.NullFieldsSearchReply.fromList(list);
     assertEquals(reply.getResult(), "result");
     assertEquals(reply.getError(), "error");
     assertEquals(reply.getIndices(), Arrays.asList(1L, 2L, 3L));
@@ -104,14 +104,15 @@ public class NullFieldsTest {
 
   @Test
   public void replyFromMapWithNulls() {
-    HashMap<String, Object> map = new HashMap<>();
-    map.put("result", null);
-    map.put("error", null);
-    map.put("indices", null);
-    map.put("request", null);
-    map.put("type", null);
+    ArrayList<Object> list = new ArrayList<Object>();
 
-    NullFields.NullFieldsSearchReply reply = NullFields.NullFieldsSearchReply.fromMap(map);
+    list.add(null);
+    list.add(null);
+    list.add(null);
+    list.add(null);
+    list.add(null);
+
+    NullFields.NullFieldsSearchReply reply = NullFields.NullFieldsSearchReply.fromList(list);
     assertNull(reply.getResult());
     assertNull(reply.getError());
     assertNull(reply.getIndices());
@@ -127,8 +128,8 @@ public class NullFieldsTest {
             .setIdentifier(1L)
             .build();
 
-    Map<String, Object> map = request.toMap();
-    assertEquals(map.get("query"), "hello");
+    ArrayList<Object> list = request.toList();
+    assertEquals(list.get(0), "hello");
   }
 
   @Test
@@ -136,8 +137,8 @@ public class NullFieldsTest {
     NullFields.NullFieldsSearchRequest request =
         new NullFields.NullFieldsSearchRequest.Builder().setQuery(null).setIdentifier(1L).build();
 
-    Map<String, Object> map = request.toMap();
-    assertNull(map.get("query"));
+    ArrayList<Object> list = request.toList();
+    assertNull(list.get(0));
   }
 
   @Test
@@ -155,12 +156,12 @@ public class NullFieldsTest {
             .setType(NullFields.NullFieldsSearchReplyType.SUCCESS)
             .build();
 
-    Map<String, Object> map = reply.toMap();
-    assertEquals(map.get("result"), "result");
-    assertEquals(map.get("error"), "error");
-    assertEquals(map.get("indices"), Arrays.asList(1L, 2L, 3L));
-    assertEquals(map.get("request"), reply.getRequest().toMap());
-    assertEquals(map.get("type"), NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
+    ArrayList<Object> list = reply.toList();
+    assertEquals(list.get(0), "result");
+    assertEquals(list.get(1), "error");
+    assertEquals(list.get(2), Arrays.asList(1L, 2L, 3L));
+    assertEquals(list.get(3), reply.getRequest().toList());
+    assertEquals(list.get(4), NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
   }
 
   @Test
@@ -174,11 +175,12 @@ public class NullFieldsTest {
             .setType(null)
             .build();
 
-    Map<String, Object> map = reply.toMap();
-    assertNull(map.get("result"));
-    assertNull(map.get("error"));
-    assertNull(map.get("indices"));
-    assertNull(map.get("request"));
-    assertNull(map.get("type"));
+    ArrayList<Object> list = reply.toList();
+
+    assertNull(list.get(0));
+    assertNull(list.get(1));
+    assertNull(list.get(2));
+    assertNull(list.get(3));
+    assertNull(list.get(4));
   }
 }

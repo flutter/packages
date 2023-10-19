@@ -127,7 +127,6 @@ class MemoryStdout extends MemoryIOSink implements io.Stdout {
   @override
   bool get hasTerminal => _hasTerminal;
   set hasTerminal(bool value) {
-    assert(value != null);
     _hasTerminal = value;
   }
 
@@ -139,7 +138,6 @@ class MemoryStdout extends MemoryIOSink implements io.Stdout {
   @override
   bool get supportsAnsiEscapes => _supportsAnsiEscapes;
   set supportsAnsiEscapes(bool value) {
-    assert(value != null);
     _supportsAnsiEscapes = value;
   }
 
@@ -265,7 +263,7 @@ class FakeStopwatch implements Stopwatch {
   }
 
   @override
-  String toString() => '$runtimeType $elapsed $isRunning';
+  String toString() => 'FakeStopwatch $elapsed $isRunning';
 }
 
 class FakeStopwatchFactory implements StopwatchFactory {

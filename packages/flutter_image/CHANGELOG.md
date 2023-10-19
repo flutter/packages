@@ -1,3 +1,25 @@
+## 4.1.9
+
+* Adds an example app.
+
+## 4.1.8
+
+* Adds pub topics to package metadata.
+## 4.1.7
+
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Migrates deprecated `ImageProvider.load` to `ImageProvider.loadBuffer`.
+
+## 4.1.6
+
+* Fixes unawaited_futures violations.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Aligns Dart and Flutter SDK constraints.
+
+## 4.1.5
+
+* Removes use of `runtimeType.toString()`.
+
 ## 4.1.4
 
 * Ignores lint warnings from new changes in Flutter master.

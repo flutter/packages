@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'test_helpers.dart';
+
 void main() {
   group('updateShouldNotify', () {
     test('does not update when goRouter does not change', () {
@@ -25,7 +27,7 @@ void main() {
       expect(shouldNotify, false);
     });
 
-    test('updates when goRouter changes', () {
+    test('does not update even when goRouter changes', () {
       final GoRouter oldGoRouter = GoRouter(
         routes: <GoRoute>[
           GoRoute(
@@ -46,7 +48,7 @@ void main() {
         oldGoRouter: oldGoRouter,
         newGoRouter: newGoRouter,
       );
-      expect(shouldNotify, true);
+      expect(shouldNotify, false);
     });
   });
 
@@ -124,16 +126,20 @@ class _MyWidget extends StatelessWidget {
 }
 
 class MockGoRouter extends GoRouter {
-  MockGoRouter() : super(routes: <GoRoute>[]);
+  MockGoRouter()
+      : super.routingConfig(
+            routingConfig: const ConstantRoutingConfig(
+                RoutingConfig(routes: <RouteBase>[])));
 
   late String latestPushedName;
 
   @override
-  void pushNamed(String name,
-      {Map<String, String> params = const <String, String>{},
-      Map<String, dynamic> queryParams = const <String, dynamic>{},
+  Future<T?> pushNamed<T extends Object?>(String name,
+      {Map<String, String> pathParameters = const <String, String>{},
+      Map<String, dynamic> queryParameters = const <String, dynamic>{},
       Object? extra}) {
     latestPushedName = name;
+    return Future<T?>.value();
   }
 
   @override

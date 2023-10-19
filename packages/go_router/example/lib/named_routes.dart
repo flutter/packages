@@ -59,7 +59,7 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   /// The title of the app.
   static const String title = 'GoRouter Example: Named Routes';
@@ -84,14 +84,15 @@ class App extends StatelessWidget {
             name: 'family',
             path: 'family/:fid',
             builder: (BuildContext context, GoRouterState state) =>
-                FamilyScreen(fid: state.params['fid']!),
+                FamilyScreen(fid: state.pathParameters['fid']!),
             routes: <GoRoute>[
               GoRoute(
                 name: 'person',
                 path: 'person/:pid',
                 builder: (BuildContext context, GoRouterState state) {
                   return PersonScreen(
-                      fid: state.params['fid']!, pid: state.params['pid']!);
+                      fid: state.pathParameters['fid']!,
+                      pid: state.pathParameters['pid']!);
                 },
               ),
             ],
@@ -105,7 +106,7 @@ class App extends StatelessWidget {
 /// The home screen that shows a list of families.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +120,7 @@ class HomeScreen extends StatelessWidget {
             ListTile(
               title: Text(entry.value.name),
               onTap: () => context.go(context.namedLocation('family',
-                  params: <String, String>{'fid': entry.key})),
+                  pathParameters: <String, String>{'fid': entry.key})),
             )
         ],
       ),
@@ -130,7 +131,7 @@ class HomeScreen extends StatelessWidget {
 /// The screen that shows a list of persons in a family.
 class FamilyScreen extends StatelessWidget {
   /// Creates a [FamilyScreen].
-  const FamilyScreen({required this.fid, Key? key}) : super(key: key);
+  const FamilyScreen({required this.fid, super.key});
 
   /// The id family to display.
   final String fid;
@@ -147,8 +148,8 @@ class FamilyScreen extends StatelessWidget {
               title: Text(entry.value.name),
               onTap: () => context.go(context.namedLocation(
                 'person',
-                params: <String, String>{'fid': fid, 'pid': entry.key},
-                queryParams: <String, String>{'qid': 'quid'},
+                pathParameters: <String, String>{'fid': fid, 'pid': entry.key},
+                queryParameters: <String, String>{'qid': 'quid'},
               )),
             ),
         ],
@@ -160,8 +161,7 @@ class FamilyScreen extends StatelessWidget {
 /// The person screen.
 class PersonScreen extends StatelessWidget {
   /// Creates a [PersonScreen].
-  const PersonScreen({required this.fid, required this.pid, Key? key})
-      : super(key: key);
+  const PersonScreen({required this.fid, required this.pid, super.key});
 
   /// The id of family this person belong to.
   final String fid;

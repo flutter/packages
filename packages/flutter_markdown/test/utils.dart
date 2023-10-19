@@ -9,14 +9,21 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:markdown/markdown.dart' as md show version;
-
-// TODO(Zhiguang): delete this once the min version of pkg:markdown is updated
-final bool newMarkdown = md.version.compareTo('6.0.1') > 0;
 
 final TextTheme textTheme = Typography.material2018()
     .black
     .merge(const TextTheme(bodyMedium: TextStyle(fontSize: 12.0)));
+
+Iterable<Widget> selfAndDescendantWidgetsOf(Finder start, WidgetTester tester) {
+  final Element startElement = tester.element(start);
+  final Iterable<Widget> descendants =
+      collectAllElementsFrom(startElement, skipOffstage: false)
+          .map((Element e) => e.widget);
+  return <Widget>[
+    startElement.widget,
+    ...descendants,
+  ];
+}
 
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
   final List<Type> actual = widgets.map((Widget w) => w.runtimeType).toList();
@@ -26,8 +33,13 @@ void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
 void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
   int currentString = 0;
   for (final Widget widget in widgets) {
+    TextSpan? span;
     if (widget is RichText) {
-      final TextSpan span = widget.text as TextSpan;
+      span = widget.text as TextSpan;
+    } else if (widget is SelectableText) {
+      span = widget.textSpan;
+    }
+    if (span != null) {
       final String text = _extractTextFromTextSpan(span);
       expect(text, equals(strings[currentString]));
       currentString += 1;
@@ -146,7 +158,7 @@ void expectTableSize(int rows, int columns) {
 
   expect(table.children.length, rows);
   for (int index = 0; index < rows; index++) {
-    expect(table.children[index].children!.length, columns);
+    expect(_ambiguate(table.children[index].children)!.length, columns);
   }
 }
 
@@ -157,6 +169,8 @@ void expectLinkTap(MarkdownLink? actual, MarkdownLink expected) {
 }
 
 String dumpRenderView() {
+  // TODO(goderbauer): Migrate to rootElement once v3.9.0 is the oldest supported Flutter version.
+  // ignore: deprecated_member_use
   return WidgetsBinding.instance.renderViewElement!.toStringDeep().replaceAll(
         RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
         'SliverChildListDelegate',
@@ -172,14 +186,21 @@ Widget boilerplate(Widget child) {
 }
 
 class TestAssetBundle extends CachingAssetBundle {
-  static const String manifest = r'{"assets/logo.png":["assets/logo.png"]}';
-
   @override
   Future<ByteData> load(String key) async {
     if (key == 'AssetManifest.json') {
+      const String manifest = r'{"assets/logo.png":["assets/logo.png"]}';
       final ByteData asset =
           ByteData.view(utf8.encoder.convert(manifest).buffer);
       return Future<ByteData>.value(asset);
+    } else if (key == 'AssetManifest.bin') {
+      final ByteData manifest = const StandardMessageCodec().encodeMessage(
+          <String, List<Object>>{'assets/logo.png': <Object>[]})!;
+      return Future<ByteData>.value(manifest);
+    } else if (key == 'AssetManifest.smcbin') {
+      final ByteData manifest = const StandardMessageCodec().encodeMessage(
+          <String, List<Object>>{'assets/logo.png': <Object>[]})!;
+      return Future<ByteData>.value(manifest);
     } else if (key == 'assets/logo.png') {
       // The root directory tests are run from is different for 'flutter test'
       // verses 'flutter test test/*_test.dart'. Adjust the root directory
@@ -192,12 +213,15 @@ class TestAssetBundle extends CachingAssetBundle {
           io.File('${rootDirectory.path}/test/assets/images/logo.png');
 
       final ByteData asset = ByteData.view(file.readAsBytesSync().buffer);
-      if (asset == null) {
-        throw FlutterError('Unable to load asset: $key');
-      }
       return asset;
     } else {
       throw ArgumentError('Unknown asset key: $key');
     }
   }
 }
+
+/// This allows a value of type T or T? to be treated as a value of type T?.
+///
+/// We use this so that APIs that have become non-nullable can still be used
+/// with `!` and `?` on the stable branch.
+T? _ambiguate<T>(T? value) => value;

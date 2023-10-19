@@ -14,7 +14,7 @@ To navigate to a route using its name, call [`goNamed`](https://pub.dev/document
 ```dart
 TextButton(
   onPressed: () {
-    context.goNamed('song', params: {'songId': 123});
+    context.goNamed('song', pathParameters: {'songId': 123});
   },
   child: const Text('Go to song 2'),
 ),
@@ -25,7 +25,7 @@ Alternatively, you can look up the location for a name using `namedLocation`:
 ```dart
 TextButton(
   onPressed: () {
-    final String location = context.namedLocation('song', params: {'songId': 123});
+    final String location = context.namedLocation('song', pathParameters: {'songId': 123});
     context.go(location);
   },
   child: const Text('Go to song 2'),
