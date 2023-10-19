@@ -4,6 +4,7 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +35,10 @@ Widget fakeNavigationBuilder(
     child;
 
 class GoRouterNamedLocationSpy extends GoRouter {
-  GoRouterNamedLocationSpy({required super.routes});
+  GoRouterNamedLocationSpy({required List<RouteBase> routes})
+      : super.routingConfig(
+            routingConfig:
+                ConstantRoutingConfig(RoutingConfig(routes: routes)));
 
   String? name;
   Map<String, String>? pathParameters;
@@ -54,7 +58,10 @@ class GoRouterNamedLocationSpy extends GoRouter {
 }
 
 class GoRouterGoSpy extends GoRouter {
-  GoRouterGoSpy({required super.routes});
+  GoRouterGoSpy({required List<RouteBase> routes})
+      : super.routingConfig(
+            routingConfig:
+                ConstantRoutingConfig(RoutingConfig(routes: routes)));
 
   String? myLocation;
   Object? extra;
@@ -67,7 +74,10 @@ class GoRouterGoSpy extends GoRouter {
 }
 
 class GoRouterGoNamedSpy extends GoRouter {
-  GoRouterGoNamedSpy({required super.routes});
+  GoRouterGoNamedSpy({required List<RouteBase> routes})
+      : super.routingConfig(
+            routingConfig:
+                ConstantRoutingConfig(RoutingConfig(routes: routes)));
 
   String? name;
   Map<String, String>? pathParameters;
@@ -89,7 +99,10 @@ class GoRouterGoNamedSpy extends GoRouter {
 }
 
 class GoRouterPushSpy extends GoRouter {
-  GoRouterPushSpy({required super.routes});
+  GoRouterPushSpy({required List<RouteBase> routes})
+      : super.routingConfig(
+            routingConfig:
+                ConstantRoutingConfig(RoutingConfig(routes: routes)));
 
   String? myLocation;
   Object? extra;
@@ -103,7 +116,10 @@ class GoRouterPushSpy extends GoRouter {
 }
 
 class GoRouterPushNamedSpy extends GoRouter {
-  GoRouterPushNamedSpy({required super.routes});
+  GoRouterPushNamedSpy({required List<RouteBase> routes})
+      : super.routingConfig(
+            routingConfig:
+                ConstantRoutingConfig(RoutingConfig(routes: routes)));
 
   String? name;
   Map<String, String>? pathParameters;
@@ -126,7 +142,10 @@ class GoRouterPushNamedSpy extends GoRouter {
 }
 
 class GoRouterPopSpy extends GoRouter {
-  GoRouterPopSpy({required super.routes});
+  GoRouterPopSpy({required List<RouteBase> routes})
+      : super.routingConfig(
+            routingConfig:
+                ConstantRoutingConfig(RoutingConfig(routes: routes)));
 
   bool popped = false;
   Object? poppedResult;
@@ -159,6 +178,39 @@ Future<GoRouter> createRouter(
     onException: onException,
     initialExtra: initialExtra,
     redirectLimit: redirectLimit,
+    errorBuilder: errorBuilder,
+    navigatorKey: navigatorKey,
+    restorationScopeId: restorationScopeId,
+    requestFocus: requestFocus,
+    overridePlatformDefaultLocation: overridePlatformDefaultLocation,
+  );
+  await tester.pumpWidget(
+    MaterialApp.router(
+      restorationScopeId:
+          restorationScopeId != null ? '$restorationScopeId-root' : null,
+      routerConfig: goRouter,
+    ),
+  );
+  return goRouter;
+}
+
+Future<GoRouter> createRouterWithRoutingConfig(
+  ValueListenable<RoutingConfig> config,
+  WidgetTester tester, {
+  String initialLocation = '/',
+  Object? initialExtra,
+  GlobalKey<NavigatorState>? navigatorKey,
+  GoRouterWidgetBuilder? errorBuilder,
+  String? restorationScopeId,
+  GoExceptionHandler? onException,
+  bool requestFocus = true,
+  bool overridePlatformDefaultLocation = false,
+}) async {
+  final GoRouter goRouter = GoRouter.routingConfig(
+    routingConfig: config,
+    initialLocation: initialLocation,
+    onException: onException,
+    initialExtra: initialExtra,
     errorBuilder: errorBuilder,
     navigatorKey: navigatorKey,
     restorationScopeId: restorationScopeId,
@@ -306,4 +358,36 @@ RouteMatch createRouteMatch(RouteBase route, String location) {
     matchedLocation: location,
     pageKey: ValueKey<String>(location),
   );
+}
+
+/// A routing config that is never going to change.
+class ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
+  const ConstantRoutingConfig(this.value);
+  @override
+  void addListener(VoidCallback listener) {
+    // Intentionally empty because listener will never be called.
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    // Intentionally empty because listener will never be called.
+  }
+
+  @override
+  final RoutingConfig value;
+}
+
+RouteConfiguration createRouteConfiguration({
+  required List<RouteBase> routes,
+  required GlobalKey<NavigatorState> navigatorKey,
+  required GoRouterRedirect topRedirect,
+  required int redirectLimit,
+}) {
+  return RouteConfiguration(
+      ConstantRoutingConfig(RoutingConfig(
+        routes: routes,
+        redirect: topRedirect,
+        redirectLimit: redirectLimit,
+      )),
+      navigatorKey: navigatorKey);
 }
