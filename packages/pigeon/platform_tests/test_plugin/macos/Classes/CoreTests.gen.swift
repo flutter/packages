@@ -1736,11 +1736,65 @@ class FlutterIntegrationCoreApiCodec: FlutterStandardMessageCodec {
   static let shared = FlutterIntegrationCoreApiCodec(readerWriter: FlutterIntegrationCoreApiCodecReaderWriter())
 }
 
+protocol FlutterIntegrationCoreApiProtocol {
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic calling.
+  func noop(completion: @escaping (Result<Void, FlutterError>) -> Void) 
+  /// Responds with an error from an async function returning a value.
+  func throwError(completion: @escaping (Result<Any?, FlutterError>) -> Void) 
+  /// Responds with an error from an async void function.
+  func throwErrorFromVoid(completion: @escaping (Result<Void, FlutterError>) -> Void) 
+  /// Returns the passed object, to test serialization and deserialization.
+  func echo(_ everythingArg: AllTypes, completion: @escaping (Result<AllTypes, FlutterError>) -> Void) 
+  /// Returns the passed object, to test serialization and deserialization.
+  func echoNullable(_ everythingArg: AllNullableTypes?, completion: @escaping (Result<AllNullableTypes?, FlutterError>) -> Void) 
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  func sendMultipleNullableTypes(aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?, aString aNullableStringArg: String?, completion: @escaping (Result<AllNullableTypes, FlutterError>) -> Void) 
+  /// Returns the passed boolean, to test serialization and deserialization.
+  func echo(_ aBoolArg: Bool, completion: @escaping (Result<Bool, FlutterError>) -> Void) 
+  /// Returns the passed int, to test serialization and deserialization.
+  func echo(_ anIntArg: Int64, completion: @escaping (Result<Int64, FlutterError>) -> Void) 
+  /// Returns the passed double, to test serialization and deserialization.
+  func echo(_ aDoubleArg: Double, completion: @escaping (Result<Double, FlutterError>) -> Void) 
+  /// Returns the passed string, to test serialization and deserialization.
+  func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) 
+  /// Returns the passed byte list, to test serialization and deserialization.
+  func echo(_ aListArg: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, FlutterError>) -> Void) 
+  /// Returns the passed list, to test serialization and deserialization.
+  func echo(_ aListArg: [Any?], completion: @escaping (Result<[Any?], FlutterError>) -> Void) 
+  /// Returns the passed map, to test serialization and deserialization.
+  func echo(_ aMapArg: [String?: Any?], completion: @escaping (Result<[String?: Any?], FlutterError>) -> Void) 
+  /// Returns the passed enum to test serialization and deserialization.
+  func echo(_ anEnumArg: AnEnum, completion: @escaping (Result<AnEnum, FlutterError>) -> Void) 
+  /// Returns the passed boolean, to test serialization and deserialization.
+  func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Result<Bool?, FlutterError>) -> Void) 
+  /// Returns the passed int, to test serialization and deserialization.
+  func echoNullable(_ anIntArg: Int64?, completion: @escaping (Result<Int64?, FlutterError>) -> Void) 
+  /// Returns the passed double, to test serialization and deserialization.
+  func echoNullable(_ aDoubleArg: Double?, completion: @escaping (Result<Double?, FlutterError>) -> Void) 
+  /// Returns the passed string, to test serialization and deserialization.
+  func echoNullable(_ aStringArg: String?, completion: @escaping (Result<String?, FlutterError>) -> Void) 
+  /// Returns the passed byte list, to test serialization and deserialization.
+  func echoNullable(_ aListArg: FlutterStandardTypedData?, completion: @escaping (Result<FlutterStandardTypedData?, FlutterError>) -> Void) 
+  /// Returns the passed list, to test serialization and deserialization.
+  func echoNullable(_ aListArg: [Any?]?, completion: @escaping (Result<[Any?]?, FlutterError>) -> Void) 
+  /// Returns the passed map, to test serialization and deserialization.
+  func echoNullable(_ aMapArg: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, FlutterError>) -> Void) 
+  /// Returns the passed enum to test serialization and deserialization.
+  func echoNullable(_ anEnumArg: AnEnum?, completion: @escaping (Result<AnEnum?, FlutterError>) -> Void) 
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  func noopAsync(completion: @escaping (Result<Void, FlutterError>) -> Void) 
+  /// Returns the passed in generic Object asynchronously.
+  func echoAsync(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) 
+}
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 ///
 /// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
-class FlutterIntegrationCoreApi {
+class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger){
     self.binaryMessenger = binaryMessenger
@@ -2305,10 +2359,13 @@ class FlutterSmallApiCodec: FlutterStandardMessageCodec {
   static let shared = FlutterSmallApiCodec(readerWriter: FlutterSmallApiCodecReaderWriter())
 }
 
+protocol FlutterSmallApiProtocol {
+  func echo(_ msgArg: TestMessage, completion: @escaping (Result<TestMessage, FlutterError>) -> Void) 
+}
 /// A simple API called in some unit tests.
 ///
 /// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
-class FlutterSmallApi {
+class FlutterSmallApi: FlutterSmallApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   init(binaryMessenger: FlutterBinaryMessenger){
     self.binaryMessenger = binaryMessenger

@@ -291,13 +291,50 @@ import FlutterMacOS
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
     }
+
+    indent.addScoped('protocol ${api.name}Protocol {', '}', () {
+      for (final Method func in api.methods) {
+        final _SwiftFunctionComponents components =
+            _SwiftFunctionComponents.fromMethod(func);
+        final String returnType = func.returnType.isVoid
+            ? 'Void'
+            : _nullsafeSwiftTypeForDartType(func.returnType);
+
+        addDocumentationComments(
+            indent, func.documentationComments, _docCommentSpec);
+
+        if (func.arguments.isEmpty) {
+          indent.writeln(
+              'func ${func.name}(completion: @escaping (Result<$returnType, FlutterError>) -> Void) ');
+        } else {
+          final Iterable<String> argTypes = func.arguments
+              .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
+          final Iterable<String> argLabels = indexMap(components.arguments,
+              (int index, _SwiftFunctionArgument argument) {
+            return argument.label ??
+                _getArgumentName(index, argument.namedType);
+          });
+          final Iterable<String> argNames =
+              indexMap(func.arguments, _getSafeArgumentName);
+          final String argsSignature = map3(
+              argTypes,
+              argLabels,
+              argNames,
+              (String type, String label, String name) =>
+                  '$label $name: $type').join(', ');
+          indent.writeln(
+              'func ${components.name}($argsSignature, completion: @escaping (Result<$returnType, FlutterError>) -> Void) ');
+        }
+      }
+    });
+
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
     ];
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    indent.write('class ${api.name} ');
+    indent.write('class ${api.name}: ${api.name}Protocol ');
     indent.addScoped('{', '}', () {
       indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
       indent.write('init(binaryMessenger: FlutterBinaryMessenger)');
