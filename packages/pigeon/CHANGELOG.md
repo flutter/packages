@@ -1,6 +1,298 @@
+## 12.0.1
+
+* [swift] Adds protocol for Flutter APIs.
+
+## 12.0.0
+
+* Adds error handling on Flutter API methods.
+* **Breaking Change** [kotlin] Flutter API methods now return `Result<return-type>`.
+* **Breaking Change** [swift] Flutter API methods now return `Result<return-type, FlutterError>`.
+* **Breaking Change** [java] Removes `Reply` class from all method returns and replaces it with `Result`.
+  * Changes required: Replace all `Reply` callbacks with `Result` classes that contain both `success` and `failure` methods.
+* **Breaking Change** [java] Adds `NullableResult` class for all nullable method returns.
+  * Changes required: Any method that returns a nullable type will need to be updated to return `NullableResult` rather than `Result`.
+* **Breaking Change** [java] Renames Host API `setup` method to `setUp`.
+* **Breaking Change** [objc] Boxes all enum returns to allow for `nil` response on error.
+* **Breaking Change** [objc] Renames `<api>Setup` to `SetUp<api>`.
+
+## 11.0.1
+
+* Adds pub topics to package metadata.
+
+## 11.0.0
+
+* Adds primitive enum support.
+* [objc] Fixes nullable enums.
+* **Breaking Change** [objc] Changes all nullable enums to be boxed in custom classes.
+* **Breaking Change** [objc] Changes all enums names to have class prefix.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 10.1.6
+
+* Fixes generation failures when an output file is in a directory that doesn't already exist.
+
+## 10.1.5
+
+* [dart] Fixes import in generated test output when overriding package name.
+
+## 10.1.4
+
+* Adds package name to method channel strings to avoid potential collisions between plugins.
+* Adds dartPackageName option to `pigeonOptions`.
+
+## 10.1.3
+
+* Adds generic `Object` field support to data classes.
+
+## 10.1.2
+
+* [swift] Fixes a crash when passing `null` for nested nullable classes.
+
+## 10.1.1
+
+* Updates README to better reflect modern usage.
+
+## 10.1.0
+
+* [objc] Adds macOS support to facilitate code sharing with existing iOS plugins.
+
+## 10.0.1
+
+* Requires `analyzer 5.13.0` and replaces use of deprecated APIs.
+
+## 10.0.0
+
+* [swift] Avoids using `Any` to represent `Optional`.
+* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be
+  translated into `[Any?]` (rather than `[Any]`).
+* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be
+  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`).
+* Adds an example application that uses Pigeon directly, rather than in a plugin.
+
+## 9.2.5
+
+* Reports an error when trying to use an enum directly in a `List` or `Map`
+  argument.
+
+## 9.2.4
+
+* [objc] Fixes a warning due to a C++-style function signature in the codec
+  getter's definition.
+
+## 9.2.3
+
+* [java] Fixes `UnknownNullability` and `SyntheticAccessor` warnings.
+
+## 9.2.2
+
+* [cpp] Minor changes to output style.
+
+## 9.2.1
+
+* [swift] Fixes NSNull casting crash.
+
+## 9.2.0
+
+* [cpp] Removes experimental tags.
+
+## 9.1.4
+
+* Migrates off deprecated `BinaryMessenger` API.
+
+## 9.1.3
+
+* [cpp] Requires passing any non-nullable fields of generated data classes as
+  constructor arguments, similar to what is done in other languages. This may
+  require updates to existing code that creates data class instances on the
+  native side.
+* [cpp] Adds a convenience constructor to generated data classes to set all
+  fields during construction.
+
+## 9.1.2
+
+* [cpp] Fixes class parameters to Flutter APIs.
+* Updates minimum Flutter version to 3.3.
+
+## 9.1.1
+
+* [swift] Removes experimental tags.
+* [kotlin] Removes experimental tags.
+
+## 9.1.0
+
+* [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
+* [kotlin] Adds a `FlutterError` exception for passing custom error details (code, message, details).
+* [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
+* [java] Removes legacy try catch from async apis.
+* [java] Removes legacy null check on non-nullable method arguments.
+* [cpp] Fixes wrong order of items in `FlutterError`.
+* Adds `FlutterError` handling integration tests for all platforms.
+
+## 9.0.7
+
+* [swift] Changes all ints to int64.
+  May require code updates to existing code.
+* Adds integration tests for int64.
+
+## 9.0.6
+
+* [kotlin] Removes safe casting from decode process.
+* [swift] Removes safe casting from decode process.
+
+## 9.0.5
+
+* Removes the unnecessary Flutter constraint.
+* Removes an unnecessary null check.
+* Aligns Dart and Flutter SDK constraints.
+
+## 9.0.4
+
+* Adds parameter to generate Kotlin code in example README.
+
+## 9.0.3
+
+* [kotlin] Fixes compiler warnings in generated output.
+* [swift] Fixes compiler warnings in generated output.
+
+## 9.0.2
+
+* [swift] Removes safe casting from decode process.
+* [kotlin] Removes safe casting from decode process.
+
+## 9.0.1
+
+* Updates links for the merge of flutter/plugins into flutter/packages.
+
+## 9.0.0
+
+* **Breaking Change** Updates `DartOptions` to be immutable and adds const to the constructor.
+* [java] Reverts `final` changes to Flutter Api classes.
+
+## 8.0.0
+
+* [objc] **BREAKING CHANGE**: FlutterApi calls now return a `FlutterError`,
+  rather than an `NSError`, on failure.
+* [objc] Fixes an unused function warning when only generating FlutterApi.
+
+## 7.2.1
+
+* [kotlin] Fixes Flutter api int errors with updated casting.
+
+## 7.2.0
+
+* [swift] Changes async method completion types.
+  May require code updates to existing code.
+* [swift] Adds error handling to async methods.
+* [kotlin] Changes async method completion types.
+  May require code updates to existing code.
+* [kotlin] Adds error handling to async methods.
+* Adds async error handling integration tests for all platforms.
+
+## 7.1.5
+
+* Updates code to fix strict-cast violations.
+
+## 7.1.4
+
+* [java] Fixes raw types lint issues.
+
+## 7.1.3
+
+* [objc] Removes unused function.
+
+## 7.1.2
+
+* [swift] Adds error handling to sync host api methods.
+
+## 7.1.1
+
+* [c++] Fixes handling of the `cpp*` options in `@ConfigurePigeon` annotations.
+
+## 7.1.0
+
+* Adds `@SwiftFunction` annotation for specifying custom swift function signature.
+
+## 7.0.5
+
+* Requires analyzer 5.0.0 and replaces use of deprecated APIs.
+
+## 7.0.4
+
+* [c++] Fixes minor output formatting issues.
+
+## 7.0.3
+
+* Updates scoped methods to prevent symbol-less use.
+
+## 7.0.2
+
+* [kotlin] Fixes a missed casting of not nullable Dart 'int' to Kotlin 64bit long.
+
+## 7.0.1
+
+* [generator_tools] adds `newln` method for adding empty lines and ending lines.
+* Updates generators to more closely match Flutter formatter tool output.
+
+## 7.0.0
+
+* [java] **BREAKING CHANGE**: Makes data classes final.
+  Updates generators for 1p linters.
+
+## 6.0.3
+
+* [docs] Updates README.md.
+
+## 6.0.2
+
+* [kotlin] Fixes a bug with a missed line break between generated statements in the `fromList` function of the companion object.
+
+## 6.0.1
+
+* [c++] Fixes most non-class arguments and return values in Flutter APIs. The
+  types of arguments and return values have changed, so this may require updates
+  to existing code.
+
+## 6.0.0
+
+* Creates StructuredGenerator class and implements it on all platforms.
+
+## 5.0.1
+
+* [c++] Fixes undefined behavior in `@async` methods.
+
+## 5.0.0
+
+* Creates new Generator classes for each language.
+
+## 4.2.16
+
+* [swift] Fixes warnings with `Object` parameters.
+* [dart] Fixes warnings with `Object` return values.
+* [c++] Generation of APIs that use `Object` no longer fails.
+
+## 4.2.15
+
+* Relocates generator classes. (Reverted)
+
+## 4.2.14
+
+* [c++] Fixes reply sending non EncodableValue wrapped lists.
+
+## 4.2.13
+
+* Add documentation comment support for Enum members.
+
+## 4.2.12
+
+* Updates serialization to use lists instead of maps to improve performance.
+
+## 4.2.11
+
+* [swift] Fixes compressed list data types.
+
 ## 4.2.10
 
-* Changes generated Java enum field to be final.
+* [java] Changes generated enum field to be final.
 
 ## 4.2.9
 
@@ -182,11 +474,11 @@
 
 ## 2.0.3
 
-* Makes the generated Java Builder class final.
+* [java] Makes the generated Builder class final.
 
 ## 2.0.2
 
-* Fixes Java crash for nullable nested type.
+* [java] Fixes crash for nullable nested type.
 
 ## 2.0.1
 
@@ -308,8 +600,8 @@
 * [generators] Moved Pigeon to using a custom codec which allows collection
   types to contain custom classes.
 * [java] Fixed NPE in Java generated code for nested types.
-* [objc] **BREAKING CHANGE:** logic for generating Objective-C selectors has
-  changed. `void add(Input value)` will now translate to
+* [objc] **BREAKING CHANGE:** logic for generating selectors has changed.
+  `void add(Input value)` will now translate to
   `-(void)addValue:(Input*)value`, methods with no arguments will translate to
   `...WithError:` or `...WithCompletion:`.
 * [objc] Added `@ObjCSelector` for specifying custom objc selectors.
@@ -537,7 +829,7 @@ class Foo {
 
 ## 0.1.0-experimental.3
 
-* Added support for for Android Java.
+* Added support for Android Java.
 
 ## 0.1.0-experimental.2
 

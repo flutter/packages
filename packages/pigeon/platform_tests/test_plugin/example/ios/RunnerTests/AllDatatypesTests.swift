@@ -2,77 +2,91 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import XCTest
 @testable import test_plugin
 
 class AllDatatypesTests: XCTestCase {
 
   func testAllNull() throws {
-    let everything = AllTypes()
+    let everything = AllNullableTypes()
     let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoAllTypes(everything: everything) { result in
-      XCTAssertNil(result.aBool)
-      XCTAssertNil(result.anInt)
-      XCTAssertNil(result.aDouble)
-      XCTAssertNil(result.aString)
-      XCTAssertNil(result.aByteArray)
-      XCTAssertNil(result.a4ByteArray)
-      XCTAssertNil(result.a8ByteArray)
-      XCTAssertNil(result.aFloatArray)
-      XCTAssertNil(result.aList)
-      XCTAssertNil(result.aMap)
-      XCTAssertNil(result.nestedList)
-      XCTAssertNil(result.mapWithAnnotations)
-      XCTAssertNil(result.mapWithObject)
-      expectation.fulfill()
+    api.echoNullable(everything) { result in
+      switch result {
+        case .success(let res) :
+          XCTAssertNotNil(res)
+          XCTAssertNil(res!.aNullableBool)
+          XCTAssertNil(res!.aNullableInt)
+          XCTAssertNil(res!.aNullableDouble)
+          XCTAssertNil(res!.aNullableString)
+          XCTAssertNil(res!.aNullableByteArray)
+          XCTAssertNil(res!.aNullable4ByteArray)
+          XCTAssertNil(res!.aNullable8ByteArray)
+          XCTAssertNil(res!.aNullableFloatArray)
+          XCTAssertNil(res!.aNullableList)
+          XCTAssertNil(res!.aNullableMap)
+          XCTAssertNil(res!.nullableNestedList)
+          XCTAssertNil(res!.nullableMapWithAnnotations)
+          XCTAssertNil(res!.nullableMapWithObject)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+        
+      }
     }
 
     wait(for: [expectation], timeout: 1.0)
   }
 
   func testAllEquals() throws {
-    let everything = AllTypes(
-      aBool: false,
-      anInt: 1,
-      aDouble: 2.0,
-      aString: "123",
-      aByteArray: [UInt8]("1234".data(using: .utf8)!),
-      a4ByteArray: [Int32].init(arrayLiteral: 1, 2, 3, 4),
-      a8ByteArray: [Int64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
-      aFloatArray: [Float64].init(arrayLiteral: 1, 2, 3, 4, 5, 6, 7, 8),
-      aList: [1, 2],
-      aMap: ["hello": 1234],
-      nestedList: [[true, false], [true]],
-      mapWithAnnotations: ["hello": "world"],
-      mapWithObject: ["hello": 1234, "goodbye" : "world"]
+    let everything = AllNullableTypes(
+      aNullableBool: true,
+      aNullableInt: 1,
+      aNullableDouble: 2.0,
+      aNullableByteArray: FlutterStandardTypedData(bytes: "1234".data(using: .utf8)!),
+      aNullable4ByteArray: FlutterStandardTypedData(int32: "1234".data(using: .utf8)!),
+      aNullable8ByteArray: FlutterStandardTypedData(int64: "12345678".data(using: .utf8)!),
+      aNullableFloatArray: FlutterStandardTypedData(float64: "12345678".data(using: .utf8)!),
+      aNullableList: [1, 2],
+      aNullableMap: ["hello": 1234],
+      nullableNestedList: [[true, false], [true]],
+      nullableMapWithAnnotations: ["hello": "world"],
+      nullableMapWithObject: ["hello": 1234, "goodbye" : "world"],
+      aNullableString: "123"
     )
+    
     let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoAllTypes(everything: everything) { result in
-      XCTAssertEqual(result.aBool, everything.aBool)
-      XCTAssertEqual(result.anInt, everything.anInt)
-      XCTAssertEqual(result.aDouble, everything.aDouble)
-      XCTAssertEqual(result.aString, everything.aString)
-      XCTAssertEqual(result.aByteArray, everything.aByteArray)
-      XCTAssertEqual(result.a4ByteArray, everything.a4ByteArray)
-      XCTAssertEqual(result.a8ByteArray, everything.a8ByteArray)
-      XCTAssertEqual(result.aFloatArray, everything.aFloatArray)
-      XCTAssert(equalsList(result.aList, everything.aList))
-      XCTAssert(equalsDictionary(result.aMap, everything.aMap))
-      XCTAssertEqual(result.nestedList, everything.nestedList)
-      XCTAssertEqual(result.mapWithAnnotations, everything.mapWithAnnotations)
-      XCTAssert(equalsDictionary(result.mapWithObject, everything.mapWithObject))
-
-      expectation.fulfill()
+    api.echoNullable(everything) { result in
+     switch result {
+        case .success(let res) :
+          XCTAssertNotNil(res)
+          XCTAssertEqual(res!.aNullableBool, everything.aNullableBool)
+          XCTAssertEqual(res!.aNullableInt, everything.aNullableInt)
+          XCTAssertEqual(res!.aNullableDouble, everything.aNullableDouble)
+          XCTAssertEqual(res!.aNullableString, everything.aNullableString)
+          XCTAssertEqual(res!.aNullableByteArray, everything.aNullableByteArray)
+          XCTAssertEqual(res!.aNullable4ByteArray, everything.aNullable4ByteArray)
+          XCTAssertEqual(res!.aNullable8ByteArray, everything.aNullable8ByteArray)
+          XCTAssertEqual(res!.aNullableFloatArray, everything.aNullableFloatArray)
+          XCTAssert(equalsList(res!.aNullableList, everything.aNullableList))
+          XCTAssert(equalsDictionary(res!.aNullableMap, everything.aNullableMap))
+          XCTAssertEqual(res!.nullableNestedList, everything.nullableNestedList)
+          XCTAssertEqual(res!.nullableMapWithAnnotations, everything.nullableMapWithAnnotations)
+          XCTAssert(equalsDictionary(res!.nullableMapWithObject, everything.nullableMapWithObject))
+          expectation.fulfill()
+          return
+        case .failure(_) :
+          return
+      }
     }
-
     wait(for: [expectation], timeout: 1.0)
   }
 }

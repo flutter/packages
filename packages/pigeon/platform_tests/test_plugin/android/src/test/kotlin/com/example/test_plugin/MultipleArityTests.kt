@@ -22,7 +22,7 @@ class MultipleArityTests: TestCase() {
         val inputX = 10L
         val inputY = 5L
 
-        val channelName = "dev.flutter.pigeon.MultipleArityHostApi.subtract"
+        val channelName = "dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract"
         val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
 
         every { binaryMessenger.setMessageHandler(channelName, capture(handlerSlot)) } returns Unit
@@ -36,10 +36,10 @@ class MultipleArityTests: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertEquals(inputX - inputY, wrapped["result"])
+                assertEquals(inputX - inputY, wrapped[0])
             }
         }
     }
@@ -60,7 +60,7 @@ class MultipleArityTests: TestCase() {
             val args = codec.decodeMessage(message) as ArrayList<*>
             val argX = args[0] as Long
             val argY = args[1] as Long
-            val replyData = codec.encodeMessage(argX - argY)
+            val replyData = codec.encodeMessage(listOf(argX - argY))
             replyData?.position(0)
             reply.reply(replyData)
         }
@@ -68,7 +68,7 @@ class MultipleArityTests: TestCase() {
         var didCall = false
         api.subtract(inputX, inputY) {
             didCall = true
-            assertEquals(inputX - inputY, it)
+            assertEquals(inputX - inputY, it.getOrNull())
         }
 
         assertTrue(didCall)

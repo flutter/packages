@@ -11,6 +11,10 @@ import '../misc/extensions.dart';
 bool isCupertinoApp(Element elem) =>
     elem.findAncestorWidgetOfExactType<CupertinoApp>() != null;
 
+/// Creates a Cupertino HeroController.
+HeroController createCupertinoHeroController() =>
+    CupertinoApp.createCupertinoHeroController();
+
 /// Builds a Cupertino page.
 CupertinoPage<void> pageBuilderForCupertinoApp({
   required LocalKey key,

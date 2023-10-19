@@ -313,4 +313,11 @@ void main() {
             .length,
         1);
   });
+
+  test('deduces package name successfully', () {
+    final String? dartPackageName =
+        deducePackageName('./pigeons/core_tests.dart');
+
+    expect(dartPackageName, 'pigeon');
+  });
 }

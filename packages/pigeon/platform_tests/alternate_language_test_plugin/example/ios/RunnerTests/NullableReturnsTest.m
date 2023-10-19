@@ -4,11 +4,7 @@
 
 @import XCTest;
 
-#ifdef LEGACY_HARNESS
-#import "NullableReturns.gen.h"
-#else
 @import alternate_language_test_plugin;
-#endif
 
 #import "EchoMessenger.h"
 #import "MockBinaryMessenger.h"
@@ -44,7 +40,7 @@
       [[NullableArgFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api doitX:nil
-      completion:^(NSNumber *_Nonnull result, NSError *_Nullable error) {
+      completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable error) {
         XCTAssertNil(result);
         [expectation fulfill];
       }];
@@ -55,8 +51,8 @@
   MockNullableArgHostApi *api = [[MockNullableArgHostApi alloc] init];
   MockBinaryMessenger *binaryMessenger =
       [[MockBinaryMessenger alloc] initWithCodec:NullableArgHostApiGetCodec()];
-  NSString *channel = @"dev.flutter.pigeon.NullableArgHostApi.doit";
-  NullableArgHostApiSetup(binaryMessenger, api);
+  NSString *channel = @"dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit";
+  SetUpNullableArgHostApi(binaryMessenger, api);
   XCTAssertNotNil(binaryMessenger.handlers[channel]);
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSData *arguments = [NullableArgHostApiGetCodec() encode:@[ [NSNull null] ]];

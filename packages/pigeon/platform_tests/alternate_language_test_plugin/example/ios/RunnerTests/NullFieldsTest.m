@@ -5,24 +5,20 @@
 @import Flutter;
 @import XCTest;
 
-#ifdef LEGACY_HARNESS
-#import "NullFields.gen.h"
-#else
 @import alternate_language_test_plugin;
-#endif
 
 #import "EchoMessenger.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface NullFieldsSearchRequest ()
-+ (NullFieldsSearchRequest *)fromMap:(NSDictionary *)dict;
-- (NSDictionary *)toMap;
++ (NullFieldsSearchRequest *)fromList:(NSArray *)list;
+- (NSArray *)toList;
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface NullFieldsSearchReply ()
-+ (NullFieldsSearchReply *)fromMap:(NSDictionary *)dict;
-- (NSDictionary *)toMap;
++ (NullFieldsSearchReply *)fromList:(NSArray *)list;
+- (NSArray *)toList;
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -35,19 +31,20 @@
 - (void)testMakeWithValues {
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1];
 
-  NullFieldsSearchReply *reply =
-      [NullFieldsSearchReply makeWithResult:@"result"
-                                      error:@"error"
-                                    indices:@[ @1, @2, @3 ]
-                                    request:request
-                                       type:NullFieldsSearchReplyTypeSuccess];
+  NullFieldsSearchReplyTypeBox *typeWrapper =
+      [[NullFieldsSearchReplyTypeBox alloc] initWithValue:NullFieldsSearchReplyTypeSuccess];
+  NullFieldsSearchReply *reply = [NullFieldsSearchReply makeWithResult:@"result"
+                                                                 error:@"error"
+                                                               indices:@[ @1, @2, @3 ]
+                                                               request:request
+                                                                  type:typeWrapper];
 
   NSArray *indices = @[ @1, @2, @3 ];
   XCTAssertEqualObjects(@"result", reply.result);
   XCTAssertEqualObjects(@"error", reply.error);
   XCTAssertEqualObjects(indices, reply.indices);
   XCTAssertEqualObjects(@"hello", reply.request.query);
-  XCTAssertEqual(NullFieldsSearchReplyTypeSuccess, reply.type);
+  XCTAssertEqual(typeWrapper.value, reply.type.value);
 }
 
 - (void)testMakeRequestWithNulls {
@@ -56,114 +53,119 @@
 }
 
 - (void)testMakeReplyWithNulls {
-  NullFieldsSearchReply *reply =
-      [NullFieldsSearchReply makeWithResult:nil
-                                      error:nil
-                                    indices:nil
-                                    request:nil
-                                       type:NullFieldsSearchReplyTypeSuccess];
+  NullFieldsSearchReply *reply = [NullFieldsSearchReply makeWithResult:nil
+                                                                 error:nil
+                                                               indices:nil
+                                                               request:nil
+                                                                  type:nil];
   XCTAssertNil(reply.result);
   XCTAssertNil(reply.error);
   XCTAssertNil(reply.indices);
   XCTAssertNil(reply.request);
-  XCTAssertEqual(NullFieldsSearchReplyTypeSuccess, reply.type);
+  XCTAssertNil(reply.type);
 }
 
-- (void)testRequestFromMapWithValues {
-  NSDictionary *map = @{
-    @"query" : @"hello",
-    @"identifier" : @1,
-  };
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest fromMap:map];
+- (void)testRequestFromListWithValues {
+  NSArray *list = @[
+    @"hello",
+    @1,
+  ];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest fromList:list];
   XCTAssertEqualObjects(@"hello", request.query);
 }
 
-- (void)testRequestFromMapWithNulls {
-  NSDictionary *map = @{
-    @"query" : [NSNull null],
-    @"identifier" : @1,
-  };
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest fromMap:map];
+- (void)testRequestFromListWithNulls {
+  NSArray *list = @[
+    [NSNull null],
+    @1,
+  ];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest fromList:list];
   XCTAssertNil(request.query);
 }
 
-- (void)testReplyFromMapWithValues {
-  NSDictionary *map = @{
-    @"result" : @"result",
-    @"error" : @"error",
-    @"indices" : @[ @1, @2, @3 ],
-    @"request" : @{
-      @"query" : @"hello",
-      @"identifier" : @1,
-    },
-    @"type" : @0,
-  };
+- (void)testReplyFromListWithValues {
+  NSArray *list = @[
+    @"result",
+    @"error",
+    @[ @1, @2, @3 ],
+    @[
+      @"hello",
+      @1,
+    ],
+    @0,
+  ];
 
   NSArray *indices = @[ @1, @2, @3 ];
-  NullFieldsSearchReply *reply = [NullFieldsSearchReply fromMap:map];
+  NullFieldsSearchReply *reply = [NullFieldsSearchReply fromList:list];
   XCTAssertEqualObjects(@"result", reply.result);
   XCTAssertEqualObjects(@"error", reply.error);
   XCTAssertEqualObjects(indices, reply.indices);
   XCTAssertEqualObjects(@"hello", reply.request.query);
-  XCTAssertEqual(NullFieldsSearchReplyTypeSuccess, reply.type);
+  XCTAssertEqual(NullFieldsSearchReplyTypeSuccess, reply.type.value);
 }
 
-- (void)testReplyFromMapWithNulls {
-  NSDictionary *map = @{
-    @"result" : [NSNull null],
-    @"error" : [NSNull null],
-    @"indices" : [NSNull null],
-    @"request" : [NSNull null],
-    @"type" : [NSNull null],
-  };
-  NullFieldsSearchReply *reply = [NullFieldsSearchReply fromMap:map];
+- (void)testReplyFromListWithNulls {
+  NSArray *list = @[
+    [NSNull null],
+    [NSNull null],
+    [NSNull null],
+    [NSNull null],
+    [NSNull null],
+  ];
+  NullFieldsSearchReply *reply = [NullFieldsSearchReply fromList:list];
   XCTAssertNil(reply.result);
   XCTAssertNil(reply.error);
   XCTAssertNil(reply.indices);
   XCTAssertNil(reply.request.query);
-  XCTAssertEqual(NullFieldsSearchReplyTypeSuccess, reply.type);
+  XCTAssertNil(reply.type);
 }
 
-- (void)testRequestToMapWithValuess {
+- (void)testRequestToListWithValuess {
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1];
-  NSDictionary *dict = [request toMap];
-  XCTAssertEqual(@"hello", dict[@"query"]);
+  NSArray *list = [request toList];
+  XCTAssertEqual(@"hello", list[0]);
 }
 
-- (void)testRequestToMapWithNulls {
+- (void)testRequestToListWithNulls {
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil identifier:@1];
-  NSDictionary *dict = [request toMap];
-  XCTAssertEqual([NSNull null], dict[@"query"]);
+  NSArray *list = [request toList];
+  XCTAssertEqual([NSNull null], list[0]);
 }
 
-- (void)testReplyToMapWithValuess {
+- (void)testReplyToListWithValuess {
+  NullFieldsSearchReplyTypeBox *typeWrapper =
+      [[NullFieldsSearchReplyTypeBox alloc] initWithValue:NullFieldsSearchReplyTypeSuccess];
   NullFieldsSearchReply *reply = [NullFieldsSearchReply
       makeWithResult:@"result"
                error:@"error"
              indices:@[ @1, @2, @3 ]
              request:[NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1]
-                type:NullFieldsSearchReplyTypeSuccess];
-  NSDictionary *dict = [reply toMap];
+                type:typeWrapper];
+  NSArray *list = [reply toList];
   NSArray *indices = @[ @1, @2, @3 ];
-  XCTAssertEqualObjects(@"result", dict[@"result"]);
-  XCTAssertEqualObjects(@"error", dict[@"error"]);
-  XCTAssertEqualObjects(indices, dict[@"indices"]);
-  XCTAssertEqualObjects(@"hello", dict[@"request"][@"query"]);
-  XCTAssertEqualObjects(@0, dict[@"type"]);
+  XCTAssertEqualObjects(@"result", list[0]);
+  XCTAssertEqualObjects(@"error", list[1]);
+  XCTAssertEqualObjects(indices, list[2]);
+  XCTAssertEqualObjects(@"hello", list[3][0]);
+  NSNumber *typeNumber = list[4];
+  NullFieldsSearchReplyTypeBox *output =
+      [[NullFieldsSearchReplyTypeBox alloc] initWithValue:[typeNumber integerValue]];
+
+  XCTAssertEqual(typeWrapper.value, output.value);
 }
 
-- (void)testReplyToMapWithNulls {
-  NullFieldsSearchReply *reply =
-      [NullFieldsSearchReply makeWithResult:nil
-                                      error:nil
-                                    indices:nil
-                                    request:nil
-                                       type:NullFieldsSearchReplyTypeSuccess];
-  NSDictionary *dict = [reply toMap];
-  XCTAssertEqual([NSNull null], dict[@"result"]);
-  XCTAssertEqual([NSNull null], dict[@"error"]);
-  XCTAssertEqual([NSNull null], dict[@"indices"]);
-  XCTAssertEqual([NSNull null], dict[@"request"]);
+- (void)testReplyToListWithNulls {
+  NullFieldsSearchReply *reply = [NullFieldsSearchReply makeWithResult:nil
+                                                                 error:nil
+                                                               indices:nil
+                                                               request:nil
+                                                                  type:nil];
+  NSArray *list = [reply toList];
+  XCTAssertEqual([NSNull null], list[0]);
+  XCTAssertEqual([NSNull null], list[1]);
+  XCTAssertEqual([NSNull null], list[2]);
+  XCTAssertEqual([NSNull null], list[3]);
+  XCTAssertEqual([NSNull null], list[4]);
 }
 
 @end

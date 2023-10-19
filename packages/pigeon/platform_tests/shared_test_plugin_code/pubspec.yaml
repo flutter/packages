@@ -1,13 +1,14 @@
 name: shared_test_plugin_code
-description: Common code for test_plugin and altenate_language_test_plugin
+description: Common code for test_plugin and alternate_language_test_plugin
 version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
-  flutter: ">=3.0.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
 
 dependencies:
+  build_runner: ^2.1.10
   flutter:
     sdk: flutter
   # These are normal dependencies rather than dev_dependencies because the
@@ -17,3 +18,4 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  mockito: 5.4.1

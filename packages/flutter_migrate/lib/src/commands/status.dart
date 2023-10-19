@@ -20,6 +20,7 @@ class MigrateStatusCommand extends MigrateCommand {
     required this.logger,
     required this.fileSystem,
     required ProcessManager processManager,
+    this.standalone = false,
   })  : _verbose = verbose,
         migrateUtils = MigrateUtils(
           logger: logger,
@@ -65,6 +66,8 @@ class MigrateStatusCommand extends MigrateCommand {
 
   final MigrateUtils migrateUtils;
 
+  final bool standalone;
+
   @override
   final String name = 'status';
 
@@ -86,7 +89,11 @@ class MigrateStatusCommand extends MigrateCommand {
         ? FlutterProject.current(fileSystem)
         : flutterProjectFactory
             .fromDirectory(fileSystem.directory(projectDirectory));
-    final bool isSubcommand = boolArg('flutter-subcommand') ?? false;
+    final bool isSubcommand = boolArg('flutter-subcommand') ?? !standalone;
+
+    if (!validateWorkingDirectory(project, logger)) {
+      return CommandResult.fail();
+    }
 
     Directory stagingDirectory =
         project.directory.childDirectory(kDefaultMigrateStagingDirectoryName);
@@ -166,7 +173,7 @@ class MigrateStatusCommand extends MigrateCommand {
       }
     }
 
-    logger.printBox('Working directory at `${stagingDirectory.path}`');
+    logger.printBox('Staging directory at `${stagingDirectory.path}`');
 
     checkAndPrintMigrateStatus(manifest, stagingDirectory, logger: logger);
 

@@ -1,3 +1,115 @@
+## 2.3.3
+
+* Adds `initialLocation` for `StatefulShellBranchConfig`
+
+## 2.3.2
+
+* Supports the latest `package:analyzer`.
+
+## 2.3.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.3.0
+
+* Adds Support for StatefulShellRoute
+
+## 2.2.5
+
+* Fixes a bug where shell routes without const constructor were not generated correctly.
+
+## 2.2.4
+
+* Bumps example go_router version to v10.0.0 and migrate example code.
+
+## 2.2.3
+
+* Removes `path_to_regexp` from the dependencies.
+
+## 2.2.2
+
+* Bumps example go_router version and migrate example code.
+
+## 2.2.1
+
+* Cleans up go_router_builder code.
+
+## 2.2.0
+
+* Adds replace methods to the generated routes.
+
+## 2.1.1
+
+* Fixes a bug that the required/positional parameters are not added to query parameters correctly.
+
+## 2.1.0
+
+* Supports required/positional parameters that are not in the path.
+
+## 2.0.2
+
+* Fixes unawaited_futures violations.
+* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+
+## 2.0.1
+
+* Supports name parameter for `TypedGoRoute`.
+## 2.0.0
+
+* Updates the documentation to go_router v7.0.0.
+* Bumps go_router version in example folder to v7.0.0.
+
+## 1.2.2
+
+* Supports returning value in generated `push` method. [go_router CHANGELOG](https://github.com/flutter/packages/blob/main/packages/go_router/CHANGELOG.md#650)
+
+## 1.2.1
+
+* Supports opt-in required extra parameters. [#117261](https://github.com/flutter/flutter/issues/117261)
+
+## 1.2.0
+
+* Adds Support for ShellRoute
+
+## 1.1.7
+
+* Supports default values for `Set`, `List` and `Iterable` route parameters.
+
+## 1.1.6
+
+* Generates the const enum map for enums used in `List`, `Set` and `Iterable`.
+
+## 1.1.5
+
+* Replaces unnecessary Flutter SDK constraint with corresponding Dart
+  SDK constraint.
+
+## 1.1.4
+
+* Fixes the example for the default values in the README.
+
+## 1.1.3
+
+* Updates router_config to not passing itself as `extra`.
+
+## 1.1.2
+
+* Adds support for Iterables, Lists and Sets in query params for TypedGoRoute. [#108437](https://github.com/flutter/flutter/issues/108437).
+
+## 1.1.1
+
+* Support for the generation of the pushReplacement method has been added.
+
+## 1.1.0
+
+* Supports default value for the route parameters.
+
+## 1.0.16
+
+* Update the documentation to go_router v6.0.0.
+* Bumps go_router version in example folder to v6.0.0.
+
 ## 1.0.15
 
 * Avoids using deprecated DartType.element2.
@@ -21,7 +133,7 @@
 
 ## 1.0.10
 
-* Adds a lint ignore for deprecated member in the example. 
+* Adds a lint ignore for deprecated member in the example.
 
 ## 1.0.9
 

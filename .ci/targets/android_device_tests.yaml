@@ -1,0 +1,17 @@
+tasks:
+  - name: prepare tool
+    script: .ci/scripts/prepare_tool.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: download Dart and Android deps
+    script: script/tool_runner.sh
+    infra_step: true
+    args: ["fetch-deps", "--android", "--supporting-target-platforms-only"]
+  - name: Firebase Test Lab
+    script: script/tool_runner.sh
+    args:
+      - "firebase-test-lab"
+      - "--device"
+      - "model=redfin,version=30"
+      - "--exclude=script/configs/exclude_integration_android.yaml"
+      - "--project=flutter-infra-staging"
+      - "--results-bucket=flutter_firebase_testlab_staging"

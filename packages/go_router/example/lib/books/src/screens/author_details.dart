@@ -13,8 +13,8 @@ class AuthorDetailsScreen extends StatelessWidget {
   /// Creates an author detail screen.
   const AuthorDetailsScreen({
     required this.author,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The author to be displayed.
   final Author? author;

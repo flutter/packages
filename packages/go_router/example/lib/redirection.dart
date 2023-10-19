@@ -39,7 +39,7 @@ void main() => runApp(App());
 /// The main app.
 class App extends StatelessWidget {
   /// Creates an [App].
-  App({Key? key}) : super(key: key);
+  App({super.key});
 
   final LoginInfo _loginInfo = LoginInfo();
 
@@ -75,7 +75,7 @@ class App extends StatelessWidget {
     redirect: (BuildContext context, GoRouterState state) {
       // if the user is not logged in, they need to login
       final bool loggedIn = _loginInfo.loggedIn;
-      final bool loggingIn = state.subloc == '/login';
+      final bool loggingIn = state.matchedLocation == '/login';
       if (!loggedIn) {
         return '/login';
       }
@@ -98,26 +98,21 @@ class App extends StatelessWidget {
 /// The login screen.
 class LoginScreen extends StatelessWidget {
   /// Creates a [LoginScreen].
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(title: const Text(App.title)),
         body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () {
-                  // log a user in, letting all the listeners know
-                  context.read<LoginInfo>().login('test-user');
+          child: ElevatedButton(
+            onPressed: () {
+              // log a user in, letting all the listeners know
+              context.read<LoginInfo>().login('test-user');
 
-                  // router will automatically redirect from /login to / using
-                  // refreshListenable
-                },
-                child: const Text('Login'),
-              ),
-            ],
+              // router will automatically redirect from /login to / using
+              // refreshListenable
+            },
+            child: const Text('Login'),
           ),
         ),
       );
@@ -126,7 +121,7 @@ class LoginScreen extends StatelessWidget {
 /// The home screen.
 class HomeScreen extends StatelessWidget {
   /// Creates a [HomeScreen].
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

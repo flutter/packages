@@ -1,5 +1,3 @@
-<?code-excerpt path-base="excerpts/packages/google_identity_services_web_example"?>
-
 # google_identity_services_web
 
 A JS-interop layer for Google Identity's Sign In With Google SDK.
@@ -29,7 +27,7 @@ script tag [as recommended](https://developers.google.com/identity/gsi/web/guide
 Place the `script` tag in the `<head>` of your site, next to the script tag that
 loads `flutter.js`, so the browser can downloaded both in parallel:
 
-<?code-excerpt "../../web/index-with-script-tag.html (script-tag)"?>
+<?code-excerpt "example/web/index-with-script-tag.html (script-tag)"?>
 ```html
 <head>
 <!-- ··· -->
@@ -46,7 +44,7 @@ An alternative way, that downloads the SDK on demand, is to use the
 **`loadWebSdk`** function provided by the library. A simple location to embed
 this in a Flutter Web only app can be the `main.dart`:
 
-<?code-excerpt "main.dart (use-loader)"?>
+<?code-excerpt "example/lib/main.dart (use-loader)"?>
 ```dart
 import 'package:google_identity_services_web/loader.dart' as gis;
 // ···
@@ -65,9 +63,29 @@ behind a [conditional import/export](https://dart.dev/guides/libraries/create-li
 
 Once the SDK has been loaded, it can be used by importing the correct library:
 
-* `import 'package:google_identity_services/id.dart' as id;` for Authentication
-* `import 'package:google_identity_services/oauth2.dart' as oauth2;` for
-  Authorization.
+* `import 'package:google_identity_services/id.dart';` for Authentication.
+  * This will expose an `id` JSObject that binds to `google.accounts.id`.
+* `import 'package:google_identity_services/oauth2.dart';` for Authorization.
+  * This will expose an `oauth2` JSObject that binds to `google.accounts.oauth2`.
+
+### Troubleshooting
+
+Watch the browser's development tools JS console while using this package.
+Information about errors during initialization and use of the library will be
+displayed there.
+
+Some common issues identified so far:
+
+#### The given origin is not allowed for the given client ID
+
+> When you perform local tests or development, **you must add both**
+> `http://localhost` and `http://localhost:<port_number>` to the
+> **Authorized JavaScript origins** box.
+> The [Referrer-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy)
+> response header must also be set to `no-referrer-when-downgrade` when using
+> http and localhost.
+
+* Read more: [Sign In with Google for Web - Setup - Get your Google API client ID](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#get_your_google_api_client_id).
 
 ## Browser compatibility
 

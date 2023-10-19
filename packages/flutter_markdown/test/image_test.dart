@@ -4,6 +4,7 @@
 
 import 'dart:io' as io;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -90,7 +91,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'local files should be files',
+      'local files should be files on non-web',
       (WidgetTester tester) async {
         const String data = '![alt](http.png)';
         await tester.pumpWidget(
@@ -105,6 +106,26 @@ void defineTests() {
 
         expect(image.image is FileImage, isTrue);
       },
+      skip: kIsWeb,
+    );
+
+    testWidgets(
+      'local files should be network on web',
+      (WidgetTester tester) async {
+        const String data = '![alt](http.png)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        final Image image =
+            widgets.firstWhere((Widget widget) => widget is Image) as Image;
+
+        expect(image.image is NetworkImage, isTrue);
+      },
+      skip: !kIsWeb,
     );
 
     testWidgets(
@@ -150,6 +171,7 @@ void defineTests() {
             matchesGoldenFile(
                 'assets/images/golden/image_test/resource_asset_logo.png'));
       },
+      skip: kIsWeb, // Goldens are platform-specific.
     );
 
     testWidgets(
@@ -168,6 +190,7 @@ void defineTests() {
         expect(image.width, 50);
         expect(image.height, 50);
       },
+      skip: kIsWeb,
     );
 
     testWidgets(
@@ -360,6 +383,7 @@ void defineTests() {
             matchesGoldenFile(
                 'assets/images/golden/image_test/custom_builder_asset_logo.png'));
       },
+      skip: kIsWeb, // Goldens are platform-specific.
     );
   });
 }

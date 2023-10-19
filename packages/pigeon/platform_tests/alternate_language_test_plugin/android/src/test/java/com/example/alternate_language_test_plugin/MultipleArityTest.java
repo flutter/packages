@@ -22,11 +22,18 @@ public class MultipleArityTest {
               ByteBuffer message = invocation.getArgument(1);
               BinaryMessenger.BinaryReply reply = invocation.getArgument(2);
               message.position(0);
+              @SuppressWarnings("unchecked")
               ArrayList<Object> args =
                   (ArrayList<Object>) MultipleArityFlutterApi.getCodec().decodeMessage(message);
               Long arg0 = (Long) args.get(0);
               Long arg1 = (Long) args.get(1);
-              ByteBuffer replyData = MultipleArityFlutterApi.getCodec().encodeMessage(arg0 - arg1);
+
+              Long output = arg0 - arg1;
+
+              ArrayList<Object> wrapped = new ArrayList<Object>();
+              wrapped.add(0, output);
+
+              ByteBuffer replyData = MultipleArityFlutterApi.getCodec().encodeMessage(wrapped);
               replyData.position(0);
               reply.reply(replyData);
               return null;
@@ -38,8 +45,14 @@ public class MultipleArityTest {
     api.subtract(
         30L,
         20L,
-        (Long result) -> {
-          assertEquals(10L, (long) result);
+        new MultipleArity.Result<Long>() {
+          public void success(Long result) {
+            assertEquals(10L, (long) result);
+          }
+
+          public void error(Throwable error) {
+            assertEquals(error, null);
+          }
         });
   }
 }

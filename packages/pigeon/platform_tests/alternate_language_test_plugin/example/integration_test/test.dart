@@ -12,7 +12,7 @@ TargetGenerator _getTarget() {
   if (Platform.isAndroid) {
     return TargetGenerator.java;
   }
-  if (Platform.isIOS) {
+  if (Platform.isIOS || Platform.isMacOS) {
     return TargetGenerator.objc;
   }
   throw UnimplementedError('Unsupported target.');

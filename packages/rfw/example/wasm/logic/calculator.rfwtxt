@@ -25,7 +25,12 @@ widget CalculatorPad = Column(
   children: [
     Row(
       children: [
+        // The "#docregion" pragma here allows us to inline this as an example
+        // in the "rfw" package's README.md file. It is unrelated to what this
+        // example is otherwise trying to show and can be disregarded.
+        // #docregion button7
         CalculatorButton(label: "7", onPressed: event "digit" { arguments: [7] }),
+        // #enddocregion button7
         CalculatorButton(label: "8", onPressed: event "digit" { arguments: [8] }),
         CalculatorButton(label: "9", onPressed: event "digit" { arguments: [9] }),
         SizedBox(width: 116.0, height: 116.0),
@@ -58,6 +63,7 @@ widget CalculatorPad = Column(
   ],
 );
 
+// #docregion CalculatorButton
 widget CalculatorButton = Padding(
   padding: [8.0],
   child: SizedBox(
@@ -69,7 +75,9 @@ widget CalculatorButton = Padding(
     ),
   ),
 );
+// #enddocregion CalculatorButton
 
+// #docregion Button
 widget Button { down: false } = GestureDetector(
   onTap: args.onPressed,
   onTapDown: set state.down = true,
@@ -110,6 +118,7 @@ widget Button { down: false } = GestureDetector(
     ),
   ),
 );
+// #enddocregion Button
 
 widget Display = Container(
   height: 80.0,

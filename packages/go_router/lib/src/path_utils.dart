@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'route.dart';
+
 final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 
 /// Converts a [pattern] such as `/user/:id` into [RegExp].
@@ -45,44 +47,6 @@ RegExp patternToRegExp(String pattern, List<String> parameters) {
     buffer.write(r'(?=/|$)');
   }
   return RegExp(buffer.toString(), caseSensitive: false);
-}
-
-/// Removes string from the end of the path that matches a `pattern`.
-///
-/// The path parameters can be specified by prefixing them with `:`. The
-/// `parameters` are used for storing path parameter names.
-///
-///
-/// For example:
-///
-///  `path` = `/user/123/book/345`
-///  `pattern` = `book/:id`
-///
-/// The return value = `/user/123`.
-String removePatternFromPath(String pattern, String path) {
-  final StringBuffer buffer = StringBuffer();
-  int start = 0;
-  for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
-    if (match.start > start) {
-      buffer.write(RegExp.escape(pattern.substring(start, match.start)));
-    }
-    final String? optionalPattern = match[2];
-    final String regex =
-        optionalPattern != null ? _escapeGroup(optionalPattern) : '[^/]+';
-    buffer.write(regex);
-    start = match.end;
-  }
-
-  if (start < pattern.length) {
-    buffer.write(RegExp.escape(pattern.substring(start)));
-  }
-
-  if (!pattern.endsWith('/')) {
-    buffer.write(r'(?=/|$)');
-  }
-  buffer.write(r'$');
-  final RegExp regexp = RegExp(buffer.toString(), caseSensitive: false);
-  return path.replaceFirst(regexp, '');
 }
 
 String _escapeGroup(String group, [String? name]) {
@@ -172,4 +136,25 @@ String canonicalUri(String loc) {
   canon = canon.replaceFirst('/?', '?', 1);
 
   return canon;
+}
+
+/// Builds an absolute path for the provided route.
+String? fullPathForRoute(
+    RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
+  for (final RouteBase route in routes) {
+    final String fullPath = (route is GoRoute)
+        ? concatenatePaths(parentFullpath, route.path)
+        : parentFullpath;
+
+    if (route == targetRoute) {
+      return fullPath;
+    } else {
+      final String? subRoutePath =
+          fullPathForRoute(targetRoute, fullPath, route.routes);
+      if (subRoutePath != null) {
+        return subRoutePath;
+      }
+    }
+  }
+  return null;
 }

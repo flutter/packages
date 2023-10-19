@@ -20,7 +20,7 @@ internal class EnumTest: TestCase() {
         val binaryMessenger = mockk<BinaryMessenger>()
         val api = mockk<EnumApi2Host>()
 
-        val channelName = "dev.flutter.pigeon.EnumApi2Host.echo"
+        val channelName = "dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo"
         val input = DataWithEnum(EnumState.SUCCESS)
 
         val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
@@ -36,11 +36,11 @@ internal class EnumTest: TestCase() {
         handlerSlot.captured.onMessage(message) {
             it?.rewind()
             @Suppress("UNCHECKED_CAST")
-            val wrapped = codec.decodeMessage(it) as HashMap<String, Any>?
+            val wrapped = codec.decodeMessage(it) as List<Any>?
             assertNotNull(wrapped)
             wrapped?.let {
-                assertTrue(wrapped.containsKey("result"))
-                assertEquals(input, wrapped["result"])
+                assertNotNull(wrapped[0])
+                assertEquals(input, wrapped[0])
             }
         }
 
@@ -61,7 +61,7 @@ internal class EnumTest: TestCase() {
             val reply = arg<BinaryMessenger.BinaryReply>(2)
             message.position(0)
             val args = codec.decodeMessage(message) as ArrayList<*>
-            val replyData = codec.encodeMessage(args[0])
+            val replyData = codec.encodeMessage(args)
             replyData?.position(0)
             reply.reply(replyData)
         }
@@ -69,7 +69,7 @@ internal class EnumTest: TestCase() {
         var didCall = false
         api.echo(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)

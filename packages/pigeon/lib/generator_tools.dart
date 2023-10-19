@@ -6,10 +6,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:mirrors';
 
+import 'package:yaml/yaml.dart' as yaml;
+
 import 'ast.dart';
 
-/// The current version of pigeon. This must match the version in pubspec.yaml.
-const String pigeonVersion = '4.2.10';
+/// The current version of pigeon.
+///
+/// This must match the version in pubspec.yaml.
+const String pigeonVersion = '12.0.1';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -72,24 +76,28 @@ class Indent {
     for (int i = 0; i < lines.length; ++i) {
       final String line = lines[i];
       if (i == 0 && !leadingSpace) {
-        addln(line.replaceAll('\t', tab));
-      } else if (i == lines.length - 1 && !trailingNewline) {
+        add(line.replaceAll('\t', tab));
+      } else if (line.isNotEmpty) {
         write(line.replaceAll('\t', tab));
-      } else {
-        writeln(line.replaceAll('\t', tab));
+      }
+      if (trailingNewline || i < lines.length - 1) {
+        addln('');
       }
     }
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented.
-  void scoped(
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented.
+  void addScoped(
     String? begin,
     String? end,
     Function func, {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
     if (begin != null) {
       _sink.write(begin + newline);
     }
@@ -102,19 +110,22 @@ class Indent {
     }
   }
 
-  /// Like `scoped` but writes the current indentation level.
+  /// Like `addScoped` but writes the current indentation level.
   void writeScoped(
     String? begin,
     String end,
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    scoped(str() + (begin ?? ''), end, func,
+    assert(begin != '' || end != '',
+        'Use nest for indentation without any decoration');
+    addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
 
-  /// Scoped increase of the ident level.  For the execution of [func] the
-  /// indentation will be incremented by the given amount.
+  /// Scoped increase of the indent level.
+  ///
+  /// For the execution of [func] the indentation will be incremented by the given amount.
   void nest(int count, Function func) {
     inc(count);
     func(); // ignore: avoid_dynamic_calls
@@ -144,11 +155,18 @@ class Indent {
   void add(String text) {
     _sink.write(text);
   }
+
+  /// Adds [lines] number of newlines.
+  void newln([int lines = 1]) {
+    for (; lines > 0; lines--) {
+      _sink.write(newline);
+    }
+  }
 }
 
 /// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func) {
-  return 'dev.flutter.pigeon.${api.name}.${func.name}';
+String makeChannelName(Api api, Method func, String dartPackageName) {
+  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
 }
 
 /// Represents the mapping of a Dart datatype to a Host datatype.
@@ -158,6 +176,7 @@ class HostDatatype {
     required this.datatype,
     required this.isBuiltin,
     required this.isNullable,
+    required this.isEnum,
   });
 
   /// The [String] that can be printed into host code to represent the type.
@@ -168,6 +187,9 @@ class HostDatatype {
 
   /// `true` if the type corresponds to a nullable Dart datatype.
   final bool isNullable;
+
+  /// `true if the type is a custom enum.
+  final bool isEnum;
 }
 
 /// Calculates the [HostDatatype] for the provided [NamedType].
@@ -208,28 +230,54 @@ HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
           ? customResolver(type.baseName)
           : type.baseName;
       return HostDatatype(
-          datatype: customName, isBuiltin: false, isNullable: type.isNullable);
+        datatype: customName,
+        isBuiltin: false,
+        isNullable: type.isNullable,
+        isEnum: false,
+      );
     } else if (enums.map((Enum x) => x.name).contains(type.baseName)) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
       return HostDatatype(
-          datatype: customName, isBuiltin: false, isNullable: type.isNullable);
+        datatype: customName,
+        isBuiltin: false,
+        isNullable: type.isNullable,
+        isEnum: true,
+      );
     } else {
       throw Exception(
           'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"');
     }
   } else {
     return HostDatatype(
-        datatype: datatype, isBuiltin: true, isNullable: type.isNullable);
+      datatype: datatype,
+      isBuiltin: true,
+      isNullable: type.isNullable,
+      isEnum: false,
+    );
   }
 }
 
+/// Whether or not to include the version in the generated warning.
+///
+/// This is a global rather than an option because it's only intended to be
+/// used internally, to avoid churn in Pigeon test files.
+bool includeVersionInGeneratedWarning = true;
+
 /// Warning printed at the top of all generated code.
+@Deprecated('Use getGeneratedCodeWarning() instead')
 const String generatedCodeWarning =
     'Autogenerated from Pigeon (v$pigeonVersion), do not edit directly.';
 
-/// String to be printed after `generatedCodeWarning`.
+/// Warning printed at the top of all generated code.
+String getGeneratedCodeWarning() {
+  final String versionString =
+      includeVersionInGeneratedWarning ? ' (v$pigeonVersion)' : '';
+  return 'Autogenerated from Pigeon$versionString, do not edit directly.';
+}
+
+/// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
 /// Collection of keys used in dictionaries across generators.
@@ -263,9 +311,10 @@ void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   }
 }
 
-/// Recursively merges [modification] into [base].  In other words, whenever
-/// there is a conflict over the value of a key path, [modification]'s value for
-/// that key path is selected.
+/// Recursively merges [modification] into [base].
+///
+/// In other words, whenever there is a conflict over the value of a key path,
+/// [modification]'s value for that key path is selected.
 Map<String, Object> mergeMaps(
   Map<String, Object> base,
   Map<String, Object> modification,
@@ -490,4 +539,88 @@ void addDocumentationComments(
       '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
     );
   }
+}
+
+/// Returns an ordered list of fields to provide consistent serialization order.
+Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+  // This returns the fields in the order they are declared in the pigeon file.
+  return klass.fields;
+}
+
+/// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a
+/// parent directory and returns its path.
+String? _findPubspecPath(String dartFilePath) {
+  try {
+    Directory dir = File(dartFilePath).parent;
+    String? pubspecPath;
+    while (pubspecPath == null) {
+      if (dir.existsSync()) {
+        final Iterable<String> pubspecPaths = dir
+            .listSync()
+            .map((FileSystemEntity e) => e.path)
+            .where((String path) => path.endsWith('pubspec.yaml'));
+        if (pubspecPaths.isNotEmpty) {
+          pubspecPath = pubspecPaths.first;
+        } else {
+          dir = dir.parent;
+        }
+      } else {
+        break;
+      }
+    }
+    return pubspecPath;
+  } catch (ex) {
+    return null;
+  }
+}
+
+/// Given the path of a Dart file, [mainDartFile], the name of the package will
+/// be deduced by locating and parsing its associated pubspec.yaml.
+String? deducePackageName(String mainDartFile) {
+  final String? pubspecPath = _findPubspecPath(mainDartFile);
+  if (pubspecPath == null) {
+    return null;
+  }
+
+  try {
+    final String text = File(pubspecPath).readAsStringSync();
+    return (yaml.loadYaml(text) as Map<dynamic, dynamic>)['name'] as String?;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Enum to specify api type when generating code.
+enum ApiType {
+  /// Flutter api.
+  flutter,
+
+  /// Host api.
+  host,
+}
+
+/// Enum to specify which file will be generated for multi-file generators
+enum FileType {
+  /// header file.
+  header,
+
+  /// source file.
+  source,
+
+  /// file type is not applicable.
+  na,
+}
+
+/// Options for [Generator]s that have multiple output file types.
+///
+/// Specifies which file to write as well as wraps all language options.
+class OutputFileOptions<T> {
+  /// Constructor.
+  OutputFileOptions({required this.fileType, required this.languageOptions});
+
+  /// To specify which file type should be created.
+  FileType fileType;
+
+  /// Options for specified language across all file types.
+  T languageOptions;
 }

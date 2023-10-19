@@ -150,15 +150,15 @@ class BenchmarkServer {
         chrome ??= await whenChromeIsReady;
         if (request.requestedUri.path.endsWith('/profile-data')) {
           final Map<String, dynamic> profile =
-              json.decode(await request.readAsString());
-          final String? benchmarkName = profile['name'];
+              json.decode(await request.readAsString()) as Map<String, dynamic>;
+          final String? benchmarkName = profile['name'] as String?;
           if (benchmarkName != benchmarkIterator.current) {
             profileData.completeError(Exception(
               'Browser returned benchmark results from a wrong benchmark.\n'
               'Requested to run benchmark ${benchmarkIterator.current}, but '
               'got results for $benchmarkName.',
             ));
-            server.close();
+            unawaited(server.close());
           }
 
           // Trace data is null when the benchmark is not frame-based, such as RawRecorder.
@@ -186,8 +186,8 @@ class BenchmarkServer {
           return Response.ok('Stopped performance tracing');
         } else if (request.requestedUri.path.endsWith('/on-error')) {
           final Map<String, dynamic> errorDetails =
-              json.decode(await request.readAsString());
-          server.close();
+              json.decode(await request.readAsString()) as Map<String, dynamic>;
+          unawaited(server.close());
           // Keep the stack trace as a string. It's thrown in the browser, not this Dart VM.
           final String errorMessage =
               'Caught browser-side error: ${errorDetails['error']}\n${errorDetails['stackTrace']}';
@@ -278,17 +278,18 @@ class BenchmarkServer {
       final Map<String, List<BenchmarkScore>> results =
           <String, List<BenchmarkScore>>{};
       for (final Map<String, dynamic> profile in profiles) {
-        final String benchmarkName = profile['name'];
+        final String benchmarkName = profile['name'] as String;
         if (benchmarkName.isEmpty) {
           throw StateError('Benchmark name is empty');
         }
 
-        final List<String> scoreKeys = List<String>.from(profile['scoreKeys']);
-        if (scoreKeys == null || scoreKeys.isEmpty) {
+        final List<String> scoreKeys =
+            List<String>.from(profile['scoreKeys'] as Iterable<dynamic>);
+        if (scoreKeys.isEmpty) {
           throw StateError('No score keys in benchmark "$benchmarkName"');
         }
         for (final String scoreKey in scoreKeys) {
-          if (scoreKey == null || scoreKey.isEmpty) {
+          if (scoreKey.isEmpty) {
             throw StateError(
                 'Score key is empty in benchmark "$benchmarkName". '
                 'Received [${scoreKeys.join(', ')}]');
@@ -302,7 +303,7 @@ class BenchmarkServer {
           }
           scores.add(BenchmarkScore(
             metric: key,
-            value: profile[key],
+            value: profile[key] as num,
           ));
         }
         results[benchmarkName] = scores;
@@ -320,7 +321,7 @@ class BenchmarkServer {
         );
         await chrome?.whenExits;
       }
-      server.close();
+      unawaited(server.close());
     }
   }
 }

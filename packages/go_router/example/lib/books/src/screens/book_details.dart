@@ -13,9 +13,9 @@ import 'author_details.dart';
 class BookDetailsScreen extends StatelessWidget {
   /// Creates a [BookDetailsScreen].
   const BookDetailsScreen({
-    Key? key,
+    super.key,
     this.book,
-  }) : super(key: key);
+  });
 
   /// The book to be displayed.
   final Book? book;

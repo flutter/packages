@@ -39,10 +39,7 @@ class ScrollRecorder extends AppRecorder {
   @override
   Future<void> automate() async {
     final ScrollableState scrollable =
-        // TODO(cyanglaz): Fix the unnecessary non null assertion when https://github.com/flutter/flutter/commit/37b72342b0ce86fbfc238a9d43e524608b89af3a is on stable,
-        // https://github.com/flutter/flutter/issues/114434
-        //ignore: unnecessary_non_null_assertion
-        Scrollable.of(find.byKey(textKey).evaluate().single)!;
+        Scrollable.of(find.byKey(textKey).evaluate().single);
     await scrollable.position.animateTo(
       30000,
       curve: Curves.linear,

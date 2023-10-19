@@ -32,6 +32,7 @@ class Method extends Node {
     this.isAsynchronous = false,
     this.offset,
     this.objcSelector = '',
+    this.swiftFunction = '',
     this.taskQueueType = TaskQueueType.serial,
     this.documentationComments = const <String>[],
   });
@@ -54,10 +55,13 @@ class Method extends Node {
   /// An override for the generated objc selector (ex. "divideNumber:by:").
   String objcSelector;
 
+  /// An override for the generated swift function signature (ex. "divideNumber(_:by:)").
+  String swiftFunction;
+
   /// Specifies how handlers are dispatched with respect to threading.
   TaskQueueType taskQueueType;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -68,7 +72,9 @@ class Method extends Node {
   String toString() {
     final String objcSelectorStr =
         objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
-    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr documentationComments:$documentationComments)';
+    final String swiftFunctionStr =
+        swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
+    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
 
@@ -95,7 +101,7 @@ class Api extends Node {
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -188,7 +194,7 @@ class NamedType extends Node {
   /// The offset in the source file where the [NamedType] appears.
   int? offset;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -216,7 +222,7 @@ class Class extends Node {
   /// All the fields contained in the class.
   List<NamedType> fields;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -242,9 +248,9 @@ class Enum extends Node {
   String name;
 
   /// All of the members of the enum.
-  List<String> members;
+  List<EnumMember> members;
 
-  /// List of documentation comments, seperated by line.
+  /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
@@ -254,6 +260,30 @@ class Enum extends Node {
   @override
   String toString() {
     return '(Enum name:$name members:$members documentationComments:$documentationComments)';
+  }
+}
+
+/// Represents a Enum member.
+class EnumMember extends Node {
+  /// Parametric constructor for [EnumMember].
+  EnumMember({
+    required this.name,
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the enum member.
+  final String name;
+
+  /// List of documentation comments, separated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  final List<String> documentationComments;
+
+  @override
+  String toString() {
+    return '(EnumMember name:$name documentationComments:$documentationComments)';
   }
 }
 

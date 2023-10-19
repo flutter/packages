@@ -4404,7 +4404,7 @@ void defineTests() {
         //
         // Test for rule 17 are not included since markdown package is not
         // following the rule.
-      });
+      }, skip: 'No Rule 17 tests implemented');
     },
   );
 }

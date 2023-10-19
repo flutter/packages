@@ -1933,7 +1933,7 @@ class __RemoveOpenContainerExampleState
 }
 
 class DummyStatefulWidget extends StatefulWidget {
-  const DummyStatefulWidget({Key? key}) : super(key: key);
+  const DummyStatefulWidget({super.key});
 
   @override
   State<StatefulWidget> createState() => DummyState();
