@@ -29,6 +29,18 @@ platform_properties:
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
+  linux_android_legacy:
+    properties:
+      os: Ubuntu
+      cores: "8"
+      device_type: none
+      dependencies: >-
+        [
+          {"dependency": "android_sdk", "version": "version:33v6"},
+          {"dependency": "open_jdk", "version": "version:17"},
+          {"dependency": "curl", "version": "version:7.64.0"},
+          {"dependency": "android_virtual_device", "version": "22"}
+        ]
   linux_desktop:
     properties:
       os: Ubuntu
@@ -529,7 +541,7 @@ targets:
           {"dependency": "android_virtual_device", "version": "33"}
         ]
 
-  - name: Linux_android android_platform_tests_legacy_api_shard_1 master
+  - name: linux_android_legacy android_platform_tests_legacy_api_shard_1 master
     recipe: packages/packages
     timeout: 60
     bringup: true # New target
@@ -538,12 +550,8 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 0 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "22"}
-        ]
 
-  - name: Linux_android android_platform_tests_legacy_api_shard_2 master
+  - name: linux_android_legacy android_platform_tests_legacy_api_shard_2 master
     recipe: packages/packages
     timeout: 60
     bringup: true # New target
@@ -552,12 +560,8 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 1 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "22"}
-        ]
 
-  - name: Linux_android android_platform_tests_legacy_api_shard_3 master
+  - name: linux_android_legacy android_platform_tests_legacy_api_shard_3 master
     recipe: packages/packages
     timeout: 60
     bringup: true # New target
@@ -566,12 +570,8 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 2 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "22"}
-        ]
 
-  - name: Linux_android android_platform_tests_legacy_api_shard_4 master
+  - name: linux_android_legacy android_platform_tests_legacy_api_shard_4 master
     recipe: packages/packages
     timeout: 60
     bringup: true # New target
@@ -580,12 +580,8 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 3 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "22"}
-        ]
 
-  - name: Linux_android android_platform_tests_legacy_api_shard_5 master
+  - name: linux_android_legacy android_platform_tests_legacy_api_shard_5 master
     recipe: packages/packages
     timeout: 60
     bringup: true # New target
@@ -594,12 +590,8 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 4 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "22"}
-        ]
 
-  - name: Linux_android android_platform_tests_legacy_api_shard_6 master
+  - name: linux_android_legacy android_platform_tests_legacy_api_shard_6 master
     recipe: packages/packages
     timeout: 60
     bringup: true # New target
@@ -608,10 +600,6 @@ targets:
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 5 --shardCount 6"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "22"}
-        ]
 
   # Device versions of Android integration tests, run via FTL.
   # TODO(stuartmorgan): Revisit whether physical device tests are redundant once
