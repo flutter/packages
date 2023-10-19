@@ -448,7 +448,7 @@ abstract class PackageCommand extends Command<void> {
       print('--$_filterPackagesArg is excluding packages that are not '
           'included in: ${sortedList.join(',')}');
     }
-    // Utility to return true if a package that could be identified by any of
+    // Returns true if a package that could be identified by any of
     // `possibleNames` should be excluded.
     bool isExcluded(Set<String> possibleNames) {
       if (excludedPackageNames.intersection(possibleNames).isNotEmpty) {
