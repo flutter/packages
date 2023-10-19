@@ -1,3 +1,7 @@
+## 12.0.1
+
+* [swift] Adds protocol for Flutter APIs.
+
 ## 12.0.0
 
 * Adds error handling on Flutter API methods.
