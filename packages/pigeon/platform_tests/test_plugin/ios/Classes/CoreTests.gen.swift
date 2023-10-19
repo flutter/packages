@@ -2361,6 +2361,7 @@ class FlutterSmallApiCodec: FlutterStandardMessageCodec {
 
 protocol FlutterSmallApiProtocol {
   func echo(_ msgArg: TestMessage, completion: @escaping (Result<TestMessage, FlutterError>) -> Void) 
+  func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) 
 }
 /// A simple API called in some unit tests.
 ///
@@ -2389,6 +2390,26 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
         completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! TestMessage
+        completion(.success(result))
+      }
+    }
+  }
+  func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aStringArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        return
+      }
+      if (listResponse.count > 1) {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)));
+      } else if (listResponse[0] == nil) {
+        completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! String
         completion(.success(result))
       }
     }
