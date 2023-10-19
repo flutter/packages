@@ -54,6 +54,7 @@ class BenchmarkServer {
     required this.benchmarkServerPort,
     required this.chromeDebugPort,
     required this.headless,
+    required this.treeShakeIcons,
   });
 
   final ProcessManager _processManager = const LocalProcessManager();
@@ -84,6 +85,11 @@ class BenchmarkServer {
   /// This is useful in environments (e.g. CI) that doesn't have a display.
   final bool headless;
 
+  /// Whether to tree shake icons during the build.
+  /// 
+  /// When false, '--no-tree-shake-icons' will be passed as a build argument.
+  final bool treeShakeIcons;
+
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {
     // Reduce logging level. Otherwise, package:webkit_inspection_protocol is way too spammy.
@@ -101,6 +107,7 @@ class BenchmarkServer {
         'web',
         '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
         if (useCanvasKit) '--dart-define=FLUTTER_WEB_USE_SKIA=true',
+        if (!treeShakeIcons) '--no-tree-shake-icons',
         '--profile',
         '-t',
         entryPoint,
