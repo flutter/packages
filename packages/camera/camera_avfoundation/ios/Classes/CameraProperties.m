@@ -151,11 +151,11 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
 
 #pragma mark - video codec
 
-FLTFileFormat FLTGetFileFormatFromString(NSString *fileFormatString) {
+FCPFileFormat FLTGetFileFormatFromString(NSString *fileFormatString) {
   if ([fileFormatString isEqualToString:@"jpg"]) {
-    return FLTFileFormatJPEG;
+    return FCPFileFormatJPEG;
   } else if ([fileFormatString isEqualToString:@"heif"]) {
-    return FLTFileFormatHEIF;
+    return FCPFileFormatHEIF;
   } else {
     NSError *error = [NSError
         errorWithDomain:NSCocoaErrorDomain

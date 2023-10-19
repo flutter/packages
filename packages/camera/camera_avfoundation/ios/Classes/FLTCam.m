@@ -144,7 +144,7 @@ NSString *const errorMethod = @"error";
   _deviceOrientation = orientation;
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
-  _fileFormat = FLTFileFormatJPEG;
+  _fileFormat = FCPFileFormatJPEG;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -219,7 +219,7 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
-- (void)setFileFormat:(FLTFileFormat)fileFormat {
+- (void)setFileFormat:(FCPFileFormat)fileFormat {
   _fileFormat = fileFormat;
 }
 
@@ -264,7 +264,7 @@ NSString *const errorMethod = @"error";
     [settings setHighResolutionPhotoEnabled:YES];
   }
 
-  if (_fileFormat == FLTFileFormatHEIF) {
+  if (_fileFormat == FCPFileFormatHEIF) {
     if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
       settings = [AVCapturePhotoSettings
           photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];

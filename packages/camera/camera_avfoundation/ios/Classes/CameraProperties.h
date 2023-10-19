@@ -130,9 +130,9 @@ extern OSType FLTGetVideoFormatFromString(NSString *videoFormatString);
 /**
  * Represents image format. Mirrors FileFormat in camera.dart.
  */
-typedef NS_ENUM(NSInteger, FLTFileFormat) {
-  FLTFileFormatJPEG,
-  FLTFileFormatHEIF,
+typedef NS_ENUM(NSInteger, FCPFileFormat) {
+  FCPFileFormatJPEG,
+  FCPFileFormatHEIF,
 };
 
 #pragma mark - image extension
@@ -140,6 +140,6 @@ typedef NS_ENUM(NSInteger, FLTFileFormat) {
 /**
  * Gets a string representation of FileFormat.
  */
-extern FLTFileFormat FLTGetFileFormatFromString(NSString *fileFormatString);
+extern FCPFileFormat FLTGetFileFormatFromString(NSString *fileFormatString);
 
 NS_ASSUME_NONNULL_END
