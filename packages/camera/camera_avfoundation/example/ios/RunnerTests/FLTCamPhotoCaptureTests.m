@@ -103,6 +103,7 @@
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
   [cam setFileFormat:FCPFileFormatHEIF];
+
   
   // Set photo settings to HEVC
   AVCapturePhotoSettings *settings =
@@ -140,9 +141,9 @@
 }
 
 - (void)testCaptureToFile_mustSetExtensionToJpegIfAvailablePhotoCodecTypesDoesNotContainHEVC {
-  XCTestExpectation *expectation =
-      [self expectationWithDescription:
-                @"Test must set extension to jpeg if availablePhotoCodecTypes does not contain HEVC."];
+  XCTestExpectation *expectation = [self
+      expectationWithDescription:
+           @"Test must set extension to jpeg if availablePhotoCodecTypes does not contain HEVC."];
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
@@ -174,7 +175,7 @@
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
     [cam captureToFile:mockResult];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
   });
+  [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 @end
