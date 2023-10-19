@@ -331,7 +331,7 @@ void main() {
   );
 
   testWidgets(
-    'Capture image with outputFormat',
+    'Capture image with fileFormat',
     (WidgetTester tester) async {
       final List<CameraDescription> cameras = await availableCameras();
       if (cameras.isEmpty) {
@@ -341,7 +341,7 @@ void main() {
         final CameraController controller =
             CameraController(cameraDescription, ResolutionPreset.low);
 
-        await controller.setOutputFormat(OutputFormat.heif);
+        await controller.setFileFormat(FileFormat.heif);
         await controller.initialize();
 
         final XFile file = await controller.takePicture();

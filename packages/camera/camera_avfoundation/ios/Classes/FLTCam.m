@@ -144,7 +144,7 @@ NSString *const errorMethod = @"error";
   _deviceOrientation = orientation;
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
-  _outputFormat = OutputFormatJPEG;
+  _fileFormat = FLTFileFormatJPEG;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -219,8 +219,8 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
-- (void)setOutputFormat:(OutputFormat)outputFormat {
-  _outputFormat = outputFormat;
+- (void)setFileFormat:(FLTFileFormat)fileFormat {
+  _fileFormat = fileFormat;
 }
 
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation {
@@ -264,13 +264,11 @@ NSString *const errorMethod = @"error";
     [settings setHighResolutionPhotoEnabled:YES];
   }
 
-  if (_outputFormat == OutputFormatHEIF) {
-    if (@available(iOS 11.0, *)) {
-      if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
-        settings = [AVCapturePhotoSettings
-            photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
-        extension = @"heif";
-      }
+  if (_fileFormat == FLTFileFormatHEIF) {
+    if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
+      settings = [AVCapturePhotoSettings
+          photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+      extension = @"heif";
     }
   }
 

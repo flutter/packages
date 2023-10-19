@@ -128,18 +128,18 @@ extern FLTResolutionPreset FLTGetFLTResolutionPresetForString(NSString *preset);
 extern OSType FLTGetVideoFormatFromString(NSString *videoFormatString);
 
 /**
- * Represents image format. Mirrors OutputFormat in camera.dart.
+ * Represents image format. Mirrors FileFormat in camera.dart.
  */
-typedef NS_ENUM(NSInteger, OutputFormat) {
-  OutputFormatJPEG,
-  OutputFormatHEIF,
+typedef NS_ENUM(NSInteger, FileFormat) {
+  FLTFileFormatJPEG,
+  FLTFileFormatHEIF,
 };
 
 #pragma mark - image extension
 
 /**
- * Gets a string representation of OutputFormat.
+ * Gets a string representation of FileFormat.
  */
-extern OutputFormat FLTGetOutputFormatFromString(NSString *outputFormatString);
+extern FLTFileFormat FLTGetFileFormatFromString(NSString *fileFormatString);
 
 NS_ASSUME_NONNULL_END

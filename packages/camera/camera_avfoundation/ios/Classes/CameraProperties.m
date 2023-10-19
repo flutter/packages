@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #import "CameraProperties.h"
-#import <FLTCam.h>
 
 #pragma mark - flash mode
 
@@ -152,18 +151,18 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
 
 #pragma mark - video codec
 
-OutputFormat FLTGetOutputFormatFromString(NSString *outputFormatString) {
-  if ([outputFormatString isEqualToString:@"jpg"]) {
-    return OutputFormatJPEG;
-  } else if ([outputFormatString isEqualToString:@"heif"]) {
-    return OutputFormatHEIF;
+FLTFileFormat FLTGetFileFormatFromString(NSString *fileFormatString) {
+  if ([fileFormatString isEqualToString:@"jpg"]) {
+    return FLTFileFormatJPEG;
+  } else if ([fileFormatString isEqualToString:@"heif"]) {
+    return FLTFileFormatHEIF;
   } else {
     NSError *error = [NSError
         errorWithDomain:NSCocoaErrorDomain
                    code:NSURLErrorUnknown
                userInfo:@{
                  NSLocalizedDescriptionKey :
-                     [NSString stringWithFormat:@"Unknown image extension %@", outputFormatString]
+                     [NSString stringWithFormat:@"Unknown image extension %@", fileFormatString]
                }];
     @throw error;
   }

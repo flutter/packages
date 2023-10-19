@@ -1402,7 +1402,7 @@ void main() {
           )));
     });
 
-    test('setOutputFormat() calls $CameraPlatform', () async {
+    test('setFileFormat() calls $CameraPlatform', () async {
       final CameraController cameraController = CameraController(
           const CameraDescription(
               name: 'cam',
@@ -1411,14 +1411,14 @@ void main() {
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      await cameraController.setOutputFormat(OutputFormat.jpeg);
+      await cameraController.setFileFormat(FileFormat.jpeg);
 
       verify(CameraPlatform.instance
-              .setOutputFormat(cameraController.cameraId, OutputFormat.jpeg))
+              .setFileFormat(cameraController.cameraId, FileFormat.jpeg))
           .called(1);
     });
 
-    test('setOutputFormat() throws $CameraException on $PlatformException',
+    test('setFileFormat() throws $CameraException on $PlatformException',
         () async {
       final CameraController cameraController = CameraController(
           const CameraDescription(
@@ -1429,7 +1429,7 @@ void main() {
       await cameraController.initialize();
 
       when(CameraPlatform.instance
-              .setOutputFormat(cameraController.cameraId, OutputFormat.jpeg))
+              .setFileFormat(cameraController.cameraId, FileFormat.jpeg))
           .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
@@ -1438,7 +1438,7 @@ void main() {
       );
 
       expect(
-          cameraController.setOutputFormat(OutputFormat.jpeg),
+          cameraController.setFileFormat(FileFormat.jpeg),
           throwsA(isA<CameraException>().having(
             (CameraException error) => error.description,
             'TEST_ERROR',
@@ -1600,9 +1600,9 @@ class MockCameraPlatform extends Mock
       ) as Future<double>;
 
   @override
-  Future<void> setOutputFormat(int cameraId, OutputFormat format) async =>
+  Future<void> setFileFormat(int cameraId, FileFormat format) async =>
       super.noSuchMethod(
-          Invocation.method(#setOutputFormat, <Object?>[cameraId, format]));
+          Invocation.method(#setFileFormat, <Object?>[cameraId, format]));
 }
 
 class MockCameraDescription extends CameraDescription {

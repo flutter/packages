@@ -237,7 +237,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     this.resolutionPreset, {
     this.enableAudio = true,
     this.imageFormatGroup,
-    this.outputFormat,
+    this.fileFormat,
   }) : super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
@@ -259,12 +259,12 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// When null the imageFormat will fallback to the platforms default.
   final ImageFormatGroup? imageFormatGroup;
 
-  /// The [OutputFormat] describes the compression of the image.
+  /// The [FileFormat] describes the compression of the image.
   ///
-  /// When null the outputFormat will fallback to the platforms default.
+  /// When null the fileFormat will fallback to the platforms default.
   ///
   /// Only supported on iOS for now.
-  final OutputFormat? outputFormat;
+  final FileFormat? fileFormat;
 
   /// The id of a camera that hasn't been initialized.
   @visibleForTesting
@@ -855,9 +855,9 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Sets the output format for the camera.
   ///
   /// If [format] is omitted, the default output format is used.
-  Future<void> setOutputFormat(OutputFormat format) async {
+  Future<void> setFileFormat(FileFormat format) async {
     try {
-      await CameraPlatform.instance.setOutputFormat(_cameraId, format);
+      await CameraPlatform.instance.setFileFormat(_cameraId, format);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

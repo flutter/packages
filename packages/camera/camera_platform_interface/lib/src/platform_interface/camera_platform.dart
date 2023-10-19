@@ -286,7 +286,7 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
   /// Sets the output format for the selected camera.
-  Future<void> setOutputFormat(int cameraId, OutputFormat format) {
-    throw UnimplementedError('setOutputFormat() is not implemented.');
+  Future<void> setFileFormat(int cameraId, FileFormat format) {
+    throw UnimplementedError('setFileFormat() is not implemented.');
   }
 }

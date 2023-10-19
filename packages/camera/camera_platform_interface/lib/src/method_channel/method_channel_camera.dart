@@ -516,12 +516,12 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setOutputFormat(int cameraId, OutputFormat format) {
+  Future<void> setFileFormat(int cameraId, FileFormat format) {
     return _channel.invokeMethod<void>(
-      'setOutputFormat',
+      'setFileFormat',
       <String, dynamic>{
         'cameraId': cameraId,
-        'outputFormat': format.name(),
+        'fileFormat': format.name(),
       },
     );
   }

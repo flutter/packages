@@ -6,10 +6,10 @@ import 'package:camera_platform_interface/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('$OutputFormat tests', () {
+  group('$FileFormat tests', () {
     test('ImageFormat extension returns correct values', () {
-      expect(OutputFormat.jpeg.name(), 'jpeg');
-      expect(OutputFormat.heif.name(), 'heif');
+      expect(FileFormat.jpeg.name(), 'jpeg');
+      expect(FileFormat.heif.name(), 'heif');
     });
   });
 }

@@ -256,9 +256,9 @@
       [_camera resumePreviewWithResult:result];
     } else if ([@"setDescriptionWhileRecording" isEqualToString:call.method]) {
       [_camera setDescriptionWhileRecording:(call.arguments[@"cameraName"]) result:result];
-    } else if ([@"setOutputFormat" isEqualToString:call.method]) {
-      NSString *outputFormat = ((NSString *)argsMap[@"outputFormat"]);
-      [_camera setOutputFormat:FLTGetOutputFormatFromString(outputFormat)];
+    } else if ([@"setFileFormat" isEqualToString:call.method]) {
+      NSString *fileFormat = call.arguments[@"fileFormat"];
+      [_camera setFileFormat:FLTGetFileFormatFromString(fileFormat)];
     } else {
       [result sendNotImplemented];
     }

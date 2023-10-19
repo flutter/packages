@@ -320,7 +320,7 @@ void main() {
     expect(await completer.future, isNotNull);
   });
 
-  // Test outputFormat is respected when taking a picture.
+  // Test fileFormat is respected when taking a picture.
   testWidgets('Capture specific image output formats',
       (WidgetTester tester) async {
     final List<CameraDescription> cameras =
@@ -329,14 +329,14 @@ void main() {
       return;
     }
     for (final CameraDescription cameraDescription in cameras) {
-      for (final OutputFormat outputFormat in OutputFormat.values) {
+      for (final FileFormat fileFormat in FileFormat.values) {
         final CameraController controller =
             CameraController(cameraDescription, ResolutionPreset.low);
         await controller.initialize();
-        await controller.setOutputFormat(outputFormat);
+        await controller.setFileFormat(fileFormat);
         final XFile file = await controller.takePicture();
         await controller.dispose();
-        expect(file.path.endsWith(outputFormat.name()), true);
+        expect(file.path.endsWith(fileFormat.name()), true);
       }
     }
   });
