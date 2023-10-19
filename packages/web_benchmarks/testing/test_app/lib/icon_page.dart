@@ -19,7 +19,7 @@ class _IconGeneratorPageState extends State<IconGeneratorPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         TextField(
           onSubmitted: (String value) {
             final int codePointAsInt =

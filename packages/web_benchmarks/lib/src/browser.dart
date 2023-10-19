@@ -240,7 +240,7 @@ String _findSystemChromeExecutable() {
   } else if (io.Platform.isWindows) {
     const String kWindowsExecutable = r'Google\Chrome\Application\chrome.exe';
     final List<String> kWindowsPrefixes = <String>[
-      for (String? item in <String?>[
+      for (final String? item in <String?>[
         io.Platform.environment['LOCALAPPDATA'],
         io.Platform.environment['PROGRAMFILES'],
         io.Platform.environment['PROGRAMFILES(X86)'],
