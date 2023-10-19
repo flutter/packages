@@ -1,4 +1,4 @@
-# Tihs plugin no-ops below API 25, which is newer than the legacy emulator.
+# This plugin no-ops below API 25, which is newer than the legacy emulator.
 # This can be removed once the legacy emulator test is using at least
 # API level 25.
 - quick_actions
