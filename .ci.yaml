@@ -536,7 +536,6 @@ targets:
   - name: linux_android_legacy android_platform_tests_legacy_api_shard_1 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -546,7 +545,6 @@ targets:
   - name: linux_android_legacy android_platform_tests_legacy_api_shard_2 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -556,7 +554,6 @@ targets:
   - name: linux_android_legacy android_platform_tests_legacy_api_shard_3 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -566,7 +563,6 @@ targets:
   - name: linux_android_legacy android_platform_tests_legacy_api_shard_4 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -576,7 +572,6 @@ targets:
   - name: linux_android_legacy android_platform_tests_legacy_api_shard_5 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -586,7 +581,6 @@ targets:
   - name: linux_android_legacy android_platform_tests_legacy_api_shard_6 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
