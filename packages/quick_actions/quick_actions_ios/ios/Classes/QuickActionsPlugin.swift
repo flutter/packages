@@ -28,7 +28,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
   }
 
   func setShortcutItems(itemsList: [ShortcutItemMessage]) {
-    self.shortcutItemProvider.shortcutItems = self.convertShortcutItemListToUIApplicationShortcutItemList(itemsList)
+    self.shortcutItemProvider.shortcutItems = self.convertShortcutItemMessageListToUIApplicationShortcutItemList(itemsList)
   }
 
   func clearShortcutItems() {
@@ -77,11 +77,11 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     }
   }
 
-  private func convertShortcutItemListToUIApplicationShortcutItemList(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem] {
-    return items.compactMap { convertShortcutItemToUIApplicationShortcutItem(with: $0) }
+  private func convertShortcutItemMessageListToUIApplicationShortcutItemList(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem] {
+    return items.compactMap { convertShortcutItemMessageToUIApplicationShortcutItem(with: $0) }
   }
 
-  private func convertShortcutItemToUIApplicationShortcutItem(with shortcut: ShortcutItemMessage)
+  private func convertShortcutItemMessageToUIApplicationShortcutItem(with shortcut: ShortcutItemMessage)
     -> UIApplicationShortcutItem?
   {
 
