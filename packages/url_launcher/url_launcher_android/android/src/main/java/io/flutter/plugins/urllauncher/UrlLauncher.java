@@ -19,6 +19,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.browser.customtabs.CustomTabsIntent;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
 import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
+import io.flutter.plugins.urllauncher.Messages.BrowserOptions;
 import java.util.Locale;
 import java.util.Map;
 
@@ -95,16 +96,19 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean openUrlInWebView(@NonNull String url, @NonNull WebViewOptions options) {
+  public @NonNull Boolean openUrlInWebView(
+      @NonNull String url,
+      @NonNull WebViewOptions webViewOptions,
+      @NonNull BrowserOptions browserOptions) {
     ensureActivity();
     assert activity != null;
 
-    Bundle headersBundle = extractBundle(options.getHeaders());
+    Bundle headersBundle = extractBundle(webViewOptions.getHeaders());
 
     // Try to launch using Custom Tabs if they have the necessary functionality.
-    if (!containsRestrictedHeader(options.getHeaders())) {
+    if (!containsRestrictedHeader(webViewOptions.getHeaders())) {
       Uri uri = Uri.parse(url);
-      if (openCustomTab(activity, uri, headersBundle, options)) {
+      if (openCustomTab(activity, uri, headersBundle, browserOptions)) {
         return true;
       }
     }
@@ -114,8 +118,8 @@ final class UrlLauncher implements UrlLauncherApi {
         WebViewActivity.createIntent(
             activity,
             url,
-            options.getEnableJavaScript(),
-            options.getEnableDomStorage(),
+            webViewOptions.getEnableJavaScript(),
+            webViewOptions.getEnableDomStorage(),
             headersBundle);
     try {
       activity.startActivity(launchIntent);
@@ -136,7 +140,7 @@ final class UrlLauncher implements UrlLauncherApi {
       @NonNull Context context,
       @NonNull Uri uri,
       @NonNull Bundle headersBundle,
-      @NonNull WebViewOptions options) {
+      @NonNull BrowserOptions options) {
     CustomTabsIntent customTabsIntent =
         new CustomTabsIntent.Builder().setShowTitle(options.getShowTitle()).build();
 

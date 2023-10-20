@@ -100,19 +100,6 @@ public class Messages {
       this.headers = setterArg;
     }
 
-    private @NonNull Boolean showTitle;
-
-    public @NonNull Boolean getShowTitle() {
-      return showTitle;
-    }
-
-    public void setShowTitle(@NonNull Boolean setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"showTitle\" is null.");
-      }
-      this.showTitle = setterArg;
-    }
-
     /** Constructor is non-public to enforce null safety; use Builder. */
     WebViewOptions() {}
 
@@ -139,30 +126,21 @@ public class Messages {
         return this;
       }
 
-      private @Nullable Boolean showTitle;
-
-      public @NonNull Builder setShowTitle(@NonNull Boolean setterArg) {
-        this.showTitle = setterArg;
-        return this;
-      }
-
       public @NonNull WebViewOptions build() {
         WebViewOptions pigeonReturn = new WebViewOptions();
         pigeonReturn.setEnableJavaScript(enableJavaScript);
         pigeonReturn.setEnableDomStorage(enableDomStorage);
         pigeonReturn.setHeaders(headers);
-        pigeonReturn.setShowTitle(showTitle);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(4);
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
       toListResult.add(enableJavaScript);
       toListResult.add(enableDomStorage);
       toListResult.add(headers);
-      toListResult.add(showTitle);
       return toListResult;
     }
 
@@ -174,7 +152,54 @@ public class Messages {
       pigeonResult.setEnableDomStorage((Boolean) enableDomStorage);
       Object headers = list.get(2);
       pigeonResult.setHeaders((Map<String, String>) headers);
-      Object showTitle = list.get(3);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class BrowserOptions {
+    private @NonNull Boolean showTitle;
+
+    public @NonNull Boolean getShowTitle() {
+      return showTitle;
+    }
+
+    public void setShowTitle(@NonNull Boolean setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"showTitle\" is null.");
+      }
+      this.showTitle = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    BrowserOptions() {}
+
+    public static final class Builder {
+
+      private @Nullable Boolean showTitle;
+
+      public @NonNull Builder setShowTitle(@NonNull Boolean setterArg) {
+        this.showTitle = setterArg;
+        return this;
+      }
+
+      public @NonNull BrowserOptions build() {
+        BrowserOptions pigeonReturn = new BrowserOptions();
+        pigeonReturn.setShowTitle(showTitle);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(showTitle);
+      return toListResult;
+    }
+
+    static @NonNull BrowserOptions fromList(@NonNull ArrayList<Object> list) {
+      BrowserOptions pigeonResult = new BrowserOptions();
+      Object showTitle = list.get(0);
       pigeonResult.setShowTitle((Boolean) showTitle);
       return pigeonResult;
     }
@@ -189,6 +214,8 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
+          return BrowserOptions.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
           return WebViewOptions.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -197,8 +224,11 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof WebViewOptions) {
+      if (value instanceof BrowserOptions) {
         stream.write(128);
+        writeValue(stream, ((BrowserOptions) value).toList());
+      } else if (value instanceof WebViewOptions) {
+        stream.write(129);
         writeValue(stream, ((WebViewOptions) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -216,7 +246,10 @@ public class Messages {
     Boolean launchUrl(@NonNull String url, @NonNull Map<String, String> headers);
     /** Opens the URL in an in-app WebView, returning true if it opens successfully. */
     @NonNull
-    Boolean openUrlInWebView(@NonNull String url, @NonNull WebViewOptions options);
+    Boolean openUrlInWebView(
+        @NonNull String url,
+        @NonNull WebViewOptions webViewOptions,
+        @NonNull BrowserOptions browserOptions);
     /** Closes the view opened by [openUrlInSafariViewController]. */
     void closeWebView();
 
@@ -289,9 +322,11 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String urlArg = (String) args.get(0);
-                WebViewOptions optionsArg = (WebViewOptions) args.get(1);
+                WebViewOptions webViewOptionsArg = (WebViewOptions) args.get(1);
+                BrowserOptions browserOptionsArg = (BrowserOptions) args.get(2);
                 try {
-                  Boolean output = api.openUrlInWebView(urlArg, optionsArg);
+                  Boolean output =
+                      api.openUrlInWebView(urlArg, webViewOptionsArg, browserOptionsArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

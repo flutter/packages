@@ -171,13 +171,13 @@ void main() {
       await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(
-          webViewConfiguration: InAppWebViewConfiguration(
+          browserConfiguration: InAppBrowserConfiguration(
             showTitle: true,
           ),
         ),
       );
 
-      expect(api.passedWebViewOptions?.showTitle, true);
+      expect(api.passedBrowserOptions?.showTitle, true);
     });
 
     test('passes through no-activity exception', () async {
@@ -227,6 +227,7 @@ void main() {
 /// See _launch for the behaviors.
 class _FakeUrlLauncherApi implements UrlLauncherApi {
   WebViewOptions? passedWebViewOptions;
+  BrowserOptions? passedBrowserOptions;
   bool? usedWebView;
   bool? closed;
 
@@ -244,8 +245,12 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
       enableJavaScript: false,
       enableDomStorage: false,
       headers: headers,
+    );
+
+    passedBrowserOptions = BrowserOptions(
       showTitle: true,
     );
+
     usedWebView = false;
     return _launch(url);
   }
@@ -256,8 +261,13 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   }
 
   @override
-  Future<bool> openUrlInWebView(String url, WebViewOptions options) async {
-    passedWebViewOptions = options;
+  Future<bool> openUrlInWebView(
+    String url,
+    WebViewOptions webViewOptions,
+    BrowserOptions browserOptions,
+  ) async {
+    passedWebViewOptions = webViewOptions;
+    passedBrowserOptions = browserOptions;
     usedWebView = true;
     return _launch(url);
   }

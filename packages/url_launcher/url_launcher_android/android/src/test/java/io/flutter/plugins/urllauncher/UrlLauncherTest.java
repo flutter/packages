@@ -149,8 +149,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(enableJavaScript)
                 .setEnableDomStorage(enableDomStorage)
                 .setHeaders(headers)
-                .setShowTitle(showTitle)
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(showTitle).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -178,8 +178,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .setShowTitle(true)
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(true).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture(), isNull());
@@ -208,8 +208,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(headers)
-                .setShowTitle(false)
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture(), isNull());
@@ -238,8 +238,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .setShowTitle(false)
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -266,8 +266,8 @@ public class UrlLauncherTest {
             .setEnableJavaScript(enableJavaScript)
             .setEnableDomStorage(false)
             .setHeaders(headers)
-            .setShowTitle(false)
-            .build());
+            .build(),
+        new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -293,8 +293,8 @@ public class UrlLauncherTest {
             .setEnableJavaScript(false)
             .setEnableDomStorage(false)
             .setHeaders(headers)
-            .setShowTitle(false)
-            .build());
+            .build(),
+        new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -320,8 +320,8 @@ public class UrlLauncherTest {
             .setEnableJavaScript(false)
             .setEnableDomStorage(enableDomStorage)
             .setHeaders(headers)
-            .setShowTitle(false)
-            .build());
+            .build(),
+        new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -345,8 +345,8 @@ public class UrlLauncherTest {
             .setEnableJavaScript(false)
             .setEnableDomStorage(enableDomStorage)
             .setHeaders(headers)
-            .setShowTitle(showTitle)
-            .build());
+            .build(),
+        new Messages.BrowserOptions.Builder().setShowTitle(showTitle).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture(), isNull());
@@ -371,8 +371,8 @@ public class UrlLauncherTest {
                         .setEnableJavaScript(false)
                         .setEnableDomStorage(false)
                         .setHeaders(new HashMap<>())
-                        .setShowTitle(false)
-                        .build()));
+                        .build(),
+                    new Messages.BrowserOptions.Builder().setShowTitle(false).build()));
     assertEquals("NO_ACTIVITY", exception.code);
   }
 
@@ -395,8 +395,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .setShowTitle(false)
-                .build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     assertFalse(result);
   }

@@ -202,10 +202,11 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launchUrl(url,
-              mode: LaunchMode.inAppWebView,
-              webViewConfiguration:
-                  const WebViewConfiguration(showTitle: true)),
+          await launchUrl(
+            url,
+            mode: LaunchMode.inAppWebView,
+            browserConfiguration: const BrowserConfiguration(showTitle: true),
+          ),
           isTrue);
     });
 

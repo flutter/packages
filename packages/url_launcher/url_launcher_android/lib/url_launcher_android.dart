@@ -66,10 +66,14 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
       enableJavaScript: enableJavaScript,
       enableDomStorage: enableDomStorage,
       headers: headers,
-      showTitle: false,
     );
 
-    return _openInWebviewOrLaunch(url, webViewOptions, useWebView);
+    return _openInWebviewOrLaunch(
+      url,
+      webViewOptions,
+      useWebView,
+      BrowserOptions(showTitle: false),
+    );
   }
 
   @override
@@ -82,20 +86,33 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
       enableJavaScript: options.webViewConfiguration.enableJavaScript,
       enableDomStorage: options.webViewConfiguration.enableDomStorage,
       headers: options.webViewConfiguration.headers,
-      showTitle: options.webViewConfiguration.showTitle,
     );
 
-    return _openInWebviewOrLaunch(url, webViewOptions, useWebView);
+    final BrowserOptions browserOptions = BrowserOptions(
+      showTitle: options.browserConfiguration.showTitle,
+    );
+
+    return _openInWebviewOrLaunch(
+      url,
+      webViewOptions,
+      useWebView,
+      browserOptions,
+    );
   }
 
   Future<bool> _openInWebviewOrLaunch(
-      String url, WebViewOptions options, bool useWebView) async {
+    String url,
+    WebViewOptions webViewOptions,
+    bool useWebView,
+    BrowserOptions browserOptions,
+  ) async {
     final bool succeeded;
 
     if (useWebView) {
-      succeeded = await _hostApi.openUrlInWebView(url, options);
+      succeeded =
+          await _hostApi.openUrlInWebView(url, webViewOptions, browserOptions);
     } else {
-      succeeded = await _hostApi.launchUrl(url, options.headers);
+      succeeded = await _hostApi.launchUrl(url, webViewOptions.headers);
     }
 
     // TODO(stuartmorgan): Remove this special handling as part of a

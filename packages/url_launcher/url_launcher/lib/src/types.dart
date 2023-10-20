@@ -32,7 +32,6 @@ class WebViewConfiguration {
     this.enableJavaScript = true,
     this.enableDomStorage = true,
     this.headers = const <String, String>{},
-    this.showTitle = false,
   });
 
   /// Whether or not JavaScript is enabled for the web content.
@@ -52,6 +51,14 @@ class WebViewConfiguration {
   /// [Browser.EXTRA_HEADERS](https://developer.android.com/reference/android/provider/Browser#EXTRA_HEADERS)
   /// Not all browsers support this, so it is not guaranteed to be honored.
   final Map<String, String> headers;
+}
+
+/// Additional configuration options for [LaunchMode.inAppWebView]
+// TODO(alex): replace this when the pr lands
+@immutable
+class BrowserConfiguration {
+  /// Creates a new InAppBrowserConfiguration with given settings.
+  const BrowserConfiguration({this.showTitle = false});
 
   /// Whether or not to show the webpage title when using Chrome Custom Tabs.
   ///

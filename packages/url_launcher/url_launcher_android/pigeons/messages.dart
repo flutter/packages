@@ -17,7 +17,6 @@ class WebViewOptions {
     required this.enableJavaScript,
     required this.enableDomStorage,
     this.headers = const <String, String>{},
-    required this.showTitle,
   });
 
   final bool enableJavaScript;
@@ -26,6 +25,11 @@ class WebViewOptions {
   // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
   // the values will never be null, and the native implementation assumes that.
   final Map<String?, String?> headers;
+}
+
+class BrowserOptions {
+  BrowserOptions({required this.showTitle});
+
   final bool showTitle;
 }
 
@@ -39,7 +43,8 @@ abstract class UrlLauncherApi {
 
   /// Opens the URL in an in-app WebView, returning true if it opens
   /// successfully.
-  bool openUrlInWebView(String url, WebViewOptions options);
+  bool openUrlInWebView(
+      String url, WebViewOptions webViewOptions, BrowserOptions browserOptions);
 
   /// Closes the view opened by [openUrlInSafariViewController].
   void closeWebView();

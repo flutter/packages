@@ -34,7 +34,7 @@ Future<bool> launchUrlString(
     urlString,
     LaunchOptions(
       mode: convertLaunchMode(mode),
-      webViewConfiguration: convertConfiguration(webViewConfiguration),
+      webViewConfiguration: convertWebViewConfiguration(webViewConfiguration),
       webOnlyWindowName: webOnlyWindowName,
     ),
   );

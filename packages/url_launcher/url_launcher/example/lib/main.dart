@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await launchUrl(
       url,
       mode: LaunchMode.inAppWebView,
-      webViewConfiguration: const WebViewConfiguration(showTitle: true),
+      browserConfiguration: const BrowserConfiguration(showTitle: true),
     )) {
       throw Exception('Could not launch $url');
     }

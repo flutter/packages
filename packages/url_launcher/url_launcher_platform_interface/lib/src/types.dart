@@ -34,7 +34,6 @@ class InAppWebViewConfiguration {
     this.enableJavaScript = true,
     this.enableDomStorage = true,
     this.headers = const <String, String>{},
-    this.showTitle = false,
   });
 
   /// Whether or not JavaScript is enabled for the web content.
@@ -45,6 +44,14 @@ class InAppWebViewConfiguration {
 
   /// Additional headers to pass in the load request.
   final Map<String, String> headers;
+}
+
+/// Additional configuration options for [PreferredLaunchMode.inAppWebView]
+// TODO(alex): replace this when the pr lands
+@immutable
+class InAppBrowserConfiguration {
+  /// Creates a new InAppBrowserConfiguration with given settings.
+  const InAppBrowserConfiguration({this.showTitle = false});
 
   /// Whether or not to show the webpage title when using Chrome Custom Tabs.
   ///
@@ -59,6 +66,7 @@ class LaunchOptions {
   const LaunchOptions({
     this.mode = PreferredLaunchMode.platformDefault,
     this.webViewConfiguration = const InAppWebViewConfiguration(),
+    this.browserConfiguration = const InAppBrowserConfiguration(),
     this.webOnlyWindowName,
   });
 
@@ -67,6 +75,10 @@ class LaunchOptions {
 
   /// Configuration for the web view in [PreferredLaunchMode.inAppWebView] mode.
   final InAppWebViewConfiguration webViewConfiguration;
+
+  /// Configuration for the browser view in [PreferredLaunchMode.inAppWebView] mode.
+// TODO(alex): replace this when the pr lands
+  final InAppBrowserConfiguration browserConfiguration;
 
   /// A web-platform-specific option to set the link target.
   ///
