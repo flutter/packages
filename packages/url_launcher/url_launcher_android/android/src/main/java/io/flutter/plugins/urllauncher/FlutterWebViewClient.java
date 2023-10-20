@@ -13,7 +13,6 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
-
 import java.util.Locale;
 
 public class FlutterWebViewClient extends WebViewClient {
@@ -72,7 +71,8 @@ public class FlutterWebViewClient extends WebViewClient {
   public static boolean urlShouldRunActivity(@NonNull WebView view, @NonNull String url) {
     // Check if URL is not an HTTP(S) request.
     // Handles mailto:, sms:, etc.
-    if (!url.toLowerCase(Locale.getDefault()).startsWith("http://") && !url.toLowerCase(Locale.getDefault()).startsWith("https://")) {
+    if (!url.toLowerCase(Locale.getDefault()).startsWith("http://")
+        && !url.toLowerCase(Locale.getDefault()).startsWith("https://")) {
       Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
       view.getContext().startActivity(intent);
       return true;
