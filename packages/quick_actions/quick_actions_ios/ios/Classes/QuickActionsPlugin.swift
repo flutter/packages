@@ -28,18 +28,19 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
   }
 
   func setShortcutItems(itemsList: [ShortcutItemMessage]) {
-    self.shortcutItemProvider.shortcutItems = self.convertShortcutItemMessageListToUIApplicationShortcutItemList(itemsList)
+    shortcutItemProvider.shortcutItems =
+      convertShortcutItemMessageListToUIApplicationShortcutItemList(itemsList)
   }
 
   func clearShortcutItems() {
-    self.shortcutItemProvider.shortcutItems = []
+    shortcutItemProvider.shortcutItems = []
   }
 
   public func application(
     _ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem,
     completionHandler: @escaping (Bool) -> Void
   ) -> Bool {
-    self.handleShortcut(shortcutItem.type)
+    handleShortcut(shortcutItem.type)
     return true
   }
 
@@ -66,28 +67,32 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
 
   public func applicationDidBecomeActive(_ application: UIApplication) {
     if let shortcutType = launchingShortcutType {
-      self.handleShortcut(shortcutType)
-      self.launchingShortcutType = nil
+      handleShortcut(shortcutType)
+      launchingShortcutType = nil
     }
   }
 
   func handleShortcut(_ shortcut: String) {
-    self.flutterApi.launchAction(action: shortcut) { _ in
+    flutterApi.launchAction(action: shortcut) { _ in
       // noop
     }
   }
 
-  private func convertShortcutItemMessageListToUIApplicationShortcutItemList(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem] {
+  private func convertShortcutItemMessageListToUIApplicationShortcutItemList(
+    _ items: [ShortcutItemMessage]
+  ) -> [UIApplicationShortcutItem] {
     return items.compactMap { convertShortcutItemMessageToUIApplicationShortcutItem(with: $0) }
   }
 
-  private func convertShortcutItemMessageToUIApplicationShortcutItem(with shortcut: ShortcutItemMessage)
+  private func convertShortcutItemMessageToUIApplicationShortcutItem(
+    with shortcut: ShortcutItemMessage
+  )
     -> UIApplicationShortcutItem?
   {
 
     let type = shortcut.type
     let localizedTitle = shortcut.localizedTitle
-    
+
     let icon = (shortcut.icon).map {
       UIApplicationShortcutIcon(templateImageName: $0)
     }
