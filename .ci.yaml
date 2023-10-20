@@ -62,6 +62,15 @@ platform_properties:
         [
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
+  windows_arm64:
+    properties:
+      dependencies: >
+        [
+          {"dependency": "certs", "version": "version:9563bb"}
+        ]
+      device_type: none
+      os: Windows
+      cpu: arm64
   windows_x64:
     properties:
       dependencies: >
@@ -1065,9 +1074,37 @@ targets:
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
+  - name: Windows_arm64 windows-build_all_packages master
+    recipe: packages/packages
+    timeout: 30
+    bringup: true # https://github.com/flutter/flutter/issues/134083
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_all_packages.yaml
+      channel: master
+      version_file: flutter_master.version
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
   - name: Windows_x64 windows-build_all_packages stable
     recipe: packages/packages
     timeout: 30
+    properties:
+      add_recipes_cq: "true"
+      target_file: windows_build_all_packages.yaml
+      channel: stable
+      version_file: flutter_stable.version
+      dependencies: >
+        [
+          {"dependency": "vs_build", "version": "version:vs2019"}
+        ]
+
+  - name: Windows_arm64 windows-build_all_packages stable
+    recipe: packages/packages
+    timeout: 30
+    bringup: true # https://github.com/flutter/flutter/issues/134083
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
