@@ -265,6 +265,8 @@ NSString *const errorMethod = @"error";
   }
 
   if (_fileFormat == FCPFileFormatHEIF) {
+    // This will check if HEVC is available and set the format to HEIF.
+    // If HEVC codec is not available, it will fall back to JPEG.
     if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
       settings = [AVCapturePhotoSettings
           photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
