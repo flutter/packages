@@ -28,7 +28,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
   }
 
   func setShortcutItems(itemsList: [ShortcutItemMessage]) {
-    self.shortcutItemProvider.shortcutItems = QuickActionsPlugin.parseShortcutItems(itemsList)
+    self.shortcutItemProvider.shortcutItems = QuickActionsPlugin.convertShortcutItemListToUIApplicationShortcutItemList(itemsList)
   }
 
   func clearShortcutItems() {
@@ -77,18 +77,18 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     }
   }
 
-  static func parseShortcutItems(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem] {
-    return items.compactMap { deserializeShortcutItem(with: $0) }
+  static func convertShortcutItemListToUIApplicationShortcutItemList(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem] {
+    return items.compactMap { convertShortcutItemToUIApplicationShortcutItem(with: $0) }
   }
 
-  static private func deserializeShortcutItem(with serialized: ShortcutItemMessage)
+  static private func convertShortcutItemToUIApplicationShortcutItem(with shortcut: ShortcutItemMessage)
     -> UIApplicationShortcutItem?
   {
 
-    let type = serialized.type
-    let localizedTitle = serialized.localizedTitle
+    let type = shortcut.type
+    let localizedTitle = shortcut.localizedTitle
     
-    let icon = (serialized.icon).map {
+    let icon = (shortcut.icon).map {
       UIApplicationShortcutIcon(templateImageName: $0)
     }
 
