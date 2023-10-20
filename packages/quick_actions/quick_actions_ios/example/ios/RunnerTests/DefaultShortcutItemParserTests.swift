@@ -23,8 +23,7 @@ class DefaultShortcutItemParserTests: XCTestCase {
       icon: UIApplicationShortcutIcon(templateImageName: "search_the_thing.png"),
       userInfo: nil)
 
-    let parser = DefaultShortcutItemParser()
-    XCTAssertEqual(parser.parseShortcutItems([rawItem]), [expectedItem])
+    XCTAssertEqual(QuickActionsPlugin.parseShortcutItems([rawItem]), [expectedItem])
   }
 
   func testParseShortcutItems_noIcon() {
@@ -40,7 +39,6 @@ class DefaultShortcutItemParserTests: XCTestCase {
       icon: nil,
       userInfo: nil)
 
-    let parser = DefaultShortcutItemParser()
-    XCTAssertEqual(parser.parseShortcutItems([rawItem]), [expectedItem])
+    XCTAssertEqual(QuickActionsPlugin.parseShortcutItems([rawItem]), [expectedItem])
   }
 }

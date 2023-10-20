@@ -8,18 +8,17 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let messenger = registrar.messenger()
-    let instance = QuickActionsPlugin(messenger: messenger)
+    let flutterApi = IOSQuickActionsFlutterApi(binaryMessenger: messenger)
+    let instance = QuickActionsPlugin(flutterApi: flutterApi)
     IOSQuickActionsApiSetup.setUp(binaryMessenger: messenger, api: instance)
     registrar.addApplicationDelegate(instance)
   }
 
   private let shortcutItemProvider: ShortcutItemProviding
-  private let shortcutItemParser: ShortcutItemParser = DefaultShortcutItemParser()
   private let flutterApi: IOSQuickActionsFlutterApiProtocol
   /// The type of the shortcut item selected when launching the app.
   private var launchingShortcutType: String? = nil
 
-  // This init is meant for unit testing only.
   init(
     flutterApi: IOSQuickActionsFlutterApiProtocol,
     shortcutItemProvider: ShortcutItemProviding = UIApplication.shared
@@ -28,27 +27,19 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     self.shortcutItemProvider = shortcutItemProvider
   }
 
-  convenience init(
-    messenger: FlutterBinaryMessenger,
-    shortcutItemProvider: ShortcutItemProviding = UIApplication.shared
-  ) {
-    let flutterApi = IOSQuickActionsFlutterApi(binaryMessenger: messenger)
-    self.init(flutterApi: flutterApi, shortcutItemProvider: shortcutItemProvider)
-  }
-
   func setShortcutItems(itemsList: [ShortcutItemMessage]) {
-    shortcutItemProvider.shortcutItems = shortcutItemParser.parseShortcutItems(itemsList)
+    self.shortcutItemProvider.shortcutItems = QuickActionsPlugin.parseShortcutItems(itemsList)
   }
 
   func clearShortcutItems() {
-    shortcutItemProvider.shortcutItems = []
+    self.shortcutItemProvider.shortcutItems = []
   }
 
   public func application(
     _ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem,
     completionHandler: @escaping (Bool) -> Void
   ) -> Bool {
-    handleShortcut(shortcutItem.type)
+    self.handleShortcut(shortcutItem.type)
     return true
   }
 
@@ -75,14 +66,38 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
 
   public func applicationDidBecomeActive(_ application: UIApplication) {
     if let shortcutType = launchingShortcutType {
-      handleShortcut(shortcutType)
+      self.handleShortcut(shortcutType)
       self.launchingShortcutType = nil
     }
   }
 
   func handleShortcut(_ shortcut: String) {
-    flutterApi.launchAction(action: shortcut) { _ in
+    self.flutterApi.launchAction(action: shortcut) { _ in
       // noop
     }
+  }
+
+  static func parseShortcutItems(_ items: [ShortcutItemMessage]) -> [UIApplicationShortcutItem] {
+    return items.compactMap { deserializeShortcutItem(with: $0) }
+  }
+
+  static private func deserializeShortcutItem(with serialized: ShortcutItemMessage)
+    -> UIApplicationShortcutItem?
+  {
+
+    let type = serialized.type
+    let localizedTitle = serialized.localizedTitle
+    
+    let icon = (serialized.icon).map {
+      UIApplicationShortcutIcon(templateImageName: $0)
+    }
+
+    // type and localizedTitle are required.
+    return UIApplicationShortcutItem(
+      type: type,
+      localizedTitle: localizedTitle,
+      localizedSubtitle: nil,
+      icon: icon,
+      userInfo: nil)
   }
 }
