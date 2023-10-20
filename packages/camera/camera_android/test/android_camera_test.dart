@@ -551,8 +551,9 @@ void main() {
 
       // Assert
       expect(channel.log, <Matcher>[
-        isMethodCall('takePicture',
-            arguments: <String, Object?>{'cameraId': cameraId}),
+        isMethodCall('takePicture', arguments: <String, Object?>{
+          'cameraId': cameraId,
+        }),
       ]);
       expect(file.path, '/test/path.jpg');
     });
