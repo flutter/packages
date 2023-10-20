@@ -259,19 +259,20 @@ NSString *const errorMethod = @"error";
 
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  NSString *extension = @"jpg";
+  NSString *extension;
   if (_resolutionPreset == FLTResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
   }
 
-  if (_fileFormat == FCPFileFormatHEIF) {
-    // This will check if HEVC is available and set the format to HEIF.
-    // If HEVC codec is not available, it will fall back to JPEG.
-    if ([self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC]) {
-      settings = [AVCapturePhotoSettings
-          photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
-      extension = @"heif";
-    }
+  bool isHEVCCodecAvailable = [self.capturePhotoOutput.availablePhotoCodecTypes
+      containsObject:AVVideoCodecTypeHEVC];
+  
+  if (_fileFormat == FCPFileFormatHEIF && isHEVCCodecAvailable) {
+    settings = [AVCapturePhotoSettings
+        photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+    extension = @"heif";
+  } else {
+    extension = @"jpg";
   }
 
   AVCaptureFlashMode avFlashMode = FLTGetAVCaptureFlashModeForFLTFlashMode(_flashMode);
