@@ -224,7 +224,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
       [[FLTImagePickerMethodCallContext alloc] initWithResult:completion];
   context.maxSize = [mediaSelectionOptions maxSize];
   context.imageQuality = [mediaSelectionOptions imageQuality];
-  context.requestFullMetadata = [mediaSelectionOptions requestFullMetadata];
+  context.requestFullMetadata = [[mediaSelectionOptions requestFullMetadata] boolValue];
   context.includeVideo = YES;
   if (![[mediaSelectionOptions allowMultiple] boolValue]) {
     context.maxImageCount = 1;
