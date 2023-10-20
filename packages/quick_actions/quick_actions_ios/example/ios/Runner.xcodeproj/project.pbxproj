@@ -18,7 +18,6 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		E092A7EE28D10802005C7F67 /* QuickActionsPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E092A7EB28D10802005C7F67 /* QuickActionsPluginTests.swift */; };
 		E092A7F128D10890005C7F67 /* MockShortcutItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E092A7F028D10890005C7F67 /* MockShortcutItemProvider.swift */; };
-		E092A7F428D110B3005C7F67 /* DefaultShortcutItemParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E092A7F328D110B3005C7F67 /* DefaultShortcutItemParserTests.swift */; };
 		E092A7F628D128EB005C7F67 /* RunnerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E092A7F528D128EB005C7F67 /* RunnerUITests.swift */; };
 /* End PBXBuildFile section */
 
@@ -78,7 +77,6 @@
 		C35AD3650AB6BF850E016715 /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E092A7EB28D10802005C7F67 /* QuickActionsPluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickActionsPluginTests.swift; sourceTree = "<group>"; };
 		E092A7F028D10890005C7F67 /* MockShortcutItemProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockShortcutItemProvider.swift; sourceTree = "<group>"; };
-		E092A7F328D110B3005C7F67 /* DefaultShortcutItemParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultShortcutItemParserTests.swift; sourceTree = "<group>"; };
 		E092A7F528D128EB005C7F67 /* RunnerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerUITests.swift; sourceTree = "<group>"; };
 		F0609304FBCAEC2289164BD5 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -116,7 +114,6 @@
 				E092A7F228D10908005C7F67 /* Mocks */,
 				33E20B3626EFCDFC00A4A191 /* Info.plist */,
 				E092A7EB28D10802005C7F67 /* QuickActionsPluginTests.swift */,
-				E092A7F328D110B3005C7F67 /* DefaultShortcutItemParserTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -431,7 +428,6 @@
 			files = (
 				E092A7EE28D10802005C7F67 /* QuickActionsPluginTests.swift in Sources */,
 				E092A7F128D10890005C7F67 /* MockShortcutItemProvider.swift in Sources */,
-				E092A7F428D110B3005C7F67 /* DefaultShortcutItemParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
