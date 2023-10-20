@@ -4,7 +4,6 @@
 
 @import ios_platform_images;
 @import XCTest;
-#import "IosPlatformImagesPlugin-Swift.h"
 
 // The tests test the UIImage extension which is a public API intended for use from native code
 // outside of the plugin (see package README). Any change that requires changing existing tests

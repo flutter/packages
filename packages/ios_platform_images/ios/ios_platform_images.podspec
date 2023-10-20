@@ -20,6 +20,7 @@ Downloaded by pub (not CocoaPods).
   s.platform = :ios, '11.0'
 
   s.xcconfig = {
+     'DEFINES_MODULE' => 'YES',
      'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
      'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
