@@ -28,7 +28,7 @@ import UIKit
     let path = (name as NSString).deletingLastPathComponent
 
     for screenScale in stride(from: Int(UIScreen.main.scale), to: 1, by: -1) {
-      //TODO(hellohuanlin): This should be fixed, because it's path uses double slash.
+      // TODO(hellohuanlin): Fix duplicate slashes in this path construction.
       let key = FlutterDartProject.lookupKey(forAsset: "\(path)/\(screenScale).0x/\(filename)")
       if let image = UIImage(named: key, in: Bundle.main, compatibleWith: nil) {
         return image
