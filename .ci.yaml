@@ -62,14 +62,6 @@ platform_properties:
         [
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
-  windows:
-    properties:
-      dependencies: >
-        [
-          {"dependency": "certs", "version": "version:9563bb"}
-        ]
-      device_type: none
-      os: Windows
   windows_x64:
     properties:
       dependencies: >
@@ -973,23 +965,9 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 5"
 
   ### Windows desktop tasks ###
-  - name: Windows custom_package_tests master - packages
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_custom_package_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
   - name: Windows_x64 custom_package_tests master - packages
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: windows_custom_package_tests.yaml
@@ -999,83 +977,34 @@ targets:
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
-
-  - name: Windows dart_unit_tests_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: windows_dart_unit_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
 
   - name: Windows_x64 dart_unit_tests_shard_1 master
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
       target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 0 --shardCount 2"
-
-  - name: Windows dart_unit_tests_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: windows_dart_unit_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
 
   - name: Windows_x64 dart_unit_tests_shard_2 master
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
       target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 1 --shardCount 2"
 
-  - name: Windows win32-platform_tests_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_and_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
   - name: Windows_x64 win32-platform_tests_shard_1 master
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 0 --shardCount 2"
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
-  - name: Windows win32-platform_tests_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_and_platform_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
@@ -1084,27 +1013,12 @@ targets:
   - name: Windows_x64 win32-platform_tests_shard_2 master
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
       package_sharding: "--shardIndex 1 --shardCount 2"
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
-  - name: Windows win32-platform_tests_shard_1 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_and_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
@@ -1113,7 +1027,6 @@ targets:
   - name: Windows_x64 win32-platform_tests_shard_1 stable
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
@@ -1125,43 +1038,15 @@ targets:
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
-  - name: Windows win32-platform_tests_shard_2 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_and_platform_tests.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
   - name: Windows_x64 win32-platform_tests_shard_2 stable
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 1 --shardCount 2"
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
-  - name: Windows windows-build_all_packages master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_all_packages.yaml
-      channel: master
-      version_file: flutter_master.version
       dependencies: >
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
@@ -1170,25 +1055,11 @@ targets:
   - name: Windows_x64 windows-build_all_packages master
     recipe: packages/packages
     timeout: 30
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
       channel: master
       version_file: flutter_master.version
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
-  - name: Windows windows-build_all_packages stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_all_packages.yaml
-      channel: stable
-      version_file: flutter_stable.version
       dependencies: >
         [
           {"dependency": "vs_build", "version": "version:vs2019"}
@@ -1197,7 +1068,6 @@ targets:
   - name: Windows_x64 windows-build_all_packages stable
     recipe: packages/packages
     timeout: 30
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
@@ -1208,19 +1078,9 @@ targets:
           {"dependency": "vs_build", "version": "version:vs2019"}
         ]
 
-  - name: Windows repo_tools_tests
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: repo_tools_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-
   - name: Windows_x64 repo_tools_tests
     recipe: packages/packages
     timeout: 30
-    bringup: true
     properties:
       add_recipes_cq: "true"
       target_file: repo_tools_tests.yaml
