@@ -2971,4 +2971,30 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void) {
                    }
                  }];
 }
+- (void)echoString:(NSString *)arg_aString
+        completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+      messageChannelWithName:
+          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString"
+             binaryMessenger:self.binaryMessenger
+                       codec:FlutterSmallApiGetCodec()];
+  [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+                   }
+                 }];
+}
 @end
