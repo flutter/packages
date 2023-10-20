@@ -15,10 +15,10 @@ late QuickActionHandler _handler;
 class QuickActionsIos extends QuickActionsPlatform {
   /// Creates a new plugin implementation instance.
   QuickActionsIos({
-    @visibleForTesting IosQuickActionsApi? api,
-  }) : _hostApi = api ?? IosQuickActionsApi();
+    @visibleForTesting IOSQuickActionsApi? api,
+  }) : _hostApi = api ?? IOSQuickActionsApi();
 
-  final IosQuickActionsApi _hostApi;
+  final IOSQuickActionsApi _hostApi;
 
   /// Registers this class as the default instance of [QuickActionsPlatform].
   static void registerWith() {
@@ -29,7 +29,7 @@ class QuickActionsIos extends QuickActionsPlatform {
   Future<void> initialize(QuickActionHandler handler) async {
     final _QuickActionHandlerApi quickActionsHandlerApi =
         _QuickActionHandlerApi();
-    IosQuickActionsFlutterApi.setup(quickActionsHandlerApi);
+    IOSQuickActionsFlutterApi.setup(quickActionsHandlerApi);
     _handler = handler;
   }
 
@@ -52,7 +52,7 @@ class QuickActionsIos extends QuickActionsPlatform {
   }
 }
 
-class _QuickActionHandlerApi extends IosQuickActionsFlutterApi {
+class _QuickActionHandlerApi extends IOSQuickActionsFlutterApi {
   @override
   void launchAction(String action) {
     _handler(action);

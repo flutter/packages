@@ -21,12 +21,12 @@ void main() {
   });
 
   group('#initialize', () {
-    test('initialize', () async {
-      await quickActions.initialize((_) {});
+    test('initialize', () {
+      expect(quickActions.initialize((_) {}), completes);
     });
   });
 
-  test('setShortCutItems', () async {
+  test('setShortcutItems', () async {
     await quickActions.initialize((String type) {});
     const ShortcutItem item =
         ShortcutItem(type: 'test', localizedTitle: 'title', icon: 'icon.svg');
@@ -61,7 +61,7 @@ void main() {
   });
 }
 
-class _FakeQuickActionsApi implements IosQuickActionsApi {
+class _FakeQuickActionsApi implements IOSQuickActionsApi {
   List<ShortcutItem> items = <ShortcutItem>[];
   bool getLaunchActionCalled = false;
 

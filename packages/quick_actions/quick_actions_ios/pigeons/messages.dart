@@ -6,7 +6,6 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/messages.g.dart',
-  dartTestOut: 'test/test_api.g.dart',
   swiftOut: 'ios/Classes/messages.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
@@ -30,7 +29,7 @@ class ShortcutItemMessage {
 }
 
 @HostApi()
-abstract class IosQuickActionsApi {
+abstract class IOSQuickActionsApi {
   /// Sets the dynamic shortcuts for the app.
   void setShortcutItems(List<ShortcutItemMessage> itemsList);
 
@@ -39,7 +38,7 @@ abstract class IosQuickActionsApi {
 }
 
 @FlutterApi()
-abstract class IosQuickActionsFlutterApi {
+abstract class IOSQuickActionsFlutterApi {
   /// Sends a string representing a shortcut from the native platform to the app.
   void launchAction(String action);
 }

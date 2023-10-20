@@ -4,39 +4,44 @@
 
 import Flutter
 
-public final class QuickActionsPlugin: NSObject, FlutterPlugin, IosQuickActionsApi {
+public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsApi {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let messenger = registrar.messenger()
     let instance = QuickActionsPlugin(messenger: messenger)
-    IosQuickActionsApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    IOSQuickActionsApiSetup.setUp(binaryMessenger: messenger, api: instance)
     registrar.addApplicationDelegate(instance)
   }
 
   private let shortcutItemProvider: ShortcutItemProviding
-  private let shortcutItemParser: ShortcutItemParser
-  private let flutterApi: IosQuickActionsFlutterApi
+  private let shortcutItemParser: ShortcutItemParser = DefaultShortcutItemParser()
+  private let flutterApi: IOSQuickActionsFlutterApiProtocol
   /// The type of the shortcut item selected when launching the app.
   private var launchingShortcutType: String? = nil
 
+  // This init is meant for unit testing only.
   init(
-    messenger: FlutterBinaryMessenger,
-    shortcutItemProvider: ShortcutItemProviding = UIApplication.shared,
-    shortcutItemParser: ShortcutItemParser = DefaultShortcutItemParser()
+    flutterApi: IOSQuickActionsFlutterApiProtocol,
+    shortcutItemProvider: ShortcutItemProviding = UIApplication.shared
   ) {
+    self.flutterApi = flutterApi
     self.shortcutItemProvider = shortcutItemProvider
-    self.shortcutItemParser = shortcutItemParser
-    self.flutterApi = IosQuickActionsFlutterApi(binaryMessenger: messenger)
   }
 
-  /// Method to allow for async testing.
-  var testStub: (() -> Void)? = nil
+  convenience init(
+    messenger: FlutterBinaryMessenger,
+    shortcutItemProvider: ShortcutItemProviding = UIApplication.shared
+  ) {
+    let shortcutItemProvider = shortcutItemProvider
+    let flutterApi = IOSQuickActionsFlutterApi(binaryMessenger: messenger)
+    self.init(flutterApi: flutterApi, shortcutItemProvider: shortcutItemProvider)
+  }
 
-  func setShortcutItems(itemsList: [ShortcutItemMessage]) throws {
+  func setShortcutItems(itemsList: [ShortcutItemMessage]) {
     shortcutItemProvider.shortcutItems = shortcutItemParser.parseShortcutItems(itemsList)
   }
 
-  func clearShortcutItems() throws {
+  func clearShortcutItems() {
     shortcutItemProvider.shortcutItems = []
   }
 
@@ -77,8 +82,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IosQuickActionsA
   }
 
   func handleShortcut(_ shortcut: String) {
-    self.testStub?()
-    flutterApi.launchAction(action: shortcut) {
+    flutterApi.launchAction(action: shortcut) { _ in
       // noop
     }
   }
