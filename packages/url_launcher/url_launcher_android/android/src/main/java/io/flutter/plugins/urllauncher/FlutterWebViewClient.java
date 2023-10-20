@@ -58,7 +58,7 @@ public class FlutterWebViewClient extends WebViewClient {
   @VisibleForTesting
   public static boolean resourceShouldOpenDocument(@NonNull WebView view, @NonNull String url) {
     // Check if URL is PDF
-    if (url.toLowerCase().endsWith(".pdf")) {
+    if (url.toLowerCase(Locale.US).endsWith(".pdf")) {
       Intent intent = new Intent(Intent.ACTION_VIEW);
       intent.setDataAndType(Uri.parse(url), "application/pdf");
       view.getContext().startActivity(intent);
