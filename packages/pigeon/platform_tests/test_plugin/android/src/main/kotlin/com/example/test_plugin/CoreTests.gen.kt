@@ -2479,4 +2479,21 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
       } 
     }
   }
+  fun echoString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString", codec)
+    channel.send(listOf(aStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
+    }
+  }
 }
