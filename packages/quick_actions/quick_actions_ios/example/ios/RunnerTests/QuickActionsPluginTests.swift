@@ -9,12 +9,12 @@ import XCTest
 
 class MockFlutterApi: IOSQuickActionsFlutterApiProtocol {
   /// Method to allow for async testing.
-  var testStub: ((String) -> Void)? = nil
+  var launchActionCallback: ((String) -> Void)? = nil
 
   func launchAction(
     action actionArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void
   ) {
-    self.testStub?(actionArg)
+    self.launchActionCallback?(actionArg)
     completion(.success(Void()))
   }
 }
@@ -85,7 +85,7 @@ class QuickActionsPluginTests: XCTestCase {
       userInfo: nil)
 
     let invokeMethodExpectation = expectation(description: "invokeMethod must be called.")
-    flutterApi.testStub = { aString in
+    flutterApi.launchActionCallback = { aString in
       XCTAssertEqual(aString, item.type)
       invokeMethodExpectation.fulfill()
     }
@@ -167,7 +167,7 @@ class QuickActionsPluginTests: XCTestCase {
       shortcutItemProvider: mockShortcutItemProvider)
 
     let invokeMethodExpectation = expectation(description: "invokeMethod must be called.")
-    flutterApi.testStub = { aString in
+    flutterApi.launchActionCallback = { aString in
       XCTAssertEqual(aString, item.type)
       invokeMethodExpectation.fulfill()
     }
@@ -201,7 +201,7 @@ class QuickActionsPluginTests: XCTestCase {
     let invokeMethodExpectation = expectation(description: "invokeMethod must be called.")
 
     var invokeMethodCount = 0
-    flutterApi.testStub = { aString in
+    flutterApi.launchActionCallback = { aString in
       XCTAssertEqual(aString, item.type)
       invokeMethodCount += 1
       invokeMethodExpectation.fulfill()

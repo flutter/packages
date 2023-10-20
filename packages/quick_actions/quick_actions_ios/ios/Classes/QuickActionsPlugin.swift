@@ -32,7 +32,6 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     messenger: FlutterBinaryMessenger,
     shortcutItemProvider: ShortcutItemProviding = UIApplication.shared
   ) {
-    let shortcutItemProvider = shortcutItemProvider
     let flutterApi = IOSQuickActionsFlutterApi(binaryMessenger: messenger)
     self.init(flutterApi: flutterApi, shortcutItemProvider: shortcutItemProvider)
   }
