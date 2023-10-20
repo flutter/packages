@@ -68,7 +68,6 @@ platform_properties:
         [
           {"dependency": "certs", "version": "version:9563bb"}
         ]
-      device_type: none
       os: Windows
       cpu: arm64
   windows_x64:
