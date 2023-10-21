@@ -1,3 +1,7 @@
+## 0.8.8+3
+
+* Fixes `requestFullMetadata` property missing `NSNumber` converting to `Bool`.
+
 ## 0.8.8+2
 
 * Adds pub topics to package metadata.
