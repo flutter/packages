@@ -264,12 +264,12 @@ NSString *const errorMethod = @"error";
     [settings setHighResolutionPhotoEnabled:YES];
   }
 
-  bool isHEVCCodecAvailable = [self.capturePhotoOutput.availablePhotoCodecTypes
-      containsObject:AVVideoCodecTypeHEVC];
+  bool isHEVCCodecAvailable =
+      [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
   
   if (_fileFormat == FCPFileFormatHEIF && isHEVCCodecAvailable) {
-    settings = [AVCapturePhotoSettings
-        photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+    settings =
+        [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
     extension = @"heif";
   } else {
     extension = @"jpg";

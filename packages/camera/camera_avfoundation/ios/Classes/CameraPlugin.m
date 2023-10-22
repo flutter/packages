@@ -258,7 +258,7 @@
       [_camera setDescriptionWhileRecording:(call.arguments[@"cameraName"]) result:result];
     } else if ([@"setFileFormat" isEqualToString:call.method]) {
       NSString *fileFormat = call.arguments[@"fileFormat"];
-      [_camera setFileFormat:FLTGetFileFormatFromString(fileFormat)];
+      [_camera setFileFormat:FCPGetFileFormatFromString(fileFormat)];
     } else {
       [result sendNotImplemented];
     }

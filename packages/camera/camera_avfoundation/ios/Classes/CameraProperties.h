@@ -140,6 +140,6 @@ typedef NS_ENUM(NSInteger, FCPFileFormat) {
 /**
  * Gets a string representation of FileFormat.
  */
-extern FCPFileFormat FLTGetFileFormatFromString(NSString *fileFormatString);
+extern FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString);
 
 NS_ASSUME_NONNULL_END

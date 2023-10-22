@@ -151,7 +151,7 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
 
 #pragma mark - video codec
 
-FCPFileFormat FLTGetFileFormatFromString(NSString *fileFormatString) {
+FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString) {
   if ([fileFormatString isEqualToString:@"jpg"]) {
     return FCPFileFormatJPEG;
   } else if ([fileFormatString isEqualToString:@"heif"]) {
