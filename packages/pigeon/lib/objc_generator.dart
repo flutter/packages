@@ -240,7 +240,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       late final String propertyType;
       addDocumentationComments(
           indent, field.documentationComments, _docCommentSpec);
-      propertyType = _propertyTypeForDartType(field,
+      propertyType = _propertyTypeForDartType(field.type,
           isNullable: field.type.isNullable,
           isEnum: customEnumNames.contains(field.type.baseName));
       final String nullability = field.type.isNullable ? ', nullable' : '';
@@ -312,8 +312,11 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln(
         '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
     for (final Method func in api.methods) {
-      final _ObjcType returnType =
-          _objcTypeForDartType(generatorOptions.prefix, func.returnType);
+      final _ObjcType returnType = _objcTypeForDartType(
+        generatorOptions.prefix, func.returnType,
+        // Nullability is required since the return must be nil if NSError is set.
+        forceNullability: true,
+      );
       final String callbackType =
           _callbackForType(root, func.returnType, returnType, generatorOptions);
       addDocumentationComments(
@@ -720,23 +723,21 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       int count = 0;
       for (final NamedType arg in func.arguments) {
         final String argName = _getSafeArgName(count, arg);
-        if (isEnum(root, arg.type)) {
-          final String className =
-              _className(generatorOptions.prefix, arg.type.baseName);
-          if (arg.type.isNullable) {
-            indent.writeln(
-                'NSNumber *${argName}AsNumber = GetNullableObjectAtIndex(args, $count);');
-            indent.writeln(
-                '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
-          } else {
-            indent.writeln(
-                '$className $argName = [GetNullableObjectAtIndex(args, $count) integerValue];');
-          }
-        } else {
-          final _ObjcType argType =
-              _objcTypeForDartType(generatorOptions.prefix, arg.type);
+        final bool isEnumType = isEnum(root, arg.type);
+        final String valueGetter = 'GetNullableObjectAtIndex(args, $count)';
+        final String? primitiveExtractionMethod =
+            _nsnumberExtractionMethod(arg.type, isEnum: isEnumType);
+        final _ObjcType objcArgType =
+            _objcTypeForDartType(generatorOptions.prefix, arg.type);
+        if (primitiveExtractionMethod != null) {
           indent.writeln(
-              '${argType.beforeString}$argName = GetNullableObjectAtIndex(args, $count);');
+              '${objcArgType.beforeString}$argName = [$valueGetter $primitiveExtractionMethod];');
+        } else if (isEnumType) {
+          indent.writeln('NSNumber *${argName}AsNumber = $valueGetter;');
+          indent.writeln(
+              '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
+        } else {
+          indent.writeln('${objcArgType.beforeString}$argName = $valueGetter;');
         }
         count++;
       }
@@ -819,8 +820,11 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.write(
         '[$channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
     indent.addScoped('{', '}];', () {
-      final _ObjcType returnType =
-          _objcTypeForDartType(generatorOptions.prefix, func.returnType);
+      final _ObjcType returnType = _objcTypeForDartType(
+        generatorOptions.prefix, func.returnType,
+        // Nullability is required since the return must be nil if NSError is set.
+        forceNullability: true,
+      );
       final Iterable<String> selectorComponents =
           _getSelectorComponents(func, lastSelectorComponent);
       final Iterable<String> argNames =
@@ -1254,6 +1258,27 @@ const Map<String, _ObjcType> _objcTypeForNonNullableDartTypeMap =
   'Object': _ObjcType(baseName: 'id'),
 };
 
+/// Returns the method to convert [type] from a boxed NSNumber to its
+/// corresponding primitive value, if any.
+String? _nsnumberExtractionMethod(TypeDeclaration type,
+    {required bool isEnum}) {
+  // Only non-nullable types are unboxed.
+  if (!type.isNullable) {
+    if (isEnum) {
+      return 'integerValue';
+    }
+    switch (type.baseName) {
+      case 'bool':
+        return 'booleanValue';
+      case 'int':
+        return 'integerValue';
+      case 'double':
+        return 'doubleValue';
+    }
+  }
+  return null;
+}
+
 /// Converts list of [TypeDeclaration] to a code string representing the type
 /// arguments for use in generics.
 /// Example: ('FOO', ['Foo', 'Bar']) -> 'FOOFoo *, FOOBar *').
@@ -1304,13 +1329,13 @@ _ObjcType _objcTypeForDartType(String? classPrefix, TypeDeclaration field,
 }
 
 /// Maps a type to a properties memory semantics (ie strong, copy).
-String _propertyTypeForDartType(NamedType field,
+String _propertyTypeForDartType(TypeDeclaration type,
     {required bool isNullable, required bool isEnum}) {
   if (isEnum) {
     // Only the nullable versions are objects.
     return isNullable ? 'strong' : 'assign';
   }
-  switch (field.type.baseName) {
+  switch (type.baseName) {
     case 'List':
     case 'Map':
     case 'String':
