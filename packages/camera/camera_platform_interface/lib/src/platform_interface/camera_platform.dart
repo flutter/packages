@@ -55,6 +55,20 @@ abstract class CameraPlatform extends PlatformInterface {
     throw UnimplementedError('createCamera() is not implemented.');
   }
 
+  /// Creates an uninitialized camera instance and returns the cameraId.
+  ///
+  /// Pass MediaSettings() for defaults
+  Future<int> createCameraWithSettings(
+    CameraDescription cameraDescription,
+    MediaSettings mediaSettings,
+  ) {
+    return createCamera(
+      cameraDescription,
+      mediaSettings.resolutionPreset,
+      enableAudio: mediaSettings.enableAudio,
+    );
+  }
+
   /// Initializes the camera on the device.
   ///
   /// [imageFormatGroup] is used to specify the image formatting used.

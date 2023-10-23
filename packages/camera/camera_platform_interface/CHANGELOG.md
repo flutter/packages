@@ -1,6 +1,10 @@
-## 2.5.3
+## 2.7.0
 
-* Add support to HEIF format to iOS
+* Adds support to HEIF format for iOS.
+
+## 2.6.0
+
+* Adds support to control video fps and bitrate. See `CameraPlatform.createCameraWithSettings`.
 
 ## 2.5.2
 
