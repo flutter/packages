@@ -1,3 +1,67 @@
+## 12.0.0
+
+- Adds ability to dynamically update routing table.
+- **BREAKING CHANGE**:
+  - The function signature of constructor of `RouteConfiguration` is updated.
+  - Adds a required `matchedPath` named parameter to `RouteMatch.match`.
+
+## 11.1.4
+
+- Fixes missing parameters in the type-safe routes topic documentation.
+
+## 11.1.3
+
+- Fixes missing state.extra in onException().
+
+## 11.1.2
+
+- Fixes a bug where the known routes and initial route were logged even when `debugLogDiagnostics` was set to `false`.
+
+## 11.1.1
+
+- Fixes a missing `{@end-tool}` doc directive tag for `GoRoute.name`.
+
+## 11.1.0
+
+- Adds optional parameter `overridePlatformDefaultLocation` to override initial route set by platform.
+
+## 11.0.1
+
+- Fixes the Android back button ignores top level route's onExit.
+
+## 11.0.0
+
+- Fixes the GoRouter.goBranch so that it doesn't reset extra to null if extra is not serializable.
+- **BREAKING CHANGE**:
+  - Updates the function signature of `GoRouteInformationProvider.restore`.
+  - Adds `NavigationType.restore` to `NavigationType` enum.
+
+## 10.2.0
+
+- Adds `onExit` to GoRoute.
+
+## 10.1.4
+
+- Fixes RouteInformationParser that does not restore full RouteMatchList if
+  the optionURLReflectsImperativeAPIs is set.
+
+## 10.1.3
+
+- Fixes an issue in the documentation that was using `state.queryParameters` instead of `state.uri.queryParameters`.
+
+## 10.1.2
+
+* Adds pub topics to package metadata.
+
+## 10.1.1
+
+- Fixes mapping from `Page` to `RouteMatch`s. 
+- Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 10.1.0
+
+- Supports setting `requestFocus`.
+
 ## 10.0.0
 
 - **BREAKING CHANGE**:
@@ -55,7 +119,7 @@
 
 - Makes namedLocation and route name related APIs case sensitive.
 
-## 8.0.2 
+## 8.0.2
 
 - Fixes a bug in `debugLogDiagnostics` to support StatefulShellRoute.
 

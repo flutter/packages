@@ -27,7 +27,7 @@ class ListTest: TestCase() {
             val reply = arg<BinaryMessenger.BinaryReply>(2)
             message.position(0)
             val args = codec.decodeMessage(message) as ArrayList<*>
-            val replyData = codec.encodeMessage(args[0])
+            val replyData = codec.encodeMessage(args)
             replyData?.position(0)
             reply.reply(replyData)
         }
@@ -35,7 +35,7 @@ class ListTest: TestCase() {
         var didCall = false
         api.echoWrappedList(input) {
             didCall = true
-            assertEquals(input, it)
+            assertEquals(input, it.getOrNull())
         }
 
         assertTrue(didCall)

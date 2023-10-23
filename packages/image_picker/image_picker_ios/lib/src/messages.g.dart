@@ -179,7 +179,7 @@ class ImagePickerApi {
     }
   }
 
-  Future<List<String?>?> pickMultiImage(MaxSize arg_maxSize,
+  Future<List<String?>> pickMultiImage(MaxSize arg_maxSize,
       int? arg_imageQuality, bool arg_requestFullMetadata) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImagePickerApi.pickMultiImage', codec,
@@ -198,8 +198,13 @@ class ImagePickerApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
     } else {
-      return (replyList[0] as List<Object?>?)?.cast<String?>();
+      return (replyList[0] as List<Object?>?)!.cast<String?>();
     }
   }
 

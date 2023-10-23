@@ -72,12 +72,9 @@ static FlutterError *getFlutterError(NSError *error) {
 @implementation FLTGoogleSignInPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FlutterMethodChannel *channel =
-      [FlutterMethodChannel methodChannelWithName:@"plugins.flutter.io/google_sign_in_ios"
-                                  binaryMessenger:[registrar messenger]];
   FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc] init];
   [registrar addApplicationDelegate:instance];
-  [registrar addMethodCallDelegate:instance channel:channel];
+  FSIGoogleSignInApiSetup(registrar.messenger, instance);
 }
 
 - (instancetype)init {
@@ -105,104 +102,122 @@ static FlutterError *getFlutterError(NSError *error) {
 
 #pragma mark - <FlutterPlugin> protocol
 
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([call.method isEqualToString:@"init"]) {
-    GIDConfiguration *configuration =
-        [self configurationWithClientIdArgument:call.arguments[@"clientId"]
-                         serverClientIdArgument:call.arguments[@"serverClientId"]
-                           hostedDomainArgument:call.arguments[@"hostedDomain"]];
-    if (configuration != nil) {
-      if ([call.arguments[@"scopes"] isKindOfClass:[NSArray class]]) {
-        self.requestedScopes = [NSSet setWithArray:call.arguments[@"scopes"]];
-      }
-      self.configuration = configuration;
-      result(nil);
-    } else {
-      result([FlutterError errorWithCode:@"missing-config"
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
+  return [self.signIn handleURL:url];
+}
+
+#pragma mark - FSIGoogleSignInApi
+
+- (void)initializeSignInWithParameters:(nonnull FSIInitParams *)params
+                                 error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  GIDConfiguration *configuration = [self configurationWithClientIdArgument:params.clientId
+                                                     serverClientIdArgument:params.serverClientId
+                                                       hostedDomainArgument:params.hostedDomain];
+  if (configuration != nil) {
+    self.requestedScopes = [NSSet setWithArray:params.scopes];
+    self.configuration = configuration;
+  } else {
+    *error = [FlutterError errorWithCode:@"missing-config"
                                  message:@"GoogleService-Info.plist file not found and clientId "
                                          @"was not provided programmatically."
-                                 details:nil]);
-    }
-  } else if ([call.method isEqualToString:@"signInSilently"]) {
-    [self.signIn restorePreviousSignInWithCallback:^(GIDGoogleUser *user, NSError *error) {
-      [self didSignInForUser:user result:result withError:error];
-    }];
-  } else if ([call.method isEqualToString:@"isSignedIn"]) {
-    result(@([self.signIn hasPreviousSignIn]));
-  } else if ([call.method isEqualToString:@"signIn"]) {
-    @try {
-      GIDConfiguration *configuration = self.configuration
-                                            ?: [self configurationWithClientIdArgument:nil
-                                                                serverClientIdArgument:nil
-                                                                  hostedDomainArgument:nil];
-      [self.signIn signInWithConfiguration:configuration
-                  presentingViewController:[self topViewController]
-                                      hint:nil
-                          additionalScopes:self.requestedScopes.allObjects
-                                  callback:^(GIDGoogleUser *user, NSError *error) {
-                                    [self didSignInForUser:user result:result withError:error];
-                                  }];
-    } @catch (NSException *e) {
-      result([FlutterError errorWithCode:@"google_sign_in" message:e.reason details:e.name]);
-      [e raise];
-    }
-  } else if ([call.method isEqualToString:@"getTokens"]) {
-    GIDGoogleUser *currentUser = self.signIn.currentUser;
-    GIDAuthentication *auth = currentUser.authentication;
-    [auth doWithFreshTokens:^void(GIDAuthentication *authentication, NSError *error) {
-      result(error != nil ? getFlutterError(error) : @{
-        @"idToken" : authentication.idToken,
-        @"accessToken" : authentication.accessToken,
-      });
-    }];
-  } else if ([call.method isEqualToString:@"signOut"]) {
-    [self.signIn signOut];
-    result(nil);
-  } else if ([call.method isEqualToString:@"disconnect"]) {
-    [self.signIn disconnectWithCallback:^(NSError *error) {
-      [self respondWithAccount:@{} result:result error:nil];
-    }];
-  } else if ([call.method isEqualToString:@"requestScopes"]) {
-    id scopeArgument = call.arguments[@"scopes"];
-    if ([scopeArgument isKindOfClass:[NSArray class]]) {
-      self.requestedScopes = [self.requestedScopes setByAddingObjectsFromArray:scopeArgument];
-    }
-    NSSet<NSString *> *requestedScopes = self.requestedScopes;
-
-    @try {
-      [self.signIn addScopes:requestedScopes.allObjects
-          presentingViewController:[self topViewController]
-                          callback:^(GIDGoogleUser *addedScopeUser, NSError *addedScopeError) {
-                            if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
-                                addedScopeError.code == kGIDSignInErrorCodeNoCurrentUser) {
-                              result([FlutterError errorWithCode:@"sign_in_required"
-                                                         message:@"No account to grant scopes."
-                                                         details:nil]);
-                            } else if ([addedScopeError.domain
-                                           isEqualToString:kGIDSignInErrorDomain] &&
-                                       addedScopeError.code ==
-                                           kGIDSignInErrorCodeScopesAlreadyGranted) {
-                              // Scopes already granted, report success.
-                              result(@YES);
-                            } else if (addedScopeUser == nil) {
-                              result(@NO);
-                            } else {
-                              NSSet<NSString *> *grantedScopes =
-                                  [NSSet setWithArray:addedScopeUser.grantedScopes];
-                              BOOL granted = [requestedScopes isSubsetOfSet:grantedScopes];
-                              result(@(granted));
-                            }
-                          }];
-    } @catch (NSException *e) {
-      result([FlutterError errorWithCode:@"request_scopes" message:e.reason details:e.name]);
-    }
-  } else {
-    result(FlutterMethodNotImplemented);
+                                 details:nil];
   }
 }
 
-- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
-  return [self.signIn handleURL:url];
+- (void)signInSilentlyWithCompletion:(nonnull void (^)(FSIUserData *_Nullable,
+                                                       FlutterError *_Nullable))completion {
+  [self.signIn restorePreviousSignInWithCallback:^(GIDGoogleUser *user, NSError *error) {
+    [self didSignInForUser:user withCompletion:completion error:error];
+  }];
+}
+
+- (nullable NSNumber *)isSignedInWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @([self.signIn hasPreviousSignIn]);
+}
+
+- (void)signInWithCompletion:(nonnull void (^)(FSIUserData *_Nullable,
+                                               FlutterError *_Nullable))completion {
+  @try {
+    GIDConfiguration *configuration = self.configuration
+                                          ?: [self configurationWithClientIdArgument:nil
+                                                              serverClientIdArgument:nil
+                                                                hostedDomainArgument:nil];
+    [self.signIn signInWithConfiguration:configuration
+                presentingViewController:[self topViewController]
+                                    hint:nil
+                        additionalScopes:self.requestedScopes.allObjects
+                                callback:^(GIDGoogleUser *user, NSError *error) {
+                                  [self didSignInForUser:user
+                                          withCompletion:completion
+                                                   error:error];
+                                }];
+  } @catch (NSException *e) {
+    completion(nil, [FlutterError errorWithCode:@"google_sign_in" message:e.reason details:e.name]);
+    [e raise];
+  }
+}
+
+- (void)getAccessTokenWithCompletion:(nonnull void (^)(FSITokenData *_Nullable,
+                                                       FlutterError *_Nullable))completion {
+  GIDGoogleUser *currentUser = self.signIn.currentUser;
+  GIDAuthentication *auth = currentUser.authentication;
+  [auth doWithFreshTokens:^void(GIDAuthentication *authentication, NSError *error) {
+    if (error) {
+      completion(nil, getFlutterError(error));
+    } else {
+      completion([FSITokenData makeWithIdToken:authentication.idToken
+                                   accessToken:authentication.accessToken],
+                 nil);
+    }
+  }];
+}
+
+- (void)signOutWithError:(FlutterError *_Nullable *_Nonnull)error;
+{ [self.signIn signOut]; }
+
+- (void)disconnectWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  [self.signIn disconnectWithCallback:^(NSError *error) {
+    // TODO(stuartmorgan): This preserves the pre-Pigeon-migration behavior, but it's unclear why
+    // 'error' is being ignored here.
+    completion(nil);
+  }];
+}
+
+- (void)requestScopes:(nonnull NSArray<NSString *> *)scopes
+           completion:(nonnull void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
+  self.requestedScopes = [self.requestedScopes setByAddingObjectsFromArray:scopes];
+  NSSet<NSString *> *requestedScopes = self.requestedScopes;
+
+  @try {
+    [self.signIn addScopes:requestedScopes.allObjects
+        presentingViewController:[self topViewController]
+                        callback:^(GIDGoogleUser *addedScopeUser, NSError *addedScopeError) {
+                          BOOL granted = NO;
+                          FlutterError *error = nil;
+                          if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
+                              addedScopeError.code == kGIDSignInErrorCodeNoCurrentUser) {
+                            error = [FlutterError errorWithCode:@"sign_in_required"
+                                                        message:@"No account to grant scopes."
+                                                        details:nil];
+                          } else if ([addedScopeError.domain
+                                         isEqualToString:kGIDSignInErrorDomain] &&
+                                     addedScopeError.code ==
+                                         kGIDSignInErrorCodeScopesAlreadyGranted) {
+                            // Scopes already granted, report success.
+                            granted = YES;
+                          } else if (addedScopeUser == nil) {
+                            granted = NO;
+                          } else {
+                            NSSet<NSString *> *grantedScopes =
+                                [NSSet setWithArray:addedScopeUser.grantedScopes];
+                            granted = [requestedScopes isSubsetOfSet:grantedScopes];
+                          }
+                          completion(error == nil ? @(granted) : nil, error);
+                        }];
+  } @catch (NSException *e) {
+    completion(nil, [FlutterError errorWithCode:@"request_scopes" message:e.reason details:e.name]);
+  }
 }
 
 #pragma mark - <GIDSignInUIDelegate> protocol
@@ -250,33 +265,25 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)didSignInForUser:(GIDGoogleUser *)user
-                  result:(FlutterResult)result
-               withError:(NSError *)error {
+          withCompletion:(nonnull void (^)(FSIUserData *_Nullable,
+                                           FlutterError *_Nullable))completion
+                   error:(NSError *)error {
   if (error != nil) {
     // Forward all errors and let Dart side decide how to handle.
-    [self respondWithAccount:nil result:result error:error];
+    completion(nil, getFlutterError(error));
   } else {
     NSURL *photoUrl;
     if (user.profile.hasImage) {
       // Placeholder that will be replaced by on the Dart side based on screen size.
       photoUrl = [user.profile imageURLWithDimension:1337];
     }
-    [self respondWithAccount:@{
-      @"displayName" : user.profile.name ?: [NSNull null],
-      @"email" : user.profile.email ?: [NSNull null],
-      @"id" : user.userID ?: [NSNull null],
-      @"photoUrl" : [photoUrl absoluteString] ?: [NSNull null],
-      @"serverAuthCode" : user.serverAuthCode ?: [NSNull null]
-    }
-                      result:result
-                       error:nil];
+    completion([FSIUserData makeWithDisplayName:user.profile.name
+                                          email:user.profile.email
+                                         userId:user.userID
+                                       photoUrl:[photoUrl absoluteString]
+                                 serverAuthCode:user.serverAuthCode],
+               nil);
   }
-}
-
-- (void)respondWithAccount:(NSDictionary<NSString *, id> *)account
-                    result:(FlutterResult)result
-                     error:(NSError *)error {
-  result(error != nil ? getFlutterError(error) : account);
 }
 
 - (UIViewController *)topViewController {
@@ -316,4 +323,5 @@ static FlutterError *getFlutterError(NSError *error) {
   }
   return viewController;
 }
+
 @end

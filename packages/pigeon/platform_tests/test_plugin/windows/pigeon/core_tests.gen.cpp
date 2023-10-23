@@ -1211,6 +1211,42 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              if (encodable_an_enum_arg.IsNull()) {
+                reply(WrapError("an_enum_arg unexpectedly null."));
+                return;
+              }
+              const AnEnum& an_enum_arg =
+                  (AnEnum)encodable_an_enum_arg.LongValue();
+              ErrorOr<AnEnum> output = api->EchoEnum(an_enum_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(
+                  EncodableValue((int)std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAllNullableTypes",
         &GetCodec());
     if (api != nullptr) {
@@ -1683,6 +1719,51 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoNullableEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              const int64_t an_enum_arg_value =
+                  encodable_an_enum_arg.IsNull()
+                      ? 0
+                      : encodable_an_enum_arg.LongValue();
+              const auto an_enum_arg =
+                  encodable_an_enum_arg.IsNull()
+                      ? std::nullopt
+                      : std::make_optional<AnEnum>(
+                            static_cast<AnEnum>(an_enum_arg_value));
+              ErrorOr<std::optional<AnEnum>> output = api->EchoNullableEnum(
+                  an_enum_arg ? &(*an_enum_arg) : nullptr);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              auto output_optional = std::move(output).TakeValue();
+              if (output_optional) {
+                wrapped.push_back(
+                    EncodableValue((int)std::move(output_optional).value()));
+              } else {
+                wrapped.push_back(EncodableValue());
+              }
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "noopAsync",
         &GetCodec());
     if (api != nullptr) {
@@ -1997,6 +2078,44 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     EncodableList wrapped;
                     wrapped.push_back(
                         EncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAsyncEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              if (encodable_an_enum_arg.IsNull()) {
+                reply(WrapError("an_enum_arg unexpectedly null."));
+                return;
+              }
+              const AnEnum& an_enum_arg =
+                  (AnEnum)encodable_an_enum_arg.LongValue();
+              api->EchoAsyncEnum(
+                  an_enum_arg, [reply](ErrorOr<AnEnum>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue((int)std::move(output).TakeValue()));
                     reply(EncodableValue(std::move(wrapped)));
                   });
             } catch (const std::exception& exception) {
@@ -2512,6 +2631,53 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAsyncNullableEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              const int64_t an_enum_arg_value =
+                  encodable_an_enum_arg.IsNull()
+                      ? 0
+                      : encodable_an_enum_arg.LongValue();
+              const auto an_enum_arg =
+                  encodable_an_enum_arg.IsNull()
+                      ? std::nullopt
+                      : std::make_optional<AnEnum>(
+                            static_cast<AnEnum>(an_enum_arg_value));
+              api->EchoAsyncNullableEnum(
+                  an_enum_arg ? &(*an_enum_arg) : nullptr,
+                  [reply](ErrorOr<std::optional<AnEnum>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(EncodableValue(
+                          (int)std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterNoop",
         &GetCodec());
     if (api != nullptr) {
@@ -2629,6 +2795,48 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     EncodableList wrapped;
                     wrapped.push_back(
                         CustomEncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoAllNullableTypes",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_everything_arg = args.at(0);
+              const auto* everything_arg =
+                  &(std::any_cast<const AllNullableTypes&>(
+                      std::get<CustomEncodableValue>(
+                          encodable_everything_arg)));
+              api->CallFlutterEchoAllNullableTypes(
+                  everything_arg,
+                  [reply](ErrorOr<std::optional<AllNullableTypes>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(CustomEncodableValue(
+                          std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
                     reply(EncodableValue(std::move(wrapped)));
                   });
             } catch (const std::exception& exception) {
@@ -2955,6 +3163,44 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     auto channel = std::make_unique<BasicMessageChannel<>>(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              if (encodable_an_enum_arg.IsNull()) {
+                reply(WrapError("an_enum_arg unexpectedly null."));
+                return;
+              }
+              const AnEnum& an_enum_arg =
+                  (AnEnum)encodable_an_enum_arg.LongValue();
+              api->CallFlutterEchoEnum(
+                  an_enum_arg, [reply](ErrorOr<AnEnum>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue((int)std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "callFlutterEchoNullableBool",
         &GetCodec());
     if (api != nullptr) {
@@ -3234,6 +3480,53 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
       channel->SetMessageHandler(nullptr);
     }
   }
+  {
+    auto channel = std::make_unique<BasicMessageChannel<>>(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterEchoNullableEnum",
+        &GetCodec());
+    if (api != nullptr) {
+      channel->SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_an_enum_arg = args.at(0);
+              const int64_t an_enum_arg_value =
+                  encodable_an_enum_arg.IsNull()
+                      ? 0
+                      : encodable_an_enum_arg.LongValue();
+              const auto an_enum_arg =
+                  encodable_an_enum_arg.IsNull()
+                      ? std::nullopt
+                      : std::make_optional<AnEnum>(
+                            static_cast<AnEnum>(an_enum_arg_value));
+              api->CallFlutterEchoNullableEnum(
+                  an_enum_arg ? &(*an_enum_arg) : nullptr,
+                  [reply](ErrorOr<std::optional<AnEnum>>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    auto output_optional = std::move(output).TakeValue();
+                    if (output_optional) {
+                      wrapped.push_back(EncodableValue(
+                          (int)std::move(output_optional).value()));
+                    } else {
+                      wrapped.push_back(EncodableValue());
+                    }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel->SetMessageHandler(nullptr);
+    }
+  }
 }
 
 EncodableValue HostIntegrationCoreApi::WrapError(
@@ -3330,10 +3623,29 @@ void FlutterIntegrationCoreApi::Noop(
       "noop",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue();
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) { on_success(); });
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        on_success();
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::ThrowError(
@@ -3345,16 +3657,30 @@ void FlutterIntegrationCoreApi::ThrowError(
       "throwError",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue();
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
-        const auto* return_value = &encodable_return_value;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const auto* return_value = &list_return_value->at(0);
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::ThrowErrorFromVoid(
@@ -3366,10 +3692,29 @@ void FlutterIntegrationCoreApi::ThrowErrorFromVoid(
       "throwErrorFromVoid",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue();
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) { on_success(); });
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        on_success();
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoAllTypes(
@@ -3384,22 +3729,36 @@ void FlutterIntegrationCoreApi::EchoAllTypes(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       CustomEncodableValue(everything_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value = std::any_cast<const AllTypes&>(
-            std::get<CustomEncodableValue>(encodable_return_value));
+            std::get<CustomEncodableValue>(list_return_value->at(0)));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoAllNullableTypes(
-    const AllNullableTypes& everything_arg,
-    std::function<void(const AllNullableTypes&)>&& on_success,
+    const AllNullableTypes* everything_arg,
+    std::function<void(const AllNullableTypes*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   auto channel = std::make_unique<BasicMessageChannel<>>(
       binary_messenger_,
@@ -3407,19 +3766,33 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypes(
       "echoAllNullableTypes",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      CustomEncodableValue(everything_arg),
+      everything_arg ? CustomEncodableValue(*everything_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
-        const auto& return_value = std::any_cast<const AllNullableTypes&>(
-            std::get<CustomEncodableValue>(encodable_return_value));
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const auto* return_value = &(std::any_cast<const AllNullableTypes&>(
+            std::get<CustomEncodableValue>(list_return_value->at(0))));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::SendMultipleNullableTypes(
@@ -3440,17 +3813,31 @@ void FlutterIntegrationCoreApi::SendMultipleNullableTypes(
       a_nullable_string_arg ? EncodableValue(*a_nullable_string_arg)
                             : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value = std::any_cast<const AllNullableTypes&>(
-            std::get<CustomEncodableValue>(encodable_return_value));
+            std::get<CustomEncodableValue>(list_return_value->at(0)));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoBool(
@@ -3464,16 +3851,30 @@ void FlutterIntegrationCoreApi::EchoBool(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_bool_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
-        const auto& return_value = std::get<bool>(encodable_return_value);
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const auto& return_value = std::get<bool>(list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoInt(
@@ -3487,16 +3888,30 @@ void FlutterIntegrationCoreApi::EchoInt(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(an_int_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
-        const int64_t return_value = encodable_return_value.LongValue();
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const int64_t return_value = list_return_value->at(0).LongValue();
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoDouble(
@@ -3510,16 +3925,30 @@ void FlutterIntegrationCoreApi::EchoDouble(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_double_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
-        const auto& return_value = std::get<double>(encodable_return_value);
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const auto& return_value = std::get<double>(list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoString(
@@ -3534,17 +3963,31 @@ void FlutterIntegrationCoreApi::EchoString(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_string_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value =
-            std::get<std::string>(encodable_return_value);
+            std::get<std::string>(list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoUint8List(
@@ -3559,17 +4002,31 @@ void FlutterIntegrationCoreApi::EchoUint8List(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_list_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value =
-            std::get<std::vector<uint8_t>>(encodable_return_value);
+            std::get<std::vector<uint8_t>>(list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoList(
@@ -3584,17 +4041,31 @@ void FlutterIntegrationCoreApi::EchoList(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_list_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value =
-            std::get<EncodableList>(encodable_return_value);
+            std::get<EncodableList>(list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoMap(
@@ -3609,17 +4080,69 @@ void FlutterIntegrationCoreApi::EchoMap(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_map_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value =
-            std::get<EncodableMap>(encodable_return_value);
+            std::get<EncodableMap>(list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
+}
+
+void FlutterIntegrationCoreApi::EchoEnum(
+    const AnEnum& an_enum_arg, std::function<void(const AnEnum&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoEnum",
+      &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      EncodableValue((int)an_enum_arg),
+  });
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const AnEnum& return_value =
+            (AnEnum)list_return_value->at(0).LongValue();
+        on_success(return_value);
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoNullableBool(
@@ -3633,16 +4156,30 @@ void FlutterIntegrationCoreApi::EchoNullableBool(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_bool_arg ? EncodableValue(*a_bool_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
-        const auto* return_value = std::get_if<bool>(&encodable_return_value);
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const auto* return_value = std::get_if<bool>(&list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoNullableInt(
@@ -3656,21 +4193,35 @@ void FlutterIntegrationCoreApi::EchoNullableInt(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       an_int_arg ? EncodableValue(*an_int_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const int64_t return_value_value =
-            encodable_return_value.IsNull()
+            list_return_value->at(0).IsNull()
                 ? 0
-                : encodable_return_value.LongValue();
+                : list_return_value->at(0).LongValue();
         const auto* return_value =
-            encodable_return_value.IsNull() ? nullptr : &return_value_value;
+            list_return_value->at(0).IsNull() ? nullptr : &return_value_value;
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoNullableDouble(
@@ -3684,16 +4235,31 @@ void FlutterIntegrationCoreApi::EchoNullableDouble(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_double_arg ? EncodableValue(*a_double_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
-        const auto* return_value = std::get_if<double>(&encodable_return_value);
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const auto* return_value =
+            std::get_if<double>(&list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoNullableString(
@@ -3708,17 +4274,31 @@ void FlutterIntegrationCoreApi::EchoNullableString(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto* return_value =
-            std::get_if<std::string>(&encodable_return_value);
+            std::get_if<std::string>(&list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoNullableUint8List(
@@ -3733,17 +4313,31 @@ void FlutterIntegrationCoreApi::EchoNullableUint8List(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_list_arg ? EncodableValue(*a_list_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto* return_value =
-            std::get_if<std::vector<uint8_t>>(&encodable_return_value);
+            std::get_if<std::vector<uint8_t>>(&list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoNullableList(
@@ -3758,17 +4352,31 @@ void FlutterIntegrationCoreApi::EchoNullableList(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_list_arg ? EncodableValue(*a_list_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto* return_value =
-            std::get_if<EncodableList>(&encodable_return_value);
+            std::get_if<EncodableList>(&list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoNullableMap(
@@ -3783,17 +4391,74 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_map_arg ? EncodableValue(*a_map_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto* return_value =
-            std::get_if<EncodableMap>(&encodable_return_value);
+            std::get_if<EncodableMap>(&list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
+}
+
+void FlutterIntegrationCoreApi::EchoNullableEnum(
+    const AnEnum* an_enum_arg, std::function<void(const AnEnum*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableEnum",
+      &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      an_enum_arg ? EncodableValue((int)(*an_enum_arg)) : EncodableValue(),
+  });
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const int64_t return_value_value =
+            list_return_value->at(0).IsNull()
+                ? 0
+                : list_return_value->at(0).LongValue();
+        const AnEnum enum_return_value = (AnEnum)return_value_value;
+        const auto* return_value =
+            list_return_value->at(0).IsNull() ? nullptr : &enum_return_value;
+        on_success(return_value);
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::NoopAsync(
@@ -3805,10 +4470,29 @@ void FlutterIntegrationCoreApi::NoopAsync(
       "noopAsync",
       &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue();
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) { on_success(); });
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        on_success();
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 void FlutterIntegrationCoreApi::EchoAsyncString(
@@ -3823,17 +4507,31 @@ void FlutterIntegrationCoreApi::EchoAsyncString(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_string_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value =
-            std::get<std::string>(encodable_return_value);
+            std::get<std::string>(list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 /// The codec used by HostTrivialApi.
@@ -4024,17 +4722,69 @@ void FlutterSmallApi::EchoWrappedList(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       CustomEncodableValue(msg_arg),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value = std::any_cast<const TestMessage&>(
-            std::get<CustomEncodableValue>(encodable_return_value));
+            std::get<CustomEncodableValue>(list_return_value->at(0)));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
+}
+
+void FlutterSmallApi::EchoString(
+    const std::string& a_string_arg,
+    std::function<void(const std::string&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error) {
+  auto channel = std::make_unique<BasicMessageChannel<>>(
+      binary_messenger_,
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString",
+      &GetCodec());
+  EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
+      EncodableValue(a_string_arg),
+  });
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
+        const auto& return_value =
+            std::get<std::string>(list_return_value->at(0));
+        on_success(return_value);
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 }  // namespace core_tests_pigeontest

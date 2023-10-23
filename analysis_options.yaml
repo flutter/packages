@@ -76,6 +76,7 @@ linter:
     # - cascade_invocations # doesn't match the typical style of this repo
     - cast_nullable_to_non_nullable
     # - close_sinks # not reliable enough
+    - collection_methods_unrelated_type
     # - combinators_ordering # DIFFERENT FROM FLUTTER/FLUTTER: This isn't available on stable yet.
     # - comment_references # blocked on https://github.com/dart-lang/linter/issues/1142
     - conditional_uri_does_not_exist
@@ -97,14 +98,12 @@ linter:
     - flutter_style_todos
     - hash_and_equals
     - implementation_imports
-    - iterable_contains_unrelated_type
     # - join_return_with_assignment # not required by flutter style
     - leading_newlines_in_multiline_strings
     - library_names
     - library_prefixes
     - library_private_types_in_public_api
     # - lines_longer_than_80_chars # not required by flutter style
-    - list_remove_unrelated_type
     # - literal_only_boolean_expressions # too many false positives: https://github.com/dart-lang/linter/issues/453
     - missing_whitespace_between_adjacent_strings
     - no_adjacent_strings_in_list

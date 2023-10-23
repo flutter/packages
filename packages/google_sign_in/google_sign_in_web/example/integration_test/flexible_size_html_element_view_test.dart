@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:ui' as ui;
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -157,8 +157,7 @@ class ResizableFromJs extends StatelessWidget {
     this.initialSize,
     super.key,
   }) {
-    // ignore: avoid_dynamic_calls, undefined_prefixed_name
-    ui.platformViewRegistry.registerViewFactory(
+    ui_web.platformViewRegistry.registerViewFactory(
       'resizable_from_js_$instanceId',
       (int viewId) {
         final DomHtmlElement element = document.createElement('div');

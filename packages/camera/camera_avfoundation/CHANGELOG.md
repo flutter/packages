@@ -1,5 +1,19 @@
-## NEXT
+## 0.9.13+6
 
+* Fixes incorrect use of `NSError` that could cause crashes on launch.
+
+## 0.9.13+5
+
+* Ignores audio samples until the first video sample arrives.
+
+## 0.9.13+4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 0.9.13+3
+
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
 * Fixes unawaited_futures violations.
 
 ## 0.9.13+2

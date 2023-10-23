@@ -58,17 +58,11 @@ void runTests() {
     } else {
       expect(
           coordinate.x,
-          ((rect.center.dx - rect.topLeft.dx) *
-                  // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
-                  // ignore: deprecated_member_use
-                  tester.binding.window.devicePixelRatio)
+          ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
               .round());
       expect(
           coordinate.y,
-          ((rect.center.dy - rect.topLeft.dy) *
-                  // TODO(pdblasi-google): Update `window` usages to new API after 3.9.0 is in stable. https://github.com/flutter/flutter/issues/122912
-                  // ignore: deprecated_member_use
-                  tester.binding.window.devicePixelRatio)
+          ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
               .round());
     }
     await tester.binding.setSurfaceSize(null);
@@ -413,6 +407,30 @@ void runTests() {
       // TODO(cyanglaz): un-skip the test when we can test this on CI with API key enabled.
       // https://github.com/flutter/flutter/issues/57057
       skip: isAndroid || isWeb);
+
+  testWidgets(
+    'testCloudMapId',
+    (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await pumpMap(
+        tester,
+        GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          onMapCreated: (GoogleMapController controller) {
+            mapIdCompleter.complete(controller.mapId);
+          },
+          cloudMapId: kCloudMapId,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Await mapIdCompleter to finish to make sure map can be created with cloudMapId
+      await mapIdCompleter.future;
+    },
+  );
 }
 
 /// Repeatedly checks an asynchronous value against a test condition.

@@ -1,3 +1,12 @@
+## 1.0.3
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 1.0.2
+
+* Adds example app to demonstrate how to use the package.
+
 ## 1.0.1
 
 * Removes `process` dependency.

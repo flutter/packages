@@ -66,7 +66,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(ObjectKey(webViewWidget.params)), findsOneWidget);
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
 
       // Pump WebViewWidget with second controller.
       final WebKitWebViewController controller2 =
@@ -85,7 +92,81 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(ObjectKey(webViewWidget2.params)), findsOneWidget);
+      expect(webViewWidget.params != webViewWidget2.params, isTrue);
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget2.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+        'Key of the PlatformView is the same when the creation params are equal',
+        (WidgetTester tester) async {
+      final InstanceManager testInstanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      final WebKitWebViewController controller =
+          createTestWebViewController(testInstanceManager);
+
+      final WebKitWebViewWidget webViewWidget = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          instanceManager: testInstanceManager,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) => webViewWidget.build(context),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
+
+      final WebKitWebViewWidget webViewWidget2 = WebKitWebViewWidget(
+        WebKitWebViewWidgetCreationParams(
+          controller: controller,
+          instanceManager: testInstanceManager,
+        ),
+      );
+
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) => webViewWidget2.build(context),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Can find the new widget with the key of the first widget.
+      expect(
+        find.byKey(
+          ValueKey<WebKitWebViewWidgetCreationParams>(
+            webViewWidget.params as WebKitWebViewWidgetCreationParams,
+          ),
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

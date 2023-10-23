@@ -34,25 +34,21 @@ public class FileChooserParamsFlutterApiImpl
     this.instanceManager = instanceManager;
   }
 
-  private static GeneratedAndroidWebView.FileChooserModeEnumData toFileChooserEnumData(int mode) {
-    final GeneratedAndroidWebView.FileChooserModeEnumData.Builder builder =
-        new GeneratedAndroidWebView.FileChooserModeEnumData.Builder();
+  private static GeneratedAndroidWebView.FileChooserMode toFileChooserEnumData(int mode) {
 
     switch (mode) {
       case WebChromeClient.FileChooserParams.MODE_OPEN:
-        builder.setValue(GeneratedAndroidWebView.FileChooserMode.OPEN);
-        break;
+        return GeneratedAndroidWebView.FileChooserMode.OPEN;
+
       case WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE:
-        builder.setValue(GeneratedAndroidWebView.FileChooserMode.OPEN_MULTIPLE);
-        break;
+        return GeneratedAndroidWebView.FileChooserMode.OPEN_MULTIPLE;
+
       case WebChromeClient.FileChooserParams.MODE_SAVE:
-        builder.setValue(GeneratedAndroidWebView.FileChooserMode.SAVE);
-        break;
+        return GeneratedAndroidWebView.FileChooserMode.SAVE;
+
       default:
         throw new IllegalArgumentException(String.format("Unsupported FileChooserMode: %d", mode));
     }
-
-    return builder.build();
   }
 
   /**

@@ -10,7 +10,7 @@ import 'package:pigeon/pigeon.dart';
   objcHeaderOut: 'ios/Classes/messages.g.h',
   objcSourceOut: 'ios/Classes/messages.g.m',
   objcOptions: ObjcOptions(
-    prefix: 'FLT',
+    prefix: 'FVP',
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))

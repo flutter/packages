@@ -2,7 +2,7 @@ name: local_auth_android
 description: Android implementation of the local_auth plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/local_auth/local_auth_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+local_auth%22
-version: 1.0.33
+version: 1.0.35
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -29,4 +29,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: 5.4.1
-  pigeon: ^9.2.4
+  pigeon: ^11.0.0
+
+topics:
+  - authentication
+  - biometrics
+  - local-auth

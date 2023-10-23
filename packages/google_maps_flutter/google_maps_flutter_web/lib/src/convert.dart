@@ -82,6 +82,8 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
   options.styles = styles;
 
+  options.mapId = configuration.cloudMapId;
+
   return options;
 }
 
@@ -260,7 +262,7 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
     // iconConfig[2] contains the DPIs of the screen, but that information is
     // already encoded in the iconConfig[1]
     icon = gmaps.Icon()
-      ..url = ui.webOnlyAssetManager.getAssetUrl(iconConfig[1]! as String);
+      ..url = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
     if (size != null) {

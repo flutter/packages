@@ -52,6 +52,18 @@ class PathProviderFoundation extends PathProviderPlatform {
   }
 
   @override
+  Future<String?> getApplicationCachePath() async {
+    final String? path =
+        await _pathProvider.getDirectoryPath(DirectoryType.applicationCache);
+    if (path != null) {
+      // Ensure the directory exists before returning it, for consistency with
+      // other platforms.
+      await Directory(path).create(recursive: true);
+    }
+    return path;
+  }
+
+  @override
   Future<String?> getExternalStoragePath() async {
     throw UnsupportedError(
         'getExternalStoragePath is not supported on this platform');

@@ -14,7 +14,7 @@ class MarkerController {
     LatLngCallback? onDragStart,
     LatLngCallback? onDrag,
     LatLngCallback? onDragEnd,
-    ui.VoidCallback? onTap,
+    VoidCallback? onTap,
   })  : _marker = marker,
         _infoWindow = infoWindow,
         _consumeTapEvents = consumeTapEvents {

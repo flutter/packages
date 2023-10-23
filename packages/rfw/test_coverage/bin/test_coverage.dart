@@ -7,6 +7,7 @@
 import 'dart:io';
 
 import 'package:lcov_parser/lcov_parser.dart' as lcov;
+import 'package:meta/meta.dart';
 
 // After you run this script, `.../rfw/coverage/lcov.info` will represent the
 // latest coverage information for the package. Load that file into your IDE's
@@ -19,9 +20,31 @@ import 'package:lcov_parser/lcov_parser.dart' as lcov;
 
 // Please update these targets when you update this package.
 // Please ensure that test coverage continues to be 100%.
-const int targetLines = 3114;
+const int targetLines = 3122;
 const String targetPercent = '100';
 const String lastUpdate = '2023-06-29';
+
+@immutable
+/* final */ class LcovLine {
+  const LcovLine(this.filename, this.line);
+  final String filename;
+  final int line;
+
+  @override
+  int get hashCode => Object.hash(filename, line);
+
+  @override
+  bool operator ==(Object other) {
+    return other is LcovLine &&
+        other.line == line &&
+        other.filename == filename;
+  }
+
+  @override
+  String toString() {
+    return '$filename:$line';
+  }
+}
 
 Future<void> main(List<String> arguments) async {
   // This script is mentioned in the README.md file.
@@ -34,8 +57,13 @@ Future<void> main(List<String> arguments) async {
 
   final ProcessResult result = Process.runSync(
     'flutter',
-    <String>['test', '--coverage'],
+    <String>[
+      'test',
+      '--coverage',
+      if (arguments.isNotEmpty) ...arguments,
+    ],
   );
+
   if (result.exitCode != 0) {
     print(result.stdout);
     print(result.stderr);
@@ -54,17 +82,78 @@ Future<void> main(List<String> arguments) async {
     exit(0);
   }
 
+  final List<File> libFiles = Directory('lib')
+      .listSync(recursive: true)
+      .whereType<File>()
+      .where((File file) => file.path.endsWith('.dart'))
+      .toList();
+  final Set<LcovLine> flakyLines = <LcovLine>{};
+  final Set<LcovLine> deadLines = <LcovLine>{};
+  for (final File file in libFiles) {
+    int lineNumber = 0;
+    for (final String line in file.readAsLinesSync()) {
+      lineNumber += 1;
+      if (line.endsWith('// dead code on VM target')) {
+        deadLines.add(LcovLine(file.path, lineNumber));
+      }
+      if (line.endsWith('// https://github.com/dart-lang/sdk/issues/53349')) {
+        flakyLines.add(LcovLine(file.path, lineNumber));
+      }
+    }
+  }
+
   final List<lcov.Record> records = await lcov.Parser.parse(
     'coverage/lcov.info',
   );
   int totalLines = 0;
   int coveredLines = 0;
+  bool deadLinesError = false;
   for (final lcov.Record record in records) {
-    totalLines += record.lines?.found ?? 0;
-    coveredLines += record.lines?.hit ?? 0;
+    if (record.lines != null) {
+      totalLines += record.lines!.found ?? 0;
+      coveredLines += record.lines!.hit ?? 0;
+      if (record.file != null && record.lines!.details != null) {
+        for (int index = 0; index < record.lines!.details!.length; index += 1) {
+          if (record.lines!.details![index].hit != null &&
+              record.lines!.details![index].line != null) {
+            final LcovLine line = LcovLine(
+              record.file!,
+              record.lines!.details![index].line!,
+            );
+            if (flakyLines.contains(line)) {
+              totalLines -= 1;
+              if (record.lines!.details![index].hit! > 0) {
+                coveredLines -= 1;
+              }
+            }
+            if (deadLines.contains(line)) {
+              deadLines.remove(line);
+              totalLines -= 1;
+              if (record.lines!.details![index].hit! > 0) {
+                print(
+                  '$line: Line is marked as being dead code but was nonetheless covered.',
+                );
+                deadLinesError = true;
+              }
+            }
+          }
+        }
+      }
+    }
   }
-  if (totalLines == 0 || totalLines < coveredLines) {
-    print('Failed to compute coverage.');
+  if (deadLines.isNotEmpty || deadLinesError) {
+    for (final LcovLine line in deadLines) {
+      print(
+        '$line: Line is marked as being undetectably dead code but was not considered reachable.',
+      );
+    }
+    print(
+      'Consider removing the "dead code on VM target" comment from affected lines.',
+    );
+    exit(1);
+  }
+  if (totalLines <= 0 || totalLines < coveredLines) {
+    print('Failed to compute coverage correctly.');
     exit(1);
   }
 
@@ -74,7 +163,7 @@ Future<void> main(List<String> arguments) async {
   // We only check the TARGET_LINES matches, not the TARGET_PERCENT,
   // because we expect the percentage to drop over time as Dart fixes
   // various bugs in how it determines what lines are coverable.
-  if (coveredLines < targetLines) {
+  if (coveredLines < targetLines && targetLines <= totalLines) {
     print('');
     print('                  ╭──────────────────────────────╮');
     print('                  │ COVERAGE REGRESSION DETECTED │');
@@ -100,13 +189,23 @@ Future<void> main(List<String> arguments) async {
   } else {
     if (coveredLines < totalLines) {
       print(
-        'Warning: Coverage of package:rfw is no longer 100%. (Coverage is now $coveredPercent%.)',
+        'Warning: Coverage of package:rfw is no longer 100%. (Coverage is now $coveredPercent%, $coveredLines/$totalLines lines.)',
       );
     }
     if (coveredLines > targetLines) {
       print(
-        'test_coverage/bin/test_coverage.dart should be updated to have a new target ($coveredLines).',
+        'Total lines of covered code has increased, and coverage script is now out of date.\n'
+        'Coverage is now $coveredPercent%, $coveredLines/$totalLines lines, whereas previously there were only $targetLines lines.\n'
+        'Update the "\$targetLines" constant at the top of rfw/test_coverage/bin/test_coverage.dart (to $coveredLines).',
       );
+    }
+    if (targetLines > totalLines) {
+      print(
+        'Total lines of code has reduced, and coverage script is now out of date.\n'
+        'Coverage is now $coveredPercent%, $coveredLines/$totalLines lines, but previously there were $targetLines lines.\n'
+        'Update the "\$targetLines" constant at the top of rfw/test_coverage/bin/test_coverage.dart (to $totalLines).',
+      );
+      exit(1);
     }
   }
 
