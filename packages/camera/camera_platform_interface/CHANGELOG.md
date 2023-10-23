@@ -1,3 +1,7 @@
+## 2.6.0
+
+* Adds support to control video fps and bitrate. See `CameraPlatform.createCameraWithSettings`.
+
 ## 2.5.2
 
 * Adds pub topics to package metadata.
