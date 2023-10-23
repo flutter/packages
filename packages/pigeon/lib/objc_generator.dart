@@ -603,14 +603,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         if (primitiveExtractionMethod != null) {
           ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
         } else if (isEnumType) {
-          if (field.type.isNullable) {
-            indent.writeln('NSNumber *${field.name}AsNumber = $valueGetter;');
-            indent.writeln(
-                '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
-            ivarValueExpression = field.name;
-          } else {
-            ivarValueExpression = '[$valueGetter integerValue]';
-          }
+          indent.writeln('NSNumber *${field.name}AsNumber = $valueGetter;');
+          indent.writeln(
+              '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
+          ivarValueExpression = field.name;
         } else {
           ivarValueExpression = valueGetter;
         }
@@ -730,8 +726,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         final String valueGetter = 'GetNullableObjectAtIndex(args, $count)';
         final String? primitiveExtractionMethod =
             _nsnumberExtractionMethod(arg.type, isEnum: isEnumType);
-        final _ObjcType objcArgType =
-            _objcTypeForDartType(generatorOptions.prefix, arg.type);
+        final _ObjcType objcArgType = _objcTypeForDartType(
+            generatorOptions.prefix, arg.type,
+            isEnum: isEnumType);
         if (primitiveExtractionMethod != null) {
           indent.writeln(
               '${objcArgType.beforeString}$argName = [$valueGetter $primitiveExtractionMethod];');
@@ -1297,7 +1294,7 @@ String? _nsnumberExtractionMethod(TypeDeclaration type,
     }
     switch (type.baseName) {
       case 'bool':
-        return 'booleanValue';
+        return 'boolValue';
       case 'int':
         return 'integerValue';
       case 'double':
@@ -1344,11 +1341,14 @@ String? _objcTypeStringForPrimitiveDartType(
 /// Returns the Objective-C type for a Dart [field], prepending the
 /// [classPrefix] for generated classes.
 _ObjcType _objcTypeForDartType(String? classPrefix, TypeDeclaration field,
-    {bool forceNullability = false}) {
+    {bool isEnum = false, bool forceNullability = false}) {
   final _ObjcType? primitiveType =
       _objcTypeForPrimitiveDartType(field, forceNullability: forceNullability);
   return primitiveType == null
-      ? _ObjcType(baseName: _className(classPrefix, field.baseName))
+      ? _ObjcType(
+          baseName: _className(classPrefix, field.baseName),
+          // Non-nullable enums are non-pointer types.
+          isPointer: !isEnum || (field.isNullable || forceNullability))
       : field.typeArguments.isEmpty
           ? primitiveType
           : _ObjcType(

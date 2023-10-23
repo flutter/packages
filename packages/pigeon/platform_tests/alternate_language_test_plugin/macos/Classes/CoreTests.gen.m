@@ -96,7 +96,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 + (AllTypes *)fromList:(NSArray *)list {
   AllTypes *pigeonResult = [[AllTypes alloc] init];
-  pigeonResult.aBool = [GetNullableObjectAtIndex(list, 0) booleanValue];
+  pigeonResult.aBool = [GetNullableObjectAtIndex(list, 0) boolValue];
   pigeonResult.anInt = [GetNullableObjectAtIndex(list, 1) integerValue];
   pigeonResult.anInt64 = [GetNullableObjectAtIndex(list, 2) integerValue];
   pigeonResult.aDouble = [GetNullableObjectAtIndex(list, 3) doubleValue];
@@ -496,7 +496,7 @@ void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) booleanValue];
+        BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) boolValue];
         FlutterError *error;
         NSNumber *output = [api echoBool:arg_aBool error:&error];
         callback(wrapResult(output, error));
@@ -652,7 +652,7 @@ void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        AnEnum *arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        AnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
         AnEnumBox *enumBox = [api echoEnum:arg_anEnum error:&error];
         NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];
@@ -1059,7 +1059,7 @@ void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) booleanValue];
+        BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) boolValue];
         [api echoAsyncBool:arg_aBool
                 completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
                   callback(wrapResult(output, error));
@@ -1205,7 +1205,7 @@ void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        AnEnum *arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        AnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
         [api echoAsyncEnum:arg_anEnum
                 completion:^(AnEnumBox *_Nullable enumValue, FlutterError *_Nullable error) {
                   NSNumber *output =
@@ -1705,7 +1705,7 @@ void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) booleanValue];
+        BOOL arg_aBool = [GetNullableObjectAtIndex(args, 0) boolValue];
         [api callFlutterEchoBool:arg_aBool
                       completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
                         callback(wrapResult(output, error));
@@ -1868,7 +1868,7 @@ void SetUpHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        AnEnum *arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        AnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
         [api callFlutterEchoEnum:arg_anEnum
                       completion:^(AnEnumBox *_Nullable enumValue, FlutterError *_Nullable error) {
                         NSNumber *output =
