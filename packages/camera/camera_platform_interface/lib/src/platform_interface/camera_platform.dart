@@ -62,7 +62,11 @@ abstract class CameraPlatform extends PlatformInterface {
     CameraDescription cameraDescription,
     MediaSettings mediaSettings,
   ) {
-    return createCamera(cameraDescription, mediaSettings.resolutionPreset);
+    return createCamera(
+      cameraDescription,
+      mediaSettings.resolutionPreset,
+      enableAudio: mediaSettings.enableAudio,
+    );
   }
 
   /// Initializes the camera on the device.
