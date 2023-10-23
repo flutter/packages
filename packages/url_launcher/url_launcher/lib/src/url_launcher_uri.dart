@@ -11,13 +11,25 @@ import 'type_conversion.dart';
 
 /// Passes [url] to the underlying platform for handling.
 ///
-/// [mode] support varies significantly by platform. Clients can use
-/// [supportsLaunchMode] to query for support, but platforms will fall back to
-/// other modes if the requested mode is not supported, so checking is not
-/// required. The default behavior of [LaunchMode.platformDefault] is up to each
-/// platform, and its behavior for a given platform may change over time as new
-/// modes are supported, so clients that want a specific mode should request it
-/// rather than rely on any currently observed default behavior.
+/// [mode] support varies significantly by platform:
+///   - [LaunchMode.platformDefault] is supported on all platforms:
+///     - On iOS and Android, this treats web URLs as
+///       [LaunchMode.inAppWebView], and all other URLs as
+///       [LaunchMode.externalApplication].
+///     - On Windows, macOS, and Linux this behaves like
+///       [LaunchMode.externalApplication].
+///     - On web, this uses `webOnlyWindowName` for web URLs, and behaves like
+///       [LaunchMode.externalApplication] for any other content.
+///   - [LaunchMode.inAppWebView] is currently only supported on iOS and
+///     Android. If a non-web URL is passed with this mode, an [ArgumentError]
+///     will be thrown.
+///   - [LaunchMode.externalApplication] is supported on all platforms.
+///     On iOS, this should be used in cases where sharing the cookies of the
+///     user's browser is important, such as SSO flows, since Safari View
+///     Controller does not share the browser's context.
+///   - [LaunchMode.externalNonBrowserApplication] is supported on iOS 10+.
+///     This setting is used to require universal links to open in a non-browser
+///     application.
 ///
 /// For web, [webOnlyWindowName] specifies a target for the launch. This
 /// supports the standard special link target names. For example:
@@ -33,8 +45,7 @@ Future<bool> launchUrl(
   WebViewConfiguration webViewConfiguration = const WebViewConfiguration(),
   String? webOnlyWindowName,
 }) async {
-  if ((mode == LaunchMode.inAppWebView ||
-          mode == LaunchMode.inAppBrowserView) &&
+  if (mode == LaunchMode.inAppWebView &&
       !(url.scheme == 'https' || url.scheme == 'http')) {
     throw ArgumentError.value(url, 'url',
         'To use an in-app web view, you must provide an http(s) URL.');
@@ -70,26 +81,8 @@ Future<bool> canLaunchUrl(Uri url) async {
 /// Closes the current in-app web view, if one was previously opened by
 /// [launchUrl].
 ///
-/// This works only if [supportsCloseForLaunchMode] returns true for the mode
-/// that was used by [launchUrl].
+/// If [launchUrl] was never called with [LaunchMode.inAppWebView], then this
+/// call will have no effect.
 Future<void> closeInAppWebView() async {
   return UrlLauncherPlatform.instance.closeWebView();
-}
-
-/// Returns true if [mode] is supported by the current platform implementation.
-///
-/// Calling [launchUrl] with an unsupported mode will fall back to a supported
-/// mode, so calling this method is only necessary for cases where the caller
-/// needs to know which mode will be used.
-Future<bool> supportsLaunchMode(PreferredLaunchMode mode) {
-  return UrlLauncherPlatform.instance.supportsMode(mode);
-}
-
-/// Returns true if [closeInAppWebView] is supported for [mode] in the current
-/// platform implementation.
-///
-/// If this returns false, [closeInAppWebView] will not work when launching
-/// URLs with [mode].
-Future<bool> supportsCloseForLaunchMode(PreferredLaunchMode mode) {
-  return UrlLauncherPlatform.instance.supportsMode(mode);
 }

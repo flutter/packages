@@ -130,7 +130,7 @@ public class UrlLauncherTest {
   }
 
   @Test
-  public void openUrlInApp_opensUrlInWebViewIfNecessary() {
+  public void openWebView_opensUrl_inWebView() {
     Activity activity = mock(Activity.class);
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
@@ -141,9 +141,8 @@ public class UrlLauncherTest {
     headers.put("key", "value");
 
     boolean result =
-        api.openUrlInApp(
+        api.openUrlInWebView(
             url,
-            true,
             new Messages.WebViewOptions.Builder()
                 .setEnableJavaScript(enableJavaScript)
                 .setEnableDomStorage(enableDomStorage)
@@ -163,39 +162,15 @@ public class UrlLauncherTest {
   }
 
   @Test
-  public void openWebView_opensUrlInWebViewIfRequested() {
+  public void openWebView_opensUrl_inCustomTabs() {
     Activity activity = mock(Activity.class);
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
     String url = "https://flutter.dev";
 
     boolean result =
-        api.openUrlInApp(
+        api.openUrlInWebView(
             url,
-            false,
-            new Messages.WebViewOptions.Builder()
-                .setEnableJavaScript(false)
-                .setEnableDomStorage(false)
-                .setHeaders(new HashMap<>())
-                .build());
-
-    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
-    verify(activity).startActivity(intentCaptor.capture());
-    assertTrue(result);
-    assertEquals(url, intentCaptor.getValue().getExtras().getString(WebViewActivity.URL_EXTRA));
-  }
-
-  @Test
-  public void openWebView_opensUrlInCustomTabs() {
-    Activity activity = mock(Activity.class);
-    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
-    api.setActivity(activity);
-    String url = "https://flutter.dev";
-
-    boolean result =
-        api.openUrlInApp(
-            url,
-            true,
             new Messages.WebViewOptions.Builder()
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
@@ -210,7 +185,7 @@ public class UrlLauncherTest {
   }
 
   @Test
-  public void openWebView_opensUrlInCustomTabsWithCORSAllowedHeader() {
+  public void openWebView_opensUrl_inCustomTabs_withCORSAllowedHeader() {
     Activity activity = mock(Activity.class);
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
@@ -220,9 +195,8 @@ public class UrlLauncherTest {
     headers.put(headerKey, "text/plain");
 
     boolean result =
-        api.openUrlInApp(
+        api.openUrlInWebView(
             url,
-            true,
             new Messages.WebViewOptions.Builder()
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
@@ -240,7 +214,7 @@ public class UrlLauncherTest {
   }
 
   @Test
-  public void openWebView_fallsBackToWebViewIfCustomTabFails() {
+  public void openWebView_fallsbackTo_inWebView() {
     Activity activity = mock(Activity.class);
     UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
     api.setActivity(activity);
@@ -250,9 +224,8 @@ public class UrlLauncherTest {
         .startActivity(any(), isNull()); // for custom tabs intent
 
     boolean result =
-        api.openUrlInApp(
+        api.openUrlInWebView(
             url,
-            true,
             new Messages.WebViewOptions.Builder()
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
@@ -278,9 +251,8 @@ public class UrlLauncherTest {
     HashMap<String, String> headers = new HashMap<>();
     headers.put("key", "value");
 
-    api.openUrlInApp(
+    api.openUrlInWebView(
         "https://flutter.dev",
-        true,
         new Messages.WebViewOptions.Builder()
             .setEnableJavaScript(enableJavaScript)
             .setEnableDomStorage(false)
@@ -305,9 +277,8 @@ public class UrlLauncherTest {
     headers.put(key1, "value");
     headers.put(key2, "value2");
 
-    api.openUrlInApp(
+    api.openUrlInWebView(
         "https://flutter.dev",
-        true,
         new Messages.WebViewOptions.Builder()
             .setEnableJavaScript(false)
             .setEnableDomStorage(false)
@@ -332,9 +303,8 @@ public class UrlLauncherTest {
     HashMap<String, String> headers = new HashMap<>();
     headers.put("key", "value");
 
-    api.openUrlInApp(
+    api.openUrlInWebView(
         "https://flutter.dev",
-        true,
         new Messages.WebViewOptions.Builder()
             .setEnableJavaScript(false)
             .setEnableDomStorage(enableDomStorage)
@@ -357,9 +327,8 @@ public class UrlLauncherTest {
         assertThrows(
             Messages.FlutterError.class,
             () ->
-                api.openUrlInApp(
+                api.openUrlInWebView(
                     "https://flutter.dev",
-                    true,
                     new Messages.WebViewOptions.Builder()
                         .setEnableJavaScript(false)
                         .setEnableDomStorage(false)
@@ -381,9 +350,8 @@ public class UrlLauncherTest {
         .startActivity(any()); // for webview intent
 
     boolean result =
-        api.openUrlInApp(
+        api.openUrlInWebView(
             "https://flutter.dev",
-            true,
             new Messages.WebViewOptions.Builder()
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)

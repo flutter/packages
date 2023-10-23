@@ -90,17 +90,4 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
     openNewWindow(url, webOnlyWindowName: webOnlyWindowName);
     return true;
   }
-
-  @override
-  Future<bool> supportsMode(PreferredLaunchMode mode) async {
-    // Web doesn't allow any control over the destination beyond
-    // webOnlyWindowName, so don't claim support for any mode beyond default.
-    return mode == PreferredLaunchMode.platformDefault;
-  }
-
-  @override
-  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
-    // No supported mode is closeable.
-    return false;
-  }
 }
