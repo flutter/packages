@@ -267,7 +267,6 @@ NSString *const errorMethod = @"error";
   bool isHEVCCodecAvailable =
       [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
 
-  
   if (_fileFormat == FCPFileFormatHEIF && isHEVCCodecAvailable) {
     settings =
         [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
