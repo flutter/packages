@@ -847,7 +847,7 @@ android {
     ${checkForDeprecatedCompileSdkVersion ? 'compileSdkVersion' : 'compileSdk'} $oldCompileSdkVersion
 ''');
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
+        await runCapturingPrint(runner, <String>[
           'update-dependency',
           '--packages',
           package.displayName,

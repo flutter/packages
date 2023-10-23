@@ -152,7 +152,6 @@ ${response.httpResponse.body}
         final RegExp validSdkVersion = RegExp(r'^\d{1,2}$');
         final bool isValidSdkVersion =
             validSdkVersion.stringMatch(version) == version;
-        print(isValidSdkVersion);
         if (!isValidSdkVersion) {
           printError(
               'A valid Android SDK version number (1-2 digit numbers) must be provided.');
@@ -332,10 +331,9 @@ ${response.httpResponse.body}
       return PackageResult.skip(
           'Package ${package.displayName} does not run on Android.');
     } else if (package.getEnclosingPackage() != null) {
-      // TODO: define isExample so we know for sure
-      // We skip examples in this command.
+      // We skip examples for this command.
       return PackageResult.skip(
-          'Package ${package.displayName} is an example; run with "compileSdkForExamples" to update.');
+          'Package ${package.displayName} is not a top-level package; run with "compileSdkForExamples" to update.');
     }
     final File buildConfigurationFile = package
         .platformDirectory(FlutterPlatform.android)
