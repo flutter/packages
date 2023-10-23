@@ -300,8 +300,8 @@ ${response.httpResponse.body}
           _AndroidDepdencyType.compileSdkForExamples) {
         fileToUpdate =
             androidDirectory.childDirectory('app').childFile('build.gradle');
-        dependencyVersionPattern =
-            RegExp(r'(compileSdk|compileSdkVersion) \d{1,2}\n');
+        dependencyVersionPattern = RegExp(
+            r'(compileSdk|compileSdkVersion) (\d{1,2}|flutter.compileSdkVersion)');
         newDependencyVersionEntry = 'compileSdk $_targetVersion';
       }
 
@@ -341,7 +341,7 @@ ${response.httpResponse.body}
     final String buildConfigurationContents =
         buildConfigurationFile.readAsStringSync();
     final RegExp validCompileSdkVersion =
-        RegExp(r'(compileSdk|compileSdkVersion) \d{1,2}\n');
+        RegExp(r'(compileSdk|compileSdkVersion) \d{1,2}');
 
     if (!validCompileSdkVersion.hasMatch(buildConfigurationContents)) {
       return PackageResult.fail(<String>[
