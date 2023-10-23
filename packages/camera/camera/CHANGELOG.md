@@ -1,4 +1,4 @@
-## 0.10.6
+## NEXT
 
 * Add support to HEIF format to iOS
 
