@@ -232,19 +232,17 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
           field,
           classes,
           enums,
-          (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+          (TypeDeclaration x) => _objcTypeStringForPrimitiveDartType(prefix, x,
+              beforeString: true),
           customResolver: customEnumNames.contains(field.type.baseName)
               ? (String x) => _enumName(x, prefix: prefix)
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
       addDocumentationComments(
           indent, field.documentationComments, _docCommentSpec);
-      if (customEnumNames.contains(field.type.baseName) &&
-          !field.type.isNullable) {
-        propertyType = 'assign';
-      } else {
-        propertyType = _propertyTypeForDartType(field);
-      }
+      propertyType = _propertyTypeForDartType(field,
+          isNullable: field.type.isNullable,
+          isEnum: customEnumNames.contains(field.type.baseName));
       final String nullability = field.type.isNullable ? ', nullable' : '';
       final String fieldType = isEnum(root, field.type) && field.type.isNullable
           ? _enumName(field.type.baseName,
@@ -314,7 +312,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln(
         '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
     for (final Method func in api.methods) {
-      final _ObjcPtr returnType =
+      final _ObjcType returnType =
           _objcTypeForDartType(generatorOptions.prefix, func.returnType);
       final String callbackType =
           _callbackForType(root, func.returnType, returnType, generatorOptions);
@@ -354,8 +352,13 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
     indent.writeln('@protocol $apiName');
     for (final Method func in api.methods) {
-      final _ObjcPtr returnTypeName =
-          _objcTypeForDartType(generatorOptions.prefix, func.returnType);
+      final _ObjcType returnTypeName = _objcTypeForDartType(
+        generatorOptions.prefix,
+        func.returnType,
+        // Nullability is required since the return must be nil if NSError is
+        // set.
+        forceNullability: true,
+      );
 
       String? lastArgName;
       String? lastArgType;
@@ -375,7 +378,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
           lastArgType = 'void (^)($enumReturnType, FlutterError *_Nullable)';
         } else {
           lastArgType =
-              'void (^)(${returnTypeName.withPtr}_Nullable, FlutterError *_Nullable)';
+              'void (^)(${returnTypeName.beforeString}_Nullable, FlutterError *_Nullable)';
         }
       } else {
         if (func.returnType.isVoid) {
@@ -383,7 +386,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         } else if (isEnum(root, func.returnType)) {
           returnType = enumReturnType;
         } else {
-          returnType = 'nullable ${returnTypeName.withPtr.trim()}';
+          returnType = 'nullable $returnTypeName';
         }
 
         lastArgType = 'FlutterError *_Nullable *_Nonnull';
@@ -730,17 +733,17 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
                 '$className $argName = [GetNullableObjectAtIndex(args, $count) integerValue];');
           }
         } else {
-          final _ObjcPtr argType =
+          final _ObjcType argType =
               _objcTypeForDartType(generatorOptions.prefix, arg.type);
           indent.writeln(
-              '${argType.withPtr}$argName = GetNullableObjectAtIndex(args, $count);');
+              '${argType.beforeString}$argName = GetNullableObjectAtIndex(args, $count);');
         }
         count++;
       }
     }
 
     void writeAsyncBindings(Iterable<String> selectorComponents,
-        String callSignature, _ObjcPtr returnType) {
+        String callSignature, _ObjcType returnType) {
       if (func.returnType.isVoid) {
         const String callback = 'callback(wrapResult(nil, error));';
         if (func.arguments.isEmpty) {
@@ -758,7 +761,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         }
       } else {
         const String callback = 'callback(wrapResult(output, error));';
-        String returnTypeString = '${returnType.withPtr}_Nullable output';
+        String returnTypeString = '${returnType.beforeString}_Nullable output';
         const String numberOutput = 'NSNumber *output =';
         const String enumConversionExpression =
             'enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];';
@@ -789,7 +792,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       }
     }
 
-    void writeSyncBindings(String call, _ObjcPtr returnType) {
+    void writeSyncBindings(String call, _ObjcType returnType) {
       indent.writeln('FlutterError *error;');
       if (func.returnType.isVoid) {
         indent.writeln('$call;');
@@ -801,7 +804,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
           indent.writeln(
               'NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];');
         } else {
-          indent.writeln('${returnType.withPtr}output = $call;');
+          indent.writeln('${returnType.beforeString}output = $call;');
         }
         indent.writeln('callback(wrapResult(output, error));');
       }
@@ -816,7 +819,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.write(
         '[$channel setMessageHandler:^(id _Nullable message, FlutterReply callback) ');
     indent.addScoped('{', '}];', () {
-      final _ObjcPtr returnType =
+      final _ObjcType returnType =
           _objcTypeForDartType(generatorOptions.prefix, func.returnType);
       final Iterable<String> selectorComponents =
           _getSelectorComponents(func, lastSelectorComponent);
@@ -1042,8 +1045,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     Method func, {
     required String dartPackageName,
   }) {
-    final _ObjcPtr returnType =
-        _objcTypeForDartType(languageOptions.prefix, func.returnType);
+    final _ObjcType returnType = _objcTypeForDartType(
+      languageOptions.prefix,
+      func.returnType,
+      // Nullability is required since the return must be nil if NSError is set.
+      forceNullability: true,
+    );
     final String callbackType =
         _callbackForType(root, func.returnType, returnType, languageOptions);
 
@@ -1116,7 +1123,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                 indent.writeln(
                     '$enumName *output = outputAsNumber == nil ? nil : [[$enumName alloc] initWithValue:[outputAsNumber integerValue]];');
               } else {
-                indent.writeln('${returnType.withPtr}output = $nullCheck;');
+                indent
+                    .writeln('${returnType.beforeString}output = $nullCheck;');
               }
               indent.writeln('completion(output, nil);');
             }
@@ -1159,7 +1167,8 @@ void _writeObjcSourceClassInitializerDeclaration(
           field,
           classes,
           enums,
-          (TypeDeclaration x) => _objcTypePtrForPrimitiveDartType(prefix, x),
+          (TypeDeclaration x) => _objcTypeStringForPrimitiveDartType(prefix, x,
+              beforeString: true),
           customResolver: customEnumNames.contains(field.type.baseName)
               ? (String x) => field.type.isNullable
                   ? _enumName(x, suffix: ' *', prefix: prefix, box: true)
@@ -1186,38 +1195,63 @@ String _className(String? prefix, String className) {
 
 /// Calculates callback block signature for async methods.
 String _callbackForType(
-    Root root, TypeDeclaration type, _ObjcPtr objcType, ObjcOptions options) {
+    Root root, TypeDeclaration type, _ObjcType objcType, ObjcOptions options) {
   if (type.isVoid) {
     return 'void (^)(FlutterError *_Nullable)';
   } else if (isEnum(root, type)) {
     return 'void (^)(${_enumName(objcType.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
   } else {
-    return 'void (^)(${objcType.withPtr}_Nullable, FlutterError *_Nullable)';
+    return 'void (^)(${objcType.beforeString}_Nullable, FlutterError *_Nullable)';
   }
 }
 
-/// Represents an ObjC pointer (ex 'id', 'NSString *').
-class _ObjcPtr {
-  const _ObjcPtr({required this.baseName}) : hasAsterisk = baseName != 'id';
+/// Represents an Objective-C type, including pointer (id, NSString*, etc.) and
+/// primitive (BOOL, NSInteger, etc.) types.
+class _ObjcType {
+  const _ObjcType({required this.baseName, bool isPointer = true})
+      : hasAsterisk = isPointer && baseName != 'id';
   final String baseName;
   final bool hasAsterisk;
-  String get withPtr => '$baseName${hasAsterisk ? ' *' : ' '}';
-  String get ptr => hasAsterisk ? '*' : '';
+
+  @override
+  String toString() => hasAsterisk ? '$baseName *' : baseName;
+
+  /// Returns a version of the string form that can be used directly before
+  /// another string (e.g., a variable name) and handle spacing correctly for
+  /// a right-aligned pointer format.
+  String get beforeString => hasAsterisk ? toString() : '$this ';
 }
 
 /// Maps between Dart types to ObjC pointer types (ex 'String' => 'NSString *').
-const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
-  'bool': _ObjcPtr(baseName: 'NSNumber'),
-  'int': _ObjcPtr(baseName: 'NSNumber'),
-  'String': _ObjcPtr(baseName: 'NSString'),
-  'double': _ObjcPtr(baseName: 'NSNumber'),
-  'Uint8List': _ObjcPtr(baseName: 'FlutterStandardTypedData'),
-  'Int32List': _ObjcPtr(baseName: 'FlutterStandardTypedData'),
-  'Int64List': _ObjcPtr(baseName: 'FlutterStandardTypedData'),
-  'Float64List': _ObjcPtr(baseName: 'FlutterStandardTypedData'),
-  'List': _ObjcPtr(baseName: 'NSArray'),
-  'Map': _ObjcPtr(baseName: 'NSDictionary'),
-  'Object': _ObjcPtr(baseName: 'id'),
+const Map<String, _ObjcType> _objcTypeForNullableDartTypeMap =
+    <String, _ObjcType>{
+  'bool': _ObjcType(baseName: 'NSNumber'),
+  'int': _ObjcType(baseName: 'NSNumber'),
+  'String': _ObjcType(baseName: 'NSString'),
+  'double': _ObjcType(baseName: 'NSNumber'),
+  'Uint8List': _ObjcType(baseName: 'FlutterStandardTypedData'),
+  'Int32List': _ObjcType(baseName: 'FlutterStandardTypedData'),
+  'Int64List': _ObjcType(baseName: 'FlutterStandardTypedData'),
+  'Float64List': _ObjcType(baseName: 'FlutterStandardTypedData'),
+  'List': _ObjcType(baseName: 'NSArray'),
+  'Map': _ObjcType(baseName: 'NSDictionary'),
+  'Object': _ObjcType(baseName: 'id'),
+};
+
+/// Maps between Dart types to ObjC pointer types (ex 'String' => 'NSString *').
+const Map<String, _ObjcType> _objcTypeForNonNullableDartTypeMap =
+    <String, _ObjcType>{
+  'bool': _ObjcType(baseName: 'BOOL', isPointer: false),
+  'int': _ObjcType(baseName: 'NSInteger', isPointer: false),
+  'String': _ObjcType(baseName: 'NSString'),
+  'double': _ObjcType(baseName: 'double', isPointer: false),
+  'Uint8List': _ObjcType(baseName: 'FlutterStandardTypedData'),
+  'Int32List': _ObjcType(baseName: 'FlutterStandardTypedData'),
+  'Int64List': _ObjcType(baseName: 'FlutterStandardTypedData'),
+  'Float64List': _ObjcType(baseName: 'FlutterStandardTypedData'),
+  'List': _ObjcType(baseName: 'NSArray'),
+  'Map': _ObjcType(baseName: 'NSDictionary'),
+  'Object': _ObjcType(baseName: 'id'),
 };
 
 /// Converts list of [TypeDeclaration] to a code string representing the type
@@ -1226,52 +1260,71 @@ const Map<String, _ObjcPtr> _objcTypeForDartTypeMap = <String, _ObjcPtr>{
 String _flattenTypeArguments(String? classPrefix, List<TypeDeclaration> args) {
   final String result = args
       .map<String>((TypeDeclaration e) =>
-          _objcTypeForDartType(classPrefix, e).withPtr.trim())
+          _objcTypeForDartType(classPrefix, e).toString())
       .join(', ');
   return result;
 }
 
-String? _objcTypePtrForPrimitiveDartType(
-    String? classPrefix, TypeDeclaration type) {
-  return _objcTypeForDartTypeMap.containsKey(type.baseName)
-      ? _objcTypeForDartType(classPrefix, type).withPtr
-      : null;
+_ObjcType? _objcTypeForPrimitiveDartType(TypeDeclaration type,
+    {bool forceNullability = false}) {
+  return forceNullability || type.isNullable
+      ? _objcTypeForNullableDartTypeMap[type.baseName]
+      : _objcTypeForNonNullableDartTypeMap[type.baseName];
 }
 
-/// Returns the objc type for a dart [type], prepending the [classPrefix] for
-/// generated classes.  For example:
-/// _objcTypeForDartType(null, 'int') => 'NSNumber'.
-_ObjcPtr _objcTypeForDartType(String? classPrefix, TypeDeclaration field) {
-  return _objcTypeForDartTypeMap.containsKey(field.baseName)
-      ? field.typeArguments.isEmpty
-          ? _objcTypeForDartTypeMap[field.baseName]!
-          : _ObjcPtr(
+String? _objcTypeStringForPrimitiveDartType(
+    String? classPrefix, TypeDeclaration type,
+    {required bool beforeString, bool forceNullability = false}) {
+  final _ObjcType? objcType;
+  if (forceNullability || type.isNullable) {
+    objcType = _objcTypeForNullableDartTypeMap.containsKey(type.baseName)
+        ? _objcTypeForDartType(classPrefix, type)
+        : null;
+  } else {
+    objcType = _objcTypeForNonNullableDartTypeMap.containsKey(type.baseName)
+        ? _objcTypeForDartType(classPrefix, type)
+        : null;
+  }
+  return beforeString ? objcType?.beforeString : objcType?.toString();
+}
+
+/// Returns the Objective-C type for a Dart [field], prepending the
+/// [classPrefix] for generated classes.
+_ObjcType _objcTypeForDartType(String? classPrefix, TypeDeclaration field,
+    {bool forceNullability = false}) {
+  final _ObjcType? primitiveType =
+      _objcTypeForPrimitiveDartType(field, forceNullability: forceNullability);
+  return primitiveType == null
+      ? _ObjcType(baseName: _className(classPrefix, field.baseName))
+      : field.typeArguments.isEmpty
+          ? primitiveType
+          : _ObjcType(
               baseName:
-                  '${_objcTypeForDartTypeMap[field.baseName]!.baseName}<${_flattenTypeArguments(classPrefix, field.typeArguments)}>')
-      : _ObjcPtr(baseName: _className(classPrefix, field.baseName));
+                  '${primitiveType.baseName}<${_flattenTypeArguments(classPrefix, field.typeArguments)}>');
 }
 
 /// Maps a type to a properties memory semantics (ie strong, copy).
-String _propertyTypeForDartType(NamedType field) {
-  const Map<String, String> propertyTypeForDartTypeMap = <String, String>{
-    'String': 'copy',
-    'bool': 'strong',
-    'int': 'strong',
-    'double': 'strong',
-    'Uint8List': 'strong',
-    'Int32List': 'strong',
-    'Int64List': 'strong',
-    'Float64List': 'strong',
-    'List': 'strong',
-    'Map': 'strong',
-  };
-
-  final String? result = propertyTypeForDartTypeMap[field.type.baseName];
-  if (result == null) {
-    return 'strong';
-  } else {
-    return result;
+String _propertyTypeForDartType(NamedType field,
+    {required bool isNullable, required bool isEnum}) {
+  if (isEnum) {
+    // Only the nullable versions are objects.
+    return isNullable ? 'strong' : 'assign';
   }
+  switch (field.type.baseName) {
+    case 'List':
+    case 'Map':
+    case 'String':
+      // Standard Objective-C practice is to copy strings and collections to
+      // avoid unexpected mutation if set to mutable versions.
+      return 'copy';
+    case 'double':
+    case 'bool':
+    case 'int':
+      // Only the nullable versions are objects.
+      return isNullable ? 'strong' : 'assign';
+  }
+  // Anything else is a standard object, and should therefore be strong.
+  return 'strong';
 }
 
 /// Generates the name of the codec that will be generated.
@@ -1348,8 +1401,9 @@ String _makeObjcSignature({
         return '${arg.type.isNullable ? 'nullable ' : ''}${_enumName(arg.type.baseName, suffix: arg.type.isNullable ? ' *' : '', prefix: options.prefix, box: arg.type.isNullable)}';
       } else {
         final String nullable = arg.type.isNullable ? 'nullable ' : '';
-        final _ObjcPtr argType = _objcTypeForDartType(options.prefix, arg.type);
-        return '$nullable${argType.withPtr.trim()}';
+        final _ObjcType argType =
+            _objcTypeForDartType(options.prefix, arg.type);
+        return '$nullable$argType';
       }
     }),
     lastArgType,
