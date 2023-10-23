@@ -529,6 +529,8 @@ class Camera
       onErrorCallback.onError("cameraAccess", "Camera is closed: " + e.getMessage());
     } catch (CameraAccessException e) {
       onErrorCallback.onError("cameraAccess", e.getMessage());
+    } catch (IllegalArgumentException e) {
+      onErrorCallback.onError("cameraAccess", e.getMessage());
     }
   }
 
