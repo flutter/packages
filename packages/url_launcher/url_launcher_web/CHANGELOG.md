@@ -1,3 +1,8 @@
+## 2.1.0
+
+* Adds `launchUrl` implementation.
+* Prevents _Tabnabbing_ and disallows `javascript:` URLs on `launch` and `launchUrl`. 
+
 ## 2.0.20
 
 * Migrates to `dart:ui_web` APIs.
