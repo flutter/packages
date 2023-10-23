@@ -594,24 +594,27 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       indent.writeln('$className *$resultName = [[$className alloc] init];');
       enumerate(getFieldsInSerializationOrder(klass),
           (int index, final NamedType field) {
-        if (customEnumNames.contains(field.type.baseName)) {
+        final bool isEnumType = customEnumNames.contains(field.type.baseName);
+        final String valueGetter = _listGetter(
+            customClassNames, 'list', field, index, generatorOptions.prefix);
+        final String? primitiveExtractionMethod =
+            _nsnumberExtractionMethod(field.type, isEnum: isEnumType);
+        final String ivarValueExpression;
+        if (primitiveExtractionMethod != null) {
+          ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
+        } else if (isEnumType) {
           if (field.type.isNullable) {
-            indent.writeln(
-                'NSNumber *${field.name}AsNumber = GetNullableObjectAtIndex(list, $index);');
+            indent.writeln('NSNumber *${field.name}AsNumber = $valueGetter;');
             indent.writeln(
                 '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
-            indent.writeln('$resultName.${field.name} = ${field.name};');
+            ivarValueExpression = field.name;
           } else {
-            indent.writeln(
-                '$resultName.${field.name} = [${_listGetter(customClassNames, 'list', field, index, generatorOptions.prefix)} integerValue];');
+            ivarValueExpression = '[$valueGetter integerValue]';
           }
         } else {
-          indent.writeln(
-              '$resultName.${field.name} = ${_listGetter(customClassNames, 'list', field, index, generatorOptions.prefix)};');
-          if (!field.type.isNullable) {
-            indent.writeln('NSAssert($resultName.${field.name} != nil, @"");');
-          }
+          ivarValueExpression = valueGetter;
         }
+        indent.writeln('$resultName.${field.name} = $ivarValueExpression;');
       });
       indent.writeln('return $resultName;');
     });
@@ -1065,14 +1068,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     } else {
       int count = 0;
       String makeVarOrNSNullExpression(NamedType arg) {
-        String varExpression = '${argNameFunc(count, arg)} ?: [NSNull null]';
-        if (isEnum(root, arg.type)) {
+        final String argName = argNameFunc(count, arg);
+        final bool isEnumType = isEnum(root, arg.type);
+        String varExpression =
+            _collectionSafeExpression(argName, arg.type, isEnum: isEnumType);
+        if (isEnumType) {
           if (arg.type.isNullable) {
             varExpression =
-                '${argNameFunc(count, arg)} == nil ? [NSNull null] : [NSNumber numberWithInteger:${argNameFunc(count, arg)}.value]';
+                '${argNameFunc(count, arg)} == nil ? [NSNull null] : [NSNumber numberWithInteger:$argName.value]';
           } else {
-            varExpression =
-                '[NSNumber numberWithInteger: ${argNameFunc(count, arg)}]';
+            varExpression = '[NSNumber numberWithInteger:$argName]';
           }
         }
         count++;
@@ -1257,6 +1262,29 @@ const Map<String, _ObjcType> _objcTypeForNonNullableDartTypeMap =
   'Map': _ObjcType(baseName: 'NSDictionary'),
   'Object': _ObjcType(baseName: 'id'),
 };
+
+bool _usesPrimitive(TypeDeclaration type, {required bool isEnum}) {
+  // Only non-nullable types are unboxed.
+  if (!type.isNullable) {
+    if (isEnum) {
+      return true;
+    }
+    switch (type.baseName) {
+      case 'bool':
+      case 'int':
+      case 'double':
+        return true;
+    }
+  }
+  return false;
+}
+
+String _collectionSafeExpression(String expression, TypeDeclaration type,
+    {required bool isEnum}) {
+  return _usesPrimitive(type, isEnum: isEnum)
+      ? '@($expression)'
+      : '$expression ?: [NSNull null]';
+}
 
 /// Returns the method to convert [type] from a boxed NSNumber to its
 /// corresponding primitive value, if any.
@@ -1463,15 +1491,17 @@ String _listGetter(Set<String> customClassNames, String list, NamedType field,
 
 String _arrayValue(Set<String> customClassNames, Set<String> customEnumNames,
     NamedType field) {
+  final bool isEnumType = customEnumNames.contains(field.type.baseName);
   if (customClassNames.contains(field.type.baseName)) {
     return '(self.${field.name} ? [self.${field.name} toList] : [NSNull null])';
-  } else if (customEnumNames.contains(field.type.baseName)) {
+  } else if (isEnumType) {
     if (field.type.isNullable) {
       return '(self.${field.name} == nil ? [NSNull null] : [NSNumber numberWithInteger:self.${field.name}.value])';
     }
     return '@(self.${field.name})';
   } else {
-    return '(self.${field.name} ?: [NSNull null])';
+    return _collectionSafeExpression('self.${field.name}', field.type,
+        isEnum: isEnumType);
   }
 }
 

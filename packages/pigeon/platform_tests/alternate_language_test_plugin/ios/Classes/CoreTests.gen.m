@@ -96,31 +96,19 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 + (AllTypes *)fromList:(NSArray *)list {
   AllTypes *pigeonResult = [[AllTypes alloc] init];
-  pigeonResult.aBool = GetNullableObjectAtIndex(list, 0);
-  NSAssert(pigeonResult.aBool != nil, @"");
-  pigeonResult.anInt = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.anInt != nil, @"");
-  pigeonResult.anInt64 = GetNullableObjectAtIndex(list, 2);
-  NSAssert(pigeonResult.anInt64 != nil, @"");
-  pigeonResult.aDouble = GetNullableObjectAtIndex(list, 3);
-  NSAssert(pigeonResult.aDouble != nil, @"");
+  pigeonResult.aBool = [GetNullableObjectAtIndex(list, 0) booleanValue];
+  pigeonResult.anInt = [GetNullableObjectAtIndex(list, 1) integerValue];
+  pigeonResult.anInt64 = [GetNullableObjectAtIndex(list, 2) integerValue];
+  pigeonResult.aDouble = [GetNullableObjectAtIndex(list, 3) doubleValue];
   pigeonResult.aByteArray = GetNullableObjectAtIndex(list, 4);
-  NSAssert(pigeonResult.aByteArray != nil, @"");
   pigeonResult.a4ByteArray = GetNullableObjectAtIndex(list, 5);
-  NSAssert(pigeonResult.a4ByteArray != nil, @"");
   pigeonResult.a8ByteArray = GetNullableObjectAtIndex(list, 6);
-  NSAssert(pigeonResult.a8ByteArray != nil, @"");
   pigeonResult.aFloatArray = GetNullableObjectAtIndex(list, 7);
-  NSAssert(pigeonResult.aFloatArray != nil, @"");
   pigeonResult.aList = GetNullableObjectAtIndex(list, 8);
-  NSAssert(pigeonResult.aList != nil, @"");
   pigeonResult.aMap = GetNullableObjectAtIndex(list, 9);
-  NSAssert(pigeonResult.aMap != nil, @"");
   pigeonResult.anEnum = [GetNullableObjectAtIndex(list, 10) integerValue];
   pigeonResult.aString = GetNullableObjectAtIndex(list, 11);
-  NSAssert(pigeonResult.aString != nil, @"");
   pigeonResult.anObject = GetNullableObjectAtIndex(list, 12);
-  NSAssert(pigeonResult.anObject != nil, @"");
   return pigeonResult;
 }
 + (nullable AllTypes *)nullableFromList:(NSArray *)list {
@@ -128,19 +116,19 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 - (NSArray *)toList {
   return @[
-    (self.aBool ?: [NSNull null]),
-    (self.anInt ?: [NSNull null]),
-    (self.anInt64 ?: [NSNull null]),
-    (self.aDouble ?: [NSNull null]),
-    (self.aByteArray ?: [NSNull null]),
-    (self.a4ByteArray ?: [NSNull null]),
-    (self.a8ByteArray ?: [NSNull null]),
-    (self.aFloatArray ?: [NSNull null]),
-    (self.aList ?: [NSNull null]),
-    (self.aMap ?: [NSNull null]),
+    @(self.aBool),
+    @(self.anInt),
+    @(self.anInt64),
+    @(self.aDouble),
+    self.aByteArray ?: [NSNull null],
+    self.a4ByteArray ?: [NSNull null],
+    self.a8ByteArray ?: [NSNull null],
+    self.aFloatArray ?: [NSNull null],
+    self.aList ?: [NSNull null],
+    self.aMap ?: [NSNull null],
     @(self.anEnum),
-    (self.aString ?: [NSNull null]),
-    (self.anObject ?: [NSNull null]),
+    self.aString ?: [NSNull null],
+    self.anObject ?: [NSNull null],
   ];
 }
 @end
@@ -212,23 +200,23 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 - (NSArray *)toList {
   return @[
-    (self.aNullableBool ?: [NSNull null]),
-    (self.aNullableInt ?: [NSNull null]),
-    (self.aNullableInt64 ?: [NSNull null]),
-    (self.aNullableDouble ?: [NSNull null]),
-    (self.aNullableByteArray ?: [NSNull null]),
-    (self.aNullable4ByteArray ?: [NSNull null]),
-    (self.aNullable8ByteArray ?: [NSNull null]),
-    (self.aNullableFloatArray ?: [NSNull null]),
-    (self.aNullableList ?: [NSNull null]),
-    (self.aNullableMap ?: [NSNull null]),
-    (self.nullableNestedList ?: [NSNull null]),
-    (self.nullableMapWithAnnotations ?: [NSNull null]),
-    (self.nullableMapWithObject ?: [NSNull null]),
+    self.aNullableBool ?: [NSNull null],
+    self.aNullableInt ?: [NSNull null],
+    self.aNullableInt64 ?: [NSNull null],
+    self.aNullableDouble ?: [NSNull null],
+    self.aNullableByteArray ?: [NSNull null],
+    self.aNullable4ByteArray ?: [NSNull null],
+    self.aNullable8ByteArray ?: [NSNull null],
+    self.aNullableFloatArray ?: [NSNull null],
+    self.aNullableList ?: [NSNull null],
+    self.aNullableMap ?: [NSNull null],
+    self.nullableNestedList ?: [NSNull null],
+    self.nullableMapWithAnnotations ?: [NSNull null],
+    self.nullableMapWithObject ?: [NSNull null],
     (self.aNullableEnum == nil ? [NSNull null]
                                : [NSNumber numberWithInteger:self.aNullableEnum.value]),
-    (self.aNullableString ?: [NSNull null]),
-    (self.aNullableObject ?: [NSNull null]),
+    self.aNullableString ?: [NSNull null],
+    self.aNullableObject ?: [NSNull null],
   ];
 }
 @end
@@ -245,7 +233,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   AllClassesWrapper *pigeonResult = [[AllClassesWrapper alloc] init];
   pigeonResult.allNullableTypes =
       [AllNullableTypes nullableFromList:(GetNullableObjectAtIndex(list, 0))];
-  NSAssert(pigeonResult.allNullableTypes != nil, @"");
   pigeonResult.allTypes = [AllTypes nullableFromList:(GetNullableObjectAtIndex(list, 1))];
   return pigeonResult;
 }
@@ -276,7 +263,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 - (NSArray *)toList {
   return @[
-    (self.testList ?: [NSNull null]),
+    self.testList ?: [NSNull null],
   ];
 }
 @end
@@ -2334,7 +2321,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
+  [channel sendMessage:@[ @(arg_aBool) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {
@@ -2360,7 +2347,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
+  [channel sendMessage:@[ @(arg_anInt) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {
@@ -2386,7 +2373,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
           @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble"
              binaryMessenger:self.binaryMessenger
                        codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
+  [channel sendMessage:@[ @(arg_aDouble) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {
