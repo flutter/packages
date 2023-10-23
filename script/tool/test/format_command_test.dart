@@ -428,6 +428,71 @@ void main() {
         ]));
   });
 
+  group('swift-format', () {
+    test('formats Swift if --swift-format flag is provided', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+
+      await runCapturingPrint(
+          runner, <String>['format', '--swift-format=/path/to/swift-format']);
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+                '/path/to/swift-format',
+                <String>['-i', ...getPackagesDirRelativePaths(plugin, files)],
+                packagesDir.path),
+          ]));
+    });
+
+    test('skips Swift if --swift-format flag is not provided', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+
+      await runCapturingPrint(runner, <String>['format']);
+
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
+    test('fails if swift-format fails', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      processRunner.mockProcessesForExecutable['swift-format'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['-i']),
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['format', '--swift-format=swift-format'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to format Swift files: exit code 1.'),
+          ]));
+    });
+  });
+
   test('skips known non-repo files', () async {
     const List<String> skipFiles = <String>[
       '/example/build/SomeFramework.framework/Headers/SomeFramework.h',
