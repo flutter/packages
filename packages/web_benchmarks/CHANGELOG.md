@@ -1,3 +1,8 @@
+## 0.1.0+8
+
+* Adds an optional parameter `treeShakeIcons` to `serveWebBenchmark`.
+* Adds a required and named parameter `treeShakeIcons` to `BenchmarkServer`.
+
 ## 0.1.0+7
 
 * Updates `package:process` version constraints.
