@@ -45,7 +45,7 @@ public class AsyncTest {
   public void asyncSuccess() {
     Success api = new Success();
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    HostSmallApi.setup(binaryMessenger, api);
+    HostSmallApi.setUp(binaryMessenger, api);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger)
@@ -76,7 +76,7 @@ public class AsyncTest {
   public void asyncError() {
     Error api = new Error();
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    HostSmallApi.setup(binaryMessenger, api);
+    HostSmallApi.setUp(binaryMessenger, api);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger)

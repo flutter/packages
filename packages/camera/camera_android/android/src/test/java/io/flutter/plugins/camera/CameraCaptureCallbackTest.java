@@ -69,4 +69,22 @@ public class CameraCaptureCallbackTest {
     verify(mockCaptureProps, times(1)).setLastSensorExposureTime(2L);
     verify(mockCaptureProps, times(1)).setLastSensorSensitivity(3);
   }
+
+  @Test
+  public void onCaptureCompleted_checksBothAutoFocusAndAutoExposure() {
+    CameraCaptureSession mockSession = mock(CameraCaptureSession.class);
+    CaptureRequest mockRequest = mock(CaptureRequest.class);
+    TotalCaptureResult mockResult = mock(TotalCaptureResult.class);
+
+    cameraCaptureCallback.onCaptureCompleted(mockSession, mockRequest, mockResult);
+
+    // This is inherently somewhat fragile since it is testing internal implementation details,
+    // but it is important to test that the code is actually using both of the expected states
+    // since it's easy to typo one of these constants as the other. Ideally this would be tested
+    // via the state machine output (CameraCaptureCallbackStatesTest.java), but testing the state
+    // machine requires overriding the keys, so can't test that the right real keys are used in
+    // production.
+    verify(mockResult, times(1)).get(CaptureResult.CONTROL_AE_STATE);
+    verify(mockResult, times(1)).get(CaptureResult.CONTROL_AF_STATE);
+  }
 }

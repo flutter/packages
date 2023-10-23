@@ -257,11 +257,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             (int index, final NamedType field) {
           final HostDatatype hostDatatype = _getHostDatatype(root, field);
 
-          // The StandardMessageCodec can give us [Integer, Long] for
-          // a Dart 'int'.  To keep things simple we just use 64bit
-          // longs in Pigeon with Kotlin.
-          final bool isInt = field.type.baseName == 'int';
-
           final String listValue = 'list[$index]';
           final String fieldType = _kotlinTypeForDartType(field.type);
 
@@ -280,10 +275,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               indent.addScoped('{', '}', () {
                 indent.writeln('$fieldType.ofRaw(it)');
               });
-            } else if (isInt) {
-              indent.write('val ${field.name} = $listValue');
-              indent.addln(
-                  '.let { ${_cast(root, indent, listValue, type: field.type)} }');
             } else {
               indent.writeln(
                   'val ${field.name} = ${_cast(root, indent, listValue, type: field.type)}');
@@ -297,10 +288,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 customEnumNames.contains(field.type.baseName)) {
               indent.writeln(
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
-            } else if (isInt) {
-              indent.write('val ${field.name} = $listValue');
-              indent.addln(
-                  '.let { ${_cast(root, indent, listValue, type: field.type)} }');
             } else {
               indent.writeln(
                   'val ${field.name} = ${_cast(root, indent, listValue, type: field.type)}');
@@ -390,7 +377,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       for (final Method func in api.methods) {
         final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
-            ? ''
+            ? 'Unit'
             : _nullsafeKotlinTypeForDartType(func.returnType);
         String sendArgument;
 
@@ -398,7 +385,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             indent, func.documentationComments, _docCommentSpec);
 
         if (func.arguments.isEmpty) {
-          indent.write('fun ${func.name}(callback: ($returnType) -> Unit) ');
+          indent.write(
+              'fun ${func.name}(callback: (Result<$returnType>) -> Unit) ');
           sendArgument = 'null';
         } else {
           final Iterable<String> argTypes = func.arguments
@@ -412,37 +400,50 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           sendArgument = 'listOf(${enumSafeArgNames.join(', ')})';
           final String argsSignature = map2(argTypes, argNames,
               (String type, String name) => '$name: $type').join(', ');
-          if (func.returnType.isVoid) {
-            indent.write(
-                'fun ${func.name}($argsSignature, callback: () -> Unit) ');
-          } else {
-            indent.write(
-                'fun ${func.name}($argsSignature, callback: ($returnType) -> Unit) ');
-          }
+          indent.write(
+              'fun ${func.name}($argsSignature, callback: (Result<$returnType>) -> Unit) ');
         }
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln(
               'val $channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec)');
-          indent.write('$channel.send($sendArgument) ');
-          if (func.returnType.isVoid) {
-            indent.addScoped('{', '}', () {
-              indent.writeln('callback()');
-            });
-          } else {
-            indent.addScoped('{', '}', () {
-              // Nullable enums require special handling.
-              if (isEnum(root, func.returnType) && func.returnType.isNullable) {
-                indent.writeScoped('val result = (it as Int?)?.let {', '}', () {
-                  indent.writeln('${func.returnType.baseName}.ofRaw(it)');
-                });
-              } else {
+          indent.writeScoped('$channel.send($sendArgument) {', '}', () {
+            indent.writeScoped('if (it is List<*>) {', '} ', () {
+              indent.writeScoped('if (it.size > 1) {', '} ', () {
                 indent.writeln(
-                    'val result = ${_cast(root, indent, 'it', type: func.returnType)}');
+                    'callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));');
+              }, addTrailingNewline: false);
+              if (!func.returnType.isNullable && !func.returnType.isVoid) {
+                indent.addScoped('else if (it[0] == null) {', '} ', () {
+                  indent.writeln(
+                      'callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));');
+                }, addTrailingNewline: false);
               }
-              indent.writeln('callback(result)');
+              indent.addScoped('else {', '}', () {
+                if (func.returnType.isVoid) {
+                  indent.writeln('callback(Result.success(Unit));');
+                } else {
+                  const String output = 'output';
+                  // Nullable enums require special handling.
+                  if (isEnum(root, func.returnType) &&
+                      func.returnType.isNullable) {
+                    indent.writeScoped(
+                        'val $output = (it[0] as Int?)?.let {', '}', () {
+                      indent.writeln('${func.returnType.baseName}.ofRaw(it)');
+                    });
+                  } else {
+                    indent.writeln(
+                        'val $output = ${_cast(root, indent, 'it[0]', type: func.returnType)}');
+                  }
+                  indent.writeln('callback(Result.success($output));');
+                }
+              });
+            }, addTrailingNewline: false);
+            indent.addScoped('else {', '} ', () {
+              indent.writeln(
+                  'callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));');
             });
-          }
+          });
         });
       }
     });
@@ -785,14 +786,7 @@ String _castForceUnwrap(
         type.isNullable ? 'if ($value == null) null else ' : '';
     return '$nullableConditionPrefix${_kotlinTypeForDartType(type)}.ofRaw($value as Int)$forceUnwrap';
   } else {
-    // The StandardMessageCodec can give us [Integer, Long] for
-    // a Dart 'int'.  To keep things simple we just use 64bit
-    // longs in Pigeon with Kotlin.
-    if (type.baseName == 'int') {
-      return '$value.let { ${_cast(root, indent, value, type: type)} }';
-    } else {
-      return _cast(root, indent, value, type: type);
-    }
+    return _cast(root, indent, value, type: type);
   }
 }
 
@@ -865,7 +859,7 @@ String _cast(Root root, Indent indent, String variable,
     return variable;
   }
   if (typeString == 'Int' || typeString == 'Long') {
-    return _castInt(type.isNullable);
+    return '$variable${_castInt(type.isNullable)}';
   }
   if (isEnum(root, type)) {
     if (type.isNullable) {
@@ -880,5 +874,5 @@ String _cast(Root root, Indent indent, String variable,
 
 String _castInt(bool isNullable) {
   final String nullability = isNullable ? '?' : '';
-  return 'if (it is Int) it.toLong() else it as Long$nullability';
+  return '.let { if (it is Int) it.toLong() else it as Long$nullability }';
 }

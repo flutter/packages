@@ -1,3 +1,9 @@
+## 0.10.5+5
+
+* Fixes bug where old camera resources were not disposed when switching between camera descriptions.
+* Fixes bug where _deviceOrientationSubscription was recreated every time the camera description was
+  changed.
+
 ## 0.10.5+4
 
 * Adds pub topics to package metadata.

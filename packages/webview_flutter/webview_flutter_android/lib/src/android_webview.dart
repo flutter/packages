@@ -12,7 +12,8 @@ import 'android_webview.g.dart';
 import 'android_webview_api_impls.dart';
 import 'instance_manager.dart';
 
-export 'android_webview_api_impls.dart' show FileChooserMode;
+export 'android_webview_api_impls.dart'
+    show ConsoleMessage, ConsoleMessageLevel, FileChooserMode;
 
 /// Root of the Java class hierarchy.
 ///
@@ -694,6 +695,11 @@ class WebSettings extends JavaObject {
     return api.setSetTextZoomFromInstance(this, textZoom);
   }
 
+  /// Gets the WebView's user-agent string.
+  Future<String> getUserAgentString() {
+    return api.getUserAgentStringFromInstance(this);
+  }
+
   @override
   WebSettings copy() {
     return WebSettings.detached(
@@ -1047,6 +1053,7 @@ class WebChromeClient extends JavaObject {
     this.onGeolocationPermissionsHidePrompt,
     this.onShowCustomView,
     this.onHideCustomView,
+    this.onConsoleMessage,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -1068,6 +1075,7 @@ class WebChromeClient extends JavaObject {
     this.onGeolocationPermissionsHidePrompt,
     this.onShowCustomView,
     this.onHideCustomView,
+    this.onConsoleMessage,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -1121,6 +1129,10 @@ class WebChromeClient extends JavaObject {
   /// mode.
   final HideCustomViewCallback? onHideCustomView;
 
+  /// Report a JavaScript console message to the host application.
+  final void Function(WebChromeClient instance, ConsoleMessage message)?
+      onConsoleMessage;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
   ///
@@ -1150,6 +1162,33 @@ class WebChromeClient extends JavaObject {
     );
   }
 
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onShowFileChooser(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onConsoleMessage(...)`, requires
+  /// a boolean to be returned and this method sets the returned value for all
+  /// calls to the Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires [onConsoleMessage] to be nonnull.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnConsoleMessage(
+    bool value,
+  ) {
+    if (value && onConsoleMessage == null) {
+      throw StateError(
+        'Setting this to true requires `onConsoleMessage` to be nonnull.',
+      );
+    }
+    return api.setSynchronousReturnValueForOnConsoleMessageFromInstance(
+      this,
+      value,
+    );
+  }
+
   @override
   WebChromeClient copy() {
     return WebChromeClient.detached(
@@ -1160,6 +1199,7 @@ class WebChromeClient extends JavaObject {
       onGeolocationPermissionsHidePrompt: onGeolocationPermissionsHidePrompt,
       onShowCustomView: onShowCustomView,
       onHideCustomView: onHideCustomView,
+      onConsoleMessage: onConsoleMessage,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
