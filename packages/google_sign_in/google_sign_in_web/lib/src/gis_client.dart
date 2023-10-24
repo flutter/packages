@@ -41,6 +41,8 @@ class GisSdkClient {
     _initializeIdClient(
       clientId,
       onResponse: _onCredentialResponse,
+      hostedDomain: hostedDomain,
+      useFedCM: true,
     );
 
     _tokenClient = _initializeTokenClient(
@@ -102,6 +104,8 @@ class GisSdkClient {
   void _initializeIdClient(
     String clientId, {
     required CallbackFn onResponse,
+    String? hostedDomain,
+    bool? useFedCM,
   }) {
     // Initialize `id` for the silent-sign in code.
     final IdConfiguration idConfig = IdConfiguration(
@@ -109,6 +113,9 @@ class GisSdkClient {
       callback: allowInterop(onResponse),
       cancel_on_tap_outside: false,
       auto_select: true, // Attempt to sign-in silently.
+      hd: hostedDomain,
+      use_fedcm_for_prompt:
+          useFedCM, // Use the native browser prompt, when available.
     );
     id.initialize(idConfig);
   }
@@ -238,7 +245,15 @@ class GisSdkClient {
   ///   * If [_lastCredentialResponse] is null, we add [people.scopes] to the
   ///     [_initialScopes], so we can retrieve User Profile information back
   ///     from the People API (without idToken). See [people.requestUserData].
+  @Deprecated(
+      'Use `renderButton` instead. See: https://pub.dev/packages/google_sign_in_web#migrating-to-v011-and-v012-google-identity-services')
   Future<GoogleSignInUserData?> signIn() async {
+    // Warn users that this method will be removed.
+    domConsole.warn(
+        'The google_sign_in plugin `signIn` method is deprecated on the web, and will be removed in Q2 2024. Please use `renderButton` instead. See: ',
+        <String>[
+          'https://pub.dev/packages/google_sign_in_web#migrating-to-v011-and-v012-google-identity-services'
+        ]);
     // If we already know the user, use their `email` as a `hint`, so they don't
     // have to pick their user again in the Authorization popup.
     final GoogleSignInUserData? knownUser =
