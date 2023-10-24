@@ -139,7 +139,7 @@ class ImagePicker {
     );
 
     return platform.getMultiImageWithOptions(
-      options: MultiImagePickerOptions.createAndValidate(
+      options: MultiImagePickerOptions(
         imageOptions: imageOptions,
         maxImages: maxImages,
       ),

@@ -12,17 +12,6 @@ class MultiImagePickerOptions {
     this.maxImages,
   });
 
-  /// Creates an instance with the given [imageOptions] and [maxImages].
-  /// Throws if options are not valid.
-  MultiImagePickerOptions.createAndValidate({
-    this.imageOptions = const ImageOptions(),
-    this.maxImages,
-  }) {
-    _validateOptions(
-      maxImages: maxImages,
-    );
-  }
-
   /// The image-specific options for picking.
   final ImageOptions imageOptions;
 
@@ -30,11 +19,4 @@ class MultiImagePickerOptions {
   ///
   /// If null, the platform limits the maximum number of images.
   final int? maxImages;
-
-  /// Validates that all values are within required ranges. Throws if not.
-  static void _validateOptions({int? maxImages}) {
-    if (maxImages != null && maxImages < 1) {
-      throw ArgumentError.value(maxImages, 'maxImages', 'must be positive');
-    }
-  }
 }
