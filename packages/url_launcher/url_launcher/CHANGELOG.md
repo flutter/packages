@@ -10,7 +10,7 @@
 * Updates the documention for `launchUrl` to clarify that clients should not
   rely on any specific behavior of the `platformDefault` launch mode. Changes
   to the handling of `platformDefault`, such as Android's recent change from
-  `inAppBrowserView` to the new `inAppBrowserView`, are not considered breaking.
+  `inAppWebView` to the new `inAppBrowserView`, are not considered breaking.
 
 ## 6.1.14
 
