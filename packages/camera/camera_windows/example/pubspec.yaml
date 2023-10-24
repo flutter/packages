@@ -7,6 +7,7 @@ environment:
   flutter: ">=3.7.0"
 
 dependencies:
+  camera_platform_interface: ^2.6.0
   camera_windows:
     path: ../
 
