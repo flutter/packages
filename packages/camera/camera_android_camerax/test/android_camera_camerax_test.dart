@@ -324,8 +324,11 @@ void main() {
 
     // Test non-null resolution presets.
     for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-      await camera.createCamera(testCameraDescription, resolutionPreset,
-          enableAudio: enableAudio);
+      await camera.createCamera(
+        testCameraDescription,
+        resolutionPreset,
+        enableAudio: enableAudio,
+      );
 
       Size? expectedBoundSize;
       ResolutionStrategy? expectedResolutionStrategy;

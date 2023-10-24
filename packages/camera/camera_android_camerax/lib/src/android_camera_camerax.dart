@@ -274,6 +274,20 @@ class AndroidCameraCameraX extends CameraPlatform {
     return flutterSurfaceTextureId;
   }
 
+  /// Creates an uninitialized camera instance with default settings and returns the camera ID.
+  ///
+  /// See [createCameraWithSettings]
+  @override
+  Future<int> createCamera(
+    CameraDescription description,
+    ResolutionPreset? resolutionPreset, {
+    bool enableAudio = false,
+  }) =>
+      createCameraWithSettings(
+          description,
+          MediaSettings(
+              resolutionPreset: resolutionPreset, enableAudio: enableAudio));
+
   /// Initializes the camera on the device.
   ///
   /// Since initialization of a camera does not directly map as an operation to
