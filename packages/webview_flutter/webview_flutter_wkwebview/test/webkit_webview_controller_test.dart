@@ -160,6 +160,25 @@ void main() {
         );
       });
 
+      test(
+          'limitsNavigationsToAppBoundDomains is not called if it uses default value (false)',
+          () {
+        final MockWKWebViewConfiguration mockConfiguration =
+            MockWKWebViewConfiguration();
+
+        WebKitWebViewControllerCreationParams(
+          webKitProxy: WebKitProxy(
+            createWebViewConfiguration: ({InstanceManager? instanceManager}) {
+              return mockConfiguration;
+            },
+          ),
+        );
+
+        verifyNever(
+          mockConfiguration.setLimitsNavigationsToAppBoundDomains(any),
+        );
+      });
+
       test('mediaTypesRequiringUserAction', () {
         final MockWKWebViewConfiguration mockConfiguration =
             MockWKWebViewConfiguration();

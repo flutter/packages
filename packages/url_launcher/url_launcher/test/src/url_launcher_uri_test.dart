@@ -248,4 +248,40 @@ void main() {
       expect(await launchUrl(emailLaunchUrl), isTrue);
     });
   });
+
+  group('supportsLaunchMode', () {
+    test('handles returning true', () async {
+      const PreferredLaunchMode mode = PreferredLaunchMode.inAppBrowserView;
+      mock.setResponse(true);
+
+      expect(await supportsLaunchMode(mode), true);
+      expect(mock.launchMode, mode);
+    });
+
+    test('handles returning false', () async {
+      const PreferredLaunchMode mode = PreferredLaunchMode.inAppBrowserView;
+      mock.setResponse(false);
+
+      expect(await supportsLaunchMode(mode), false);
+      expect(mock.launchMode, mode);
+    });
+  });
+
+  group('supportsCloseForLaunchMode', () {
+    test('handles returning true', () async {
+      const PreferredLaunchMode mode = PreferredLaunchMode.inAppBrowserView;
+      mock.setResponse(true);
+
+      expect(await supportsCloseForLaunchMode(mode), true);
+      expect(mock.launchMode, mode);
+    });
+
+    test('handles returning false', () async {
+      const PreferredLaunchMode mode = PreferredLaunchMode.inAppBrowserView;
+      mock.setResponse(false);
+
+      expect(await supportsCloseForLaunchMode(mode), false);
+      expect(mock.launchMode, mode);
+    });
+  });
 }
