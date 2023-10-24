@@ -1,3 +1,10 @@
+## 6.2.0
+
+* Adds support for `inAppBrowserView` as a separate launch mode option from
+  `inAppWebView` mode. `inAppBrowserView` is the preferred in-app mode for most uses,
+  but does not support `closeInAppWebView`.
+* Implements `supportsMode` and `supportsCloseForMode`.
+
 ## 6.1.1
 
 * Updates annotations lib to 1.7.0.

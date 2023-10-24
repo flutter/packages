@@ -1,3 +1,7 @@
+## 2.2.0
+
+* Implements `supportsMode` and `supportsCloseForMode`.
+
 ## 2.1.0
 
 * Adds `launchUrl` implementation.
