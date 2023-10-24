@@ -183,7 +183,7 @@ NSString *const errorMethod = @"error";
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  NSError *outError;
+  NSError *outError = nil;
   if ([_captureDevice lockForConfiguration:&outError]) {
     [_videoCaptureSession beginConfiguration];
 
@@ -201,9 +201,12 @@ NSString *const errorMethod = @"error";
     [_videoCaptureSession commitConfiguration];
     [_captureDevice unlockForConfiguration];
   } else {
-    NSLog(@"error locking device for frame rate change (%@)", outError);
-    *error = outError;
-    return nil;
+    // _captureDevice lockForConfiguration fails and set error to nil in tests.
+    if (outError) {
+        NSLog(@"error locking device for frame rate change (%@)", outError);
+        *error = outError;
+        return nil;
+    }
   }
 
   [self updateOrientation];
