@@ -25,8 +25,7 @@ Future<bool> launchUrlString(
   WebViewConfiguration webViewConfiguration = const WebViewConfiguration(),
   String? webOnlyWindowName,
 }) async {
-  if ((mode == LaunchMode.inAppWebView ||
-          mode == LaunchMode.inAppBrowserView) &&
+  if (mode == LaunchMode.inAppWebView &&
       !(urlString.startsWith('https:') || urlString.startsWith('http:'))) {
     throw ArgumentError.value(urlString, 'urlString',
         'To use an in-app web view, you must provide an http(s) URL.');
