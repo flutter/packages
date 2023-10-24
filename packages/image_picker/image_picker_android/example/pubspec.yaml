@@ -20,7 +20,9 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   image_picker_platform_interface:
-    path: ../../image_picker_platform_interface
+    git:
+      url: git@github.com:LanarsInc/packages.git
+      path: packages/image_picker/image_picker_platform_interface
   mime: ^1.0.4
   video_player: ^2.1.4
 
