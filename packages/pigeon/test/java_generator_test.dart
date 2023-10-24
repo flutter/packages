@@ -371,8 +371,11 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('Reply<Void>'));
-    expect(code, contains('callback.reply(null)'));
+    expect(
+        code,
+        contains(
+            'public void doSomething(@NonNull Input arg0Arg, @NonNull Result<Void> result)'));
+    expect(code, contains('result.success(null);'));
   });
 
   test('gen host void argument api', () {
@@ -439,7 +442,8 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('doSomething(@NonNull Reply<Output>'));
+    expect(code,
+        contains('public void doSomething(@NonNull Result<Output> result)'));
     expect(code, contains(RegExp(r'channel.send\(\s*null')));
   });
 
@@ -955,8 +959,9 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('doit(@NonNull Reply<List<Long>> callback)'));
-    expect(code, contains('List<Long> output ='));
+    expect(
+        code, contains('public void doit(@NonNull Result<List<Long>> result)'));
+    expect(code, contains('List<Long> output = (List<Long>) listReply.get(0)'));
   });
 
   test('flutter int return', () {
@@ -984,11 +989,11 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('doit(@NonNull Reply<Long> callback)'));
+    expect(code, contains('public void doit(@NonNull Result<Long> result)'));
     expect(
         code,
         contains(
-            'Long output = channelReply == null ? null : ((Number) channelReply).longValue();'));
+            'Long output = listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();'));
   });
 
   test('host multiple args', () {
@@ -1095,7 +1100,7 @@ void main() {
     expect(
         code,
         contains(
-            'public void add(@NonNull Long xArg, @NonNull Long yArg, @NonNull Reply<Long> callback)'));
+            'public void add(@NonNull Long xArg, @NonNull Long yArg, @NonNull Result<Long> result)'));
     expect(
         code,
         contains(RegExp(
@@ -1259,7 +1264,7 @@ void main() {
     expect(
         code,
         contains(
-            'public void doit(@Nullable Long fooArg, @NonNull Reply<Void> callback) {'));
+            'public void doit(@Nullable Long fooArg, @NonNull Result<Void> result) {'));
   });
 
   test('background platform channel', () {

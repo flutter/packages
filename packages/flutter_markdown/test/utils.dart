@@ -33,8 +33,13 @@ void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
 void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
   int currentString = 0;
   for (final Widget widget in widgets) {
+    TextSpan? span;
     if (widget is RichText) {
-      final TextSpan span = widget.text as TextSpan;
+      span = widget.text as TextSpan;
+    } else if (widget is SelectableText) {
+      span = widget.textSpan;
+    }
+    if (span != null) {
       final String text = _extractTextFromTextSpan(span);
       expect(text, equals(strings[currentString]));
       currentString += 1;

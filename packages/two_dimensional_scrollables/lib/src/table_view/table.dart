@@ -723,8 +723,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          _pinnedColumnsExtent,
-          _pinnedRowsExtent,
+          axisDirectionIsReversed(horizontalAxisDirection)
+              ? 0.0
+              : _pinnedColumnsExtent,
+          axisDirectionIsReversed(verticalAxisDirection)
+              ? 0.0
+              : _pinnedRowsExtent,
           viewportDimension.width - _pinnedColumnsExtent,
           viewportDimension.height - _pinnedRowsExtent,
         ),
@@ -750,8 +754,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          0.0,
-          _pinnedRowsExtent,
+          axisDirectionIsReversed(horizontalAxisDirection)
+              ? viewportDimension.width - _pinnedColumnsExtent
+              : 0.0,
+          axisDirectionIsReversed(verticalAxisDirection)
+              ? 0.0
+              : _pinnedRowsExtent,
           _pinnedColumnsExtent,
           viewportDimension.height - _pinnedRowsExtent,
         ),
@@ -778,8 +786,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         needsCompositing,
         offset,
         Rect.fromLTWH(
-          _pinnedColumnsExtent,
-          0.0,
+          axisDirectionIsReversed(horizontalAxisDirection)
+              ? 0.0
+              : _pinnedColumnsExtent,
+          axisDirectionIsReversed(horizontalAxisDirection)
+              ? viewportDimension.height - _pinnedRowsExtent
+              : 0.0,
           viewportDimension.width - _pinnedColumnsExtent,
           _pinnedRowsExtent,
         ),

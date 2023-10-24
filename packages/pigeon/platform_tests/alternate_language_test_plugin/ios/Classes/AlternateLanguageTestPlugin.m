@@ -16,7 +16,7 @@
 @implementation AlternateLanguageTestPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
-  HostIntegrationCoreApiSetup([registrar messenger], plugin);
+  SetUpHostIntegrationCoreApi([registrar messenger], plugin);
   plugin.flutterAPI =
       [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:[registrar messenger]];
 }
@@ -92,8 +92,8 @@
   return wrapper;
 }
 
-- (AnEnum)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error {
-  return anEnum;
+- (AnEnumBox *_Nullable)echoEnum:(AnEnum)anEnum error:(FlutterError *_Nullable *_Nonnull)error {
+  return [[AnEnumBox alloc] initWithValue:anEnum];
 }
 
 - (nullable NSString *)extractNestedNullableStringFrom:(AllClassesWrapper *)wrapper
@@ -239,8 +239,8 @@
 }
 
 - (void)echoAsyncEnum:(AnEnum)anEnum
-           completion:(void (^)(AnEnum, FlutterError *_Nullable))completion {
-  completion(anEnum, nil);
+           completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
+  completion([[AnEnumBox alloc] initWithValue:anEnum], nil);
 }
 
 - (void)echoAsyncNullableInt:(nullable NSNumber *)anInt
@@ -390,9 +390,9 @@
 }
 
 - (void)callFlutterEchoEnum:(AnEnum)anEnum
-                 completion:(void (^)(AnEnum, FlutterError *_Nullable))completion {
+                 completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
   [self.flutterAPI echoEnum:anEnum
-                 completion:^(AnEnum value, FlutterError *error) {
+                 completion:^(AnEnumBox *value, FlutterError *error) {
                    completion(value, error);
                  }];
 }

@@ -445,17 +445,17 @@ class RouteBuilder {
       final Element? elem = context is Element ? context : null;
 
       if (elem != null && isMaterialApp(elem)) {
-        log.info('Using MaterialApp configuration');
+        log('Using MaterialApp configuration');
         _pageBuilderForAppType = pageBuilderForMaterialApp;
         _errorBuilderForAppType =
             (BuildContext c, GoRouterState s) => MaterialErrorScreen(s.error);
       } else if (elem != null && isCupertinoApp(elem)) {
-        log.info('Using CupertinoApp configuration');
+        log('Using CupertinoApp configuration');
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
         _errorBuilderForAppType =
             (BuildContext c, GoRouterState s) => CupertinoErrorScreen(s.error);
       } else {
-        log.info('Using WidgetsApp configuration');
+        log('Using WidgetsApp configuration');
         _pageBuilderForAppType = pageBuilderForWidgetApp;
         _errorBuilderForAppType =
             (BuildContext c, GoRouterState s) => ErrorScreen(s.error);
@@ -592,10 +592,11 @@ class _PagePopContext {
   /// This assumes always pop the last route match for the page.
   bool onPopPage(Route<dynamic> route, dynamic result) {
     final Page<Object?> page = route.settings as Page<Object?>;
-
     final RouteMatch match = _routeMatchesLookUp[page]!.last;
-    _routeMatchesLookUp[page]!.removeLast();
-
-    return onPopPageWithRouteMatch(route, result, match);
+    if (onPopPageWithRouteMatch(route, result, match)) {
+      _routeMatchesLookUp[page]!.removeLast();
+      return true;
+    }
+    return false;
   }
 }

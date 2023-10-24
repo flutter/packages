@@ -744,9 +744,9 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewHostApiGetCodec(void);
 - (void)setAllowsBackForwardForWebViewWithIdentifier:(NSNumber *)identifier
                                            isAllowed:(NSNumber *)allow
                                                error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setUserAgentForWebViewWithIdentifier:(NSNumber *)identifier
-                                   userAgent:(nullable NSString *)userAgent
-                                       error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setCustomUserAgentForWebViewWithIdentifier:(NSNumber *)identifier
+                                         userAgent:(nullable NSString *)userAgent
+                                             error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)evaluateJavaScriptForWebViewWithIdentifier:(NSNumber *)identifier
                                   javaScriptString:(NSString *)javaScriptString
                                         completion:(void (^)(id _Nullable,
@@ -754,6 +754,9 @@ NSObject<FlutterMessageCodec> *FWFWKWebViewHostApiGetCodec(void);
 - (void)setInspectableForWebViewWithIdentifier:(NSNumber *)identifier
                                    inspectable:(NSNumber *)inspectable
                                          error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)customUserAgentForWebViewWithIdentifier:(NSNumber *)identifier
+                                                         error:(FlutterError *_Nullable *_Nonnull)
+                                                                   error;
 @end
 
 extern void FWFWKWebViewHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,

@@ -17,6 +17,9 @@ typedef NS_ENUM(NSInteger, FLTFlashMode) {
   FLTFlashModeAuto,
   FLTFlashModeAlways,
   FLTFlashModeTorch,
+  // This should never occur; it indicates an unknown value was received over
+  // the platform channel.
+  FLTFlashModeInvalid,
 };
 
 /**
@@ -39,6 +42,9 @@ extern AVCaptureFlashMode FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashMode m
 typedef NS_ENUM(NSInteger, FLTExposureMode) {
   FLTExposureModeAuto,
   FLTExposureModeLocked,
+  // This should never occur; it indicates an unknown value was received over
+  // the platform channel.
+  FLTExposureModeInvalid,
 };
 
 /**
@@ -61,6 +67,9 @@ extern FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode);
 typedef NS_ENUM(NSInteger, FLTFocusMode) {
   FLTFocusModeAuto,
   FLTFocusModeLocked,
+  // This should never occur; it indicates an unknown value was received over
+  // the platform channel.
+  FLTFocusModeInvalid,
 };
 
 /**
@@ -100,6 +109,9 @@ typedef NS_ENUM(NSInteger, FLTResolutionPreset) {
   FLTResolutionPresetVeryHigh,
   FLTResolutionPresetUltraHigh,
   FLTResolutionPresetMax,
+  // This should never occur; it indicates an unknown value was received over
+  // the platform channel.
+  FLTResolutionPresetInvalid,
 };
 
 /**

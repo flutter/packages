@@ -137,6 +137,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
     required super.routeDataClass,
     required super.parent,
     this.restorationScopeId,
+    this.initialLocation,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -144,6 +145,9 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 
   /// The restoration scope id.
   final String? restorationScopeId;
+
+  /// The initial route.
+  final String? initialLocation;
 
   @override
   Iterable<String> classDeclarations() => <String>[];
@@ -153,7 +157,8 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   @override
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
-      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}';
+      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
+      '${initialLocation == null ? '' : 'initialLocation: $initialLocation,'}';
 
   @override
   String get routeDataClassName => 'StatefulShellBranchData';
@@ -501,6 +506,10 @@ abstract class RouteBaseConfig {
           restorationScopeId: _generateParameterGetterCode(
             classElement,
             parameterName: r'$restorationScopeId',
+          ),
+          initialLocation: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$initialLocation',
           ),
         );
         break;

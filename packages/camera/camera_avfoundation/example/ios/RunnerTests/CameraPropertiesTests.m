@@ -19,7 +19,7 @@
   XCTAssertEqual(FLTFlashModeAuto, FLTGetFLTFlashModeForString(@"auto"));
   XCTAssertEqual(FLTFlashModeAlways, FLTGetFLTFlashModeForString(@"always"));
   XCTAssertEqual(FLTFlashModeTorch, FLTGetFLTFlashModeForString(@"torch"));
-  XCTAssertThrows(FLTGetFLTFlashModeForString(@"unkwown"));
+  XCTAssertEqual(FLTFlashModeInvalid, FLTGetFLTFlashModeForString(@"unknown"));
 }
 
 - (void)testFLTGetAVCaptureFlashModeForFLTFlashMode {
@@ -34,13 +34,13 @@
 - (void)testFLTGetStringForFLTExposureMode {
   XCTAssertEqualObjects(@"auto", FLTGetStringForFLTExposureMode(FLTExposureModeAuto));
   XCTAssertEqualObjects(@"locked", FLTGetStringForFLTExposureMode(FLTExposureModeLocked));
-  XCTAssertThrows(FLTGetStringForFLTExposureMode(-1));
+  XCTAssertNil(FLTGetStringForFLTExposureMode(-1));
 }
 
 - (void)testFLTGetFLTExposureModeForString {
   XCTAssertEqual(FLTExposureModeAuto, FLTGetFLTExposureModeForString(@"auto"));
   XCTAssertEqual(FLTExposureModeLocked, FLTGetFLTExposureModeForString(@"locked"));
-  XCTAssertThrows(FLTGetFLTExposureModeForString(@"unknown"));
+  XCTAssertEqual(FLTExposureModeInvalid, FLTGetFLTExposureModeForString(@"unknown"));
 }
 
 #pragma mark - focus mode tests
@@ -48,13 +48,13 @@
 - (void)testFLTGetStringForFLTFocusMode {
   XCTAssertEqualObjects(@"auto", FLTGetStringForFLTFocusMode(FLTFocusModeAuto));
   XCTAssertEqualObjects(@"locked", FLTGetStringForFLTFocusMode(FLTFocusModeLocked));
-  XCTAssertThrows(FLTGetStringForFLTFocusMode(-1));
+  XCTAssertNil(FLTGetStringForFLTFocusMode(-1));
 }
 
 - (void)testFLTGetFLTFocusModeForString {
   XCTAssertEqual(FLTFocusModeAuto, FLTGetFLTFocusModeForString(@"auto"));
   XCTAssertEqual(FLTFocusModeLocked, FLTGetFLTFocusModeForString(@"locked"));
-  XCTAssertThrows(FLTGetFLTFocusModeForString(@"unknown"));
+  XCTAssertEqual(FLTFocusModeInvalid, FLTGetFLTFocusModeForString(@"unknown"));
 }
 
 #pragma mark - resolution preset tests
@@ -67,7 +67,7 @@
   XCTAssertEqual(FLTResolutionPresetVeryHigh, FLTGetFLTResolutionPresetForString(@"veryHigh"));
   XCTAssertEqual(FLTResolutionPresetUltraHigh, FLTGetFLTResolutionPresetForString(@"ultraHigh"));
   XCTAssertEqual(FLTResolutionPresetMax, FLTGetFLTResolutionPresetForString(@"max"));
-  XCTAssertThrows(FLTGetFLTFlashModeForString(@"unknown"));
+  XCTAssertEqual(FLTResolutionPresetInvalid, FLTGetFLTResolutionPresetForString(@"unknown"));
 }
 
 #pragma mark - video format tests
@@ -89,7 +89,7 @@
   XCTAssertEqual(UIDeviceOrientationLandscapeLeft,
                  FLTGetUIDeviceOrientationForString(@"landscapeRight"));
   XCTAssertEqual(UIDeviceOrientationPortrait, FLTGetUIDeviceOrientationForString(@"portraitUp"));
-  XCTAssertThrows(FLTGetUIDeviceOrientationForString(@"unknown"));
+  XCTAssertEqual(UIDeviceOrientationUnknown, FLTGetUIDeviceOrientationForString(@"unknown"));
 }
 
 - (void)testFLTGetStringForUIDeviceOrientation {

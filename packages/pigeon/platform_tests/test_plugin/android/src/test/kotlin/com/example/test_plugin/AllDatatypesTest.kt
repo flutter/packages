@@ -65,7 +65,7 @@ internal class AllDatatypesTest: TestCase() {
             val reply = arg<BinaryMessenger.BinaryReply>(2)
             message.position(0)
             val args = codec.decodeMessage(message) as ArrayList<*>
-            val replyData = codec.encodeMessage(args[0])
+            val replyData = codec.encodeMessage(args)
             replyData?.position(0)
             reply.reply(replyData)
         }
@@ -73,18 +73,21 @@ internal class AllDatatypesTest: TestCase() {
         var didCall = false
         api.echoAllNullableTypes(everything) {
             didCall = true
-            assertNotNull(it)
-            assertNull(it!!.aNullableBool)
-            assertNull(it.aNullableInt)
-            assertNull(it.aNullableDouble)
-            assertNull(it.aNullableString)
-            assertNull(it.aNullableByteArray)
-            assertNull(it.aNullable4ByteArray)
-            assertNull(it.aNullable8ByteArray)
-            assertNull(it.aNullableFloatArray)
-            assertNull(it.aNullableList)
-            assertNull(it.aNullableMap)
-            assertNull(it.nullableMapWithObject)
+            val output = (it.getOrNull())?.let {
+                assertNull(it.aNullableBool)
+                assertNull(it.aNullableInt)
+                assertNull(it.aNullableDouble)
+                assertNull(it.aNullableString)
+                assertNull(it.aNullableByteArray)
+                assertNull(it.aNullable4ByteArray)
+                assertNull(it.aNullable8ByteArray)
+                assertNull(it.aNullableFloatArray)
+                assertNull(it.aNullableList)
+                assertNull(it.aNullableMap)
+                assertNull(it.nullableMapWithObject)
+            }
+            assertNotNull(output)
+            
         }
 
         assertTrue(didCall)
@@ -115,7 +118,7 @@ internal class AllDatatypesTest: TestCase() {
             val reply = arg<BinaryMessenger.BinaryReply>(2)
             message.position(0)
             val args = codec.decodeMessage(message) as ArrayList<*>
-            val replyData = codec.encodeMessage(args[0])
+            val replyData = codec.encodeMessage(args)
             replyData?.position(0)
             reply.reply(replyData)
         }
@@ -123,7 +126,7 @@ internal class AllDatatypesTest: TestCase() {
         var didCall = false
         api.echoAllNullableTypes(everything) {
             didCall = true
-            compareAllNullableTypes(everything, it)
+            compareAllNullableTypes(everything, it.getOrNull())
         }
 
         assertTrue(didCall)

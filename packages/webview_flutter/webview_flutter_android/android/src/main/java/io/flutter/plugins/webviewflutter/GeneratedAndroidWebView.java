@@ -94,6 +94,62 @@ public class GeneratedAndroidWebView {
     }
   }
 
+  /**
+   * Indicates the type of message logged to the console.
+   *
+   * <p>See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel.
+   */
+  public enum ConsoleMessageLevel {
+    /**
+     * Indicates a message is logged for debugging.
+     *
+     * <p>See
+     * https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#DEBUG.
+     */
+    DEBUG(0),
+    /**
+     * Indicates a message is provided as an error.
+     *
+     * <p>See
+     * https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#ERROR.
+     */
+    ERROR(1),
+    /**
+     * Indicates a message is provided as a basic log message.
+     *
+     * <p>See
+     * https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#LOG.
+     */
+    LOG(2),
+    /**
+     * Indicates a message is provided as a tip.
+     *
+     * <p>See
+     * https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#TIP.
+     */
+    TIP(3),
+    /**
+     * Indicates a message is provided as a warning.
+     *
+     * <p>See
+     * https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#WARNING.
+     */
+    WARNING(4),
+    /**
+     * Indicates a message with an unknown level.
+     *
+     * <p>This does not represent an actual value provided by the platform and only indicates a
+     * value was provided that isn't currently supported.
+     */
+    UNKNOWN(5);
+
+    final int index;
+
+    private ConsoleMessageLevel(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class WebResourceRequestData {
     private @NonNull String url;
@@ -405,6 +461,136 @@ public class GeneratedAndroidWebView {
       pigeonResult.setX((x == null) ? null : ((x instanceof Integer) ? (Integer) x : (Long) x));
       Object y = list.get(1);
       pigeonResult.setY((y == null) ? null : ((y instanceof Integer) ? (Integer) y : (Long) y));
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Represents a JavaScript console message from WebCore.
+   *
+   * <p>See https://developer.android.com/reference/android/webkit/ConsoleMessage
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class ConsoleMessage {
+    private @NonNull Long lineNumber;
+
+    public @NonNull Long getLineNumber() {
+      return lineNumber;
+    }
+
+    public void setLineNumber(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"lineNumber\" is null.");
+      }
+      this.lineNumber = setterArg;
+    }
+
+    private @NonNull String message;
+
+    public @NonNull String getMessage() {
+      return message;
+    }
+
+    public void setMessage(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"message\" is null.");
+      }
+      this.message = setterArg;
+    }
+
+    private @NonNull ConsoleMessageLevel level;
+
+    public @NonNull ConsoleMessageLevel getLevel() {
+      return level;
+    }
+
+    public void setLevel(@NonNull ConsoleMessageLevel setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"level\" is null.");
+      }
+      this.level = setterArg;
+    }
+
+    private @NonNull String sourceId;
+
+    public @NonNull String getSourceId() {
+      return sourceId;
+    }
+
+    public void setSourceId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"sourceId\" is null.");
+      }
+      this.sourceId = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    ConsoleMessage() {}
+
+    public static final class Builder {
+
+      private @Nullable Long lineNumber;
+
+      public @NonNull Builder setLineNumber(@NonNull Long setterArg) {
+        this.lineNumber = setterArg;
+        return this;
+      }
+
+      private @Nullable String message;
+
+      public @NonNull Builder setMessage(@NonNull String setterArg) {
+        this.message = setterArg;
+        return this;
+      }
+
+      private @Nullable ConsoleMessageLevel level;
+
+      public @NonNull Builder setLevel(@NonNull ConsoleMessageLevel setterArg) {
+        this.level = setterArg;
+        return this;
+      }
+
+      private @Nullable String sourceId;
+
+      public @NonNull Builder setSourceId(@NonNull String setterArg) {
+        this.sourceId = setterArg;
+        return this;
+      }
+
+      public @NonNull ConsoleMessage build() {
+        ConsoleMessage pigeonReturn = new ConsoleMessage();
+        pigeonReturn.setLineNumber(lineNumber);
+        pigeonReturn.setMessage(message);
+        pigeonReturn.setLevel(level);
+        pigeonReturn.setSourceId(sourceId);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(4);
+      toListResult.add(lineNumber);
+      toListResult.add(message);
+      toListResult.add(level == null ? null : level.index);
+      toListResult.add(sourceId);
+      return toListResult;
+    }
+
+    static @NonNull ConsoleMessage fromList(@NonNull ArrayList<Object> list) {
+      ConsoleMessage pigeonResult = new ConsoleMessage();
+      Object lineNumber = list.get(0);
+      pigeonResult.setLineNumber(
+          (lineNumber == null)
+              ? null
+              : ((lineNumber instanceof Integer) ? (Integer) lineNumber : (Long) lineNumber));
+      Object message = list.get(1);
+      pigeonResult.setMessage((String) message);
+      Object level = list.get(2);
+      pigeonResult.setLevel(ConsoleMessageLevel.values()[(int) level]);
+      Object sourceId = list.get(3);
+      pigeonResult.setSourceId((String) sourceId);
       return pigeonResult;
     }
   }
@@ -1604,6 +1790,9 @@ public class GeneratedAndroidWebView {
 
     void setTextZoom(@NonNull Long instanceId, @NonNull Long textZoom);
 
+    @NonNull
+    String getUserAgentString(@NonNull Long instanceId);
+
     /** The codec used by WebSettingsHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -1983,6 +2172,33 @@ public class GeneratedAndroidWebView {
                       (instanceIdArg == null) ? null : instanceIdArg.longValue(),
                       (textZoomArg == null) ? null : textZoomArg.longValue());
                   wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.getUserAgentString",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                try {
+                  String output =
+                      api.getUserAgentString(
+                          (instanceIdArg == null) ? null : instanceIdArg.longValue());
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
@@ -2401,6 +2617,9 @@ public class GeneratedAndroidWebView {
     void setSynchronousReturnValueForOnShowFileChooser(
         @NonNull Long instanceId, @NonNull Boolean value);
 
+    void setSynchronousReturnValueForOnConsoleMessage(
+        @NonNull Long instanceId, @NonNull Boolean value);
+
     /** The codec used by WebChromeClientHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -2451,6 +2670,33 @@ public class GeneratedAndroidWebView {
                 Boolean valueArg = (Boolean) args.get(1);
                 try {
                   api.setSynchronousReturnValueForOnShowFileChooser(
+                      (instanceIdArg == null) ? null : instanceIdArg.longValue(), valueArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number instanceIdArg = (Number) args.get(0);
+                Boolean valueArg = (Boolean) args.get(1);
+                try {
+                  api.setSynchronousReturnValueForOnConsoleMessage(
                       (instanceIdArg == null) ? null : instanceIdArg.longValue(), valueArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
@@ -2536,6 +2782,34 @@ public class GeneratedAndroidWebView {
       }
     }
   }
+
+  private static class WebChromeClientFlutterApiCodec extends StandardMessageCodec {
+    public static final WebChromeClientFlutterApiCodec INSTANCE =
+        new WebChromeClientFlutterApiCodec();
+
+    private WebChromeClientFlutterApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return ConsoleMessage.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof ConsoleMessage) {
+        stream.write(128);
+        writeValue(stream, ((ConsoleMessage) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class WebChromeClientFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -2551,7 +2825,7 @@ public class GeneratedAndroidWebView {
     }
     /** The codec used by WebChromeClientFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return WebChromeClientFlutterApiCodec.INSTANCE;
     }
 
     public void onProgressChanged(
@@ -2654,6 +2928,20 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          channelReply -> callback.reply(null));
+    }
+    /** Callback to Dart function `WebChromeClient.onConsoleMessage`. */
+    public void onConsoleMessage(
+        @NonNull Long instanceIdArg,
+        @NonNull ConsoleMessage messageArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebChromeClientFlutterApi.onConsoleMessage",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(instanceIdArg, messageArg)),
           channelReply -> callback.reply(null));
     }
   }

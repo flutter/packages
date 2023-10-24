@@ -384,14 +384,10 @@ $resultAt != null
                 final String returnType =
                     _addGenericTypesNullable(func.returnType);
                 final bool isAsync = func.isAsynchronous;
-                final String emptyReturnStatement = isMockHandler
-                    ? 'return <Object?>[];'
-                    : func.returnType.isVoid
-                        ? 'return;'
-                        : 'return null;';
+                const String emptyReturnStatement =
+                    'return wrapResponse(empty: true);';
                 String call;
                 if (func.arguments.isEmpty) {
-                  indent.writeln('// ignore message');
                   call = 'api.${func.name}()';
                 } else {
                   indent.writeln('assert(message != null,');
@@ -429,30 +425,41 @@ $resultAt != null
                   });
                   call = 'api.${func.name}(${argNames.join(', ')})';
                 }
-                if (func.returnType.isVoid) {
-                  if (isAsync) {
-                    indent.writeln('await $call;');
+                indent.writeScoped('try {', '} ', () {
+                  if (func.returnType.isVoid) {
+                    if (isAsync) {
+                      indent.writeln('await $call;');
+                    } else {
+                      indent.writeln('$call;');
+                    }
+                    indent.writeln(emptyReturnStatement);
                   } else {
-                    indent.writeln('$call;');
-                  }
-                  indent.writeln(emptyReturnStatement);
-                } else {
-                  if (isAsync) {
-                    indent.writeln('final $returnType output = await $call;');
-                  } else {
-                    indent.writeln('final $returnType output = $call;');
-                  }
+                    if (isAsync) {
+                      indent.writeln('final $returnType output = await $call;');
+                    } else {
+                      indent.writeln('final $returnType output = $call;');
+                    }
 
-                  const String returnExpression = 'output';
-                  final String nullability =
-                      func.returnType.isNullable ? '?' : '';
-                  final String valueExtraction =
-                      isEnum(root, func.returnType) ? '$nullability.index' : '';
-                  final String returnStatement = isMockHandler
-                      ? 'return <Object?>[$returnExpression$valueExtraction];'
-                      : 'return $returnExpression$valueExtraction;';
-                  indent.writeln(returnStatement);
-                }
+                    const String returnExpression = 'output';
+                    final String nullability =
+                        func.returnType.isNullable ? '?' : '';
+                    final String valueExtraction = isEnum(root, func.returnType)
+                        ? '$nullability.index'
+                        : '';
+                    final String returnStatement = isMockHandler
+                        ? 'return <Object?>[$returnExpression$valueExtraction];'
+                        : 'return wrapResponse(result: $returnExpression$valueExtraction);';
+                    indent.writeln(returnStatement);
+                  }
+                }, addTrailingNewline: false);
+                indent.addScoped('on PlatformException catch (e) {', '}', () {
+                  indent.writeln('return wrapResponse(error: e);');
+                }, addTrailingNewline: false);
+
+                indent.writeScoped('catch (e) {', '}', () {
+                  indent.writeln(
+                      "return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));");
+                });
               });
             });
           });
@@ -689,6 +696,32 @@ if (replyList == null) {
     indent.writeln("import 'package:flutter/services.dart';");
     indent.writeln("import 'package:flutter_test/flutter_test.dart';");
     indent.newln();
+  }
+
+  @override
+  void writeGeneralUtilities(
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    _writeWrapResponse(generatorOptions, root, indent);
+  }
+
+  /// Writes [wrapResponse] method.
+  void _writeWrapResponse(DartOptions opt, Root root, Indent indent) {
+    indent.writeScoped(
+        'List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {',
+        '}', () {
+      indent.writeScoped('if (empty) {', '}', () {
+        indent.writeln('return <Object?>[];');
+      });
+      indent.writeScoped('if (error == null) {', '}', () {
+        indent.writeln('return <Object?>[result];');
+      });
+      indent.writeln(
+          'return <Object?>[error.code, error.message, error.details];');
+    });
   }
 }
 

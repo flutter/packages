@@ -293,6 +293,20 @@ dependencies {}
       },
       dependencyOverrides: pluginDeps,
     );
+
+    // An application cannot depend directly on multiple federated
+    // implementations of the same plugin for the same platform, which means the
+    // app cannot directly depend on both camera_android and
+    // camera_android_androidx. Since camera_android is endorsed, it will be
+    // included transitively already, so exclude it from the direct dependency
+    // list to allow including camera_android_androidx to ensure that they don't
+    // conflict at build time (if they did, it would be impossible to use
+    // camera_android_androidx while camera_android is endorsed).
+    // This is special-cased here, rather than being done via the normal
+    // exclusion config file mechanism, because it still needs to be in the
+    // depenedency overrides list to ensure that the version from path is used.
+    pubspec.dependencies.remove('camera_android');
+
     app.pubspecFile.writeAsStringSync(_pubspecToString(pubspec));
   }
 

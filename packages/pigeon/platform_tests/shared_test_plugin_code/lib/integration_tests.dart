@@ -1030,10 +1030,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.callFlutterThrowError();
       }, throwsA(isA<PlatformException>()));
-    },
-        // TODO(tarrinneal): Once flutter api error handling is added, enable these tests.
-        // See: https://github.com/flutter/flutter/issues/118243
-        skip: true);
+    });
 
     testWidgets('errors are returned from void methods correctly',
         (WidgetTester _) async {
@@ -1042,10 +1039,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.callFlutterThrowErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
-    },
-        // TODO(tarrinneal): Once flutter api error handling is added, enable these tests.
-        // See: https://github.com/flutter/flutter/issues/118243
-        skip: true);
+    });
 
     testWidgets('all datatypes serialize and deserialize correctly',
         (WidgetTester _) async {

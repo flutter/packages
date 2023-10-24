@@ -1,3 +1,11 @@
+## 0.2.3
+
+* Migrates to a Swift implementation.
+
+## 0.2.2+3
+
+* Converts platform communication to Pigeon.
+
 ## 0.2.2+2
 
 * Adds pub topics to package metadata.
