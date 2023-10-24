@@ -202,6 +202,8 @@ NSString *const errorMethod = @"error";
     [_captureDevice unlockForConfiguration];
   } else {
     NSLog(@"error locking device for frame rate change (%@)", outError);
+    *error = outError;
+    return nil;
   }
 
   [self updateOrientation];
