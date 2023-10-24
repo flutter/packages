@@ -201,11 +201,11 @@ NSString *const errorMethod = @"error";
     [_videoCaptureSession commitConfiguration];
     [_captureDevice unlockForConfiguration];
   } else {
-    // _captureDevice lockForConfiguration fails and set error to nil in tests.
+    // tests always go there with outError == nil.
     if (outError) {
-        NSLog(@"error locking device for frame rate change (%@)", outError);
-        *error = outError;
-        return nil;
+      NSLog(@"error locking device for frame rate change (%@)", outError);
+      *error = outError;
+      return nil;
     }
   }
 
