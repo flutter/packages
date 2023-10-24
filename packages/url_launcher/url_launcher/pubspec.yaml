@@ -50,8 +50,3 @@ topics:
   - os-integration
   - url-launcher
   - urls
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {url_launcher_platform_interface: {path: ../../url_launcher/url_launcher_platform_interface}}
