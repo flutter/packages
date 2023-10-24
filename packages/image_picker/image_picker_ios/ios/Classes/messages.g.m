@@ -43,8 +43,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FLTMaxSize
-+ (instancetype)makeWithWidth:(nullable NSNumber *)width height:(nullable NSNumber *)height {
-  FLTMaxSize *pigeonResult = [[FLTMaxSize alloc] init];
++ (instancetype)makeWithWidth:(nullable NSNumber *)width
+    height:(nullable NSNumber *)height {
+  FLTMaxSize* pigeonResult = [[FLTMaxSize alloc] init];
   pigeonResult.width = width;
   pigeonResult.height = height;
   return pigeonResult;
@@ -68,10 +69,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FLTMediaSelectionOptions
 + (instancetype)makeWithMaxSize:(FLTMaxSize *)maxSize
-                   imageQuality:(nullable NSNumber *)imageQuality
-            requestFullMetadata:(NSNumber *)requestFullMetadata
-                  allowMultiple:(NSNumber *)allowMultiple {
-  FLTMediaSelectionOptions *pigeonResult = [[FLTMediaSelectionOptions alloc] init];
+    imageQuality:(nullable NSNumber *)imageQuality
+    requestFullMetadata:(NSNumber *)requestFullMetadata
+    allowMultiple:(NSNumber *)allowMultiple {
+  FLTMediaSelectionOptions* pigeonResult = [[FLTMediaSelectionOptions alloc] init];
   pigeonResult.maxSize = maxSize;
   pigeonResult.imageQuality = imageQuality;
   pigeonResult.requestFullMetadata = requestFullMetadata;
@@ -103,8 +104,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FLTSourceSpecification
-+ (instancetype)makeWithType:(FLTSourceType)type camera:(FLTSourceCamera)camera {
-  FLTSourceSpecification *pigeonResult = [[FLTSourceSpecification alloc] init];
++ (instancetype)makeWithType:(FLTSourceType)type
+    camera:(FLTSourceCamera)camera {
+  FLTSourceSpecification* pigeonResult = [[FLTSourceSpecification alloc] init];
   pigeonResult.type = type;
   pigeonResult.camera = camera;
   return pigeonResult;
@@ -131,11 +133,11 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation FLTImagePickerApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [FLTMaxSize fromList:[self readValue]];
-    case 129:
+    case 129: 
       return [FLTMediaSelectionOptions fromList:[self readValue]];
-    case 130:
+    case 130: 
       return [FLTSourceSpecification fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -177,91 +179,72 @@ NSObject<FlutterMessageCodec> *FLTImagePickerApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FLTImagePickerApiCodecReaderWriter *readerWriter =
-        [[FLTImagePickerApiCodecReaderWriter alloc] init];
+    FLTImagePickerApiCodecReaderWriter *readerWriter = [[FLTImagePickerApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void FLTImagePickerApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
-                            NSObject<FLTImagePickerApi> *api) {
+void FLTImagePickerApiSetup(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTImagePickerApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.ImagePickerApi.pickImage"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.ImagePickerApi.pickImage"
         binaryMessenger:binaryMessenger
-                  codec:FLTImagePickerApiGetCodec()];
+        codec:FLTImagePickerApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (pickImageWithSource:maxSize:quality:fullMetadata:completion:)],
-                @"FLTImagePickerApi api (%@) doesn't respond to "
-                @"@selector(pickImageWithSource:maxSize:quality:fullMetadata:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(pickImageWithSource:maxSize:quality:fullMetadata:completion:)], @"FLTImagePickerApi api (%@) doesn't respond to @selector(pickImageWithSource:maxSize:quality:fullMetadata:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         FLTSourceSpecification *arg_source = GetNullableObjectAtIndex(args, 0);
         FLTMaxSize *arg_maxSize = GetNullableObjectAtIndex(args, 1);
         NSNumber *arg_imageQuality = GetNullableObjectAtIndex(args, 2);
         NSNumber *arg_requestFullMetadata = GetNullableObjectAtIndex(args, 3);
-        [api pickImageWithSource:arg_source
-                         maxSize:arg_maxSize
-                         quality:arg_imageQuality
-                    fullMetadata:arg_requestFullMetadata
-                      completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
-                        callback(wrapResult(output, error));
-                      }];
+        [api pickImageWithSource:arg_source maxSize:arg_maxSize quality:arg_imageQuality fullMetadata:arg_requestFullMetadata completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.ImagePickerApi.pickMultiImage"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.ImagePickerApi.pickMultiImage"
         binaryMessenger:binaryMessenger
-                  codec:FLTImagePickerApiGetCodec()];
+        codec:FLTImagePickerApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector
-                     (pickMultiImageWithMaxSize:quality:fullMetadata:completion:)],
-                @"FLTImagePickerApi api (%@) doesn't respond to "
-                @"@selector(pickMultiImageWithMaxSize:quality:fullMetadata:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(pickMultiImageWithMaxSize:quality:maxImages:fullMetadata:completion:)], @"FLTImagePickerApi api (%@) doesn't respond to @selector(pickMultiImageWithMaxSize:quality:maxImages:fullMetadata:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         FLTMaxSize *arg_maxSize = GetNullableObjectAtIndex(args, 0);
         NSNumber *arg_imageQuality = GetNullableObjectAtIndex(args, 1);
-        NSNumber *arg_requestFullMetadata = GetNullableObjectAtIndex(args, 2);
-        [api pickMultiImageWithMaxSize:arg_maxSize
-                               quality:arg_imageQuality
-                          fullMetadata:arg_requestFullMetadata
-                            completion:^(NSArray<NSString *> *_Nullable output,
-                                         FlutterError *_Nullable error) {
-                              callback(wrapResult(output, error));
-                            }];
+        NSNumber *arg_maxImages = GetNullableObjectAtIndex(args, 2);
+        NSNumber *arg_requestFullMetadata = GetNullableObjectAtIndex(args, 3);
+        [api pickMultiImageWithMaxSize:arg_maxSize quality:arg_imageQuality maxImages:arg_maxImages fullMetadata:arg_requestFullMetadata completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.ImagePickerApi.pickVideo"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.ImagePickerApi.pickVideo"
         binaryMessenger:binaryMessenger
-                  codec:FLTImagePickerApiGetCodec()];
+        codec:FLTImagePickerApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(pickVideoWithSource:maxDuration:completion:)],
-                @"FLTImagePickerApi api (%@) doesn't respond to "
-                @"@selector(pickVideoWithSource:maxDuration:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(pickVideoWithSource:maxDuration:completion:)], @"FLTImagePickerApi api (%@) doesn't respond to @selector(pickVideoWithSource:maxDuration:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         FLTSourceSpecification *arg_source = GetNullableObjectAtIndex(args, 0);
         NSNumber *arg_maxDurationSeconds = GetNullableObjectAtIndex(args, 1);
-        [api pickVideoWithSource:arg_source
-                     maxDuration:arg_maxDurationSeconds
-                      completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
-                        callback(wrapResult(output, error));
-                      }];
+        [api pickVideoWithSource:arg_source maxDuration:arg_maxDurationSeconds completion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -269,23 +252,19 @@ void FLTImagePickerApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Selects images and videos and returns their paths.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.ImagePickerApi.pickMedia"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.ImagePickerApi.pickMedia"
         binaryMessenger:binaryMessenger
-                  codec:FLTImagePickerApiGetCodec()];
+        codec:FLTImagePickerApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(pickMediaWithMediaSelectionOptions:completion:)],
-                @"FLTImagePickerApi api (%@) doesn't respond to "
-                @"@selector(pickMediaWithMediaSelectionOptions:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(pickMediaWithMediaSelectionOptions:completion:)], @"FLTImagePickerApi api (%@) doesn't respond to @selector(pickMediaWithMediaSelectionOptions:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         FLTMediaSelectionOptions *arg_mediaSelectionOptions = GetNullableObjectAtIndex(args, 0);
-        [api pickMediaWithMediaSelectionOptions:arg_mediaSelectionOptions
-                                     completion:^(NSArray<NSString *> *_Nullable output,
-                                                  FlutterError *_Nullable error) {
-                                       callback(wrapResult(output, error));
-                                     }];
+        [api pickMediaWithMediaSelectionOptions:arg_mediaSelectionOptions completion:^(NSArray<NSString *> *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
