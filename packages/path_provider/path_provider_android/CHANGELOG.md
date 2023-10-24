@@ -1,3 +1,7 @@
+## 2.2.1
+
+* Updates annotations lib to 1.7.0.
+
 ## 2.2.0
 
 * Adds implementation of `getDownloadsDirectory()`.
