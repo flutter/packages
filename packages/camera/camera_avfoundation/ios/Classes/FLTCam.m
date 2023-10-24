@@ -41,9 +41,9 @@
                       AVCaptureAudioDataOutputSampleBufferDelegate>
 
 @property(readonly, nonatomic) int64_t textureId;
-@property NSNumber *fps;
-@property NSNumber *videoBitrate;
-@property NSNumber *audioBitrate;
+@property (atomic, readwrite, strong) NSNumber *fps;
+@property (atomic, readwrite, strong) NSNumber *videoBitrate;
+@property (atomic, readwrite, strong) NSNumber *audioBitrate;
 @property BOOL enableAudio;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
 @property(readonly, nonatomic) AVCaptureSession *videoCaptureSession;
