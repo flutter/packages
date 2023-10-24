@@ -271,7 +271,7 @@ targets:
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"},
+          {"dependency": "android_virtual_device", "version": "34"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -288,7 +288,7 @@ targets:
       # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"},
+          {"dependency": "android_virtual_device", "version": "34"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
@@ -323,6 +323,9 @@ targets:
           {"dependency": "open_jdk", "version": "version:11"}
         ]
 
+  # All of the Linux_android android_platform_tests shards have the same
+  # dependency list, despite some running on Android 33 AVDs versus 34.
+  # See https://github.com/flutter/flutter/issues/137082 for context.
   - name: Linux_android android_platform_tests_shard_1 master
     recipe: packages/packages
     timeout: 60
@@ -330,10 +333,11 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
+      # set up for 34
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_2 master
@@ -343,10 +347,11 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
+      # set up for 34
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_3 master
@@ -356,10 +361,11 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
+      # set up for 34
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_4 master
@@ -369,10 +375,11 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
+      # set up for 34
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_5 master
@@ -382,10 +389,11 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
+      # set up for 34
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_6 master
@@ -395,20 +403,21 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
+      # set up for 34
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_api_33_shard_1 master
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_master.version
+      # set up for 33
       package_sharding: "--shardIndex 0 --shardCount 2"
       dependencies: >-
         [
@@ -418,11 +427,11 @@ targets:
   - name: Linux_android android_platform_tests_api_33_shard_2 master
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_master.version
+      # set up for 33
       package_sharding: "--shardIndex 1 --shardCount 2"
       dependencies: >-
         [
@@ -440,7 +449,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_2 stable
@@ -454,7 +463,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_3 stable
@@ -468,7 +477,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_4 stable
@@ -482,7 +491,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_5 stable
@@ -496,7 +505,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_shard_6 stable
@@ -510,15 +519,14 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "33"}
+          {"dependency": "android_virtual_device", "version": "34"}
         ]
 
   - name: Linux_android android_platform_tests_api_33_shard_1 stable
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 0 --shardCount 2"
@@ -530,9 +538,8 @@ targets:
   - name: Linux_android android_platform_tests_api_33_shard_2 stable
     recipe: packages/packages
     timeout: 60
-    bringup: true
     properties:
-      target_file: android_platform_tests_api_33.yaml
+      target_file: android_platform_tests_api_33_avd.yaml
       channel: master
       version_file: flutter_stable.version
       package_sharding: "--shardIndex 1 --shardCount 2"
