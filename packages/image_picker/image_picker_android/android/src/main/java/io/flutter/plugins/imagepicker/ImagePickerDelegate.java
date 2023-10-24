@@ -15,6 +15,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
+import android.os.ext.SdkExtensions;
 import android.provider.MediaStore;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -462,7 +463,7 @@ public class ImagePickerDelegate
     if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
       ActivityResultContracts.PickMultipleVisualMedia pickMultipleVisualMedia;
       if (maxImages != null) {
-        Integer maxItems = maxImages.intValue();
+        Integer maxItems = getMultipleVisualMediaMaxItems(maxImages);
         pickMultipleVisualMedia = new ActivityResultContracts.PickMultipleVisualMedia(maxItems);
       } else {
         pickMultipleVisualMedia = new ActivityResultContracts.PickMultipleVisualMedia();
@@ -470,10 +471,10 @@ public class ImagePickerDelegate
 
       pickMultiImageIntent = pickMultipleVisualMedia
               .createIntent(
-                  activity,
-                  new PickVisualMediaRequest.Builder()
-                      .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                      .build());
+                      activity,
+                      new PickVisualMediaRequest.Builder()
+                              .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                              .build());
     } else {
       pickMultiImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
       pickMultiImageIntent.setType("image/*");
@@ -930,5 +931,21 @@ public class ImagePickerDelegate
     } else {
       intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
     }
+  }
+
+  private Integer getMultipleVisualMediaMaxItems(Long maxImages) {
+    Integer maxItems = maxImages.intValue();
+    boolean isSystemLimit = isPickImagesMaxLimitAvailable();
+    if (isSystemLimit) {
+        int systemLimit = MediaStore.getPickImagesMaxLimit();
+        maxItems = Math.min(maxItems, systemLimit);
+    }
+    return maxItems;
+  }
+
+  private boolean isPickImagesMaxLimitAvailable() {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ||
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+               SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2);
   }
 }
