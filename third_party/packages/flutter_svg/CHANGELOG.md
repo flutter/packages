@@ -3,6 +3,9 @@
 ## 2.0.8
 
 - Adds back `DefaultSvgTheme`.
+- Bump vector_graphics to 1.1.9+1
+- Adds debugFillProperties
+- Fix bug for cache keys.
 
 ## 2.0.7
 

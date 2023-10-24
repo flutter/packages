@@ -32,8 +32,8 @@ environment:
 
 # dependency_overrides:
 #   vector_graphics_codec:
-#     path: ../../vector_graphics/packages/vector_graphics_codec
+#     path: ../../../../vector_graphics/packages/vector_graphics_codec
 #   vector_graphics_compiler:
-#     path: ../../vector_graphics/packages/vector_graphics_compiler
+#     path: ../../../../vector_graphics/packages/vector_graphics_compiler
 #   vector_graphics:
-#     path: ../../vector_graphics/packages/vector_graphics
+#     path: ../../../../vector_graphics/packages/vector_graphics

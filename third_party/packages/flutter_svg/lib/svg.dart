@@ -505,7 +505,7 @@ class SvgPicture extends StatelessWidget {
         StringProperty('bytesLoader', bytesLoader.toString(), showName: false));
     properties.add(DoubleProperty('width', width, defaultValue: null));
     properties.add(DoubleProperty('height', height, defaultValue: null));
-    properties.add(EnumProperty<AlignmentGeometry>('alignment', alignment,
+    properties.add(DiagnosticsProperty<AlignmentGeometry>('alignment', alignment,
         defaultValue: Alignment.center));
     properties.add(DiagnosticsProperty<bool>(
         'allowDrawingOutsideViewBox', allowDrawingOutsideViewBox,
