@@ -1,3 +1,7 @@
+## 5.0.2
+
+* Example app initialization.
+
 ## 5.0.1
 
 * Transfers the package source from https://github.com/google/process.dart to
