@@ -41,9 +41,9 @@
                       AVCaptureAudioDataOutputSampleBufferDelegate>
 
 @property(readonly, nonatomic) int64_t textureId;
-@property NSNumber *fps;
-@property NSNumber *videoBitrate;
-@property NSNumber *audioBitrate;
+@property(atomic, readwrite, strong) NSNumber *fps;
+@property(atomic, readwrite, strong) NSNumber *videoBitrate;
+@property(atomic, readwrite, strong) NSNumber *audioBitrate;
 @property BOOL enableAudio;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
 @property(readonly, nonatomic) AVCaptureSession *videoCaptureSession;
@@ -183,7 +183,7 @@ NSString *const errorMethod = @"error";
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  NSError *outError;
+  NSError *outError = nil;
   if ([_captureDevice lockForConfiguration:&outError]) {
     [_videoCaptureSession beginConfiguration];
 
@@ -201,7 +201,12 @@ NSString *const errorMethod = @"error";
     [_videoCaptureSession commitConfiguration];
     [_captureDevice unlockForConfiguration];
   } else {
-    NSLog(@"error locking device for frame rate change (%@)", outError);
+    // tests always go there with outError == nil.
+    if (outError) {
+      NSLog(@"error locking device for frame rate change (%@)", outError);
+      *error = outError;
+      return nil;
+    }
   }
 
   [self updateOrientation];
