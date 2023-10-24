@@ -428,13 +428,14 @@ public class ImagePickerDelegate
   public void chooseMultiImageFromGallery(
       @NonNull ImageSelectionOptions options,
       boolean usePhotoPicker,
+      @Nullable Long maxImages,
       @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
     }
 
-    launchMultiPickImageFromGalleryIntent(usePhotoPicker);
+    launchMultiPickImageFromGalleryIntent(usePhotoPicker, maxImages);
   }
 
   private void launchPickImageFromGalleryIntent(Boolean usePhotoPicker) {
@@ -454,11 +455,20 @@ public class ImagePickerDelegate
     activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY);
   }
 
-  private void launchMultiPickImageFromGalleryIntent(Boolean usePhotoPicker) {
+  private void launchMultiPickImageFromGalleryIntent(
+          Boolean usePhotoPicker,
+          @Nullable Long maxImages) {
     Intent pickMultiImageIntent;
     if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      pickMultiImageIntent =
-          new ActivityResultContracts.PickMultipleVisualMedia()
+      ActivityResultContracts.PickMultipleVisualMedia pickMultipleVisualMedia;
+      if (maxImages != null) {
+        Integer maxItems = maxImages.intValue();
+        pickMultipleVisualMedia = new ActivityResultContracts.PickMultipleVisualMedia(maxItems);
+      } else {
+        pickMultipleVisualMedia = new ActivityResultContracts.PickMultipleVisualMedia();
+      }
+
+      pickMultiImageIntent = pickMultipleVisualMedia
               .createIntent(
                   activity,
                   new PickVisualMediaRequest.Builder()
