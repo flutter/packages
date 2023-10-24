@@ -45,11 +45,79 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     required bool universalLinksOnly,
     required Map<String, String> headers,
     String? webOnlyWindowName,
-  }) {
+  }) async {
+    final PreferredLaunchMode mode;
     if (useSafariVC) {
+      mode = PreferredLaunchMode.inAppBrowserView;
+    } else if (universalLinksOnly) {
+      mode = PreferredLaunchMode.externalNonBrowserApplication;
+    } else {
+      mode = PreferredLaunchMode.externalApplication;
+    }
+    return launchUrl(
+        url,
+        LaunchOptions(
+            mode: mode,
+            webViewConfiguration: InAppWebViewConfiguration(
+                enableDomStorage: enableDomStorage,
+                enableJavaScript: enableJavaScript,
+                headers: headers)));
+  }
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    final bool inApp;
+    switch (options.mode) {
+      case PreferredLaunchMode.inAppWebView:
+      case PreferredLaunchMode.inAppBrowserView:
+        // The iOS implementation doesn't distinguish between these two modes;
+        // both are treated as inAppBrowserView.
+        inApp = true;
+        break;
+      case PreferredLaunchMode.externalApplication:
+      case PreferredLaunchMode.externalNonBrowserApplication:
+        inApp = false;
+        break;
+      case PreferredLaunchMode.platformDefault:
+      // Intentionally treat any new values as platformDefault; support for any
+      // new mode requires intentional opt-in, otherwise falling back is the
+      // documented behavior.
+      // ignore: no_default_cases
+      default:
+        // By default, open web URLs in the application.
+        inApp = url.startsWith('http:') || url.startsWith('https:');
+        break;
+    }
+
+    if (inApp) {
       return _hostApi.openUrlInSafariViewController(url);
     } else {
-      return _hostApi.launchUrl(url, universalLinksOnly);
+      return _hostApi.launchUrl(url,
+          options.mode == PreferredLaunchMode.externalNonBrowserApplication);
     }
+  }
+
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    switch (mode) {
+      case PreferredLaunchMode.platformDefault:
+      case PreferredLaunchMode.inAppWebView:
+      case PreferredLaunchMode.inAppBrowserView:
+      case PreferredLaunchMode.externalApplication:
+      case PreferredLaunchMode.externalNonBrowserApplication:
+        return true;
+      // Default is a desired behavior here since support for new modes is
+      // always opt-in, and the enum lives in a different package, so silently
+      // adding "false" for new values is the correct behavior.
+      // ignore: no_default_cases
+      default:
+        return false;
+    }
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    return mode == PreferredLaunchMode.inAppWebView ||
+        mode == PreferredLaunchMode.inAppBrowserView;
   }
 }

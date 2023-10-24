@@ -32,15 +32,15 @@ Widget build(BuildContext context) {
 }
 ```
 
-`IosPlatformImages.load` functions like [[UIImage imageNamed:]](https://developer.apple.com/documentation/uikit/uiimage/1624146-imagenamed).
+`IosPlatformImages.load` works similarly to [`UIImage(named:)`](https://developer.apple.com/documentation/uikit/uiimage/1624146-imagenamed).
 
 ### Flutter->iOS Example
 
-```objc
-#import <ios_platform_images/UIImage+ios_platform_images.h>
+```swift
+import ios_platform_images
 
-static UIImageView* MakeImage() {
-  UIImage* image = [UIImage flutterImageWithName:@"assets/foo.png"];
-  return [[UIImageView alloc] initWithImage:image];
+func makeImage() -> UIImageView {
+    let image = UIImage.flutterImageWithName("assets/foo.png")
+    return UIImageView(image: image)
 }
 ```
