@@ -1,6 +1,11 @@
-## 2.1.0
+## 2.2.0
 
 * Implements `supportsMode` and `supportsCloseForMode`.
+
+## 2.1.0
+
+* Adds `launchUrl` implementation.
+* Prevents _Tabnabbing_ and disallows `javascript:` URLs on `launch` and `launchUrl`. 
 
 ## 2.0.20
 

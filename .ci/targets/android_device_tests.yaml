@@ -11,7 +11,7 @@ tasks:
     args:
       - "firebase-test-lab"
       - "--device"
-      - "model=redfin,version=30"
+      - "model=oriole,version=33"
       - "--exclude=script/configs/exclude_integration_android.yaml"
       - "--project=flutter-infra-staging"
       - "--results-bucket=flutter_firebase_testlab_staging"

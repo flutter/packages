@@ -4390,5 +4390,41 @@ public class CoreTests {
             }
           });
     }
+
+    public void echoString(@NonNull String aStringArg, @NonNull Result<String> result) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(aStringArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                String output = (String) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
+          });
+    }
   }
 }
