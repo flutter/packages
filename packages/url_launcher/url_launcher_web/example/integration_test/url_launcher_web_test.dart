@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:url_launcher_web/url_launcher_web.dart';
 
 import 'url_launcher_web_test.mocks.dart';
@@ -217,6 +218,31 @@ void main() {
               'mailto:name@mydomain.com', '_blank', 'noopener,noreferrer'));
         });
       });
+    });
+
+    group('supportsMode', () {
+      testWidgets('returns true for platformDefault', (WidgetTester _) async {
+        expect(plugin.supportsMode(PreferredLaunchMode.platformDefault),
+            completion(isTrue));
+      });
+
+      testWidgets('returns false for other modes', (WidgetTester _) async {
+        expect(plugin.supportsMode(PreferredLaunchMode.externalApplication),
+            completion(isFalse));
+        expect(
+            plugin.supportsMode(
+                PreferredLaunchMode.externalNonBrowserApplication),
+            completion(isFalse));
+        expect(plugin.supportsMode(PreferredLaunchMode.inAppBrowserView),
+            completion(isFalse));
+        expect(plugin.supportsMode(PreferredLaunchMode.inAppWebView),
+            completion(isFalse));
+      });
+    });
+
+    testWidgets('supportsCloseForMode returns false', (WidgetTester _) async {
+      expect(plugin.supportsCloseForMode(PreferredLaunchMode.platformDefault),
+          completion(isFalse));
     });
   });
 }
