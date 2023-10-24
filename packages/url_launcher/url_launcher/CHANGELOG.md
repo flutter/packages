@@ -11,6 +11,7 @@
   rely on any specific behavior of the `platformDefault` launch mode. Changes
   to the handling of `platformDefault`, such as Android's recent change from
   `inAppWebView` to the new `inAppBrowserView`, are not considered breaking.
+* Updates minimum supported SDK version to Flutter 3.13.
 
 ## 6.1.14
 
