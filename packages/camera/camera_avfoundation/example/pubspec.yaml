@@ -9,8 +9,6 @@ environment:
 dependencies:
   camera_avfoundation:
     path: ../
-  camera_platform_interface:
-    path: ../../camera_platform_interface
 
   flutter:
     sdk: flutter
@@ -27,8 +25,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {camera_avfoundation: {path: ../../../camera/camera_avfoundation}, camera_platform_interface: {path: ../../../camera/camera_platform_interface}}

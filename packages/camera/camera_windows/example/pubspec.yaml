@@ -7,8 +7,6 @@ environment:
   flutter: ">=3.7.0"
 
 dependencies:
-  camera_platform_interface:
-    path: ../../camera_platform_interface
   camera_windows:
     path: ../
 
@@ -24,8 +22,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {camera_platform_interface: {path: ../../../camera/camera_platform_interface}, camera_windows: {path: ../../../camera/camera_windows}}

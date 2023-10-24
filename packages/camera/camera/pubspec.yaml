@@ -23,7 +23,7 @@ flutter:
 dependencies:
   camera_android: ^0.10.8+2
   camera_avfoundation: ^0.9.13+2
-  camera_platform_interface: ^2.5.1
+  camera_platform_interface: ^2.6.0
   camera_web: ^0.3.1+4
 
   flutter:
@@ -44,13 +44,11 @@ dev_dependencies:
 # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
 dependency_overrides:
 
-  camera_android: 
+  camera_android:
     path: ../../camera/camera_android
-  camera_avfoundation: 
+  camera_avfoundation:
     path: ../../camera/camera_avfoundation
-  camera_platform_interface: 
-    path: ../../camera/camera_platform_interface
-  camera_web: 
+  camera_web:
     path: ../../camera/camera_web
 
 topics:

@@ -2,7 +2,7 @@ name: camera_android_camerax
 description: Android implementation of the camera plugin using the CameraX library.
 repository: https://github.com/flutter/packages/tree/main/packages/camera/camera_android_camerax
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+camera%22
-version: 0.5.0+19
+version: 0.5.0+20
 
 environment:
   sdk: ">=2.19.0 <4.0.0"
@@ -19,7 +19,7 @@ flutter:
 
 dependencies:
   async: ^2.5.0
-  camera_platform_interface: ^2.3.2
+  camera_platform_interface: ^2.6.0
 
   flutter:
     sdk: flutter
@@ -34,15 +34,6 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.1
   pigeon: ^9.1.0
-
-# TODO: for PR
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-
-  camera_platform_interface: 
-    path: ../../camera/camera_platform_interface
 
 topics:
   - camera

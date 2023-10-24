@@ -188,11 +188,21 @@ class MessageFlutterApi(private val binaryMessenger: BinaryMessenger) {
       StandardMessageCodec()
     }
   }
-  fun flutterMethod(aStringArg: String?, callback: (String) -> Unit) {
+  fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod", codec)
     channel.send(listOf(aStringArg)) {
-      val result = it as String
-      callback(result)
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));
+        } else if (it[0] == null) {
+          callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output));
+        }
+      } else {
+        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+      } 
     }
   }
 }

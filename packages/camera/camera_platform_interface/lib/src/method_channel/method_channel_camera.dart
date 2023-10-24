@@ -97,19 +97,20 @@ class MethodChannelCamera extends CameraPlatform {
   @override
   Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
-    MediaSettings? mediaSettings,
+    MediaSettings mediaSettings,
   ) async {
     try {
+      final ResolutionPreset? resolutionPreset = mediaSettings.resolutionPreset;
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': null != mediaSettings?.resolutionPreset
-            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset!)
+        'resolutionPreset': resolutionPreset != null
+            ? _serializeResolutionPreset(mediaSettings.resolutionPreset!)
             : null,
-        'fps': mediaSettings?.fps,
-        'videoBitrate': mediaSettings?.videoBitrate,
-        'audioBitrate': mediaSettings?.audioBitrate,
-        'enableAudio': mediaSettings?.enableAudio ?? false,
+        'fps': mediaSettings.fps,
+        'videoBitrate': mediaSettings.videoBitrate,
+        'audioBitrate': mediaSettings.audioBitrate,
+        'enableAudio': mediaSettings.enableAudio,
       });
 
       return reply!['cameraId']! as int;

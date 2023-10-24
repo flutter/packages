@@ -666,7 +666,10 @@ window.addEventListener("error", function(e) {
   @override
   Future<String?> getUserAgent() async {
     final String? customUserAgent = await _webView.getCustomUserAgent();
-    if (customUserAgent != null) {
+    // Despite the official documentation of `WKWebView.customUserAgent`, the
+    // default value seems to be an empty String and not null. It's possible it
+    // could depend on the iOS version, so this checks for both.
+    if (customUserAgent != null && customUserAgent.isNotEmpty) {
       return customUserAgent;
     }
 

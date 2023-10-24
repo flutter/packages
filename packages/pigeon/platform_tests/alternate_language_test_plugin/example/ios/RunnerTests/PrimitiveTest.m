@@ -49,11 +49,11 @@
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSNumber *arg = @(1.5);
-  [api aBoolValue:arg
-       completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
-         XCTAssertEqualObjects(arg, result);
-         [expectation fulfill];
-       }];
+  [api aDoubleValue:arg
+         completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
+           XCTAssertEqualObjects(arg, result);
+           [expectation fulfill];
+         }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 

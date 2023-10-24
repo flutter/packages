@@ -291,13 +291,22 @@ import FlutterMacOS
     if (isCustomCodec) {
       _writeCodec(indent, api, root);
     }
+
     const List<String> generatedComments = <String>[
-      ' Generated class from Pigeon that represents Flutter messages that can be called from Swift.'
+      ' Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.'
     ];
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    indent.write('class ${api.name} ');
+    indent.addScoped('protocol ${api.name}Protocol {', '}', () {
+      for (final Method func in api.methods) {
+        addDocumentationComments(
+            indent, func.documentationComments, _docCommentSpec);
+        indent.writeln(_getMethodSignature(func));
+      }
+    });
+
+    indent.write('class ${api.name}: ${api.name}Protocol ');
     indent.addScoped('{', '}', () {
       indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
       indent.write('init(binaryMessenger: FlutterBinaryMessenger)');
@@ -314,70 +323,62 @@ import FlutterMacOS
         });
       }
       for (final Method func in api.methods) {
-        final _SwiftFunctionComponents components =
-            _SwiftFunctionComponents.fromMethod(func);
-
         final String channelName = makeChannelName(api, func, dartPackageName);
-        final String returnType = func.returnType.isVoid
-            ? ''
-            : _nullsafeSwiftTypeForDartType(func.returnType);
-        String sendArgument;
+
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
-
-        if (func.arguments.isEmpty) {
-          indent.write(
-              'func ${func.name}(completion: @escaping ($returnType) -> Void) ');
-          sendArgument = 'nil';
-        } else {
-          final Iterable<String> argTypes = func.arguments
-              .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
-          final Iterable<String> argLabels = indexMap(components.arguments,
-              (int index, _SwiftFunctionArgument argument) {
-            return argument.label ??
-                _getArgumentName(index, argument.namedType);
-          });
-          final Iterable<String> argNames =
-              indexMap(func.arguments, _getSafeArgumentName);
+        indent.writeScoped('${_getMethodSignature(func)} {', '}', () {
           final Iterable<String> enumSafeArgNames = func.arguments
               .asMap()
               .entries
               .map((MapEntry<int, NamedType> e) =>
                   getEnumSafeArgumentExpression(root, e.key, e.value));
-          sendArgument = '[${enumSafeArgNames.join(', ')}] as [Any?]';
-          final String argsSignature = map3(
-              argTypes,
-              argLabels,
-              argNames,
-              (String type, String label, String name) =>
-                  '$label $name: $type').join(', ');
-          if (func.returnType.isVoid) {
-            indent.write(
-                'func ${components.name}($argsSignature, completion: @escaping () -> Void) ');
-          } else {
-            indent.write(
-                'func ${components.name}($argsSignature, completion: @escaping ($returnType) -> Void) ');
-          }
-        }
-        indent.addScoped('{', '}', () {
+          final String sendArgument = func.arguments.isEmpty
+              ? 'nil'
+              : '[${enumSafeArgNames.join(', ')}] as [Any?]';
           const String channel = 'channel';
           indent.writeln(
               'let $channel = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
           indent.write('$channel.sendMessage($sendArgument) ');
           if (func.returnType.isVoid) {
             indent.addScoped('{ _ in', '}', () {
-              indent.writeln('completion()');
+              indent.writeln('completion(.success(Void()))');
             });
           } else {
             indent.addScoped('{ response in', '}', () {
-              _writeDecodeCasting(
-                root: root,
-                indent: indent,
-                value: 'response',
-                variableName: 'result',
-                type: func.returnType,
-              );
-              indent.writeln('completion(result)');
+              indent.writeScoped(
+                  'guard let listResponse = response as? [Any?] else {', '}',
+                  () {
+                indent.writeln(
+                    'completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))');
+                indent.writeln('return');
+              });
+              indent.writeScoped('if (listResponse.count > 1) {', '} ', () {
+                indent.writeln('let code: String = listResponse[0] as! String');
+                indent.writeln(
+                    'let message: String? = nilOrValue(listResponse[1])');
+                indent.writeln(
+                    'let details: String? = nilOrValue(listResponse[2])');
+                indent.writeln(
+                    'completion(.failure(FlutterError(code: code, message: message, details: details)));');
+              }, addTrailingNewline: false);
+              if (!func.returnType.isNullable && !func.returnType.isVoid) {
+                indent.addScoped('else if (listResponse[0] == nil) {', '} ',
+                    () {
+                  indent.writeln(
+                      'completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
+                }, addTrailingNewline: false);
+              }
+              indent.addScoped('else {', '}', () {
+                _writeDecodeCasting(
+                  root: root,
+                  indent: indent,
+                  value: 'listResponse[0]',
+                  variableName: 'result',
+                  type: func.returnType,
+                );
+                indent.writeln('completion(.success(result))');
+              });
             });
           }
         });
@@ -871,6 +872,31 @@ String _swiftTypeForDartType(TypeDeclaration type) {
 String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
   return '${_swiftTypeForDartType(type)}$nullSafe';
+}
+
+String _getMethodSignature(Method func) {
+  final _SwiftFunctionComponents components =
+      _SwiftFunctionComponents.fromMethod(func);
+  final String returnType = func.returnType.isVoid
+      ? 'Void'
+      : _nullsafeSwiftTypeForDartType(func.returnType);
+
+  if (func.arguments.isEmpty) {
+    return 'func ${func.name}(completion: @escaping (Result<$returnType, FlutterError>) -> Void) ';
+  } else {
+    final Iterable<String> argTypes = func.arguments
+        .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
+    final Iterable<String> argLabels = indexMap(components.arguments,
+        (int index, _SwiftFunctionArgument argument) {
+      return argument.label ?? _getArgumentName(index, argument.namedType);
+    });
+    final Iterable<String> argNames =
+        indexMap(func.arguments, _getSafeArgumentName);
+    final String argsSignature = map3(argTypes, argLabels, argNames,
+            (String type, String label, String name) => '$label $name: $type')
+        .join(', ');
+    return 'func ${components.name}($argsSignature, completion: @escaping (Result<$returnType, FlutterError>) -> Void) ';
+  }
 }
 
 /// A class that represents a Swift function argument.

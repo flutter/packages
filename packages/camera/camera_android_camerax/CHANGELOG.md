@@ -1,7 +1,11 @@
-## 0.5.0+19
+## 0.5.0+20
 
 * Adds support to control video fps and bitrate. See `CameraController.withSettings`.
- 
+
+## 0.5.0+19
+
+* Implements torch flash mode.
+
 ## 0.5.0+18
 
 * Implements `startVideoCapturing`.

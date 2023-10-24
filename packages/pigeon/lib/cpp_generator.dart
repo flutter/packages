@@ -878,26 +878,40 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
             '[on_success = std::move(on_success), on_error = std::move(on_error)]'
             '(const uint8_t* reply, size_t reply_size) ');
         indent.addScoped('{', '});', () {
-          final String successCallbackArgument;
-          if (func.returnType.isVoid) {
-            successCallbackArgument = '';
-          } else {
-            successCallbackArgument = 'return_value';
-            final String encodedReplyName =
-                'encodable_$successCallbackArgument';
+          String successCallbackArgument;
+          successCallbackArgument = 'return_value';
+          final String encodedReplyName = 'encodable_$successCallbackArgument';
+          final String listReplyName = 'list_$successCallbackArgument';
+          indent.writeln(
+              'std::unique_ptr<EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);');
+          indent.writeln('const auto& $encodedReplyName = *response;');
+          indent.writeln(
+              'const auto* $listReplyName = std::get_if<EncodableList>(&$encodedReplyName);');
+          indent.writeScoped('if ($listReplyName) {', '} ', () {
+            indent.writeScoped('if ($listReplyName->size() > 1) {', '} ', () {
+              indent.writeln(
+                  'on_error(FlutterError( std::get<std::string>($listReplyName->at(0)),  std::get<std::string>($listReplyName->at(1)), $listReplyName->at(2)));');
+            }, addTrailingNewline: false);
+            indent.addScoped('else {', '}', () {
+              if (func.returnType.isVoid) {
+                successCallbackArgument = '';
+              } else {
+                _writeEncodableValueArgumentUnwrapping(
+                  indent,
+                  root,
+                  returnType,
+                  argName: successCallbackArgument,
+                  encodableArgName: '$listReplyName->at(0)',
+                  apiType: ApiType.flutter,
+                );
+              }
+              indent.writeln('on_success($successCallbackArgument);');
+            });
+          }, addTrailingNewline: false);
+          indent.addScoped('else {', '} ', () {
             indent.writeln(
-                'std::unique_ptr<EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);');
-            indent.writeln('const auto& $encodedReplyName = *response;');
-            _writeEncodableValueArgumentUnwrapping(
-              indent,
-              root,
-              returnType,
-              argName: successCallbackArgument,
-              encodableArgName: encodedReplyName,
-              apiType: ApiType.flutter,
-            );
-          }
-          indent.writeln('on_success($successCallbackArgument);');
+                'on_error(FlutterError("channel-error",  "Unable to establish connection on channel.", EncodableValue("")));');
+          });
         });
       });
     }
@@ -1344,20 +1358,17 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
         indent.writeln(
             'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
       } else if (hostType.isEnum) {
-        if (hostType.isNullable) {
-          final String valueVarName = '${argName}_value';
+        final String valueVarName = '${argName}_value';
+        indent.writeln(
+            'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
+        if (apiType == ApiType.flutter) {
           indent.writeln(
-              'const int64_t $valueVarName = $encodableArgName.IsNull() ? 0 : $encodableArgName.LongValue();');
-          if (apiType == ApiType.flutter) {
-            indent.writeln(
-                'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &(${hostType.datatype})$valueVarName;');
-          } else {
-            indent.writeln(
-                'const auto $argName = $encodableArgName.IsNull() ? std::nullopt : std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(${argName}_value));');
-          }
+              'const ${hostType.datatype} enum_$argName = (${hostType.datatype})$valueVarName;');
+          indent.writeln(
+              'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &enum_$argName;');
         } else {
           indent.writeln(
-              'const auto* $argName = &((${hostType.datatype})std::get<int>($encodableArgName));');
+              'const auto $argName = $encodableArgName.IsNull() ? std::nullopt : std::make_optional<${hostType.datatype}>(static_cast<${hostType.datatype}>(${argName}_value));');
         }
       } else {
         indent.writeln(

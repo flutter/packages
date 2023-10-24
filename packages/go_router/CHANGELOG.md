@@ -1,3 +1,18 @@
+## 12.0.0
+
+- Adds ability to dynamically update routing table.
+- **BREAKING CHANGE**:
+  - The function signature of constructor of `RouteConfiguration` is updated.
+  - Adds a required `matchedPath` named parameter to `RouteMatch.match`.
+
+## 11.1.4
+
+- Fixes missing parameters in the type-safe routes topic documentation.
+
+## 11.1.3
+
+- Fixes missing state.extra in onException().
+
 ## 11.1.2
 
 - Fixes a bug where the known routes and initial route were logged even when `debugLogDiagnostics` was set to `false`.

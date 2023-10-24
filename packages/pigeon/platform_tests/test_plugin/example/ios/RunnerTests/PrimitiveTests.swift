@@ -49,8 +49,14 @@ class PrimitiveTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
     api.anInt(value: 1) { result in
-      XCTAssertEqual(1, result)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(1, res)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+        
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
@@ -83,8 +89,13 @@ class PrimitiveTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
     api.aBool(value: true) { result in
-      XCTAssertEqual(true, result)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(true, res)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
@@ -118,8 +129,13 @@ class PrimitiveTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
     let arg: Double = 1.5
     api.aDouble(value: arg) { result in
-      XCTAssertEqual(arg, result)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(arg, res)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
@@ -153,8 +169,13 @@ class PrimitiveTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
     let arg: String = "hello"
     api.aString(value: arg) { result in
-      XCTAssertEqual(arg, result)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(arg, res)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
@@ -188,8 +209,13 @@ class PrimitiveTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
     let arg = ["hello"]
     api.aList(value: arg) { result in
-      XCTAssert(equalsList(arg, result))
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssert(equalsList(arg, res))
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }
@@ -223,8 +249,14 @@ class PrimitiveTests: XCTestCase {
     let expectation = XCTestExpectation(description: "callback")
     let arg = ["hello": 1]
     api.aMap(value: arg) { result in
-      XCTAssert(equalsDictionary(arg, result))
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssert(equalsDictionary(arg, res))
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
+
     }
     wait(for: [expectation], timeout: 1.0)
   }

@@ -10,6 +10,7 @@ import 'resolution_preset.dart';
 ///
 /// Used in [CameraPlatform.createCameraWithSettings].
 /// Allows to tune recorded video parameters, such as resolution, frame rate, bitrate.
+/// If [fps], [videoBitrate] or [audioBitrate] are passed, they must be greater than zero.
 class MediaSettings {
   /// Creates a [MediaSettings].
   const MediaSettings({
@@ -18,7 +19,11 @@ class MediaSettings {
     this.videoBitrate,
     this.audioBitrate,
     this.enableAudio = false,
-  });
+  })  : assert(fps == null || fps > 0, 'fps must be null or greater than zero'),
+        assert(videoBitrate == null || videoBitrate > 0,
+            'videoBitrate must be null or greater than zero'),
+        assert(audioBitrate == null || audioBitrate > 0,
+            'audioBitrate must be null or greater than zero');
 
   /// [ResolutionPreset] affect the quality of video recording and image capture.
   final ResolutionPreset? resolutionPreset;
@@ -36,25 +41,37 @@ class MediaSettings {
   final bool enableAudio;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MediaSettings &&
-          runtimeType == other.runtimeType &&
-          resolutionPreset == other.resolutionPreset &&
-          fps == other.fps &&
-          videoBitrate == other.videoBitrate &&
-          audioBitrate == other.audioBitrate &&
-          enableAudio == other.enableAudio;
+  bool operator ==(Object other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is MediaSettings &&
+        resolutionPreset == other.resolutionPreset &&
+        fps == other.fps &&
+        videoBitrate == other.videoBitrate &&
+        audioBitrate == other.audioBitrate &&
+        enableAudio == other.enableAudio;
+  }
 
   @override
-  int get hashCode =>
-      resolutionPreset.hashCode ^
-      fps.hashCode ^
-      videoBitrate.hashCode ^
-      audioBitrate.hashCode ^
-      enableAudio.hashCode;
+  int get hashCode => Object.hash(
+        resolutionPreset,
+        fps,
+        videoBitrate,
+        audioBitrate,
+        enableAudio,
+      );
 
   @override
-  String toString() =>
-      'MediaSettings{resolutionPreset: $resolutionPreset, fps: $fps, videoBitrate: $videoBitrate, audioBitrate: $audioBitrate, enableAudio: $enableAudio}';
+  String toString() {
+    return 'MediaSettings{'
+        'resolutionPreset: $resolutionPreset, '
+        'fps: $fps, '
+        'videoBitrate: $videoBitrate, '
+        'audioBitrate: $audioBitrate, '
+        'enableAudio: $enableAudio}';
+  }
 }
