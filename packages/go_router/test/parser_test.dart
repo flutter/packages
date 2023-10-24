@@ -155,7 +155,7 @@ void main() {
       ),
     ];
 
-    final RouteConfiguration configuration = RouteConfiguration(
+    final RouteConfiguration configuration = createRouteConfiguration(
       routes: routes,
       redirectLimit: 100,
       topRedirect: (_, __) => null,
@@ -195,7 +195,7 @@ void main() {
       ),
     ];
 
-    final RouteConfiguration configuration = RouteConfiguration(
+    final RouteConfiguration configuration = createRouteConfiguration(
       routes: routes,
       redirectLimit: 100,
       topRedirect: (_, __) => null,

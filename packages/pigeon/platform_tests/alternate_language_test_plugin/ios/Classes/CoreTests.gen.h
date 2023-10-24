@@ -494,6 +494,8 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void);
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (void)echoWrappedList:(TestMessage *)msg
              completion:(void (^)(TestMessage *_Nullable, FlutterError *_Nullable))completion;
+- (void)echoString:(NSString *)aString
+        completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 NS_ASSUME_NONNULL_END

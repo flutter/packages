@@ -8,6 +8,7 @@ import 'package:async/async.dart';
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/analyzer.dart';
 import 'package:camera_android_camerax/src/camera.dart';
+import 'package:camera_android_camerax/src/camera_control.dart';
 import 'package:camera_android_camerax/src/camera_info.dart';
 import 'package:camera_android_camerax/src/camera_selector.dart';
 import 'package:camera_android_camerax/src/camera_state.dart';
@@ -46,6 +47,7 @@ import 'test_camerax_library.g.dart';
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
+  MockSpec<CameraControl>(),
   MockSpec<CameraImageData>(),
   MockSpec<CameraSelector>(),
   MockSpec<ExposureState>(),
@@ -1025,12 +1027,35 @@ void main() {
     expect(imageFile.path, equals(testPicturePath));
   });
 
-  test('setFlashMode configures ImageCapture with expected flash mode',
+  test('takePicture turns non-torch flash mode off when torch mode enabled',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 77;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    camera.imageCapture = MockImageCapture();
+    camera.camera = MockCamera();
+
+    when(camera.camera!.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
+
+    await camera.setFlashMode(cameraId, FlashMode.torch);
+    await camera.takePicture(cameraId);
+    verify(camera.imageCapture!.setFlashMode(ImageCapture.flashModeOff));
+  });
+
+  test(
+      'setFlashMode configures ImageCapture with expected non-torch flash mode',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 22;
+    final MockCameraControl mockCameraControl = MockCameraControl();
 
     camera.imageCapture = MockImageCapture();
+    camera.camera = MockCamera();
+
+    when(camera.camera!.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
 
     for (final FlashMode flashMode in FlashMode.values) {
       await camera.setFlashMode(cameraId, flashMode);
@@ -1047,16 +1072,65 @@ void main() {
           expectedFlashMode = ImageCapture.flashModeOn;
           break;
         case FlashMode.torch:
-          // TODO(camsim99): Test torch mode when implemented.
+          expectedFlashMode = null;
           break;
       }
 
       if (expectedFlashMode == null) {
+        // Torch mode enabled and won't be used for configuring image capture.
         continue;
       }
 
+      verifyNever(mockCameraControl.enableTorch(true));
+      expect(camera.torchEnabled, isFalse);
       await camera.takePicture(cameraId);
       verify(camera.imageCapture!.setFlashMode(expectedFlashMode));
+    }
+  });
+
+  test('setFlashMode turns on torch mode as expected', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 44;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    camera.camera = MockCamera();
+
+    when(camera.camera!.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
+
+    await camera.setFlashMode(cameraId, FlashMode.torch);
+
+    verify(mockCameraControl.enableTorch(true));
+    expect(camera.torchEnabled, isTrue);
+  });
+
+  test('setFlashMode turns off torch mode when non-torch flash modes set',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 33;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    camera.camera = MockCamera();
+
+    when(camera.camera!.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
+
+    for (final FlashMode flashMode in FlashMode.values) {
+      camera.torchEnabled = true;
+      await camera.setFlashMode(cameraId, flashMode);
+
+      switch (flashMode) {
+        case FlashMode.off:
+        case FlashMode.auto:
+        case FlashMode.always:
+          verify(mockCameraControl.enableTorch(false));
+          expect(camera.torchEnabled, isFalse);
+          break;
+        case FlashMode.torch:
+          verifyNever(mockCameraControl.enableTorch(true));
+          expect(camera.torchEnabled, true);
+          break;
+      }
     }
   });
 
