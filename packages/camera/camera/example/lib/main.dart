@@ -629,15 +629,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Future<void> _initializeCameraController(
       CameraDescription cameraDescription) async {
-    final CameraController cameraController = CameraController.withSettings(
+    final CameraController cameraController = CameraController(
       cameraDescription,
-      mediaSettings: MediaSettings(
-        resolutionPreset: ResolutionPreset.low,
-        fps: 15,
-        videoBitrate: 200000,
-        audioBitrate: 32000,
-        enableAudio: enableAudio,
-      ),
+      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
+      enableAudio: enableAudio,
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
 

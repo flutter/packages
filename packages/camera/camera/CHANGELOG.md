@@ -1,7 +1,3 @@
-## 0.10.6
-
-* Adds support to control video fps and bitrate. See `CameraController.withSettings`.
-
 ## 0.10.5+5
 
 * Fixes bug where old camera resources were not disposed when switching between camera descriptions.
