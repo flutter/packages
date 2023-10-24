@@ -330,7 +330,7 @@ ${response.httpResponse.body}
     if (!package.platformDirectory(FlutterPlatform.android).existsSync()) {
       return PackageResult.skip(
           'Package ${package.displayName} does not run on Android.');
-    } else if (package.getEnclosingPackage() != null) {
+    } else if (package.isExample) {
       // We skip examples for this command.
       return PackageResult.skip(
           'Package ${package.displayName} is not a top-level package; run with "compileSdkForExamples" to update.');

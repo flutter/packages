@@ -142,6 +142,23 @@ class RepositoryPackage {
       !isPlatformInterface &&
       directory.basename != directory.parent.basename;
 
+  /// True if this appears to be an example package, according to package
+  /// conventions.
+  bool get isExample {
+    final RepositoryPackage? enclosingPackage = getEnclosingPackage();
+    if (enclosingPackage == null) {
+      // An example package is enclosed in another package.
+      return false;
+    }
+    for (final RepositoryPackage example in enclosingPackage.getExamples()) {
+      if (example.path == path) {
+        // This package is an example of its enclosing package.
+        return true;
+      }
+    }
+    return false;
+  }
+
   /// Returns the Flutter example packages contained in the package, if any.
   Iterable<RepositoryPackage> getExamples() {
     final Directory exampleDirectory = directory.childDirectory('example');
