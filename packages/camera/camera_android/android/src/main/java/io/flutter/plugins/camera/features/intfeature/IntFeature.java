@@ -12,7 +12,7 @@ import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.features.CameraFeature;
 
 /**
- * Used to control the fps, videoBitrate and audioBitrate configuration on the {@link
+ * Used to control the FPS, videoBitrate and audioBitrate configuration on the {@link
  * android.hardware.camera2} API.
  */
 public class IntFeature extends CameraFeature<Integer> {
