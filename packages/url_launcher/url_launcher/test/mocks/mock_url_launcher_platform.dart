@@ -107,4 +107,16 @@ class MockUrlLauncher extends Fake
   Future<void> closeWebView() async {
     closeWebViewCalled = true;
   }
+
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    launchMode = mode;
+    return response!;
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    launchMode = mode;
+    return response!;
+  }
 }
