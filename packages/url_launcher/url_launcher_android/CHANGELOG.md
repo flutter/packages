@@ -1,7 +1,14 @@
-## 6.1.2
+## 6.3.0
 
 * Enables in-app Android WebView to open non-https urls, e.g. `mailto:`, `sms:`.
 * Enables in-app Android WebView to open `.pdf` documents.
+
+## 6.2.0
+
+* Adds support for `inAppBrowserView` as a separate launch mode option from
+  `inAppWebView` mode. `inAppBrowserView` is the preferred in-app mode for most uses,
+  but does not support `closeInAppWebView`.
+* Implements `supportsMode` and `supportsCloseForMode`.
 
 ## 6.1.1
 
