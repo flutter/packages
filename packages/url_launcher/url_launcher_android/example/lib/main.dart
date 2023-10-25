@@ -225,13 +225,15 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithoutJavaScript(_urlTextController.text);
+                  _launched = _launchInWebViewWithoutJavaScript(
+                      _urlTextController.text);
                 }),
                 child: const Text('Launch in web view (JavaScript OFF)'),
               ),
               ElevatedButton(
                 onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithoutDomStorage(_urlTextController.text);
+                  _launched = _launchInWebViewWithoutDomStorage(
+                      _urlTextController.text);
                 }),
                 child: const Text('Launch in web view (DOM storage OFF)'),
               ),
