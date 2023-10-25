@@ -424,6 +424,9 @@ abstract class FallbackStrategyHostApi {
 abstract class CameraControlHostApi {
   @async
   void enableTorch(int identifier, bool torch);
+
+  @async
+  void setZoomRatio(int identifier, double ratio);
 }
 
 @FlutterApi()
