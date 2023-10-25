@@ -92,6 +92,19 @@ class AndroidCamera extends CameraPlatform {
   }
 
   @override
+  Future<int> createCamera(
+    CameraDescription cameraDescription,
+    ResolutionPreset? resolutionPreset, {
+    bool enableAudio = false,
+  }) =>
+      createCameraWithSettings(
+          cameraDescription,
+          MediaSettings(
+            resolutionPreset: resolutionPreset,
+            enableAudio: enableAudio,
+          ));
+
+  @override
   Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
