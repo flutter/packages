@@ -122,7 +122,7 @@ class AndroidCamera extends CameraPlatform {
         'fps': mediaSettings?.fps,
         'videoBitrate': mediaSettings?.videoBitrate,
         'audioBitrate': mediaSettings?.audioBitrate,
-        'enableAudio': mediaSettings?.enableAudio ?? true,
+        'enableAudio': mediaSettings?.enableAudio ?? false,
       });
 
       return reply!['cameraId']! as int;
