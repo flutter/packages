@@ -1,4 +1,11 @@
+## 6.2.1
+
+* Fixes incorrect types in `supportsLaunchMode` and
+  `supportsCloseForLaunchMode`.
+
 ## 6.2.0
+
+_Retracted due to incorrect types in new APIs._
 
 * Adds `supportsLaunchMode` for checking whether the current platform supports a
   given launch mode, to allow clients that will only work with specific modes
