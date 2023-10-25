@@ -215,7 +215,7 @@ class Camera
         CameraFeatures.init(
             cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
 
-    if (null != fps && 0 < fps.intValue()) {
+    if (fps != null && fps.intValue() > 0) {
       final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
       fpsRange.setValue(new Range<>(fps, fps));
       this.cameraFeatures.setFpsRange(fpsRange);
@@ -223,11 +223,11 @@ class Camera
       this.cameraFeatures.setFps(new IntFeature(cameraProperties, fps));
     }
 
-    if (null != videoBitrate && 0 < videoBitrate.intValue()) {
+    if (videoBitrate != null && videoBitrate.intValue() > 0) {
       this.cameraFeatures.setVideoBitrate(new IntFeature(cameraProperties, videoBitrate));
     }
 
-    if (null != audioBitrate && 0 < audioBitrate.intValue()) {
+    if (audioBitrate != null && audioBitrate.intValue() > 0) {
       this.cameraFeatures.setAudioBitrate(new IntFeature(cameraProperties, audioBitrate));
     }
 
@@ -278,11 +278,10 @@ class Camera
 
     // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is null
     // once this has largely been fixed on the Android side. https://github.com/flutter/flutter/issues/119668
-    EncoderProfiles recordingProfile = getRecordingProfile();
-    if (SdkCapabilityChecker.supportsEncoderProfiles() && recordingProfile != null) {
+    if (SdkCapabilityChecker.supportsEncoderProfiles() && getRecordingProfile() != null) {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
-              recordingProfile, outputFilePath, getFps(), getVideoBitrate(), getAudioBitrate());
+                  getRecordingProfile(), outputFilePath, getFps(), getVideoBitrate(), getAudioBitrate());
     } else {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
@@ -1056,16 +1055,19 @@ class Camera
     return cameraFeatures.getResolution().getRecordingProfile();
   }
 
+  @Nullable
   Integer getFps() {
     IntFeature fpsFeature = cameraFeatures.getFps();
     return fpsFeature == null ? null : fpsFeature.getValue();
   }
 
+  @Nullable
   Integer getVideoBitrate() {
     IntFeature videoBitrateFeature = cameraFeatures.getVideoBitrate();
     return videoBitrateFeature == null ? null : videoBitrateFeature.getValue();
   }
 
+  @Nullable
   Integer getAudioBitrate() {
     IntFeature audioBitrateFeature = cameraFeatures.getAudioBitrate();
     return audioBitrateFeature == null ? null : audioBitrateFeature.getValue();
@@ -1125,7 +1127,7 @@ class Camera
     if (!this.pausedPreview) {
       this.pausedPreview = true;
 
-      if (null != this.captureSession) {
+      if (this.captureSession != null) {
         this.captureSession.stopRepeating();
       }
     }
