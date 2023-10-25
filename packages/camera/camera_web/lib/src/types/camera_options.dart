@@ -64,7 +64,7 @@ class AudioConstraints {
   final bool enabled;
 
   /// Converts the current instance to a Map.
-  Map<String, dynamic> toJson() => <String, dynamic>{'enabled': enabled};
+  Map<String, Object?> toJson() => <String, Object?>{'enabled': enabled};
 
   @override
   bool operator ==(Object other) =>
