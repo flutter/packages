@@ -32,6 +32,9 @@ class CameraControl extends JavaObject {
   late final _CameraControlHostApiImpl _api;
 
   /// Enables or disables the torch of related [Camera] instance.
+  ///
+  /// If the torch mode was unable to be changed, an error message will be
+  /// added to [SystemServices.cameraErrorStreamController].
   Future<void> enableTorch(bool torch) async {
     return _api.enableTorchFromInstance(this, torch);
   }
@@ -40,7 +43,8 @@ class CameraControl extends JavaObject {
   ///
   /// Ratio should be between what the `minZoomRatio` and `maxZoomRatio` of the
   /// [ZoomState] of the [CameraInfo] instance that is retrievable from the same
-  /// [Camera] instance; otherwise, an error will be thrown.
+  /// [Camera] instance; otherwise, an error message will be added to
+  /// [SystemServices.cameraErrorStreamController].
   Future<void> setZoomRatio(double ratio) async {
     return _api.setZoomRatioFromInstance(this, ratio);
   }
