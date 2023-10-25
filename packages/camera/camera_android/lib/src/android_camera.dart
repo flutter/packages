@@ -110,11 +110,14 @@ class AndroidCamera extends CameraPlatform {
     MediaSettings? mediaSettings,
   ) async {
     try {
+      final ResolutionPreset? resolutionPreset =
+          mediaSettings?.resolutionPreset;
+
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': mediaSettings?.resolutionPreset != null
-            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset!)
+        'resolutionPreset': resolutionPreset != null
+            ? _serializeResolutionPreset(resolutionPreset)
             : null,
         'fps': mediaSettings?.fps,
         'videoBitrate': mediaSettings?.videoBitrate,
