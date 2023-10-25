@@ -192,17 +192,10 @@ class GisSdkClient {
     // Create a Token Client for authorization calls.
     final CodeClientConfig codeConfig = CodeClientConfig(
       client_id: clientId,
-      hosted_domain: hostedDomain,
+      scope: scopes.join(' '),
+      ux_mode: UxMode.popup,
       callback: allowInterop(_onCodeResponse),
       error_callback: allowInterop(_onCodeError),
-      scope: scopes.join(' '),
-      auto_select: true,
-      enable_serial_consent: true,
-      hint: 'hint',
-      redirect_uri: null,
-      select_account: true,
-      state: null,
-      ux_mode: UxMode.popup,
     );
     return oauth2.initCodeClient(codeConfig);
   }

@@ -80,7 +80,7 @@ GoogleSignInUserData? gisResponsesToUserData(
 
 /// Converts responses from the GIS library into TokenData for the plugin.
 GoogleSignInTokenData gisResponsesToTokenData(
-    CredentialResponse? credentialResponse, TokenResponse? tokenResponse) {
+    CredentialResponse? credentialResponse, TokenResponse? tokenResponse, CodeResponse? codeResponse) {
   return GoogleSignInTokenData(
     idToken: credentialResponse?.credential,
     accessToken: tokenResponse?.access_token,
