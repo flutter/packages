@@ -1,3 +1,7 @@
+## 0.5.0+5
+
+* Fixes issue https://github.com/flutter/flutter/issues/117945z.
+
 ## 0.5.0+4
 
 * Updates annotations lib to 1.7.0.

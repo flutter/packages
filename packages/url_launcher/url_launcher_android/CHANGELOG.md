@@ -1,3 +1,7 @@
+## 6.2.1
+
+* Fixes issue https://github.com/flutter/flutter/issues/117945z.
+
 ## 6.2.0
 
 * Adds support for `inAppBrowserView` as a separate launch mode option from

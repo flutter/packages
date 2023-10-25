@@ -1,3 +1,7 @@
+## 3.1.1
+
+* Fixes issue https://github.com/flutter/flutter/issues/117945z.
+
 ## 3.1.0
 
 * Implements `supportsMode` and `supportsCloseForMode`.

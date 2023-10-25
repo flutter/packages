@@ -1,3 +1,7 @@
+## 3.9.3
+
+* Fixes issue https://github.com/flutter/flutter/issues/117945z.
+
 ## 3.9.2
 
 * Fixes error caused by calling `WKWebViewConfiguration.limitsNavigationsToAppBoundDomains` on

@@ -1,3 +1,7 @@
+## 1.0.36
+
+* Fixes issue https://github.com/flutter/flutter/issues/117945z.
+
 ## 1.0.35
 
 * Updates androidx.fragment version to 1.6.1.

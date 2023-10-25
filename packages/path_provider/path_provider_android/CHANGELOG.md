@@ -1,3 +1,7 @@
+## 2.2.2
+
+* Fixes issue https://github.com/flutter/flutter/issues/117945z.
+
 ## 2.2.1
 
 * Updates annotations lib to 1.7.0.
