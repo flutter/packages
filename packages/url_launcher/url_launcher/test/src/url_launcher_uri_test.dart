@@ -251,7 +251,7 @@ void main() {
 
   group('supportsLaunchMode', () {
     test('handles returning true', () async {
-      const PreferredLaunchMode mode = PreferredLaunchMode.inAppBrowserView;
+      const LaunchMode mode = LaunchMode.inAppBrowserView;
       mock.setResponse(true);
 
       expect(await supportsLaunchMode(mode), true);
@@ -259,7 +259,7 @@ void main() {
     });
 
     test('handles returning false', () async {
-      const PreferredLaunchMode mode = PreferredLaunchMode.inAppBrowserView;
+      const LaunchMode mode = LaunchMode.inAppBrowserView;
       mock.setResponse(false);
 
       expect(await supportsLaunchMode(mode), false);
@@ -269,7 +269,7 @@ void main() {
 
   group('supportsCloseForLaunchMode', () {
     test('handles returning true', () async {
-      const PreferredLaunchMode mode = PreferredLaunchMode.inAppBrowserView;
+      const LaunchMode mode = LaunchMode.inAppBrowserView;
       mock.setResponse(true);
 
       expect(await supportsCloseForLaunchMode(mode), true);
@@ -277,7 +277,7 @@ void main() {
     });
 
     test('handles returning false', () async {
-      const PreferredLaunchMode mode = PreferredLaunchMode.inAppBrowserView;
+      const LaunchMode mode = LaunchMode.inAppBrowserView;
       mock.setResponse(false);
 
       expect(await supportsCloseForLaunchMode(mode), false);
