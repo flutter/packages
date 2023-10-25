@@ -282,18 +282,14 @@ class Camera
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
               getRecordingProfile(),
-              outputFilePath,
-              getFps(),
-              getVideoBitrate(),
-              getAudioBitrate());
+              new MediaRecorderBuilder.Parameters(
+                  outputFilePath, getFps(), getVideoBitrate(), getAudioBitrate()));
     } else {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
               getRecordingProfileLegacy(),
-              outputFilePath,
-              getFps(),
-              getVideoBitrate(),
-              getAudioBitrate());
+              new MediaRecorderBuilder.Parameters(
+                  outputFilePath, getFps(), getVideoBitrate(), getAudioBitrate()));
     }
 
     mediaRecorder =
