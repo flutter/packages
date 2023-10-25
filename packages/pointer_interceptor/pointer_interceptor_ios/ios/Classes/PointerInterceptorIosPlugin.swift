@@ -7,10 +7,6 @@ import UIKit
 public class PointerInterceptorIosPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     registrar.register(PointerInterceptorFactory(), withId: "plugins.flutter.dev/pointer_interceptor_ios")
-    let instance = PointerInterceptorIosPlugin()
-
-    let factory = DummyPlatformViewFactory(messenger: registrar.messenger())
-    registrar.register(factory, withId: "dummy_platform_view")
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

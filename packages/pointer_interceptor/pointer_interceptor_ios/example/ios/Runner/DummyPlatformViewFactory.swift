@@ -21,7 +21,6 @@ public class DummyPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
       binaryMessenger: messenger)
   }
 
-  /// Implementing this method is only necessary when the `arguments` in `createWithFrame` is not `nil`.
   public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
     return FlutterStandardMessageCodec.sharedInstance()
   }

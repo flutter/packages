@@ -16,9 +16,9 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		CFB68197D52B546F94542F41 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6FB2CD38E750E672AB226D /* Pods_Runner.framework */; };
-		F21CC8562AE098D900E020D2 /* DummyPlatformViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21CC8552AE098D900E020D2 /* DummyPlatformViewFactory.swift */; };
 		F243D6112AE053F700F4A2FC /* RunnerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F243D6102AE053F700F4A2FC /* RunnerUITests.swift */; };
 		F243D6132AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F243D6122AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift */; };
+		F2FC28712AE9D8C7000AB127 /* DummyPlatformViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FC28702AE9D8C7000AB127 /* DummyPlatformViewFactory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,10 +75,10 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9978D0D01D3549F3784C2F44 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
-		F21CC8552AE098D900E020D2 /* DummyPlatformViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DummyPlatformViewFactory.swift; path = ../.symlinks/plugins/pointer_interceptor_ios/ios/Classes/DummyPlatformViewFactory.swift; sourceTree = "<group>"; };
 		F243D60E2AE053F700F4A2FC /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F243D6102AE053F700F4A2FC /* RunnerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerUITests.swift; sourceTree = "<group>"; };
 		F243D6122AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		F2FC28702AE9D8C7000AB127 /* DummyPlatformViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyPlatformViewFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +168,7 @@
 				97C147021CF9000F007C117D /* Info.plist */,
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
+				F2FC28702AE9D8C7000AB127 /* DummyPlatformViewFactory.swift */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 			);
@@ -192,7 +193,6 @@
 			children = (
 				F243D6102AE053F700F4A2FC /* RunnerUITests.swift */,
 				F243D6122AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift */,
-				F21CC8552AE098D900E020D2 /* DummyPlatformViewFactory.swift */,
 			);
 			path = RunnerUITests;
 			sourceTree = "<group>";
@@ -440,6 +440,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2FC28712AE9D8C7000AB127 /* DummyPlatformViewFactory.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
@@ -451,7 +452,6 @@
 			files = (
 				F243D6132AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift in Sources */,
 				F243D6112AE053F700F4A2FC /* RunnerUITests.swift in Sources */,
-				F21CC8562AE098D900E020D2 /* DummyPlatformViewFactory.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
