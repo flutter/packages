@@ -83,7 +83,7 @@ platform_properties:
     properties:
       dependencies: >-
         [
-          {"dependency": "gems", "version": "v3.3.14"}
+          {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
       os: "Mac-12|Mac-13"
       device_type: none
@@ -96,7 +96,7 @@ platform_properties:
     properties:
       dependencies: >-
         [
-          {"dependency": "gems", "version": "v3.3.14"}
+          {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
       os: "Mac-12|Mac-13"
       device_type: none
@@ -615,7 +615,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_1 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -624,7 +624,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_2 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -633,7 +633,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_3 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -642,7 +642,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_4 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -651,7 +651,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_5 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -660,7 +660,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_6 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
