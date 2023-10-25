@@ -52,19 +52,22 @@ Map<String, Object?>? decodeJwtPayload(String? payload) {
   return null;
 }
 
+/// Returns the payload of a [CredentialResponse].
+Map<String, Object?>? getResponsePayload(CredentialResponse? response) {
+  if (response == null || response.credential == null) {
+    return null;
+  }
+
+  return getJwtTokenPayload(response.credential);
+}
+
 /// Converts a [CredentialResponse] into a [GoogleSignInUserData].
 ///
 /// May return `null`, if the `credentialResponse` is null, or its `credential`
 /// cannot be decoded.
 GoogleSignInUserData? gisResponsesToUserData(
     CredentialResponse? credentialResponse) {
-  if (credentialResponse == null || credentialResponse.credential == null) {
-    return null;
-  }
-
-  final Map<String, Object?>? payload =
-      getJwtTokenPayload(credentialResponse.credential);
-
+  final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   if (payload == null) {
     return null;
   }
@@ -74,8 +77,22 @@ GoogleSignInUserData? gisResponsesToUserData(
     id: payload['sub']! as String,
     displayName: payload['name'] as String?,
     photoUrl: payload['picture'] as String?,
-    idToken: credentialResponse.credential,
+    idToken: credentialResponse!.credential,
   );
+}
+
+/// Returns the expiration timestamp ('exp') of a [CredentialResponse].
+///
+/// May return `null` if the `credentialResponse` is null, its `credential`
+/// cannot be decoded, or the `exp` field is not set on the JWT payload.
+DateTime? getCredentialResponseExpirationTimestamp(
+    CredentialResponse? credentialResponse) {
+  final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
+  if (payload == null || payload['exp'] == null) {
+    return null;
+  }
+
+  return DateTime.fromMillisecondsSinceEpoch((payload['exp']! as int) * 1000);
 }
 
 /// Converts responses from the GIS library into TokenData for the plugin.

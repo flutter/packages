@@ -66,6 +66,8 @@ class GisSdkClient {
 
     _tokenResponses.stream.listen((TokenResponse response) {
       _lastTokenResponse = response;
+      _lastTokenResponseExpiration =
+          DateTime.now().add(Duration(seconds: response.expires_in));
     }, onError: (Object error) {
       _logIfEnabled('Error on TokenResponse:', <Object>[error.toString()]);
       _lastTokenResponse = null;
@@ -280,6 +282,8 @@ class GisSdkClient {
   // This function returns the currently signed-in [GoogleSignInUserData].
   //
   // It'll do a request to the People API (if needed).
+  //
+  // @Deprecated
   Future<GoogleSignInUserData?> _computeUserDataForLastToken() async {
     // If the user hasn't authenticated, request their basic profile info
     // from the People API.
@@ -317,9 +321,17 @@ class GisSdkClient {
     await signOut();
   }
 
-  /// Returns true if the client has recognized this user before.
+  /// Returns true if the client has recognized this user before, and the last-seen
+  /// credential is not expired.
   Future<bool> isSignedIn() async {
-    return _lastCredentialResponse != null || _requestedUserData != null;
+    bool isSignedIn = false;
+    if (_lastCredentialResponse != null) {
+      final DateTime? expiration = utils
+          .getCredentialResponseExpirationTimestamp(_lastCredentialResponse);
+      isSignedIn = expiration?.isAfter(DateTime.now()) ?? false;
+    }
+
+    return isSignedIn || _requestedUserData != null;
   }
 
   /// Clears all the cached results from authentication and authorization.
@@ -353,12 +365,15 @@ class GisSdkClient {
   /// Checks if the passed-in `accessToken` can access all `scopes`.
   ///
   /// This validates that the `accessToken` is the same as the last seen
-  /// token response, and uses that response to check if permissions are
-  /// still granted.
+  /// token response, that the token is not expired, then uses that response to
+  /// check if permissions are still granted.
   Future<bool> canAccessScopes(List<String> scopes, String? accessToken) async {
     if (accessToken != null && _lastTokenResponse != null) {
       if (accessToken == _lastTokenResponse!.access_token) {
-        return oauth2.hasGrantedAllScopes(_lastTokenResponse!, scopes);
+        final bool isTokenValid =
+            _lastTokenResponseExpiration?.isAfter(DateTime.now()) ?? false;
+        return isTokenValid &&
+            oauth2.hasGrantedAllScopes(_lastTokenResponse!, scopes);
       }
     }
     return false;
@@ -383,6 +398,8 @@ class GisSdkClient {
   // The last-seen credential and token responses
   CredentialResponse? _lastCredentialResponse;
   TokenResponse? _lastTokenResponse;
+  // Expiration timestamp for the lastTokenResponse, which only has an `expires_in` field.
+  DateTime? _lastTokenResponseExpiration;
 
   /// The StreamController onto which the GIS Client propagates user authentication events.
   ///
@@ -394,5 +411,7 @@ class GisSdkClient {
   // (if needed)
   //
   // (This is a synthetic _lastCredentialResponse)
+  //
+  // @Deprecated
   GoogleSignInUserData? _requestedUserData;
 }
