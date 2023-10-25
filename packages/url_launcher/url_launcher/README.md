@@ -67,7 +67,7 @@ See [`-[UIApplication canOpenURL:]`](https://developer.apple.com/documentation/u
 Add any URL schemes passed to `canLaunchUrl` as `<queries>` entries in your
 `AndroidManifest.xml`, otherwise it will return false in most cases starting
 on Android 11 (API 30) or higher. Checking for
-`supportsLaunchMode(PreferredLaunchMode.inAppBrowserView)` also requires
+`supportsLaunchMode(LaunchMode.inAppBrowserView)` also requires
 a `<queries>` entry to return anything but false. A `<queries>`
 element must be added to your manifest as a child of the root element.
 
@@ -222,9 +222,9 @@ On some platforms, web URLs can be launched either in an in-app web view, or
 in the default browser. The default behavior depends on the platform (see
 [`launchUrl`](https://pub.dev/documentation/url_launcher/latest/url_launcher/launchUrl.html)
 for details), but a specific mode can be used on supported platforms by
-passing a `PreferredLaunchMode`.
+passing a `LaunchMode`.
 
-Platforms that do no support a requested `PreferredLaunchMode` will
+Platforms that do no support a requested `LaunchMode` will
 automatically fall back to a supported mode (usually `platformDefault`). If
 your application needs to avoid that fallback behavior, however, you can check
 if the current platform supports a given mode with `supportsLaunchMode` before
