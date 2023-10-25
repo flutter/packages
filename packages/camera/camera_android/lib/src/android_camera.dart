@@ -113,7 +113,7 @@ class AndroidCamera extends CameraPlatform {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': null != mediaSettings?.resolutionPreset
+        'resolutionPreset': mediaSettings?.resolutionPreset != null
             ? _serializeResolutionPreset(mediaSettings!.resolutionPreset!)
             : null,
         'fps': mediaSettings?.fps,
