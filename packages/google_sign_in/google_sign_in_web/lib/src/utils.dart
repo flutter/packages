@@ -84,5 +84,6 @@ GoogleSignInTokenData gisResponsesToTokenData(
   return GoogleSignInTokenData(
     idToken: credentialResponse?.credential,
     accessToken: tokenResponse?.access_token,
+    serverAuthCode: codeResponse?.code,
   );
 }

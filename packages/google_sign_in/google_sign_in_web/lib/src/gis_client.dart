@@ -49,6 +49,14 @@ class GisSdkClient {
       onResponse: _onTokenResponse,
       onError: _onTokenError,
     );
+
+    _codeClient = _initializeCodeClient(
+      clientId,
+      hostedDomain: hostedDomain,
+      onResponse: _onCodeResponse,
+      onError: _onCodeError,
+      scopes: initialScopes,
+    );
   }
 
   void _logIfEnabled(String message, [List<Object?>? more]) {
@@ -61,12 +69,20 @@ class GisSdkClient {
   void _configureStreams() {
     _tokenResponses = StreamController<TokenResponse>.broadcast();
     _credentialResponses = StreamController<CredentialResponse>.broadcast();
+    _codeResponses = StreamController<CodeResponse>.broadcast();
 
     _tokenResponses.stream.listen((TokenResponse response) {
       _lastTokenResponse = response;
     }, onError: (Object error) {
       _logIfEnabled('Error on TokenResponse:', <Object>[error.toString()]);
       _lastTokenResponse = null;
+    });
+
+    _codeResponses.stream.listen((CodeResponse response) {
+      _lastCodeResponse = response;
+    }, onError: (Object error) {
+      _logIfEnabled('Error on CodeResponse:', <Object>[error.toString()]);
+      _lastCodeResponse = null;
     });
 
     _credentialResponses.stream.listen((CredentialResponse response) {
@@ -165,6 +181,44 @@ class GisSdkClient {
     _tokenResponses.addError(getProperty(error!, 'type'));
   }
 
+  // Creates a `oauth2.CodeClient` used for authorization (scope) requests.
+  CodeClient _initializeCodeClient(
+    String clientId, {
+    String? hostedDomain,
+    required List<String> scopes,
+    required CodeClientCallbackFn onResponse,
+    required ErrorCallbackFn onError,
+  }) {
+    // Create a Token Client for authorization calls.
+    final CodeClientConfig codeConfig = CodeClientConfig(
+      client_id: clientId,
+      hosted_domain: hostedDomain,
+      callback: allowInterop(_onCodeResponse),
+      error_callback: allowInterop(_onCodeError),
+      scope: scopes.join(' '),
+      auto_select: true,
+      enable_serial_consent: true,
+      hint: 'hint',
+      redirect_uri: null,
+      select_account: true,
+      state: null,
+      ux_mode: UxMode.popup,
+    );
+    return oauth2.initCodeClient(codeConfig);
+  }
+
+  void _onCodeResponse(CodeResponse response) {
+    if (response.error != null) {
+      _codeResponses.addError(response.error!);
+    } else {
+      _codeResponses.add(response);
+    }
+  }
+
+  void _onCodeError(Object? error) {
+    _codeResponses.addError(getProperty(error!, 'type'));
+  }
+
   /// Attempts to sign-in the user using the OneTap UX flow.
   ///
   /// If the user consents, to OneTap, the [GoogleSignInUserData] will be
@@ -230,6 +284,14 @@ class GisSdkClient {
     return id.renderButton(parent, convertButtonConfiguration(options)!);
   }
 
+  /// Requests a server auth code per:
+  /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
+  Future<String?> requestServerAuthCode() async {
+    _codeClient.requestCode();
+    final CodeResponse response = await _codeResponses.stream.first;
+    return response.code;
+  }
+
   /// Starts an oauth2 "implicit" flow to authorize requests.
   ///
   /// The new GIS SDK does not return user authentication from this flow, so:
@@ -285,6 +347,7 @@ class GisSdkClient {
     return utils.gisResponsesToTokenData(
       _lastCredentialResponse,
       _lastTokenResponse,
+      _lastCodeResponse,
     );
   }
 
@@ -312,6 +375,7 @@ class GisSdkClient {
     _lastCredentialResponse = null;
     _lastTokenResponse = null;
     _requestedUserData = null;
+    _lastCodeResponse = null;
   }
 
   /// Requests the list of [scopes] passed in to the client.
@@ -360,14 +424,17 @@ class GisSdkClient {
 
   // The Google Identity Services client for oauth requests.
   late TokenClient _tokenClient;
+  late CodeClient _codeClient;
 
   // Streams of credential and token responses.
   late StreamController<CredentialResponse> _credentialResponses;
   late StreamController<TokenResponse> _tokenResponses;
+  late StreamController<CodeResponse> _codeResponses;
 
   // The last-seen credential and token responses
   CredentialResponse? _lastCredentialResponse;
   TokenResponse? _lastTokenResponse;
+  CodeResponse? _lastCodeResponse;
 
   /// The StreamController onto which the GIS Client propagates user authentication events.
   ///
