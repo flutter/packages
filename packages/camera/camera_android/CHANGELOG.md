@@ -1,3 +1,7 @@
+## 0.10.8+13
+
+* Fixes issue https://github.com/flutter/flutter/issues/117945z.
+
 ## 0.10.8+12
 
 * Fixes handling of autofocus state when taking a picture.
