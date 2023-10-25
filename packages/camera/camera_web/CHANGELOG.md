@@ -1,3 +1,7 @@
+## 0.3.2+4
+
+* Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
 ## 0.3.2+3
 
 * Migrates to `dart:ui_web` APIs.

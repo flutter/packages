@@ -29,6 +29,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Range;
 import android.util.Size;
 import android.view.Display;
 import android.view.Surface;
@@ -52,6 +53,8 @@ import io.flutter.plugins.camera.features.exposurepoint.ExposurePointFeature;
 import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
+import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
+import io.flutter.plugins.camera.features.intfeature.IntFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
@@ -192,7 +195,10 @@ class Camera
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
       final ResolutionPreset resolutionPreset,
-      final boolean enableAudio) {
+      final boolean enableAudio,
+      final Integer fps,
+      final Integer videoBitrate,
+      final Integer audioBitrate) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
@@ -208,6 +214,22 @@ class Camera
     this.cameraFeatures =
         CameraFeatures.init(
             cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
+
+    if (null != fps && 0 < fps.intValue()) {
+      final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
+      fpsRange.setValue(new Range<>(fps, fps));
+      this.cameraFeatures.setFpsRange(fpsRange);
+
+      this.cameraFeatures.setFps(new IntFeature(cameraProperties, fps));
+    }
+
+    if (null != videoBitrate && 0 < videoBitrate.intValue()) {
+      this.cameraFeatures.setVideoBitrate(new IntFeature(cameraProperties, videoBitrate));
+    }
+
+    if (null != audioBitrate && 0 < audioBitrate.intValue()) {
+      this.cameraFeatures.setAudioBitrate(new IntFeature(cameraProperties, audioBitrate));
+    }
 
     // Create capture callback.
     captureTimeouts = new CaptureTimeoutsWrapper(3000, 3000);
@@ -256,10 +278,19 @@ class Camera
 
     // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is null
     // once this has largely been fixed on the Android side. https://github.com/flutter/flutter/issues/119668
-    if (SdkCapabilityChecker.supportsEncoderProfiles() && getRecordingProfile() != null) {
-      mediaRecorderBuilder = new MediaRecorderBuilder(getRecordingProfile(), outputFilePath);
+    EncoderProfiles recordingProfile = getRecordingProfile();
+    if (SdkCapabilityChecker.supportsEncoderProfiles() && recordingProfile != null) {
+      mediaRecorderBuilder =
+          new MediaRecorderBuilder(
+              recordingProfile, outputFilePath, getFps(), getVideoBitrate(), getAudioBitrate());
     } else {
-      mediaRecorderBuilder = new MediaRecorderBuilder(getRecordingProfileLegacy(), outputFilePath);
+      mediaRecorderBuilder =
+          new MediaRecorderBuilder(
+              getRecordingProfileLegacy(),
+              outputFilePath,
+              getFps(),
+              getVideoBitrate(),
+              getAudioBitrate());
     }
 
     mediaRecorder =
@@ -1025,6 +1056,21 @@ class Camera
     return cameraFeatures.getResolution().getRecordingProfile();
   }
 
+  Integer getFps() {
+    IntFeature fpsFeature = cameraFeatures.getFps();
+    return fpsFeature == null ? null : fpsFeature.getValue();
+  }
+
+  Integer getVideoBitrate() {
+    IntFeature videoBitrateFeature = cameraFeatures.getVideoBitrate();
+    return videoBitrateFeature == null ? null : videoBitrateFeature.getValue();
+  }
+
+  Integer getAudioBitrate() {
+    IntFeature audioBitrateFeature = cameraFeatures.getAudioBitrate();
+    return audioBitrateFeature == null ? null : audioBitrateFeature.getValue();
+  }
+
   /** Shortut to get deviceOrientationListener. */
   DeviceOrientationManager getDeviceOrientationManager() {
     return cameraFeatures.getSensorOrientation().getDeviceOrientationManager();
@@ -1076,8 +1122,13 @@ class Camera
 
   /** Pause the preview from dart. */
   public void pausePreview() throws CameraAccessException {
-    this.pausedPreview = true;
-    this.captureSession.stopRepeating();
+    if (!this.pausedPreview) {
+      this.pausedPreview = true;
+
+      if (null != this.captureSession) {
+        this.captureSession.stopRepeating();
+      }
+    }
   }
 
   /** Resume the preview from dart. */

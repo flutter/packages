@@ -1,3 +1,7 @@
+## 0.5.0+20
+
+* Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
 ## 0.5.0+19
 
 * Implements torch flash mode.
@@ -24,7 +28,7 @@
 * Wraps classes needed to implement resolution configuration for video recording.
 
 ## 0.5.0+13
-
+ 
 * Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
 
 ## 0.5.0+12
@@ -53,10 +57,6 @@
 ## 0.5.0+7
 
 * Updates Guava version to 32.0.1.
-
-## 0.5.0+6
-
-* Updates Guava version to 32.0.0.
 
 ## 0.5.0+5
 

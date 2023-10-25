@@ -1,3 +1,7 @@
+## 0.10.8+14
+
+* Adds support to control video fps and bitrate. See `CameraController.withSettings`.
+
 ## 0.10.8+13
 
 * Updates annotations lib to 1.7.0.
@@ -26,6 +30,7 @@
 
 * Fixes video record crash on Android versions lower than 12.
 * Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+>>>>>>> upstream/main
 
 ## 0.10.8+6
 

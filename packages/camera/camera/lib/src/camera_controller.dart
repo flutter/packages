@@ -232,12 +232,28 @@ class CameraValue {
 /// To show the camera preview on the screen use a [CameraPreview] widget.
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
+  ///
+  /// Deprecated. Please use [withSettings].
   CameraController(
     CameraDescription description,
-    this.resolutionPreset, {
-    this.enableAudio = true,
+    ResolutionPreset resolutionPreset, {
+    bool enableAudio = true,
     this.imageFormatGroup,
-  }) : super(CameraValue.uninitialized(description));
+  })  : mediaSettings = MediaSettings(
+            resolutionPreset: resolutionPreset, enableAudio: enableAudio),
+        super(CameraValue.uninitialized(description));
+
+  /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
+  CameraController.withSettings(
+    CameraDescription description, {
+    MediaSettings? mediaSettings,
+    this.imageFormatGroup,
+  })  : mediaSettings = mediaSettings ??
+            const MediaSettings(
+                resolutionPreset:
+                    kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
+                enableAudio: true),
+        super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
@@ -248,10 +264,20 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// if unavailable a lower resolution will be used.
   ///
   /// See also: [ResolutionPreset].
-  final ResolutionPreset resolutionPreset;
+  ResolutionPreset get resolutionPreset =>
+      mediaSettings.resolutionPreset ??
+      (kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium);
 
   /// Whether to include audio when recording a video.
-  final bool enableAudio;
+  bool get enableAudio => mediaSettings.enableAudio;
+
+  /// The media settings this controller is targeting.
+  ///
+  /// This media settings are not guaranteed to be available on the device,
+  /// if unavailable a lower resolution will be used.
+  ///
+  /// See also: [MediaSettings].
+  final MediaSettings mediaSettings;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
@@ -313,10 +339,9 @@ class CameraController extends ValueNotifier<CameraValue> {
         );
       });
 
-      _cameraId = await CameraPlatform.instance.createCamera(
+      _cameraId = await CameraPlatform.instance.createCameraWithSettings(
         description,
-        resolutionPreset,
-        enableAudio: enableAudio,
+        mediaSettings,
       );
 
       _unawaited(CameraPlatform.instance
@@ -372,9 +397,10 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Pauses the current camera preview
   Future<void> pausePreview() async {
-    if (value.isPreviewPaused) {
+    if (value.isPreviewPaused || !value.isInitialized || _isDisposed) {
       return;
     }
+
     try {
       await CameraPlatform.instance.pausePreview(_cameraId);
       value = value.copyWith(
@@ -652,7 +678,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   ///
   /// The supplied [zoom] value should be between 1.0 and the maximum supported
   /// zoom level returned by the `getMaxZoomLevel`. Throws an `CameraException`
-  /// when an illegal zoom level is suplied.
+  /// when an illegal zoom level is supplied.
   Future<void> setZoomLevel(double zoom) {
     _throwIfNotInitialized('setZoomLevel');
     try {

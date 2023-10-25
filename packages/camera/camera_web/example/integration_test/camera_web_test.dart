@@ -527,10 +527,13 @@ void main() {
                 .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
-          final int cameraId = await CameraPlatform.instance.createCamera(
+          final int cameraId =
+              await CameraPlatform.instance.createCameraWithSettings(
             cameraDescription,
-            ResolutionPreset.ultraHigh,
-            enableAudio: true,
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.ultraHigh,
+              enableAudio: true,
+            ),
           );
 
           expect(
@@ -569,9 +572,12 @@ void main() {
             () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
           ).thenReturn(maxResolutionSize);
 
-          final int cameraId = await CameraPlatform.instance.createCamera(
+          final int cameraId =
+              await CameraPlatform.instance.createCameraWithSettings(
             cameraDescription,
-            null,
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.max,
+            ),
           );
 
           expect(
@@ -603,13 +609,19 @@ void main() {
           'if there is no metadata '
           'for the given camera description', (WidgetTester tester) async {
         expect(
-          () => CameraPlatform.instance.createCamera(
+          () => CameraPlatform.instance.createCameraWithSettings(
             const CameraDescription(
               name: 'name',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
-            ResolutionPreset.ultraHigh,
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.low,
+              fps: 15,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
+              enableAudio: true,
+            ),
           ),
           throwsA(
             isA<CameraException>().having(
@@ -2436,7 +2448,7 @@ void main() {
 
           final FakeMediaError error = FakeMediaError(
             MediaError.MEDIA_ERR_NETWORK,
-            'A network error occured.',
+            'A network error occurred.',
           );
 
           final CameraErrorCode errorCode =

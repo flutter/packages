@@ -593,7 +593,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
-              onChanged: onChanged,
+              onChanged:
+                  controller != null && controller!.value.isRecordingVideo
+                      ? null
+                      : onChanged,
             ),
           ),
         );
@@ -635,10 +638,14 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Future<void> _initializeCameraController(
       CameraDescription cameraDescription) async {
-    final CameraController cameraController = CameraController(
+    final CameraController cameraController = CameraController.withSettings(
       cameraDescription,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
-      enableAudio: enableAudio,
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+      ),
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
 

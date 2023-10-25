@@ -301,7 +301,8 @@ void CaptureControllerImpl::ResetCaptureController() {
 
 bool CaptureControllerImpl::InitCaptureDevice(
     flutter::TextureRegistrar* texture_registrar, const std::string& device_id,
-    bool record_audio, ResolutionPreset resolution_preset) {
+    bool record_audio, ResolutionPreset resolution_preset, int fps,
+    int video_bitrate, int audio_bitrate) {
   assert(capture_controller_listener_);
 
   if (IsInitialized()) {
@@ -316,6 +317,9 @@ bool CaptureControllerImpl::InitCaptureDevice(
 
   capture_engine_state_ = CaptureEngineState::kInitializing;
   resolution_preset_ = resolution_preset;
+  fps_ = fps;
+  video_bitrate_ = video_bitrate;
+  audio_bitrate_ = audio_bitrate;
   record_audio_ = record_audio;
   texture_registrar_ = texture_registrar;
   video_device_id_ = device_id;
@@ -518,7 +522,8 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path,
   }
 
   if (!record_handler_) {
-    record_handler_ = std::make_unique<RecordHandler>(record_audio_);
+    record_handler_ = std::make_unique<RecordHandler>(
+        record_audio_, fps_, video_bitrate_, audio_bitrate_);
   } else if (!record_handler_->CanStart()) {
     return OnRecordStarted(
         CameraResult::kError,

@@ -32,9 +32,14 @@
       [[MockFLTThreadSafeFlutterResult alloc] initWithExpectation:expectation];
 
   // Set up method call
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"create"
-                     arguments:@{@"resolutionPreset" : @"medium", @"enableAudio" : @(1)}];
+  FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"create"
+                                                              arguments:@{
+                                                                @"resolutionPreset" : @"medium",
+                                                                @"fps" : @(15),
+                                                                @"videoBitrate" : @(200000),
+                                                                @"audioBitrate" : @(32000),
+                                                                @"enableAudio" : @(1)
+                                                              }];
 
   [camera createCameraOnSessionQueueWithCreateMethodCall:call result:resultObject];
   [self waitForExpectationsWithTimeout:1 handler:nil];

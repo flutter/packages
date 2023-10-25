@@ -73,7 +73,10 @@ public class CameraTest_getRecordingProfileTest {
             mockDartMessenger,
             mockCameraProperties,
             resolutionPreset,
-            enableAudio);
+            enableAudio,
+            Integer.valueOf(15),
+            Integer.valueOf(200000),
+            Integer.valueOf(32000));
   }
 
   @Config(maxSdk = 30)
