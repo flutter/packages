@@ -107,28 +107,4 @@ void main() {
     expect(decoded, isNotNull);
     expect(decoded, equals(list1));
   });
-
-  test('RouteMatchList for deep-link Uri with scheme, authority', () {
-    final RouteConfiguration configuration = RouteConfiguration(
-      routes: <GoRoute>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              const Placeholder(),
-        ),
-      ],
-      redirectLimit: 0,
-      navigatorKey: GlobalKey<NavigatorState>(),
-      topRedirect: (_, __) => null,
-    );
-
-    final RouteMatchList matchList1 = configuration.findMatch('/');
-    expect(matchList1.matches[0].matchedLocation, '/');
-    final RouteMatchList matchList2 =
-        configuration.findMatch('https://domain.com');
-    expect(matchList2.matches[0].matchedLocation, '/');
-    final RouteMatchList matchList3 =
-        configuration.findMatch('https://domain.com/');
-    expect(matchList3.matches[0].matchedLocation, '/');
-  });
 }

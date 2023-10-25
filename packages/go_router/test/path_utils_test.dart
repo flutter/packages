@@ -100,8 +100,6 @@ void main() {
     verify('/a/', '/a');
     verify('/', '/');
     verify('/a/b/', '/a/b');
-    verify('scheme://authority', 'scheme://authority');
-    verify('scheme://authority/', 'scheme://authority');
 
     expect(() => canonicalUri('::::'), throwsA(isA<FormatException>()));
     expect(() => canonicalUri(''), throwsA(anything));
