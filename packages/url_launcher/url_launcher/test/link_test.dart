@@ -86,7 +86,7 @@ void main() {
       mock
         ..setLaunchExpectations(
           url: 'http://example.com/foobar',
-          launchMode: PreferredLaunchMode.inAppWebView,
+          launchMode: PreferredLaunchMode.inAppBrowserView,
           universalLinksOnly: false,
           enableJavaScript: true,
           enableDomStorage: true,
