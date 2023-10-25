@@ -209,6 +209,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? maxImages,
   }) {
     throw UnimplementedError('getMultiImage() has not been implemented.');
   }
@@ -318,6 +319,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
       maxWidth: options.imageOptions.maxWidth,
       maxHeight: options.imageOptions.maxHeight,
       imageQuality: options.imageOptions.imageQuality,
+      maxImages: options.maxImages,
     );
     return pickedImages ?? <XFile>[];
   }

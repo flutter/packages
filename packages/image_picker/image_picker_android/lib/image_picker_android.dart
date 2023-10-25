@@ -50,11 +50,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? maxImages,
   }) async {
     final List<dynamic> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
+      maxImages: maxImages,
     );
     if (paths.isEmpty) {
       return null;
@@ -67,6 +69,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? maxImages,
   }) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
@@ -81,6 +84,10 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
+    if (maxImages != null && maxImages <= 1) {
+      throw ArgumentError.value(maxImages, 'maxImages', 'must be higher than 1');
+    }
+
     return _hostApi.pickImages(
       SourceSpecification(type: SourceType.gallery),
       ImageSelectionOptions(
@@ -88,7 +95,9 @@ class ImagePickerAndroid extends ImagePickerPlatform {
           maxHeight: maxHeight,
           quality: imageQuality ?? 100),
       GeneralOptions(
-          allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker),
+          allowMultiple: true,
+          usePhotoPicker: useAndroidPhotoPicker,
+          selectionLimit: maxImages),
     );
   }
 
@@ -196,11 +205,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? maxImages,
   }) async {
     final List<dynamic> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
+      maxImages: maxImages,
     );
     if (paths.isEmpty) {
       return null;

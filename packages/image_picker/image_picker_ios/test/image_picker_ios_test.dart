@@ -60,12 +60,14 @@ class _ApiLogger implements TestHostImagePickerApi {
   Future<List<String?>> pickMultiImage(
     MaxSize maxSize,
     int? imageQuality,
+    int? maxImages,
     bool requestFullMetadata,
   ) async {
     calls.add(_LoggedMethodCall('pickMultiImage', arguments: <String, dynamic>{
       'maxWidth': maxSize.width,
       'maxHeight': maxSize.height,
       'imageQuality': imageQuality,
+      'maxImages': maxImages,
       'requestFullMetadata': requestFullMetadata,
     }));
     return returnValue as List<String?>;

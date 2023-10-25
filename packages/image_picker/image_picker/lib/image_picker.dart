@@ -129,6 +129,7 @@ class ImagePicker {
     double? maxHeight,
     int? imageQuality,
     bool requestFullMetadata = true,
+    int? maxImages,
   }) {
     final ImageOptions imageOptions = ImageOptions.createAndValidate(
       maxWidth: maxWidth,
@@ -140,6 +141,7 @@ class ImagePicker {
     return platform.getMultiImageWithOptions(
       options: MultiImagePickerOptions(
         imageOptions: imageOptions,
+        maxImages: maxImages,
       ),
     );
   }

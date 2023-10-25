@@ -15,6 +15,7 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
+import android.os.ext.SdkExtensions;
 import android.provider.MediaStore;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -428,13 +429,14 @@ public class ImagePickerDelegate
   public void chooseMultiImageFromGallery(
       @NonNull ImageSelectionOptions options,
       boolean usePhotoPicker,
+      @Nullable Long maxImages,
       @NonNull Messages.Result<List<String>> result) {
     if (!setPendingOptionsAndResult(options, null, result)) {
       finishWithAlreadyActiveError(result);
       return;
     }
 
-    launchMultiPickImageFromGalleryIntent(usePhotoPicker);
+    launchMultiPickImageFromGalleryIntent(usePhotoPicker, maxImages);
   }
 
   private void launchPickImageFromGalleryIntent(Boolean usePhotoPicker) {
@@ -454,16 +456,25 @@ public class ImagePickerDelegate
     activity.startActivityForResult(pickImageIntent, REQUEST_CODE_CHOOSE_IMAGE_FROM_GALLERY);
   }
 
-  private void launchMultiPickImageFromGalleryIntent(Boolean usePhotoPicker) {
+  private void launchMultiPickImageFromGalleryIntent(
+          Boolean usePhotoPicker,
+          @Nullable Long maxImages) {
     Intent pickMultiImageIntent;
     if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-      pickMultiImageIntent =
-          new ActivityResultContracts.PickMultipleVisualMedia()
+      ActivityResultContracts.PickMultipleVisualMedia pickMultipleVisualMedia;
+      if (maxImages != null) {
+        Integer maxItems = getMultipleVisualMediaMaxItems(maxImages);
+        pickMultipleVisualMedia = new ActivityResultContracts.PickMultipleVisualMedia(maxItems);
+      } else {
+        pickMultipleVisualMedia = new ActivityResultContracts.PickMultipleVisualMedia();
+      }
+
+      pickMultiImageIntent = pickMultipleVisualMedia
               .createIntent(
-                  activity,
-                  new PickVisualMediaRequest.Builder()
-                      .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                      .build());
+                      activity,
+                      new PickVisualMediaRequest.Builder()
+                              .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                              .build());
     } else {
       pickMultiImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
       pickMultiImageIntent.setType("image/*");
@@ -920,5 +931,21 @@ public class ImagePickerDelegate
     } else {
       intent.putExtra("android.intent.extras.CAMERA_FACING", 1);
     }
+  }
+
+  private Integer getMultipleVisualMediaMaxItems(Long maxImages) {
+    Integer maxItems = maxImages.intValue();
+    boolean isSystemLimit = isPickImagesMaxLimitAvailable();
+    if (isSystemLimit) {
+        int systemLimit = MediaStore.getPickImagesMaxLimit();
+        maxItems = Math.min(maxItems, systemLimit);
+    }
+    return maxItems;
+  }
+
+  private boolean isPickImagesMaxLimitAvailable() {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ||
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+               SdkExtensions.getExtensionVersion(Build.VERSION_CODES.R) >= 2);
   }
 }

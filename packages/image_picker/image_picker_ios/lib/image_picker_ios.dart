@@ -87,6 +87,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? maxImages,
   }) async {
     final List<dynamic> paths = await _pickMultiImageAsPath(
       options: MultiImagePickerOptions(
@@ -95,6 +96,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
           maxHeight: maxHeight,
           imageQuality: imageQuality,
         ),
+        maxImages: maxImages,
       ),
     );
     // Convert an empty list to a null return since that was the legacy behavior
@@ -133,11 +135,17 @@ class ImagePickerIOS extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
+    final int? maxImages = options.maxImages;
+    if (maxImages != null && maxImages < 1) {
+      throw ArgumentError.value(maxImages, 'maxImages', 'cannot be negative or zero');
+    }
+
     // TODO(stuartmorgan): Remove the cast once Pigeon supports non-nullable
     //  generics, https://github.com/flutter/flutter/issues/97848
     return (await _hostApi.pickMultiImage(
             MaxSize(width: maxWidth, height: maxHeight),
             imageQuality,
+            maxImages,
             options.imageOptions.requestFullMetadata))
         .cast<String>();
   }
@@ -269,6 +277,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? maxImages,
   }) async {
     final List<String> paths = await _pickMultiImageAsPath(
       options: MultiImagePickerOptions(
@@ -277,6 +286,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
           maxHeight: maxHeight,
           imageQuality: imageQuality,
         ),
+        maxImages: maxImages,
       ),
     );
     // Convert an empty list to a null return since that was the legacy behavior
