@@ -20,15 +20,9 @@
       [self expectationWithDescription:@"create's result block must be called"];
   FlutterMethodCall *disposeCall = [FlutterMethodCall methodCallWithMethodName:@"dispose"
                                                                      arguments:nil];
-  FlutterMethodCall *createCall =
-      [FlutterMethodCall methodCallWithMethodName:@"create"
-                                        arguments:@{
-                                          @"resolutionPreset" : @"medium",
-                                          @"fps" : @(15),
-                                          @"videoBitrate" : @(200000),
-                                          @"audioBitrate" : @(32000),
-                                          @"enableAudio" : @(1)
-                                        }];
+  FlutterMethodCall *createCall = [FlutterMethodCall
+      methodCallWithMethodName:@"create"
+                     arguments:@{@"resolutionPreset" : @"medium", @"enableAudio" : @(1)}];
   // Mimic a dispose call followed by a create call, which can be triggered by slightly dragging the
   // home bar, causing the app to be inactive, and immediately regain active.
   [camera handleMethodCall:disposeCall
