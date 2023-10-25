@@ -183,7 +183,7 @@ class CameraController extends ValueNotifier<CameraValue> {
         ),
         super(CameraValue.uninitialized(cameraDescription));
 
-  /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
+  /// Creates a new camera controller in an uninitialized state, using specified media settings like FPS and bitrate.
   CameraController.withSettings(
     CameraDescription cameraDescription, {
     MediaSettings? mediaSettings,
