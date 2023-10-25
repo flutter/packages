@@ -39,6 +39,7 @@ void main() {
       route: route,
       remainingLocation: '/page-0',
       matchedLocation: '',
+      matchedPath: '',
       pathParameters: params1,
     )!;
 
@@ -47,6 +48,7 @@ void main() {
       route: route,
       remainingLocation: '/page-0',
       matchedLocation: '',
+      matchedPath: '',
       pathParameters: params2,
     )!;
 
@@ -73,7 +75,7 @@ void main() {
   });
 
   test('RouteMatchList is encoded and decoded correctly', () {
-    final RouteConfiguration configuration = RouteConfiguration(
+    final RouteConfiguration configuration = createRouteConfiguration(
       routes: <GoRoute>[
         GoRoute(
           path: '/a',
