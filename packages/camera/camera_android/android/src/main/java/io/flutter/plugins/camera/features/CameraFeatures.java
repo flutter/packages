@@ -208,9 +208,9 @@ public class CameraFeatures {
   }
 
   /**
-   * Gets the fps range feature if it has been set.
+   * Gets the FPS range feature if it has been set.
    *
-   * @return the fps range feature.
+   * @return the FPS range feature.
    */
   @NonNull
   public FpsRangeFeature getFpsRange() {
@@ -218,7 +218,7 @@ public class CameraFeatures {
   }
 
   /**
-   * Sets the instance of the fps range feature.
+   * Sets the instance of the FPS range feature.
    *
    * @param fpsRange the {@link FpsRangeFeature} instance to set.
    */
@@ -303,7 +303,7 @@ public class CameraFeatures {
   }
 
   /**
-   * Sets the instance of the fps feature.
+   * Sets the instance of the FPS feature.
    *
    * @param fps the {@link IntFeature} instance to set.
    */
@@ -312,9 +312,9 @@ public class CameraFeatures {
   }
 
   /**
-   * Gets the fps feature if it has been set.
+   * Gets the FPS feature if it has been set.
    *
-   * @return the fps feature.
+   * @return the FPS feature.
    */
   @NonNull
   public IntFeature getFps() {
