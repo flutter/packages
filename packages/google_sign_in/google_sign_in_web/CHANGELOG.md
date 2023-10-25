@@ -1,3 +1,7 @@
+## 0.12.1
+
+* Adds server auth code retrieval to google_sign_in_web.
+
 ## 0.12.0+5
 
 * Migrates to `dart:ui_web` APIs.
