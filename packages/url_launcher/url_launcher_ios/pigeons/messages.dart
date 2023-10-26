@@ -15,10 +15,10 @@ enum LaunchResult {
   /// The URL was successfully launched.
   success,
 
-  /// The URL could not be launched
+  /// The URL could not be launched.
   failedToLoad,
 
-  /// The URL was not launched because it is not invalid URL
+  /// The URL was not launched because the URL is invalid.
   invalidUrl,
 }
 

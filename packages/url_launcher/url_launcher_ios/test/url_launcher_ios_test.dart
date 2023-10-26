@@ -115,7 +115,7 @@ void main() {
       );
       expect(
           await launcher.launch(
-            'invalid://u r l',
+            'unknown://scheme',
             useSafariVC: false,
             useWebView: false,
             enableJavaScript: false,

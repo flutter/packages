@@ -34,7 +34,8 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
   }
 
   func launchUrl(
-    url: String, universalLinksOnly: Bool,
+    url: String,
+    universalLinksOnly: Bool,
     completion: @escaping (Result<LaunchResult, Error>) -> Void
   ) {
     guard let url = URL(string: url) else {
@@ -48,7 +49,8 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
   }
 
   func openUrlInSafariViewController(
-    url: String, completion: @escaping (Result<LaunchResult, Error>) -> Void
+    url: String,
+    completion: @escaping (Result<LaunchResult, Error>) -> Void
   ) {
     guard let url = URL(string: url) else {
       completion(.success(.failedToLoad))
@@ -64,7 +66,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     topViewController?.present(session.safariViewController, animated: true, completion: nil)
   }
 
-  func closeSafariViewController() throws {
+  func closeSafariViewController() {
     currentSession?.close()
   }
 }

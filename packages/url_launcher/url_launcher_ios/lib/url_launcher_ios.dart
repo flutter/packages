@@ -66,16 +66,15 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     required final LaunchResult results,
     required String url,
   }) {
-    // Replace this in https://github.com/flutter/flutter/issues/127665
-    // This is temporary since FlutterError is not a NSError.
-    // The PlatformExceptions thrown here are for compatibility with the
-    // previous Objective-C implementation.
     switch (results) {
       case LaunchResult.success:
         return true;
       case LaunchResult.failedToLoad:
         return false;
       case LaunchResult.invalidUrl:
+        // TODO(stuartmorgan): Remove this as part of standardizing error handling. See
+        // flutter/flutter#127665
+        // The PlatformExceptions thrown here is for compatibility with the previous implementation.
         throw PlatformException(
           code: 'invalidUrl',
           message: 'Unable to parse URL $url',

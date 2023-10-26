@@ -38,7 +38,8 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
   ///   - controller: The Safari view controller.
   ///   - didLoadSuccessfully: Indicates if the initial load was successful.
   func safariViewController(
-    _ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool
+    _ controller: SFSafariViewController,
+    didCompleteInitialLoad didLoadSuccessfully: Bool
   ) {
     if didLoadSuccessfully {
       completion(.success(.success))
