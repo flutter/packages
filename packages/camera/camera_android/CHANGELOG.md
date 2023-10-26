@@ -1,3 +1,7 @@
+## 0.10.8+14
+
+* Catches IllegalArgumentException caused by CameraCaptureSession setRepeatingRequest call.
+
 ## 0.10.8+13
 
 * Updates annotations lib to 1.7.0.
