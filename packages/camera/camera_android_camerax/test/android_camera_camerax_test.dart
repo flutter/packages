@@ -1242,6 +1242,22 @@ void main() {
     expect(await camera.getMinZoomLevel(55), minZoomRatio);
   });
 
+  test('setZoomLevel sets zoom ratio as expected', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 44;
+    const double zoomRatio = 0.3;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    camera.camera = MockCamera();
+
+    when(camera.camera!.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
+
+    await camera.setZoomLevel(cameraId, zoomRatio);
+
+    verify(mockCameraControl.setZoomRatio(zoomRatio));
+  });
+
   test(
       'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {

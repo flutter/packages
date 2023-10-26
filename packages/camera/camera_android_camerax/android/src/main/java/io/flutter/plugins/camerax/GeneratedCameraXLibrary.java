@@ -3237,6 +3237,9 @@ public class GeneratedCameraXLibrary {
     void enableTorch(
         @NonNull Long identifier, @NonNull Boolean torch, @NonNull Result<Void> result);
 
+    void setZoomRatio(
+        @NonNull Long identifier, @NonNull Double ratio, @NonNull Result<Void> result);
+
     /** The codec used by CameraControlHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -3274,6 +3277,41 @@ public class GeneratedCameraXLibrary {
                 api.enableTorch(
                     (identifierArg == null) ? null : identifierArg.longValue(),
                     torchArg,
+                    resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.CameraControlHostApi.setZoomRatio",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Double ratioArg = (Double) args.get(1);
+                Result<Void> resultCallback =
+                    new Result<Void>() {
+                      public void success(Void result) {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.setZoomRatio(
+                    (identifierArg == null) ? null : identifierArg.longValue(),
+                    ratioArg,
                     resultCallback);
               });
         } else {

@@ -4,7 +4,11 @@
 
 import 'dart:async';
 
-import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+// PreferredLaunchMode is hidden to prevent accidentally using it in APIs at
+// this layer. If it is ever needed in this file, it should be imported
+// separately with a prefix.
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart'
+    hide PreferredLaunchMode;
 
 import '../url_launcher_string.dart';
 import 'type_conversion.dart';
@@ -81,8 +85,8 @@ Future<void> closeInAppWebView() async {
 /// Calling [launchUrl] with an unsupported mode will fall back to a supported
 /// mode, so calling this method is only necessary for cases where the caller
 /// needs to know which mode will be used.
-Future<bool> supportsLaunchMode(PreferredLaunchMode mode) {
-  return UrlLauncherPlatform.instance.supportsMode(mode);
+Future<bool> supportsLaunchMode(LaunchMode mode) {
+  return UrlLauncherPlatform.instance.supportsMode(convertLaunchMode(mode));
 }
 
 /// Returns true if [closeInAppWebView] is supported for [mode] in the current
@@ -90,6 +94,6 @@ Future<bool> supportsLaunchMode(PreferredLaunchMode mode) {
 ///
 /// If this returns false, [closeInAppWebView] will not work when launching
 /// URLs with [mode].
-Future<bool> supportsCloseForLaunchMode(PreferredLaunchMode mode) {
-  return UrlLauncherPlatform.instance.supportsMode(mode);
+Future<bool> supportsCloseForLaunchMode(LaunchMode mode) {
+  return UrlLauncherPlatform.instance.supportsMode(convertLaunchMode(mode));
 }

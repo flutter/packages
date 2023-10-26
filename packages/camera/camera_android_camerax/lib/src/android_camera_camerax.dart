@@ -453,6 +453,17 @@ class AndroidCameraCameraX extends CameraPlatform {
     return zoomState.minZoomRatio;
   }
 
+  /// Set the zoom level for the selected camera.
+  ///
+  /// The supplied [zoom] value should be between the minimum and the maximum
+  /// supported zoom level returned by `getMinZoomLevel` and `getMaxZoomLevel`.
+  /// Throws a `CameraException` when an illegal zoom level is supplied.
+  @override
+  Future<void> setZoomLevel(int cameraId, double zoom) async {
+    final CameraControl cameraControl = await camera!.getCameraControl();
+    await cameraControl.setZoomRatio(zoom);
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {

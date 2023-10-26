@@ -2,6 +2,10 @@
 
 * Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
 
+## 0.5.0+20
+
+* Implements `setZoomLevel`.
+
 ## 0.5.0+19
 
 * Implements torch flash mode.
