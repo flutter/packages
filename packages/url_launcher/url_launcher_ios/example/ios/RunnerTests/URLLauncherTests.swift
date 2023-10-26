@@ -7,6 +7,12 @@ import XCTest
 
 @testable import url_launcher_ios
 
+// Tests whether NSURL parsing is strict. When linking against the iOS 17 SDK or later,
+// NSURL uses a more lenient parser which will not return nil.
+private func urlParsingIsStrict() -> Bool {
+  return URL(string: "b a d U R L") == nil
+}
+
 final class URLLauncherTests: XCTestCase {
 
   private func createPlugin() -> URLLauncherPlugin {
@@ -31,9 +37,11 @@ final class URLLauncherTests: XCTestCase {
   func testCanLaunchFailureWithInvalidURL() {
     let result = createPlugin().canLaunchUrl(url: "urls can't have spaces")
 
-    // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
-    // fail to parse URLs, so the test must allow for either outcome.
-    XCTAssertTrue(result == .failure || result == .invalidUrl)
+    if urlParsingIsStrict() {
+      XCTAssertEqual(result, .invalidUrl)
+    } else {
+      XCTAssertEqual(result, .failure)
+    }
   }
 
   func testLaunchSuccess() {
@@ -71,9 +79,11 @@ final class URLLauncherTests: XCTestCase {
     createPlugin().launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
       switch result {
       case .success(let details):
-        // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
-        // fail to parse URLs, so the test must allow for either outcome.
-        XCTAssertTrue(details == .failure || details == .invalidUrl)
+        if urlParsingIsStrict() {
+          XCTAssertEqual(details, .invalidUrl)
+        } else {
+          XCTAssertEqual(details, .failure)
+        }
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
