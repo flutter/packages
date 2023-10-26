@@ -130,7 +130,7 @@ final private class FakeLauncher: NSObject, Launcher {
     url.scheme == "good"
   }
 
-  func openURL(
+  func open(
     _ url: URL,
     options: [UIApplication.OpenExternalURLOptionsKey: Any],
     completionHandler completion: ((Bool) -> Void)?

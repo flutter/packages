@@ -10,23 +10,11 @@ protocol Launcher {
   func canOpenURL(_ url: URL) -> Bool
 
   /// Attempts to asynchronously open the resource at the specified URL.
-  func openURL(
+  func open(
     _ url: URL,
     options: [UIApplication.OpenExternalURLOptionsKey: Any],
     completionHandler completion: ((Bool) -> Void)?)
 }
 
-/// Default implementation of Launcher, using UIApplication.
-final class UIApplicationLauncher: Launcher {
-  func canOpenURL(_ url: URL) -> Bool {
-    UIApplication.shared.canOpenURL(url)
-  }
-
-  func openURL(
-    _ url: URL,
-    options: [UIApplication.OpenExternalURLOptionsKey: Any],
-    completionHandler completion: ((Bool) -> Void)?
-  ) {
-    UIApplication.shared.open(url, options: options, completionHandler: completion)
-  }
-}
+/// Launcher is intentionally a direct passthroguh to UIApplication.
+extension UIApplication: Launcher {}

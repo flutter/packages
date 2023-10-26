@@ -21,7 +21,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     UIApplication.shared.keyWindow?.rootViewController?.topViewController
   }
 
-  init(launcher: Launcher = UIApplicationLauncher()) {
+  init(launcher: Launcher = UIApplication.shared) {
     self.launcher = launcher
   }
 
@@ -43,7 +43,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
       return
     }
     let options = [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: universalLinksOnly]
-    launcher.openURL(url, options: options) { result in
+    launcher.open(url, options: options) { result in
       completion(.success(result ? .success : .failedToLoad))
     }
   }
