@@ -328,11 +328,11 @@ void main() {
         return;
       }
 
-      final List<int> lengths = [];
+      final List<int> lengths = <int>[];
       for (final int fps in <int>[10, 30]) {
         final CameraController controller = CameraController.withSettings(
           cameras.first,
-          mediaSettings: MediaSettings(fps: fps, enableAudio: false),
+          mediaSettings: MediaSettings(fps: fps),
         );
         await controller.initialize();
         await controller.prepareForVideoRecording();
@@ -364,7 +364,7 @@ void main() {
       }
 
       const int kiloBits = 1024;
-      final List<int> lengths = [];
+      final List<int> lengths = <int>[];
       for (final int videoBitrate in <int>[100 * kiloBits, 1000 * kiloBits]) {
         final CameraController controller = CameraController.withSettings(
           cameras.first,
@@ -399,7 +399,7 @@ void main() {
         return;
       }
 
-      final List<int> lengths = [];
+      final List<int> lengths = <int>[];
 
       const int kiloBits = 1024;
       for (final int audioBitrate in <int>[32 * kiloBits, 64 * kiloBits]) {
