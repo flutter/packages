@@ -34,6 +34,7 @@ class RouteMatch {
   /// into `pathParameters`.
   static RouteMatch? match({
     required RouteBase route,
+    required String matchedPath, // e.g. /family/:fid
     required String remainingLocation, // e.g. person/p1
     required String matchedLocation, // e.g. /family/f2
     required Map<String, String> pathParameters,
@@ -59,10 +60,11 @@ class RouteMatch {
       final String pathLoc = patternToPath(route.path, encodedParams);
       final String newMatchedLocation =
           concatenatePaths(matchedLocation, pathLoc);
+      final String newMatchedPath = concatenatePaths(matchedPath, route.path);
       return RouteMatch(
         route: route,
         matchedLocation: newMatchedLocation,
-        pageKey: ValueKey<String>(route.hashCode.toString()),
+        pageKey: ValueKey<String>(newMatchedPath),
       );
     }
     assert(false, 'Unexpected route type: $route');
@@ -136,16 +138,16 @@ class ImperativeRouteMatch extends RouteMatch {
     completer.complete(value);
   }
 
-  // An ImperativeRouteMatch has its own life cycle due the the _completer.
-  // comparing _completer between instances would be the same thing as
-  // comparing object reference.
   @override
   bool operator ==(Object other) {
-    return identical(this, other);
+    return other is ImperativeRouteMatch &&
+        completer == other.completer &&
+        matches == other.matches &&
+        super == other;
   }
 
   @override
-  int get hashCode => identityHashCode(this);
+  int get hashCode => Object.hash(super.hashCode, completer, matches.hashCode);
 }
 
 /// The list of [RouteMatch] objects.

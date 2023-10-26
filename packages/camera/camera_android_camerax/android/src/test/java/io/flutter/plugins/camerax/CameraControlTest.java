@@ -98,6 +98,57 @@ public class CameraControlTest {
   }
 
   @Test
+  public void setZoomRatio_setsZoomAsExpected() {
+    try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
+      final CameraControlHostApiImpl cameraControlHostApiImpl =
+          new CameraControlHostApiImpl(testInstanceManager, mock(Context.class));
+      final Long cameraControlIdentifier = 33L;
+      final Double zoomRatio = 0.2D;
+
+      @SuppressWarnings("unchecked")
+      final ListenableFuture<Void> setZoomRatioFuture = mock(ListenableFuture.class);
+
+      testInstanceManager.addDartCreatedInstance(cameraControl, cameraControlIdentifier);
+
+      when(cameraControl.setZoomRatio(zoomRatio.floatValue())).thenReturn(setZoomRatioFuture);
+
+      @SuppressWarnings("unchecked")
+      final ArgumentCaptor<FutureCallback<Void>> futureCallbackCaptor =
+          ArgumentCaptor.forClass(FutureCallback.class);
+
+      // Test successful behavior.
+      @SuppressWarnings("unchecked")
+      final GeneratedCameraXLibrary.Result<Void> successfulMockResult =
+          mock(GeneratedCameraXLibrary.Result.class);
+      cameraControlHostApiImpl.setZoomRatio(
+          cameraControlIdentifier, zoomRatio, successfulMockResult);
+      mockedFutures.verify(
+          () -> Futures.addCallback(eq(setZoomRatioFuture), futureCallbackCaptor.capture(), any()));
+      mockedFutures.clearInvocations();
+
+      FutureCallback<Void> successfulSetZoomRatioCallback = futureCallbackCaptor.getValue();
+
+      successfulSetZoomRatioCallback.onSuccess(mock(Void.class));
+      verify(successfulMockResult).success(null);
+
+      // Test failed behavior.
+      @SuppressWarnings("unchecked")
+      final GeneratedCameraXLibrary.Result<Void> failedMockResult =
+          mock(GeneratedCameraXLibrary.Result.class);
+      final Throwable testThrowable = new Throwable();
+      cameraControlHostApiImpl.setZoomRatio(cameraControlIdentifier, zoomRatio, failedMockResult);
+      mockedFutures.verify(
+          () -> Futures.addCallback(eq(setZoomRatioFuture), futureCallbackCaptor.capture(), any()));
+      mockedFutures.clearInvocations();
+
+      FutureCallback<Void> failedSetZoomRatioCallback = futureCallbackCaptor.getValue();
+
+      failedSetZoomRatioCallback.onFailure(testThrowable);
+      verify(failedMockResult).error(testThrowable);
+    }
+  }
+
+  @Test
   public void flutterApiCreate_makesCallToCreateInstanceOnDartSide() {
     final CameraControlFlutterApiImpl spyFlutterApi =
         spy(new CameraControlFlutterApiImpl(mockBinaryMessenger, testInstanceManager));

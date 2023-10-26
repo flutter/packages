@@ -1,6 +1,10 @@
-## 0.3.0+14
+## 0.3.0+15
 
 * Adds missing network error response code to BillingResponse enum.
+
+## 0.3.0+14
+
+* Updates annotations lib to 1.7.0.
 
 ## 0.3.0+13
 
