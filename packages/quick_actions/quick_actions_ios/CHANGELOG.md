@@ -1,3 +1,7 @@
+## 1.0.8
+
+* Changes method channels to pigeon.
+
 ## 1.0.7
 
 * Adds pub topics to package metadata.

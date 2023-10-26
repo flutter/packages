@@ -48,18 +48,81 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) async {
-    final LaunchResult result =
-        await _launchUrl(useSafariVC, url, universalLinksOnly);
+    final PreferredLaunchMode mode;
+    if (useSafariVC) {
+      mode = PreferredLaunchMode.inAppBrowserView;
+    } else if (universalLinksOnly) {
+      mode = PreferredLaunchMode.externalNonBrowserApplication;
+    } else {
+      mode = PreferredLaunchMode.externalApplication;
+    }
+    return launchUrl(
+        url,
+        LaunchOptions(
+            mode: mode,
+            webViewConfiguration: InAppWebViewConfiguration(
+                enableDomStorage: enableDomStorage,
+                enableJavaScript: enableJavaScript,
+                headers: headers)));
+  }
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    final bool inApp;
+    switch (options.mode) {
+      case PreferredLaunchMode.inAppWebView:
+      case PreferredLaunchMode.inAppBrowserView:
+        // The iOS implementation doesn't distinguish between these two modes;
+        // both are treated as inAppBrowserView.
+        inApp = true;
+        break;
+      case PreferredLaunchMode.externalApplication:
+      case PreferredLaunchMode.externalNonBrowserApplication:
+        inApp = false;
+        break;
+      case PreferredLaunchMode.platformDefault:
+      // Intentionally treat any new values as platformDefault; support for any
+      // new mode requires intentional opt-in, otherwise falling back is the
+      // documented behavior.
+      // ignore: no_default_cases
+      default:
+        // By default, open web URLs in the application.
+        inApp = url.startsWith('http:') || url.startsWith('https:');
+        break;
+    }
+
+    final LaunchResult result;
+    if (inApp) {
+      result = await _hostApi.openUrlInSafariViewController(url);
+    } else {
+      result = await _hostApi.launchUrl(url,
+          options.mode == PreferredLaunchMode.externalNonBrowserApplication);
+    }
     return _mapLaunchResults(results: result, url: url);
   }
 
-  Future<LaunchResult> _launchUrl(
-      bool useSafariVC, String url, bool universalLinksOnly) {
-    if (useSafariVC) {
-      return _hostApi.openUrlInSafariViewController(url);
-    } else {
-      return _hostApi.launchUrl(url, universalLinksOnly);
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    switch (mode) {
+      case PreferredLaunchMode.platformDefault:
+      case PreferredLaunchMode.inAppWebView:
+      case PreferredLaunchMode.inAppBrowserView:
+      case PreferredLaunchMode.externalApplication:
+      case PreferredLaunchMode.externalNonBrowserApplication:
+        return true;
+      // Default is a desired behavior here since support for new modes is
+      // always opt-in, and the enum lives in a different package, so silently
+      // adding "false" for new values is the correct behavior.
+      // ignore: no_default_cases
+      default:
+        return false;
     }
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    return mode == PreferredLaunchMode.inAppWebView ||
+        mode == PreferredLaunchMode.inAppBrowserView;
   }
 
   bool _mapLaunchResults({
@@ -72,9 +135,10 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
       case LaunchResult.failedToLoad:
         return false;
       case LaunchResult.invalidUrl:
-        // TODO(stuartmorgan): Remove this as part of standardizing error handling. See
-        // flutter/flutter#127665
-        // The PlatformExceptions thrown here is for compatibility with the previous implementation.
+        // TODO(stuartmorgan): Remove this as part of standardizing error
+        // handling. See https://github.com/flutter/flutter/issues/127665
+        // The PlatformExceptions thrown here is for compatibility with the
+        // previous implementation.
         throw PlatformException(
           code: 'invalidUrl',
           message: 'Unable to parse URL $url',

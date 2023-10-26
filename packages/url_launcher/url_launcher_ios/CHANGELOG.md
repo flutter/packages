@@ -1,6 +1,10 @@
-## 6.1.6
+## 6.2.1
 
 * Migrates plugin from Objective-C to Swift.
+
+## 6.2.0
+
+* Implements `supportsMode` and `supportsCloseForMode`.
 
 ## 6.1.5
 
