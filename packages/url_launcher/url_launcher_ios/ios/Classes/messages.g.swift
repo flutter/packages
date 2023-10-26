@@ -44,26 +44,36 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
 /// Possible outcomes of launching a URL.
 enum LaunchResult: Int {
-  /// The URL was successfully launched.
+  /// The URL was successfully launched (or could be, for `canLaunchUrl`).
   case success = 0
-  /// The URL could not be launched.
+  /// There was no handler available for the URL.
+  case failure = 1
+  /// The URL could not be launched because it is invalid.
+  case invalidUrl = 2
+}
+
+/// Possible outcomes of handling a URL within the application.
+enum InAppLoadResult: Int {
+  /// The URL was successfully loaded.
+  case success = 0
+  /// The URL did not load successfully.
   case failedToLoad = 1
-  /// The URL was not launched because the URL is invalid.
+  /// The URL could not be launched because it is invalid.
   case invalidUrl = 2
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UrlLauncherApi {
-  /// Returns true if the URL can definitely be launched.
+  /// Checks whether a URL can be loaded.
   func canLaunchUrl(url: String) throws -> LaunchResult
-  /// Opens the URL externally, returning true if successful.
+  /// Opens the URL externally, returning the status of launching it.
   func launchUrl(
     url: String, universalLinksOnly: Bool,
     completion: @escaping (Result<LaunchResult, Error>) -> Void)
-  /// Opens the URL in an in-app SFSafariViewController, returning true
-  /// when it has loaded successfully.
+  /// Opens the URL in an in-app SFSafariViewController, returning the results
+  /// of loading it.
   func openUrlInSafariViewController(
-    url: String, completion: @escaping (Result<LaunchResult, Error>) -> Void)
+    url: String, completion: @escaping (Result<InAppLoadResult, Error>) -> Void)
   /// Closes the view controller opened by [openUrlInSafariViewController].
   func closeSafariViewController() throws
 }
@@ -73,7 +83,7 @@ class UrlLauncherApiSetup {
   /// The codec used by UrlLauncherApi.
   /// Sets up an instance of `UrlLauncherApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UrlLauncherApi?) {
-    /// Returns true if the URL can definitely be launched.
+    /// Checks whether a URL can be loaded.
     let canLaunchUrlChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.canLaunchUrl",
       binaryMessenger: binaryMessenger)
@@ -91,7 +101,7 @@ class UrlLauncherApiSetup {
     } else {
       canLaunchUrlChannel.setMessageHandler(nil)
     }
-    /// Opens the URL externally, returning true if successful.
+    /// Opens the URL externally, returning the status of launching it.
     let launchUrlChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.launchUrl",
       binaryMessenger: binaryMessenger)
@@ -112,8 +122,8 @@ class UrlLauncherApiSetup {
     } else {
       launchUrlChannel.setMessageHandler(nil)
     }
-    /// Opens the URL in an in-app SFSafariViewController, returning true
-    /// when it has loaded successfully.
+    /// Opens the URL in an in-app SFSafariViewController, returning the results
+    /// of loading it.
     let openUrlInSafariViewControllerChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInSafariViewController",
       binaryMessenger: binaryMessenger)

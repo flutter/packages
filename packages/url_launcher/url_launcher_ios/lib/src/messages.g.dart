@@ -13,13 +13,25 @@ import 'package:flutter/services.dart';
 
 /// Possible outcomes of launching a URL.
 enum LaunchResult {
-  /// The URL was successfully launched.
+  /// The URL was successfully launched (or could be, for `canLaunchUrl`).
   success,
 
-  /// The URL could not be launched.
+  /// There was no handler available for the URL.
+  failure,
+
+  /// The URL could not be launched because it is invalid.
+  invalidUrl,
+}
+
+/// Possible outcomes of handling a URL within the application.
+enum InAppLoadResult {
+  /// The URL was successfully loaded.
+  success,
+
+  /// The URL did not load successfully.
   failedToLoad,
 
-  /// The URL was not launched because the URL is invalid.
+  /// The URL could not be launched because it is invalid.
   invalidUrl,
 }
 
@@ -33,7 +45,7 @@ class UrlLauncherApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  /// Returns true if the URL can definitely be launched.
+  /// Checks whether a URL can be loaded.
   Future<LaunchResult> canLaunchUrl(String arg_url) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.canLaunchUrl',
@@ -62,7 +74,7 @@ class UrlLauncherApi {
     }
   }
 
-  /// Opens the URL externally, returning true if successful.
+  /// Opens the URL externally, returning the status of launching it.
   Future<LaunchResult> launchUrl(
       String arg_url, bool arg_universalLinksOnly) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -91,9 +103,9 @@ class UrlLauncherApi {
     }
   }
 
-  /// Opens the URL in an in-app SFSafariViewController, returning true
-  /// when it has loaded successfully.
-  Future<LaunchResult> openUrlInSafariViewController(String arg_url) async {
+  /// Opens the URL in an in-app SFSafariViewController, returning the results
+  /// of loading it.
+  Future<InAppLoadResult> openUrlInSafariViewController(String arg_url) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInSafariViewController',
         codec,
@@ -117,7 +129,7 @@ class UrlLauncherApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return LaunchResult.values[replyList[0]! as int];
+      return InAppLoadResult.values[replyList[0]! as int];
     }
   }
 

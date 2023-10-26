@@ -56,15 +56,16 @@ class MockUrlLauncherApi extends _i1.Mock implements _i2.UrlLauncherApi {
       ) as _i3.Future<_i2.LaunchResult>);
 
   @override
-  _i3.Future<_i2.LaunchResult> openUrlInSafariViewController(String? arg_url) =>
+  _i3.Future<_i2.InAppLoadResult> openUrlInSafariViewController(
+          String? arg_url) =>
       (super.noSuchMethod(
         Invocation.method(
           #openUrlInSafariViewController,
           [arg_url],
         ),
         returnValue:
-            _i3.Future<_i2.LaunchResult>.value(_i2.LaunchResult.success),
-      ) as _i3.Future<_i2.LaunchResult>);
+            _i3.Future<_i2.InAppLoadResult>.value(_i2.InAppLoadResult.success),
+      ) as _i3.Future<_i2.InAppLoadResult>);
 
   @override
   _i3.Future<void> closeSafariViewController() => (super.noSuchMethod(

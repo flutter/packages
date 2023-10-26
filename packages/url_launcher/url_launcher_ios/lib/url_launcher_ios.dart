@@ -29,7 +29,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
   @override
   Future<bool> canLaunch(String url) async {
     final LaunchResult result = await _hostApi.canLaunchUrl(url);
-    return _mapLaunchResults(results: result, url: url);
+    return _mapLaunchResult(result);
   }
 
   @override
@@ -91,14 +91,14 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
         break;
     }
 
-    final LaunchResult result;
     if (inApp) {
-      result = await _hostApi.openUrlInSafariViewController(url);
+      return _mapInAppLoadResult(
+          await _hostApi.openUrlInSafariViewController(url),
+          url: url);
     } else {
-      result = await _hostApi.launchUrl(url,
-          options.mode == PreferredLaunchMode.externalNonBrowserApplication);
+      return _mapLaunchResult(await _hostApi.launchUrl(url,
+          options.mode == PreferredLaunchMode.externalNonBrowserApplication));
     }
-    return _mapLaunchResults(results: result, url: url);
   }
 
   @override
@@ -125,24 +125,51 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
         mode == PreferredLaunchMode.inAppBrowserView;
   }
 
-  bool _mapLaunchResults({
-    required final LaunchResult results,
-    required String url,
-  }) {
-    switch (results) {
+  bool _mapLaunchResult(LaunchResult result) {
+    switch (result) {
       case LaunchResult.success:
         return true;
-      case LaunchResult.failedToLoad:
+      case LaunchResult.failure:
         return false;
       case LaunchResult.invalidUrl:
-        // TODO(stuartmorgan): Remove this as part of standardizing error
-        // handling. See https://github.com/flutter/flutter/issues/127665
-        // The PlatformExceptions thrown here is for compatibility with the
-        // previous implementation.
-        throw PlatformException(
-          code: 'invalidUrl',
-          message: 'Unable to parse URL $url',
-        );
+        throw _invalidUrlException();
     }
+  }
+
+  bool _mapInAppLoadResult(InAppLoadResult result, {required String url}) {
+    switch (result) {
+      case InAppLoadResult.success:
+        return true;
+      case InAppLoadResult.failedToLoad:
+        throw _failedSafariViewControllerLoadException(url);
+      case InAppLoadResult.invalidUrl:
+        throw _invalidUrlException();
+    }
+  }
+
+  // TODO(stuartmorgan): Remove this as part of standardizing error handling.
+  // See https://github.com/flutter/flutter/issues/127665
+  //
+  // This PlatformException (including the exact string details, since those
+  // are a defacto part of the API) is for compatibility with the previous
+  // native implementation.
+  PlatformException _invalidUrlException() {
+    throw PlatformException(
+      code: 'argument_error',
+      message: 'Unable to parse URL',
+    );
+  }
+
+  // TODO(stuartmorgan): Remove this as part of standardizing error handling.
+  // See https://github.com/flutter/flutter/issues/127665
+  //
+  // This PlatformException (including the exact string details, since those
+  // are a defacto part of the API) is for compatibility with the previous
+  // native implementation.
+  PlatformException _failedSafariViewControllerLoadException(String url) {
+    throw PlatformException(
+      code: 'Error',
+      message: 'Error while launching $url',
+    );
   }
 }

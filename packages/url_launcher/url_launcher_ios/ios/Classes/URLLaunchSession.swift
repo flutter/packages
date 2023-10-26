@@ -5,7 +5,7 @@
 import Flutter
 import SafariServices
 
-typealias OpenInSafariCompletionHandler = (Result<LaunchResult, Error>) -> Void
+typealias OpenInSafariCompletionHandler = (Result<InAppLoadResult, Error>) -> Void
 
 /// A session responsible for launching a URL in Safari and handling its events.
 final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {

@@ -25,7 +25,7 @@ final class URLLauncherTests: XCTestCase {
 
   func testCanLaunchFailure() {
     let result = createPlugin().canLaunchUrl(url: "bad://url")
-    XCTAssertEqual(result, .failedToLoad)
+    XCTAssertEqual(result, .failure)
   }
 
   func testCanLaunchFailureWithInvalidURL() {
@@ -33,7 +33,7 @@ final class URLLauncherTests: XCTestCase {
 
     // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
     // fail to parse URLs, so the test must allow for either outcome.
-    XCTAssertTrue(result == .failedToLoad || result == .invalidUrl)
+    XCTAssertTrue(result == .failure || result == .invalidUrl)
   }
 
   func testLaunchSuccess() {
@@ -56,7 +56,7 @@ final class URLLauncherTests: XCTestCase {
     createPlugin().launchUrl(url: "bad://url", universalLinksOnly: false) { result in
       switch result {
       case .success(let details):
-        XCTAssertEqual(details, .failedToLoad)
+        XCTAssertEqual(details, .failure)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
@@ -73,7 +73,7 @@ final class URLLauncherTests: XCTestCase {
       case .success(let details):
         // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
         // fail to parse URLs, so the test must allow for either outcome.
-        XCTAssertTrue(details == .failedToLoad || details == .invalidUrl)
+        XCTAssertTrue(details == .failure || details == .invalidUrl)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }

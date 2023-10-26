@@ -27,10 +27,10 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
 
   func canLaunchUrl(url: String) -> LaunchResult {
     guard let url = URL(string: url) else {
-      return .failedToLoad
+      return .invalidUrl
     }
     let canOpen = launcher.canOpenURL(url)
-    return canOpen ? .success : .failedToLoad
+    return canOpen ? .success : .failure
   }
 
   func launchUrl(
@@ -39,21 +39,21 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     completion: @escaping (Result<LaunchResult, Error>) -> Void
   ) {
     guard let url = URL(string: url) else {
-      completion(.success(.failedToLoad))
+      completion(.success(.invalidUrl))
       return
     }
     let options = [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: universalLinksOnly]
     launcher.open(url, options: options) { result in
-      completion(.success(result ? .success : .failedToLoad))
+      completion(.success(result ? .success : .failure))
     }
   }
 
   func openUrlInSafariViewController(
     url: String,
-    completion: @escaping (Result<LaunchResult, Error>) -> Void
+    completion: @escaping (Result<InAppLoadResult, Error>) -> Void
   ) {
     guard let url = URL(string: url) else {
-      completion(.success(.failedToLoad))
+      completion(.success(.invalidUrl))
       return
     }
 
