@@ -130,7 +130,9 @@ NSString *const errorMethod = @"error";
                              error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  _resolutionPreset = FLTGetFLTResolutionPresetForString(resolutionPreset);
+  _resolutionPreset = (nil == resolutionPreset || [resolutionPreset isEqual:[NSNull null]])
+                          ? FLTResolutionPresetLow
+                          : FLTGetFLTResolutionPresetForString(resolutionPreset);
   if (_resolutionPreset == FLTResolutionPresetInvalid) {
     *error = [NSError
         errorWithDomain:NSCocoaErrorDomain
@@ -141,9 +143,9 @@ NSString *const errorMethod = @"error";
                }];
     return nil;
   }
-  _fps = fps;
-  _videoBitrate = videoBitrate;
-  _audioBitrate = audioBitrate;
+  _fps = (!fps || [fps isEqual:[NSNull null]]) ? nil : fps;
+  _videoBitrate = (!videoBitrate || [videoBitrate isEqual:[NSNull null]]) ? nil : videoBitrate;
+  _audioBitrate = (!audioBitrate || [audioBitrate isEqual:[NSNull null]]) ? nil : audioBitrate;
   _enableAudio = enableAudio;
   _captureSessionQueue = captureSessionQueue;
   _pixelBufferSynchronizationQueue =
