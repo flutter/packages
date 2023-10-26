@@ -84,7 +84,8 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
 extension UIViewController {
   var topViewController: UIViewController {
     if let navigationController = self as? UINavigationController {
-      return navigationController.viewControllers.last?.topViewController ?? navigationController
+      return navigationController.viewControllers.last?.topViewController
+        ?? navigationController
         .visibleViewController ?? navigationController
     }
     if let tabBarController = self as? UITabBarController {
