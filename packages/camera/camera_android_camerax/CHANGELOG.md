@@ -1,3 +1,8 @@
+## 0.5.0+21
+
+* Changes fallback resolution strategies for camera use cases to look for a higher resolution if first the desired
+  resolution is unavailable and then also a lower resolution is unavailable.
+
 ## 0.5.0+20
 
 * Implements `setZoomLevel`.
