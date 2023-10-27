@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes bug where having one reversed axis caused incorrect painting of a pinned row.
+
 ## 0.0.4
 
 * Adds TableSpanPadding, TableSpan.padding, and TableSpanDecoration.consumeSpanPadding.

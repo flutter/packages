@@ -1368,7 +1368,8 @@ void main() {
       // TODO(Piinks): Rewrite this to remove golden files from this repo when
       //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
       //  * foreground, background, and precedence per mainAxis
-      final TableView tableView = TableView.builder(
+      // Both reversed - Regression test for https://github.com/flutter/flutter/issues/135386
+      TableView tableView = TableView.builder(
         verticalDetails: const ScrollableDetails.vertical(reverse: true),
         horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
         rowCount: 2,
@@ -1416,6 +1417,57 @@ void main() {
       await expectLater(
         find.byType(TableView),
         matchesGoldenFile('goldens/reversed.pinned.painting.png'),
+        skip: !runGoldens,
+      );
+
+      // Only one axis reversed - Regression test for https://github.com/flutter/flutter/issues/136897
+      tableView = TableView.builder(
+        horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
+        rowCount: 2,
+        pinnedRowCount: 1,
+        columnCount: 2,
+        pinnedColumnCount: 1,
+        columnBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+            border: TableSpanBorder(
+              trailing: BorderSide(
+                color: Colors.orange,
+                width: 3,
+              ),
+            ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isEven ? Colors.red : null,
+          ),
+        ),
+        rowBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+            border: TableSpanBorder(
+              leading: BorderSide(
+                color: Colors.green,
+                width: 3,
+              ),
+            ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isOdd ? Colors.blue : null,
+          ),
+        ),
+        cellBuilder: (_, TableVicinity vicinity) {
+          return const SizedBox.square(
+            dimension: 200,
+            child: Center(child: FlutterLogo()),
+          );
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
+      await expectLater(
+        find.byType(TableView),
+        matchesGoldenFile('goldens/single-reversed.pinned.painting.png'),
         skip: !runGoldens,
       );
     });
