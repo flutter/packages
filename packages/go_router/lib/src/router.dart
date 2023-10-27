@@ -526,8 +526,10 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       // verified by assert() during the initialization.
       return initialLocation!;
     }
+    final Uri platformDefaultUri =
+        Uri.parse(WidgetsBinding.instance.platformDispatcher.defaultRouteName);
     final String platformDefault =
-        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+        platformDefaultUri.path.isEmpty ? '/' : platformDefaultUri.path;
     if (initialLocation == null) {
       return platformDefault;
     } else if (platformDefault == '/') {
