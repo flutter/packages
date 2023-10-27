@@ -882,7 +882,7 @@ String _getMethodSignature(Method func) {
       : _nullsafeSwiftTypeForDartType(func.returnType);
 
   if (func.arguments.isEmpty) {
-    return 'func ${func.name}(completion: @escaping (Result<$returnType, FlutterError>) -> Void) ';
+    return 'func ${func.name}(completion: @escaping (Result<$returnType, FlutterError>) -> Void)';
   } else {
     final Iterable<String> argTypes = func.arguments
         .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
@@ -895,7 +895,7 @@ String _getMethodSignature(Method func) {
     final String argsSignature = map3(argTypes, argLabels, argNames,
             (String type, String label, String name) => '$label $name: $type')
         .join(', ');
-    return 'func ${components.name}($argsSignature, completion: @escaping (Result<$returnType, FlutterError>) -> Void) ';
+    return 'func ${components.name}($argsSignature, completion: @escaping (Result<$returnType, FlutterError>) -> Void)';
   }
 }
 
