@@ -353,8 +353,12 @@ NSString *const errorMethod = @"error";
           if ( bestFormat ) {
               _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
               if ( [_captureDevice lockForConfiguration:NULL] == YES ) {
+
+                  // set best device format and finish device configuration
                   _captureDevice.activeFormat = bestFormat;
                   [_captureDevice unlockForConfiguration];
+
+                  // set preview size based on values from the current _captureDevice
                   _previewSize =
                   CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
                              _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
@@ -422,6 +426,7 @@ NSString *const errorMethod = @"error";
   return YES;
 }
 
+/// Finds the highest available resolution in terms of pixel count for the given device
 - (AVCaptureDeviceFormat *)getHighestResolutionFormatFor:(AVCaptureDevice*)captureDevice {
     AVCaptureDeviceFormat *bestFormat = nil;
     NSUInteger maxPixelCount = 0;
