@@ -10,9 +10,11 @@ import android.util.Log;
 import android.util.Range;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import io.flutter.BuildConfig;
 import io.flutter.plugins.camera.CameraProperties;
 import io.flutter.plugins.camera.DeviceInfo;
 import io.flutter.plugins.camera.features.CameraFeature;
+import io.flutter.BuildConfig;
 
 /**
  * Controls the frames per seconds (FPS) range configuration on the {@link android.hardware.camera2}
