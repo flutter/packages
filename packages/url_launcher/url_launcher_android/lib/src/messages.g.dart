@@ -82,9 +82,9 @@ class _UrlLauncherApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 128: 
         return BrowserOptions.decode(readValue(buffer)!);
-      case 129:
+      case 129: 
         return WebViewOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -105,8 +105,7 @@ class UrlLauncherApi {
   /// Returns true if the URL can definitely be launched.
   Future<bool> canLaunchUrl(String arg_url) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.canLaunchUrl',
-        codec,
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.canLaunchUrl', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_url]) as List<Object?>?;
@@ -132,11 +131,9 @@ class UrlLauncherApi {
   }
 
   /// Opens the URL externally, returning true if successful.
-  Future<bool> launchUrl(
-      String arg_url, Map<String?, String?> arg_headers) async {
+  Future<bool> launchUrl(String arg_url, Map<String?, String?> arg_headers) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.launchUrl',
-        codec,
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.launchUrl', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_url, arg_headers]) as List<Object?>?;
@@ -163,17 +160,39 @@ class UrlLauncherApi {
 
   /// Opens the URL in an in-app WebView, returning true if it opens
   /// successfully.
-  Future<bool> openUrlInWebView(
-      String arg_url,
-      WebViewOptions arg_webViewOptions,
-      BrowserOptions arg_browserOptions) async {
+  Future<bool> openUrlInApp(String arg_url, bool arg_allowCustomTab, WebViewOptions arg_webViewOptions, BrowserOptions arg_browserOptions) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.openUrlInWebView',
-        codec,
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.openUrlInApp', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-            .send(<Object?>[arg_url, arg_webViewOptions, arg_browserOptions])
-        as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_url, arg_allowCustomTab, arg_webViewOptions, arg_browserOptions]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as bool?)!;
+    }
+  }
+
+  Future<bool> supportsCustomTabs() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.supportsCustomTabs', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -198,10 +217,10 @@ class UrlLauncherApi {
   /// Closes the view opened by [openUrlInSafariViewController].
   Future<void> closeWebView() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.closeWebView',
-        codec,
+        'dev.flutter.pigeon.url_launcher_android.UrlLauncherApi.closeWebView', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

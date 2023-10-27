@@ -14,8 +14,11 @@ enum LaunchMode {
   /// implementation.
   platformDefault,
 
-  /// Loads the URL in an in-app web view (e.g., Android Custom Tabs, Safari View Controller).
+  /// Loads the URL in an in-app web view (e.g., Android WebView).
   inAppWebView,
+
+  /// Loads the URL in an in-app web view (e.g., Android Custom Tabs, SFSafariViewController).
+  inAppBrowserView,
 
   /// Passes the URL to the OS to be handled by another application.
   externalApplication,
@@ -53,8 +56,7 @@ class WebViewConfiguration {
   final Map<String, String> headers;
 }
 
-/// Additional configuration options for [LaunchMode.inAppWebView]
-// TODO(alex): replace this when the pr lands
+/// Additional configuration options for [LaunchMode.inAppBrowserView]
 @immutable
 class BrowserConfiguration {
   /// Creates a new InAppBrowserConfiguration with given settings.

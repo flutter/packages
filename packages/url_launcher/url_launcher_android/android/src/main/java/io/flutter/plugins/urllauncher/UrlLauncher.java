@@ -16,10 +16,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
 import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
 import io.flutter.plugins.urllauncher.Messages.BrowserOptions;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
@@ -96,8 +98,9 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   @Override
-  public @NonNull Boolean openUrlInWebView(
+  public @NonNull Boolean openUrlInApp(
       @NonNull String url,
+      @NonNull Boolean allowCustomTab,
       @NonNull WebViewOptions webViewOptions,
       @NonNull BrowserOptions browserOptions) {
     ensureActivity();
@@ -105,8 +108,9 @@ final class UrlLauncher implements UrlLauncherApi {
 
     Bundle headersBundle = extractBundle(webViewOptions.getHeaders());
 
-    // Try to launch using Custom Tabs if they have the necessary functionality.
-    if (!containsRestrictedHeader(webViewOptions.getHeaders())) {
+    // Try to launch using Custom Tabs if they have the necessary functionality, unless the caller
+    // specifically requested a web view.
+    if (allowCustomTab && !containsRestrictedHeader(webViewOptions.getHeaders())) {
       Uri uri = Uri.parse(url);
       if (openCustomTab(activity, uri, headersBundle, browserOptions)) {
         return true;
@@ -135,6 +139,11 @@ final class UrlLauncher implements UrlLauncherApi {
     applicationContext.sendBroadcast(new Intent(WebViewActivity.ACTION_CLOSE));
   }
 
+  @Override
+  public @NonNull Boolean supportsCustomTabs() {
+    return CustomTabsClient.getPackageName(applicationContext, Collections.emptyList()) != null;
+  }
+
   @VisibleForTesting
   public static boolean openCustomTab(
       @NonNull Context context,
@@ -143,7 +152,6 @@ final class UrlLauncher implements UrlLauncherApi {
       @NonNull BrowserOptions options) {
     CustomTabsIntent customTabsIntent =
         new CustomTabsIntent.Builder().setShowTitle(options.getShowTitle()).build();
-
     customTabsIntent.intent.putExtra(Browser.EXTRA_HEADERS, headersBundle);
 
     try {

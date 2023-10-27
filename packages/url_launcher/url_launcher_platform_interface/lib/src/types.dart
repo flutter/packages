@@ -13,8 +13,12 @@ enum PreferredLaunchMode {
   /// implementation.
   platformDefault,
 
-  /// Loads the URL in an in-app web view (e.g., Android Custom Tabs, Safari View Controller).
+  /// Loads the URL in an in-app web view (e.g., Android WebView).
   inAppWebView,
+
+  /// Loads the URL in an in-app browser view (e.g., Android Custom Tabs,
+  /// SFSafariViewController).
+  inAppBrowserView,
 
   /// Passes the URL to the OS to be handled by another application.
   externalApplication,
@@ -46,8 +50,7 @@ class InAppWebViewConfiguration {
   final Map<String, String> headers;
 }
 
-/// Additional configuration options for [PreferredLaunchMode.inAppWebView]
-// TODO(alex): replace this when the pr lands
+/// Additional configuration options for [PreferredLaunchMode.inAppBrowserView]
 @immutable
 class InAppBrowserConfiguration {
   /// Creates a new InAppBrowserConfiguration with given settings.
@@ -76,8 +79,7 @@ class LaunchOptions {
   /// Configuration for the web view in [PreferredLaunchMode.inAppWebView] mode.
   final InAppWebViewConfiguration webViewConfiguration;
 
-  /// Configuration for the browser view in [PreferredLaunchMode.inAppWebView] mode.
-// TODO(alex): replace this when the pr lands
+  /// Configuration for the browser view in [PreferredLaunchMode.inAppBrowserView] mode.
   final InAppBrowserConfiguration browserConfiguration;
 
   /// A web-platform-specific option to set the link target.
