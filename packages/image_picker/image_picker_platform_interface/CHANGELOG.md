@@ -1,3 +1,7 @@
+## 2.9.2
+
+* Migrates away from deprecated `UnmodifiableUint8ListView`.
+
 ## 2.9.1
 
 * Adds pub topics to package metadata.
