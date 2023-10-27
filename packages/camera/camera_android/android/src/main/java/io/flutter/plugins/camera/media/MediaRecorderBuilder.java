@@ -119,20 +119,7 @@ public class MediaRecorderBuilder {
         mediaRecorder.setAudioSamplingRate(audioProfile.getSampleRate());
       }
 
-      mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
-
       mediaRecorder.setVideoEncoder(videoProfile.getCodec());
-
-      int fps =
-          (parameters.fps != null && parameters.fps.intValue() > 0)
-              ? parameters.fps
-              : videoProfile.getFrameRate();
-
-      if (BuildConfig.DEBUG) {
-        Log.i("XXXXXX", "Video FPS: " + parameters.fps);
-      }
-
-      mediaRecorder.setVideoFrameRate(fps);
 
       int videoBitrate =
           (parameters.videoBitrate != null && parameters.videoBitrate.intValue() > 0)
@@ -145,6 +132,18 @@ public class MediaRecorderBuilder {
 
       mediaRecorder.setVideoEncodingBitRate(videoBitrate);
 
+      int fps =
+          (parameters.fps != null && parameters.fps.intValue() > 0)
+              ? parameters.fps
+              : videoProfile.getFrameRate();
+
+      if (BuildConfig.DEBUG) {
+        Log.i("XXXXXX", "Video FPS: " + parameters.fps);
+      }
+
+      mediaRecorder.setVideoFrameRate(fps);
+
+      mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
     } else if (camcorderProfile != null) {
       mediaRecorder.setOutputFormat(camcorderProfile.fileFormat);
       if (enableAudio) {
