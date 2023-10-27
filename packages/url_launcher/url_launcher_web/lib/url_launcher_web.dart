@@ -4,14 +4,14 @@
 
 import 'dart:async';
 import 'dart:html' as html;
+import 'dart:ui_web' as ui_web;
 
-import 'package:flutter/foundation.dart' show visibleForTesting;
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
+import 'package:flutter_web_plugins/flutter_web_plugins.dart' show Registrar;
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 import 'src/link.dart';
-import 'src/shims/dart_ui.dart' as ui;
 
 const Set<String> _safariTargetTopSchemes = <String>{
   'mailto',
@@ -20,8 +20,14 @@ const Set<String> _safariTargetTopSchemes = <String>{
 };
 String? _getUrlScheme(String url) => Uri.tryParse(url)?.scheme;
 
-bool _isSafariTargetTopScheme(String url) =>
-    _safariTargetTopSchemes.contains(_getUrlScheme(url));
+bool _isSafariTargetTopScheme(String? scheme) =>
+    _safariTargetTopSchemes.contains(scheme);
+
+// The set of schemes that are explicitly disallowed by the plugin.
+const Set<String> _disallowedSchemes = <String>{
+  'javascript',
+};
+bool _isDisallowedScheme(String? scheme) => _disallowedSchemes.contains(scheme);
 
 bool _navigatorIsSafari(html.Navigator navigator) =>
     navigator.userAgent.contains('Safari') &&
@@ -40,7 +46,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   final html.Window _window;
   bool _isSafari = false;
 
-  // The set of schemes that can be handled by the plugin
+  // The set of schemes that can be handled by the plugin.
   static final Set<String> _supportedSchemes = <String>{
     'http',
     'https',
@@ -49,7 +55,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   /// Registers this class as the default instance of [UrlLauncherPlatform].
   static void registerWith(Registrar registrar) {
     UrlLauncherPlatform.instance = UrlLauncherPlugin();
-    ui.platformViewRegistry
+    ui_web.platformViewRegistry
         .registerViewFactory(linkViewType, linkViewFactory, isVisible: false);
   }
 
@@ -62,13 +68,23 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   ///
   /// Returns the newly created window.
   @visibleForTesting
-  html.WindowBase openNewWindow(String url, {String? webOnlyWindowName}) {
-    // We need to open mailto, tel and sms urls on the _top window context on safari browsers.
-    // See https://github.com/flutter/flutter/issues/51461 for reference.
+  html.WindowBase? openNewWindow(String url, {String? webOnlyWindowName}) {
+    final String? scheme = _getUrlScheme(url);
+    // Actively disallow opening some schemes, like javascript.
+    // See https://github.com/flutter/flutter/issues/136657
+    if (_isDisallowedScheme(scheme)) {
+      if (kDebugMode) {
+        print('Disallowed URL with scheme: $scheme');
+      }
+      return null;
+    }
+    // Some schemes need to be opened on the _top window context on Safari.
+    // See https://github.com/flutter/flutter/issues/51461
     final String target = webOnlyWindowName ??
-        ((_isSafari && _isSafariTargetTopScheme(url)) ? '_top' : '');
+        ((_isSafari && _isSafariTargetTopScheme(scheme)) ? '_top' : '');
+
     // ignore: unsafe_html
-    return _window.open(url, target);
+    return _window.open(url, target, 'noopener,noreferrer');
   }
 
   @override
@@ -87,7 +103,25 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
     Map<String, String> headers = const <String, String>{},
     String? webOnlyWindowName,
   }) async {
-    openNewWindow(url, webOnlyWindowName: webOnlyWindowName);
-    return true;
+    return launchUrl(url, LaunchOptions(webOnlyWindowName: webOnlyWindowName));
+  }
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    final String? windowName = options.webOnlyWindowName;
+    return openNewWindow(url, webOnlyWindowName: windowName) != null;
+  }
+
+  @override
+  Future<bool> supportsMode(PreferredLaunchMode mode) async {
+    // Web doesn't allow any control over the destination beyond
+    // webOnlyWindowName, so don't claim support for any mode beyond default.
+    return mode == PreferredLaunchMode.platformDefault;
+  }
+
+  @override
+  Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
+    // No supported mode is closeable.
+    return false;
   }
 }

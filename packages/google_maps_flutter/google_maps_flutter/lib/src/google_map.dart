@@ -125,6 +125,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.cloudMapId,
   });
 
   /// Callback method for when the map is ready to be used.
@@ -291,6 +292,12 @@ class GoogleMap extends StatefulWidget {
   ///
   /// See [WebGestureHandling] for more details.
   final WebGestureHandling? webGestureHandling;
+
+  /// Identifier that's associated with a specific cloud-based map style.
+  ///
+  /// See https://developers.google.com/maps/documentation/get-map-id
+  /// for more details.
+  final String? cloudMapId;
 
   /// Creates a [State] for this [GoogleMap].
   @override
@@ -548,5 +555,6 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
+    cloudMapId: map.cloudMapId,
   );
 }

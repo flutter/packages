@@ -56,7 +56,6 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
 
 - (void)testLoadRequestWithInvalidUrl {
   FWFWebView *mockWebView = OCMClassMock([FWFWebView class]);
-  OCMReject([mockWebView loadRequest:OCMOCK_ANY]);
 
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
   [instanceManager addDartCreatedInstance:mockWebView withIdentifier:0];
@@ -65,16 +64,24 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
       initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
               instanceManager:instanceManager];
 
+  NSString *badURLString = @"%invalidUrl%";
   FlutterError *error;
-  FWFNSUrlRequestData *requestData = [FWFNSUrlRequestData makeWithUrl:@"%invalidUrl%"
+  FWFNSUrlRequestData *requestData = [FWFNSUrlRequestData makeWithUrl:badURLString
                                                            httpMethod:nil
                                                              httpBody:nil
                                                   allHttpHeaderFields:@{}];
   [hostAPI loadRequestForWebViewWithIdentifier:@0 request:requestData error:&error];
-  XCTAssertNotNil(error);
-  XCTAssertEqualObjects(error.code, @"FWFURLRequestParsingError");
-  XCTAssertEqualObjects(error.message, @"Failed instantiating an NSURLRequest.");
-  XCTAssertEqualObjects(error.details, @"URL was: '%invalidUrl%'");
+  // When linking against the iOS 17 SDK or later, NSURL uses a lenient parser, and won't
+  // fail to parse URLs, so the test must allow for either outcome.
+  if (error) {
+    XCTAssertEqualObjects(error.code, @"FWFURLRequestParsingError");
+    XCTAssertEqualObjects(error.message, @"Failed instantiating an NSURLRequest.");
+    XCTAssertEqualObjects(error.details, @"URL was: '%invalidUrl%'");
+  } else {
+    NSMutableURLRequest *request =
+        [NSMutableURLRequest requestWithURL:[NSURL URLWithString:badURLString]];
+    OCMVerify([mockWebView loadRequest:request]);
+  }
 }
 
 - (void)testSetCustomUserAgent {
@@ -88,7 +95,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setUserAgentForWebViewWithIdentifier:@0 userAgent:@"userA" error:&error];
+  [hostAPI setCustomUserAgentForWebViewWithIdentifier:@0 userAgent:@"userA" error:&error];
   OCMVerify([mockWebView setCustomUserAgent:@"userA"]);
   XCTAssertNil(error);
 }
@@ -478,6 +485,25 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   FlutterError *error;
   [hostAPI setInspectableForWebViewWithIdentifier:@0 inspectable:@YES error:&error];
   OCMVerify([mockWebView setInspectable:YES]);
+  XCTAssertNil(error);
+}
+
+- (void)testCustomUserAgent {
+  FWFWebView *mockWebView = OCMClassMock([FWFWebView class]);
+
+  NSString *userAgent = @"str";
+  OCMStub([mockWebView customUserAgent]).andReturn(userAgent);
+
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:0];
+
+  FWFWebViewHostApiImpl *hostAPI = [[FWFWebViewHostApiImpl alloc]
+      initWithBinaryMessenger:OCMProtocolMock(@protocol(FlutterBinaryMessenger))
+              instanceManager:instanceManager];
+
+  FlutterError *error;
+  XCTAssertEqualObjects([hostAPI customUserAgentForWebViewWithIdentifier:@0 error:&error],
+                        userAgent);
   XCTAssertNil(error);
 }
 @end

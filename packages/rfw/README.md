@@ -965,22 +965,4 @@ concerns on iOS, anyway).
 
 ## Contributing
 
-If you run into any problems, please file a [new
-bug](https://github.com/flutter/flutter/issues/new?labels=p:%20rfw,package,P2).
-Rather than waiting for a fix, we encourage you to consider submitting
-a PR yourself. See our [contributing
-guide](https://github.com/flutter/packages/blob/master/CONTRIBUTING.md)
-for details.
-
-Adding more widgets to `lib/flutter/core_widgets.dart` and
-`lib/flutter/material_widgets.dart` is welcome.
-
-When contributing code, ensure that `flutter test --coverage; lcov
---list coverage/lcov.info` continues to show 100% test coverage, and
-update `test_coverage/bin/test_coverage.dart` with the appropriate
-expectations to prevent future coverage regressions. (That program is
-run by `run_tests.sh`.)
-
-Golden tests are only run against the Flutter master channel and only
-run on Linux, since minor rendering differences are expected on
-different platforms and on different versions of Flutter.
+See [CONTRIBUTING.md](https://github.com/flutter/packages/blob/main/packages/rfw/CONTRIBUTING.md)

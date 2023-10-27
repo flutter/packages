@@ -271,17 +271,31 @@ void MessageFlutterApi::FlutterMethod(
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue(),
   });
-  channel->Send(
-      encoded_api_arguments,
-      [on_success = std::move(on_success), on_error = std::move(on_error)](
-          const uint8_t* reply, size_t reply_size) {
-        std::unique_ptr<EncodableValue> response =
-            GetCodec().DecodeMessage(reply, reply_size);
-        const auto& encodable_return_value = *response;
+  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
+                                        on_error = std::move(on_error)](
+                                           const uint8_t* reply,
+                                           size_t reply_size) {
+    std::unique_ptr<EncodableValue> response =
+        GetCodec().DecodeMessage(reply, reply_size);
+    const auto& encodable_return_value = *response;
+    const auto* list_return_value =
+        std::get_if<EncodableList>(&encodable_return_value);
+    if (list_return_value) {
+      if (list_return_value->size() > 1) {
+        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
+                              std::get<std::string>(list_return_value->at(1)),
+                              list_return_value->at(2)));
+      } else {
         const auto& return_value =
-            std::get<std::string>(encodable_return_value);
+            std::get<std::string>(list_return_value->at(0));
         on_success(return_value);
-      });
+      }
+    } else {
+      on_error(FlutterError("channel-error",
+                            "Unable to establish connection on channel.",
+                            EncodableValue("")));
+    }
+  });
 }
 
 }  // namespace pigeon_example

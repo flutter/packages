@@ -10,7 +10,7 @@ class PolylineController {
   PolylineController({
     required gmaps.Polyline polyline,
     bool consumeTapEvents = false,
-    ui.VoidCallback? onTap,
+    VoidCallback? onTap,
   })  : _polyline = polyline,
         _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {

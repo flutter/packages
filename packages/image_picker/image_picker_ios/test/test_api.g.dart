@@ -54,7 +54,7 @@ abstract class TestHostImagePickerApi {
   Future<String?> pickImage(SourceSpecification source, MaxSize maxSize,
       int? imageQuality, bool requestFullMetadata);
 
-  Future<List<String?>?> pickMultiImage(
+  Future<List<String?>> pickMultiImage(
       MaxSize maxSize, int? imageQuality, bool requestFullMetadata);
 
   Future<String?> pickVideo(
@@ -117,7 +117,7 @@ abstract class TestHostImagePickerApi {
           final bool? arg_requestFullMetadata = (args[2] as bool?);
           assert(arg_requestFullMetadata != null,
               'Argument for dev.flutter.pigeon.ImagePickerApi.pickMultiImage was null, expected non-null bool.');
-          final List<String?>? output = await api.pickMultiImage(
+          final List<String?> output = await api.pickMultiImage(
               arg_maxSize!, arg_imageQuality, arg_requestFullMetadata!);
           return <Object?>[output];
         });

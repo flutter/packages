@@ -8,15 +8,16 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 
-import 'src/utils.dart';
+import 'src/messages.g.dart';
 
 /// iOS implementation of [GoogleSignInPlatform].
 class GoogleSignInIOS extends GoogleSignInPlatform {
-  /// This is only exposed for test purposes. It shouldn't be used by clients of
-  /// the plugin as it may break or change at any time.
-  @visibleForTesting
-  MethodChannel channel =
-      const MethodChannel('plugins.flutter.io/google_sign_in_ios');
+  /// Creates a new plugin implementation instance.
+  GoogleSignInIOS({
+    @visibleForTesting GoogleSignInApi? api,
+  }) : _api = api ?? GoogleSignInApi();
+
+  final GoogleSignInApi _api;
 
   /// Registers this class as the default instance of [GoogleSignInPlatform].
   static void registerWith() {
@@ -45,51 +46,43 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
           code: 'unsupported-options',
           message: 'Games sign in is not supported on iOS');
     }
-    return channel.invokeMethod<void>('init', <String, dynamic>{
-      'scopes': params.scopes,
-      'hostedDomain': params.hostedDomain,
-      'clientId': params.clientId,
-      'serverClientId': params.serverClientId,
-    });
+    return _api.init(InitParams(
+      scopes: params.scopes,
+      hostedDomain: params.hostedDomain,
+      clientId: params.clientId,
+      serverClientId: params.serverClientId,
+    ));
   }
 
   @override
   Future<GoogleSignInUserData?> signInSilently() {
-    return channel
-        .invokeMapMethod<String, dynamic>('signInSilently')
-        .then(getUserDataFromMap);
+    return _api.signInSilently().then(_signInUserDataFromChannelData);
   }
 
   @override
   Future<GoogleSignInUserData?> signIn() {
-    return channel
-        .invokeMapMethod<String, dynamic>('signIn')
-        .then(getUserDataFromMap);
+    return _api.signIn().then(_signInUserDataFromChannelData);
   }
 
   @override
   Future<GoogleSignInTokenData> getTokens(
       {required String email, bool? shouldRecoverAuth = true}) {
-    return channel
-        .invokeMapMethod<String, dynamic>('getTokens', <String, dynamic>{
-      'email': email,
-      'shouldRecoverAuth': shouldRecoverAuth,
-    }).then((Map<String, dynamic>? result) => getTokenDataFromMap(result!));
+    return _api.getAccessToken().then(_signInTokenDataFromChannelData);
   }
 
   @override
   Future<void> signOut() {
-    return channel.invokeMapMethod<String, dynamic>('signOut');
+    return _api.signOut();
   }
 
   @override
   Future<void> disconnect() {
-    return channel.invokeMapMethod<String, dynamic>('disconnect');
+    return _api.disconnect();
   }
 
   @override
-  Future<bool> isSignedIn() async {
-    return (await channel.invokeMethod<bool>('isSignedIn'))!;
+  Future<bool> isSignedIn() {
+    return _api.isSignedIn();
   }
 
   @override
@@ -99,10 +92,24 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   }
 
   @override
-  Future<bool> requestScopes(List<String> scopes) async {
-    return (await channel.invokeMethod<bool>(
-      'requestScopes',
-      <String, List<String>>{'scopes': scopes},
-    ))!;
+  Future<bool> requestScopes(List<String> scopes) {
+    return _api.requestScopes(scopes);
+  }
+
+  GoogleSignInUserData _signInUserDataFromChannelData(UserData data) {
+    return GoogleSignInUserData(
+      email: data.email,
+      id: data.userId,
+      displayName: data.displayName,
+      photoUrl: data.photoUrl,
+      serverAuthCode: data.serverAuthCode,
+    );
+  }
+
+  GoogleSignInTokenData _signInTokenDataFromChannelData(TokenData data) {
+    return GoogleSignInTokenData(
+      idToken: data.idToken,
+      accessToken: data.accessToken,
+    );
   }
 }

@@ -114,29 +114,16 @@ class PathProviderWindows extends PathProviderPlatform {
   }
 
   @override
-  Future<String?> getApplicationSupportPath() async {
-    final String? appDataRoot =
-        await getPath(WindowsKnownFolder.RoamingAppData);
-    if (appDataRoot == null) {
-      return null;
-    }
-    final Directory directory = Directory(
-        path.join(appDataRoot, _getApplicationSpecificSubdirectory()));
-    // Ensure that the directory exists if possible, since it will on other
-    // platforms. If the name is longer than MAXPATH, creating will fail, so
-    // skip that step; it's up to the client to decide what to do with the path
-    // in that case (e.g., using a short path).
-    if (directory.path.length <= MAX_PATH) {
-      if (!directory.existsSync()) {
-        await directory.create(recursive: true);
-      }
-    }
-    return directory.path;
-  }
+  Future<String?> getApplicationSupportPath() =>
+      _createApplicationSubdirectory(WindowsKnownFolder.RoamingAppData);
 
   @override
   Future<String?> getApplicationDocumentsPath() =>
       getPath(WindowsKnownFolder.Documents);
+
+  @override
+  Future<String?> getApplicationCachePath() =>
+      _createApplicationSubdirectory(WindowsKnownFolder.LocalAppData);
 
   @override
   Future<String?> getDownloadsPath() => getPath(WindowsKnownFolder.Downloads);
@@ -255,5 +242,24 @@ class PathProviderWindows extends PathProviderPlatform {
       sanitized = sanitized.substring(0, kMaxComponentLength);
     }
     return sanitized.isEmpty ? null : sanitized;
+  }
+
+  Future<String?> _createApplicationSubdirectory(String folderId) async {
+    final String? baseDir = await getPath(folderId);
+    if (baseDir == null) {
+      return null;
+    }
+    final Directory directory =
+        Directory(path.join(baseDir, _getApplicationSpecificSubdirectory()));
+    // Ensure that the directory exists if possible, since it will on other
+    // platforms. If the name is longer than MAXPATH, creating will fail, so
+    // skip that step; it's up to the client to decide what to do with the path
+    // in that case (e.g., using a short path).
+    if (directory.path.length <= MAX_PATH) {
+      if (!directory.existsSync()) {
+        await directory.create(recursive: true);
+      }
+    }
+    return directory.path;
   }
 }

@@ -1,6 +1,11 @@
-## NEXT
+## 0.3.3+6
 
-* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Improves documentation about ignored parameters in IO implementation.
+
+## 0.3.3+5
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 0.3.3+4
 

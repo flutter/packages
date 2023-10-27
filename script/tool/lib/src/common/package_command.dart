@@ -43,6 +43,10 @@ abstract class PackageCommand extends Command<void> {
     this.platform = const LocalPlatform(),
     GitDir? gitDir,
   }) : _gitDir = gitDir {
+    thirdPartyPackagesDir = packagesDir.parent
+        .childDirectory('third_party')
+        .childDirectory('packages');
+
     argParser.addMultiOption(
       _packagesArg,
       help:
@@ -94,6 +98,14 @@ abstract class PackageCommand extends Command<void> {
             'Cannot be combined with $_packagesArg.\n\n'
             'This is intended for use in CI.\n',
         hide: true);
+    argParser.addMultiOption(_filterPackagesArg,
+        help: 'Filters any selected packages to only those included in this '
+            'list. This is intended for use in CI with flags such as '
+            '--$_packagesForBranchArg.\n\n'
+            'Entries can be package names or YAML files that contain a list '
+            'of package names.',
+        defaultsTo: <String>[],
+        hide: true);
     argParser.addFlag(_currentPackageArg,
         negatable: false,
         help:
@@ -125,6 +137,7 @@ abstract class PackageCommand extends Command<void> {
   static const String _runOnChangedPackagesArg = 'run-on-changed-packages';
   static const String _runOnDirtyPackagesArg = 'run-on-dirty-packages';
   static const String _excludeArg = 'exclude';
+  static const String _filterPackagesArg = 'filter-packages-to';
   // Diff base selection.
   static const String _baseBranchArg = 'base-branch';
   static const String _baseShaArg = 'base-sha';
@@ -136,6 +149,9 @@ abstract class PackageCommand extends Command<void> {
 
   /// The directory containing the packages.
   final Directory packagesDir;
+
+  /// The directory containing packages wrapping third-party code.
+  late Directory thirdPartyPackagesDir;
 
   /// The process runner.
   ///
@@ -248,18 +264,25 @@ abstract class PackageCommand extends Command<void> {
     _shardCount = shardCount;
   }
 
+  /// Converts a list of items which are either package names or yaml files
+  /// containing a list of package names to a flat list of package names by
+  /// reading all the file contents.
+  Set<String> _expandYamlInPackageList(List<String> items) {
+    return items.expand<String>((String item) {
+      if (item.endsWith('.yaml')) {
+        final File file = packagesDir.fileSystem.file(item);
+        return (loadYaml(file.readAsStringSync()) as YamlList)
+            .toList()
+            .cast<String>();
+      }
+      return <String>[item];
+    }).toSet();
+  }
+
   /// Returns the set of packages to exclude based on the `--exclude` argument.
   Set<String> getExcludedPackageNames() {
     final Set<String> excludedPackages = _excludedPackages ??
-        getStringListArg(_excludeArg).expand<String>((String item) {
-          if (item.endsWith('.yaml')) {
-            final File file = packagesDir.fileSystem.file(item);
-            return (loadYaml(file.readAsStringSync()) as YamlList)
-                .toList()
-                .cast<String>();
-          }
-          return <String>[item];
-        }).toSet();
+        _expandYamlInPackageList(getStringListArg(_excludeArg));
     // Cache for future calls.
     _excludedPackages = excludedPackages;
     return excludedPackages;
@@ -413,14 +436,31 @@ abstract class PackageCommand extends Command<void> {
       packages = <String>{currentPackageName};
     }
 
-    final Directory thirdPartyPackagesDirectory = packagesDir.parent
-        .childDirectory('third_party')
-        .childDirectory('packages');
-
     final Set<String> excludedPackageNames = getExcludedPackageNames();
+    final bool hasFilter = argResults?.wasParsed(_filterPackagesArg) ?? false;
+    final Set<String>? excludeAllButPackageNames = hasFilter
+        ? _expandYamlInPackageList(getStringListArg(_filterPackagesArg))
+        : null;
+    if (excludeAllButPackageNames != null &&
+        excludeAllButPackageNames.isNotEmpty) {
+      final List<String> sortedList = excludeAllButPackageNames.toList()
+        ..sort();
+      print('--$_filterPackagesArg is excluding packages that are not '
+          'included in: ${sortedList.join(',')}');
+    }
+    // Returns true if a package that could be identified by any of
+    // `possibleNames` should be excluded.
+    bool isExcluded(Set<String> possibleNames) {
+      if (excludedPackageNames.intersection(possibleNames).isNotEmpty) {
+        return true;
+      }
+      return excludeAllButPackageNames != null &&
+          excludeAllButPackageNames.intersection(possibleNames).isEmpty;
+    }
+
     for (final Directory dir in <Directory>[
       packagesDir,
-      if (thirdPartyPackagesDirectory.existsSync()) thirdPartyPackagesDirectory,
+      if (thirdPartyPackagesDir.existsSync()) thirdPartyPackagesDir,
     ]) {
       await for (final FileSystemEntity entity
           in dir.list(followLinks: false)) {
@@ -429,7 +469,7 @@ abstract class PackageCommand extends Command<void> {
           if (packages.isEmpty || packages.contains(p.basename(entity.path))) {
             yield PackageEnumerationEntry(
                 RepositoryPackage(entity as Directory),
-                excluded: excludedPackageNames.contains(entity.basename));
+                excluded: isExcluded(<String>{entity.basename}));
           }
         } else if (entity is Directory) {
           // Look for Dart packages under this top-level directory; this is the
@@ -451,9 +491,7 @@ abstract class PackageCommand extends Command<void> {
                   packages.intersection(possibleMatches).isNotEmpty) {
                 yield PackageEnumerationEntry(
                     RepositoryPackage(subdir as Directory),
-                    excluded: excludedPackageNames
-                        .intersection(possibleMatches)
-                        .isNotEmpty);
+                    excluded: isExcluded(possibleMatches));
               }
             }
           }

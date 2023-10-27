@@ -78,7 +78,23 @@
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   GMSCameraPosition *camera =
       [FLTGoogleMapJSONConversions cameraPostionFromDictionary:args[@"initialCameraPosition"]];
-  GMSMapView *mapView = [GMSMapView mapWithFrame:frame camera:camera];
+  GMSMapView *mapView;
+  id mapID = nil;
+  NSString *cloudMapId = args[@"options"][@"cloudMapId"];
+
+  if (cloudMapId) {
+    Class mapIDClass = NSClassFromString(@"GMSMapID");
+    if (mapIDClass && [mapIDClass respondsToSelector:@selector(mapIDWithIdentifier:)]) {
+      mapID = [mapIDClass mapIDWithIdentifier:cloudMapId];
+    }
+  }
+
+  if (mapID && [GMSMapView respondsToSelector:@selector(mapWithFrame:mapID:camera:)]) {
+    mapView = [GMSMapView mapWithFrame:frame mapID:mapID camera:camera];
+  } else {
+    mapView = [GMSMapView mapWithFrame:frame camera:camera];
+  }
+
   return [self initWithMapView:mapView viewIdentifier:viewId arguments:args registrar:registrar];
 }
 
@@ -527,7 +543,7 @@
   [self.markersController didEndDraggingMarkerWithIdentifier:markerId location:marker.position];
 }
 
-- (void)mapView:(GMSMapView *)mapView didStartDraggingMarker:(GMSMarker *)marker {
+- (void)mapView:(GMSMapView *)mapView didBeginDraggingMarker:(GMSMarker *)marker {
   NSString *markerId = marker.userData[0];
   [self.markersController didStartDraggingMarkerWithIdentifier:markerId location:marker.position];
 }

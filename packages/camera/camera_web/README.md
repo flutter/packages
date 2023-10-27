@@ -80,11 +80,13 @@ URL pointing to a location within the browser (blob) and can be displayed using
 
 See the example below:
 
+<?code-excerpt "example/lib/readme_excerpts.dart (ImageFromXFile)"?>
 ```dart
+final Image image;
 if (kIsWeb) {
-  Image.network(capturedImage.path);
+  image = Image.network(capturedImage.path);
 } else {
-  Image.file(File(capturedImage.path));
+  image = Image.file(File(capturedImage.path));
 }
 ```
 

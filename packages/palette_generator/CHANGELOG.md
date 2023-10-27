@@ -1,6 +1,7 @@
-## NEXT
+## 0.3.3+3
 
-* Updates minimum supported SDK version to Flutter 3.3/Dart 2.18.
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 * Aligns Dart and Flutter SDK constraints.
 
 ## 0.3.3+2

@@ -11,6 +11,12 @@ buildscript {
 
 allprojects {
     repositories {
+        // See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
+        def artifactRepoKey = 'ARTIFACT_HUB_REPOSITORY'
+        if (System.getenv().containsKey(artifactRepoKey)) {
+            println "Using artifact hub"
+            maven { url System.getenv(artifactRepoKey) }
+        }
         google()
         mavenCentral()
     }
@@ -39,9 +45,9 @@ gradle.projectsEvaluated {
 
             // Workaround for several warnings when building
             // that the above turns into errors, coming from
-            // org.checkerframework.checker.nullness.qual and 
+            // org.checkerframework.checker.nullness.qual and
             // com.google.errorprone.annotations:
-            // 
+            //
             //   warning: Cannot find annotation method 'value()' in type
             //   'EnsuresNonNull': class file for
             //   org.checkerframework.checker.nullness.qual.EnsuresNonNull not found

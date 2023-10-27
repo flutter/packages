@@ -47,3 +47,22 @@ CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
   CFRelease(formatDescription);
   return sampleBuffer;
 }
+
+CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void) {
+  CMBlockBufferRef blockBuffer;
+  CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, 100, kCFAllocatorDefault, NULL, 0,
+                                     100, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
+
+  CMFormatDescriptionRef formatDescription;
+  AudioStreamBasicDescription basicDescription = {44100, kAudioFormatLinearPCM, 0, 1, 1, 1, 1, 8};
+  CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &basicDescription, 0, NULL, 0, NULL, NULL,
+                                 &formatDescription);
+
+  CMSampleBufferRef sampleBuffer;
+  CMAudioSampleBufferCreateReadyWithPacketDescriptions(
+      kCFAllocatorDefault, blockBuffer, formatDescription, 1, kCMTimeZero, NULL, &sampleBuffer);
+
+  CFRelease(blockBuffer);
+  CFRelease(formatDescription);
+  return sampleBuffer;
+}

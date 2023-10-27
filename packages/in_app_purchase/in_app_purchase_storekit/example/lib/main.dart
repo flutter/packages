@@ -156,10 +156,8 @@ class _MyAppState extends State<_MyApp> {
     }
     if (_purchasePending) {
       stack.add(
-        // TODO(goderbauer): Make this const when that's available on stable.
-        // ignore: prefer_const_constructors
-        Stack(
-          children: const <Widget>[
+        const Stack(
+          children: <Widget>[
             Opacity(
               opacity: 0.3,
               child: ModalBarrier(dismissible: false, color: Colors.grey),
@@ -262,9 +260,7 @@ class _MyAppState extends State<_MyApp> {
                 : TextButton(
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.green[800],
-                      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                      // ignore: deprecated_member_use
-                      primary: Colors.white,
+                      foregroundColor: Colors.white,
                     ),
                     onPressed: () {
                       final PurchaseParam purchaseParam = PurchaseParam(
@@ -339,9 +335,7 @@ class _MyAppState extends State<_MyApp> {
           TextButton(
             style: TextButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
-              // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-              // ignore: deprecated_member_use
-              primary: Colors.white,
+              foregroundColor: Colors.white,
             ),
             onPressed: () => _iapStoreKitPlatform.restorePurchases(),
             child: const Text('Restore purchases'),

@@ -62,6 +62,12 @@ abstract class PathProviderPlatform extends PlatformInterface {
         'getApplicationDocumentsPath() has not been implemented.');
   }
 
+  /// Path to a directory where application specific cache data can be stored.
+  Future<String?> getApplicationCachePath() {
+    throw UnimplementedError(
+        'getApplicationCachePath() has not been implemented.');
+  }
+
   /// Path to a directory where the application may access top level storage.
   /// The current operating system should be determined before issuing this
   /// function call, as this functionality is only available on Android.

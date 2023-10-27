@@ -4,6 +4,8 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +13,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'android_proxy.dart';
 import 'android_webview.dart' as android_webview;
+import 'android_webview_api_impls.dart';
 import 'instance_manager.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
@@ -137,6 +140,41 @@ class AndroidWebViewController extends PlatformWebViewController {
         }
       };
     }),
+    onShowCustomView: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (_, android_webview.View view,
+          android_webview.CustomViewCallback callback) {
+        final AndroidWebViewController? webViewController =
+            weakReference.target;
+        if (webViewController == null) {
+          callback.onCustomViewHidden();
+          return;
+        }
+        final OnShowCustomWidgetCallback? onShowCallback =
+            webViewController._onShowCustomWidgetCallback;
+        if (onShowCallback == null) {
+          callback.onCustomViewHidden();
+          return;
+        }
+        onShowCallback(
+          AndroidCustomViewWidget.private(
+            controller: webViewController,
+            customView: view,
+          ),
+          () => callback.onCustomViewHidden(),
+        );
+      };
+    }),
+    onHideCustomView: withWeakReferenceTo(this,
+        (WeakReference<AndroidWebViewController> weakReference) {
+      return (android_webview.WebChromeClient instance) {
+        final OnHideCustomWidgetCallback? onHideCustomViewCallback =
+            weakReference.target?._onHideCustomWidgetCallback;
+        if (onHideCustomViewCallback != null) {
+          onHideCustomViewCallback();
+        }
+      };
+    }),
     onShowFileChooser: withWeakReferenceTo(
       this,
       (WeakReference<AndroidWebViewController> weakReference) {
@@ -148,6 +186,42 @@ class AndroidWebViewController extends PlatformWebViewController {
             );
           }
           return <String>[];
+        };
+      },
+    ),
+    onConsoleMessage: withWeakReferenceTo(
+      this,
+      (WeakReference<AndroidWebViewController> weakReference) {
+        return (android_webview.WebChromeClient webChromeClient,
+            android_webview.ConsoleMessage consoleMessage) async {
+          final void Function(JavaScriptConsoleMessage)? callback =
+              weakReference.target?._onConsoleLogCallback;
+          if (callback != null) {
+            JavaScriptLogLevel logLevel;
+            switch (consoleMessage.level) {
+              // Android maps `console.debug` to `MessageLevel.TIP`, it seems
+              // `MessageLevel.DEBUG` if not being used.
+              case ConsoleMessageLevel.debug:
+              case ConsoleMessageLevel.tip:
+                logLevel = JavaScriptLogLevel.debug;
+                break;
+              case ConsoleMessageLevel.error:
+                logLevel = JavaScriptLogLevel.error;
+                break;
+              case ConsoleMessageLevel.warning:
+                logLevel = JavaScriptLogLevel.warning;
+                break;
+              case ConsoleMessageLevel.unknown:
+              case ConsoleMessageLevel.log:
+                logLevel = JavaScriptLogLevel.log;
+                break;
+            }
+
+            callback(JavaScriptConsoleMessage(
+              level: logLevel,
+              message: consoleMessage.message,
+            ));
+          }
         };
       },
     ),
@@ -212,7 +286,13 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   OnGeolocationPermissionsHidePrompt? _onGeolocationPermissionsHidePrompt;
 
+  OnShowCustomWidgetCallback? _onShowCustomWidgetCallback;
+
+  OnHideCustomWidgetCallback? _onHideCustomWidgetCallback;
+
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
+
+  void Function(JavaScriptConsoleMessage consoleMessage)? _onConsoleLogCallback;
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
@@ -495,6 +575,51 @@ class AndroidWebViewController extends PlatformWebViewController {
     _onGeolocationPermissionsShowPrompt = onShowPrompt;
     _onGeolocationPermissionsHidePrompt = onHidePrompt;
   }
+
+  /// Sets the callbacks that are invoked when the host application wants to
+  /// show or hide a custom widget.
+  ///
+  /// The most common use case these methods are invoked a video element wants
+  /// to be displayed in fullscreen.
+  ///
+  /// The [onShowCustomWidget] notifies the host application that web content
+  /// from the specified origin wants to be displayed in a custom widget. After
+  /// this call, web content will no longer be rendered in the `WebViewWidget`,
+  /// but will instead be rendered in the custom widget. The application may
+  /// explicitly exit fullscreen mode by invoking `onCustomWidgetHidden` in the
+  /// [onShowCustomWidget] callback (ex. when the user presses the back
+  /// button). However, this is generally not necessary as the web page will
+  /// often show its own UI to close out of fullscreen. Regardless of how the
+  /// WebView exits fullscreen mode, WebView will invoke [onHideCustomWidget],
+  /// signaling for the application to remove the custom widget. If this value
+  /// is `null` when passed to an `AndroidWebViewWidget`, a default handler
+  /// will be set.
+  ///
+  /// The [onHideCustomWidget] notifies the host application that the custom
+  /// widget must be hidden. After this call, web content will render in the
+  /// original `WebViewWidget` again.
+  Future<void> setCustomWidgetCallbacks({
+    required OnShowCustomWidgetCallback? onShowCustomWidget,
+    required OnHideCustomWidgetCallback? onHideCustomWidget,
+  }) async {
+    _onShowCustomWidgetCallback = onShowCustomWidget;
+    _onHideCustomWidgetCallback = onHideCustomWidget;
+  }
+
+  /// Sets a callback that notifies the host application of any log messages
+  /// written to the JavaScript console.
+  @override
+  Future<void> setOnConsoleMessage(
+      void Function(JavaScriptConsoleMessage consoleMessage)
+          onConsoleMessage) async {
+    _onConsoleLogCallback = onConsoleMessage;
+
+    return _webChromeClient.setSynchronousReturnValueForOnConsoleMessage(
+        _onConsoleLogCallback != null);
+  }
+
+  @override
+  Future<String?> getUserAgent() => _webView.settings.getUserAgentString();
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
@@ -540,6 +665,13 @@ typedef OnGeolocationPermissionsShowPrompt
 
 /// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API is cancel.
 typedef OnGeolocationPermissionsHidePrompt = void Function();
+
+/// Signature for the `setCustomWidgetCallbacks` callback responsible for showing the custom view.
+typedef OnShowCustomWidgetCallback = void Function(
+    Widget widget, void Function() onCustomWidgetHidden);
+
+/// Signature for the `setCustomWidgetCallbacks` callback responsible for hiding the custom view.
+typedef OnHideCustomWidgetCallback = void Function();
 
 /// A request params used by the host application to set the Geolocation permission state for an origin.
 @immutable
@@ -781,10 +913,13 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
 
   @override
   Widget build(BuildContext context) {
+    _trySetDefaultOnShowCustomWidgetCallbacks(context);
     return PlatformViewLink(
       // Setting a default key using `params` ensures the `PlatformViewLink`
       // recreates the PlatformView when changes are made.
-      key: _androidParams.key ?? ObjectKey(params),
+      key: _androidParams.key ??
+          ValueKey<AndroidWebViewWidgetCreationParams>(
+              params as AndroidWebViewWidgetCreationParams),
       viewType: 'plugins.flutter.io/webview',
       surfaceFactory: (
         BuildContext context,
@@ -801,6 +936,11 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
           params,
           displayWithHybridComposition:
               _androidParams.displayWithHybridComposition,
+          platformViewsServiceProxy: _androidParams.platformViewsServiceProxy,
+          view:
+              (_androidParams.controller as AndroidWebViewController)._webView,
+          instanceManager: _androidParams.instanceManager,
+          layoutDirection: _androidParams.layoutDirection,
         )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
           ..create();
@@ -808,29 +948,135 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
     );
   }
 
-  AndroidViewController _initAndroidView(
-    PlatformViewCreationParams params, {
-    required bool displayWithHybridComposition,
-  }) {
-    if (displayWithHybridComposition) {
-      return _androidParams.platformViewsServiceProxy.initExpensiveAndroidView(
-        id: params.id,
-        viewType: 'plugins.flutter.io/webview',
-        layoutDirection: _androidParams.layoutDirection,
-        creationParams: _androidParams.instanceManager.getIdentifier(
-            (_androidParams.controller as AndroidWebViewController)._webView),
-        creationParamsCodec: const StandardMessageCodec(),
-      );
-    } else {
-      return _androidParams.platformViewsServiceProxy.initSurfaceAndroidView(
-        id: params.id,
-        viewType: 'plugins.flutter.io/webview',
-        layoutDirection: _androidParams.layoutDirection,
-        creationParams: _androidParams.instanceManager.getIdentifier(
-            (_androidParams.controller as AndroidWebViewController)._webView),
-        creationParamsCodec: const StandardMessageCodec(),
+  // Attempt to handle custom views with a default implementation if it has not
+  // been set.
+  void _trySetDefaultOnShowCustomWidgetCallbacks(BuildContext context) {
+    final AndroidWebViewController controller =
+        _androidParams.controller as AndroidWebViewController;
+
+    if (controller._onShowCustomWidgetCallback == null) {
+      controller.setCustomWidgetCallbacks(
+        onShowCustomWidget:
+            (Widget widget, OnHideCustomWidgetCallback callback) {
+          Navigator.of(context).push(MaterialPageRoute<void>(
+            builder: (BuildContext context) => widget,
+            fullscreenDialog: true,
+          ));
+        },
+        onHideCustomWidget: () {
+          Navigator.of(context).pop();
+        },
       );
     }
+  }
+}
+
+/// Represents a Flutter implementation of the Android [View](https://developer.android.com/reference/android/view/View)
+/// that is created by the host platform when web content needs to be displayed
+/// in fullscreen mode.
+///
+/// The [AndroidCustomViewWidget] cannot be manually instantiated and is
+/// provided to the host application through the callbacks specified using the
+/// [AndroidWebViewController.setCustomWidgetCallbacks] method.
+///
+/// The [AndroidCustomViewWidget] is initialized internally and should only be
+/// exposed as a [Widget] externally. The type [AndroidCustomViewWidget] is
+/// visible for testing purposes only and should never be called externally.
+@visibleForTesting
+class AndroidCustomViewWidget extends StatelessWidget {
+  /// Creates a [AndroidCustomViewWidget].
+  ///
+  /// The [AndroidCustomViewWidget] should only be instantiated internally.
+  /// This constructor is visible for testing purposes only and should
+  /// never be called externally.
+  @visibleForTesting
+  AndroidCustomViewWidget.private({
+    super.key,
+    required this.controller,
+    required this.customView,
+    @visibleForTesting InstanceManager? instanceManager,
+    @visibleForTesting
+    this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
+  }) : instanceManager =
+            instanceManager ?? android_webview.JavaObject.globalInstanceManager;
+
+  /// The reference to the Android native view that should be shown.
+  final android_webview.View customView;
+
+  /// The [PlatformWebViewController] that allows controlling the native web
+  /// view.
+  final PlatformWebViewController controller;
+
+  /// Maintains instances used to communicate with the native objects they
+  /// represent.
+  ///
+  /// This field is exposed for testing purposes only and should not be used
+  /// outside of tests.
+  @visibleForTesting
+  final InstanceManager instanceManager;
+
+  /// Proxy that provides access to the platform views service.
+  ///
+  /// This service allows creating and controlling platform-specific views.
+  @visibleForTesting
+  final PlatformViewsServiceProxy platformViewsServiceProxy;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlatformViewLink(
+      key: key,
+      viewType: 'plugins.flutter.io/webview',
+      surfaceFactory: (
+        BuildContext context,
+        PlatformViewController controller,
+      ) {
+        return AndroidViewSurface(
+          controller: controller as AndroidViewController,
+          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+        );
+      },
+      onCreatePlatformView: (PlatformViewCreationParams params) {
+        return _initAndroidView(
+          params,
+          displayWithHybridComposition: false,
+          platformViewsServiceProxy: platformViewsServiceProxy,
+          view: customView,
+          instanceManager: instanceManager,
+        )
+          ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+          ..create();
+      },
+    );
+  }
+}
+
+AndroidViewController _initAndroidView(
+  PlatformViewCreationParams params, {
+  required bool displayWithHybridComposition,
+  required PlatformViewsServiceProxy platformViewsServiceProxy,
+  required android_webview.View view,
+  required InstanceManager instanceManager,
+  TextDirection layoutDirection = TextDirection.ltr,
+}) {
+  final int? instanceId = instanceManager.getIdentifier(view);
+
+  if (displayWithHybridComposition) {
+    return platformViewsServiceProxy.initExpensiveAndroidView(
+      id: params.id,
+      viewType: 'plugins.flutter.io/webview',
+      layoutDirection: layoutDirection,
+      creationParams: instanceId,
+      creationParamsCodec: const StandardMessageCodec(),
+    );
+  } else {
+    return platformViewsServiceProxy.initSurfaceAndroidView(
+      id: params.id,
+      viewType: 'plugins.flutter.io/webview',
+      layoutDirection: layoutDirection,
+      creationParams: instanceId,
+      creationParamsCodec: const StandardMessageCodec(),
+    );
   }
 }
 

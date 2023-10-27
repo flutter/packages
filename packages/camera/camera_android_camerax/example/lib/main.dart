@@ -274,7 +274,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             IconButton(
               icon: const Icon(Icons.flash_on),
               color: Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null ? onFlashModeButtonPressed : null,
             ),
             // The exposure and focus mode are currently not supported on the web.
             ...!kIsWeb
@@ -326,28 +326,36 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               color: controller?.value.flashMode == FlashMode.off
                   ? Colors.orange
                   : Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null
+                  ? () => onSetFlashModeButtonPressed(FlashMode.off)
+                  : null,
             ),
             IconButton(
               icon: const Icon(Icons.flash_auto),
               color: controller?.value.flashMode == FlashMode.auto
                   ? Colors.orange
                   : Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null
+                  ? () => onSetFlashModeButtonPressed(FlashMode.auto)
+                  : null,
             ),
             IconButton(
               icon: const Icon(Icons.flash_on),
               color: controller?.value.flashMode == FlashMode.always
                   ? Colors.orange
                   : Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null
+                  ? () => onSetFlashModeButtonPressed(FlashMode.always)
+                  : null,
             ),
             IconButton(
               icon: const Icon(Icons.highlight),
               color: controller?.value.flashMode == FlashMode.torch
                   ? Colors.orange
                   : Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null
+                  ? () => onSetFlashModeButtonPressed(FlashMode.torch)
+                  : null,
             ),
           ],
         ),
@@ -357,16 +365,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Widget _exposureModeControlRowWidget() {
     final ButtonStyle styleAuto = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.exposureMode == ExposureMode.auto
+      foregroundColor: controller?.value.exposureMode == ExposureMode.auto
           ? Colors.orange
           : Colors.blue,
     );
     final ButtonStyle styleLocked = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.exposureMode == ExposureMode.locked
+      foregroundColor: controller?.value.exposureMode == ExposureMode.locked
           ? Colors.orange
           : Colors.blue,
     );
@@ -388,12 +392,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     style: styleAuto,
                     onPressed:
                         () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress: () {
-                      if (controller != null) {
-                        controller!.setExposurePoint(null);
-                        showInSnackBar('Resetting exposure point');
-                      }
-                    },
+                    onLongPress:
+                        () {}, // TODO(camsim99): Add functionality back here.,
                     child: const Text('AUTO'),
                   ),
                   TextButton(
@@ -439,16 +439,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   Widget _focusModeControlRowWidget() {
     final ButtonStyle styleAuto = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.focusMode == FocusMode.auto
+      foregroundColor: controller?.value.focusMode == FocusMode.auto
           ? Colors.orange
           : Colors.blue,
     );
     final ButtonStyle styleLocked = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.focusMode == FocusMode.locked
+      foregroundColor: controller?.value.focusMode == FocusMode.locked
           ? Colors.orange
           : Colors.blue,
     );
@@ -470,12 +466,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     style: styleAuto,
                     onPressed:
                         () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress: () {
-                      if (controller != null) {
-                        controller!.setFocusPoint(null);
-                      }
-                      showInSnackBar('Resetting focus point');
-                    },
+                    onLongPress:
+                        () {}, // TODO(camsim99): Add functionality back here.
                     child: const Text('AUTO'),
                   ),
                   TextButton(
