@@ -10,6 +10,7 @@ import android.media.MediaRecorder;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import io.flutter.BuildConfig;
 import io.flutter.plugins.camera.SdkCapabilityChecker;
 import java.io.IOException;
 
