@@ -28,7 +28,7 @@ double _getCssOpacity(Color color) {
 // mapToolbarEnabled is unused in web, there's no "map toolbar"
 // myLocationButtonEnabled Widget not available in web yet, it needs to be built on top of the maps widget
 //   See: https://developers.google.com/maps/documentation/javascript/examples/control-custom
-// myLocationEnabled needs to be built through dart:html navigator.geolocation
+// myLocationEnabled needs to be built through `navigator.geolocation` from package:web.
 //   See: https://api.dart.dev/stable/2.8.4/dart-html/Geolocation-class.html
 // trafficEnabled is handled when creating the GMap object, since it needs to be added as a layer.
 // trackCameraPosition is just a boolean value that indicates if the map has an onCameraMove handler.
