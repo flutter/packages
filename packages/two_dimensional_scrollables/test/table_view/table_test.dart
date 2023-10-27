@@ -1365,10 +1365,10 @@ void main() {
 
     testWidgets('paint rects are correct when reversed and pinned',
         (WidgetTester tester) async {
-      // Regression test for https://github.com/flutter/flutter/issues/135386
       // TODO(Piinks): Rewrite this to remove golden files from this repo when
       //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
       //  * foreground, background, and precedence per mainAxis
+      // Both reversed - Regression test for https://github.com/flutter/flutter/issues/135386
       TableView tableView = TableView.builder(
         verticalDetails: const ScrollableDetails.vertical(reverse: true),
         horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
@@ -1420,8 +1420,8 @@ void main() {
         skip: !runGoldens,
       );
 
+      // Only one axis reversed - Regression test for https://github.com/flutter/flutter/issues/136897
       tableView = TableView.builder(
-        // Only one axis reversed
         horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
         rowCount: 2,
         pinnedRowCount: 1,
