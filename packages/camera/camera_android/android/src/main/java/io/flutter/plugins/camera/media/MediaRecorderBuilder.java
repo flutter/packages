@@ -127,7 +127,9 @@ public class MediaRecorderBuilder {
               ? parameters.fps
               : videoProfile.getFrameRate();
 
-      Log.i("XXXXXX", "Video FPS: " + parameters.fps);
+      if (BuildConfig.DEBUG) {
+        Log.i("XXXXXX", "Video FPS: " + parameters.fps);
+      }
 
       mediaRecorder.setVideoFrameRate(fps);
 
@@ -136,7 +138,9 @@ public class MediaRecorderBuilder {
               ? parameters.videoBitrate
               : videoProfile.getBitrate();
 
-      Log.i("XXXXXX", "Video bitrate: " + videoBitrate);
+      if (BuildConfig.DEBUG) {
+        Log.i("XXXXXX", "Video bitrate: " + videoBitrate);
+      }
 
       mediaRecorder.setVideoEncodingBitRate(videoBitrate);
 
