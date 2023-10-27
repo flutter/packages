@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'package:camera_android/camera_android.dart';
 import 'package:camera_example/camera_controller.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -82,8 +83,9 @@ void main() {
         bool previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller =
-              CameraController(cameraDescription, preset.key);
+          final CameraController controller = CameraController(
+              cameraDescription,
+              mediaSettings: MediaSettings(resolutionPreset: preset.key));
           await controller.initialize();
           final bool presetExactlySupported =
               await testCaptureImageResolution(controller, preset.key);
@@ -135,8 +137,9 @@ void main() {
         bool previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller =
-              CameraController(cameraDescription, preset.key);
+          final CameraController controller = CameraController(
+              cameraDescription,
+              mediaSettings: MediaSettings(resolutionPreset: preset.key));
           await controller.initialize();
           await controller.prepareForVideoRecording();
           final bool presetExactlySupported =
@@ -159,11 +162,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
-      cameras[0],
-      ResolutionPreset.low,
-      enableAudio: false,
-    );
+    final CameraController controller = CameraController(cameras[0]);
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
@@ -213,11 +212,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
-      cameras[0],
-      ResolutionPreset.low,
-      enableAudio: false,
-    );
+    final CameraController controller = CameraController(cameras[0]);
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
@@ -254,11 +249,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
-      cameras[0],
-      ResolutionPreset.low,
-      enableAudio: false,
-    );
+    final CameraController controller = CameraController(cameras[0]);
 
     await controller.initialize();
     await controller.setDescription(cameras[1]);
@@ -275,11 +266,7 @@ void main() {
         return;
       }
 
-      final CameraController controller = CameraController(
-        cameras[0],
-        ResolutionPreset.low,
-        enableAudio: false,
-      );
+      final CameraController controller = CameraController(cameras[0]);
 
       await controller.initialize();
       bool isDetecting = false;
@@ -312,11 +299,7 @@ void main() {
         return;
       }
 
-      final CameraController controller = CameraController(
-        cameras[0],
-        ResolutionPreset.low,
-        enableAudio: false,
-      );
+      final CameraController controller = CameraController(cameras[0]);
 
       await controller.initialize();
       bool isDetecting = false;
@@ -345,4 +328,150 @@ void main() {
       expect(controller.value.isStreamingImages, false);
     },
   );
+
+  group('Camera settings', () {
+    Future<CameraDescription> getCamera() async {
+      final List<CameraDescription> cameras =
+          await CameraPlatform.instance.availableCameras();
+      expect(cameras.isNotEmpty, equals(true));
+
+      // Prefer back camera, as it allows more customizations.
+      final CameraDescription cameraDescription = cameras.firstWhere(
+        (CameraDescription description) =>
+            description.lensDirection == CameraLensDirection.back,
+        orElse: () => cameras.first,
+      );
+      return cameraDescription;
+    }
+
+    Future<void> startRecording(CameraController controller) async {
+      await controller.initialize();
+
+      //region Lock video as much as possible to avoid video bitrate fluctuations
+      await controller.lockCaptureOrientation();
+      await controller.setExposureMode(ExposureMode.locked);
+      await controller.setFocusMode(FocusMode.locked);
+      await controller.setFlashMode(FlashMode.off);
+      await controller.setExposureOffset(0);
+      //endregion
+
+      await controller.prepareForVideoRecording();
+      await controller.startVideoRecording();
+    }
+
+    testWidgets('Control FPS', (WidgetTester tester) async {
+      final CameraDescription cameraDescription = await getCamera();
+
+      final List<int> lengths = <int>[];
+
+      for (final int fps in <int>[10, 30]) {
+        final CameraController controller = CameraController(
+          cameraDescription,
+          mediaSettings: MediaSettings(
+              resolutionPreset: ResolutionPreset.medium, fps: fps),
+        );
+
+        await startRecording(controller);
+
+        sleep(const Duration(milliseconds: 3000));
+
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video size
+        final File videoFile = File(file.path);
+
+        lengths.add(await videoFile.length());
+
+        await controller.dispose();
+      }
+
+      debugPrint('XXX $lengths');
+
+      for (int n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], lessThan(lengths[n + 1]),
+            reason: 'incrementing fps should increment file size');
+      }
+    });
+
+    testWidgets('Control video bitrate', (WidgetTester tester) async {
+      final CameraDescription cameraDescription = await getCamera();
+
+      const int kiloBits = 1000;
+      final List<int> lengths = <int>[];
+      for (final int videoBitrate in <int>[200 * kiloBits, 2000 * kiloBits]) {
+        final CameraController controller = CameraController(
+          cameraDescription,
+          mediaSettings: MediaSettings(
+              resolutionPreset: ResolutionPreset.medium,
+              videoBitrate: videoBitrate),
+        );
+
+        await startRecording(controller);
+
+        sleep(const Duration(milliseconds: 3000));
+
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video size
+        final File videoFile = File(file.path);
+
+        lengths.add(await videoFile.length());
+
+        await controller.dispose();
+      }
+
+      debugPrint('XXX $lengths');
+
+      for (int n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], lessThan(lengths[n + 1]),
+            reason: 'incrementing video bitrate should increment file size');
+      }
+    });
+
+    testWidgets('Control audio bitrate', (WidgetTester tester) async {
+      final List<int> lengths = <int>[];
+
+      final CameraDescription cameraDescription = await getCamera();
+
+      const int kiloBits = 1000;
+
+      for (final int audioBitrate in <int>[32 * kiloBits, 256 * kiloBits]) {
+        final CameraController controller = CameraController(
+          cameraDescription,
+          mediaSettings: MediaSettings(
+            //region Use lowest video settings for minimize video impact on bitrate
+            resolutionPreset: ResolutionPreset.low,
+            fps: 10,
+            videoBitrate: 64 * kiloBits,
+            //endregion
+            audioBitrate: audioBitrate,
+            enableAudio: true,
+          ),
+        );
+
+        await startRecording(controller);
+
+        sleep(const Duration(milliseconds: 3000));
+
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video metadata
+        final File videoFile = File(file.path);
+
+        final int length = await videoFile.length();
+
+        lengths.add(length);
+
+        await controller.dispose();
+      }
+
+      debugPrint('XXX $lengths');
+
+      // Lengths should be sorted in incrementing order
+      for (int n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], lessThan(lengths[n + 1]),
+            reason: 'incrementing audio bitrate should increment file size');
+      }
+    });
+  });
 }

@@ -23,6 +23,8 @@ import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaExtractor;
+import android.media.MediaFormat;
 import android.media.MediaRecorder;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
@@ -215,12 +217,25 @@ class Camera
         CameraFeatures.init(
             cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset);
 
+    Integer recordingFps = null;
     if (fps != null && fps.intValue() > 0) {
+      recordingFps = fps;
+    } else if (SdkCapabilityChecker.supportsEncoderProfiles()) {
+      EncoderProfiles encoderProfiles = getRecordingProfile();
+      if (encoderProfiles != null && encoderProfiles.getVideoProfiles().size() > 0) {
+        recordingFps = encoderProfiles.getVideoProfiles().get(0).getFrameRate();
+      }
+    } else {
+      CamcorderProfile camcorderProfile = getRecordingProfileLegacy();
+      recordingFps = camcorderProfile.videoFrameRate;
+    }
+
+    if (recordingFps != null && recordingFps.intValue() > 0) {
       final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
-      fpsRange.setValue(new Range<>(fps, fps));
+      fpsRange.setValue(new Range<>(recordingFps, recordingFps));
       this.cameraFeatures.setFpsRange(fpsRange);
 
-      this.cameraFeatures.setFps(new IntFeature(cameraProperties, fps));
+      this.cameraFeatures.setFps(new IntFeature(cameraProperties, recordingFps));
     }
 
     if (videoBitrate != null && videoBitrate.intValue() > 0) {
@@ -837,6 +852,41 @@ class Camera
       result.error("videoRecordingFailed", e.getMessage(), null);
       return;
     }
+
+    final MediaExtractor extractor = new MediaExtractor();
+    int frameRate = -1; // may be default
+    int bitrate = -1;
+    try {
+      // Adjust data source as per the requirement if file, URI, etc.
+      extractor.setDataSource(captureFile.getAbsolutePath());
+      final int numTracks = extractor.getTrackCount();
+
+      for (int i = 0; i < numTracks; i++) {
+        final MediaFormat format = extractor.getTrackFormat(i);
+
+        final String mime = format.getString(MediaFormat.KEY_MIME);
+
+        Log.d("XXXXXX", "track: " + i + ", mime: " + mime);
+
+        if (mime.startsWith("video/")) {
+          if (format.containsKey(MediaFormat.KEY_FRAME_RATE)) {
+            frameRate = format.getInteger(MediaFormat.KEY_FRAME_RATE);
+            Log.d("XXXXXX", "FPS: " + frameRate);
+          }
+        }
+
+        if (format.containsKey(MediaFormat.KEY_BIT_RATE)) {
+          bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
+          Log.d("XXXXXX", "bitrate: " + bitrate);
+        }
+      }
+    } catch (Exception e) {
+      Log.e("XXXXXX", captureFile.getAbsolutePath(), e);
+    } finally {
+      // Release stuff
+      extractor.release();
+    }
+
     result.success(captureFile.getAbsolutePath());
     captureFile = null;
   }

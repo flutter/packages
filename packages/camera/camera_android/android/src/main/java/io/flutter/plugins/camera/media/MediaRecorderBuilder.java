@@ -7,6 +7,7 @@ package io.flutter.plugins.camera.media;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.media.MediaRecorder;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.plugins.camera.SdkCapabilityChecker;
@@ -102,11 +103,13 @@ public class MediaRecorderBuilder {
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 
     if (SdkCapabilityChecker.supportsEncoderProfiles() && encoderProfiles != null) {
-      EncoderProfiles.VideoProfile videoProfile = encoderProfiles.getVideoProfiles().get(0);
-      EncoderProfiles.AudioProfile audioProfile = encoderProfiles.getAudioProfiles().get(0);
-
       mediaRecorder.setOutputFormat(encoderProfiles.getRecommendedFileFormat());
+
+      EncoderProfiles.VideoProfile videoProfile = encoderProfiles.getVideoProfiles().get(0);
+
       if (enableAudio) {
+        EncoderProfiles.AudioProfile audioProfile = encoderProfiles.getAudioProfiles().get(0);
+
         mediaRecorder.setAudioEncoder(audioProfile.getCodec());
         mediaRecorder.setAudioEncodingBitRate(
             (parameters.audioBitrate != null && parameters.audioBitrate.intValue() > 0)
@@ -114,16 +117,29 @@ public class MediaRecorderBuilder {
                 : audioProfile.getBitrate());
         mediaRecorder.setAudioSamplingRate(audioProfile.getSampleRate());
       }
+
+      mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
+
       mediaRecorder.setVideoEncoder(videoProfile.getCodec());
-      mediaRecorder.setVideoEncodingBitRate(
-          (parameters.videoBitrate != null && parameters.videoBitrate.intValue() > 0)
-              ? parameters.videoBitrate
-              : videoProfile.getBitrate());
-      mediaRecorder.setVideoFrameRate(
+
+      int fps =
           (parameters.fps != null && parameters.fps.intValue() > 0)
               ? parameters.fps
-              : videoProfile.getFrameRate());
-      mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
+              : videoProfile.getFrameRate();
+
+      Log.d("XXXXXX", "Video FPS: " + parameters.fps);
+
+      mediaRecorder.setVideoFrameRate(fps);
+
+      int videoBitrate =
+          (parameters.videoBitrate != null && parameters.videoBitrate.intValue() > 0)
+              ? parameters.videoBitrate
+              : videoProfile.getBitrate();
+
+      Log.d("XXXXXX", "Video bitrate: " + videoBitrate);
+
+      mediaRecorder.setVideoEncodingBitRate(videoBitrate);
+
     } else if (camcorderProfile != null) {
       mediaRecorder.setOutputFormat(camcorderProfile.fileFormat);
       if (enableAudio) {
