@@ -866,18 +866,18 @@ class Camera
 
         final String mime = format.getString(MediaFormat.KEY_MIME);
 
-        Log.d("XXXXXX", "track: " + i + ", mime: " + mime);
+        Log.i("XXXXXX", "track: " + i + ", mime: " + mime);
 
         if (mime.startsWith("video/")) {
           if (format.containsKey(MediaFormat.KEY_FRAME_RATE)) {
             frameRate = format.getInteger(MediaFormat.KEY_FRAME_RATE);
-            Log.d("XXXXXX", "FPS: " + frameRate);
+            Log.i("XXXXXX", "FPS: " + frameRate);
           }
         }
 
         if (format.containsKey(MediaFormat.KEY_BIT_RATE)) {
           bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
-          Log.d("XXXXXX", "bitrate: " + bitrate);
+          Log.i("XXXXXX", "bitrate: " + bitrate);
         }
       }
     } catch (Exception e) {

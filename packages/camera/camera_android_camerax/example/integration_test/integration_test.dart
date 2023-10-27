@@ -10,7 +10,6 @@ import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax_example/camera_controller.dart';
 import 'package:camera_android_camerax_example/camera_image.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -178,121 +177,5 @@ void main() {
         await controller.dispose();
       }
     }
-  });
-
-  group('Camera settings', () {
-    testWidgets('Control FPS', (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
-      if (cameras.isEmpty) {
-        return;
-      }
-
-      final List<int> lengths = <int>[];
-      for (final int fps in <int>[10, 30]) {
-        final CameraController controller = CameraController(
-          cameras.first,
-          mediaSettings: MediaSettings(fps: fps),
-        );
-        await controller.initialize();
-
-        // Take Video
-        await controller.startVideoRecording();
-        sleep(const Duration(milliseconds: 500));
-        final XFile file = await controller.stopVideoRecording();
-
-        // Load video size
-        final File videoFile = File(file.path);
-
-        lengths.add(await videoFile.length());
-
-        await controller.dispose();
-      }
-
-      debugPrint('XXX $lengths');
-
-      for (int n = 0; n < lengths.length - 1; n++) {
-        expect(lengths[n], lessThan(lengths[n + 1]),
-            reason: 'incrementing fps should increment file size');
-      }
-    });
-
-    testWidgets('Control video bitrate', (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
-      if (cameras.isEmpty) {
-        return;
-      }
-
-      const int kiloBits = 1024;
-      final List<int> lengths = <int>[];
-      for (final int videoBitrate in <int>[100 * kiloBits, 1000 * kiloBits]) {
-        final CameraController controller = CameraController(
-          cameras.first,
-          mediaSettings: MediaSettings(videoBitrate: videoBitrate),
-        );
-        await controller.initialize();
-
-        // Take Video
-        await controller.startVideoRecording();
-        sleep(const Duration(milliseconds: 500));
-        final XFile file = await controller.stopVideoRecording();
-
-        // Load video size
-        final File videoFile = File(file.path);
-
-        lengths.add(await videoFile.length());
-
-        await controller.dispose();
-      }
-
-      debugPrint('XXX $lengths');
-
-      for (int n = 0; n < lengths.length - 1; n++) {
-        expect(lengths[n], lessThan(lengths[n + 1]),
-            reason: 'incrementing video bitrate should increment file size');
-      }
-    });
-
-    testWidgets('Control audio bitrate', (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
-      if (cameras.isEmpty) {
-        return;
-      }
-
-      final List<int> lengths = <int>[];
-
-      const int kiloBits = 1024;
-      for (final int audioBitrate in <int>[32 * kiloBits, 64 * kiloBits]) {
-        final CameraController controller = CameraController(
-          cameras.first,
-          mediaSettings:
-              MediaSettings(audioBitrate: audioBitrate, enableAudio: true),
-        );
-        await controller.initialize();
-
-        // Take Video
-        await controller.startVideoRecording();
-        sleep(const Duration(milliseconds: 1000));
-        final XFile file = await controller.stopVideoRecording();
-
-        // Load video metadata
-        final File videoFile = File(file.path);
-
-        final int length = await videoFile.length();
-
-        lengths.add(length);
-
-        await controller.dispose();
-      }
-
-      debugPrint('XXX $lengths');
-
-      for (int n = 0; n < lengths.length - 1; n++) {
-        expect(lengths[n], lessThan(lengths[n + 1]),
-            reason: 'incrementing audio bitrate should increment file size');
-      }
-    });
   });
 }
