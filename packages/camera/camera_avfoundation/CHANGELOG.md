@@ -1,3 +1,7 @@
+## 0.9.13+7
+
+* Fixes bug where max resolution preset does not produce highest available resolution on iOS.
+
 ## 0.9.13+6
 
 * Fixes incorrect use of `NSError` that could cause crashes on launch.
