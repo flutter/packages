@@ -12,7 +12,6 @@
 
 // Configuration wrapping Google Cloud Console, Google Apps, OpenID,
 // and other initialization metadata.
-// @property(strong) GIDConfiguration *configuration;
-@property(strong, nonatomic) GIDConfiguration *configuration;
+@property(strong) GIDConfiguration *configuration;
 
 @end
