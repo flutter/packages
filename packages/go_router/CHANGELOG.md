@@ -1,3 +1,7 @@
+## 12.0.1
+
+- Fixes deep-link with no path on cold start.
+
 ## 12.0.0
 
 - Adds ability to dynamically update routing table.
