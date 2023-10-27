@@ -180,7 +180,7 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .build());
+                .build(), new Messages.BrowserOptions.Builder().setShowTitle(true).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -369,8 +369,9 @@ public class UrlLauncherTest {
     HashMap<String, String> headers = new HashMap<>();
     boolean showTitle = true;
 
-    api.openUrlInWebView(
+    api.openUrlInApp(
         "https://flutter.dev",
+        true,
         new Messages.WebViewOptions.Builder()
             .setEnableJavaScript(false)
             .setEnableDomStorage(enableDomStorage)
