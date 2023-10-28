@@ -128,7 +128,6 @@ public class CameraTest {
 
     mockRangeConstruction = new RangeConstruction();
     mockCameraProperties = mock(CameraProperties.class);
-    mockCameraFeatureFactory = spy(new TestCameraFeatureFactory());
     mockDartMessenger = mock(DartMessenger.class);
     mockCaptureSession = mock(CameraCaptureSession.class);
     mockPreviewRequestBuilder = mock(CaptureRequest.Builder.class);
@@ -158,9 +157,7 @@ public class CameraTest {
 
     final FpsRangeFeature fpsRangeFeature = new FpsRangeFeature(mockCameraProperties);
 
-    doReturn(fpsRangeFeature)
-        .when(mockCameraFeatureFactory)
-        .createFpsRangeFeature(mockCameraProperties);
+    mockCameraFeatureFactory = new TestCameraFeatureFactory(fpsRangeFeature);
 
     camera =
         new Camera(
@@ -1239,10 +1236,6 @@ public class CameraTest {
 
       final FpsRangeFeature fpsRangeFeature = new FpsRangeFeature(mockCameraProperties);
 
-      doReturn(fpsRangeFeature)
-          .when(mockCameraFeatureFactory)
-          .createFpsRangeFeature(mockCameraProperties);
-
       final Camera camera =
           spy(
               new Camera(
@@ -1363,14 +1356,14 @@ public class CameraTest {
     private final SensorOrientationFeature mockSensorOrientationFeature;
     private final ZoomLevelFeature mockZoomLevelFeature;
 
-    public TestCameraFeatureFactory() {
+    public TestCameraFeatureFactory(FpsRangeFeature fpsRangeFeature) {
       this.mockAutoFocusFeature = mock(AutoFocusFeature.class);
       this.mockExposureLockFeature = mock(ExposureLockFeature.class);
       this.mockExposureOffsetFeature = mock(ExposureOffsetFeature.class);
       this.mockExposurePointFeature = mock(ExposurePointFeature.class);
       this.mockFlashFeature = mock(FlashFeature.class);
       this.mockFocusPointFeature = mock(FocusPointFeature.class);
-      this.mockFpsRangeFeature = mock(FpsRangeFeature.class);
+      this.mockFpsRangeFeature = fpsRangeFeature;
       this.mockNoiseReductionFeature = mock(NoiseReductionFeature.class);
       this.mockResolutionFeature = mock(ResolutionFeature.class);
       this.mockSensorOrientationFeature = mock(SensorOrientationFeature.class);

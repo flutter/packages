@@ -7,10 +7,8 @@ package io.flutter.plugins.camera.media;
 import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.media.MediaRecorder;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.flutter.BuildConfig;
 import io.flutter.plugins.camera.SdkCapabilityChecker;
 import java.io.IOException;
 
@@ -104,13 +102,11 @@ public class MediaRecorderBuilder {
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 
     if (SdkCapabilityChecker.supportsEncoderProfiles() && encoderProfiles != null) {
-
       mediaRecorder.setOutputFormat(encoderProfiles.getRecommendedFileFormat());
 
       EncoderProfiles.VideoProfile videoProfile = encoderProfiles.getVideoProfiles().get(0);
 
       if (enableAudio) {
-
         EncoderProfiles.AudioProfile audioProfile = encoderProfiles.getAudioProfiles().get(0);
 
         mediaRecorder.setAudioEncoder(audioProfile.getCodec());
@@ -128,10 +124,6 @@ public class MediaRecorderBuilder {
               ? parameters.videoBitrate
               : videoProfile.getBitrate();
 
-      if (BuildConfig.DEBUG) {
-        Log.i("XXXXXX", "Video bitrate: " + videoBitrate);
-      }
-
       mediaRecorder.setVideoEncodingBitRate(videoBitrate);
 
       int fps =
@@ -139,15 +131,10 @@ public class MediaRecorderBuilder {
               ? parameters.fps
               : videoProfile.getFrameRate();
 
-      if (BuildConfig.DEBUG) {
-        Log.i("XXXXXX", "Video FPS: " + parameters.fps);
-      }
-
       mediaRecorder.setVideoFrameRate(fps);
 
       mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
     } else if (camcorderProfile != null) {
-
       mediaRecorder.setOutputFormat(camcorderProfile.fileFormat);
       if (enableAudio) {
         mediaRecorder.setAudioEncoder(camcorderProfile.audioCodec);

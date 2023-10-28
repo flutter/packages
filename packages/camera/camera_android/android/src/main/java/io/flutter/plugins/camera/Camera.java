@@ -23,8 +23,6 @@ import android.media.CamcorderProfile;
 import android.media.EncoderProfiles;
 import android.media.Image;
 import android.media.ImageReader;
-import android.media.MediaExtractor;
-import android.media.MediaFormat;
 import android.media.MediaRecorder;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
@@ -871,46 +869,6 @@ class Camera
     } catch (CameraAccessException | IllegalStateException | InterruptedException e) {
       result.error("videoRecordingFailed", e.getMessage(), null);
       return;
-    }
-
-    final MediaExtractor extractor = new MediaExtractor();
-    int frameRate = -1; // may be default
-    int bitrate = -1;
-    try {
-      // Adjust data source as per the requirement if file, URI, etc.
-      extractor.setDataSource(captureFile.getAbsolutePath());
-      final int numTracks = extractor.getTrackCount();
-
-      for (int i = 0; i < numTracks; i++) {
-        final MediaFormat format = extractor.getTrackFormat(i);
-
-        final String mime = format.getString(MediaFormat.KEY_MIME);
-
-        if (BuildConfig.DEBUG) {
-          Log.i("XXXXXX", "track: " + i + ", mime: " + mime);
-        }
-
-        if (mime.startsWith("video/")) {
-          if (format.containsKey(MediaFormat.KEY_FRAME_RATE)) {
-            frameRate = format.getInteger(MediaFormat.KEY_FRAME_RATE);
-            if (BuildConfig.DEBUG) {
-              Log.i("XXXXXX", "FPS: " + frameRate);
-            }
-          }
-        }
-
-        if (format.containsKey(MediaFormat.KEY_BIT_RATE)) {
-          bitrate = format.getInteger(MediaFormat.KEY_BIT_RATE);
-          if (BuildConfig.DEBUG) {
-            Log.i("XXXXXX", "bitrate: " + bitrate);
-          }
-        }
-      }
-    } catch (Exception e) {
-      Log.e("XXXXXX", captureFile.getAbsolutePath(), e);
-    } finally {
-      // Release stuff
-      extractor.release();
     }
 
     result.success(captureFile.getAbsolutePath());
