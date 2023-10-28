@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,9 +13,11 @@ import 'package:google_maps_flutter_web/google_maps_flutter_web.dart'
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:web/web.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<TileProvider>()])
 import 'overlays_test.mocks.dart';
+import 'test_utils.dart';
 
 MockTileProvider neverTileProvider() {
   final MockTileProvider tileProvider = MockTileProvider();
@@ -38,13 +39,13 @@ void main() {
     /// 0.
     void probeTiles() {
       for (final gmaps.MapType? mapType in map.overlayMapTypes!.array!) {
-        mapType?.getTile!(gmaps.Point(0, 0), 0, html.document);
+        mapType?.getTile!(gmaps.Point(0, 0), 0, document);
       }
     }
 
     setUp(() {
       controller = TileOverlaysController();
-      map = gmaps.GMap(html.DivElement());
+      map = gmaps.GMap(createDivElement());
       controller.googleMap = map;
 
       tileProviders = <MockTileProvider>[
