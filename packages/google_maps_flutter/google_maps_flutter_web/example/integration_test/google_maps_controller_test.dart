@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +13,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'google_maps_controller_test.mocks.dart';
+import 'test_utils.dart';
 
 // This value is used when comparing long~num, like
 // LatLng values.
@@ -230,7 +230,7 @@ void main() {
         polygons = MockPolygonsController();
         polylines = MockPolylinesController();
         tileOverlays = MockTileOverlaysController();
-        map = gmaps.GMap(html.DivElement());
+        map = gmaps.GMap(createDivElement());
       });
 
       testWidgets('listens to map events', (WidgetTester tester) async {
@@ -471,7 +471,7 @@ void main() {
 
       setUp(() {
         map = gmaps.GMap(
-          html.DivElement(),
+          createDivElement(),
           gmaps.MapOptions()
             ..zoom = 10
             ..center = gmaps.LatLng(0, 0),
