@@ -39,11 +39,17 @@ class MarkersController extends GeometryController {
       // Google Maps' JS SDK does not have a click event on the InfoWindow, so
       // we make one...
       if (infoWindowOptions.content != null &&
-          infoWindowOptions.content is HtmlElement) {
-        final HtmlElement content = infoWindowOptions.content! as HtmlElement;
-        content.onClick.listen((_) {
-          _onInfoWindowTap(marker.markerId);
-        });
+          infoWindowOptions.content is HTMLElement) {
+        final HTMLElement content = infoWindowOptions.content! as HTMLElement;
+
+        // TODO(ditman): Use the premade handler
+        // See https://github.com/dart-lang/web/issues/76
+        content.addEventListener(
+          'click',
+          allowInterop((_) {
+            _onInfoWindowTap(marker.markerId);
+          }).toJS,
+        );
       }
     }
 
@@ -91,7 +97,7 @@ class MarkersController extends GeometryController {
           _infoWindowOptionsFromMarker(marker);
       markerController.update(
         markerOptions,
-        newInfoWindowContent: infoWindow?.content as HtmlElement?,
+        newInfoWindowContent: infoWindow?.content as HTMLElement?,
       );
     }
   }
