@@ -12,6 +12,7 @@ dependencies:
   google_maps_flutter_platform_interface: ^2.4.0
   google_maps_flutter_web:
     path: ../
+  web: ^0.3.0
 
 dev_dependencies:
   build_runner: ^2.1.1
