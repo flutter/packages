@@ -803,7 +803,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           axisDirectionIsReversed(horizontalAxisDirection)
               ? 0.0
               : _pinnedColumnsExtent,
-          axisDirectionIsReversed(horizontalAxisDirection)
+          axisDirectionIsReversed(verticalAxisDirection)
               ? viewportDimension.height - _pinnedRowsExtent
               : 0.0,
           viewportDimension.width - _pinnedColumnsExtent,
