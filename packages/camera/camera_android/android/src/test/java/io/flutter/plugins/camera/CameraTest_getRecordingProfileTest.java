@@ -72,11 +72,7 @@ public class CameraTest_getRecordingProfileTest {
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            resolutionPreset,
-            enableAudio,
-            Integer.valueOf(15),
-            Integer.valueOf(200000),
-            Integer.valueOf(32000));
+            new Camera.Parameters(resolutionPreset, enableAudio));
   }
 
   @Config(maxSdk = 30)
@@ -90,7 +86,7 @@ public class CameraTest_getRecordingProfileTest {
 
     CamcorderProfile actualRecordingProfile = camera.getRecordingProfileLegacy();
 
-    verify(mockResolutionFeature, times(1)).getRecordingProfileLegacy();
+    verify(mockResolutionFeature, times(2)).getRecordingProfileLegacy();
     assertEquals(mockCamcorderProfile, actualRecordingProfile);
   }
 
@@ -105,7 +101,7 @@ public class CameraTest_getRecordingProfileTest {
 
     EncoderProfiles actualRecordingProfile = camera.getRecordingProfile();
 
-    verify(mockResolutionFeature, times(1)).getRecordingProfile();
+    verify(mockResolutionFeature, times(2)).getRecordingProfile();
     assertEquals(mockRecordingProfile, actualRecordingProfile);
   }
 

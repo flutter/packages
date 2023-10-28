@@ -8,31 +8,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.*;
 import android.hardware.camera2.params.SessionConfiguration;
+import android.media.CamcorderProfile;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
@@ -63,19 +53,32 @@ import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.utils.TestUtils;
 import io.flutter.view.TextureRegistry;
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 class FakeCameraDeviceWrapper implements CameraDeviceWrapper {
   final List<CaptureRequest.Builder> captureRequests;
+  @Nullable final CameraCaptureSession session;
 
   FakeCameraDeviceWrapper(List<CaptureRequest.Builder> captureRequests) {
+    this(captureRequests, null);
+  }
+
+  FakeCameraDeviceWrapper(
+      List<CaptureRequest.Builder> captureRequests, CameraCaptureSession session) {
     this.captureRequests = captureRequests;
+    this.session = session;
   }
 
   @NonNull
@@ -85,13 +88,21 @@ class FakeCameraDeviceWrapper implements CameraDeviceWrapper {
   }
 
   @Override
-  public void createCaptureSession(SessionConfiguration config) {}
+  public void createCaptureSession(SessionConfiguration config) {
+    if (session != null) {
+      config.getStateCallback().onConfigured(session);
+    }
+  }
 
   @Override
   public void createCaptureSession(
       @NonNull List<Surface> outputs,
       @NonNull CameraCaptureSession.StateCallback callback,
-      @Nullable Handler handler) {}
+      @Nullable Handler handler) {
+    if (session != null) {
+      callback.onConfigured(session);
+    }
+  }
 
   @Override
   public void close() {}
@@ -109,10 +120,15 @@ public class CameraTest {
   private MockedStatic<Camera.HandlerFactory> mockHandlerFactory;
   private Handler mockHandler;
 
+  private RangeConstruction mockRangeConstruction;
+
   @Before
+  @SuppressWarnings("unchecked")
   public void before() {
+
+    mockRangeConstruction = new RangeConstruction();
     mockCameraProperties = mock(CameraProperties.class);
-    mockCameraFeatureFactory = new TestCameraFeatureFactory();
+    mockCameraFeatureFactory = spy(new TestCameraFeatureFactory());
     mockDartMessenger = mock(DartMessenger.class);
     mockCaptureSession = mock(CameraCaptureSession.class);
     mockPreviewRequestBuilder = mock(CaptureRequest.Builder.class);
@@ -134,6 +150,18 @@ public class CameraTest {
         .when(() -> Camera.HandlerThreadFactory.create(any()))
         .thenReturn(mockHandlerThread);
 
+    final Range<Integer>[] mockRanges =
+        (Range<Integer>[]) new Range<?>[] {new Range<Integer>(10, 20)};
+
+    when(mockCameraProperties.getControlAutoExposureAvailableTargetFpsRanges())
+        .thenReturn(mockRanges);
+
+    final FpsRangeFeature fpsRangeFeature = new FpsRangeFeature(mockCameraProperties);
+
+    doReturn(fpsRangeFeature)
+        .when(mockCameraFeatureFactory)
+        .createFpsRangeFeature(mockCameraProperties);
+
     camera =
         new Camera(
             mockActivity,
@@ -141,21 +169,22 @@ public class CameraTest {
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            resolutionPreset,
-            enableAudio,
-            Integer.valueOf(15),
-            Integer.valueOf(200000),
-            Integer.valueOf(32000));
+            new Camera.Parameters(resolutionPreset, enableAudio));
+
+    final CamcorderProfile mockProfileLegacy = mock(CamcorderProfile.class);
+    mockProfileLegacy.videoFrameRate = 15;
+    when(camera.getRecordingProfileLegacy()).thenReturn(mockProfileLegacy);
 
     TestUtils.setPrivateField(camera, "captureSession", mockCaptureSession);
     TestUtils.setPrivateField(camera, "previewRequestBuilder", mockPreviewRequestBuilder);
   }
 
   @After
-  public void after() {
+  public void after() throws IOException {
     SdkCapabilityChecker.SDK_VERSION = 0;
     mockHandlerThreadFactory.close();
     mockHandlerFactory.close();
+    mockRangeConstruction.close();
   }
 
   @Test
@@ -166,48 +195,46 @@ public class CameraTest {
   }
 
   @Test
+  @SuppressWarnings("unchecked")
   public void shouldCreateCameraPluginAndSetAllFeatures() {
     final Activity mockActivity = mock(Activity.class);
     final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
         mock(TextureRegistry.SurfaceTextureEntry.class);
-    final CameraFeatureFactory mockCameraFeatureFactory = mock(CameraFeatureFactory.class);
+    final CameraFeatureFactory spyMockCameraFeatureFactory = spy(mockCameraFeatureFactory);
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
 
     when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
     SensorOrientationFeature mockSensorOrientationFeature = mock(SensorOrientationFeature.class);
-    when(mockCameraFeatureFactory.createSensorOrientationFeature(any(), any(), any()))
+    when(spyMockCameraFeatureFactory.createSensorOrientationFeature(any(), any(), any()))
         .thenReturn(mockSensorOrientationFeature);
 
     Camera camera =
         new Camera(
             mockActivity,
             mockFlutterTexture,
-            mockCameraFeatureFactory,
+            spyMockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            resolutionPreset,
-            enableAudio,
-            Integer.valueOf(15),
-            Integer.valueOf(200000),
-            Integer.valueOf(32000));
+            new Camera.Parameters(resolutionPreset, enableAudio));
 
-    verify(mockCameraFeatureFactory, times(1))
+    verify(spyMockCameraFeatureFactory, times(1))
         .createSensorOrientationFeature(mockCameraProperties, mockActivity, mockDartMessenger);
-    verify(mockCameraFeatureFactory, times(1)).createAutoFocusFeature(mockCameraProperties, false);
-    verify(mockCameraFeatureFactory, times(1)).createExposureLockFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1))
+    verify(spyMockCameraFeatureFactory, times(1))
+        .createAutoFocusFeature(mockCameraProperties, false);
+    verify(spyMockCameraFeatureFactory, times(1)).createExposureLockFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1))
         .createExposurePointFeature(eq(mockCameraProperties), eq(mockSensorOrientationFeature));
-    verify(mockCameraFeatureFactory, times(1)).createExposureOffsetFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1)).createFlashFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1))
+    verify(spyMockCameraFeatureFactory, times(1)).createExposureOffsetFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1)).createFlashFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1))
         .createFocusPointFeature(eq(mockCameraProperties), eq(mockSensorOrientationFeature));
-    verify(mockCameraFeatureFactory, times(1)).createFpsRangeFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1)).createNoiseReductionFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1))
+    verify(spyMockCameraFeatureFactory, times(1)).createFpsRangeFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1)).createNoiseReductionFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1))
         .createResolutionFeature(mockCameraProperties, resolutionPreset, cameraName);
-    verify(mockCameraFeatureFactory, times(1)).createZoomLevelFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1)).createZoomLevelFeature(mockCameraProperties);
     assertNotNull("should create a camera", camera);
   }
 
@@ -1169,6 +1196,158 @@ public class CameraTest {
     camera.close();
 
     verify(mockCaptureSession, never()).close();
+  }
+
+  @Test
+  @SuppressWarnings({"unchecked", "try", "rawtypes"})
+  public void startVideoRecording_shouldApplySettingsToMediaRecorder()
+      throws InterruptedException, IOException, CameraAccessException {
+
+    final Activity mockActivity = mock(Activity.class);
+    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
+        mock(TextureRegistry.SurfaceTextureEntry.class);
+    final String cameraName = "1";
+    final ResolutionPreset resolutionPreset = ResolutionPreset.high;
+    final boolean enableAudio = true;
+
+    //region These parameters should be set in android MediaRecorder.
+    final int fps = 15;
+    final int videoBitrate = 200000;
+    final int audioBitrate = 32000;
+    //endregion
+
+    when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
+
+    final Camera.Parameters parameters =
+        new Camera.Parameters(resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate);
+
+    final Range<Integer>[] mockRanges =
+        (Range<Integer>[]) new Range<?>[] {new Range<Integer>(10, 20)};
+
+    when(mockCameraProperties.getControlAutoExposureAvailableTargetFpsRanges())
+        .thenReturn(mockRanges);
+
+    final Context mockApplicationContext = mock(Context.class);
+    when(mockActivity.getApplicationContext()).thenReturn(mockApplicationContext);
+
+    try (final MockedStatic<File> mockFile = mockStatic(File.class);
+        final MockedConstruction<MediaRecorder> mockMediaRecorder =
+            Mockito.mockConstruction(MediaRecorder.class)) {
+      mockFile
+          .when(() -> File.createTempFile(any(), any(), any()))
+          .thenReturn(new File("/tmp/file.mp4"));
+
+      final FpsRangeFeature fpsRangeFeature = new FpsRangeFeature(mockCameraProperties);
+
+      doReturn(fpsRangeFeature)
+          .when(mockCameraFeatureFactory)
+          .createFpsRangeFeature(mockCameraProperties);
+
+      final Camera camera =
+          spy(
+              new Camera(
+                  mockActivity,
+                  mockFlutterTexture,
+                  mockCameraFeatureFactory,
+                  mockDartMessenger,
+                  mockCameraProperties,
+                  parameters));
+
+      final CamcorderProfile mockProfileLegacy = mock(CamcorderProfile.class);
+      mockProfileLegacy.videoFrameRate = fps;
+      when(camera.getRecordingProfileLegacy()).thenReturn(mockProfileLegacy);
+
+      final SensorOrientationFeature mockSensorOrientationFeature =
+          mockCameraFeatureFactory.createSensorOrientationFeature(mockCameraProperties, null, null);
+      DeviceOrientationManager mockDeviceOrientationManager = mock(DeviceOrientationManager.class);
+
+      when(mockSensorOrientationFeature.getDeviceOrientationManager())
+          .thenReturn(mockDeviceOrientationManager);
+
+      TestUtils.setPrivateField(camera, "captureSession", mockCaptureSession);
+      TestUtils.setPrivateField(camera, "previewRequestBuilder", mockPreviewRequestBuilder);
+
+      final ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+      CaptureRequest.Builder mockRequestBuilder = mock(CaptureRequest.Builder.class);
+      mockRequestBuilders.add(mockRequestBuilder);
+      final SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
+      final Size mockSize = mock(Size.class);
+      final ImageReader mockPictureImageReader = mock(ImageReader.class);
+      TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
+      final CameraDeviceWrapper fakeCamera =
+          new FakeCameraDeviceWrapper(mockRequestBuilders, mockCaptureSession);
+
+      TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+      MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+
+      TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
+          (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
+
+      ResolutionFeature resolutionFeature =
+          (ResolutionFeature)
+              TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+
+      when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
+      when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
+
+      camera.startVideoRecording(mockResult, null);
+
+      //region Check that FPS parameter affects AE range at which the camera captures frames.
+      assertEquals(camera.cameraFeatures.getFpsRange().getValue().getLower(), Integer.valueOf(fps));
+      assertEquals(camera.cameraFeatures.getFpsRange().getValue().getUpper(), Integer.valueOf(fps));
+
+      verify(mockRequestBuilder)
+          .set(
+              eq(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE),
+              argThat(
+                  (Range<Integer> range) -> range.getLower() == fps && range.getUpper() == fps));
+      //endregion
+
+      final MediaRecorder recorder =
+          (MediaRecorder) TestUtils.getPrivateField(camera, "mediaRecorder");
+
+      //region Check that parameters affects movies, written by MediaRecorder.
+      verify(recorder).setVideoFrameRate(fps);
+      verify(recorder).setAudioEncodingBitRate(audioBitrate);
+      verify(recorder).setVideoEncodingBitRate(videoBitrate);
+      //endregion
+    }
+  }
+
+  /// Allow to use `new antroid.util.Range(Integer, Integer)`
+  private static class RangeConstruction implements Closeable {
+    final Map<Range<Integer>, Integer> lowers = new HashMap<>();
+    final Map<Range<Integer>, Integer> uppers = new HashMap<>();
+
+    @SuppressWarnings({"rawtypes"})
+    final MockedConstruction<Range> rangeMockedConstruction;
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public RangeConstruction() {
+      this.rangeMockedConstruction =
+          Mockito.mockConstruction(
+              Range.class,
+              (mock, context) -> {
+                int lower = (int) context.arguments().get(0);
+                int upper = (int) context.arguments().get(1);
+                lowers.put((Range<Integer>) mock, lower);
+                uppers.put((Range<Integer>) mock, upper);
+                when(((Range<Integer>) mock).getUpper())
+                    .thenReturn(lowers.getOrDefault((Range<Integer>) mock, 15));
+                when(((Range<Integer>) mock).getLower())
+                    .thenReturn(uppers.getOrDefault((Range<Integer>) mock, 15));
+                when(mock.toString())
+                    .thenReturn(
+                        String.format(
+                            "mocked [%s, %s]",
+                            lowers.getOrDefault(mock, 15), uppers.getOrDefault(mock, 15)));
+              });
+    }
+
+    @Override
+    public void close() throws IOException {
+      rangeMockedConstruction.close();
+    }
   }
 
   private static class TestCameraFeatureFactory implements CameraFeatureFactory {

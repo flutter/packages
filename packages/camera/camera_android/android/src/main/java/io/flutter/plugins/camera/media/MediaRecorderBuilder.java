@@ -104,11 +104,13 @@ public class MediaRecorderBuilder {
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 
     if (SdkCapabilityChecker.supportsEncoderProfiles() && encoderProfiles != null) {
+
       mediaRecorder.setOutputFormat(encoderProfiles.getRecommendedFileFormat());
 
       EncoderProfiles.VideoProfile videoProfile = encoderProfiles.getVideoProfiles().get(0);
 
       if (enableAudio) {
+
         EncoderProfiles.AudioProfile audioProfile = encoderProfiles.getAudioProfiles().get(0);
 
         mediaRecorder.setAudioEncoder(audioProfile.getCodec());
@@ -145,6 +147,7 @@ public class MediaRecorderBuilder {
 
       mediaRecorder.setVideoSize(videoProfile.getWidth(), videoProfile.getHeight());
     } else if (camcorderProfile != null) {
+
       mediaRecorder.setOutputFormat(camcorderProfile.fileFormat);
       if (enableAudio) {
         mediaRecorder.setAudioEncoder(camcorderProfile.audioCodec);
