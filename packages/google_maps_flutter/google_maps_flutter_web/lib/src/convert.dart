@@ -203,30 +203,25 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // Add an outer wrapper to the contents of the infowindow, we need it to listen
   // to click events...
-  final HtmlElement container = DivElement()
+  final HTMLElement container = createDivElement()
     ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final HtmlElement title = HeadingElement.h3()
+    final HTMLHeadingElement title = (document.createElement('h3') as HTMLHeadingElement)
       ..className = 'infowindow-title'
       ..innerText = markerTitle;
-    container.children.add(title);
+    container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
-    final HtmlElement snippet = DivElement()
+    final HTMLElement snippet = createDivElement()
       ..className = 'infowindow-snippet'
       // `sanitizeHtml` is used to clean the (potential) user input from (potential)
       // XSS attacks through the contents of the marker InfoWindow.
       // See: https://pub.dev/documentation/sanitize_html/latest/sanitize_html/sanitizeHtml.html
       // See: b/159137885, b/159598165
-      // The NodeTreeSanitizer.trusted just tells setInnerHtml to leave the output
-      // of `sanitizeHtml` untouched.
       // ignore: unsafe_html
-      ..setInnerHtml(
-        sanitizeHtml(markerSnippet),
-        treeSanitizer: NodeTreeSanitizer.trusted,
-      );
-    container.children.add(snippet);
+      ..innerHTML = sanitizeHtml(markerSnippet);
+    container.appendChild(snippet);
   }
 
   return gmaps.InfoWindowOptions()
@@ -273,9 +268,12 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
   } else if (iconConfig[0] == 'fromBytes') {
     // Grab the bytes, and put them into a blob
     final List<int> bytes = iconConfig[1]! as List<int>;
+    // TODO(ditman): Improve Blob creation
+    // See https://github.com/dart-lang/web/issues/91
+    //
     // Create a Blob from bytes, but let the browser figure out the encoding
-    final Blob blob = Blob(<dynamic>[bytes]);
-    icon = gmaps.Icon()..url = Url.createObjectUrlFromBlob(blob);
+    final Blob blob = Blob(bytes.map((int byte) => byte.toJS).toList().toJS);
+    icon = gmaps.Icon()..url = URL.createObjectURL(blob);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
     if (size != null) {
