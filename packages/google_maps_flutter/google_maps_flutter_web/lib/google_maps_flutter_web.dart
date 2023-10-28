@@ -6,6 +6,7 @@ library google_maps_flutter_web;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:js_interop';
 import 'dart:js_util';
 import 'dart:ui_web' as ui_web;
 
@@ -24,6 +25,7 @@ import 'package:web/web.dart';
 import 'src/google_maps_inspector_web.dart';
 import 'src/third_party/to_screen_location/to_screen_location.dart';
 import 'src/types.dart';
+import 'src/utils.dart';
 
 part 'src/circle.dart';
 part 'src/circles.dart';
