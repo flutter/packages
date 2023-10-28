@@ -33,7 +33,7 @@ class TileOverlayController {
   }
 
   /// Renders a Tile for gmaps; delegating to the configured [TileProvider].
-  HtmlElement? _getTile(
+  HTMLElement? _getTile(
     gmaps.Point? tileCoord,
     num? zoom,
     Document? ownerDocument,
@@ -42,10 +42,10 @@ class TileOverlayController {
       return null;
     }
 
-    final ImageElement img =
-        ownerDocument!.createElement('img') as ImageElement;
+    final HTMLImageElement img = 
+        ownerDocument!.createElement('img') as HTMLImageElement;
     img.width = img.height = logicalTileSize;
-    img.hidden = true;
+    img.hidden = true.toJS;
     img.setAttribute('decoding', 'async');
 
     _tileOverlay.tileProvider!
@@ -55,12 +55,19 @@ class TileOverlayController {
         return;
       }
       // Using img lets us take advantage of native decoding.
-      final String src = Url.createObjectUrl(Blob(<Object?>[tile.data]));
+      final String src = URL.createObjectURL(
+        // TODO(ditman): Improve Blob creation
+        // See https://github.com/dart-lang/web/issues/91
+        Blob(tile.data!.map((int byte) => byte.toJS).toList().toJS),
+      );
       img.src = src;
-      img.addEventListener('load', (_) {
-        img.hidden = false;
-        Url.revokeObjectUrl(src);
-      });
+      img.addEventListener(
+        'load',
+        allowInterop((_) {
+          img.hidden = false.toJS;
+          URL.revokeObjectURL(src);
+        }).toJS,
+      );
     });
 
     return img;
