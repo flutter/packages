@@ -69,7 +69,7 @@ class MarkerController {
   /// This cannot be called after [remove].
   void update(
     gmaps.MarkerOptions options, {
-    HtmlElement? newInfoWindowContent,
+    HTMLElement? newInfoWindowContent,
   }) {
     assert(_marker != null, 'Cannot `update` Marker after calling `remove`.');
     _marker!.options = options;
