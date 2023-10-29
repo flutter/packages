@@ -5049,8 +5049,9 @@ void main() {
     });
   });
 
-  testWidgets('test the pathParameters in redirect when the Router is recreated', 
-      (WidgetTester tester) async{
+  testWidgets(
+      'test the pathParameters in redirect when the Router is recreated',
+      (WidgetTester tester) async {
     final GoRouter router = GoRouter(
       initialLocation: '/foo',
       routes: <RouteBase>[

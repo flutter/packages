@@ -495,7 +495,8 @@ class RouteConfiguration {
     final RouteBase route = match.route;
     FutureOr<String?> routeRedirectResult;
     if (route is GoRoute && route.redirect != null) {
-      final RouteMatchList effectiveMatchList = match is ImperativeRouteMatch ? match.matches : matchList;
+      final RouteMatchList effectiveMatchList =
+          match is ImperativeRouteMatch ? match.matches : matchList;
       routeRedirectResult = route.redirect!(
         context,
         GoRouterState(
