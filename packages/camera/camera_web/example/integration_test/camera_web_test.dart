@@ -527,11 +527,54 @@ void main() {
                 .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
+          final int cameraId = await CameraPlatform.instance.createCamera(
+            cameraDescription,
+            ResolutionPreset.ultraHigh,
+            enableAudio: true,
+          );
+
+          expect(
+            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
+            isA<Camera>()
+                .having(
+                  (Camera camera) => camera.textureId,
+                  'textureId',
+                  cameraId,
+                )
+                .having(
+                  (Camera camera) => camera.options,
+                  'options',
+                  CameraOptions(
+                    audio: const AudioConstraints(enabled: true),
+                    video: VideoConstraints(
+                      facingMode: FacingModeConstraint(CameraType.user),
+                      width: VideoSizeConstraint(
+                        ideal: ultraHighResolutionSize.width.toInt(),
+                      ),
+                      height: VideoSizeConstraint(
+                        ideal: ultraHighResolutionSize.height.toInt(),
+                      ),
+                      deviceId: cameraMetadata.deviceId,
+                    ),
+                  ),
+                ),
+          );
+        });
+
+        testWidgets('with appropriate createCameraWithSettings options',
+            (WidgetTester tester) async {
+          when(
+            () => cameraService
+                .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
+          ).thenReturn(ultraHighResolutionSize);
+
           final int cameraId =
               await CameraPlatform.instance.createCameraWithSettings(
             cameraDescription,
             const MediaSettings(
               resolutionPreset: ResolutionPreset.ultraHigh,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
               enableAudio: true,
             ),
           );
@@ -572,6 +615,42 @@ void main() {
             () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
           ).thenReturn(maxResolutionSize);
 
+          final int cameraId = await CameraPlatform.instance.createCamera(
+            cameraDescription,
+            null,
+          );
+
+          expect(
+            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
+            isA<Camera>().having(
+              (Camera camera) => camera.options,
+              'options',
+              CameraOptions(
+                audio: const AudioConstraints(),
+                video: VideoConstraints(
+                  facingMode: FacingModeConstraint(CameraType.user),
+                  width: VideoSizeConstraint(
+                    ideal: maxResolutionSize.width.toInt(),
+                  ),
+                  height: VideoSizeConstraint(
+                    ideal: maxResolutionSize.height.toInt(),
+                  ),
+                  deviceId: cameraMetadata.deviceId,
+                ),
+              ),
+            ),
+          );
+        });
+
+        testWidgets(
+            'with a max resolution preset '
+            'and enabled audio set to false '
+            'when no options are specified '
+            'using createCameraWithSettings', (WidgetTester tester) async {
+          when(
+            () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
+          ).thenReturn(maxResolutionSize);
+
           final int cameraId =
               await CameraPlatform.instance.createCameraWithSettings(
             cameraDescription,
@@ -608,6 +687,31 @@ void main() {
           'with missingMetadata error '
           'if there is no metadata '
           'for the given camera description', (WidgetTester tester) async {
+        expect(
+          () => CameraPlatform.instance.createCamera(
+            const CameraDescription(
+              name: 'name',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 0,
+            ),
+            ResolutionPreset.ultraHigh,
+          ),
+          throwsA(
+            isA<CameraException>().having(
+              (CameraException e) => e.code,
+              'code',
+              CameraErrorCode.missingMetadata.toString(),
+            ),
+          ),
+        );
+      });
+
+      testWidgets(
+          'throws CameraException '
+          'with missingMetadata error '
+          'if there is no metadata '
+          'for the given camera description '
+          'using createCameraWithSettings', (WidgetTester tester) async {
         expect(
           () => CameraPlatform.instance.createCameraWithSettings(
             const CameraDescription(

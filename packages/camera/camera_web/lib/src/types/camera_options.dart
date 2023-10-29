@@ -64,14 +64,16 @@ class AudioConstraints {
   final bool enabled;
 
   /// Converts the current instance to a Map.
-  Map<String, Object?> toJson() => <String, Object?>{'enabled': enabled};
+  Object toJson() => enabled;
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AudioConstraints &&
-          runtimeType == other.runtimeType &&
-          enabled == other.enabled;
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    return other is AudioConstraints && other.enabled == enabled;
+  }
 
   @override
   int get hashCode => enabled.hashCode;
@@ -123,14 +125,17 @@ class VideoConstraints {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is VideoConstraints &&
-          runtimeType == other.runtimeType &&
-          facingMode == other.facingMode &&
-          width == other.width &&
-          height == other.height &&
-          deviceId == other.deviceId;
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    return other is VideoConstraints &&
+        other.facingMode == facingMode &&
+        other.width == width &&
+        other.height == height &&
+        other.deviceId == deviceId;
+  }
 
   @override
   int get hashCode => Object.hash(facingMode, width, height, deviceId);

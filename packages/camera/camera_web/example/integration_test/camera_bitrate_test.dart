@@ -24,7 +24,7 @@ void main() {
   /// Draw some seconds of random video frames on canvas in realtime.
   Future<void> simulateCamera(CanvasElement canvasElement) async {
     const int fps = 15;
-    const int seconds = 5;
+    const int seconds = 3;
     const int frameDuration = 1000 ~/ fps;
     final Random random = Random(0);
 
@@ -48,7 +48,8 @@ void main() {
 
   testWidgets('Camera allows to control video bitrate',
       (WidgetTester tester) async {
-    const String supportedVideoType = 'video/webm';
+    //const String supportedVideoType = 'video/webm';
+    const String supportedVideoType = 'video/webm;codecs="vp9,opus"';
     bool isVideoTypeSupported(String type) => type == supportedVideoType;
 
     Future<int> recordVideo(int videoBitrate) async {
@@ -101,7 +102,7 @@ void main() {
           cameraService: cameraService,
           options: options,
           recorderOptions: (
-            audioBitrate: 32000,
+            audioBitrate: null,
             videoBitrate: videoBitrate,
           ))
         ..isVideoTypeSupported = isVideoTypeSupported;

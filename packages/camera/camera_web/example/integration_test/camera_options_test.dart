@@ -61,9 +61,7 @@ void main() {
     testWidgets('serializes correctly', (WidgetTester tester) async {
       expect(
         const AudioConstraints(enabled: true).toJson(),
-        equals(<String, Object>{
-          'enabled': true,
-        }),
+        equals(true),
       );
     });
 
