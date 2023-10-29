@@ -273,7 +273,7 @@ class AdaptiveScaffold extends StatefulWidget {
     IconThemeData? unselectedIconTheme,
     TextStyle? selectedLabelTextStyle,
     TextStyle? unSelectedLabelTextStyle,
-    NavigationRailLabelType labelType = NavigationRailLabelType.none,
+    NavigationRailLabelType? labelType = NavigationRailLabelType.none,
   }) {
     if (extended && width == 72) {
       width = 192;
@@ -542,6 +542,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 unselectedIconTheme: navRailTheme.unselectedIconTheme,
                 selectedLabelTextStyle: navRailTheme.selectedLabelTextStyle,
                 unSelectedLabelTextStyle: navRailTheme.unselectedLabelTextStyle,
+                labelType: navRailTheme.labelType,
               ),
             ),
             widget.largeBreakpoint: SlotLayout.from(
