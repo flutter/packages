@@ -63,7 +63,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.description = GetNullableObjectAtIndex(list, 1);
   pigeonResult.code = [GetNullableObjectAtIndex(list, 2) integerValue];
   pigeonResult.data = GetNullableObjectAtIndex(list, 3);
-  NSAssert(pigeonResult.data != nil, @"");
   return pigeonResult;
 }
 + (nullable PGNMessageData *)nullableFromList:(NSArray *)list {
@@ -71,10 +70,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 - (NSArray *)toList {
   return @[
-    (self.name ?: [NSNull null]),
-    (self.description ?: [NSNull null]),
+    self.name ?: [NSNull null],
+    self.description ?: [NSNull null],
     @(self.code),
-    (self.data ?: [NSNull null]),
+    self.data ?: [NSNull null],
   ];
 }
 @end
@@ -160,8 +159,8 @@ void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSNumber *arg_a = GetNullableObjectAtIndex(args, 0);
-        NSNumber *arg_b = GetNullableObjectAtIndex(args, 1);
+        NSInteger arg_a = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSInteger arg_b = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
         NSNumber *output = [api addNumber:arg_a toNumber:arg_b error:&error];
         callback(wrapResult(output, error));

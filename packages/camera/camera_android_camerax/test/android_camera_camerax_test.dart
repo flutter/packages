@@ -359,7 +359,7 @@ void main() {
       // resolution.
       expectedResolutionStrategy ??= ResolutionStrategy.detached(
           boundSize: expectedBoundSize,
-          fallbackRule: ResolutionStrategy.fallbackRuleClosestLower);
+          fallbackRule: ResolutionStrategy.fallbackRuleClosestLowerThenHigher);
 
       expect(camera.preview!.resolutionSelector!.resolutionStrategy!.boundSize,
           equals(expectedResolutionStrategy.boundSize));
@@ -448,7 +448,7 @@ void main() {
       }
 
       const VideoResolutionFallbackRule expectedFallbackRule =
-          VideoResolutionFallbackRule.lowerQualityThan;
+          VideoResolutionFallbackRule.lowerQualityOrHigherThan;
       final FallbackStrategy expectedFallbackStrategy =
           FallbackStrategy.detached(
               quality: expectedVideoQuality,

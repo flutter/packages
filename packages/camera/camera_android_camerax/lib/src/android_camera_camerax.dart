@@ -871,7 +871,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// closest lower resolution available.
   ResolutionSelector? _getResolutionSelectorFromPreset(
       ResolutionPreset? preset) {
-    const int fallbackRule = ResolutionStrategy.fallbackRuleClosestLower;
+    const int fallbackRule =
+        ResolutionStrategy.fallbackRuleClosestLowerThenHigher;
 
     Size? boundSize;
     ResolutionStrategy? resolutionStrategy;
@@ -951,7 +952,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // We will choose the next highest video quality if the one desired
     // is unavailable.
     const VideoResolutionFallbackRule fallbackRule =
-        VideoResolutionFallbackRule.lowerQualityThan;
+        VideoResolutionFallbackRule.lowerQualityOrHigherThan;
     final FallbackStrategy fallbackStrategy =
         _shouldCreateDetachedObjectForTesting
             ? FallbackStrategy.detached(

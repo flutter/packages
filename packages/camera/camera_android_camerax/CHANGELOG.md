@@ -2,6 +2,11 @@
 
 * Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
 
+## 0.5.0+21
+
+* Changes fallback resolution strategies for camera use cases to look for a higher resolution if neither the desired
+  resolution nor any lower resolutions are available.
+
 ## 0.5.0+20
 
 * Implements `setZoomLevel`.
