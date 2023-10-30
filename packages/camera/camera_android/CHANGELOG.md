@@ -1,3 +1,7 @@
+## 0.10.8+14
+
+* Check captureSession before call to stopRepeating in pausePreview
+
 ## 0.10.8+13
 
 * Updates annotations lib to 1.7.0.
