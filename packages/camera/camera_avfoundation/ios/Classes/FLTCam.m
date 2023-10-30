@@ -131,7 +131,7 @@ NSString *const errorMethod = @"error";
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _resolutionPreset = (nil == resolutionPreset || [resolutionPreset isEqual:[NSNull null]])
-                          ? FLTResolutionPresetLow
+                          ? FLTResolutionPresetHigh
                           : FLTGetFLTResolutionPresetForString(resolutionPreset);
   if (_resolutionPreset == FLTResolutionPresetInvalid) {
     *error = [NSError
