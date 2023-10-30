@@ -180,7 +180,8 @@ public class UrlLauncherTest {
                 .setEnableJavaScript(false)
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
-                .build(), new Messages.BrowserOptions.Builder().setShowTitle(true).build());
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(true).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture());
@@ -204,16 +205,13 @@ public class UrlLauncherTest {
                 .setEnableDomStorage(false)
                 .setHeaders(new HashMap<>())
                 .build(),
-            new Messages.BrowserOptions.Builder().setShowTitle(true).build());
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
 
     final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
     verify(activity).startActivity(intentCaptor.capture(), isNull());
     assertTrue(result);
     assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
     assertNull(intentCaptor.getValue().getComponent());
-    assertEquals(
-        intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE),
-        CustomTabsIntent.SHOW_PAGE_TITLE);
   }
 
   @Test
@@ -245,6 +243,68 @@ public class UrlLauncherTest {
     final Bundle passedHeaders =
         intentCaptor.getValue().getExtras().getBundle(Browser.EXTRA_HEADERS);
     assertEquals(headers.get(headerKey), passedHeaders.getString(headerKey));
+  }
+
+  @Test
+  public void openWebView_opensUrlInCustomTabsWithShowTitle() {
+    Activity activity = mock(Activity.class);
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+    String url = "https://flutter.dev";
+    HashMap<String, String> headers = new HashMap<>();
+    String headerKey = "Content-Type";
+    headers.put(headerKey, "text/plain");
+
+    boolean result =
+        api.openUrlInApp(
+            url,
+            true,
+            new Messages.WebViewOptions.Builder()
+                .setEnableJavaScript(false)
+                .setEnableDomStorage(false)
+                .setHeaders(headers)
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(true).build());
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    assertTrue(result);
+    assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
+    assertNull(intentCaptor.getValue().getComponent());
+    assertEquals(
+        intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE),
+        CustomTabsIntent.SHOW_PAGE_TITLE);
+  }
+
+  @Test
+  public void openWebView_opensUrlInCustomTabsWithoutShowTitle() {
+    Activity activity = mock(Activity.class);
+    UrlLauncher api = new UrlLauncher(ApplicationProvider.getApplicationContext());
+    api.setActivity(activity);
+    String url = "https://flutter.dev";
+    HashMap<String, String> headers = new HashMap<>();
+    String headerKey = "Content-Type";
+    headers.put(headerKey, "text/plain");
+
+    boolean result =
+        api.openUrlInApp(
+            url,
+            true,
+            new Messages.WebViewOptions.Builder()
+                .setEnableJavaScript(false)
+                .setEnableDomStorage(false)
+                .setHeaders(headers)
+                .build(),
+            new Messages.BrowserOptions.Builder().setShowTitle(false).build());
+
+    final ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+    verify(activity).startActivity(intentCaptor.capture(), isNull());
+    assertTrue(result);
+    assertEquals(Intent.ACTION_VIEW, intentCaptor.getValue().getAction());
+    assertNull(intentCaptor.getValue().getComponent());
+    assertEquals(
+        intentCaptor.getValue().getExtras().getInt(CustomTabsIntent.EXTRA_TITLE_VISIBILITY_STATE),
+        CustomTabsIntent.NO_TITLE);
   }
 
   @Test

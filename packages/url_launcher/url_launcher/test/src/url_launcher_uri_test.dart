@@ -187,12 +187,12 @@ void main() {
           isTrue);
     });
 
-    test('in-app webview with show title', () async {
+    test('in-app browser view with show title', () async {
       final Uri url = Uri.parse('https://flutter.dev');
       mock
         ..setLaunchExpectations(
           url: url.toString(),
-          launchMode: PreferredLaunchMode.inAppWebView,
+          launchMode: PreferredLaunchMode.inAppBrowserView,
           enableJavaScript: true,
           enableDomStorage: true,
           universalLinksOnly: false,
@@ -204,7 +204,7 @@ void main() {
       expect(
           await launchUrl(
             url,
-            mode: LaunchMode.inAppWebView,
+            mode: LaunchMode.inAppBrowserView,
             browserConfiguration: const BrowserConfiguration(showTitle: true),
           ),
           isTrue);
