@@ -1,6 +1,5 @@
 ## 0.8.8+3
 
-* Fixes a
 * Updates to a newer version of Pigeon.
 
 ## 0.8.8+2
