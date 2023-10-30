@@ -86,9 +86,8 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
   self.lastCallState = nil;
   context.localizedFallbackTitle = strings.localizedFallbackTitle;
 
-  LAPolicy policy = options.biometricOnly.boolValue
-                        ? LAPolicyDeviceOwnerAuthenticationWithBiometrics
-                        : LAPolicyDeviceOwnerAuthentication;
+  LAPolicy policy = options.biometricOnly ? LAPolicyDeviceOwnerAuthenticationWithBiometrics
+                                          : LAPolicyDeviceOwnerAuthentication;
   if ([context canEvaluatePolicy:policy error:&authError]) {
     [context evaluatePolicy:policy
             localizedReason:strings.reason
@@ -208,7 +207,7 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
         [self handleError:error withOptions:options strings:strings completion:completion];
         return;
       case LAErrorSystemCancel:
-        if ([options.sticky boolValue]) {
+        if (options.sticky) {
           _lastCallState = [[FLAStickyAuthState alloc] initWithOptions:options
                                                                strings:strings
                                                          resultHandler:completion];
@@ -237,7 +236,7 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
   switch (authError.code) {
     case LAErrorPasscodeNotSet:
     case LAErrorBiometryNotEnrolled:
-      if (options.useErrorDialogs.boolValue) {
+      if (options.useErrorDialogs) {
         [self showAlertWithMessage:strings.goToSettingsDescription
                  dismissButtonTitle:strings.cancelButton
             openSettingsButtonTitle:strings.goToSettingsButton
