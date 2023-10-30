@@ -1,3 +1,7 @@
+## 3.9.3
+
+* Updates to  Pigeon 13.
+
 ## 3.9.2
 
 * Fixes error caused by calling `WKWebViewConfiguration.limitsNavigationsToAppBoundDomains` on
