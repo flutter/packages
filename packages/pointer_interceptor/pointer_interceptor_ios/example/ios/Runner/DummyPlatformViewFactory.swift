@@ -32,8 +32,6 @@ public class CustomView: UIView {
     _ point: CGPoint,
     with event: UIEvent?
   ) -> UIView? {
-    print("clicked")
-
     viewWithTag(1)?.removeFromSuperview();
     return super.hitTest(point, with: event)
   }

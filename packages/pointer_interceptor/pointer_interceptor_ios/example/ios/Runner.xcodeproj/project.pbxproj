@@ -17,7 +17,6 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		CFB68197D52B546F94542F41 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6FB2CD38E750E672AB226D /* Pods_Runner.framework */; };
 		F243D6112AE053F700F4A2FC /* RunnerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F243D6102AE053F700F4A2FC /* RunnerUITests.swift */; };
-		F243D6132AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F243D6122AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift */; };
 		F2FC28712AE9D8C7000AB127 /* DummyPlatformViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FC28702AE9D8C7000AB127 /* DummyPlatformViewFactory.swift */; };
 /* End PBXBuildFile section */
 
@@ -77,7 +76,6 @@
 		9978D0D01D3549F3784C2F44 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		F243D60E2AE053F700F4A2FC /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F243D6102AE053F700F4A2FC /* RunnerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerUITests.swift; sourceTree = "<group>"; };
-		F243D6122AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		F2FC28702AE9D8C7000AB127 /* DummyPlatformViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyPlatformViewFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -192,7 +190,6 @@
 			isa = PBXGroup;
 			children = (
 				F243D6102AE053F700F4A2FC /* RunnerUITests.swift */,
-				F243D6122AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift */,
 			);
 			path = RunnerUITests;
 			sourceTree = "<group>";
@@ -450,7 +447,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F243D6132AE053F700F4A2FC /* RunnerUITestsLaunchTests.swift in Sources */,
 				F243D6112AE053F700F4A2FC /* RunnerUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
