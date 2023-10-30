@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'pointer_interceptor_platform.dart';
 
 /// An implementation of [PointerInterceptorPlatform] that uses method channels.
-class MethodChannelPointerInterceptor extends PointerInterceptorPlatform {
+class PlaceholderPointerInterceptor extends PointerInterceptorPlatform {
   @override
   Widget buildWidget(
       {required child, bool intercepting = true, bool debug = false, key}) {

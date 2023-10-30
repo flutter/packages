@@ -4,12 +4,13 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
-import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
+import 'package:pointer_interceptor_platform_interface/src/pointer_interceptor_platform.dart';
 
 /// The iOS implementation of the [PointerInterceptorPlatform]
-class PointerInterceptorPluginIOS extends PointerInterceptorPlatform {
+class PointerInterceptorIOSPlugin extends PointerInterceptorPlatform {
   static void registerWith() {
-    PointerInterceptorPlatform.instance = PointerInterceptorPluginIOS();
+    // platformViewRegistry.registerViewFactory('plugins.flutter.dev/pointer_interceptor_ios', viewFactory)
+    PointerInterceptorPlatform.instance = PointerInterceptorIOSPlugin();
   }
 
   @override

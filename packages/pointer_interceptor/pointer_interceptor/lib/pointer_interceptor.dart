@@ -6,7 +6,6 @@ library pointer_interceptor;
 
 import 'package:flutter/widgets.dart';
 import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
+// export 'src/mobile.dart' if (dart.library.html) 'src/web.dart';
 
-// export 'src/web.dart';
-
-part 'src/pointer_interceptor_widget.dart';
+// part 'src/pointer_interceptor_widget.dart';

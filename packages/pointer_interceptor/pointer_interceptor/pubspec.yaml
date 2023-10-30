@@ -13,19 +13,15 @@ flutter:
     implements: pointer_interceptor_platform_interface
     platforms:
       web:
-        pluginClass: PointerInterceptorPlugin
-        fileName: src/web.dart
+        default_package: ./src/web.dart
       ios:
-        pluginClass: PointerInterceptorPlugin
-        fileName: src/mobile.dart
+        default_package: ./src/mobile.dart
 
 dependencies:
   flutter:
     sdk: flutter
   pointer_interceptor_platform_interface:
     path: ../pointer_interceptor_platform_interface
-  pointer_interceptor_ios:
-    path: ../pointer_interceptor_ios
   flutter_web_plugins:
     sdk: flutter
 
@@ -35,6 +31,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+#  pointer_interceptor_ios:
+#    path: ../pointer_interceptor_ios
 
 topics:
   -

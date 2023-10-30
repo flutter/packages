@@ -50,7 +50,7 @@ class PointerInterceptorIOSExampleState
         alignment: AlignmentDirectional.center,
         children: [
           const DummyPlatformView(),
-          PointerInterceptorPluginIOS().buildWidget(
+          PointerInterceptorIOSPlugin().buildWidget(
               debug: true,
               child: TextButton(
                   style: TextButton.styleFrom(foregroundColor: Colors.red),

@@ -35,7 +35,7 @@ Widget boilerplate() {
     body: const DummyPlatformView(),
     floatingActionButton: FloatingActionButton(
         child: Container(
-          child: PointerInterceptorPluginIOS().buildWidget(child: Container()),
+          child: PointerInterceptorIOSPlugin().buildWidget(child: Container()),
         ),
         onPressed: () {}),
   ));

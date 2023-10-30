@@ -13,21 +13,25 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static PointerInterceptorPlatform _instance =
-  MethodChannelPointerInterceptor();
-
   /// The default instance of [PointerInterceptorPlatform] to use.
   ///
-  /// Defaults to [MethodChannelPointerInterceptor].
-  static PointerInterceptorPlatform get instance => _instance;
+  /// Defaults to [PlaceholderPointerInterceptor].
+  static PointerInterceptorPlatform _instance = PlaceholderPointerInterceptor();
 
   /// Platform-specific implementations should set this with their own
   /// platform-specific class that extends [PointerInterceptorPlatform] when
   /// they register themselves.
-  static set instance(PointerInterceptorPlatform instance) {
-    PlatformInterface.verifyToken(instance, _token);
+  static set instance(PointerInterceptorPlatform? instance) {
+    if (instance == null) {
+      throw AssertionError(
+          'Platform interfaces can only be set to a non-null instance');
+    }
+
+    PlatformInterface.verify(instance, _token);
     _instance = instance;
   }
+
+  static PointerInterceptorPlatform get instance => _instance;
 
   Widget buildWidget({
     required Widget child,
