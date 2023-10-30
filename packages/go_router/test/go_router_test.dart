@@ -2445,8 +2445,8 @@ void main() {
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
       expect(router.routeInformationProvider.value.location, '/dummy');
-      TestWidgetsFlutterBinding
-          .instance.platformDispatcher.defaultRouteNameTestValue = '/';
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
     });
 
     test('throws assertion if initialExtra is set w/o initialLocation', () {
@@ -2463,6 +2463,45 @@ void main() {
           ),
         ),
       );
+    });
+  });
+
+  group('_effectiveInitialLocation()', () {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+      ),
+    ];
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path', (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
+    });
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path, but trailing slash',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com/';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
     });
   });
 
