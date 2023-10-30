@@ -73,6 +73,9 @@ void main() {
           arguments: <String, Object?>{
             'cameraName': 'Test',
             'resolutionPreset': 'high',
+            'fps': null,
+            'videoBitrate': null,
+            'audioBitrate': null,
             'enableAudio': false
           },
         ),
