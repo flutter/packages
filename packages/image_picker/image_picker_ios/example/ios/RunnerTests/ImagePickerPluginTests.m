@@ -56,7 +56,7 @@
                                                             camera:FLTSourceCameraRear]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
                    }];
 
@@ -89,7 +89,7 @@
                                                             camera:FLTSourceCameraFront]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
                    }];
 
@@ -174,7 +174,7 @@
 
   [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                             quality:@(50)
-                       fullMetadata:@YES
+                       fullMetadata:YES
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
@@ -197,8 +197,8 @@
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:@(50)
-                            requestFullMetadata:@YES
-                                  allowMultiple:@YES];
+                            requestFullMetadata:YES
+                                  allowMultiple:YES];
 
   [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
                                   completion:^(NSArray<NSString *> *_Nullable result,
@@ -219,7 +219,7 @@
                                                             camera:FLTSourceCameraFront]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@NO
+                 fullMetadata:NO
                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
                    }];
 
@@ -235,7 +235,7 @@
 
   [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
                             quality:nil
-                       fullMetadata:@NO
+                       fullMetadata:NO
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
@@ -253,8 +253,8 @@
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:@(50)
-                            requestFullMetadata:@YES
-                                  allowMultiple:@YES];
+                            requestFullMetadata:YES
+                                  allowMultiple:YES];
 
   [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
 
@@ -279,7 +279,7 @@
                                                             camera:FLTSourceCameraRear]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
                    }];
 
@@ -502,7 +502,7 @@
                                                             camera:FLTSourceCameraFront]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *result, FlutterError *error){
                    }];
   OCMVerifyAll(mockPhotoLibrary);
@@ -521,7 +521,7 @@
                                                             camera:FLTSourceCameraFront]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *result, FlutterError *error) {
                      XCTAssertNil(result);
                      XCTAssertEqualObjects(error.code, @"photo_access_denied");
