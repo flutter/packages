@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +20,7 @@ void main() {
         route: route,
         remainingLocation: '/users/123',
         matchedLocation: '',
+        matchedPath: '',
         pathParameters: pathParameters,
       );
       if (match == null) {
@@ -39,6 +42,7 @@ void main() {
         route: route,
         remainingLocation: 'users/123',
         matchedLocation: '/home',
+        matchedPath: '/home',
         pathParameters: pathParameters,
       );
       if (match == null) {
@@ -65,6 +69,7 @@ void main() {
         route: route,
         remainingLocation: 'users/123',
         matchedLocation: '/home',
+        matchedPath: '/home',
         pathParameters: pathParameters,
       );
       if (match == null) {
@@ -88,6 +93,7 @@ void main() {
         route: route,
         remainingLocation: 'users/123',
         matchedLocation: '/home',
+        matchedPath: '/home',
         pathParameters: pathParameters,
       );
 
@@ -95,6 +101,7 @@ void main() {
         route: route,
         remainingLocation: 'users/1234',
         matchedLocation: '/home',
+        matchedPath: '/home',
         pathParameters: pathParameters,
       );
 
@@ -111,6 +118,7 @@ void main() {
         route: route,
         remainingLocation: 'users/123',
         matchedLocation: '/home',
+        matchedPath: '/home',
         pathParameters: pathParameters,
       );
 
@@ -118,10 +126,71 @@ void main() {
         route: route,
         remainingLocation: 'users/1234',
         matchedLocation: '/home',
+        matchedPath: '/home',
         pathParameters: pathParameters,
       );
 
       expect(match1!.pageKey, match2!.pageKey);
+    });
+  });
+
+  group('ImperativeRouteMatch', () {
+    final RouteMatchList matchList1 = RouteMatchList(
+        matches: <RouteMatch>[
+          RouteMatch(
+            route: GoRoute(path: '/', builder: (_, __) => const Text('hi')),
+            matchedLocation: '/',
+            pageKey: const ValueKey<String>('dummy'),
+          ),
+        ],
+        uri: Uri.parse('/'),
+        pathParameters: const <String, String>{});
+
+    final RouteMatchList matchList2 = RouteMatchList(
+        matches: <RouteMatch>[
+          RouteMatch(
+            route: GoRoute(path: '/a', builder: (_, __) => const Text('a')),
+            matchedLocation: '/a',
+            pageKey: const ValueKey<String>('dummy'),
+          ),
+        ],
+        uri: Uri.parse('/a'),
+        pathParameters: const <String, String>{});
+
+    const ValueKey<String> key1 = ValueKey<String>('key1');
+    const ValueKey<String> key2 = ValueKey<String>('key2');
+
+    final Completer<void> completer1 = Completer<void>();
+    final Completer<void> completer2 = Completer<void>();
+
+    test('can equal and has', () async {
+      ImperativeRouteMatch match1 = ImperativeRouteMatch(
+          pageKey: key1, matches: matchList1, completer: completer1);
+      ImperativeRouteMatch match2 = ImperativeRouteMatch(
+          pageKey: key1, matches: matchList1, completer: completer1);
+      expect(match1 == match2, isTrue);
+      expect(match1.hashCode == match2.hashCode, isTrue);
+
+      match1 = ImperativeRouteMatch(
+          pageKey: key1, matches: matchList1, completer: completer1);
+      match2 = ImperativeRouteMatch(
+          pageKey: key2, matches: matchList1, completer: completer1);
+      expect(match1 == match2, isFalse);
+      expect(match1.hashCode == match2.hashCode, isFalse);
+
+      match1 = ImperativeRouteMatch(
+          pageKey: key1, matches: matchList1, completer: completer1);
+      match2 = ImperativeRouteMatch(
+          pageKey: key1, matches: matchList2, completer: completer1);
+      expect(match1 == match2, isFalse);
+      expect(match1.hashCode == match2.hashCode, isFalse);
+
+      match1 = ImperativeRouteMatch(
+          pageKey: key1, matches: matchList1, completer: completer1);
+      match2 = ImperativeRouteMatch(
+          pageKey: key1, matches: matchList1, completer: completer2);
+      expect(match1 == match2, isFalse);
+      expect(match1.hashCode == match2.hashCode, isFalse);
     });
   });
 }
