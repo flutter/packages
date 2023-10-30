@@ -97,17 +97,17 @@ class MediaSelectionOptions {
 class SourceSpecification {
   SourceSpecification({
     required this.type,
-    this.camera,
+    required this.camera,
   });
 
   SourceType type;
 
-  SourceCamera? camera;
+  SourceCamera camera;
 
   Object encode() {
     return <Object?>[
       type.index,
-      camera?.index,
+      camera.index,
     ];
   }
 
@@ -115,7 +115,7 @@ class SourceSpecification {
     result as List<Object?>;
     return SourceSpecification(
       type: SourceType.values[result[0]! as int],
-      camera: result[1] != null ? SourceCamera.values[result[1]! as int] : null,
+      camera: SourceCamera.values[result[1]! as int],
     );
   }
 }

@@ -61,9 +61,9 @@ typedef NS_ENUM(NSUInteger, FLTSourceType) {
 @interface FLTSourceSpecification : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithType:(FLTSourceType)type camera:(nullable FLTSourceCameraBox *)camera;
++ (instancetype)makeWithType:(FLTSourceType)type camera:(FLTSourceCamera)camera;
 @property(nonatomic, assign) FLTSourceType type;
-@property(nonatomic, strong, nullable) FLTSourceCameraBox *camera;
+@property(nonatomic, assign) FLTSourceCamera camera;
 @end
 
 /// The codec used by FLTImagePickerApi.

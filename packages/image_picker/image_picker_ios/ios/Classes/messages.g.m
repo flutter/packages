@@ -125,7 +125,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FLTSourceSpecification
-+ (instancetype)makeWithType:(FLTSourceType)type camera:(nullable FLTSourceCameraBox *)camera {
++ (instancetype)makeWithType:(FLTSourceType)type camera:(FLTSourceCamera)camera {
   FLTSourceSpecification *pigeonResult = [[FLTSourceSpecification alloc] init];
   pigeonResult.type = type;
   pigeonResult.camera = camera;
@@ -134,12 +134,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 + (FLTSourceSpecification *)fromList:(NSArray *)list {
   FLTSourceSpecification *pigeonResult = [[FLTSourceSpecification alloc] init];
   pigeonResult.type = [GetNullableObjectAtIndex(list, 0) integerValue];
-  NSNumber *cameraAsNumber = GetNullableObjectAtIndex(list, 1);
-  FLTSourceCameraBox *camera =
-      cameraAsNumber == nil
-          ? nil
-          : [[FLTSourceCameraBox alloc] initWithValue:[cameraAsNumber integerValue]];
-  pigeonResult.camera = camera;
+  pigeonResult.camera = [GetNullableObjectAtIndex(list, 1) integerValue];
   return pigeonResult;
 }
 + (nullable FLTSourceSpecification *)nullableFromList:(NSArray *)list {
@@ -148,7 +143,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList {
   return @[
     @(self.type),
-    (self.camera == nil ? [NSNull null] : [NSNumber numberWithInteger:self.camera.value]),
+    @(self.camera),
   ];
 }
 @end
