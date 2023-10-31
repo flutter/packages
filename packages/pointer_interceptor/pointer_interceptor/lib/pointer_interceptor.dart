@@ -4,11 +4,5 @@
 
 library pointer_interceptor;
 
-import 'dart:html' as html;
-import 'dart:ui_web' as ui_web;
-
-import 'package:flutter/widgets.dart';
 export 'package:pointer_interceptor/src/pointer_interceptor.dart';
-// export 'package:pointer_interceptor/src/mobile.dart';
-// export 'package:pointer_interceptor/src/web.dart';
 export 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
