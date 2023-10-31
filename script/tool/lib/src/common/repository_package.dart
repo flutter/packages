@@ -150,13 +150,8 @@ class RepositoryPackage {
       // An example package is enclosed in another package.
       return false;
     }
-    for (final RepositoryPackage example in enclosingPackage.getExamples()) {
-      if (example.path == path) {
-        // This package is an example of its enclosing package.
-        return true;
-      }
-    }
-    return false;
+    // Check whether this is one of the enclosing package's examples.
+    return enclosingPackage.getExamples().any((RepositoryPackage p) => p.path == path);
   }
 
   /// Returns the Flutter example packages contained in the package, if any.

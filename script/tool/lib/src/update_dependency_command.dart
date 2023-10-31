@@ -52,7 +52,7 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
           _AndroidDepdencyType.compileSdk:
               'Updates compileSdk version used to compile plugins.',
           _AndroidDepdencyType.compileSdkForExamples:
-              'Updates compileSdk version used to compile plugin examples',
+              'Updates compileSdk version used to compile plugin examples.',
         });
     argParser.addOption(
       _versionFlag,
@@ -255,7 +255,7 @@ ${response.httpResponse.body}
     } else if (_targetAndroidDependency == _AndroidDepdencyType.gradle ||
         _targetAndroidDependency ==
             _AndroidDepdencyType.compileSdkForExamples) {
-      return _runForAndroidDependencyOnExample(package);
+      return _runForAndroidDependencyOnExamples(package);
     }
 
     return PackageResult.fail(<String>[
@@ -263,7 +263,7 @@ ${response.httpResponse.body}
     ]);
   }
 
-  Future<PackageResult> _runForAndroidDependencyOnExample(
+  Future<PackageResult> _runForAndroidDependencyOnExamples(
       RepositoryPackage package) async {
     final Iterable<RepositoryPackage> packageExamples = package.getExamples();
     bool updateRanForExamples = false;
@@ -275,9 +275,9 @@ ${response.httpResponse.body}
       updateRanForExamples = true;
       Directory androidDirectory =
           example.platformDirectory(FlutterPlatform.android);
-      File? fileToUpdate;
-      RegExp? dependencyVersionPattern;
-      String? newDependencyVersionEntry;
+      final File fileToUpdate;
+      final RegExp dependencyVersionPattern;
+      final String newDependencyVersionEntry;
 
       if (_targetAndroidDependency == _AndroidDepdencyType.gradle) {
         if (androidDirectory
@@ -303,11 +303,15 @@ ${response.httpResponse.body}
         dependencyVersionPattern = RegExp(
             r'(compileSdk|compileSdkVersion) (\d{1,2}|flutter.compileSdkVersion)');
         newDependencyVersionEntry = 'compileSdk $_targetVersion';
+      } else {
+        printError(
+            'Target Android dependency $_targetAndroidDependency is unrecognized.');
+        throw ToolExit(_exitIncorrectTargetDependency);
       }
 
-      final String oldFileToUpdateContents = fileToUpdate!.readAsStringSync();
+      final String oldFileToUpdateContents = fileToUpdate.readAsStringSync();
 
-      if (!dependencyVersionPattern!.hasMatch(oldFileToUpdateContents)) {
+      if (!dependencyVersionPattern.hasMatch(oldFileToUpdateContents)) {
         return PackageResult.fail(<String>[
           'Unable to find a $_targetAndroidDependency version entry to update for ${example.displayName}.'
         ]);
@@ -316,7 +320,7 @@ ${response.httpResponse.body}
       print(
           '${indentation}Updating ${getRelativePosixPath(example.directory, from: package.directory)} to "$_targetVersion"');
       final String newGradleWrapperPropertiesContents = oldFileToUpdateContents
-          .replaceFirst(dependencyVersionPattern, newDependencyVersionEntry!);
+          .replaceFirst(dependencyVersionPattern, newDependencyVersionEntry);
 
       fileToUpdate.writeAsStringSync(newGradleWrapperPropertiesContents);
     }
