@@ -35,9 +35,9 @@ void _registerFactory({bool debug = false}) {
 /// The web implementation of the `PointerInterceptor` widget.
 ///
 /// A `Widget` that prevents clicks from being swallowed by [HtmlElementView]s.
-class PointerInterceptorWeb extends PointerInterceptorPlatform {
+class PointerInterceptor extends PointerInterceptorPlatform {
   static void registerWith() {
-    PointerInterceptorPlatform.instance = PointerInterceptorWeb();
+    PointerInterceptorPlatform.instance = PointerInterceptor();
   }
 
   @override
