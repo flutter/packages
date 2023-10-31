@@ -6,11 +6,11 @@ import 'package:flutter/widgets.dart';
 
 import 'pointer_interceptor_platform.dart';
 
-/// An implementation of [PointerInterceptorPlatform] that uses method channels.
+/// A defailt implementation of [PointerInterceptorPlatform].
 class PlaceholderPointerInterceptor extends PointerInterceptorPlatform {
   @override
   Widget buildWidget(
-      {required child, bool intercepting = true, bool debug = false, key}) {
+      {required Widget child, bool intercepting = true, bool debug = false, Key? key}) {
     throw UnimplementedError('buildWidget() has not been implemented.');
   }
 }
