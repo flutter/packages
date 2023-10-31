@@ -26,6 +26,10 @@ class SystemServices {
       deviceOrientationChangedStreamController =
       StreamController<DeviceOrientationChangedEvent>.broadcast();
 
+  /// The last [DeviceOrientation] picked up by
+  /// [deviceOrientationChangedStreamController].
+  static DeviceOrientation? lastRecordedDeviceOrientation;
+
   /// Stream that emits the errors caused by camera usage on the native side.
   static final StreamController<String> cameraErrorStreamController =
       StreamController<String>.broadcast();
@@ -127,6 +131,7 @@ class SystemServicesFlutterApiImpl implements SystemServicesFlutterApi {
         deserializeDeviceOrientation(orientation);
     SystemServices.deviceOrientationChangedStreamController
         .add(DeviceOrientationChangedEvent(deviceOrientation));
+    SystemServices.lastRecordedDeviceOrientation = deviceOrientation;
   }
 
   /// Deserializes device orientation in [String] format into a

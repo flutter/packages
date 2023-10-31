@@ -126,6 +126,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraSelector? cameraSelector;
 
+  /// The clockwise angle through which the output image needs to be rotated
+  /// to be upright on the device screen in its native orientation that is
+  /// initially set when [createCamera] is called.
+  int? initialSensorOrientation;
+
   /// The controller we need to broadcast the different camera events.
   ///
   /// It is a `broadcast` because multiple controllers will connect to
@@ -232,8 +237,9 @@ class AndroidCameraCameraX extends CameraPlatform {
         cameraSelectorLensDirection == CameraSelector.lensFacingFront;
     cameraSelector = createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
+    initialSensorOrientation = cameraDescription.sensorOrientation;
     startListeningForDeviceOrientationChange(
-        cameraIsFrontFacing, cameraDescription.sensorOrientation);
+        cameraIsFrontFacing, initialSensorOrientation!);
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
@@ -246,8 +252,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider!.unbindAll();
 
     // Retrieve target rotation for UseCases.
-    final int targetRotation =
-        _getTargetRotation(cameraDescription.sensorOrientation);
+    final int targetRotation = _getTargetRotation(initialSensorOrientation!);
 
     // Configure Preview instance.
     preview = createPreview(
@@ -401,7 +406,20 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Unlocks the capture orientation.
   @override
-  Future<void> unlockCaptureOrientation(int cameraId) async {}
+  Future<void> unlockCaptureOrientation(int cameraId) async {
+    int? currentDeviceOrientation;
+    if (SystemServices.lastRecordedDeviceOrientation == null) {
+      currentDeviceOrientation = initialSensorOrientation;
+    } else {
+      currentDeviceOrientation = _getTargetRotationFromDeviceOrientation(
+          SystemServices.lastRecordedDeviceOrientation!);
+    }
+
+    /// Update UseCases to use current device orientation.
+    await imageAnalysis!.setTargetRotation(currentDeviceOrientation!);
+    await imageCapture!.setTargetRotation(currentDeviceOrientation!);
+    await videoCapture!.setTargetRotation(currentDeviceOrientation!);
+  }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
   ///
