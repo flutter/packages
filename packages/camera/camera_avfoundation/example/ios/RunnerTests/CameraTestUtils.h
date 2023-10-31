@@ -12,6 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue,
                                                    NSError **error);
 
+/// Creates an `FLTCam` that runs its capture session operations on a given queue.
+/// @param captureSessionQueue the capture session queue
+/// @param error the error
+/// @return an FLTCam object.
+extern FLTCam *FLTCreateCamWithCaptureSessionQueueWithError(dispatch_queue_t captureSessionQueue,
+                                                            NSError **error);
+
 /// Creates a test sample buffer.
 /// @return a test sample buffer.
 extern CMSampleBufferRef FLTCreateTestSampleBuffer(void);
