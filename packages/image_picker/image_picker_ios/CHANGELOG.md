@@ -1,6 +1,6 @@
 ## 0.8.8+3
 
-* Updates to a newer version of Pigeon.
+* Updates to Pigeon 13.
 
 ## 0.8.8+2
 
