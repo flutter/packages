@@ -3,6 +3,7 @@ description: A widget to prevent clicks from being swallowed by underlying HtmlE
 repository: https://github.com/flutter/packages/tree/main/packages/pointer_interceptor
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+pointer_interceptor%22
 version: 0.9.4
+publish_to: none
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
@@ -20,10 +21,10 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  pointer_interceptor_platform_interface:
-    path: ../pointer_interceptor_platform_interface
   flutter_web_plugins:
     sdk: flutter
+  pointer_interceptor_platform_interface:
+    path: ../pointer_interceptor_platform_interface
 
   # flutter_web_plugins:
   #   sdk: flutter
