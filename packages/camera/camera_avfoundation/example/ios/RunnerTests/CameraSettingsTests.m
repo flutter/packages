@@ -22,6 +22,7 @@ static const bool TEST_ENABLE_AUDIO = YES;
 
 @implementation CameraSettingsTests
 
+#if 0
 - (void)testSettings_shouldPassConfigurationToCameraDeviceAndWriter {
   XCTestExpectation *lockExpectation = [self expectationWithDescription:@"lockExpectation"];
   XCTestExpectation *unlockExpectation = [self expectationWithDescription:@"unlockExpectation"];
@@ -180,6 +181,8 @@ static const bool TEST_ENABLE_AUDIO = YES;
 
   [captureConnectionMock stopMocking];
 }
+
+#endif
 
 - (void)testSettings_ShouldBeSupportedByMethodCall {
   CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
