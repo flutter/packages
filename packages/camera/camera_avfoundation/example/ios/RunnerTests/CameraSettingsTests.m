@@ -22,7 +22,6 @@ static const bool TEST_ENABLE_AUDIO = YES;
 
 @implementation CameraSettingsTests
 
-#if 0
 - (void)testSettings_shouldPassConfigurationToCameraDeviceAndWriter {
   XCTestExpectation *lockExpectation = [self expectationWithDescription:@"lockExpectation"];
   XCTestExpectation *unlockExpectation = [self expectationWithDescription:@"unlockExpectation"];
@@ -46,7 +45,6 @@ static const bool TEST_ENABLE_AUDIO = YES;
         [lockExpectation fulfill];
       })
       .andReturn(YES);
-
   OCMStub([deviceMock unlockForConfiguration]).andDo(^(NSInvocation *invocation) {
     [unlockExpectation fulfill];
   });
@@ -179,10 +177,16 @@ static const bool TEST_ENABLE_AUDIO = YES;
 
   [self waitForExpectations:@[ audioSettingsExpectation, videoSettingsExpectation ] timeout:1];
 
+  [writerMock stopMocking];
+  [videoMock stopMocking];
+  [audioSessionMock stopMocking];
   [captureConnectionMock stopMocking];
+  [captureVideoDataOutputMock stopMocking];
+  [audioSessionMock stopMocking];
+  [videoSessionMock stopMocking];
+  [inputMock stopMocking];
+  [deviceMock stopMocking];
 }
-
-#endif
 
 - (void)testSettings_ShouldBeSupportedByMethodCall {
   CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
