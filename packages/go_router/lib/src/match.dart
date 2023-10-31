@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This file deal with json.
+// This file deals with json.
 // ignore_for_file: avoid_dynamic_calls
 
 import 'dart:async';
@@ -422,7 +422,7 @@ class _RouteMatchListEncoder
         jsonEncodedExtra = json.encoder.convert(null);
         log(
             'An extra with complex data type ${extra.runtimeType} is provided '
-            'without an codec. Consider provide an extraCodec to GoRouter to '
+            'without a codec. Consider provide a codec to GoRouter to '
             'prevent extra being dropped during serialization.',
             level: Level.WARNING);
       }

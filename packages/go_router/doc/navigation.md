@@ -97,7 +97,7 @@ and retrieve the data from GoRouterState
 final String extraString = GoRouterState.of(context).extra! as String;
 ```
 
-The extra will go through serialization when storing into the Router.
+The extra will go through serialization when it is stored in browser.
 If you plan to use complex data as extra, consider also provide a codec
 to GoRouter so that it won't get dropped during serialization.
 
