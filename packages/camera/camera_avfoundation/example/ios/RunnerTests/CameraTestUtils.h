@@ -15,7 +15,8 @@ extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessi
 /// @param captureSessionQueue the capture session queue
 /// @param error the error
 /// @return an FLTCam object.
-extern FLTCam *FLTCreateCamWithCaptureSessionQueueWithError(dispatch_queue_t captureSessionQueue, NSError** error);
+extern FLTCam *FLTCreateCamWithCaptureSessionQueueWithError(dispatch_queue_t captureSessionQueue,
+                                                            NSError **error);
 
 /// Creates a test sample buffer.
 /// @return a test sample buffer.

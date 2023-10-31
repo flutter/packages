@@ -21,7 +21,8 @@
   NSError *error = nil;
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueueWithError(captureSessionQueue, &error);
   XCTAssertNotNil(cam, @"FLTCreateCamWithCaptureSessionQueue must not be nil, error: %@", error);
-  XCTAssertNotNil(cam.captureVideoOutput.sampleBufferCallbackQueue, @"sampleBufferCallbackQueue must not be nil, error: %@", error);
+  XCTAssertNotNil(cam.captureVideoOutput.sampleBufferCallbackQueue,
+                  @"sampleBufferCallbackQueue must not be nil, error: %@", error);
   if (error) {
     XCTAssertNil(error, @"FLTCreateCamWithCaptureSessionQueue error: %@", error.description);
   }
