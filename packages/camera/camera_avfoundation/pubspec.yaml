@@ -18,7 +18,6 @@ flutter:
 
 dependencies:
   camera_platform_interface: ^2.6.0
-
   flutter:
     sdk: flutter
   stream_transform: ^2.0.0

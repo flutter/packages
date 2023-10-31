@@ -130,9 +130,7 @@ NSString *const errorMethod = @"error";
                              error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  _resolutionPreset = (nil == resolutionPreset || [resolutionPreset isEqual:[NSNull null]])
-                          ? FLTResolutionPresetHigh
-                          : FLTGetFLTResolutionPresetForString(resolutionPreset);
+  _resolutionPreset = FLTGetFLTResolutionPresetForString(resolutionPreset);
   if (_resolutionPreset == FLTResolutionPresetInvalid) {
     *error = [NSError
         errorWithDomain:NSCocoaErrorDomain
@@ -173,6 +171,7 @@ NSString *const errorMethod = @"error";
     if (error != nil) {
       *error = localError;
     }
+    *error = localError;
     return nil;
   }
 
@@ -215,17 +214,6 @@ NSString *const errorMethod = @"error";
 
   [self updateOrientation];
 
-  dispatch_queue_t queue = _captureVideoOutput.sampleBufferCallbackQueue;
-  if (queue != captureSessionQueue) {
-    *error = [NSError
-        errorWithDomain:@"FLTCam"
-                   code:101
-               userInfo:@{
-                 NSLocalizedDescriptionKey : @"sampleBufferCallbackQueue != captureSessionQueue"
-               }];
-    return nil;
-  }
-
   return self;
 }
 
@@ -243,15 +231,6 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)};
   [_captureVideoOutput setAlwaysDiscardsLateVideoFrames:YES];
   [_captureVideoOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
-
-  dispatch_queue_t queue = _captureVideoOutput.sampleBufferCallbackQueue;
-  if (queue != _captureSessionQueue) {
-    *error =
-        [NSError errorWithDomain:@"FLTCam"
-                            code:100
-                        userInfo:@{NSLocalizedDescriptionKey : @"setSampleBufferDelegate failed"}];
-    return nil;
-  }
 
   // Setup video capture connection.
   AVCaptureConnection *connection =

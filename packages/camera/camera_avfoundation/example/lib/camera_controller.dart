@@ -172,29 +172,35 @@ class CameraValue {
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   /// Deprecated, use [withSettings].
-  CameraController(
+  factory CameraController(
     CameraDescription cameraDescription,
     ResolutionPreset resolutionPreset, {
     bool enableAudio = true,
-    this.imageFormatGroup,
-  })  : _mediaSettings = MediaSettings(
+    ImageFormatGroup? imageFormatGroup,
+  }) =>
+      CameraController.withSettings(
+        cameraDescription,
+        mediaSettings: MediaSettings(
           resolutionPreset: resolutionPreset,
           enableAudio: enableAudio,
         ),
-        super(CameraValue.uninitialized(cameraDescription));
+        imageFormatGroup: imageFormatGroup,
+      );
 
   /// Creates a new camera controller in an uninitialized state, using specified media settings like FPS and bitrate.
   CameraController.withSettings(
     CameraDescription cameraDescription, {
-    MediaSettings? mediaSettings,
+    required this.mediaSettings,
     this.imageFormatGroup,
-  })  : _mediaSettings = mediaSettings,
+  })  : assert(mediaSettings.resolutionPreset != null,
+            'resolutionPreset should be provided in CameraController.withSettings'),
         super(CameraValue.uninitialized(cameraDescription));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
 
-  final MediaSettings? _mediaSettings;
+  /// Media settings for video recording.
+  final MediaSettings mediaSettings;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
@@ -229,7 +235,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
     _cameraId = await CameraPlatform.instance.createCameraWithSettings(
       description,
-      _mediaSettings ?? const MediaSettings(),
+      mediaSettings,
     );
 
     unawaited(CameraPlatform.instance

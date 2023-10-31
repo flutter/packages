@@ -22,6 +22,7 @@ static const bool TEST_ENABLE_AUDIO = YES;
 
 @implementation CameraSettingsTests
 
+/// Expect that FPS, video and audio bitrate are passed to camera device and asset writer.
 - (void)testSettings_shouldPassConfigurationToCameraDeviceAndWriter {
   XCTestExpectation *lockExpectation = [self expectationWithDescription:@"lockExpectation"];
   XCTestExpectation *unlockExpectation = [self expectationWithDescription:@"unlockExpectation"];
