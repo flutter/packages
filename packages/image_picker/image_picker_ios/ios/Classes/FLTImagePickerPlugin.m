@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FLTImagePickerPlugin *instance = [[FLTImagePickerPlugin alloc] init];
-  FLTImagePickerApiSetup(registrar.messenger, instance);
+  SetUpFLTImagePickerApi(registrar.messenger, instance);
 }
 
 - (UIImagePickerController *)createImagePickerController {
@@ -162,7 +162,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)pickImageWithSource:(nonnull FLTSourceSpecification *)source
                     maxSize:(nonnull FLTMaxSize *)maxSize
                     quality:(nullable NSNumber *)imageQuality
-               fullMetadata:(NSNumber *)fullMetadata
+               fullMetadata:(BOOL)fullMetadata
                  completion:
                      (nonnull void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   [self cancelInProgressCall];
@@ -178,7 +178,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   context.maxSize = maxSize;
   context.imageQuality = imageQuality;
   context.maxImageCount = 1;
-  context.requestFullMetadata = [fullMetadata boolValue];
+  context.requestFullMetadata = fullMetadata;
 
   if (source.type == FLTSourceTypeGallery) {  // Capture is not possible with PHPicker
     if (@available(iOS 14, *)) {
@@ -193,7 +193,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)pickMultiImageWithMaxSize:(nonnull FLTMaxSize *)maxSize
                           quality:(nullable NSNumber *)imageQuality
-                     fullMetadata:(NSNumber *)fullMetadata
+                     fullMetadata:(BOOL)fullMetadata
                        completion:(nonnull void (^)(NSArray<NSString *> *_Nullable,
                                                     FlutterError *_Nullable))completion {
   [self cancelInProgressCall];
@@ -201,7 +201,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
       [[FLTImagePickerMethodCallContext alloc] initWithResult:completion];
   context.maxSize = maxSize;
   context.imageQuality = imageQuality;
-  context.requestFullMetadata = [fullMetadata boolValue];
+  context.requestFullMetadata = fullMetadata;
 
   if (@available(iOS 14, *)) {
     [self launchPHPickerWithContext:context];
@@ -223,7 +223,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   context.imageQuality = [mediaSelectionOptions imageQuality];
   context.requestFullMetadata = [mediaSelectionOptions requestFullMetadata];
   context.includeVideo = YES;
-  if (![[mediaSelectionOptions allowMultiple] boolValue]) {
+  if (!mediaSelectionOptions.allowMultiple) {
     context.maxImageCount = 1;
   }
 
