@@ -18,8 +18,7 @@
 
 - (void)setUp {
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
-  NSError *error = nil;
-  _camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue, &error);
+  _camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
   _sampleBuffer = FLTCreateTestSampleBuffer();
 }
 

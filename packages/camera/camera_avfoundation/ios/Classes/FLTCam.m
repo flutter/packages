@@ -213,6 +213,17 @@ NSString *const errorMethod = @"error";
 
   [self updateOrientation];
 
+  dispatch_queue_t queue = _captureVideoOutput.sampleBufferCallbackQueue;
+  if (queue != captureSessionQueue) {
+    *error = [NSError
+        errorWithDomain:@"FLTCam"
+                   code:101
+               userInfo:@{
+                 NSLocalizedDescriptionKey : @"sampleBufferCallbackQueue != captureSessionQueue"
+               }];
+    return nil;
+  }
+
   return self;
 }
 
@@ -230,6 +241,15 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)};
   [_captureVideoOutput setAlwaysDiscardsLateVideoFrames:YES];
   [_captureVideoOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
+
+  dispatch_queue_t queue = _captureVideoOutput.sampleBufferCallbackQueue;
+  if (queue != _captureSessionQueue) {
+    *error =
+        [NSError errorWithDomain:@"FLTCam"
+                            code:100
+                        userInfo:@{NSLocalizedDescriptionKey : @"setSampleBufferDelegate failed"}];
+    return nil;
+  }
 
   // Setup video capture connection.
   AVCaptureConnection *connection =

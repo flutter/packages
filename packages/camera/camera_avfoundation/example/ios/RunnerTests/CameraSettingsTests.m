@@ -34,7 +34,7 @@ static const int TEST_AUDIO_BITRATE = 32000;
   beginConfigurationExpectation =
       [self expectationWithDescription:@"beginConfigurationExpectation"];
   commitConfigurationExpectation =
-      [self expectationWithDescription:@"comminConfigurationExpectation"];
+      [self expectationWithDescription:@"commitConfigurationExpectation"];
 }
 
 - (FLTCam *)FLTCreateCamWithQueue:(dispatch_queue_t)captureSessionQueue
