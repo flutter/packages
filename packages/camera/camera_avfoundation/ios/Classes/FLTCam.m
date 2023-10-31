@@ -170,7 +170,9 @@ NSString *const errorMethod = @"error";
   NSError *localError = nil;
   AVCaptureConnection *connection = [self createConnection:&localError];
   if (localError) {
-    *error = localError;
+    if (error != nil) {
+      *error = localError;
+    }
     return nil;
   }
 
