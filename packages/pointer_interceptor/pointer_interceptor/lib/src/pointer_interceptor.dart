@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of pointer_interceptor;
+import 'package:flutter/widgets.dart';
+import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
 
 /// A [Widget] that prevents clicks from being swallowed by PlatformViews.
 class PointerInterceptor extends StatelessWidget {
@@ -29,7 +30,6 @@ class PointerInterceptor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(PointerInterceptorPlatform.instance.runtimeType);
     return PointerInterceptorPlatform.instance.buildWidget(
         child: child, intercepting: intercepting, debug: debug, key: key);
   }
