@@ -1,3 +1,7 @@
+## 12.0.2
+
+- Retains query parameters during refresh and first redirect.
+
 ## 12.0.1
 
 - Fixes deep-link with no path on cold start.
