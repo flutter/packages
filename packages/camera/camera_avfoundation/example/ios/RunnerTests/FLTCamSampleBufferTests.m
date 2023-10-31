@@ -18,13 +18,19 @@
 
 - (void)testSampleBufferCallbackQueueMustBeCaptureSessionQueue {
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  NSError *error = nil;
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue, &error);
+  XCTAssertNotNil(cam, @"FLTCreateCamWithCaptureSessionQueue must not be nil, error: %@", error);
+  if (error) {
+    XCTAssertNil(error, @"FLTCreateCamWithCaptureSessionQueue error: %@", error.description);
+  }
   XCTAssertEqual(captureSessionQueue, cam.captureVideoOutput.sampleBufferCallbackQueue,
                  @"Sample buffer callback queue must be the capture session queue.");
 }
 
 - (void)testCopyPixelBuffer {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("test", NULL));
+  NSError *error = nil;
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("test", NULL), &error);
   CMSampleBufferRef capturedSampleBuffer = FLTCreateTestSampleBuffer();
   CVPixelBufferRef capturedPixelBuffer = CMSampleBufferGetImageBuffer(capturedSampleBuffer);
   // Mimic sample buffer callback when captured a new video sample
@@ -39,7 +45,8 @@
 }
 
 - (void)testDidOutputSampleBufferIgnoreAudioSamplesBeforeVideoSamples {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+  NSError *error = nil;
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL), &error);
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
   CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
 

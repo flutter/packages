@@ -6,7 +6,7 @@
 #import <OCMock/OCMock.h>
 @import AVFoundation;
 
-FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue) {
+FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue, NSError **error) {
   id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
       .andReturn(inputMock);
@@ -29,7 +29,7 @@ FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue
                         videoCaptureSession:videoSessionMock
                         audioCaptureSession:audioSessionMock
                         captureSessionQueue:captureSessionQueue
-                                      error:nil];
+                                      error:error];
 }
 
 CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
