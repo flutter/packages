@@ -899,9 +899,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     resolutionStrategy ??=
         ResolutionStrategy(boundSize: boundSize!, fallbackRule: fallbackRule);
-    return ResolutionSelector(
-        resolutionStrategy: ResolutionStrategy(
-            boundSize: boundSize!, fallbackRule: fallbackRule));
+    return ResolutionSelector(resolutionStrategy: resolutionStrategy);
   }
 
   /// Returns the [QualitySelector] that maps to the specified resolution
