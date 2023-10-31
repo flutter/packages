@@ -3,7 +3,8 @@
 
   <application
     android:icon="@mipmap/ic_launcher"
-    android:label="camera_example">
+    android:label="camera_example"
+    android:name="${applicationName}">
     <activity
       android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
       android:hardwareAccelerated="true"

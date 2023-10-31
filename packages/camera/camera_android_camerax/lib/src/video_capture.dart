@@ -43,6 +43,12 @@ class VideoCapture extends UseCase {
     return _api.getOutputFromInstance(this);
   }
 
+  /// Dynamically sets the target rotation of this instance.
+  ///
+  /// [rotation] should be one of the [Surface] rotation constants.
+  Future<void> setTargetRotation(int rotation) =>
+      _api.setTargetRotationFromInstances(this, rotation);
+
   late final VideoCaptureHostApiImpl _api;
 }
 
@@ -81,6 +87,13 @@ class VideoCaptureHostApiImpl extends VideoCaptureHostApi {
     final int? identifier = instanceManager.getIdentifier(instance);
     final int recorderId = await getOutput(identifier!);
     return instanceManager.getInstanceWithWeakReference(recorderId)!;
+  }
+
+  /// Dynamically sets the target rotation of [instance] to [rotation].
+  Future<void> setTargetRotationFromInstances(
+      VideoCapture instance, int rotation) {
+    return setTargetRotation(
+        instanceManager.getIdentifier(instance)!, rotation);
   }
 }
 

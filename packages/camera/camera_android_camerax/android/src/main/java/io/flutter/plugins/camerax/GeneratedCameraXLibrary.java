@@ -1466,6 +1466,8 @@ public class GeneratedCameraXLibrary {
     @NonNull
     ResolutionInfo getResolutionInfo(@NonNull Long identifier);
 
+    void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
+
     /** The codec used by PreviewHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PreviewHostApiCodec.INSTANCE;
@@ -1577,6 +1579,32 @@ public class GeneratedCameraXLibrary {
           channel.setMessageHandler(null);
         }
       }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.PreviewHostApi.setTargetRotation", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number rotationArg = (Number) args.get(1);
+                try {
+                  api.setTargetRotation(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (rotationArg == null) ? null : rotationArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
@@ -1587,6 +1615,8 @@ public class GeneratedCameraXLibrary {
 
     @NonNull
     Long getOutput(@NonNull Long identifier);
+
+    void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
 
     /** The codec used by VideoCaptureHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1636,6 +1666,34 @@ public class GeneratedCameraXLibrary {
                   Long output =
                       api.getOutput((identifierArg == null) ? null : identifierArg.longValue());
                   wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.VideoCaptureHostApi.setTargetRotation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number rotationArg = (Number) args.get(1);
+                try {
+                  api.setTargetRotation(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (rotationArg == null) ? null : rotationArg.longValue());
+                  wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
@@ -2055,11 +2113,16 @@ public class GeneratedCameraXLibrary {
   public interface ImageCaptureHostApi {
 
     void create(
-        @NonNull Long identifier, @Nullable Long flashMode, @Nullable Long resolutionSelectorId);
+        @NonNull Long identifier,
+        @Nullable Long targetRotation,
+        @Nullable Long flashMode,
+        @Nullable Long resolutionSelectorId);
 
     void setFlashMode(@NonNull Long identifier, @NonNull Long flashMode);
 
     void takePicture(@NonNull Long identifier, @NonNull Result<String> result);
+
+    void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
 
     /** The codec used by ImageCaptureHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -2080,11 +2143,13 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                Number flashModeArg = (Number) args.get(1);
-                Number resolutionSelectorIdArg = (Number) args.get(2);
+                Number targetRotationArg = (Number) args.get(1);
+                Number flashModeArg = (Number) args.get(2);
+                Number resolutionSelectorIdArg = (Number) args.get(3);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
+                      (targetRotationArg == null) ? null : targetRotationArg.longValue(),
                       (flashModeArg == null) ? null : flashModeArg.longValue(),
                       (resolutionSelectorIdArg == null)
                           ? null
@@ -2151,6 +2216,34 @@ public class GeneratedCameraXLibrary {
 
                 api.takePicture(
                     (identifierArg == null) ? null : identifierArg.longValue(), resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.ImageCaptureHostApi.setTargetRotation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number rotationArg = (Number) args.get(1);
+                try {
+                  api.setTargetRotation(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (rotationArg == null) ? null : rotationArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
@@ -2486,11 +2579,16 @@ public class GeneratedCameraXLibrary {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImageAnalysisHostApi {
 
-    void create(@NonNull Long identifier, @Nullable Long resolutionSelectorId);
+    void create(
+        @NonNull Long identifier,
+        @Nullable Long targetRotation,
+        @Nullable Long resolutionSelectorId);
 
     void setAnalyzer(@NonNull Long identifier, @NonNull Long analyzerIdentifier);
 
     void clearAnalyzer(@NonNull Long identifier);
+
+    void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
 
     /** The codec used by ImageAnalysisHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -2512,10 +2610,12 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number identifierArg = (Number) args.get(0);
-                Number resolutionSelectorIdArg = (Number) args.get(1);
+                Number targetRotationArg = (Number) args.get(1);
+                Number resolutionSelectorIdArg = (Number) args.get(2);
                 try {
                   api.create(
                       (identifierArg == null) ? null : identifierArg.longValue(),
+                      (targetRotationArg == null) ? null : targetRotationArg.longValue(),
                       (resolutionSelectorIdArg == null)
                           ? null
                           : resolutionSelectorIdArg.longValue());
@@ -2570,6 +2670,34 @@ public class GeneratedCameraXLibrary {
                 Number identifierArg = (Number) args.get(0);
                 try {
                   api.clearAnalyzer((identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.ImageAnalysisHostApi.setTargetRotation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                Number rotationArg = (Number) args.get(1);
+                try {
+                  api.setTargetRotation(
+                      (identifierArg == null) ? null : identifierArg.longValue(),
+                      (rotationArg == null) ? null : rotationArg.longValue());
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

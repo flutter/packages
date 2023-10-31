@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/services.dart' show DeviceOrientation;
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -244,24 +245,33 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider ??= await ProcessCameraProvider.getInstance();
     processCameraProvider!.unbindAll();
 
-    // Configure Preview instance.
+    // Retrieve target rotation for UseCases.
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
+
+    // Configure Preview instance.
     preview = createPreview(
         targetRotation: targetRotation,
         resolutionSelector: presetResolutionSelector);
     final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
 
     // Configure ImageCapture instance.
-    imageCapture = createImageCapture(presetResolutionSelector);
+    imageCapture = createImageCapture(
+        targetRotation: targetRotation,
+        resolutionSelector: presetResolutionSelector);
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = createImageAnalysis(presetResolutionSelector);
+    imageAnalysis = createImageAnalysis(
+        targetRotation: targetRotation,
+        resolutionSelector: presetResolutionSelector);
 
     // Configure VideoCapture and Recorder instances.
+    // TODO(camsim99): Investigate if this should be refactored to allow for
+    // setting target rotation when creating VideoCapture instance.
     recorder = createRecorder(presetQualitySelector);
     videoCapture = await createVideoCapture(recorder!);
+    await videoCapture!.setTargetRotation(targetRotation);
 
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
@@ -373,6 +383,25 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<VideoRecordedEvent> onVideoRecordedEvent(int cameraId) {
     return _cameraEvents(cameraId).whereType<VideoRecordedEvent>();
   }
+
+  /// Locks the capture orientation.
+  @override
+  Future<void> lockCaptureOrientation(
+    int cameraId,
+    DeviceOrientation orientation,
+  ) async {
+    final int targetRotation =
+        _getTargetRotationFromDeviceOrientation(orientation);
+
+    /// Update UseCases to use target device orientation.
+    await imageAnalysis!.setTargetRotation(targetRotation);
+    await imageCapture!.setTargetRotation(targetRotation);
+    await videoCapture!.setTargetRotation(targetRotation);
+  }
+
+  /// Unlocks the capture orientation.
+  @override
+  Future<void> unlockCaptureOrientation(int cameraId) async {}
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
   ///
@@ -850,6 +879,22 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
+  /// Returns [Surface] target rotation constant that maps to specified
+  /// [DeviceOrientation].
+  int _getTargetRotationFromDeviceOrientation(
+      DeviceOrientation deviceOrientation) {
+    switch (deviceOrientation) {
+      case DeviceOrientation.portraitUp:
+        return Surface.ROTATION_0;
+      case DeviceOrientation.landscapeLeft:
+        return Surface.ROTATION_90;
+      case DeviceOrientation.portraitDown:
+        return Surface.ROTATION_180;
+      case DeviceOrientation.landscapeRight:
+        return Surface.ROTATION_270;
+    }
+  }
+
   /// Returns the [ResolutionSelector] that maps to the specified resolution
   /// preset for camera [UseCase]s.
   ///
@@ -996,8 +1041,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns an [ImageCapture] configured with specified flash mode and
   /// the specified [ResolutionSelector].
   @visibleForTesting
-  ImageCapture createImageCapture(ResolutionSelector? resolutionSelector) {
-    return ImageCapture(resolutionSelector: resolutionSelector);
+  ImageCapture createImageCapture(
+      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
+    return ImageCapture(
+        targetRotation: targetRotation, resolutionSelector: resolutionSelector);
   }
 
   /// Returns a [Recorder] for use in video capture configured with the
@@ -1016,7 +1063,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns an [ImageAnalysis] configured with the specified
   /// [ResolutionSelector].
   @visibleForTesting
-  ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
-    return ImageAnalysis(resolutionSelector: resolutionSelector);
+  ImageAnalysis createImageAnalysis(
+      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
+    return ImageAnalysis(
+        targetRotation: targetRotation, resolutionSelector: resolutionSelector);
   }
 }

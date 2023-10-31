@@ -1458,7 +1458,8 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  ImageCapture createImageCapture(ResolutionSelector? resolutionSelector) {
+  ImageCapture createImageCapture(
+      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
     when(testImageCapture.resolutionSelector).thenReturn(resolutionSelector);
     return testImageCapture;
   }
@@ -1475,7 +1476,8 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   }
 
   @override
-  ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
+  ImageAnalysis createImageAnalysis(
+      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
     when(testImageAnalysis.resolutionSelector).thenReturn(resolutionSelector);
     return testImageAnalysis;
   }

@@ -235,6 +235,8 @@ abstract class PreviewHostApi {
   void releaseFlutterSurfaceTexture();
 
   ResolutionInfo getResolutionInfo(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestVideoCaptureHostApi')
@@ -242,6 +244,8 @@ abstract class VideoCaptureHostApi {
   int withOutput(int videoOutputId);
 
   int getOutput(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @FlutterApi()
@@ -294,12 +298,15 @@ abstract class RecordingFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')
 abstract class ImageCaptureHostApi {
-  void create(int identifier, int? flashMode, int? resolutionSelectorId);
+  void create(int identifier, int? targetRotation, int? flashMode,
+      int? resolutionSelectorId);
 
   void setFlashMode(int identifier, int flashMode);
 
   @async
   String takePicture(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestResolutionStrategyHostApi')
@@ -341,11 +348,13 @@ abstract class ZoomStateFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
 abstract class ImageAnalysisHostApi {
-  void create(int identifier, int? resolutionSelectorId);
+  void create(int identifier, int? targetRotation, int? resolutionSelectorId);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
   void clearAnalyzer(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 }
 
 @HostApi(dartHostTestHandler: 'TestAnalyzerHostApi')

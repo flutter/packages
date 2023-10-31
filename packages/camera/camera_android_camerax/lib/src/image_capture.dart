@@ -17,9 +17,13 @@ import 'use_case.dart';
 @immutable
 class ImageCapture extends UseCase {
   /// Creates an [ImageCapture].
+  ///
+  /// [targetRotation] should be specified in terms of one of the [Surface]
+  /// rotation constants.
   ImageCapture({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
+    this.targetRotation,
     this.targetFlashMode,
     this.resolutionSelector,
   }) : super.detached(
@@ -28,13 +32,19 @@ class ImageCapture extends UseCase {
         ) {
     _api = ImageCaptureHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, targetFlashMode, resolutionSelector);
+    _api.createFromInstance(
+        this, targetRotation, targetFlashMode, resolutionSelector);
   }
 
-  /// Constructs a [ImageCapture] that is not automatically attached to a native object.
+  /// Constructs a [ImageCapture] that is not automatically attached to a
+  /// native object.
+  ///
+  /// [targetRotation] should be specified in terms of one of the [Surface]
+  /// rotation constants.
   ImageCapture.detached({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
+    this.targetRotation,
     this.targetFlashMode,
     this.resolutionSelector,
   }) : super.detached(
@@ -46,6 +56,9 @@ class ImageCapture extends UseCase {
   }
 
   late final ImageCaptureHostApiImpl _api;
+
+  /// Target rotation of the camera used for the preview stream.
+  final int? targetRotation;
 
   /// Flash mode used to take a picture.
   final int? targetFlashMode;
@@ -96,6 +109,12 @@ class ImageCapture extends UseCase {
   Future<String> takePicture() async {
     return _api.takePictureFromInstance(this);
   }
+
+  /// Dynamically sets the target rotation of this instance.
+  ///
+  /// [rotation] should be one of the [Surface] rotation constants.
+  Future<void> setTargetRotation(int rotation) =>
+      _api.setTargetRotationFromInstances(this, rotation);
 }
 
 /// Host API implementation of [ImageCapture].
@@ -124,18 +143,20 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
 
   /// Creates an [ImageCapture] instance with the flash mode and target resolution
   /// if specified.
-  void createFromInstance(ImageCapture instance, int? targetFlashMode,
-      ResolutionSelector? resolutionSelector) {
+  void createFromInstance(ImageCapture instance, int? targetRotation,
+      int? targetFlashMode, ResolutionSelector? resolutionSelector) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (ImageCapture original) {
       return ImageCapture.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
+          targetRotation: original.targetRotation,
           targetFlashMode: original.targetFlashMode,
           resolutionSelector: original.resolutionSelector);
     });
     create(
         identifier,
+        targetRotation,
         targetFlashMode,
         resolutionSelector == null
             ? null
@@ -161,5 +182,12 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
 
     final String picturePath = await takePicture(identifier!);
     return picturePath;
+  }
+
+  /// Dynamically sets the target rotation of [instance] to [rotation].
+  Future<void> setTargetRotationFromInstances(
+      ImageCapture instance, int rotation) {
+    return setTargetRotation(
+        instanceManager.getIdentifier(instance)!, rotation);
   }
 }

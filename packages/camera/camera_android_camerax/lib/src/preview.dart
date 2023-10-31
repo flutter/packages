@@ -17,6 +17,9 @@ import 'use_case.dart';
 @immutable
 class Preview extends UseCase {
   /// Creates a [Preview].
+  ///
+  /// [targetRotation] should be specified in terms of one of the [Surface]
+  /// rotation constants.
   Preview(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
@@ -72,6 +75,12 @@ class Preview extends UseCase {
   Future<ResolutionInfo> getResolutionInfo() {
     return _api.getResolutionInfoFromInstance(this);
   }
+
+  /// Dynamically sets the target rotation of this instance.
+  ///
+  /// [rotation] should be one of the [Surface] rotation constants.
+  Future<void> setTargetRotation(int rotation) =>
+      _api.setTargetRotationFromInstances(this, rotation);
 }
 
 /// Host API implementation of [Preview].
@@ -135,5 +144,11 @@ class PreviewHostApiImpl extends PreviewHostApi {
     final ResolutionInfo resolutionInfo = await getResolutionInfo(identifier!);
 
     return resolutionInfo;
+  }
+
+  /// Dynamically sets the target rotation of [instance] to [rotation].
+  Future<void> setTargetRotationFromInstances(Preview instance, int rotation) {
+    return setTargetRotation(
+        instanceManager.getIdentifier(instance)!, rotation);
   }
 }

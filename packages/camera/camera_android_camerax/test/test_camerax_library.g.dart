@@ -650,6 +650,8 @@ abstract class TestPreviewHostApi {
 
   ResolutionInfo getResolutionInfo(int identifier);
 
+  void setTargetRotation(int identifier, int rotation);
+
   static void setup(TestPreviewHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -738,6 +740,31 @@ abstract class TestPreviewHostApi {
         });
       }
     }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.PreviewHostApi.setTargetRotation', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.PreviewHostApi.setTargetRotation was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.PreviewHostApi.setTargetRotation was null, expected non-null int.');
+          final int? arg_rotation = (args[1] as int?);
+          assert(arg_rotation != null,
+              'Argument for dev.flutter.pigeon.PreviewHostApi.setTargetRotation was null, expected non-null int.');
+          api.setTargetRotation(arg_identifier!, arg_rotation!);
+          return <Object?>[];
+        });
+      }
+    }
   }
 }
 
@@ -749,6 +776,8 @@ abstract class TestVideoCaptureHostApi {
   int withOutput(int videoOutputId);
 
   int getOutput(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 
   static void setup(TestVideoCaptureHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -793,6 +822,31 @@ abstract class TestVideoCaptureHostApi {
               'Argument for dev.flutter.pigeon.VideoCaptureHostApi.getOutput was null, expected non-null int.');
           final int output = api.getOutput(arg_identifier!);
           return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.VideoCaptureHostApi.setTargetRotation', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.VideoCaptureHostApi.setTargetRotation was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.VideoCaptureHostApi.setTargetRotation was null, expected non-null int.');
+          final int? arg_rotation = (args[1] as int?);
+          assert(arg_rotation != null,
+              'Argument for dev.flutter.pigeon.VideoCaptureHostApi.setTargetRotation was null, expected non-null int.');
+          api.setTargetRotation(arg_identifier!, arg_rotation!);
+          return <Object?>[];
         });
       }
     }
@@ -1059,11 +1113,14 @@ abstract class TestImageCaptureHostApi {
       TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void create(int identifier, int? flashMode, int? resolutionSelectorId);
+  void create(int identifier, int? targetRotation, int? flashMode,
+      int? resolutionSelectorId);
 
   void setFlashMode(int identifier, int flashMode);
 
   Future<String> takePicture(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 
   static void setup(TestImageCaptureHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1084,9 +1141,11 @@ abstract class TestImageCaptureHostApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ImageCaptureHostApi.create was null, expected non-null int.');
-          final int? arg_flashMode = (args[1] as int?);
-          final int? arg_resolutionSelectorId = (args[2] as int?);
-          api.create(arg_identifier!, arg_flashMode, arg_resolutionSelectorId);
+          final int? arg_targetRotation = (args[1] as int?);
+          final int? arg_flashMode = (args[2] as int?);
+          final int? arg_resolutionSelectorId = (args[3] as int?);
+          api.create(arg_identifier!, arg_targetRotation, arg_flashMode,
+              arg_resolutionSelectorId);
           return <Object?>[];
         });
       }
@@ -1135,6 +1194,31 @@ abstract class TestImageCaptureHostApi {
               'Argument for dev.flutter.pigeon.ImageCaptureHostApi.takePicture was null, expected non-null int.');
           final String output = await api.takePicture(arg_identifier!);
           return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ImageCaptureHostApi.setTargetRotation', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.setTargetRotation was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.setTargetRotation was null, expected non-null int.');
+          final int? arg_rotation = (args[1] as int?);
+          assert(arg_rotation != null,
+              'Argument for dev.flutter.pigeon.ImageCaptureHostApi.setTargetRotation was null, expected non-null int.');
+          api.setTargetRotation(arg_identifier!, arg_rotation!);
+          return <Object?>[];
         });
       }
     }
@@ -1285,11 +1369,13 @@ abstract class TestImageAnalysisHostApi {
       TestDefaultBinaryMessengerBinding.instance;
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void create(int identifier, int? resolutionSelectorId);
+  void create(int identifier, int? targetRotation, int? resolutionSelectorId);
 
   void setAnalyzer(int identifier, int analyzerIdentifier);
 
   void clearAnalyzer(int identifier);
+
+  void setTargetRotation(int identifier, int rotation);
 
   static void setup(TestImageAnalysisHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1310,8 +1396,10 @@ abstract class TestImageAnalysisHostApi {
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ImageAnalysisHostApi.create was null, expected non-null int.');
-          final int? arg_resolutionSelectorId = (args[1] as int?);
-          api.create(arg_identifier!, arg_resolutionSelectorId);
+          final int? arg_targetRotation = (args[1] as int?);
+          final int? arg_resolutionSelectorId = (args[2] as int?);
+          api.create(
+              arg_identifier!, arg_targetRotation, arg_resolutionSelectorId);
           return <Object?>[];
         });
       }
@@ -1359,6 +1447,31 @@ abstract class TestImageAnalysisHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ImageAnalysisHostApi.clearAnalyzer was null, expected non-null int.');
           api.clearAnalyzer(arg_identifier!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ImageAnalysisHostApi.setTargetRotation', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ImageAnalysisHostApi.setTargetRotation was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ImageAnalysisHostApi.setTargetRotation was null, expected non-null int.');
+          final int? arg_rotation = (args[1] as int?);
+          assert(arg_rotation != null,
+              'Argument for dev.flutter.pigeon.ImageAnalysisHostApi.setTargetRotation was null, expected non-null int.');
+          api.setTargetRotation(arg_identifier!, arg_rotation!);
           return <Object?>[];
         });
       }

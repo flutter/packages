@@ -1151,6 +1151,28 @@ class PreviewHostApi {
       return (replyList[0] as ResolutionInfo?)!;
     }
   }
+
+  Future<void> setTargetRotation(int arg_identifier, int arg_rotation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.PreviewHostApi.setTargetRotation', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_rotation]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 class VideoCaptureHostApi {
@@ -1214,6 +1236,28 @@ class VideoCaptureHostApi {
       );
     } else {
       return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<void> setTargetRotation(int arg_identifier, int arg_rotation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.VideoCaptureHostApi.setTargetRotation', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_rotation]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }
@@ -1603,14 +1647,17 @@ class ImageCaptureHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, int? arg_flashMode,
-      int? arg_resolutionSelectorId) async {
+  Future<void> create(int arg_identifier, int? arg_targetRotation,
+      int? arg_flashMode, int? arg_resolutionSelectorId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImageCaptureHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(
-            <Object?>[arg_identifier, arg_flashMode, arg_resolutionSelectorId])
-        as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_targetRotation,
+      arg_flashMode,
+      arg_resolutionSelectorId
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1673,6 +1720,28 @@ class ImageCaptureHostApi {
       );
     } else {
       return (replyList[0] as String?)!;
+    }
+  }
+
+  Future<void> setTargetRotation(int arg_identifier, int arg_rotation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ImageCaptureHostApi.setTargetRotation', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_rotation]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }
@@ -1974,13 +2043,16 @@ class ImageAnalysisHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, int? arg_resolutionSelectorId) async {
+  Future<void> create(int arg_identifier, int? arg_targetRotation,
+      int? arg_resolutionSelectorId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ImageAnalysisHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_resolutionSelectorId])
-            as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_targetRotation,
+      arg_resolutionSelectorId
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -2027,6 +2099,28 @@ class ImageAnalysisHostApi {
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setTargetRotation(int arg_identifier, int arg_rotation) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ImageAnalysisHostApi.setTargetRotation', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_rotation]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

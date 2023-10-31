@@ -296,14 +296,16 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             IconButton(
               icon: Icon(enableAudio ? Icons.volume_up : Icons.volume_mute),
               color: Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null ? onAudioModeButtonPressed : null,
             ),
             IconButton(
               icon: Icon(controller?.value.isCaptureOrientationLocked ?? false
                   ? Icons.screen_lock_rotation
                   : Icons.screen_rotation),
               color: Colors.blue,
-              onPressed: () {}, // TODO(camsim99): Add functionality back here.
+              onPressed: controller != null
+                  ? onCaptureOrientationLockButtonPressed
+                  : null,
             ),
           ],
         ),
