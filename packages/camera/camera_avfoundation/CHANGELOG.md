@@ -1,6 +1,6 @@
-## NEXT
+## 0.9.14
 
-* Add support to HEIF format
+* Adds support to HEIF format
 
 ## 0.9.13+6
 

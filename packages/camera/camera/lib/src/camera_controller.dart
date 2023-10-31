@@ -261,7 +261,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// The [FileFormat] describes the compression of the image.
   ///
-  /// When null the fileFormat will fallback to the platforms default.
+  /// When null the fileFormat will fallback [FileFormat.jpeg]
   ///
   /// Only supported on iOS for now.
   final FileFormat? fileFormat;

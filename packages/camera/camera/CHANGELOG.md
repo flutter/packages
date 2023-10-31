@@ -1,6 +1,6 @@
 ## NEXT
 
-* Add support to HEIF format to iOS
+* Adds support to HEIF format to iOS
 
 ## 0.10.5+5
 

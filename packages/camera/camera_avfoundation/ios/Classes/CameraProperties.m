@@ -149,7 +149,7 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
   }
 }
 
-#pragma mark - video codec
+#pragma mark - file format
 
 FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString) {
   if ([fileFormatString isEqualToString:@"jpg"]) {
@@ -157,13 +157,6 @@ FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString) {
   } else if ([fileFormatString isEqualToString:@"heif"]) {
     return FCPFileFormatHEIF;
   } else {
-    NSError *error = [NSError
-        errorWithDomain:NSCocoaErrorDomain
-                   code:NSURLErrorUnknown
-               userInfo:@{
-                 NSLocalizedDescriptionKey :
-                     [NSString stringWithFormat:@"Unknown image extension %@", fileFormatString]
-               }];
-    @throw error;
+    return FCPFileFormatInvalid;
   }
 }
