@@ -18,7 +18,13 @@
 
 - (void)testSampleBufferCallbackQueueMustBeCaptureSessionQueue {
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  NSError *error = nil;
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue, &error);
+  XCTAssertNotNil(cam, @"FLTCreateCamWithCaptureSessionQueue must not be nil, error: %@", error);
+  XCTAssertNotNil(cam.captureVideoOutput.sampleBufferCallbackQueue, @"sampleBufferCallbackQueue must not be nil, error: %@", error);
+  if (error) {
+    XCTAssertNil(error, @"FLTCreateCamWithCaptureSessionQueue error: %@", error.description);
+  }
   XCTAssertEqual(captureSessionQueue, cam.captureVideoOutput.sampleBufferCallbackQueue,
                  @"Sample buffer callback queue must be the capture session queue.");
 }
