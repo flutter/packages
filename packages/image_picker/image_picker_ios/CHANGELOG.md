@@ -1,3 +1,7 @@
+## 0.8.8+3
+
+* Fixes a possible crash when calling a picker method while another is waiting on permissions.
+
 ## 0.8.8+2
 
 * Adds pub topics to package metadata.
