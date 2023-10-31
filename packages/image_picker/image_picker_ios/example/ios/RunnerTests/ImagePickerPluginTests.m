@@ -531,4 +531,81 @@
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
+- (void)testPickMultiImageDuplicateCallCancels API_AVAILABLE(ios(14)) {
+  id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])
+      .andReturn(PHAuthorizationStatusNotDetermined);
+  OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
+                                                         handler:OCMOCK_ANY]);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  XCTestExpectation *firstCallExpectation = [self expectationWithDescription:@"first call"];
+  [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@100 height:@100]
+                            quality:nil
+                       fullMetadata:YES
+                         completion:^(NSArray<NSString *> *result, FlutterError *error) {
+                           XCTAssertNotNil(error);
+                           XCTAssertEqualObjects(error.code, @"multiple_request");
+                           [firstCallExpectation fulfill];
+                         }];
+  [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@100 height:@100]
+                            quality:nil
+                       fullMetadata:YES
+                         completion:^(NSArray<NSString *> *result, FlutterError *error){
+                         }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPickMediaDuplicateCallCancels API_AVAILABLE(ios(14)) {
+  id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])
+      .andReturn(PHAuthorizationStatusNotDetermined);
+  OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
+                                                         handler:OCMOCK_ANY]);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  FLTMediaSelectionOptions *options =
+      [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
+                                   imageQuality:@(50)
+                            requestFullMetadata:YES
+                                  allowMultiple:YES];
+  XCTestExpectation *firstCallExpectation = [self expectationWithDescription:@"first call"];
+  [plugin pickMediaWithMediaSelectionOptions:options
+                                  completion:^(NSArray<NSString *> *result, FlutterError *error) {
+                                    XCTAssertNotNil(error);
+                                    XCTAssertEqualObjects(error.code, @"multiple_request");
+                                    [firstCallExpectation fulfill];
+                                  }];
+  [plugin pickMediaWithMediaSelectionOptions:options
+                                  completion:^(NSArray<NSString *> *result, FlutterError *error){
+                                  }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPickVideoDuplicateCallCancels API_AVAILABLE(ios(14)) {
+  id mockPhotoLibrary = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockPhotoLibrary authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusNotDetermined);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  FLTSourceSpecification *source = [FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                                 camera:FLTSourceCameraRear];
+  XCTestExpectation *firstCallExpectation = [self expectationWithDescription:@"first call"];
+  [plugin pickVideoWithSource:source
+                  maxDuration:nil
+                   completion:^(NSString *result, FlutterError *error) {
+                     XCTAssertNotNil(error);
+                     XCTAssertEqualObjects(error.code, @"multiple_request");
+                     [firstCallExpectation fulfill];
+                   }];
+  [plugin pickVideoWithSource:source
+                  maxDuration:nil
+                   completion:^(NSString *result, FlutterError *error){
+                   }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
 @end

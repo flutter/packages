@@ -1,6 +1,10 @@
-## 0.8.8+3
+## 0.8.8+4
 
 * Updates to Pigeon 13.
+
+## 0.8.8+3
+
+* Fixes a possible crash when calling a picker method while another is waiting on permissions.
 
 ## 0.8.8+2
 
