@@ -2,15 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// This file deal with json.
+// ignore_for_file: avoid_dynamic_calls
+
 import 'dart:async';
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
 import 'configuration.dart';
+import 'logging.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'route.dart';
@@ -363,16 +368,20 @@ class RouteMatchList {
 class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
   /// Creates a new [RouteMatchListCodec] object.
   RouteMatchListCodec(RouteConfiguration configuration)
-      : decoder = _RouteMatchListDecoder(configuration);
+      : decoder = _RouteMatchListDecoder(configuration),
+        encoder = _RouteMatchListEncoder(configuration);
 
   static const String _locationKey = 'location';
   static const String _extraKey = 'state';
   static const String _imperativeMatchesKey = 'imperativeMatches';
   static const String _pageKey = 'pageKey';
+  static const String _codecKey = 'codec';
+  static const String _jsonCodecName = 'json';
+  static const String _customCodecName = 'custom';
+  static const String _encodedKey = 'encoded';
 
   @override
-  final Converter<RouteMatchList, Map<Object?, Object?>> encoder =
-      const _RouteMatchListEncoder();
+  final Converter<RouteMatchList, Map<Object?, Object?>> encoder;
 
   @override
   final Converter<Map<Object?, Object?>, RouteMatchList> decoder;
@@ -380,7 +389,9 @@ class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
 
 class _RouteMatchListEncoder
     extends Converter<RouteMatchList, Map<Object?, Object?>> {
-  const _RouteMatchListEncoder();
+  const _RouteMatchListEncoder(this.configuration);
+
+  final RouteConfiguration configuration;
   @override
   Map<Object?, Object?> convert(RouteMatchList input) {
     final List<Map<Object?, Object?>> imperativeMatches = input.matches
@@ -394,15 +405,36 @@ class _RouteMatchListEncoder
         imperativeMatches: imperativeMatches);
   }
 
-  static Map<Object?, Object?> _toPrimitives(String location, Object? extra,
+  Map<Object?, Object?> _toPrimitives(String location, Object? extra,
       {List<Map<Object?, Object?>>? imperativeMatches, String? pageKey}) {
-    String? encodedExtra;
-    try {
-      encodedExtra = json.encoder.convert(extra);
-    } on JsonUnsupportedObjectError {/* give up if not serializable */}
+    Map<String, Object?> encodedExtra;
+    if (configuration.extraCodec != null) {
+      encodedExtra = <String, Object?>{
+        RouteMatchListCodec._codecKey: RouteMatchListCodec._customCodecName,
+        RouteMatchListCodec._encodedKey:
+            configuration.extraCodec?.encode(extra),
+      };
+    } else {
+      String jsonEncodedExtra;
+      try {
+        jsonEncodedExtra = json.encoder.convert(extra);
+      } on JsonUnsupportedObjectError {
+        jsonEncodedExtra = json.encoder.convert(null);
+        log(
+            'An extra with complex data type ${extra.runtimeType} is provided '
+            'without an codec. Consider provide an extraCodec to GoRouter to '
+            'prevent extra being dropped during serialization.',
+            level: Level.WARNING);
+      }
+      encodedExtra = <String, Object?>{
+        RouteMatchListCodec._codecKey: RouteMatchListCodec._jsonCodecName,
+        RouteMatchListCodec._encodedKey: jsonEncodedExtra,
+      };
+    }
+
     return <Object?, Object?>{
       RouteMatchListCodec._locationKey: location,
-      if (encodedExtra != null) RouteMatchListCodec._extraKey: encodedExtra,
+      RouteMatchListCodec._extraKey: encodedExtra,
       if (imperativeMatches != null)
         RouteMatchListCodec._imperativeMatchesKey: imperativeMatches,
       if (pageKey != null) RouteMatchListCodec._pageKey: pageKey,
@@ -420,13 +452,16 @@ class _RouteMatchListDecoder
   RouteMatchList convert(Map<Object?, Object?> input) {
     final String rootLocation =
         input[RouteMatchListCodec._locationKey]! as String;
-    final String? encodedExtra =
-        input[RouteMatchListCodec._extraKey] as String?;
+    final dynamic encodedExtra = input[RouteMatchListCodec._extraKey];
     final Object? extra;
-    if (encodedExtra != null) {
-      extra = json.decoder.convert(encodedExtra);
+
+    if (encodedExtra[RouteMatchListCodec._codecKey] ==
+        RouteMatchListCodec._jsonCodecName) {
+      extra = json.decoder
+          .convert(encodedExtra[RouteMatchListCodec._encodedKey]! as String);
     } else {
-      extra = null;
+      extra = configuration.extraCodec
+          ?.decode(encodedExtra[RouteMatchListCodec._encodedKey]);
     }
     RouteMatchList matchList =
         configuration.findMatch(rootLocation, extra: extra);

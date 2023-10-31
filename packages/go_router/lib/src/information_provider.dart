@@ -114,6 +114,8 @@ class GoRouteInformationProvider extends RouteInformationProvider
                 .equals(_valueInEngine.state, routeInformation.state)) {
           return;
         }
+        print(
+            '_valueInEngine.state ${_valueInEngine.state}\n routeInformation.state ${routeInformation.state}');
         replace = _valueInEngine == _kEmptyRouteInformation;
         break;
       case RouteInformationReportingType.neglect:

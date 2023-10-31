@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -25,6 +26,7 @@ class RouteConfiguration {
   RouteConfiguration(
     this._routingConfig, {
     required this.navigatorKey,
+    this.extraCodec,
   }) {
     _onRoutingTableChanged();
     _routingConfig.addListener(_onRoutingTableChanged);
@@ -231,6 +233,11 @@ class RouteConfiguration {
 
   /// The global key for top level navigator.
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// The codec used to encode and decode extra into a serializable format.
+  ///
+  /// This is needed if the extra used in GoRouter contains conplex data.
+  final Codec<Object?, Object?>? extraCodec;
 
   final Map<String, String> _nameToPath = <String, String>{};
 
