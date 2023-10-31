@@ -1,5 +1,11 @@
 # CHANGES
 
+## 2.0.9
+
+- Adds back `SvgPicture(theme:)` parameter with a deprecation. Although this
+  parameter was inherently broken, removing it would require a major semver
+  bump, which would cause consumers to miss out on important fixes.
+
 ## 2.0.8
 
 - Adds back `DefaultSvgTheme`.
