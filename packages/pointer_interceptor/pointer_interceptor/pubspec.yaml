@@ -35,6 +35,5 @@ dev_dependencies:
 #    path: ../pointer_interceptor_ios
 
 topics:
-  -
   - web
   - widgets
