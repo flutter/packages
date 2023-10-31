@@ -19,9 +19,6 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
 
   static PointerInterceptorPlatform _instance = PlaceholderPointerInterceptor();
 
-  /// The default instance of [PointerInterceptorPlatform] to use.
-  ///
-  /// Defaults to [PlaceholderPointerInterceptor], which does not do anything
   static set instance(PointerInterceptorPlatform? instance) {
     if (instance == null) {
       throw AssertionError(
@@ -32,6 +29,9 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  /// The default instance of [PointerInterceptorPlatform] to use.
+  ///
+  /// Defaults to [PlaceholderPointerInterceptor], which does not do anything
   static PointerInterceptorPlatform get instance => _instance;
 
   /// Platform-specific implementations should override this function their own
