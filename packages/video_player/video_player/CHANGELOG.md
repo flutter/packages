@@ -1,6 +1,6 @@
 ## 2.8.1
 
-* Update the example app: replace `ButtonBar` with `OverflowBar` widget.
+* Updates the example app: replaces `ButtonBar` with `OverflowBar` widget.
 
 ## 2.8.0
 
