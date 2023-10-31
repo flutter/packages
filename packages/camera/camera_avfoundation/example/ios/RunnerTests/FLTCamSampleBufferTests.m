@@ -24,8 +24,9 @@
 }
 
 - (void)testCopyPixelBuffer {
-    NSError* error = nil;
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueueWithError(dispatch_queue_create("test", NULL), &error);
+  NSError *error = nil;
+  FLTCam *cam =
+      FLTCreateCamWithCaptureSessionQueueWithError(dispatch_queue_create("test", NULL), &error);
   XCTAssertNotNil(cam, @"FLTCreateCamWithCaptureSessionQueueWithError is nil");
   XCTAssertNil(error, @"FLTCreateCamWithCaptureSessionQueueWithError error not nil: %@", error);
   CMSampleBufferRef capturedSampleBuffer = FLTCreateTestSampleBuffer();
