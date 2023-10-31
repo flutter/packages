@@ -19,6 +19,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   VolumeMessage? volumeMessage;
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
+  IsCacheSupportedMessage? isCacheSupportedMessage;
 
   @override
   TextureMessage create(CreateMessage arg) {
@@ -86,6 +87,18 @@ class _ApiLogger implements TestHostVideoPlayerApi {
     log.add('setPlaybackSpeed');
     playbackSpeedMessage = arg;
   }
+
+  @override
+  bool clearCache() {
+    log.add('clearCache');
+    return true;
+  }
+
+  @override
+  bool isCacheSupportedForNetworkMedia(IsCacheSupportedMessage msg) {
+    log.add('isCacheSupportedForNetworkMedia');
+    return true;
+  }
 }
 
 void main() {
@@ -132,18 +145,49 @@ void main() {
     });
 
     test('create with network', () async {
-      final int? textureId = await player.create(DataSource(
-        sourceType: DataSourceType.network,
-        uri: 'someUri',
-        formatHint: VideoFormat.dash,
-      ));
+      int? textureId = await player.createWithParameters(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            formatHint: VideoFormat.dash,
+          ),
+          VideoPlayerParameters(videoPlayerOptions: VideoPlayerOptions()));
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, 'dash');
+      expect(log.createMessage?.maxCacheSize, null);
+      expect(log.createMessage?.maxFileSize, null);
+      expect(log.createMessage?.formatHint, 'dash');
       expect(log.createMessage?.httpHeaders, <String, String>{});
       expect(textureId, 3);
+
+      textureId = await player.createWithParameters(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            formatHint: VideoFormat.dash,
+          ),
+          VideoPlayerParameters(
+              videoPlayerOptions:
+                  VideoPlayerOptions(maxCacheSize: 1, maxFileSize: 2)));
+      expect(log.log.last, 'create');
+      expect(log.createMessage?.asset, null);
+      expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.packageName, null);
+      expect(log.createMessage?.maxCacheSize, 1);
+      expect(log.createMessage?.maxFileSize, 2);
+      expect(log.createMessage?.formatHint, 'dash');
+      expect(log.createMessage?.httpHeaders, <String, String>{});
+      expect(textureId, 3);
+    });
+
+    test('can check is supported', () async {
+      final bool isSupported =
+          await player.isCacheSupportedForNetworkMedia('www.video.mp4');
+      expect(log.log.last, 'isCacheSupportedForNetworkMedia');
+      expect(isSupported, true);
     });
 
     test('create with network (some headers)', () async {
@@ -155,11 +199,19 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.maxCacheSize, null);
+      expect(log.createMessage?.maxFileSize, null);
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, null);
       expect(log.createMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
+    });
+
+    test('clearCache', () async {
+      final bool hasSucceeded = await player.clearCache();
+      expect(log.log.last, 'clearCache');
+      expect(hasSucceeded, true);
     });
 
     test('create with file', () async {

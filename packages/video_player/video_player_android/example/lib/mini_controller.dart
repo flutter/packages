@@ -173,7 +173,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
+  MiniController.network(this.dataSource, {this.videoPlayerParameters})
       : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -195,6 +195,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
+
+  /// Only for [network] videos.
+  VideoPlayerParameters? videoPlayerParameters;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -243,7 +246,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         break;
     }
 
-    _textureId = (await _platform.create(dataSourceDescription)) ??
+    _textureId = (await _platform.createWithParameters(
+            dataSourceDescription, videoPlayerParameters)) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
@@ -313,10 +317,21 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// Clears the cache.
+  Future<bool> clearCache() async {
+    value = value.copyWith(isPlaying: true);
+    return _applyClearCache();
+  }
+
   /// Pauses the video.
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
     await _applyPlayPause();
+  }
+
+  /// Returns if caching is supported for network media.
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
+    return _platform.isCacheSupportedForNetworkMedia(uri);
   }
 
   Future<void> _applyPlayPause() async {
@@ -338,6 +353,10 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     } else {
       await _platform.pause(_textureId);
     }
+  }
+
+  Future<bool> _applyClearCache() async {
+    return _platform.clearCache();
   }
 
   Future<void> _applyPlaybackSpeed() async {

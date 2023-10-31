@@ -276,8 +276,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
-  /// The URI for the video is given by the [dataSource] argument.
-  ///
+  /// The URI for the video is given by the [dataSource] argument and must not be
+  /// null.
+  /// The [videoPlayerOptions] option allows the caller to override the video player options
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
   ///
@@ -435,7 +436,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           .setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
-    _textureId = (await _videoPlayerPlatform.create(dataSourceDescription)) ??
+    _textureId = (await _videoPlayerPlatform.createWithParameters(
+            dataSourceDescription,
+            VideoPlayerParameters(videoPlayerOptions: videoPlayerOptions))) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
@@ -562,6 +565,22 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
     await _videoPlayerPlatform.setLooping(_textureId, value.isLooping);
+  }
+
+  /// Returns if caching is supported for network media.
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
+    if (_isDisposedOrNotInitialized) {
+      return false;
+    }
+    return _videoPlayerPlatform.isCacheSupportedForNetworkMedia(uri);
+  }
+
+  /// Clears the cache of the player, returns true if succeeded.
+  Future<bool> clearCache() async {
+    if (_isDisposedOrNotInitialized) {
+      return false;
+    }
+    return _videoPlayerPlatform.clearCache();
   }
 
   Future<void> _applyPlayPause() async {

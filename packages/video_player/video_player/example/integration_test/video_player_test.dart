@@ -231,6 +231,76 @@ void main() {
     }, skip: kIsWeb);
   });
 
+  group('file-based videos', () {
+    setUp(() async {
+      // Load the data from the asset.
+      final String tempDir = (await getTemporaryDirectory()).path;
+      final ByteData bytes = await rootBundle.load(_videoAssetKey);
+
+      // Write it to a file to use as a source.
+      final String filename = _videoAssetKey.split('/').last;
+      final File file = File('$tempDir/$filename');
+      await file.writeAsBytes(bytes.buffer.asInt8List());
+
+      controller = VideoPlayerController.file(file);
+    });
+
+    testWidgets('test video player using static file() method as constructor',
+        (WidgetTester tester) async {
+      await controller.initialize();
+
+      await controller.play();
+      expect(controller.value.isPlaying, true);
+
+      await controller.pause();
+      expect(controller.value.isPlaying, false);
+    }, skip: kIsWeb);
+  });
+
+  group('network cached videos', () {
+    setUp(() {
+      controller = VideoPlayerController.networkUrl(
+          Uri.parse(getUrlForAssetAsNetworkSource(_videoAssetKey)),
+          videoPlayerOptions:
+              VideoPlayerOptions(maxCacheSize: 10, maxFileSize: 10));
+    });
+
+    testWidgets(
+      'reports buffering status',
+      (WidgetTester tester) async {
+        await controller.initialize();
+        // Mute to allow playing without DOM interaction on Web.
+        // See https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
+        await controller.setVolume(0);
+        final Completer<void> started = Completer<void>();
+        final Completer<void> ended = Completer<void>();
+        controller.addListener(() {
+          if (!started.isCompleted && controller.value.isBuffering) {
+            started.complete();
+          }
+          if (started.isCompleted &&
+              !controller.value.isBuffering &&
+              !ended.isCompleted) {
+            ended.complete();
+          }
+        });
+
+        await controller.play();
+        await controller.seekTo(const Duration(seconds: 5));
+        await tester.pumpAndSettle(_playDuration);
+        await controller.pause();
+
+        expect(controller.value.isPlaying, false);
+        expect(controller.value.position,
+            (Duration position) => position > Duration.zero);
+
+        await expectLater(started.future, completes);
+        await expectLater(ended.future, completes);
+      },
+      skip: !(kIsWeb || defaultTargetPlatform == TargetPlatform.android),
+    );
+  });
+
   group('network videos', () {
     setUp(() {
       controller = VideoPlayerController.networkUrl(

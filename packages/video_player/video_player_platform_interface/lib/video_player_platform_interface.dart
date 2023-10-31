@@ -53,6 +53,13 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('create() has not been implemented.');
   }
 
+  /// Creates an instance of a video player with [VideoPlayerParameters] and returns its textureId.
+  Future<int?> createWithParameters(
+      DataSource dataSource, VideoPlayerParameters? videoPlayerParameters) {
+    throw UnimplementedError(
+        'createWithParameters() has not been implemented.');
+  }
+
   /// Returns a Stream of [VideoEventType]s.
   Stream<VideoEvent> videoEventsFor(int textureId) {
     throw UnimplementedError('videoEventsFor() has not been implemented.');
@@ -76,6 +83,17 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// Sets the volume to a range between 0.0 and 1.0.
   Future<void> setVolume(int textureId, double volume) {
     throw UnimplementedError('setVolume() has not been implemented.');
+  }
+
+  /// Returns true if caching is supported for the mimetype of the network video url.
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) {
+    throw UnimplementedError(
+        'isCacheSupportedForNetworkMedia() has not been implemented.');
+  }
+
+  /// Clears the cached videos.
+  Future<bool> clearCache() {
+    throw UnimplementedError('clearCache() has not been implemented.');
   }
 
   /// Sets the video position to a [Duration] from the start.
@@ -379,6 +397,9 @@ class VideoPlayerOptions {
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.webOptions,
+    this.maxCacheSize,
+    this.maxFileSize,
+    this.enableCache = false,
   });
 
   /// Set this to true to keep playing video in background, when app goes in background.
@@ -394,6 +415,45 @@ class VideoPlayerOptions {
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// Whether caching is enabled.
+  /// All parameters are best-effort, and not all platforms will support all options.
+  ///
+  /// [enableCache] true (enabled) or false (disabled), default (disabled).
+  /// Add [maxCacheSize] and [maxFileSize], default null.
+  /// The developer can clear the cache using [clearCache].
+  /// The developer can check the support mimetype for cache on the platform by calling [isCacheSupportedForNetworkMedia].
+  /// Only enabled for supported mimetypes. For other mimetypes this setting is ignored.
+  /// Detection with whatever is set here.
+  final bool enableCache;
+
+  /// Will set the total size of the cache in bytes.
+  /// null means that there is no cache enabled.
+  /// 1 * 1024 * 1024 will be 1MB and it will automatically remove oldest used files if the size is reached out.
+  /// Detection with whatever is set here.
+  final int? maxCacheSize;
+
+  /// Will set the size of a cache for one file (uri).
+  /// Default maxFileSize is 0 (no cache enabled).
+  /// 1 * 1024 * 1024 will be 1MB and it will automatically remove oldest used files if the size is reached out.
+  /// Detection with whatever is set here.
+  final int? maxFileSize;
+}
+
+/// [VideoPlayerOptions] can be optionally used to set additional player settings
+@immutable
+class VideoPlayerParameters {
+  /// Set additional optional player settings
+  // TODO(stuartmorgan): Temporarily suppress warnings about not using const
+  // in all of the other video player packages, fix this, and then update
+  // the other packages to use const.
+  // ignore: prefer_const_constructors_in_immutables
+  VideoPlayerParameters({
+    this.videoPlayerOptions,
+  });
+
+  /// Add [VideoPlayerOptions] to the [VideoPlayerParameters]
+  final VideoPlayerOptions? videoPlayerOptions;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings

@@ -7,8 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut: 'ios/Classes/messages.g.h',
-  objcSourceOut: 'ios/Classes/messages.g.m',
+  objcHeaderOut: 'darwin/Classes/messages.g.h',
+  objcSourceOut: 'darwin/Classes/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FVP',
   ),
@@ -23,6 +23,11 @@ class LoopingMessage {
   LoopingMessage(this.textureId, this.isLooping);
   int textureId;
   bool isLooping;
+}
+
+class IsCacheSupportedMessage {
+  IsCacheSupportedMessage(this.uri);
+  String uri;
 }
 
 class VolumeMessage {
@@ -44,11 +49,12 @@ class PositionMessage {
 }
 
 class CreateMessage {
-  CreateMessage({required this.httpHeaders});
+  CreateMessage({required this.httpHeaders, required this.enableCache});
   String? asset;
   String? uri;
   String? packageName;
   String? formatHint;
+  bool enableCache;
   Map<String?, String?> httpHeaders;
 }
 
@@ -67,8 +73,12 @@ abstract class AVFoundationVideoPlayerApi {
   void dispose(TextureMessage msg);
   @ObjCSelector('setLooping:')
   void setLooping(LoopingMessage msg);
+  @ObjCSelector('clearCache')
+  bool clearCache();
   @ObjCSelector('setVolume:')
   void setVolume(VolumeMessage msg);
+  @ObjCSelector('isCacheSupportedForNetworkMedia:')
+  bool isCacheSupportedForNetworkMedia(IsCacheSupportedMessage msg);
   @ObjCSelector('setPlaybackSpeed:')
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
   @ObjCSelector('play:')

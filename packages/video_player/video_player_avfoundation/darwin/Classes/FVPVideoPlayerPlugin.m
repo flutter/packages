@@ -10,6 +10,10 @@
 
 #import "AVAssetTrackUtils.h"
 #import "messages.g.h"
+#if TARGET_OS_IOS
+#import <MobileCoreServices/MobileCoreServices.h>
+#endif
+#import "VideoPlayerCache.h"
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -49,6 +53,14 @@
   }
 }
 @end
+//
+// const BOOL IS_OSX(void) {
+// #if TARGET_OS_MACCATALYST
+//  return YES;
+// #else
+//  return NO;
+// #endif
+//}
 
 #if TARGET_OS_OSX
 static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeStamp *now,
@@ -90,6 +102,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 @property(nonatomic, readonly) BOOL disposed;
 @property(nonatomic, readonly) BOOL isPlaying;
 @property(nonatomic) BOOL isLooping;
+@property(nonatomic, strong) FVPResourceLoaderManager *resourceLoaderManager;
 @property(nonatomic, readonly) BOOL isInitialized;
 // TODO(stuartmorgan): Extract and abstract the display link to remove all the display-link-related
 // ifdefs from this file.
@@ -106,6 +119,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
                frameUpdater:(FVPFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
               playerFactory:(id<FVPPlayerFactory>)playerFactory
+                enableCache:(NSNumber *)cacheEnabled
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
 
@@ -120,6 +134,7 @@ static void *rateContext = &rateContext;
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                 playerFactory:(id<FVPPlayerFactory>)playerFactory
+                  enableCache:(NSNumber *)enable
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
 #if TARGET_OS_OSX
@@ -133,6 +148,7 @@ static void *rateContext = &rateContext;
               frameUpdater:frameUpdater
                httpHeaders:@{}
              playerFactory:playerFactory
+               enableCache:false
                  registrar:registrar];
 }
 
@@ -277,17 +293,42 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                frameUpdater:(FVPFrameUpdater *)frameUpdater
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
               playerFactory:(id<FVPPlayerFactory>)playerFactory
+                enableCache:(NSNumber *)cacheEnabled
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
   }
-  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
-  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
+  AVPlayerItem *item;
+  if (cacheEnabled.boolValue) {
+    NSLog(@"cache enabled");
+    // cache is enabled, start the resource loader manager to mage loading and caching content
+    // during playback. it is tied to the player. If a new player is created, a new
+    // resourceloadermanager for that player is created. If the player is deallocated, the
+    // resourceloadermanager for that player will be cleaned up by the garbage collector.
+    // NSLog(@"cache enabled %@", url);
+
+    FVPResourceLoaderManager *resourceLoaderManager = [FVPResourceLoaderManager new];
+    self.resourceLoaderManager = resourceLoaderManager;
+    //
+    item = [resourceLoaderManager playerItemWithURL:url];
+  } else {
+    AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
+    item = [AVPlayerItem playerItemWithAsset:urlAsset];
+  }
+
   return [self initWithPlayerItem:item
                      frameUpdater:frameUpdater
                     playerFactory:playerFactory
                         registrar:registrar];
+}
+
+- (void)string:(NSMutableString *)string
+    appendString:(NSString *)appendString
+            muti:(NSInteger)muti {
+  for (NSInteger i = 0; i < muti; i++) {
+    [string appendString:appendString];
+  }
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
@@ -741,6 +782,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
                                         frameUpdater:frameUpdater
                                        playerFactory:_playerFactory
+                                         enableCache:false
                                            registrar:self.registrar];
       return [self onPlayerSetup:player frameUpdater:frameUpdater];
     } @catch (NSException *exception) {
@@ -748,10 +790,16 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       return nil;
     }
   } else if (input.uri) {
+    BOOL isCacheSupported = NO;
+    if (input.enableCache.boolValue) {
+      isCacheSupported = [self isCacheSupported:input.uri];
+    }
+    BOOL enableCache = input.enableCache.boolValue ? isCacheSupported : NO;
     player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
                                     frameUpdater:frameUpdater
                                      httpHeaders:input.httpHeaders
                                    playerFactory:_playerFactory
+                                     enableCache:[NSNumber numberWithBool:enableCache]
                                        registrar:self.registrar];
     return [self onPlayerSetup:player frameUpdater:frameUpdater];
   } else {
@@ -759,6 +807,64 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     return nil;
   }
 }
+
+- (NSString *)contentTypeForFileAtPath:(NSString *)path {
+  NSString *contentType;
+
+#if TARGET_OS_IOS
+  NSString *fileExtension = [path pathExtension];
+
+  if (@available(iOS 14.0, *)) {
+    UTType *type = ([UTType typeWithFilenameExtension:fileExtension]);
+    contentType = type.preferredMIMEType;
+  } else {
+    NSString *UTI = (__bridge_transfer NSString *)UTTypeCreatePreferredIdentifierForTag(
+        kUTTagClassFilenameExtension, (__bridge CFStringRef)fileExtension, NULL);
+
+    contentType = (__bridge_transfer NSString *)UTTypeCopyPreferredTagWithClass(
+        (__bridge CFStringRef)UTI, kUTTagClassMIMEType);
+  }
+
+#endif
+
+  if (!contentType) {
+    return @"application/octet-stream";
+  }
+  return contentType;
+}
+
+- (BOOL)isCacheSupported:(NSString *)path {
+  //    if (IS_OSX()) {
+  //        NSLog(@" run on mac 1");
+  //    } else {
+  //        NSLog(@" run on iphone 1");
+  //    }
+  //
+  //    #if TARGET_OS_MACCATALYST
+  //        NSLog(@" run on mac 3");
+  //    #endif
+  //
+  //    #if TARGET_OS_IOS
+  //        NSLog(@" run on iphone 3");
+  //    #endif
+
+  //    if (@available(iOS 14.0, *)) {
+  //        if ([NSProcessInfo processInfo].isiOSAppOnMac) {
+  //            NSLog(@"run on mac 2");
+  //            return NO;
+  //        }else{
+  //            NSLog(@" run on iphone 2");
+  NSString *mimeType = [self contentTypeForFileAtPath:path];
+  NSArray *supportedMimetypes = @[ @"video/mp4", @"audio/flac" ];
+  if ([supportedMimetypes containsObject:mimeType]) {
+    return YES;
+  } else {
+    return NO;
+  }
+}
+//   }
+//   return NO;
+//}
 
 - (void)dispose:(FVPTextureMessage *)input error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
@@ -787,6 +893,21 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   player.isLooping = input.isLooping.boolValue;
 }
 
+- (NSNumber *)clearCache:(FlutterError *__autoreleasing *)error {
+  NSLog(@"clean cache");
+  //  [player.resourceLoaderManager cleanCache];
+  unsigned long long fileSize = [FVPCacheManager calculateCachedSizeWithError:nil];
+  NSLog(@"file cache size: %@", @(fileSize));
+  NSError *error2;
+  [FVPCacheManager cleanAllCacheWithError:&error2];
+
+  if (error2) {
+    NSLog(@"clean cache failure: %@", error2);
+    return @NO;
+  }
+  return @YES;
+}
+
 - (void)setVolume:(FVPVolumeMessage *)input error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
   [player setVolume:input.volume.doubleValue];
@@ -807,6 +928,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   FVPPositionMessage *result = [FVPPositionMessage makeWithTextureId:input.textureId
                                                             position:@([player position])];
   return result;
+}
+
+- (NSNumber *)isCacheSupportedForNetworkMedia:(FVPIsCacheSupportedMessage *)msg
+                                        error:(FlutterError **)error {
+  BOOL isSupported = [self isCacheSupported:msg.uri];
+  return [NSNumber numberWithBool:isSupported];
 }
 
 - (void)seekTo:(FVPPositionMessage *)input

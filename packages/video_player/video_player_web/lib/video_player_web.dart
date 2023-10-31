@@ -128,6 +128,18 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
+    // caching is by default supported by most browsers. It remains a function of the browser, see web README.
+    return false;
+  }
+
+  // Clears the cache.
+  @override
+  Future<bool> clearCache() async {
+    return true;
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
     return _player(textureId).events;
   }

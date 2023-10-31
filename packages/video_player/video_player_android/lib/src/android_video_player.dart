@@ -31,11 +31,15 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> create(DataSource dataSource) async {
+  Future<int?> createWithParameters(DataSource dataSource,
+      VideoPlayerParameters? videoPlayerParameters) async {
     String? asset;
     String? packageName;
     String? uri;
     String? formatHint;
+    int? maxCacheSize;
+    int? maxFileSize;
+
     Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
@@ -44,6 +48,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         break;
       case DataSourceType.network:
         uri = dataSource.uri;
+        maxCacheSize = videoPlayerParameters?.videoPlayerOptions?.maxCacheSize;
+        maxFileSize = videoPlayerParameters?.videoPlayerOptions?.maxFileSize;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
         break;
@@ -59,6 +65,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       asset: asset,
       packageName: packageName,
       uri: uri,
+      maxCacheSize: maxCacheSize,
+      maxFileSize: maxFileSize,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
     );
@@ -68,11 +76,27 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<int?> create(DataSource dataSource) async {
+    return createWithParameters(dataSource, null);
+  }
+
+  @override
   Future<void> setLooping(int textureId, bool looping) {
     return _api.setLooping(LoopingMessage(
       textureId: textureId,
       isLooping: looping,
     ));
+  }
+
+  @override
+  Future<bool> clearCache() async {
+    return _api.clearCache();
+  }
+
+  @override
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
+    return _api
+        .isCacheSupportedForNetworkMedia(IsCacheSupportedMessage(uri: uri));
   }
 
   @override

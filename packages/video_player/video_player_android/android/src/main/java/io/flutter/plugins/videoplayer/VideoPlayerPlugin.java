@@ -5,9 +5,13 @@
 package io.flutter.plugins.videoplayer;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.util.LongSparseArray;
+import android.webkit.MimeTypeMap;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.exoplayer2.util.MimeTypes;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -15,6 +19,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
+import io.flutter.plugins.videoplayer.Messages.IsCacheSupportedMessage;
 import io.flutter.plugins.videoplayer.Messages.LoopingMessage;
 import io.flutter.plugins.videoplayer.Messages.MixWithOthersMessage;
 import io.flutter.plugins.videoplayer.Messages.PlaybackSpeedMessage;
@@ -145,6 +150,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               options);
     } else {
       Map<String, String> httpHeaders = arg.getHttpHeaders();
+      boolean isSupported = isCacheSupported(Uri.parse(arg.getUri()));
+      if (isSupported) {
+        options.maxCacheSize = arg.getMaxCacheSize();
+        options.maxFileSize = arg.getMaxFileSize();
+      }
       player =
           new VideoPlayer(
               flutterState.applicationContext,
@@ -169,6 +179,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   public void setLooping(@NonNull LoopingMessage arg) {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     player.setLooping(arg.getIsLooping());
+  }
+
+  @NonNull
+  public Boolean clearCache() {
+    //clear the media content cache directory and send back the response if it is a success or failed.
+    return VideoCache.clearVideoCache(flutterState.applicationContext);
   }
 
   public void setVolume(@NonNull VolumeMessage arg) {
@@ -212,6 +228,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     options.mixWithOthers = arg.getMixWithOthers();
   }
 
+  @NonNull
+  public Boolean isCacheSupportedForNetworkMedia(@NonNull IsCacheSupportedMessage arg) {
+    return isCacheSupported(Uri.parse(arg.getUri()));
+  }
+
   private interface KeyForAssetFn {
     String get(String asset);
   }
@@ -247,5 +268,20 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     void stopListening(BinaryMessenger messenger) {
       AndroidVideoPlayerApi.setup(messenger, null);
     }
+  }
+
+  private boolean isCacheSupported(@NonNull Uri uri) {
+    String mimeType = getMimeType(uri.toString());
+    return MimeTypes.VIDEO_MP4.equals(mimeType);
+  }
+
+  @Nullable
+  public static String getMimeType(@NonNull String url) {
+    String type = null;
+    String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+    if (extension != null && !extension.isEmpty()) {
+      type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+    }
+    return type;
   }
 }

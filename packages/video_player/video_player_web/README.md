@@ -60,6 +60,14 @@ on how to diagnose if a server supports range requests or not.
 The `VideoPlayerOptions.mixWithOthers` option can't be implemented in web, at least
 at the moment. If you use this option it will be silently ignored.
 
+### Video cache
+
+The `VideoPlayerOptions.enableCache`, `VideoPlayerOptions.maxCacheSize` , `VideoPlayerOptions.maxFileSize` options aren't implemented in web, at least not at the moment. If you use this option it will be silently ignored. 
+
+It's worth noting that the majority of browsers rely on their innate caching mechanisms, which implies that caching is most likely active by default.
+
+Additionally, the functions clearCache() (where the default value for hasSucceeded is true) and isCacheSupportedForMedia() (where the default value for isSupported is false) persist in providing default values and have not been integrated into the web version.
+
 ## Supported Formats
 
 **Different web browsers support different sets of video codecs.**

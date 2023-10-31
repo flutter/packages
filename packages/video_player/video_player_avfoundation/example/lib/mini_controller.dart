@@ -173,7 +173,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
+  MiniController.network(this.dataSource, {this.videoPlayerParameters})
       : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -195,6 +195,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
+
+  /// Adds cache to the video player. Video will be cached. Cache can be cleared manually.
+  VideoPlayerParameters? videoPlayerParameters;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -243,7 +246,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         break;
     }
 
-    _textureId = (await _platform.create(dataSourceDescription)) ??
+    _textureId = (await _platform.createWithParameters(
+            dataSourceDescription, videoPlayerParameters)) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
@@ -313,6 +317,11 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// Clears the media cache of the player.
+  void clearCache() {
+    _platform.clearCache();
+  }
+
   /// Pauses the video.
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
@@ -352,6 +361,11 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The position in the current video.
   Future<Duration?> get position async {
     return _platform.getPosition(_textureId);
+  }
+
+  /// Returns if cache is supported for network media.
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async {
+    return _platform.isCacheSupportedForNetworkMedia(uri);
   }
 
   /// Sets the video's current timestamp to be at [position].

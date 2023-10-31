@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Adds caching functionality for network video.
+
 ## 2.4.10
 
 * Adds pub topics to package metadata.

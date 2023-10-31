@@ -5,6 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'mini_controller.dart';
 
@@ -20,7 +21,7 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         key: const ValueKey<String>('home_page'),
         appBar: AppBar(
@@ -32,6 +33,10 @@ class _App extends StatelessWidget {
                 icon: Icon(Icons.cloud),
                 text: 'Remote',
               ),
+              Tab(
+                icon: Icon(Icons.cloud),
+                text: 'Remote with cache',
+              ),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset'),
             ],
           ),
@@ -39,6 +44,7 @@ class _App extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             _BumbleBeeRemoteVideo(),
+            _BumbleBeeRemoteCacheVideo(),
             _ButterFlyAssetVideo(),
           ],
         ),
@@ -109,10 +115,10 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late MiniController _controller;
-
   @override
   void initState() {
     super.initState();
+
     _controller = MiniController.network(
       'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
     );
@@ -150,6 +156,73 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BumbleBeeRemoteCacheVideo extends StatefulWidget {
+  @override
+  _BumbleBeeRemoteCacheVideoState createState() =>
+      _BumbleBeeRemoteCacheVideoState();
+}
+
+class _BumbleBeeRemoteCacheVideoState
+    extends State<_BumbleBeeRemoteCacheVideo> {
+  late MiniController _controller;
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = MiniController.network(
+        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+        videoPlayerParameters: VideoPlayerParameters(
+            videoPlayerOptions:
+                VideoPlayerOptions(maxCacheSize: 1500, maxFileSize: 1000)));
+
+    _controller.addListener(() {
+      setState(() {});
+    });
+    _controller.initialize();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Container(padding: const EdgeInsets.only(top: 20.0)),
+          const Text('With remote Cache mp4'),
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  VideoPlayer(_controller),
+                  _ControlsOverlay(controller: _controller),
+                  VideoProgressIndicator(_controller),
+                ],
+              ),
+            ),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(Colors.blue),
+            ),
+            onPressed: () {
+              _controller.clearCache();
+            },
+            child: const Text('clear cache'),
+          )
         ],
       ),
     );

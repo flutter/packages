@@ -19,6 +19,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   VolumeMessage? volumeMessage;
   PlaybackSpeedMessage? playbackSpeedMessage;
   MixWithOthersMessage? mixWithOthersMessage;
+  IsCacheSupportedMessage? isCacheSupportedMessage;
 
   @override
   TextureMessage create(CreateMessage arg) {
@@ -64,6 +65,12 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
+  bool isCacheSupportedForNetworkMedia(IsCacheSupportedMessage msg) {
+    log.add('isCacheSupportedForNetworkMedia');
+    return true;
+  }
+
+  @override
   Future<void> seekTo(PositionMessage arg) async {
     log.add('seekTo');
     positionMessage = arg;
@@ -85,6 +92,12 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   void setPlaybackSpeed(PlaybackSpeedMessage arg) {
     log.add('setPlaybackSpeed');
     playbackSpeedMessage = arg;
+  }
+
+  @override
+  bool clearCache() {
+    log.add('clearCache');
+    return true;
   }
 }
 
@@ -117,6 +130,13 @@ void main() {
       await player.dispose(1);
       expect(log.log.last, 'dispose');
       expect(log.textureMessage?.textureId, 1);
+    });
+
+    test('can cache .mp4', () async {
+      final bool isSupported =
+          await player.isCacheSupportedForNetworkMedia('www.video.mp4');
+      expect(log.log.last, 'isCacheSupportedForNetworkMedia');
+      expect(isSupported, true);
     });
 
     test('create with asset', () async {
@@ -153,12 +173,33 @@ void main() {
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
       expect(log.createMessage?.packageName, null);
+      expect(log.createMessage?.enableCache, false);
       expect(log.createMessage?.formatHint, 'dash');
       expect(log.createMessage?.httpHeaders, <String, String>{});
       expect(textureId, 3);
     });
 
-    test('create with network (some headers)', () async {
+    test('create with network (cache)', () async {
+      final int? textureId = await player.createWithParameters(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+          ),
+          VideoPlayerParameters(
+              videoPlayerOptions: VideoPlayerOptions(enableCache: true)));
+      expect(log.log.last, 'create');
+      expect(log.createMessage?.asset, null);
+      expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.enableCache, true);
+      expect(log.createMessage?.packageName, null);
+      expect(log.createMessage?.formatHint, null);
+      expect(log.createMessage?.httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'});
+      expect(textureId, 3);
+    });
+
+    test('should cache (mp4)', () async {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
@@ -167,6 +208,7 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.createMessage?.asset, null);
       expect(log.createMessage?.uri, 'someUri');
+      expect(log.createMessage?.enableCache, false);
       expect(log.createMessage?.packageName, null);
       expect(log.createMessage?.formatHint, null);
       expect(log.createMessage?.httpHeaders,
@@ -225,6 +267,12 @@ void main() {
       expect(log.log.last, 'setPlaybackSpeed');
       expect(log.playbackSpeedMessage?.textureId, 1);
       expect(log.playbackSpeedMessage?.speed, 1.5);
+    });
+
+    test('clearCache', () async {
+      final bool success = await player.clearCache();
+      expect(log.log.last, 'clearCache');
+      expect(success, true);
     });
 
     test('seekTo', () async {

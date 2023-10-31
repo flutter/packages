@@ -68,6 +68,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setLooping(bool looping) async {}
 
   @override
+  Future<bool> clearCache() async => false;
+
+  @override
   VideoFormat? get formatHint => null;
 
   @override
@@ -83,6 +86,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
+
+  @override
+  Future<bool> isCacheSupportedForNetworkMedia(String uri) async => false;
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -1160,6 +1166,23 @@ void main() {
       expect(controller.videoPlayerOptions!.mixWithOthers, true);
     });
 
+    test('setVideoPlayerOptions', () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUrl(
+        _localhostUri,
+        videoPlayerOptions: VideoPlayerOptions(
+            mixWithOthers: true,
+            maxCacheSize: 1000,
+            maxFileSize: 100,
+            enableCache: true),
+      );
+
+      await controller.initialize();
+      expect(controller.videoPlayerOptions!.mixWithOthers, true);
+      expect(controller.videoPlayerOptions!.maxCacheSize, 1000);
+      expect(controller.videoPlayerOptions!.maxFileSize, 100);
+      expect(controller.videoPlayerOptions!.mixWithOthers, true);
+    });
+
     test('true allowBackgroundPlayback continues playback', () async {
       final VideoPlayerController controller = VideoPlayerController.networkUrl(
         _localhostUri,
@@ -1315,6 +1338,13 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<int?> create(DataSource dataSource) async {
     calls.add('create');
+    return createWithParameters(dataSource, null);
+  }
+
+  @override
+  Future<int?> createWithParameters(
+      DataSource dataSource, VideoPlayerParameters? parameters) async {
+    calls.add('createWithParameters');
     final StreamController<VideoEvent> stream = StreamController<VideoEvent>();
     streams[nextTextureId] = stream;
     if (forceInitError) {
@@ -1381,6 +1411,12 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   @override
   Future<void> setPlaybackSpeed(int textureId, double speed) async {
     calls.add('setPlaybackSpeed');
+  }
+
+  @override
+  Future<bool> clearCache() async {
+    calls.add('clearCache');
+    return true;
   }
 
   @override

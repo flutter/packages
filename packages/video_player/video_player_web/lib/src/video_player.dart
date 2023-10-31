@@ -204,6 +204,11 @@ class VideoPlayer {
     return Duration(milliseconds: (_videoElement.currentTime * 1000).round());
   }
 
+  /// Returns if cache clearing has succeeded. In web cache cannot be cleared with this function,
+  Future<bool> clearCache() async {
+    return false;
+  }
+
   /// Sets options
   Future<void> setOptions(VideoPlayerWebOptions options) async {
     // In case this method is called multiple times, reset options.

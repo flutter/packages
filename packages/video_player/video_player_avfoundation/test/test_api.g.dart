@@ -20,23 +20,26 @@ class _TestHostVideoPlayerApiCodec extends StandardMessageCodec {
     if (value is CreateMessage) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is LoopingMessage) {
+    } else if (value is IsCacheSupportedMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is MixWithOthersMessage) {
+    } else if (value is LoopingMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlaybackSpeedMessage) {
+    } else if (value is MixWithOthersMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PositionMessage) {
+    } else if (value is PlaybackSpeedMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is TextureMessage) {
+    } else if (value is PositionMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is VolumeMessage) {
+    } else if (value is TextureMessage) {
       buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is VolumeMessage) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -49,16 +52,18 @@ class _TestHostVideoPlayerApiCodec extends StandardMessageCodec {
       case 128:
         return CreateMessage.decode(readValue(buffer)!);
       case 129:
-        return LoopingMessage.decode(readValue(buffer)!);
+        return IsCacheSupportedMessage.decode(readValue(buffer)!);
       case 130:
-        return MixWithOthersMessage.decode(readValue(buffer)!);
+        return LoopingMessage.decode(readValue(buffer)!);
       case 131:
-        return PlaybackSpeedMessage.decode(readValue(buffer)!);
+        return MixWithOthersMessage.decode(readValue(buffer)!);
       case 132:
-        return PositionMessage.decode(readValue(buffer)!);
+        return PlaybackSpeedMessage.decode(readValue(buffer)!);
       case 133:
-        return TextureMessage.decode(readValue(buffer)!);
+        return PositionMessage.decode(readValue(buffer)!);
       case 134:
+        return TextureMessage.decode(readValue(buffer)!);
+      case 135:
         return VolumeMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -79,7 +84,11 @@ abstract class TestHostVideoPlayerApi {
 
   void setLooping(LoopingMessage msg);
 
+  bool clearCache();
+
   void setVolume(VolumeMessage msg);
+
+  bool isCacheSupportedForNetworkMedia(IsCacheSupportedMessage msg);
 
   void setPlaybackSpeed(PlaybackSpeedMessage msg);
 
@@ -184,6 +193,24 @@ abstract class TestHostVideoPlayerApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.clearCache',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          // ignore message
+          final bool output = api.clearCache();
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setVolume',
           codec,
           binaryMessenger: binaryMessenger);
@@ -202,6 +229,30 @@ abstract class TestHostVideoPlayerApi {
               'Argument for dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.setVolume was null, expected non-null VolumeMessage.');
           api.setVolume(arg_msg!);
           return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final IsCacheSupportedMessage? arg_msg =
+              (args[0] as IsCacheSupportedMessage?);
+          assert(arg_msg != null,
+              'Argument for dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.isCacheSupportedForNetworkMedia was null, expected non-null IsCacheSupportedMessage.');
+          final bool output = api.isCacheSupportedForNetworkMedia(arg_msg!);
+          return <Object?>[output];
         });
       }
     }
