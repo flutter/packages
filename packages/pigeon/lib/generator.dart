@@ -4,6 +4,7 @@
 
 import 'ast.dart';
 import 'generator_tools.dart';
+import 'pigeon.dart';
 
 /// An abstract base class of generators.
 ///
@@ -78,6 +79,13 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     );
 
     writeApis(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
+
+    writeProxyApis(
       generatorOptions,
       root,
       indent,
@@ -265,4 +273,47 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Api api, {
     required String dartPackageName,
   });
+
+  void writeInstanceManager(
+    T generatorOptions,
+    Root root,
+    Indent indent,
+  ) {}
+
+  void writeInstanceManagerApi(
+    T generatorOptions,
+    Root root,
+    Indent indent,
+  ) {}
+
+  void writeProxyApis(
+    T generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    if (root.proxyApis.isNotEmpty) {
+      writeInstanceManager(generatorOptions, root, indent);
+
+      writeInstanceManagerApi(generatorOptions, root, indent);
+    }
+
+    for (final ProxyApiNode api in root.proxyApis) {
+      writeProxyApi(
+        generatorOptions,
+        root,
+        indent,
+        api,
+        dartPackageName: dartPackageName,
+      );
+    }
+  }
+
+  void writeProxyApi(
+    T generatorOptions,
+    Root root,
+    Indent indent,
+    ProxyApiNode api, {
+    required String dartPackageName,
+  }) {}
 }

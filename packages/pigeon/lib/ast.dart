@@ -78,6 +78,33 @@ class Method extends Node {
   }
 }
 
+class ProxyApiNode extends Node {
+  /// Parametric constructor for [ProxyApiNode].
+  ProxyApiNode({
+    required this.name,
+    required this.methods,
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the API.
+  final String name;
+
+  /// List of methods inside the API.
+  final List<Method> methods;
+
+  /// List of documentation comments, separated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  final List<String> documentationComments;
+
+  @override
+  String toString() {
+    return '(ProxyApi name:$name methods:$methods documentationComments:$documentationComments)';
+  }
+}
+
 /// Represents a collection of [Method]s that are hosted on a given [location].
 class Api extends Node {
   /// Parametric constructor for [Api].
@@ -294,11 +321,17 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
+    required this.proxyApis,
   });
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
   factory Root.makeEmpty() {
-    return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    return Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      proxyApis: <ProxyApiNode>[],
+    );
   }
 
   /// All the classes contained in the AST.
@@ -309,6 +342,8 @@ class Root extends Node {
 
   /// All of the enums contained in the AST.
   List<Enum> enums;
+
+  List<ProxyApiNode> proxyApis;
 
   @override
   String toString() {

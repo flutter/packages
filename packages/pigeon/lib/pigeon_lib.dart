@@ -87,6 +87,10 @@ class FlutterApi {
   const FlutterApi();
 }
 
+class ProxyApi {
+  const ProxyApi();
+}
+
 /// Metadata to annotation methods to control the selector used for objc output.
 /// The number of components in the provided selector must match the number of
 /// arguments in the annotated method.
@@ -844,6 +848,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   _RootBuilder(this.source);
 
   final List<Api> _apis = <Api>[];
+  final List<ProxyApiNode> _proxyApis = <ProxyApiNode>[];
   final List<Enum> _enums = <Enum>[];
   final List<Class> _classes = <Class>[];
   final List<Error> _errors = <Error>[];
@@ -851,6 +856,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   Class? _currentClass;
   Api? _currentApi;
+  ProxyApiNode? _currentProxyApi;
   Map<String, Object>? _pigeonOptions;
 
   void _storeCurrentApi() {
@@ -867,9 +873,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
   }
 
+  void _storeCurrentProxyApi() {
+    if (_currentProxyApi != null) {
+      _proxyApis.add(_currentProxyApi!);
+      _currentProxyApi = null;
+    }
+  }
+
   ParseResults results() {
     _storeCurrentApi();
     _storeCurrentClass();
+    _storeCurrentProxyApi();
 
     final Map<TypeDeclaration, List<int>> referencedTypes =
         getReferencedTypes(_apis, _classes);
@@ -880,8 +894,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         .removeWhere((Class x) => !referencedTypeNames.contains(x.name));
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
-    final Root completeRoot =
-        Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
+    final Root completeRoot = Root(
+      apis: _apis,
+      classes: referencedClasses,
+      enums: referencedEnums,
+      proxyApis: _proxyApis,
+    );
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
@@ -912,7 +930,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return ParseResults(
       root: totalErrors.isEmpty
           ? completeRoot
-          : Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
+          : Root(
+              apis: <Api>[],
+              classes: <Class>[],
+              enums: <Enum>[],
+              proxyApis: <ProxyApiNode>[],
+            ),
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );
@@ -997,6 +1020,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object? visitClassDeclaration(dart_ast.ClassDeclaration node) {
     _storeCurrentApi();
     _storeCurrentClass();
+    _storeCurrentProxyApi();
 
     if (node.abstractKeyword != null) {
       if (_hasMetadata(node.metadata, 'HostApi')) {
@@ -1030,6 +1054,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         _currentApi = Api(
           name: node.name.lexeme,
           location: ApiLocation.flutter,
+          methods: <Method>[],
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        );
+      } else if (_hasMetadata(node.metadata, 'ProxyApi')) {
+        _currentProxyApi = ProxyApiNode(
+          name: node.name.lexeme,
           methods: <Method>[],
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
