@@ -1,3 +1,7 @@
+## 0.9.3+7
+
+* Move pointer_interceptor to subfolder
+
 ## 0.9.3+6
 
 * Migrates to `dart:ui_web` APIs.
