@@ -14,8 +14,11 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
+  pointer_interceptor:
+    path: ../../pointer_interceptor/
   pointer_interceptor_ios:
     # When depending on this package from a real application you should use:
     #   pointer_interceptor_ios: ^x.y.z
@@ -25,12 +28,9 @@ dependencies:
     path: ../../pointer_interceptor_ios
   pointer_interceptor_platform_interface:
     path: ../../pointer_interceptor_platform_interface
-  pointer_interceptor:
-    path: ../../pointer_interceptor/
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
   shared_preferences: ^2.2.2
 
 dev_dependencies:
