@@ -80,11 +80,60 @@ class Method extends Node {
   }
 }
 
+/// Represents a method on an [ProxyApiNode].
+class Constructor extends Node {
+  /// Parametric constructor for [Method].
+  Constructor({
+    required this.name,
+    required this.arguments,
+    this.offset,
+    this.objcSelector = '',
+    this.swiftFunction = '',
+    this.taskQueueType = TaskQueueType.serial,
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the method.
+  String name;
+
+  /// The arguments passed into the [Method].
+  List<NamedType> arguments;
+
+  /// The offset in the source file where the field appears.
+  int? offset;
+
+  /// An override for the generated objc selector (ex. "divideNumber:by:").
+  String objcSelector;
+
+  /// An override for the generated swift function signature (ex. "divideNumber(_:by:)").
+  String swiftFunction;
+
+  /// Specifies how handlers are dispatched with respect to threading.
+  TaskQueueType taskQueueType;
+
+  /// List of documentation comments, separated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  List<String> documentationComments;
+
+  @override
+  String toString() {
+    final String objcSelectorStr =
+    objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
+    final String swiftFunctionStr =
+    swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
+    return '(Constructor name:$name arguments:$arguments $objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
+  }
+}
+
 class ProxyApiNode extends Api {
   /// Parametric constructor for [ProxyApiNode].
   ProxyApiNode({
     required super.name,
     required super.methods,
+    required this.constructors,
     this.documentationComments = const <String>[],
   }) : super(location: ApiLocation.proxy);
 
@@ -94,6 +143,8 @@ class ProxyApiNode extends Api {
   /// leading whitespace, so that any indentation in the original comment is preserved.
   /// For example: [" List of documentation comments, separated by line.", ...]
   final List<String> documentationComments;
+
+  List<Constructor> constructors;
 
   @override
   String toString() {

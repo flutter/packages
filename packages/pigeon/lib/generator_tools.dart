@@ -169,6 +169,16 @@ String makeChannelName(Api api, Method func, String dartPackageName) {
   return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
 }
 
+String makeChannelNameForConstructor(
+  Api api,
+  Constructor constructor,
+  String dartPackageName,
+) {
+  final String constructorName =
+      constructor.name.isEmpty ? r'$defaultConstructor' : constructor.name;
+  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.$constructorName';
+}
+
 /// Represents the mapping of a Dart datatype to a Host datatype.
 class HostDatatype {
   /// Parametric constructor for HostDatatype.

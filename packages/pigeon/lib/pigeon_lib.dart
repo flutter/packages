@@ -1062,6 +1062,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         _currentProxyApi = ProxyApiNode(
           name: node.name.lexeme,
           methods: <Method>[],
+          constructors: <Constructor>[],
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
@@ -1308,6 +1309,48 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _errors.add(Error(
           message: 'Constructors aren\'t supported in API classes ("$node").',
           lineNumber: _calculateLineNumber(source, node.offset)));
+    } else if (_currentProxyApi != null) {
+      final dart_ast.FormalParameterList parameters = node.parameters;
+      final List<NamedType> arguments =
+          parameters.parameters.map(formalParameterToField).toList();
+      final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
+              ?.arguments
+              ?.arguments
+              .first
+              .asNullable<dart_ast.SimpleStringLiteral>()
+              ?.value ??
+          '';
+      final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
+              ?.arguments
+              ?.arguments
+              .first
+              .asNullable<dart_ast.SimpleStringLiteral>()
+              ?.value ??
+          '';
+      final dart_ast.ArgumentList? taskQueueArguments =
+          _findMetadata(node.metadata, 'TaskQueue')?.arguments;
+      final String? taskQueueTypeName = taskQueueArguments == null
+          ? null
+          : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
+              ?.expression
+              .asNullable<dart_ast.PrefixedIdentifier>()
+              ?.name;
+      final TaskQueueType taskQueueType =
+          _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
+              TaskQueueType.serial;
+
+      _currentProxyApi!.constructors.add(
+        Constructor(
+          name: node.name?.lexeme ?? '',
+          arguments: arguments,
+          objcSelector: objcSelector,
+          swiftFunction: swiftFunction,
+          offset: node.offset,
+          taskQueueType: taskQueueType,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        ),
+      );
     } else {
       if (node.body.beginToken.lexeme != ';') {
         _errors.add(Error(

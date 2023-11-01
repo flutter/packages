@@ -1043,7 +1043,7 @@ class $InstanceManagerApi {
   }) {
     final String codecName = _getCodecName(api.name);
     final List<String> customEnumNames =
-    root.enums.map((Enum x) => x.name).toList();
+        root.enums.map((Enum x) => x.name).toList();
     // TODO: ENUMS!
     indent.writeln('''
 class $codecName extends StandardMessageCodec {
@@ -1078,6 +1078,79 @@ class $codecName extends StandardMessageCodec {
         indent, api.documentationComments, _docCommentSpec);
     indent.write('class ${api.name} implements \$Copyable ');
     indent.addScoped('{', '}', () {
+      for (final Constructor constructor in api.constructors) {
+        addDocumentationComments(
+            indent, constructor.documentationComments, _docCommentSpec);
+
+        String argSignature = '';
+        String sendArgument = 'null';
+
+        if (constructor.arguments.isNotEmpty) {
+          String argNameFunc(int index, NamedType type) =>
+              _getSafeArgumentName(index, type);
+
+          final Iterable<String> argExpressions =
+          indexMap(constructor.arguments, (int index, NamedType type) {
+            final String name = argNameFunc(index, type);
+            if (root.enums
+                .map((Enum e) => e.name)
+                .contains(type.type.baseName)) {
+              return '$name${type.type.isNullable ? '?' : ''}.index';
+            } else {
+              return name;
+            }
+          });
+          sendArgument =
+          '<Object?>[instanceIdentifier, ${argExpressions.join(', ')}]';
+          argSignature =
+              _getConstructorArgumentsSignature(constructor, argNameFunc);
+        }
+
+        final String constructorNameWithDot =
+        constructor.name.isEmpty ? '' : '.${constructor.name}';
+
+        indent.writeln(
+          '${api.name}$constructorNameWithDot({this.binaryMessenger, \$InstanceManager? customInstanceManager, $argSignature})',
+        );
+        indent.write(
+            r': instanceManager = customInstanceManager ?? $InstanceManager.instance');
+
+        indent.addScoped('{', '}', () {
+          final String channelName =
+          makeChannelNameForConstructor(api, constructor, dartPackageName);
+          indent.writeln(
+              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
+          indent.nest(2, () {
+            indent.writeln("r'$channelName', $codecName(instanceManager),");
+            indent.writeln('binaryMessenger: binaryMessenger);');
+          });
+
+          indent.writeln(
+            'final int instanceIdentifier = instanceManager.addDartCreatedInstance(this);',
+          );
+          indent.write(
+            'channel.send($sendArgument).then<void>((Object? value)',
+          );
+
+          indent.addScoped('{', '});', () {
+            indent.format('''
+final List<Object?>? replyList = value as List<Object?>?;
+if (replyList == null) {
+\tthrow PlatformException(
+\t\tcode: 'channel-error',
+\t\tmessage: 'Unable to establish connection on channel.',
+\t);
+} else {
+\tthrow PlatformException(
+\t\tcode: replyList[0]! as String,
+\t\tmessage: replyList[1] as String?,
+\t\tdetails: replyList[2],
+\t);
+}''');
+          });
+        });
+      }
+
       indent.format('''
 /// Constructs ${api.name} without creating the associated native object.
 ///
@@ -1137,7 +1210,7 @@ final $InstanceManager instanceManager;
               _getSafeArgumentName(index, type);
 
           final Iterable<String> argExpressions =
-          indexMap(method.arguments, (int index, NamedType type) {
+              indexMap(method.arguments, (int index, NamedType type) {
             final String name = argNameFunc(index, type);
             if (root.enums
                 .map((Enum e) => e.name)
@@ -1157,19 +1230,21 @@ final $InstanceManager instanceManager;
 
         indent.addScoped('{', '}', () {
           final String channelName =
-          makeChannelName(api, method, dartPackageName);
+              makeChannelName(api, method, dartPackageName);
           indent.writeln(
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
           indent.nest(2, () {
             indent.writeln("'$channelName', $codecName(instanceManager),");
             indent.writeln('binaryMessenger: binaryMessenger);');
           });
-          final String returnType = _makeGenericTypeArguments(method.returnType);
-          final String genericCastCall = _makeGenericCastCall(method.returnType);
+          final String returnType =
+              _makeGenericTypeArguments(method.returnType);
+          final String genericCastCall =
+              _makeGenericCastCall(method.returnType);
           const String accessor = 'replyList[0]';
           // Avoid warnings from pointlessly casting to `Object?`.
           final String nullablyTypedAccessor =
-          returnType == 'Object' ? accessor : '($accessor as $returnType?)';
+              returnType == 'Object' ? accessor : '($accessor as $returnType?)';
           final String nullHandler = method.returnType.isNullable
               ? (genericCastCall.isEmpty ? '' : '?')
               : '!';
@@ -1177,14 +1252,14 @@ final $InstanceManager instanceManager;
           if (customEnumNames.contains(returnType)) {
             if (method.returnType.isNullable) {
               returnStatement =
-              '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
+                  '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
             } else {
               returnStatement =
-              '$returnStatement $returnType.values[$accessor! as int]';
+                  '$returnStatement $returnType.values[$accessor! as int]';
             }
           } else if (!method.returnType.isVoid) {
             returnStatement =
-            '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+                '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
           }
           returnStatement = '$returnStatement;';
 
@@ -1328,6 +1403,20 @@ String _getMethodArgumentsSignature(
           final String type = _addGenericTypesNullable(arg.type);
           final String argName = getArgumentName(index, arg);
           return '$type $argName';
+        }).join(', ');
+}
+
+String _getConstructorArgumentsSignature(
+  Constructor constructor,
+  String Function(int index, NamedType arg) getArgumentName,
+) {
+  return constructor.arguments.isEmpty
+      ? ''
+      : indexMap(constructor.arguments, (int index, NamedType arg) {
+          final String type = _addGenericTypesNullable(arg.type);
+          final String argName = getArgumentName(index, arg);
+          final String required = arg.type.isNullable ? '' : 'required';
+          return '$required $type $argName';
         }).join(', ');
 }
 
