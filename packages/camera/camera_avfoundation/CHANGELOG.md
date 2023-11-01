@@ -2,6 +2,10 @@
 
 * Adds support to HEIF format
 
+## 0.9.13+7
+
+* Fixes inverted orientation strings.
+
 ## 0.9.13+6
 
 * Fixes incorrect use of `NSError` that could cause crashes on launch.

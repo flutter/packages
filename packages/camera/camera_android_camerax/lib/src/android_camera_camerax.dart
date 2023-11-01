@@ -439,6 +439,17 @@ class AndroidCameraCameraX extends CameraPlatform {
     return zoomState.minZoomRatio;
   }
 
+  /// Set the zoom level for the selected camera.
+  ///
+  /// The supplied [zoom] value should be between the minimum and the maximum
+  /// supported zoom level returned by `getMinZoomLevel` and `getMaxZoomLevel`.
+  /// Throws a `CameraException` when an illegal zoom level is supplied.
+  @override
+  Future<void> setZoomLevel(int cameraId, double zoom) async {
+    final CameraControl cameraControl = await camera!.getCameraControl();
+    await cameraControl.setZoomRatio(zoom);
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
@@ -846,7 +857,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// closest lower resolution available.
   ResolutionSelector? _getResolutionSelectorFromPreset(
       ResolutionPreset? preset) {
-    const int fallbackRule = ResolutionStrategy.fallbackRuleClosestLower;
+    const int fallbackRule =
+        ResolutionStrategy.fallbackRuleClosestLowerThenHigher;
 
     Size? boundSize;
     ResolutionStrategy? resolutionStrategy;
@@ -926,7 +938,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // We will choose the next highest video quality if the one desired
     // is unavailable.
     const VideoResolutionFallbackRule fallbackRule =
-        VideoResolutionFallbackRule.lowerQualityThan;
+        VideoResolutionFallbackRule.lowerQualityOrHigherThan;
     final FallbackStrategy fallbackStrategy =
         _shouldCreateDetachedObjectForTesting
             ? FallbackStrategy.detached(
