@@ -57,6 +57,46 @@ void main() {
       final AndroidCamera camera = AndroidCamera();
 
       // Act
+      final int cameraId = await camera.createCamera(
+        const CameraDescription(
+            name: 'Test',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 0),
+        ResolutionPreset.high,
+      );
+
+      // Assert
+      expect(cameraMockChannel.log, <Matcher>[
+        isMethodCall(
+          'create',
+          arguments: <String, Object?>{
+            'cameraName': 'Test',
+            'resolutionPreset': 'high',
+            'enableAudio': false,
+            'fps': null,
+            'videoBitrate': null,
+            'audioBitrate': null,
+          },
+        ),
+      ]);
+      expect(cameraId, 1);
+    });
+
+    test(
+        'Should send creation data and receive back a camera id using createCameraWithSettings',
+        () async {
+      // Arrange
+      final MethodChannelMock cameraMockChannel = MethodChannelMock(
+          channelName: _channelName,
+          methods: <String, dynamic>{
+            'create': <String, dynamic>{
+              'cameraId': 1,
+              'imageFormatGroup': 'unknown',
+            }
+          });
+      final AndroidCamera camera = AndroidCamera();
+
+      // Act
       final int cameraId = await camera.createCameraWithSettings(
         const CameraDescription(
             name: 'Test',
@@ -100,19 +140,13 @@ void main() {
 
       // Act
       expect(
-        () => camera.createCameraWithSettings(
+        () => camera.createCamera(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          const MediaSettings(
-            resolutionPreset: ResolutionPreset.low,
-            fps: 15,
-            videoBitrate: 200000,
-            audioBitrate: 32000,
-            enableAudio: true,
-          ),
+          ResolutionPreset.high,
         ),
         throwsA(
           isA<CameraException>()
@@ -137,19 +171,13 @@ void main() {
 
       // Act
       expect(
-        () => camera.createCameraWithSettings(
+        () => camera.createCamera(
           const CameraDescription(
             name: 'Test',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          const MediaSettings(
-            resolutionPreset: ResolutionPreset.low,
-            fps: 15,
-            videoBitrate: 200000,
-            audioBitrate: 32000,
-            enableAudio: true,
-          ),
+          ResolutionPreset.high,
         ),
         throwsA(
           isA<CameraException>()
@@ -205,19 +233,13 @@ void main() {
             'initialize': null
           });
       final AndroidCamera camera = AndroidCamera();
-      final int cameraId = await camera.createCameraWithSettings(
+      final int cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
         ),
-        const MediaSettings(
-          resolutionPreset: ResolutionPreset.low,
-          fps: 15,
-          videoBitrate: 200000,
-          audioBitrate: 32000,
-          enableAudio: true,
-        ),
+        ResolutionPreset.high,
       );
 
       // Act
@@ -258,19 +280,13 @@ void main() {
           });
 
       final AndroidCamera camera = AndroidCamera();
-      final int cameraId = await camera.createCameraWithSettings(
+      final int cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
         ),
-        const MediaSettings(
-          resolutionPreset: ResolutionPreset.low,
-          fps: 15,
-          videoBitrate: 200000,
-          audioBitrate: 32000,
-          enableAudio: true,
-        ),
+        ResolutionPreset.high,
       );
       final Future<void> initializeFuture = camera.initializeCamera(cameraId);
       camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -312,19 +328,13 @@ void main() {
         },
       );
       camera = AndroidCamera();
-      cameraId = await camera.createCameraWithSettings(
+      cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
         ),
-        const MediaSettings(
-          resolutionPreset: ResolutionPreset.low,
-          fps: 15,
-          videoBitrate: 200000,
-          audioBitrate: 32000,
-          enableAudio: true,
-        ),
+        ResolutionPreset.high,
       );
       final Future<void> initializeFuture = camera.initializeCamera(cameraId);
       camera.cameraEventStreamController.add(CameraInitializedEvent(
@@ -490,19 +500,13 @@ void main() {
         },
       );
       camera = AndroidCamera();
-      cameraId = await camera.createCameraWithSettings(
+      cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
           lensDirection: CameraLensDirection.back,
           sensorOrientation: 0,
         ),
-        const MediaSettings(
-          resolutionPreset: ResolutionPreset.low,
-          fps: 15,
-          videoBitrate: 200000,
-          audioBitrate: 32000,
-          enableAudio: true,
-        ),
+        ResolutionPreset.high,
       );
       final Future<void> initializeFuture = camera.initializeCamera(cameraId);
       camera.cameraEventStreamController.add(

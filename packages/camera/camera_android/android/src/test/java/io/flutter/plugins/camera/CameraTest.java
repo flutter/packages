@@ -1307,7 +1307,7 @@ public class CameraTest {
     }
   }
 
-  /// Allow to use `new antroid.util.Range(Integer, Integer)`
+  /// Allow to use `new android.util.Range(Integer, Integer)`
   private static class RangeConstruction implements Closeable {
     final Map<Range<Integer>, Integer> lowers = new HashMap<>();
     final Map<Range<Integer>, Integer> uppers = new HashMap<>();

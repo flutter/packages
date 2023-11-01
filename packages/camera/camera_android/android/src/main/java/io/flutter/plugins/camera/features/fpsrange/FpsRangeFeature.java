@@ -57,7 +57,6 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
   private boolean isPixel4A() {
     String brand = DeviceInfo.getBrand();
     String model = DeviceInfo.getModel();
-
     return brand != null && brand.equals("google") && model != null && model.equals("Pixel 4a");
   }
 

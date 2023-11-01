@@ -42,9 +42,6 @@ public class CameraFeatures {
   private static final String RESOLUTION = "RESOLUTION";
   private static final String SENSOR_ORIENTATION = "SENSOR_ORIENTATION";
   private static final String ZOOM_LEVEL = "ZOOM_LEVEL";
-  private static final String FPS = "FPS";
-  private static final String VIDEO_BITRATE = "VIDEO_BITRATE";
-  private static final String AUDIO_BITRATE = "AUDIO_BITRATE";
 
   @NonNull
   public static CameraFeatures init(
@@ -207,9 +204,9 @@ public class CameraFeatures {
   }
 
   /**
-   * Gets the FPS range feature if it has been set.
+   * Gets the fps range feature if it has been set.
    *
-   * @return the FPS range feature.
+   * @return the fps range feature.
    */
   @NonNull
   public FpsRangeFeature getFpsRange() {
@@ -217,7 +214,7 @@ public class CameraFeatures {
   }
 
   /**
-   * Sets the instance of the FPS range feature.
+   * Sets the instance of the fps range feature.
    *
    * @param fpsRange the {@link FpsRangeFeature} instance to set.
    */

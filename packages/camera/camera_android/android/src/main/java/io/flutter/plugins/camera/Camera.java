@@ -66,7 +66,11 @@ import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executors;
 
 @FunctionalInterface
@@ -870,7 +874,6 @@ class Camera
       result.error("videoRecordingFailed", e.getMessage(), null);
       return;
     }
-
     result.success(captureFile.getAbsolutePath());
     captureFile = null;
   }

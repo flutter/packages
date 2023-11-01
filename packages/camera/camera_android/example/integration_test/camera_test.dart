@@ -8,7 +8,6 @@ import 'dart:ui';
 import 'package:camera_android/camera_android.dart';
 import 'package:camera_example/camera_controller.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -385,8 +384,6 @@ void main() {
         await controller.dispose();
       }
 
-      debugPrint('XXX $lengths');
-
       for (int n = 0; n < lengths.length - 1; n++) {
         expect(lengths[n], lessThan(lengths[n + 1]),
             reason: 'incrementing fps should increment file size');
@@ -408,7 +405,7 @@ void main() {
 
         await startRecording(controller);
 
-        sleep(const Duration(milliseconds: 3000));
+        sleep(const Duration(milliseconds: 1500));
 
         final XFile file = await controller.stopVideoRecording();
 
@@ -419,8 +416,6 @@ void main() {
 
         await controller.dispose();
       }
-
-      debugPrint('XXX $lengths');
 
       for (int n = 0; n < lengths.length - 1; n++) {
         expect(lengths[n], lessThan(lengths[n + 1]),
@@ -451,7 +446,7 @@ void main() {
 
         await startRecording(controller);
 
-        sleep(const Duration(milliseconds: 3000));
+        sleep(const Duration(milliseconds: 1500));
 
         final XFile file = await controller.stopVideoRecording();
 
@@ -464,8 +459,6 @@ void main() {
 
         await controller.dispose();
       }
-
-      debugPrint('XXX $lengths');
 
       // Lengths should be sorted in incrementing order
       for (int n = 0; n < lengths.length - 1; n++) {
