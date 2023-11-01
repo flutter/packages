@@ -94,7 +94,7 @@
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
-- (void)testCaptureToFile_mustSetExtensionToHeicIfAvailablePhotoCodecTypesContainsHEVC {
+- (void)testCaptureToFile_mustReportFileExtensionWithHeifWhenHEVCIsAvailableAndFileFormatIsHEIF {
   XCTestExpectation *expectation =
       [self expectationWithDescription:
                 @"Test must set extension to heif if availablePhotoCodecTypes contains HEVC."];
@@ -110,10 +110,10 @@
   id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
   OCMStub([mockSettings photoSettingsWithFormat:OCMOCK_ANY]).andReturn(settings);
 
-  NSString *filePath = @"test.heif";
+  NSString *filePath = @"test";
   id mockResult = OCMClassMock([FLTThreadSafeFlutterResult class]);
   OCMStub([mockResult sendSuccessWithData:filePath]).andDo(^(NSInvocation *invocation) {
-    XCTAssertEqualObjects([filePath pathExtension], @"heif");
+    XCTAssertEqualObjects(cam.fileExtension, @"heif");
     [expectation fulfill];
   });
 
@@ -139,7 +139,7 @@
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
-- (void)testCaptureToFile_mustSetExtensionToJpegIfAvailablePhotoCodecTypesDoesNotContainHEVC {
+- (void)testCaptureToFile_mustReportFileExtensionWithJpgWhenHEVCNotAvailableAndFileFormatIsHEIF {
   XCTestExpectation *expectation = [self
       expectationWithDescription:
           @"Test must set extension to jpg if availablePhotoCodecTypes does not contain HEVC."];
@@ -153,10 +153,10 @@
   id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
   OCMStub([mockSettings photoSettings]).andReturn(settings);
 
-  NSString *filePath = @"test.jpg";
+  NSString *filePath = @"test";
   id mockResult = OCMClassMock([FLTThreadSafeFlutterResult class]);
   OCMStub([mockResult sendSuccessWithData:filePath]).andDo(^(NSInvocation *invocation) {
-    XCTAssertEqualObjects([filePath pathExtension], @"jpg");
+    XCTAssertEqualObjects(cam.fileExtension, @"jpg");
     [expectation fulfill];
   });
 

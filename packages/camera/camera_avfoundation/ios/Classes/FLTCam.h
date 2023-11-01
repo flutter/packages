@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
 @property(assign, nonatomic) FCPFileFormat fileFormat;
+// This returns the file extension of the photo captured by the camera.
+@property(readonly, nonatomic) NSString *fileExtension;
 
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
