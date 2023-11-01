@@ -1,3 +1,7 @@
+## 3.0.1
+
+* Replaces `flutter pub add --dev` with `dev:` in README.md.
+
 ## 3.0.0
 
 * Updated `package:lints` dependency to version 3.0.0, with the following changes:
