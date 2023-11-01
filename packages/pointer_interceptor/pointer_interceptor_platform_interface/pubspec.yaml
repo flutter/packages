@@ -3,8 +3,8 @@ description: "A new Flutter plugin project."
 version: 0.0.1
 
 environment:
-  sdk: '>=3.2.0-134.0.dev <4.0.0'
-  flutter: '>=3.3.0'
+  sdk: '>=3.1.0-134.0.dev <4.0.0'
+  flutter: '>=3.13.0'
 
 dependencies:
   flutter:
