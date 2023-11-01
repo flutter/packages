@@ -58,6 +58,14 @@ class VideoPlayer {
   /// This method sets the required DOM attributes so videos can [play] programmatically,
   /// and attaches listeners to the internal events from the [html.VideoElement]
   /// to react to them / expose them through the [VideoPlayer.events] stream.
+  ///
+  /// The [src] parameter is the URL of the video. It is passed in from the plugin
+  /// `create` method so it can be set in the VideoElement *last*. This way, all
+  /// the event listeners needed to integrate the videoElement with the plugin
+  /// are attached before any events start firing (events start to fire when the
+  /// `src` attribute is set).
+  ///
+  /// The `src` parameter is nullable for testing purposes.
   void initialize({
     String? src,
   }) {
@@ -122,6 +130,8 @@ class VideoPlayer {
       _eventController.add(VideoEvent(eventType: VideoEventType.completed));
     });
 
+    // The `src` of the _videoElement is the last property that is set, so all
+    // the listeners for the events that the plugin cares about are attached.
     if (src != null) {
       _videoElement.src = src;
     }
