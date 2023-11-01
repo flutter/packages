@@ -354,11 +354,11 @@ class WebViewController {
     return platform.setUserAgent(userAgent);
   }
 
-<<<<<<< HEAD
   /// Whether to display a preview of the destination for the link
   Future<void> setAllowsLinkPreview(bool allow) {
     return platform.setAllowsLinkPreview(allow);
-=======
+  }
+
   /// Sets a callback that notifies the host application on any log messages
   /// written to the JavaScript console.
   ///
@@ -378,7 +378,6 @@ class WebViewController {
   /// Gets the value used for the HTTP `User-Agent:` request header.
   Future<String?> getUserAgent() {
     return platform.getUserAgent();
->>>>>>> origin/main
   }
 }
 

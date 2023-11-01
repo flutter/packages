@@ -833,7 +833,6 @@ void main() {
         ));
       });
 
-<<<<<<< HEAD
       test('setAllowsLinkPreview', () {
         webView.setAllowsLinkPreview(false);
         verify(mockPlatformHostApi.setAllowsLinkPreview(
@@ -842,10 +841,7 @@ void main() {
         ));
       });
 
-      test('customUserAgent', () {
-=======
       test('setCustomUserAgent', () {
->>>>>>> origin/main
         webView.setCustomUserAgent('hello');
         verify(mockPlatformHostApi.setCustomUserAgent(
           webViewInstanceId,

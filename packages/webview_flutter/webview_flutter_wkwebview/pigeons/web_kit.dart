@@ -688,14 +688,10 @@ abstract class WKWebViewHostApi {
   @ObjCSelector('setAllowsBackForwardForWebViewWithIdentifier:isAllowed:')
   void setAllowsBackForwardNavigationGestures(int identifier, bool allow);
 
-<<<<<<< HEAD
   @ObjCSelector('setAllowsLinkPreviewForWebViewWithIdentifier:isAllowed:')
   void setAllowsLinkPreview(int identifier, bool allow);
 
-  @ObjCSelector('setUserAgentForWebViewWithIdentifier:userAgent:')
-=======
   @ObjCSelector('setCustomUserAgentForWebViewWithIdentifier:userAgent:')
->>>>>>> origin/main
   void setCustomUserAgent(int identifier, String? userAgent);
 
   @ObjCSelector('evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:')
