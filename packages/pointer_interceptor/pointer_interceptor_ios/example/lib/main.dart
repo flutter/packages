@@ -7,7 +7,7 @@ void main() {
 }
 
 class _DummyPlatformView extends StatelessWidget {
-  const _DummyPlatformView({super.key});
+  const _DummyPlatformView();
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class _PointerInterceptorIOSExampleState
         body: Center(
       child: Stack(
         alignment: AlignmentDirectional.center,
-        children: [
+        children: <Widget>[
           const _DummyPlatformView(),
           PointerInterceptorIOSPlugin().buildWidget(
               debug: true,

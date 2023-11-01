@@ -3,6 +3,7 @@ description: iOS implementation of the pointer_interceptor plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor_ios
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen++label%3A%22p%3A+pointer_interceptor%22
 version: 2.3.1
+publish_to: 'none'
 
 environment:
   sdk: '>=3.2.0-134.0.dev <4.0.0'
@@ -24,6 +25,6 @@ dependencies:
   webview_flutter: ^3.0.4
 
 dev_dependencies:
+  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
