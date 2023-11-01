@@ -11,6 +11,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
 import 'camera.dart';
+import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
@@ -110,6 +111,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The flash mode currently configured for [imageCapture].
   int? _currentFlashMode;
+
+  /// Whether or not torch flash mode has been enabled for the [camera].
+  @visibleForTesting
+  bool torchEnabled = false;
 
   /// The [ImageAnalysis] instance that can be configured to analyze individual
   /// frames.
@@ -434,6 +439,17 @@ class AndroidCameraCameraX extends CameraPlatform {
     return zoomState.minZoomRatio;
   }
 
+  /// Set the zoom level for the selected camera.
+  ///
+  /// The supplied [zoom] value should be between the minimum and the maximum
+  /// supported zoom level returned by `getMinZoomLevel` and `getMaxZoomLevel`.
+  /// Throws a `CameraException` when an illegal zoom level is supplied.
+  @override
+  Future<void> setZoomLevel(int cameraId, double zoom) async {
+    final CameraControl cameraControl = await camera!.getCameraControl();
+    await cameraControl.setZoomRatio(zoom);
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
@@ -483,14 +499,37 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<XFile> takePicture(int cameraId) async {
     if (_currentFlashMode != null) {
       await imageCapture!.setFlashMode(_currentFlashMode!);
+    } else if (torchEnabled) {
+      // Ensure any previously set flash modes are unset when torch mode has
+      // been enabled.
+      await imageCapture!.setFlashMode(ImageCapture.flashModeOff);
     }
     final String picturePath = await imageCapture!.takePicture();
     return XFile(picturePath);
   }
 
   /// Sets the flash mode for the selected camera.
+  ///
+  /// When the [FlashMode.torch] is enabled, any previously set [FlashMode] with
+  /// this method will be disabled, just as with any other [FlashMode]; while
+  /// this is not default native Android behavior as defined by the CameraX API,
+  /// this behavior is compliant with the plugin platform interface.
+  ///
+  /// This method combines the notion of setting the flash mode of the
+  /// [imageCapture] UseCase and enabling the camera torch, as described
+  /// by https://developer.android.com/reference/androidx/camera/core/ImageCapture
+  /// and https://developer.android.com/reference/androidx/camera/core/CameraControl#enableTorch(boolean),
+  /// respectively.
   @override
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    CameraControl? cameraControl;
+    // Turn off torch mode if it is enabled and not being redundantly set.
+    if (mode != FlashMode.torch && torchEnabled) {
+      cameraControl = await camera!.getCameraControl();
+      await cameraControl.enableTorch(false);
+      torchEnabled = false;
+    }
+
     switch (mode) {
       case FlashMode.off:
         _currentFlashMode = ImageCapture.flashModeOff;
@@ -502,7 +541,14 @@ class AndroidCameraCameraX extends CameraPlatform {
         _currentFlashMode = ImageCapture.flashModeOn;
         break;
       case FlashMode.torch:
-        // TODO(camsim99): Implement torch mode when CameraControl is wrapped.
+        _currentFlashMode = null;
+        if (torchEnabled) {
+          // Torch mode enabled already.
+          return;
+        }
+        cameraControl = await camera!.getCameraControl();
+        await cameraControl.enableTorch(true);
+        torchEnabled = true;
         break;
     }
   }
@@ -811,7 +857,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// closest lower resolution available.
   ResolutionSelector? _getResolutionSelectorFromPreset(
       ResolutionPreset? preset) {
-    const int fallbackRule = ResolutionStrategy.fallbackRuleClosestLower;
+    const int fallbackRule =
+        ResolutionStrategy.fallbackRuleClosestLowerThenHigher;
 
     Size? boundSize;
     ResolutionStrategy? resolutionStrategy;
@@ -891,7 +938,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // We will choose the next highest video quality if the one desired
     // is unavailable.
     const VideoResolutionFallbackRule fallbackRule =
-        VideoResolutionFallbackRule.lowerQualityThan;
+        VideoResolutionFallbackRule.lowerQualityOrHigherThan;
     final FallbackStrategy fallbackStrategy =
         _shouldCreateDetachedObjectForTesting
             ? FallbackStrategy.detached(

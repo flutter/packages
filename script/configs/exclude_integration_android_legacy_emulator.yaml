@@ -1,0 +1,13 @@
+# This plugin no-ops below API 25, which is newer than the legacy emulator.
+# This can be removed once the legacy emulator test is using at least
+# API level 25.
+- quick_actions
+- quick_actions_android
+# Fails on the legacy emulator. See https://github.com/flutter/flutter/issues/136823
+# TODO(stuartmorgan): Remove this if the limitation can be worked around.
+- video_player
+- video_player_android
+# Hangs on the legacy emulator. See https://github.com/flutter/flutter/issues/136824
+# TODO(stuartmorgan): Remove this if the hang can be fixed.
+- webview_flutter
+- webview_flutter_android

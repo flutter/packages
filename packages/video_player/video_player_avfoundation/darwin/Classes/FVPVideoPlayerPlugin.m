@@ -512,7 +512,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return FVPCMTimeToMillis([[[_player currentItem] asset] duration]);
 }
 
-- (void)seekTo:(int)location completionHandler:(void (^)(BOOL))completionHandler {
+- (void)seekTo:(int64_t)location completionHandler:(void (^)(BOOL))completionHandler {
   CMTime locationCMT = CMTimeMake(location, 1000);
   CMTimeValue duration = _player.currentItem.asset.duration.value;
   // Without adding tolerance when seeking to duration,
@@ -670,7 +670,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // https://github.com/flutter/flutter/issues/135320
   [registrar publish:instance];
 #endif
-  FVPAVFoundationVideoPlayerApiSetup(registrar.messenger, instance);
+  SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
@@ -709,7 +709,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [eventChannel setStreamHandler:player];
   player.eventChannel = eventChannel;
   self.playersByTextureId[@(textureId)] = player;
-  FVPTextureMessage *result = [FVPTextureMessage makeWithTextureId:@(textureId)];
+  FVPTextureMessage *result = [FVPTextureMessage makeWithTextureId:textureId];
   return result;
 }
 
@@ -761,9 +761,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)dispose:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
-  [self.registry unregisterTexture:input.textureId.intValue];
-  [self.playersByTextureId removeObjectForKey:input.textureId];
+  NSNumber *playerKey = @(input.textureId);
+  FVPVideoPlayer *player = self.playersByTextureId[playerKey];
+  [self.registry unregisterTexture:input.textureId];
+  [self.playersByTextureId removeObjectForKey:playerKey];
   // If the Flutter contains https://github.com/flutter/engine/pull/12695,
   // the `player` is disposed via `onTextureUnregistered` at the right time.
   // Without https://github.com/flutter/engine/pull/12695, there is no guarantee that the
@@ -783,46 +784,46 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)setLooping:(FVPLoopingMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
-  player.isLooping = input.isLooping.boolValue;
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+  player.isLooping = input.isLooping;
 }
 
 - (void)setVolume:(FVPVolumeMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
-  [player setVolume:input.volume.doubleValue];
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+  [player setVolume:input.volume];
 }
 
 - (void)setPlaybackSpeed:(FVPPlaybackSpeedMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
-  [player setPlaybackSpeed:input.speed.doubleValue];
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+  [player setPlaybackSpeed:input.speed];
 }
 
 - (void)play:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
   [player play];
 }
 
 - (FVPPositionMessage *)position:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
   FVPPositionMessage *result = [FVPPositionMessage makeWithTextureId:input.textureId
-                                                            position:@([player position])];
+                                                            position:[player position]];
   return result;
 }
 
 - (void)seekTo:(FVPPositionMessage *)input
     completion:(void (^)(FlutterError *_Nullable))completion {
-  FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
-  [player seekTo:input.position.intValue
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+  [player seekTo:input.position
       completionHandler:^(BOOL finished) {
         dispatch_async(dispatch_get_main_queue(), ^{
-          [self.registry textureFrameAvailable:input.textureId.intValue];
+          [self.registry textureFrameAvailable:input.textureId];
           completion(nil);
         });
       }];
 }
 
 - (void)pause:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[input.textureId];
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
   [player pause];
 }
 
@@ -831,7 +832,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 #if TARGET_OS_OSX
   // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
 #else
-  if (input.mixWithOthers.boolValue) {
+  if (input.mixWithOthers) {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback
                                      withOptions:AVAudioSessionCategoryOptionMixWithOthers
                                            error:nil];

@@ -35,10 +35,6 @@ and thus, the plugin will fall back to 480p if configured with a
 
 `lockCaptureOrientation` & `unLockCaptureOrientation` are unimplemented.
 
-### Torch mode \[[Issue #120715][120715]\]
-
-Calling `setFlashMode` with mode `FlashMode.torch` currently does nothing.
-
 ### Exposure mode, point, & offset configuration \[[Issue #120468][120468]\]
 
 `setExposureMode`, `setExposurePoint`, & `setExposureOffset` are unimplemented.
@@ -46,10 +42,6 @@ Calling `setFlashMode` with mode `FlashMode.torch` currently does nothing.
 ### Focus mode & point configuration \[[Issue #120467][120467]\]
 
 `setFocusMode` & `setFocusPoint` are unimplemented.
-
-### Zoom configuration \[[Issue #125371][125371]\]
-
-`setZoomLevel` is unimplemented.
 
 ### Setting maximum duration and stream options for video capture
 
