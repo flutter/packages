@@ -1195,6 +1195,29 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           message:
               'Methods aren\'t supported in Pigeon data classes ("${node.name.lexeme}").',
           lineNumber: _calculateLineNumber(source, node.offset)));
+    } else if (_currentProxyApi != null) {
+      // Methods without named return types aren't supported.
+      final dart_ast.TypeAnnotation returnType = node.returnType!;
+      returnType as dart_ast.NamedType;
+      _currentProxyApi!.methods.add(
+        Method(
+          name: node.name.lexeme,
+          returnType: TypeDeclaration(
+            baseName: _getNamedTypeQualifiedName(returnType),
+            typeArguments:
+                typeAnnotationsToTypeArguments(returnType.typeArguments),
+            isNullable: returnType.question != null,
+          ),
+          arguments: arguments,
+          isAsynchronous: isAsynchronous,
+          objcSelector: objcSelector,
+          swiftFunction: swiftFunction,
+          offset: node.offset,
+          taskQueueType: taskQueueType,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        ),
+      );
     }
     node.visitChildren(this);
     return null;

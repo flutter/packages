@@ -17,6 +17,8 @@ enum ApiLocation {
 
   /// The API is for calling functions defined in Flutter.
   flutter,
+
+  proxy,
 }
 
 /// Superclass for all AST nodes.
@@ -78,19 +80,13 @@ class Method extends Node {
   }
 }
 
-class ProxyApiNode extends Node {
+class ProxyApiNode extends Api {
   /// Parametric constructor for [ProxyApiNode].
   ProxyApiNode({
-    required this.name,
-    required this.methods,
+    required super.name,
+    required super.methods,
     this.documentationComments = const <String>[],
-  });
-
-  /// The name of the API.
-  final String name;
-
-  /// List of methods inside the API.
-  final List<Method> methods;
+  }) : super(location: ApiLocation.proxy);
 
   /// List of documentation comments, separated by line.
   ///

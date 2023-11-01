@@ -1042,6 +1042,8 @@ class $InstanceManagerApi {
     required String dartPackageName,
   }) {
     final String codecName = _getCodecName(api.name);
+    final List<String> customEnumNames =
+    root.enums.map((Enum x) => x.name).toList();
     // TODO: ENUMS!
     indent.writeln('''
 class $codecName extends StandardMessageCodec {
@@ -1122,6 +1124,101 @@ static void setUpDartMessageHandlers({
 final BinaryMessenger? binaryMessenger;
 final $InstanceManager instanceManager;    
 ''');
+
+      for (final Method method in api.methods) {
+        addDocumentationComments(
+            indent, method.documentationComments, _docCommentSpec);
+
+        String argSignature = '';
+        String sendArgument = 'null';
+
+        if (method.arguments.isNotEmpty) {
+          String argNameFunc(int index, NamedType type) =>
+              _getSafeArgumentName(index, type);
+
+          final Iterable<String> argExpressions =
+          indexMap(method.arguments, (int index, NamedType type) {
+            final String name = argNameFunc(index, type);
+            if (root.enums
+                .map((Enum e) => e.name)
+                .contains(type.type.baseName)) {
+              return '$name${type.type.isNullable ? '?' : ''}.index';
+            } else {
+              return name;
+            }
+          });
+          sendArgument = '<Object?>[this, ${argExpressions.join(', ')}]';
+          argSignature = _getMethodArgumentsSignature(method, argNameFunc);
+        }
+
+        indent.write(
+          'Future<${_addGenericTypesNullable(method.returnType)}> ${method.name}($argSignature) async ',
+        );
+
+        indent.addScoped('{', '}', () {
+          final String channelName =
+          makeChannelName(api, method, dartPackageName);
+          indent.writeln(
+              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
+          indent.nest(2, () {
+            indent.writeln("'$channelName', $codecName(instanceManager),");
+            indent.writeln('binaryMessenger: binaryMessenger);');
+          });
+          final String returnType = _makeGenericTypeArguments(method.returnType);
+          final String genericCastCall = _makeGenericCastCall(method.returnType);
+          const String accessor = 'replyList[0]';
+          // Avoid warnings from pointlessly casting to `Object?`.
+          final String nullablyTypedAccessor =
+          returnType == 'Object' ? accessor : '($accessor as $returnType?)';
+          final String nullHandler = method.returnType.isNullable
+              ? (genericCastCall.isEmpty ? '' : '?')
+              : '!';
+          String returnStatement = 'return';
+          if (customEnumNames.contains(returnType)) {
+            if (method.returnType.isNullable) {
+              returnStatement =
+              '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
+            } else {
+              returnStatement =
+              '$returnStatement $returnType.values[$accessor! as int]';
+            }
+          } else if (!method.returnType.isVoid) {
+            returnStatement =
+            '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+          }
+          returnStatement = '$returnStatement;';
+
+          indent.format('''
+final List<Object?>? replyList =
+\t\tawait channel.send($sendArgument) as List<Object?>?;
+if (replyList == null) {
+\tthrow PlatformException(
+\t\tcode: 'channel-error',
+\t\tmessage: 'Unable to establish connection on channel.',
+\t);
+} else if (replyList.length > 1) {
+\tthrow PlatformException(
+\t\tcode: replyList[0]! as String,
+\t\tmessage: replyList[1] as String?,
+\t\tdetails: replyList[2],
+\t);''');
+          // On iOS we can return nil from functions to accommodate error
+          // handling.  Returning a nil value and not returning an error is an
+          // exception.
+          if (!method.returnType.isNullable && !method.returnType.isVoid) {
+            indent.format('''
+} else if (replyList[0] == null) {
+\tthrow PlatformException(
+\t\tcode: 'null-error',
+\t\tmessage: 'Host platform returned null value for non-null return value.',
+\t);''');
+          }
+          indent.format('''
+} else {
+\t$returnStatement
+}''');
+        });
+      }
 
       indent.format('''
 @override
