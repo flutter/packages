@@ -322,7 +322,7 @@ $resultAt != null
         root.enums.map((Enum x) => x.name).toList();
     String codecName = _standardMessageCodec;
     if (getCodecClasses(api, root).isNotEmpty) {
-      codecName = _getCodecName(api);
+      codecName = _getCodecName(api.name);
       _writeCodec(indent, codecName, api, root);
     }
     indent.newln();
@@ -500,7 +500,7 @@ $resultAt != null
     assert(api.location == ApiLocation.host);
     String codecName = _standardMessageCodec;
     if (getCodecClasses(api, root).isNotEmpty) {
-      codecName = _getCodecName(api);
+      codecName = _getCodecName(api.name);
       _writeCodec(indent, codecName, api, root);
     }
     final List<String> customEnumNames =
@@ -1035,9 +1035,103 @@ class $InstanceManagerApi {
 
   @override
   void writeProxyApi(
-      DartOptions generatorOptions, Root root, Indent indent, ProxyApiNode api,
-      {required String dartPackageName}) {
-    indent.writeln('class ${api.name} {}');
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    ProxyApiNode api, {
+    required String dartPackageName,
+  }) {
+    final String codecName = _getCodecName(api.name);
+    // TODO: ENUMS!
+    indent.writeln('''
+class $codecName extends StandardMessageCodec {
+ const $codecName(this.instanceManager);
+
+ final \$InstanceManager instanceManager;
+
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is \$Copyable) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
+}
+''');
+
+    addDocumentationComments(
+        indent, api.documentationComments, _docCommentSpec);
+    indent.write('class ${api.name} implements \$Copyable ');
+    indent.addScoped('{', '}', () {
+      indent.format('''
+/// Constructs ${api.name} without creating the associated native object.
+///
+/// This should only be used by subclasses created by this library or to
+/// create copies.''');
+      indent.format('''
+${api.name}.\$detached({this.binaryMessenger, \$InstanceManager? instanceManager}) 
+    : instanceManager = instanceManager ?? \$InstanceManager.instance;
+''');
+
+      indent.format('''
+static void setUpDartMessageHandlers({
+  BinaryMessenger? binaryMessenger,
+  \$InstanceManager? instanceManager,
+  ${api.name} Function()? \$defaultConstructor,
+}) {
+  {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        r'dev.flutter.pigeon.${api.name}.\$defaultConstructor',
+        $codecName(instanceManager ?? \$InstanceManager.instance),
+        binaryMessenger: binaryMessenger);
+    channel.setMessageHandler((Object? message) async {
+      assert(message != null,
+          r'Argument for dev.flutter.pigeon.${api.name}.\$defaultConstructor was null.');
+      final List<Object?> args = (message as List<Object?>?)!;
+      final int? instanceIdentifier = (args[0] as int?);
+      assert(instanceIdentifier != null,
+          r'Argument for dev.flutter.pigeon.${api.name}.\$defaultConstructor was null, expected non-null int.');
+      (instanceManager ?? \$InstanceManager.instance).addHostCreatedInstance(
+        \$defaultConstructor?.call() ??
+            ${api.name}.\$detached(
+              binaryMessenger: binaryMessenger,
+              instanceManager: instanceManager,
+            ),
+        instanceIdentifier!,
+      );
+      return;
+    });
+  }
+}      
+''');
+
+      indent.format(r'''
+final BinaryMessenger? binaryMessenger;
+final $InstanceManager instanceManager;    
+''');
+
+      indent.format('''
+@override
+${api.name} copy() {
+  return ${api.name}.\$detached(
+    binaryMessenger: binaryMessenger,
+    instanceManager: instanceManager,
+  );
+}''');
+    });
   }
 }
 
@@ -1049,7 +1143,7 @@ String _escapeForDartSingleQuotedString(String raw) {
 }
 
 /// Calculates the name of the codec class that will be generated for [api].
-String _getCodecName(Api api) => '_${api.name}Codec';
+String _getCodecName(String apiName) => '_${apiName}Codec';
 
 /// Writes the codec that will be used by [api].
 /// Example:
