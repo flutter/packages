@@ -29,6 +29,11 @@ dev_dependencies:
   mockito: 5.4.1
   pigeon: ^10.1.4
 
+# FOR TESTING ONLY. DO NOT MERGE.
+dependency_overrides:
+  webview_flutter_platform_interface:
+    path: ../webview_flutter_platform_interface
+
 topics:
   - html
   - webview
