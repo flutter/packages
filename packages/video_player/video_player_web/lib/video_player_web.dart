@@ -75,7 +75,6 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
 
     final VideoElement videoElement = VideoElement()
       ..id = 'videoElement-$textureId'
-      ..src = uri
       ..style.border = 'none'
       ..style.height = '100%'
       ..style.width = '100%';
@@ -85,7 +84,9 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
         'videoPlayer-$textureId', (int viewId) => videoElement);
 
     final VideoPlayer player = VideoPlayer(videoElement: videoElement)
-      ..initialize();
+      ..initialize(
+        src: uri,
+      );
 
     _videoPlayers[textureId] = player;
 
