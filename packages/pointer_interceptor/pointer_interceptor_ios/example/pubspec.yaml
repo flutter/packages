@@ -5,7 +5,7 @@ description: "Demonstrates how to use the pointer_interceptor_ios plugin."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: '>=3.2.0-134.0.dev <4.0.0'
+  sdk: '>=3.1.0-134.0.dev <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
