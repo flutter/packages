@@ -336,6 +336,18 @@ void main() {
     );
   });
 
+  test('setAllowsLinkPreview', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    await webViewController.setAllowsLinkPreview(false);
+    verify(mockPlatformWebViewController.setAllowsLinkPreview(false));
+  });
+
   test('setUserAgent', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();

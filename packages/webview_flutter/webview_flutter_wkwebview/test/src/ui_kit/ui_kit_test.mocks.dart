@@ -293,6 +293,23 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
+  @override
+  void setAllowsLinkPreview(
+    int? identifier,
+    bool? allow,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setAllowsLinkPreview,
+          [
+            identifier,
+            allow,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+
   @override
   void setCustomUserAgent(
     int? identifier,

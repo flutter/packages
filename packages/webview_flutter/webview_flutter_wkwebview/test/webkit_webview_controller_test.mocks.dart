@@ -732,6 +732,17 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> setAllowsLinkPreview(bool? allow) => (super.noSuchMethod(
+        Invocation.method(
+          #setAllowsLinkPreview,
+          [allow],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> setCustomUserAgent(String? userAgent) => (super.noSuchMethod(
         Invocation.method(

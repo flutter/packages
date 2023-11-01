@@ -1154,6 +1154,8 @@ abstract class TestWKWebViewHostApi {
 
   void setAllowsBackForwardNavigationGestures(int identifier, bool allow);
 
+  void setAllowsLinkPreview(int identifier, bool allow);
+
   void setCustomUserAgent(int identifier, String? userAgent);
 
   Future<Object?> evaluateJavaScript(int identifier, String javaScriptString);
@@ -1554,6 +1556,32 @@ abstract class TestWKWebViewHostApi {
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsBackForwardNavigationGestures was null, expected non-null bool.');
           api.setAllowsBackForwardNavigationGestures(
               arg_identifier!, arg_allow!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsLinkPreview',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsLinkPreview was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsLinkPreview was null, expected non-null int.');
+          final bool? arg_allow = (args[1] as bool?);
+          assert(arg_allow != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsLinkPreview was null, expected non-null bool.');
+          api.setAllowsLinkPreview(arg_identifier!, arg_allow!);
           return <Object?>[];
         });
       }

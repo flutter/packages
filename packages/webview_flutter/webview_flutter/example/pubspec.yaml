@@ -29,6 +29,11 @@ dev_dependencies:
     sdk: flutter
   webview_flutter_platform_interface: ^2.3.0
 
+# FOR TESTING ONLY. DO NOT MERGE.
+dependency_overrides:
+  webview_flutter_platform_interface:
+    path: ../../webview_flutter_platform_interface
+
 flutter:
   uses-material-design: true
   assets:

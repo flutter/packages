@@ -343,6 +343,17 @@ class MockPlatformWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setAllowsLinkPreview(bool? allow) => (super.noSuchMethod(
+        Invocation.method(
+          #setAllowsLinkPreview,
+          [allow],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setOnPlatformPermissionRequest(
           void Function(_i2.PlatformWebViewPermissionRequest)?

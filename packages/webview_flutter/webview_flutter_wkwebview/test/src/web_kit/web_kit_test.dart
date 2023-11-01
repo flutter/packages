@@ -833,6 +833,14 @@ void main() {
         ));
       });
 
+      test('setAllowsLinkPreview', () {
+        webView.setAllowsLinkPreview(false);
+        verify(mockPlatformHostApi.setAllowsLinkPreview(
+          webViewInstanceId,
+          false,
+        ));
+      });
+
       test('setCustomUserAgent', () {
         webView.setCustomUserAgent('hello');
         verify(mockPlatformHostApi.setCustomUserAgent(

@@ -25,6 +25,11 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
+# FOR TESTING ONLY. DO NOT MERGE.
+dependency_overrides:
+  webview_flutter_platform_interface:
+    path: ../../webview_flutter_platform_interface
+
 flutter:
   uses-material-design: true
   assets:

@@ -354,6 +354,11 @@ class WebViewController {
     return platform.setUserAgent(userAgent);
   }
 
+  /// Whether to display a preview of the destination for the link
+  Future<void> setAllowsLinkPreview(bool allow) {
+    return platform.setAllowsLinkPreview(allow);
+  }
+
   /// Sets a callback that notifies the host application on any log messages
   /// written to the JavaScript console.
   ///

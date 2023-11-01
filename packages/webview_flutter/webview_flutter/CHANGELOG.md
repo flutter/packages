@@ -1,3 +1,7 @@
+## 4.4.2
+
+* Adds support for the `allowsLinkPreview` property on iOS.
+
 ## 4.4.1
 
 * Exposes `JavaScriptLogLevel` from platform interface.

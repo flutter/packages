@@ -1,3 +1,7 @@
+## 3.9.3
+
+* Adds support for the `allowsLinkPreview` property on iOS.
+
 ## 3.9.2
 
 * Fixes error caused by calling `WKWebViewConfiguration.limitsNavigationsToAppBoundDomains` on

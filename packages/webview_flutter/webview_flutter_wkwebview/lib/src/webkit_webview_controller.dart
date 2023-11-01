@@ -486,6 +486,11 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
+  Future<void> setAllowsLinkPreview(bool allow) {
+    return _webView.setAllowsLinkPreview(allow);
+  }
+
+  @override
   Future<void> enableZoom(bool enabled) async {
     if (_zoomEnabled == enabled) {
       return;
