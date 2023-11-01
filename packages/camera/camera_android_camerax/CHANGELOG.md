@@ -1,6 +1,6 @@
 ## 0.5.0+22
 
-* Fixes `_getResolutionSelectorFromPreset` null pointer error caused by typo.
+* Fixes `_getResolutionSelectorFromPreset` null pointer error.
 
 ## 0.5.0+21
 
