@@ -58,7 +58,9 @@ class VideoPlayer {
   /// This method sets the required DOM attributes so videos can [play] programmatically,
   /// and attaches listeners to the internal events from the [html.VideoElement]
   /// to react to them / expose them through the [VideoPlayer.events] stream.
-  void initialize() {
+  void initialize({
+    String? src,
+  }) {
     _videoElement
       ..autoplay = false
       ..controls = false;
@@ -68,14 +70,11 @@ class VideoPlayer {
     // This property is not exposed through dart:html so we use the
     // HTML Boolean attribute form (when present with any value => true)
     // See: https://developer.mozilla.org/en-US/docs/Glossary/Boolean/HTML
-    _videoElement.setAttribute('playsinline', 'true');
+    _videoElement.setAttribute('playsinline', true);
 
-    _videoElement.onCanPlay.listen((dynamic _) {
-      if (!_isInitialized) {
-        _isInitialized = true;
-        _sendInitialized();
-      }
-    });
+    _videoElement.onCanPlay.listen(_onVideoElementInitialization);
+    // Needed for Safari iOS 17, which may not send `canplay`.
+    _videoElement.onLoadedMetadata.listen(_onVideoElementInitialization);
 
     _videoElement.onCanPlayThrough.listen((dynamic _) {
       setBuffering(false);
@@ -122,6 +121,10 @@ class VideoPlayer {
       setBuffering(false);
       _eventController.add(VideoEvent(eventType: VideoEventType.completed));
     });
+
+    if (src != null) {
+      _videoElement.src = src;
+    }
   }
 
   /// Attempts to play the video.
@@ -250,6 +253,20 @@ class VideoPlayer {
       _onContextMenu = null;
     }
     _videoElement.load();
+  }
+
+  // Handler to mark (and broadcast) when this player [_isInitialized].
+  //
+  // (Used as a JS event handler for "canplay" and "loadedmetadata")
+  //
+  // This function can be called multiple times by different JS Events, but it'll
+  // only broadcast an "initialized" event the first time it's called, and ignore
+  // the rest of the calls.
+  void _onVideoElementInitialization(Object? _) {
+    if (!_isInitialized) {
+      _isInitialized = true;
+      _sendInitialized();
+    }
   }
 
   // Sends an [VideoEventType.initialized] [VideoEvent] with info about the wrapped video.
