@@ -264,15 +264,17 @@ NSString *const errorMethod = @"error";
     [settings setHighResolutionPhotoEnabled:YES];
   }
 
+  NSString *extension;
+
   BOOL isHEVCCodecAvailable =
       [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
 
   if (_fileFormat == FCPFileFormatHEIF && isHEVCCodecAvailable) {
     settings =
         [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
-    _fileExtension = @"heif";
+    extension = @"heif";
   } else {
-    _fileExtension = @"jpg";
+    extension = @"jpg";
   }
 
   AVCaptureFlashMode avFlashMode = FLTGetAVCaptureFlashModeForFLTFlashMode(_flashMode);
@@ -280,7 +282,7 @@ NSString *const errorMethod = @"error";
     [settings setFlashMode:avFlashMode];
   }
   NSError *error;
-  NSString *path = [self getTemporaryFilePathWithExtension:_fileExtension
+  NSString *path = [self getTemporaryFilePathWithExtension:extension
                                                  subfolder:@"pictures"
                                                     prefix:@"CAP_"
                                                      error:error];
