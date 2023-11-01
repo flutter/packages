@@ -102,6 +102,7 @@ void main() {
       final List<RepositoryPackage> examples = plugin.getExamples().toList();
 
       expect(examples.length, 1);
+      expect(examples[0].isExample, isTrue);
       expect(examples[0].path, getExampleDir(plugin).path);
     });
 
@@ -112,6 +113,8 @@ void main() {
       final List<RepositoryPackage> examples = plugin.getExamples().toList();
 
       expect(examples.length, 2);
+      expect(examples[0].isExample, isTrue);
+      expect(examples[1].isExample, isTrue);
       expect(examples[0].path,
           getExampleDir(plugin).childDirectory('example1').path);
       expect(examples[1].path,
@@ -125,6 +128,7 @@ void main() {
       final List<RepositoryPackage> examples = package.getExamples().toList();
 
       expect(examples.length, 1);
+      expect(examples[0].isExample, isTrue);
       expect(examples[0].path, getExampleDir(package).path);
     });
 
@@ -136,6 +140,8 @@ void main() {
       final List<RepositoryPackage> examples = package.getExamples().toList();
 
       expect(examples.length, 2);
+      expect(examples[0].isExample, isTrue);
+      expect(examples[1].isExample, isTrue);
       expect(examples[0].path,
           getExampleDir(package).childDirectory('example1').path);
       expect(examples[1].path,
@@ -151,6 +157,7 @@ void main() {
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, false);
       expect(plugin.isFederated, false);
+      expect(plugin.isExample, isFalse);
     });
 
     test('handle app-facing packages', () {
@@ -160,6 +167,7 @@ void main() {
       expect(plugin.isAppFacing, true);
       expect(plugin.isPlatformInterface, false);
       expect(plugin.isPlatformImplementation, false);
+      expect(plugin.isExample, isFalse);
     });
 
     test('handle platform interface packages', () {
@@ -170,6 +178,7 @@ void main() {
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, true);
       expect(plugin.isPlatformImplementation, false);
+      expect(plugin.isExample, isFalse);
     });
 
     test('handle platform implementation packages', () {
@@ -181,6 +190,7 @@ void main() {
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, false);
       expect(plugin.isPlatformImplementation, true);
+      expect(plugin.isExample, isFalse);
     });
   });
 
