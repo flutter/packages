@@ -1,6 +1,6 @@
 ## 0.5.1+7
 
-* Updates to  Pigeon 13.
+* Updates to Pigeon 13.
 
 ## 0.5.1+6
 
