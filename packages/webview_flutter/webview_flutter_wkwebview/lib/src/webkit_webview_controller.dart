@@ -70,8 +70,14 @@ class WebKitWebViewControllerCreationParams
       );
     }
     _configuration.setAllowsInlineMediaPlayback(allowsInlineMediaPlayback);
-    _configuration.setLimitsNavigationsToAppBoundDomains(
-        limitsNavigationsToAppBoundDomains);
+    // `WKWebViewConfiguration.limitsNavigationsToAppBoundDomains` is only
+    // supported on iOS versions 14+. So this only calls it if the value is set
+    // to true.
+    if (limitsNavigationsToAppBoundDomains) {
+      _configuration.setLimitsNavigationsToAppBoundDomains(
+        limitsNavigationsToAppBoundDomains,
+      );
+    }
   }
 
   /// Constructs a [WebKitWebViewControllerCreationParams] using a
@@ -666,6 +672,20 @@ window.addEventListener("error", function(e) {
   /// Defaults to true in previous versions.
   Future<void> setInspectable(bool inspectable) {
     return _webView.setInspectable(inspectable);
+  }
+
+  @override
+  Future<String?> getUserAgent() async {
+    final String? customUserAgent = await _webView.getCustomUserAgent();
+    // Despite the official documentation of `WKWebView.customUserAgent`, the
+    // default value seems to be an empty String and not null. It's possible it
+    // could depend on the iOS version, so this checks for both.
+    if (customUserAgent != null && customUserAgent.isNotEmpty) {
+      return customUserAgent;
+    }
+
+    return (await _webView.evaluateJavaScript('navigator.userAgent;')
+        as String?)!;
   }
 }
 

@@ -1,3 +1,11 @@
+## 2.8.1
+
+* Updates the example app: replaces `ButtonBar` with `OverflowBar` widget.
+
+## 2.8.0
+
+* Adds support for macOS.
+
 ## 2.7.2
 
 * Adds `isCompleted` event to `VideoPlayerEvent`.

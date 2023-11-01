@@ -160,6 +160,25 @@ void main() {
         );
       });
 
+      test(
+          'limitsNavigationsToAppBoundDomains is not called if it uses default value (false)',
+          () {
+        final MockWKWebViewConfiguration mockConfiguration =
+            MockWKWebViewConfiguration();
+
+        WebKitWebViewControllerCreationParams(
+          webKitProxy: WebKitProxy(
+            createWebViewConfiguration: ({InstanceManager? instanceManager}) {
+              return mockConfiguration;
+            },
+          ),
+        );
+
+        verifyNever(
+          mockConfiguration.setLimitsNavigationsToAppBoundDomains(any),
+        );
+      });
+
       test('mediaTypesRequiringUserAction', () {
         final MockWKWebViewConfiguration mockConfiguration =
             MockWKWebViewConfiguration();
@@ -823,6 +842,21 @@ void main() {
         "user-scalable=no';\n"
         "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
       );
+    });
+
+    test('getUserAgent', () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      const String userAgent = 'str';
+
+      when(mockWebView.getCustomUserAgent()).thenAnswer(
+        (_) => Future<String?>.value(userAgent),
+      );
+      expect(controller.getUserAgent(), completion(userAgent));
     });
 
     test('setPlatformNavigationDelegate', () {

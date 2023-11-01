@@ -663,6 +663,14 @@ class MockWKWebView extends _i1.Mock implements _i4.WKWebView {
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
   @override
+  _i5.Future<String?> getCustomUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getCustomUserAgent,
+          [],
+        ),
+        returnValue: _i5.Future<String?>.value(),
+      ) as _i5.Future<String?>);
+  @override
   _i4.WKWebView copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,

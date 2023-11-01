@@ -1089,6 +1089,11 @@ class WKWebViewHostApiImpl extends WKWebViewHostApi {
     );
   }
 
+  /// Calls [getCustomUserAgent] with the ids of the provided object instances.
+  Future<String?> getCustomUserAgentForInstances(WKWebView instance) {
+    return getCustomUserAgent(instanceManager.getIdentifier(instance)!);
+  }
+
   /// Calls [setNavigationDelegate] with the ids of the provided object instances.
   Future<void> setNavigationDelegateForInstances(
     WKWebView instance,

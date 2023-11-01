@@ -833,6 +833,7 @@ void main() {
         ));
       });
 
+<<<<<<< HEAD
       test('setAllowsLinkPreview', () {
         webView.setAllowsLinkPreview(false);
         verify(mockPlatformHostApi.setAllowsLinkPreview(
@@ -842,11 +843,22 @@ void main() {
       });
 
       test('customUserAgent', () {
+=======
+      test('setCustomUserAgent', () {
+>>>>>>> origin/main
         webView.setCustomUserAgent('hello');
         verify(mockPlatformHostApi.setCustomUserAgent(
           webViewInstanceId,
           'hello',
         ));
+      });
+
+      test('getCustomUserAgent', () {
+        const String userAgent = 'str';
+        when(
+          mockPlatformHostApi.getCustomUserAgent(webViewInstanceId),
+        ).thenReturn(userAgent);
+        expect(webView.getCustomUserAgent(), completion(userAgent));
       });
 
       test('evaluateJavaScript', () {

@@ -12,6 +12,17 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 enum NullFieldsSearchReplyType {
   success,
   failure,
@@ -207,8 +218,15 @@ abstract class NullFieldsFlutterApi {
               (args[0] as NullFieldsSearchRequest?);
           assert(arg_request != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null, expected non-null NullFieldsSearchRequest.');
-          final NullFieldsSearchReply output = api.search(arg_request!);
-          return output;
+          try {
+            final NullFieldsSearchReply output = api.search(arg_request!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }

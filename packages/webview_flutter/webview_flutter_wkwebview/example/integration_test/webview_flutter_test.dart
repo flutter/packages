@@ -292,8 +292,28 @@ Future<void> main() async {
       },
     ));
 
-    final String customUserAgent2 = await _getUserAgent(controller);
-    expect(customUserAgent2, 'Custom_User_Agent1');
+    final String? customUserAgent = await controller.getUserAgent();
+    expect(customUserAgent, 'Custom_User_Agent1');
+  });
+
+  testWidgets(
+      'getUserAgent returns a default value when custom value is not set',
+      (WidgetTester tester) async {
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    final String? userAgent = await controller.getUserAgent();
+    expect(userAgent, isNotNull);
+    expect(userAgent, isNotEmpty);
   });
 
   group('Video playback policy', () {
@@ -1238,12 +1258,6 @@ Future<void> main() async {
           debugMessageReceived.future, completion('debug:Debug message'));
     });
   });
-}
-
-/// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.
-Future<String> _getUserAgent(PlatformWebViewController controller) async {
-  return await controller.runJavaScriptReturningResult('navigator.userAgent;')
-      as String;
 }
 
 class ResizableWebView extends StatefulWidget {

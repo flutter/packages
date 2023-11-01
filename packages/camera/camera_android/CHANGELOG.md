@@ -1,3 +1,11 @@
+## 0.10.8+13
+
+* Updates annotations lib to 1.7.0.
+
+## 0.10.8+12
+
+* Fixes handling of autofocus state when taking a picture.
+
 ## 0.10.8+11
 
 * Downgrades AGP version for compatibility with legacy projects.

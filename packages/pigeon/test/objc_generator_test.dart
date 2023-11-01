@@ -168,7 +168,7 @@ void main() {
     expect(
         code,
         contains(
-            'Enum1Box *enum1 = enum1AsNumber == nil ? nil : [[Enum1Box alloc] initWithValue: [enum1AsNumber integerValue]];'));
+            'Enum1Box *enum1 = enum1AsNumber == nil ? nil : [[Enum1Box alloc] initWithValue:[enum1AsNumber integerValue]];'));
   });
 
   test('primitive enum host', () {
@@ -347,7 +347,7 @@ void main() {
     expect(code, contains('@protocol Api'));
     expect(code, contains('/// @return `nil` only when `error != nil`.'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
-    expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
+    expect(code, matches('SetUpApi.*<Api>.*_Nullable'));
     expect(code, contains('ApiGetCodec(void)'));
   });
 
@@ -396,7 +396,7 @@ void main() {
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
     expect(code, contains('@implementation Output'));
-    expect(code, contains('ApiSetup('));
+    expect(code, contains('SetUpApi('));
     expect(
         code,
         contains(
@@ -703,7 +703,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
-    expect(code, contains('void ABCApiSetup('));
+    expect(code, contains('void SetUpABCApi('));
   });
 
   test('gen flutter api header', () {
@@ -1194,7 +1194,7 @@ void main() {
     expect(
         code,
         contains(
-            '@property(nonatomic, strong, nullable) NSDictionary<NSString *, id> *'));
+            '@property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *'));
   });
 
   test('gen map argument with object', () {
@@ -1978,7 +1978,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (nullable NSNumber *)addX:(NSNumber *)x y:(NSNumber *)y error:(FlutterError *_Nullable *_Nonnull)error;'));
+              '- (nullable NSNumber *)addX:(NSInteger)x y:(NSInteger)y error:(FlutterError *_Nullable *_Nonnull)error;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1997,10 +1997,14 @@ void main() {
       );
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code,
-          contains('NSNumber *arg_x = GetNullableObjectAtIndex(args, 0);'));
-      expect(code,
-          contains('NSNumber *arg_y = GetNullableObjectAtIndex(args, 1);'));
+      expect(
+          code,
+          contains(
+              'NSInteger arg_x = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+      expect(
+          code,
+          contains(
+              'NSInteger arg_y = [GetNullableObjectAtIndex(args, 1) integerValue];'));
       expect(code,
           contains('NSNumber *output = [api addX:arg_x y:arg_y error:&error]'));
     }
@@ -2045,7 +2049,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+              '- (void)addX:(NSInteger)x y:(NSInteger)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -2064,10 +2068,14 @@ void main() {
       );
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code,
-          contains('NSNumber *arg_x = GetNullableObjectAtIndex(args, 0);'));
-      expect(code,
-          contains('NSNumber *arg_y = GetNullableObjectAtIndex(args, 1);'));
+      expect(
+          code,
+          contains(
+              'NSInteger arg_x = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+      expect(
+          code,
+          contains(
+              'NSInteger arg_y = [GetNullableObjectAtIndex(args, 1) integerValue];'));
       expect(code, contains('[api addX:arg_x y:arg_y completion:'));
     }
   });
@@ -2110,7 +2118,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+              '- (void)addX:(NSInteger)x y:(NSInteger)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -2131,11 +2139,9 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {'));
+              '- (void)addX:(NSInteger)arg_x y:(NSInteger)arg_y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {'));
       expect(
-          code,
-          contains(
-              '[channel sendMessage:@[arg_x ?: [NSNull null], arg_y ?: [NSNull null]] reply:'));
+          code, contains('[channel sendMessage:@[@(arg_x), @(arg_y)] reply:'));
     }
   });
 

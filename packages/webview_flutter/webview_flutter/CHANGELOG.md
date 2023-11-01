@@ -1,6 +1,20 @@
+<<<<<<< HEAD
 ## 4.2.5
 
 * Adds support for the `allowsLinkPreview` property on iOS.
+=======
+## 4.4.1
+
+* Exposes `JavaScriptLogLevel` from platform interface.
+
+## 4.4.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `WebViewController.setOnConsoleMessage`.
+
+## 4.3.0
+
+* Adds support to retrieve the user agent. See `WebViewController.getUserAgent`.
+>>>>>>> origin/main
 
 ## 4.2.4
 

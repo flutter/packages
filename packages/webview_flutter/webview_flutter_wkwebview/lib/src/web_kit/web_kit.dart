@@ -1137,6 +1137,13 @@ class WKWebView extends UIView {
     );
   }
 
+  /// The custom user agent string.
+  ///
+  /// Represents [WKWebView.customUserAgent](https://developer.apple.com/documentation/webkit/wkwebview/1414950-customuseragent?language=objc).
+  Future<String?> getCustomUserAgent() {
+    return _webViewApi.getCustomUserAgentForInstances(this);
+  }
+
   @override
   WKWebView copy() {
     return WKWebView.detached(

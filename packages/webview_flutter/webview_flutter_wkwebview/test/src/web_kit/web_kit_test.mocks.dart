@@ -584,6 +584,12 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+  @override
+  String? getCustomUserAgent(int? identifier) =>
+      (super.noSuchMethod(Invocation.method(
+        #getCustomUserAgent,
+        [identifier],
+      )) as String?);
 }
 
 /// A class which mocks [TestWKWebsiteDataStoreHostApi].

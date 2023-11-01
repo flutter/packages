@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /** Generated class from Pigeon. */
@@ -180,10 +181,20 @@ public class Messages {
     }
   }
 
+  /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
-    @SuppressWarnings("UnknownNullness")
-    void success(T result);
+    /** Success case callback method for handling returns. */
+    void success(@NonNull T result);
 
+    /** Failure case callback method for handling errors. */
+    void error(@NonNull Throwable error);
+  }
+  /** Asynchronous error handling return type for nullable API method returns. */
+  public interface NullableResult<T> {
+    /** Success case callback method for handling returns. */
+    void success(@Nullable T result);
+
+    /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
 
@@ -229,7 +240,7 @@ public class Messages {
       return ExampleHostApiCodec.INSTANCE;
     }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
-    static void setup(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -324,16 +335,12 @@ public class Messages {
     }
 
     /** Public interface for sending reply. */
-    @SuppressWarnings("UnknownNullness")
-    public interface Reply<T> {
-      void reply(T reply);
-    }
     /** The codec used by MessageFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
     }
 
-    public void flutterMethod(@Nullable String aStringArg, @NonNull Reply<String> callback) {
+    public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> result) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
@@ -342,9 +349,30 @@ public class Messages {
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {
-            @SuppressWarnings("ConstantConditions")
-            String output = (String) channelReply;
-            callback.reply(output);
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                String output = (String) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(
+                  new FlutterError(
+                      "channel-error", "Unable to establish connection on channel.", ""));
+            }
           });
     }
   }

@@ -1,6 +1,21 @@
+<<<<<<< HEAD
 ## 3.8.1
 
 * Adds support for the `allowsLinkPreview` property on iOS.
+=======
+## 3.9.2
+
+* Fixes error caused by calling `WKWebViewConfiguration.limitsNavigationsToAppBoundDomains` on
+  versions below 14.
+
+## 3.9.1
+
+* Fixes bug where `WebkitWebViewController.getUserAgent` was incorrectly returning an empty String.
+
+## 3.9.0
+
+* Adds support for `PlatformWebViewController.getUserAgent`.
+>>>>>>> origin/main
 
 ## 3.8.0
 

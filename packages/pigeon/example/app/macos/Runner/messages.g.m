@@ -63,7 +63,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.description = GetNullableObjectAtIndex(list, 1);
   pigeonResult.code = [GetNullableObjectAtIndex(list, 2) integerValue];
   pigeonResult.data = GetNullableObjectAtIndex(list, 3);
-  NSAssert(pigeonResult.data != nil, @"");
   return pigeonResult;
 }
 + (nullable PGNMessageData *)nullableFromList:(NSArray *)list {
@@ -71,10 +70,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 - (NSArray *)toList {
   return @[
-    (self.name ?: [NSNull null]),
-    (self.description ?: [NSNull null]),
+    self.name ?: [NSNull null],
+    self.description ?: [NSNull null],
     @(self.code),
-    (self.data ?: [NSNull null]),
+    self.data ?: [NSNull null],
   ];
 }
 @end
@@ -127,7 +126,7 @@ NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void) {
   return sSharedObject;
 }
 
-void PGNExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
+void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
                             NSObject<PGNExampleHostApi> *api) {
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
@@ -160,8 +159,8 @@ void PGNExampleHostApiSetup(id<FlutterBinaryMessenger> binaryMessenger,
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSNumber *arg_a = GetNullableObjectAtIndex(args, 0);
-        NSNumber *arg_b = GetNullableObjectAtIndex(args, 1);
+        NSInteger arg_a = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSInteger arg_b = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
         NSNumber *output = [api addNumber:arg_a toNumber:arg_b error:&error];
         callback(wrapResult(output, error));
@@ -220,9 +219,22 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
              binaryMessenger:self.binaryMessenger
                        codec:PGNMessageFlutterApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
-                 reply:^(id reply) {
-                   NSString *output = reply;
-                   completion(output, nil);
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, [FlutterError
+                                         errorWithCode:@"channel-error"
+                                               message:@"Unable to establish connection on channel."
+                                               details:@""]);
+                   }
                  }];
 }
 @end
