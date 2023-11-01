@@ -1,6 +1,6 @@
 ## 0.9.3+7
 
-* Move pointer_interceptor to subfolder
+* Moved pointer_interceptor to subfolder.
 
 ## 0.9.3+6
 
