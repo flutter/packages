@@ -880,14 +880,14 @@ class AndroidCameraCameraX extends CameraPlatform {
         break;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
-        final ResolutionStrategy highestResolutionStrategy =
-            _shouldCreateDetachedObjectForTesting
-                ? ResolutionStrategy.detachedHighestAvailableStrategy()
-                : ResolutionStrategy.highestAvailableStrategy();
-        return _shouldCreateDetachedObjectForTesting
-            ? ResolutionSelector.detached(
-                resolutionStrategy: highestResolutionStrategy)
-            : ResolutionSelector(resolutionStrategy: highestResolutionStrategy);
+        if (_shouldCreateDetachedObjectForTesting) {
+          resolutionStrategy =
+              ResolutionStrategy.detachedHighestAvailableStrategy();
+          return ResolutionSelector.detached(
+              resolutionStrategy: resolutionStrategy);
+        }
+        resolutionStrategy = ResolutionStrategy.highestAvailableStrategy();
+        return ResolutionSelector(resolutionStrategy: resolutionStrategy);
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
