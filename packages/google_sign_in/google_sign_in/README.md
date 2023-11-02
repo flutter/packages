@@ -10,6 +10,7 @@ A Flutter plugin for [Google Sign In](https://developers.google.com/identity/).
 
 ### Android integration
 
+
 1. Collect your app's certificate hashes (You will probably have different certificates for debug and release / published versions)
    - Make sure to collect BOTH the SHA-1 and SHA-256 hashes
        - You can find your local certificate hashes by running ```gradlew signingReport``` inside your projects ```android``` directory (Scroll to the beginning of the response)
