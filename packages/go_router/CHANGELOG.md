@@ -1,6 +1,6 @@
 ## 12.0.2
 
-- Fixes the problem what pathParameters is null in redirect when the Router is recreated.
+- Fixes the problem that pathParameters is null in redirect when the Router is recreated.
 
 ## 12.0.1
 
