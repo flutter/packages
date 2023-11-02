@@ -10,20 +10,50 @@ A Flutter plugin for [Google Sign In](https://developers.google.com/identity/).
 
 ### Android integration
 
-To access Google Sign-In, you'll need to make sure to
-[register your application](https://firebase.google.com/docs/android/setup).
+1. Collect your app's certificate hashes (You will probably have different certificates for debug and release / published versions)
+   - Make sure to collect BOTH the SHA-1 and SHA-256 hashes
+       - You can find your local certificate hashes by running ```gradlew signingReport``` inside your projects ```android``` directory (Scroll to the beginning of the response)
+       - Your publishing certificate hashes can be found on the Google Play Console within the ```Release > Setup > App Signing``` tab on the navigation pane.
+2. To access Google Sign-In, you will need to register it on Firebase
+   - Follow the tutorial [in the Firebase docs](https://firebase.google.com/docs/flutter/setup?platform=android)
+   - Navigate to your Project Settings on the [Firebase Console](https://console.firebase.google.com/)
+   - In the general tab, specify your apps support email
+   - Scroll down to find your added flutter app, you should see an Android App with your apps package name
+     - Click "Add Fingerprint" and add each of your SHA-1 and SHA-256 hashes
+     - Download the ```google-services.json``` file and place it inside your ```android/app``` directory
+3. To set up your required Google Services, you need to navigate to the [Google Cloud Console API Dashboard](https://console.cloud.google.com/apis/)
+   - Click "Enable APIs and Services" and search for your required API(s) (e.g. Google Calendar API)
+   - Navigate to the "Credentials" tab on the navigation pane
+     - Create a new OAuth Client ID
+     - #### Specify "**Web application**" as the application type (Do not use "Android" or "Other")
+     - Give it a name, then create it and copy the Client ID
+   - Navigate to the OAuth consent screen
+     - Select "External" as the user type
+     - Fill out all fields
+     - If you use sensitive scopes, you will need to submit your app for verification
+       - If you do not use sensitive scopes, you can skip this step
+     - **If this step is not completed correctly, you may face an ```APIException``` error**
+4. Use the following code to prompt the user to sign in with Google
+```dart
+import 'package:google_sign_in/google_sign_in.dart';
 
-You don't need to include the google-services.json file in your app unless you
-are using Google services that require it. You do need to enable the OAuth APIs
-that you want, using the
-[Google Cloud Platform API manager](https://console.developers.google.com/). For
-example, if you want to mimic the behavior of the Google Sign-In sample app,
-you'll need to enable the
-[Google People API](https://developers.google.com/people/).
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  // The OAuth client id of your app. This is required.
+  clientId: <YOUR_CLIENT_ID>,
+  // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
+  serverClientId: <YOUR_SERVER_CLIENT_ID>,
+  scopes: const [<YOUR_SCOPES>],
+);
 
-Make sure you've filled out all required fields in the console for
-[OAuth consent screen](https://console.developers.google.com/apis/credentials/consent).
-Otherwise, you may encounter `APIException` errors.
+// Prompt the user to sign in with Google
+Future<void> _handleSignIn() async {
+  try {
+    await _googleSignIn.signIn();
+  } catch (error) {
+    print(error);
+  }
+}
+```
 
 ### iOS integration
 
