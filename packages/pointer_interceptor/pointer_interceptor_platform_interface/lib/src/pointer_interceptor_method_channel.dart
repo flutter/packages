@@ -6,11 +6,11 @@ import 'package:flutter/widgets.dart';
 
 import 'pointer_interceptor_platform.dart';
 
-/// A defailt implementation of [PointerInterceptorPlatform].
+/// A default implementation of [PointerInterceptorPlatform].
 class PlaceholderPointerInterceptor extends PointerInterceptorPlatform {
   @override
   Widget buildWidget(
       {required Widget child, bool intercepting = true, bool debug = false, Key? key}) {
-    throw UnimplementedError('buildWidget() has not been implemented.');
+    return child;
   }
 }

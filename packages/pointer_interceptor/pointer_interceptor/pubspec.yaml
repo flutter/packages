@@ -14,9 +14,12 @@ flutter:
     implements: pointer_interceptor_platform_interface
     platforms:
       web:
-        default_package: ./src/web.dart
+        pluginClass: PointerInterceptorWeb
+        fileName: ./src/web.dart
       ios:
         default_package: ./src/mobile.dart
+#        pluginClass: PointerInterceptorIOSLegacy
+#        fileName: ./src/mobile.dart
 
 dependencies:
   flutter:
