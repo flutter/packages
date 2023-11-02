@@ -85,6 +85,30 @@ void main() {
     });
   });
 
+  group('getCredentialResponseExpirationTimestamp', () {
+    testWidgets('Good payload -> data', (_) async {
+      final DateTime? expiration =
+          getCredentialResponseExpirationTimestamp(expiredCredential);
+
+      expect(expiration, isNotNull);
+      expect(expiration!.millisecondsSinceEpoch, 1430330400 * 1000);
+    });
+
+    testWidgets('No expiration -> null', (_) async {
+      expect(
+          getCredentialResponseExpirationTimestamp(minimalCredential), isNull);
+    });
+
+    testWidgets('Bad data -> null', (_) async {
+      final CredentialResponse bogus =
+          jsifyAs<CredentialResponse>(<String, Object?>{
+        'credential': 'some-bogus.thing-that-is-not.valid-jwt',
+      });
+
+      expect(getCredentialResponseExpirationTimestamp(bogus), isNull);
+    });
+  });
+
   group('getJwtTokenPayload', () {
     testWidgets('happy case -> data', (_) async {
       final Map<String, Object?>? data = getJwtTokenPayload(goodJwtToken);
