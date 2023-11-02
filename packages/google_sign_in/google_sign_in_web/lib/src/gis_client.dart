@@ -239,6 +239,8 @@ class GisSdkClient {
     return id.renderButton(parent, convertButtonConfiguration(options)!);
   }
 
+  // TODO(dit): Clean this up. https://github.com/flutter/flutter/issues/137727
+  //
   /// Starts an oauth2 "implicit" flow to authorize requests.
   ///
   /// The new GIS SDK does not return user authentication from this flow, so:
@@ -283,7 +285,7 @@ class GisSdkClient {
   //
   // It'll do a request to the People API (if needed).
   //
-  // @Deprecated
+  // TODO(dit): Clean this up. https://github.com/flutter/flutter/issues/137727
   Future<GoogleSignInUserData?> _computeUserDataForLastToken() async {
     // If the user hasn't authenticated, request their basic profile info
     // from the People API.
@@ -328,6 +330,16 @@ class GisSdkClient {
     if (_lastCredentialResponse != null) {
       final DateTime? expiration = utils
           .getCredentialResponseExpirationTimestamp(_lastCredentialResponse);
+      // All Google ID Tokens provide an "exp" date. If the method above cannot
+      // extract `expiration`, it's because `_lastCredentialResponse`'s contents
+      // are unexpected (or wrong) in any way.
+      //
+      // Users are considered to be signedIn when the last CredentialResponse
+      // exists and has an expiration date in the future.
+      //
+      // Users are not signed in in any other case.
+      //
+      // See: https://developers.google.com/identity/openid-connect/openid-connect#an-id-tokens-payload
       isSignedIn = expiration?.isAfter(DateTime.now()) ?? false;
     }
 
@@ -412,6 +424,6 @@ class GisSdkClient {
   //
   // (This is a synthetic _lastCredentialResponse)
   //
-  // @Deprecated
+  // TODO(dit): Clean this up. https://github.com/flutter/flutter/issues/137727
   GoogleSignInUserData? _requestedUserData;
 }

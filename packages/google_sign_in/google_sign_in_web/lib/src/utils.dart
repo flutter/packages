@@ -54,11 +54,11 @@ Map<String, Object?>? decodeJwtPayload(String? payload) {
 
 /// Returns the payload of a [CredentialResponse].
 Map<String, Object?>? getResponsePayload(CredentialResponse? response) {
-  if (response == null || response.credential == null) {
+  if (response?.credential == null) {
     return null;
   }
 
-  return getJwtTokenPayload(response.credential);
+  return getJwtTokenPayload(response!.credential);
 }
 
 /// Converts a [CredentialResponse] into a [GoogleSignInUserData].
@@ -71,6 +71,9 @@ GoogleSignInUserData? gisResponsesToUserData(
   if (payload == null) {
     return null;
   }
+
+  assert(credentialResponse?.credential != null,
+      'The CredentialResponse cannot be null and have a payload.');
 
   return GoogleSignInUserData(
     email: payload['email']! as String,
@@ -88,11 +91,10 @@ GoogleSignInUserData? gisResponsesToUserData(
 DateTime? getCredentialResponseExpirationTimestamp(
     CredentialResponse? credentialResponse) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
-  if (payload == null || payload['exp'] == null) {
-    return null;
-  }
-
-  return DateTime.fromMillisecondsSinceEpoch((payload['exp']! as int) * 1000);
+  // Get the 'exp' field from the payload, if present.
+  final int? exp = (payload != null) ? payload['exp'] as int? : null;
+  // Return 'exp' (a timestamp in seconds since Epoch) as a DateTime.
+  return (exp != null) ? DateTime.fromMillisecondsSinceEpoch(exp * 1000) : null;
 }
 
 /// Converts responses from the GIS library into TokenData for the plugin.
