@@ -108,41 +108,46 @@ void main() {
   });
 
   testWidgets('routing config works with named route',
-          (WidgetTester tester) async {
-        final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
-          RoutingConfig(
-            routes: <RouteBase>[
-              GoRoute(path: '/', builder: (_, __) => const Text('home')),
-              GoRoute(path: '/abc', name: 'abc', builder: (_, __) => const Text('/abc')),
-            ],
-          ),
-        );
-        final GoRouter router = await createRouterWithRoutingConfig(
-          config,
-          tester,
-          errorBuilder: (_, __) => const Text('error'),
-        );
-        expect(find.text('home'), findsOneWidget);
-        // Sanity check.
-        router.goNamed('abc');
-        await tester.pumpAndSettle();
-        expect(find.text('/abc'), findsOneWidget);
+      (WidgetTester tester) async {
+    final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+      RoutingConfig(
+        routes: <RouteBase>[
+          GoRoute(path: '/', builder: (_, __) => const Text('home')),
+          GoRoute(
+              path: '/abc',
+              name: 'abc',
+              builder: (_, __) => const Text('/abc')),
+        ],
+      ),
+    );
+    final GoRouter router = await createRouterWithRoutingConfig(
+      config,
+      tester,
+      errorBuilder: (_, __) => const Text('error'),
+    );
+    expect(find.text('home'), findsOneWidget);
+    // Sanity check.
+    router.goNamed('abc');
+    await tester.pumpAndSettle();
+    expect(find.text('/abc'), findsOneWidget);
 
-        config.value = RoutingConfig(
-          routes: <RouteBase>[
-            GoRoute(path: '/', name: 'home', builder: (_, __) => const Text('home')),
-            GoRoute(path: '/abc', name: 'def',builder: (_, __) => const Text('def')),
-          ],
-        );
-        await tester.pumpAndSettle();
-        expect(find.text('def'), findsOneWidget);
+    config.value = RoutingConfig(
+      routes: <RouteBase>[
+        GoRoute(
+            path: '/', name: 'home', builder: (_, __) => const Text('home')),
+        GoRoute(
+            path: '/abc', name: 'def', builder: (_, __) => const Text('def')),
+      ],
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('def'), findsOneWidget);
 
-        router.goNamed('home');
-        await tester.pumpAndSettle();
-        expect(find.text('home'), findsOneWidget);
+    router.goNamed('home');
+    await tester.pumpAndSettle();
+    expect(find.text('home'), findsOneWidget);
 
-        router.goNamed('def');
-        await tester.pumpAndSettle();
-        expect(find.text('def'), findsOneWidget);
-      });
+    router.goNamed('def');
+    await tester.pumpAndSettle();
+    expect(find.text('def'), findsOneWidget);
+  });
 }
