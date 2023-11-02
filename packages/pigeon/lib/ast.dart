@@ -133,6 +133,7 @@ class ProxyApiNode extends Api {
   ProxyApiNode({
     required super.name,
     required super.methods,
+    required this.callbackmethods,
     required this.constructors,
     this.documentationComments = const <String>[],
   }) : super(location: ApiLocation.proxy);
@@ -145,6 +146,8 @@ class ProxyApiNode extends Api {
   final List<String> documentationComments;
 
   List<Constructor> constructors;
+
+  List<Method> callbackmethods;
 
   @override
   String toString() {

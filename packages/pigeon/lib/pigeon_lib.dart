@@ -19,6 +19,7 @@ import 'package:analyzer/dart/ast/syntactic_entity.dart'
     as dart_ast_syntactic_entity;
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
+import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
@@ -1063,6 +1064,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           name: node.name.lexeme,
           methods: <Method>[],
           constructors: <Constructor>[],
+          callbackmethods: <Method>[],
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
@@ -1260,8 +1262,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitFieldDeclaration(dart_ast.FieldDeclaration node) {
+    final dart_ast.TypeAnnotation? type = node.fields.type;
     if (_currentClass != null) {
-      final dart_ast.TypeAnnotation? type = node.fields.type;
       if (node.isStatic) {
         _errors.add(Error(
             message:
@@ -1298,6 +1300,63 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _errors.add(Error(
           message: 'Fields aren\'t supported in Pigeon API classes ("$node").',
           lineNumber: _calculateLineNumber(source, node.offset)));
+    } else if (_currentProxyApi != null) {
+      if (type is dart_ast.GenericFunctionType) {
+        final dart_ast.FormalParameterList parameters = type.parameters;
+        final List<NamedType> arguments =
+            parameters.parameters.map(formalParameterToField).toList();
+        final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+        final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
+                ?.arguments
+                ?.arguments
+                .first
+                .asNullable<dart_ast.SimpleStringLiteral>()
+                ?.value ??
+            '';
+        final String swiftFunction =
+            _findMetadata(node.metadata, 'SwiftFunction')
+                    ?.arguments
+                    ?.arguments
+                    .first
+                    .asNullable<dart_ast.SimpleStringLiteral>()
+                    ?.value ??
+                '';
+        final dart_ast.ArgumentList? taskQueueArguments =
+            _findMetadata(node.metadata, 'TaskQueue')?.arguments;
+        final String? taskQueueTypeName = taskQueueArguments == null
+            ? null
+            : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
+                ?.expression
+                .asNullable<dart_ast.PrefixedIdentifier>()
+                ?.name;
+        final TaskQueueType taskQueueType =
+            _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
+                TaskQueueType.serial;
+
+        // Methods without named return types aren't supported.
+        final dart_ast.TypeAnnotation returnType = type.returnType!;
+        returnType as dart_ast.NamedType;
+
+        _currentProxyApi!.callbackmethods.add(
+          Method(
+            name: node.fields.variables[0].name.lexeme,
+            returnType: TypeDeclaration(
+              baseName: _getNamedTypeQualifiedName(returnType),
+              typeArguments:
+                  typeAnnotationsToTypeArguments(returnType.typeArguments),
+              isNullable: returnType.question != null,
+            ),
+            arguments: arguments,
+            isAsynchronous: isAsynchronous,
+            objcSelector: objcSelector,
+            swiftFunction: swiftFunction,
+            offset: node.offset,
+            taskQueueType: taskQueueType,
+            documentationComments:
+                _documentationCommentsParser(node.documentationComment?.tokens),
+          ),
+        );
+      }
     }
     node.visitChildren(this);
     return null;

@@ -1090,7 +1090,7 @@ class $codecName extends StandardMessageCodec {
               _getSafeArgumentName(index, type);
 
           final Iterable<String> argExpressions =
-          indexMap(constructor.arguments, (int index, NamedType type) {
+              indexMap(constructor.arguments, (int index, NamedType type) {
             final String name = argNameFunc(index, type);
             if (root.enums
                 .map((Enum e) => e.name)
@@ -1101,23 +1101,29 @@ class $codecName extends StandardMessageCodec {
             }
           });
           sendArgument =
-          '<Object?>[instanceIdentifier, ${argExpressions.join(', ')}]';
+              '<Object?>[instanceIdentifier, ${argExpressions.join(', ')}]';
           argSignature =
               _getConstructorArgumentsSignature(constructor, argNameFunc);
         }
 
         final String constructorNameWithDot =
-        constructor.name.isEmpty ? '' : '.${constructor.name}';
+            constructor.name.isEmpty ? '' : '.${constructor.name}';
 
-        indent.writeln(
-          '${api.name}$constructorNameWithDot({this.binaryMessenger, \$InstanceManager? customInstanceManager, $argSignature})',
-        );
+        indent.write('${api.name}$constructorNameWithDot');
+        indent.addScoped('({', '})', () {
+          indent.writeln(
+              r'this.binaryMessenger, $InstanceManager? customInstanceManager,');
+          for (final Method method in api.callbackmethods) {
+            indent.writeln('this.${method.name},');
+          }
+          indent.writeln(argSignature);
+        });
         indent.write(
             r': instanceManager = customInstanceManager ?? $InstanceManager.instance');
 
         indent.addScoped('{', '}', () {
           final String channelName =
-          makeChannelNameForConstructor(api, constructor, dartPackageName);
+              makeChannelNameForConstructor(api, constructor, dartPackageName);
           indent.writeln(
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
           indent.nest(2, () {
@@ -1156,47 +1162,201 @@ if (replyList == null) {
 ///
 /// This should only be used by subclasses created by this library or to
 /// create copies.''');
-      indent.format('''
-${api.name}.\$detached({this.binaryMessenger, \$InstanceManager? instanceManager}) 
-    : instanceManager = instanceManager ?? \$InstanceManager.instance;
-''');
+      indent.write('${api.name}.\$detached');
+      indent.addScoped('({', '})', () {
+        indent.writeln(
+            r'this.binaryMessenger, $InstanceManager? instanceManager,');
+        for (final Method method in api.callbackmethods) {
+          indent.writeln('this.${method.name},');
+        }
+      });
+      indent.writeln(
+          r': instanceManager = instanceManager ?? $InstanceManager.instance;');
 
-      indent.format('''
-static void setUpDartMessageHandlers({
-  BinaryMessenger? binaryMessenger,
-  \$InstanceManager? instanceManager,
-  ${api.name} Function()? \$defaultConstructor,
-}) {
-  {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        r'dev.flutter.pigeon.${api.name}.\$defaultConstructor',
-        $codecName(instanceManager ?? \$InstanceManager.instance),
-        binaryMessenger: binaryMessenger);
-    channel.setMessageHandler((Object? message) async {
-      assert(message != null,
-          r'Argument for dev.flutter.pigeon.${api.name}.\$defaultConstructor was null.');
-      final List<Object?> args = (message as List<Object?>?)!;
-      final int? instanceIdentifier = (args[0] as int?);
-      assert(instanceIdentifier != null,
-          r'Argument for dev.flutter.pigeon.${api.name}.\$defaultConstructor was null, expected non-null int.');
-      (instanceManager ?? \$InstanceManager.instance).addHostCreatedInstance(
-        \$defaultConstructor?.call() ??
-            ${api.name}.\$detached(
-              binaryMessenger: binaryMessenger,
-              instanceManager: instanceManager,
-            ),
-        instanceIdentifier!,
-      );
-      return;
-    });
-  }
-}      
-''');
+      indent.write('static void setUpDartMessageHandlers');
+      indent.addScoped('({', '})', () {
+        indent.writeln(
+          r'BinaryMessenger? binaryMessenger, $InstanceManager? instanceManager,',
+        );
+        // TODO: Add fields in here
+        indent.writeln('${api.name} Function()? \$detached,');
+
+        for (final Method method in api.callbackmethods) {
+          final bool isAsync = method.isAsynchronous;
+          final String returnType = isAsync
+              ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
+              : _addGenericTypesNullable(method.returnType);
+          final String argSignature = _getMethodArgumentsSignature(
+            method,
+            _getArgumentName,
+          );
+          indent.writeln(
+              '$returnType Function(${api.name} instance, $argSignature)? ${method.name},');
+        }
+      });
+      indent.addScoped('{', '}', () {
+        final String callbackMethodFields =
+            api.callbackmethods.fold('', (String previousValue, Method method) {
+          return '${method.name}: ${method.name},\n';
+        });
+
+        indent.format('''
+{
+  final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      r'dev.flutter.pigeon.$dartPackageName.${api.name}.\$detached',
+      $codecName(instanceManager ?? \$InstanceManager.instance),
+      binaryMessenger: binaryMessenger);
+  channel.setMessageHandler((Object? message) async {
+    assert(message != null,
+        r'Argument for dev.flutter.pigeon.$dartPackageName.${api.name}.\$detached was null.');
+    final List<Object?> args = (message as List<Object?>?)!;
+    final int? instanceIdentifier = (args[0] as int?);
+    assert(instanceIdentifier != null,
+        r'Argument for dev.flutter.pigeon.$dartPackageName.${api.name}.\$detached was null, expected non-null int.');
+    (instanceManager ?? \$InstanceManager.instance).addHostCreatedInstance(
+      \$detached?.call() ??
+          ${api.name}.\$detached(
+            binaryMessenger: binaryMessenger,
+            instanceManager: instanceManager,
+            $callbackMethodFields
+          ),
+      instanceIdentifier!,
+    );
+    return;
+  });
+}        
+        ''');
+
+        for (final Method method in api.callbackmethods) {
+          indent.addScoped('{', '}', () {
+            indent.writeln(
+              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+            );
+            final String channelName =
+                makeChannelName(api, method, dartPackageName);
+            indent.nest(2, () {
+              indent.writeln(
+                  "r'$channelName', $codecName(instanceManager ?? \$InstanceManager.instance),");
+              indent.writeln(
+                'binaryMessenger: binaryMessenger);',
+              );
+            });
+            indent.write(
+              'channel.setMessageHandler((Object? message) async ',
+            );
+            indent.addScoped('{', '});', () {
+              final String returnType =
+                  _addGenericTypesNullable(method.returnType);
+              final bool isAsync = method.isAsynchronous;
+              const String emptyReturnStatement =
+                  'return wrapResponse(empty: true);';
+              indent.writeln('assert(message != null,');
+              indent.writeln("'Argument for $channelName was null.');");
+              const String argsArray = 'args';
+              indent.writeln(
+                'final List<Object?> $argsArray = (message as List<Object?>?)!;',
+              );
+              indent.writeln(
+                'final ${api.name}? instance = (args[0] as ${api.name}?);',
+              );
+              indent.writeln('assert(instance != null,');
+              indent.writeln(
+                  "'Argument for $channelName was null, expected non-null ${api.name}');");
+              String call;
+              // TODO: Nullable callback methods
+              if (method.arguments.isEmpty) {
+                call =
+                    '(${method.name} ?? instance!.${method.name})?.call(instance!)';
+              } else {
+                String argNameFunc(int index, NamedType type) =>
+                    _getSafeArgumentName(index, type);
+                enumerate(method.arguments, (int count, NamedType arg) {
+                  final String argType = _addGenericTypes(arg.type);
+                  final String argName = argNameFunc(count, arg);
+                  final String genericArgType =
+                      _makeGenericTypeArguments(arg.type);
+                  final String castCall = _makeGenericCastCall(arg.type);
+
+                  final String leftHandSide = 'final $argType? $argName';
+                  if (customEnumNames.contains(arg.type.baseName)) {
+                    indent.writeln(
+                        '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
+                  } else {
+                    indent.writeln(
+                        '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
+                  }
+                  if (!arg.type.isNullable) {
+                    indent.writeln('assert($argName != null,');
+                    indent.writeln(
+                        "    'Argument for $channelName was null, expected non-null $argType.');");
+                  }
+                });
+                final Iterable<String> argNames =
+                    indexMap(method.arguments, (int index, NamedType field) {
+                  final String name = _getSafeArgumentName(index, field);
+                  return '$name${field.type.isNullable ? '' : '!'}';
+                });
+                call =
+                    '(${method.name} ?? instance!.${method.name})?.call(instance!, ${argNames.join(', ')})';
+              }
+              indent.writeScoped('try {', '} ', () {
+                if (method.returnType.isVoid) {
+                  if (isAsync) {
+                    indent.writeln('await $call;');
+                  } else {
+                    indent.writeln('$call;');
+                  }
+                  indent.writeln(emptyReturnStatement);
+                } else {
+                  if (isAsync) {
+                    indent.writeln('final $returnType output = await $call;');
+                  } else {
+                    indent.writeln('final $returnType output = $call;');
+                  }
+
+                  const String returnExpression = 'output';
+                  final String nullability =
+                      method.returnType.isNullable ? '?' : '';
+                  final String valueExtraction = isEnum(root, method.returnType)
+                      ? '$nullability.index'
+                      : '';
+                  final String returnStatement =
+                      'return wrapResponse(result: $returnExpression$valueExtraction);';
+                  indent.writeln(returnStatement);
+                }
+              }, addTrailingNewline: false);
+              indent.addScoped('on PlatformException catch (e) {', '}', () {
+                indent.writeln('return wrapResponse(error: e);');
+              }, addTrailingNewline: false);
+
+              indent.writeScoped('catch (e) {', '}', () {
+                indent.writeln(
+                    "return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));");
+              });
+            });
+          });
+        }
+      });
 
       indent.format(r'''
 final BinaryMessenger? binaryMessenger;
-final $InstanceManager instanceManager;    
-''');
+final $InstanceManager instanceManager;''');
+      for (final Method method in api.callbackmethods) {
+        final bool isAsync = method.isAsynchronous;
+        final String returnType = isAsync
+            ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
+            : _addGenericTypesNullable(method.returnType);
+        final String argSignature = _getMethodArgumentsSignature(
+          method,
+          _getArgumentName,
+        );
+        addDocumentationComments(
+            indent, method.documentationComments, _docCommentSpec);
+        indent.writeln(
+          'final $returnType Function(${api.name} instance, $argSignature)? ${method.name};',
+        );
+      }
+      indent.newln();
 
       for (final Method method in api.methods) {
         addDocumentationComments(
@@ -1295,14 +1455,18 @@ if (replyList == null) {
         });
       }
 
-      indent.format('''
-@override
-${api.name} copy() {
-  return ${api.name}.\$detached(
-    binaryMessenger: binaryMessenger,
-    instanceManager: instanceManager,
-  );
-}''');
+      indent.writeln('@override');
+      indent.write('${api.name} copy() ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ${api.name}.\$detached');
+        indent.addScoped('(', ');', () {
+          indent.writeln('binaryMessenger: binaryMessenger,');
+          indent.writeln('instanceManager: instanceManager,');
+          for (final Method method in api.callbackmethods) {
+            indent.writeln('${method.name}: ${method.name},');
+          }
+        });
+      });
     });
   }
 }
