@@ -18,7 +18,7 @@ abstract class XFileBase {
   // ignore: avoid_unused_constructor_parameters
   XFileBase(String? path);
 
-  /// Save the CrossFile at the indicated file path.
+  /// Save the CrossFile to the indicated file path.
   Future<void> saveTo(String path) {
     throw UnimplementedError('saveTo has not been implemented.');
   }
