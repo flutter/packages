@@ -196,6 +196,7 @@ class RouteConfiguration {
     assert(_debugCheckParentNavigatorKeys(
         routingTable.routes, <GlobalKey<NavigatorState>>[navigatorKey]));
     assert(_debugCheckStatefulShellBranchDefaultLocations(routingTable.routes));
+    _nameToPath.clear();
     _cacheNameToPath('', routingTable.routes);
     log(debugKnownRoutes());
   }
