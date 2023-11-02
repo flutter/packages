@@ -173,8 +173,9 @@ static FlutterError *getFlutterError(NSError *error) {
   }];
 }
 
-- (void)signOutWithError:(FlutterError *_Nullable *_Nonnull)error;
-{ [self.signIn signOut]; }
+- (void)signOutWithError:(FlutterError *_Nullable *_Nonnull)error {
+  [self.signIn signOut];
+}
 
 - (void)disconnectWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
   [self.signIn disconnectWithCallback:^(NSError *error) {
