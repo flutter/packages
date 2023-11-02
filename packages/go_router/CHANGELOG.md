@@ -1,3 +1,7 @@
+## 12.0.3
+
+- Fixes crashes when dynamically updates routing tables with named routes.
+
 ## 12.0.2
 
 - Fixes the problem that pathParameters is null in redirect when the Router is recreated.
