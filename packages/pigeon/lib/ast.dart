@@ -121,9 +121,9 @@ class Constructor extends Node {
   @override
   String toString() {
     final String objcSelectorStr =
-    objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
+        objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
     final String swiftFunctionStr =
-    swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
+        swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
     return '(Constructor name:$name arguments:$arguments $objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
@@ -135,6 +135,7 @@ class ProxyApiNode extends Api {
     required super.methods,
     required this.callbackmethods,
     required this.constructors,
+    required this.fields,
     this.documentationComments = const <String>[],
   }) : super(location: ApiLocation.proxy);
 
@@ -148,6 +149,8 @@ class ProxyApiNode extends Api {
   List<Constructor> constructors;
 
   List<Method> callbackmethods;
+
+  List<ProxyApiField> fields;
 
   @override
   String toString() {
@@ -250,6 +253,18 @@ class TypeDeclaration {
         typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
     return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr)';
   }
+}
+
+class ProxyApiField extends NamedType {
+  ProxyApiField({
+    required super.name,
+    required super.type,
+    required this.isAttached,
+    super.offset,
+    super.documentationComments,
+  });
+
+  bool isAttached;
 }
 
 /// Represents a named entity that has a type.

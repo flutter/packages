@@ -1358,6 +1358,57 @@ final $InstanceManager instanceManager;''');
       }
       indent.newln();
 
+      for (final ProxyApiField field in api.fields) {
+        if (!field.isAttached) {
+          continue;
+        }
+
+        final String type = _addGenericTypesNullable(field.type);
+        indent.writeln('late final $type ${field.name} = _${field.name}();');
+        indent.write('$type _${field.name}() ');
+        indent.addScoped('{', '}', () {
+          indent.format('''
+final $type instance = $type.\$detached(
+  binaryMessenger: binaryMessenger,
+  instanceManager: instanceManager,
+);
+''');
+          final String channelName =
+              makeChannelNameForField(api, field, dartPackageName);
+          indent.writeln(
+              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
+          indent.nest(2, () {
+            indent.writeln("'$channelName', $codecName(instanceManager),");
+            indent.writeln('binaryMessenger: binaryMessenger);');
+          });
+
+          indent.writeln(
+            'final int instanceIdentifier = instanceManager.addDartCreatedInstance(instance);',
+          );
+          indent.write(
+            'channel.send(<Object?>[this, instanceIdentifier]).then<void>((Object? value) ',
+          );
+          indent.addScoped('{', '});', () {
+            indent.format('''
+final List<Object?>? replyList = value as List<Object?>?;
+if (replyList == null) {
+\tthrow PlatformException(
+\t\tcode: 'channel-error',
+\t\tmessage: 'Unable to establish connection on channel.',
+\t);
+} else {
+\tthrow PlatformException(
+\t\tcode: replyList[0]! as String,
+\t\tmessage: replyList[1] as String?,
+\t\tdetails: replyList[2],
+\t);
+}''');
+          });
+
+          indent.writeln('return instance;');
+        });
+      }
+
       for (final Method method in api.methods) {
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);

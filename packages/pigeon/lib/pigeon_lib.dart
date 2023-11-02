@@ -39,8 +39,20 @@ class _Asynchronous {
   const _Asynchronous();
 }
 
+class _Attached {
+  const _Attached();
+}
+
+class _Static {
+  const _Static();
+
+}
 /// Metadata to annotate a Api method as asynchronous
 const Object async = _Asynchronous();
+
+const Object attached = _Attached();
+
+const Object static = _Static();
 
 /// Metadata annotation used to configure how Pigeon will generate code.
 class ConfigurePigeon {
@@ -1065,6 +1077,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           methods: <Method>[],
           constructors: <Constructor>[],
           callbackmethods: <Method>[],
+          fields: <ProxyApiField>[],
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
@@ -1356,6 +1369,30 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                 _documentationCommentsParser(node.documentationComment?.tokens),
           ),
         );
+      } else if (type is dart_ast.NamedType) {
+        final _FindInitializer findInitializerVisitor = _FindInitializer();
+        node.visitChildren(findInitializerVisitor);
+        if (findInitializerVisitor.initializer != null) {
+          _errors.add(Error(
+              message:
+              'Initialization isn\'t supported for fields in Pigeon data classes ("$node"), just use nullable types with no initializer (example "int? x;").',
+              lineNumber: _calculateLineNumber(source, node.offset)));
+        } else {
+          final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
+          final bool isAttached = _hasMetadata(node.metadata, 'attached');
+          _currentProxyApi!.fields.add(ProxyApiField(
+            type: TypeDeclaration(
+              baseName: _getNamedTypeQualifiedName(type),
+              isNullable: type.question != null,
+              typeArguments: typeAnnotationsToTypeArguments(typeArguments),
+            ),
+            name: node.fields.variables[0].name.lexeme,
+            isAttached: isAttached,
+            offset: node.offset,
+            documentationComments:
+            _documentationCommentsParser(node.documentationComment?.tokens),
+          ));
+        }
       }
     }
     node.visitChildren(this);

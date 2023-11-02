@@ -166,7 +166,20 @@ class Indent {
 
 /// Create the generated channel name for a [func] on a [api].
 String makeChannelName(Api api, Method func, String dartPackageName) {
-  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
+  return makeChannelNameWithStrings(
+    apiName: api.name,
+    methodName: func.name,
+    dartPackageName: dartPackageName,
+  );
+}
+
+/// Create the generated channel name for a [func] on a [api].
+String makeChannelNameWithStrings({
+  required String apiName,
+  required String methodName,
+  required String dartPackageName,
+}) {
+  return 'dev.flutter.pigeon.$dartPackageName.$apiName.$methodName';
 }
 
 String makeChannelNameForConstructor(
@@ -174,9 +187,24 @@ String makeChannelNameForConstructor(
   Constructor constructor,
   String dartPackageName,
 ) {
-  final String constructorName =
-      constructor.name.isEmpty ? r'$defaultConstructor' : constructor.name;
-  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.$constructorName';
+  return makeChannelNameWithStrings(
+    apiName: api.name,
+    methodName:
+        constructor.name.isEmpty ? r'$defaultConstructor' : constructor.name,
+    dartPackageName: dartPackageName,
+  );
+}
+
+String makeChannelNameForField(
+  Api api,
+  ProxyApiField field,
+  String dartPackageName,
+) {
+  return makeChannelNameWithStrings(
+    apiName: api.name,
+    methodName: field.name,
+    dartPackageName: dartPackageName,
+  );
 }
 
 /// Represents the mapping of a Dart datatype to a Host datatype.
