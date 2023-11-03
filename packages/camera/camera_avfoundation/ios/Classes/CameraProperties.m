@@ -59,6 +59,31 @@ FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode) {
   }
 }
 
+#pragma mark - capture mode
+
+NSString *FLTGetStringForFLTCaptureMode(FLTCaptureMode mode) {
+  switch (mode) {
+    case FLTCaptureModePhoto:
+      return @"photo";
+    case FLTCaptureModeVideo:
+      return @"video";
+    case FLTCaptureModeInvalid:
+      // This value should never actually be used.
+      return nil;
+  }
+  return nil;
+}
+
+FLTCaptureMode FLTGetFLTCaptureModeForString(NSString *mode) {
+  if ([mode isEqualToString:@"photo"]) {
+    return FLTCaptureModePhoto;
+  } else if ([mode isEqualToString:@"video"]) {
+    return FLTCaptureModeVideo;
+  } else {
+    return FLTCaptureModeInvalid;
+  }
+}
+
 #pragma mark - focus mode
 
 NSString *FLTGetStringForFLTFocusMode(FLTFocusMode mode) {

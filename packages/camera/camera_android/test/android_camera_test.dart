@@ -204,6 +204,7 @@ void main() {
         true,
         FocusMode.auto,
         true,
+        CaptureMode.video,
       ));
       await initializeFuture;
 
@@ -249,6 +250,8 @@ void main() {
         true,
         FocusMode.auto,
         true,
+                  CaptureMode.video,
+
       ));
       await initializeFuture;
 
@@ -297,6 +300,8 @@ void main() {
         true,
         FocusMode.auto,
         true,
+                  CaptureMode.video,
+
       ));
       await initializeFuture;
     });
@@ -317,6 +322,8 @@ void main() {
         true,
         FocusMode.auto,
         true,
+                  CaptureMode.video,
+
       );
       await camera.handleCameraMethodCall(
           MethodCall('initialized', event.toJson()), cameraId);
@@ -470,6 +477,8 @@ void main() {
           true,
           FocusMode.auto,
           true,
+                    CaptureMode.video,
+
         ),
       );
       await initializeFuture;

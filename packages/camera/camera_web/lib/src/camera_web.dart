@@ -196,8 +196,6 @@ class CameraPlugin extends CameraPlatform {
   Future<int> createCamera(
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
-    // Capture Mode is not currently supported.
-    CaptureMode captureMode = CaptureMode.video,
     bool enableAudio = false,
   }) async {
     try {
@@ -318,6 +316,8 @@ class CameraPlugin extends CameraPlatform {
           // TODO(bselwe): Add support for focus mode and point (https://github.com/flutter/flutter/issues/86858).
           FocusMode.auto,
           false,
+          // TODO: Add support for capture modes.
+          CaptureMode.video,
         ),
       );
     } on html.DomException catch (e) {

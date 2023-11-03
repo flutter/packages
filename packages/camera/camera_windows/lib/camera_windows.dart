@@ -126,6 +126,7 @@ class CameraWindows extends CameraPlatform {
         false,
         FocusMode.auto,
         false,
+        CaptureMode.video,
       ),
     );
   }

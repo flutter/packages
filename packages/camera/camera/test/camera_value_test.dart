@@ -28,6 +28,7 @@ void main() {
         focusPointSupported: true,
         previewPauseOrientation: DeviceOrientation.portraitUp,
         description: FakeController.fakeDescription,
+        captureMode: CaptureMode.video,
       );
 
       expect(cameraValue, isA<CameraValue>());
@@ -144,6 +145,7 @@ void main() {
         isPreviewPaused: true,
         previewPauseOrientation: DeviceOrientation.portraitUp,
         description: FakeController.fakeDescription,
+        captureMode: CaptureMode.video,
       );
 
       expect(cameraValue.toString(),

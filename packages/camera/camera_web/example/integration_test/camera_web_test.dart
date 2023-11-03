@@ -2375,6 +2375,7 @@ void main() {
               false,
               FocusMode.auto,
               false,
+              CaptureMode.video,
             ),
           ),
         );

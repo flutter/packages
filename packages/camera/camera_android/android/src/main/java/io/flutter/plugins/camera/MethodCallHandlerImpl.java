@@ -375,6 +375,21 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
           result.success(null);
           break;
         }
+      case "setCaptureMode":
+        {
+          String modeStr = call.argument("mode");
+          CaptureMode mode = CaptureMode.getValueForString(modeStr);
+          if (mode == null) {
+            result.error("setCaptureModeFailed", "Unknown capture mode " + modeStr, null);
+            return;
+          }
+          try {
+            camera.setCaptureMode(result, mode);
+          } catch (Exception e) {
+            handleException(e, result);
+          }
+          break;
+        }
       default:
         result.notImplemented();
         break;
@@ -409,7 +424,6 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
             dartMessenger,
             cameraProperties,
             resolutionPreset,
-            captureMode,
             enableAudio);
 
     Map<String, Object> reply = new HashMap<>();

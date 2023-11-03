@@ -13,6 +13,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
 import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
+import io.flutter.plugins.camera.types.CaptureMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,6 +96,7 @@ public class DartMessenger {
    * @param focusMode describes the current focus mode that is set on the camera.
    * @param exposurePointSupported indicates if the camera supports setting an exposure point.
    * @param focusPointSupported indicates if the camera supports setting a focus point.
+   * @param captureMode describes the current capture mode that is set on the camera.
    */
   void sendCameraInitializedEvent(
       Integer previewWidth,
@@ -102,13 +104,15 @@ public class DartMessenger {
       ExposureMode exposureMode,
       FocusMode focusMode,
       Boolean exposurePointSupported,
-      Boolean focusPointSupported) {
+      Boolean focusPointSupported,
+      CaptureMode captureMode) {
     assert (previewWidth != null);
     assert (previewHeight != null);
     assert (exposureMode != null);
     assert (focusMode != null);
     assert (exposurePointSupported != null);
     assert (focusPointSupported != null);
+    assert (captureMode != null);
     this.send(
         CameraEventType.INITIALIZED,
         new HashMap<String, Object>() {
@@ -119,6 +123,7 @@ public class DartMessenger {
             put("focusMode", focusMode.toString());
             put("exposurePointSupported", exposurePointSupported);
             put("focusPointSupported", focusPointSupported);
+            put("captureMode", captureMode.toString());
           }
         });
   }

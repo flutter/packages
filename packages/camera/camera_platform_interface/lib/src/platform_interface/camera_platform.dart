@@ -50,7 +50,6 @@ abstract class CameraPlatform extends PlatformInterface {
   Future<int> createCamera(
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
-    CaptureMode captureMode = CaptureMode.video,
     bool enableAudio = false,
   }) {
     throw UnimplementedError('createCamera() is not implemented.');
@@ -277,7 +276,7 @@ abstract class CameraPlatform extends PlatformInterface {
   /// Set the capture mode for the selected camera.
   ///
   /// See [CaptureMode] for more information.
-  Future<void> setCaptureMode(int cameraId, CaptureMode mode) {
+  Future<Size?> setCaptureMode(int cameraId, CaptureMode mode) {
     throw UnimplementedError('setCaptureMode() is not implemented.');
   }
 

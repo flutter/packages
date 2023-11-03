@@ -94,14 +94,12 @@ NSString *const errorMethod = @"error";
 
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
-                  captureMode: (NSString *)captureMode
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
   return [self initWithCameraName:cameraName
                  resolutionPreset:resolutionPreset
-                 captureMode: (NSString *)captureMode
                       enableAudio:enableAudio
                       orientation:orientation
               videoCaptureSession:[[AVCaptureSession alloc] init]
@@ -112,7 +110,6 @@ NSString *const errorMethod = @"error";
 
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
-                  captureMode: (NSString *)captureMode
                        enableAudio:(BOOL)enableAudio
                        orientation:(UIDeviceOrientation)orientation
                videoCaptureSession:(AVCaptureSession *)videoCaptureSession
@@ -142,6 +139,7 @@ NSString *const errorMethod = @"error";
   _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
   _flashMode = _captureDevice.hasFlash ? FLTFlashModeAuto : FLTFlashModeOff;
   _exposureMode = FLTExposureModeAuto;
+  _captureMode = FLTCaptureModeVideo;
   _focusMode = FLTFocusModeAuto;
   _lockedCaptureOrientation = UIDeviceOrientationUnknown;
   _deviceOrientation = orientation;
@@ -403,9 +401,10 @@ NSString *const errorMethod = @"error";
         return NO;
       }
   }
+  return YES;
 }
 
-- (void)setCaptureSessionForPhoto:(FLTResolutionPreset)resolutionPreset {
+- (BOOL)setCaptureSessionForPhoto:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
   switch (resolutionPreset) {
     case FLTResolutionPresetMax:
     case FLTResolutionPresetUltraHigh:
@@ -423,7 +422,7 @@ NSString *const errorMethod = @"error";
               if ([_captureDevice lockForConfiguration:nil]) {
                 _captureDevice.activeFormat = format;
                 [_captureDevice unlockForConfiguration];
-                return;
+                return YES;
               }
             }
           }
@@ -439,7 +438,7 @@ NSString *const errorMethod = @"error";
               if ([_captureDevice lockForConfiguration:nil]) {
                 _captureDevice.activeFormat = format;
                 [_captureDevice unlockForConfiguration];
-                return;
+                return YES;
               }
             }
           }
@@ -461,25 +460,30 @@ NSString *const errorMethod = @"error";
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetLow]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetLow;
       } else {
-        NSError *error =
-        [NSError errorWithDomain:NSCocoaErrorDomain
-                            code:NSURLErrorUnknown
-                        userInfo:@{
-            NSLocalizedDescriptionKey :
-                @"No capture session available for current capture session."
-        }];
-        @throw error;
+        *error = [NSError errorWithDomain:NSCocoaErrorDomain
+                                     code:NSURLErrorUnknown
+                                 userInfo:@{
+                                   NSLocalizedDescriptionKey :
+                                       @"No capture session available for current capture session."
+                                 }];
+        return NO;
       }
   }
+  return YES;
 }
 
-- (void)setCaptureSessionWithResolutionPreset:(FLTResolutionPreset)resolutionPreset
-                              withCaptureMode: (FLTCaptureMode) captureMode {
-  NSArray<AVCaptureDeviceFormat *> *formats = _captureDevice.formats;
+- (BOOL)setCaptureSessionWithResolutionPreset:(FLTResolutionPreset)resolutionPreset
+                              withCaptureMode: (FLTCaptureMode) captureMode
+                              withError:(NSError **)error {
+ // NSArray<AVCaptureDeviceFormat *> *formats = _captureDevice.formats;
   if (captureMode == FLTCaptureModeVideo) {
-    [self setCaptureSessionForVideo:resolutionPreset];
+    if (![self setCaptureSessionForVideo:resolutionPreset withError:error]) {
+      return NO;
+    }
   } else if (captureMode == FLTCaptureModePhoto) {
-    [self setCaptureSessionForPhoto:resolutionPreset];
+    if (![self setCaptureSessionForPhoto:resolutionPreset withError:error]) {
+      return NO;
+    }
   }
   CMVideoDimensions previewDimensions = CMVideoFormatDescriptionGetDimensions(_captureDevice.activeFormat.formatDescription);
   _previewSize = CGSizeMake(previewDimensions.width, previewDimensions.height);
@@ -937,6 +941,44 @@ NSString *const errorMethod = @"error";
   }
   [_captureDevice unlockForConfiguration];
 }
+
+- (void)setCaptureModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
+  FLTCaptureMode mode = FLTGetFLTCaptureModeForString(modeStr);
+  if (mode == FLTCaptureModeInvalid) {
+    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
+                                          code:NSURLErrorUnknown
+                                      userInfo:@{
+                                        NSLocalizedDescriptionKey : [NSString
+                                            stringWithFormat:@"Unknown capture mode %@", modeStr]
+                                      }]];
+    return;
+  }
+  NSError *error;
+  _captureMode = mode;
+  [self setCaptureSessionWithResolutionPreset:_resolutionPreset withCaptureMode:_captureMode withError: &error];
+  [result sendSuccessWithData:@{
+    @"previewWidth" : @(_previewSize.width),
+    @"previewHeight" : @(_previewSize.height),
+  }];
+}
+
+// - (void)applyCaptureMode {
+//   [_captureDevice lockForConfiguration:nil];
+//   switch (_captureMode) {
+//     case FLTCaptureModePhoto:
+//       [_captureDevice setCaptureMode:AVCaptureCaptureModePhoto];
+//       break;
+//     case FLTCaptureModeVideo:
+//       [_captureDevice setCaptureMode:AVCaptureCaptureModeVideo];
+//       break;    
+//     case FLTCaptureModeInvalid:
+//       // This state is not intended to be reachable; it exists only for error handling during
+//       // message deserialization.
+//       NSAssert(false, @"");
+//       break;
+//   }
+//   [_captureDevice unlockForConfiguration];
+// }
 
 - (void)setFocusModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
   FLTFocusMode mode = FLTGetFLTFocusModeForString(modeStr);

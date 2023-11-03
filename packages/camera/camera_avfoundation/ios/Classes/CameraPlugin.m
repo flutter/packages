@@ -179,6 +179,7 @@
                @"exposurePointSupported" :
                    @([_camera.captureDevice isExposurePointOfInterestSupported]),
                @"focusPointSupported" : @([_camera.captureDevice isFocusPointOfInterestSupported]),
+               @"captureMode" : FLTGetStringForFLTCaptureMode([_camera captureMode]),
              }];
       [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
       [_camera start];
@@ -225,6 +226,8 @@
         y = ((NSNumber *)call.arguments[@"y"]).doubleValue;
       }
       [_camera setExposurePointWithResult:result x:x y:y];
+    } else if ([@"setCaptureMode" isEqualToString:call.method]) {
+      [_camera setCaptureModeWithResult:result mode:call.arguments[@"mode"]];
     } else if ([@"getMinExposureOffset" isEqualToString:call.method]) {
       [result sendSuccessWithData:@(_camera.captureDevice.minExposureTargetBias)];
     } else if ([@"getMaxExposureOffset" isEqualToString:call.method]) {
@@ -304,12 +307,10 @@
 
     NSString *cameraName = createMethodCall.arguments[@"cameraName"];
     NSString *resolutionPreset = createMethodCall.arguments[@"resolutionPreset"];
-    NSString *captureMode = createMethodCall.arguments[@"captureMode"];
     NSNumber *enableAudio = createMethodCall.arguments[@"enableAudio"];
     NSError *error;
     FLTCam *cam = [[FLTCam alloc] initWithCameraName:cameraName
                                     resolutionPreset:resolutionPreset
-                                    captureMode: captureMode
                                          enableAudio:[enableAudio boolValue]
                                          orientation:[[UIDevice currentDevice] orientation]
                                  captureSessionQueue:strongSelf.captureSessionQueue

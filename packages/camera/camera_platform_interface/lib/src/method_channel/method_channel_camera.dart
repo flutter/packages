@@ -87,7 +87,6 @@ class MethodChannelCamera extends CameraPlatform {
   Future<int> createCamera(
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
-    CaptureMode captureMode = CaptureMode.video,
     bool enableAudio = false,
   }) async =>
       createCameraWithSettings(
@@ -111,7 +110,6 @@ class MethodChannelCamera extends CameraPlatform {
         'fps': mediaSettings.fps,
         'videoBitrate': mediaSettings.videoBitrate,
         'audioBitrate': mediaSettings.audioBitrate,
-        'captureMode': captureMode.name,
         'enableAudio': mediaSettings.enableAudio,
       });
 
@@ -401,6 +399,16 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   @override
+  Future<Size?> setCaptureMode(int cameraId, CaptureMode mode) =>
+      _channel.invokeMethod<Size>(
+        'setCaptureMode',
+        <String, dynamic>{
+          'cameraId': cameraId,
+          'mode': serializeCaptureMode(mode),
+        },
+      );
+
+  @override
   Future<double> getMinExposureOffset(int cameraId) async {
     final double? minExposureOffset = await _channel.invokeMethod<double>(
       'getMinExposureOffset',
@@ -601,6 +609,7 @@ class MethodChannelCamera extends CameraPlatform {
           arguments['exposurePointSupported']! as bool,
           deserializeFocusMode(arguments['focusMode']! as String),
           arguments['focusPointSupported']! as bool,
+          deserializeCaptureMode(arguments['captureMode']! as String),
         ));
         break;
       case 'resolution_changed':

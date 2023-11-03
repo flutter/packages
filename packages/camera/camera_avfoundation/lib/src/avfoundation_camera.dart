@@ -95,7 +95,6 @@ class AVFoundationCamera extends CameraPlatform {
   Future<int> createCamera(
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
-    CaptureMode captureMode = CaptureMode.video,
     bool enableAudio = false,
   }) async {
     try {
@@ -105,7 +104,6 @@ class AVFoundationCamera extends CameraPlatform {
         'resolutionPreset': resolutionPreset != null
             ? _serializeResolutionPreset(resolutionPreset)
             : null,
-        'captureMode': captureMode.name,
         'enableAudio': enableAudio,
       });
 
@@ -378,6 +376,23 @@ class AVFoundationCamera extends CameraPlatform {
       );
 
   @override
+  Future<Size?> setCaptureMode(int cameraId, CaptureMode mode) async {
+     final Map<dynamic, dynamic>? reply = await
+      _channel.invokeMethod<Map<dynamic, dynamic>>(
+        'setCaptureMode',
+        <String, dynamic>{
+          'cameraId': cameraId,
+          'mode': serializeCaptureMode(mode),
+        },
+      );
+      if (reply == null) {
+        return null;
+      }
+      return Size(
+          reply['previewWidth']! as double, reply['previewHeight']! as double);
+  }
+
+  @override
   Future<void> setExposurePoint(int cameraId, Point<double>? point) {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
@@ -605,6 +620,7 @@ class AVFoundationCamera extends CameraPlatform {
           arguments['exposurePointSupported']! as bool,
           deserializeFocusMode(arguments['focusMode']! as String),
           arguments['focusPointSupported']! as bool,
+          deserializeCaptureMode(arguments['captureMode']! as String),
         ));
         break;
       case 'resolution_changed':

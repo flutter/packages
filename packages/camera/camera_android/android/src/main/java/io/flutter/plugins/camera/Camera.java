@@ -53,6 +53,7 @@ import io.flutter.plugins.camera.features.exposurepoint.ExposurePointFeature;
 import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
+import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
@@ -70,6 +71,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 @FunctionalInterface
@@ -114,7 +116,6 @@ class Camera
 
   private final SurfaceTextureEntry flutterTexture;
   private final ResolutionPreset resolutionPreset;
-  private final CaptureMode captureMode;
   private final boolean enableAudio;
   private final Context applicationContext;
   final DartMessenger dartMessenger;
@@ -195,7 +196,6 @@ class Camera
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
       final ResolutionPreset resolutionPreset,
-      final CaptureMode captureMode,
       final boolean enableAudio) {
 
     if (activity == null) {
@@ -209,10 +209,9 @@ class Camera
     this.cameraProperties = cameraProperties;
     this.cameraFeatureFactory = cameraFeatureFactory;
     this.resolutionPreset = resolutionPreset;
-    this.captureMode = captureMode;
     this.cameraFeatures =
         CameraFeatures.init(
-            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset, captureMode);
+            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset, CaptureMode.video);
 
     // Create capture callback.
     captureTimeouts = new CaptureTimeoutsWrapper(3000, 3000);
@@ -331,7 +330,8 @@ class Camera
                     cameraFeatures.getExposureLock().getValue(),
                     cameraFeatures.getAutoFocus().getValue(),
                     cameraFeatures.getExposurePoint().checkIsSupported(),
-                    cameraFeatures.getFocusPoint().checkIsSupported());
+                    cameraFeatures.getFocusPoint().checkIsSupported(),
+                    resolutionFeature.getCaptureMode());
               }
             } catch (Exception e) {
               if (BuildConfig.DEBUG) {
@@ -506,7 +506,7 @@ class Camera
     cameraDevice.createCaptureSession(surfaces, callback, backgroundHandler);
   }
 
-  // Send a repeating request to refresh  capture session.
+  // Send a repeating request to refresh capture session.
   void refreshPreviewCaptureSession(
       @Nullable Runnable onSuccessCallback, @NonNull ErrorCallback onErrorCallback) {
     Log.i(TAG, "refreshPreviewCaptureSession");
@@ -977,6 +977,31 @@ class Camera
   }
 
   /**
+   * Sets new capture mode from dart
+   * 
+   * @param result Flutter result.
+   * @param newMode New mode.
+   */
+  public void setCaptureMode(@NonNull final Result result, @NonNull CaptureMode newMode) {
+    // Re-initalises the camera with the appropriate capture mode.
+    stopAndReleaseCamera();
+    cameraFeatures =
+        CameraFeatures.init(
+            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset, newMode);
+    try {
+      open(imageFormatGroup);
+    } catch (CameraAccessException e) {
+      result.error("setDescriptionWhileRecordingFailed", e.getMessage(), null);
+    }
+
+    final ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
+    Map <String, Integer> previewSize = new HashMap<String, Integer>();
+    previewSize.put("previewWidth", resolutionFeature.getPreviewSize().getWidth());
+    previewSize.put("previewHeight", resolutionFeature.getPreviewSize().getHeight());
+    result.success(previewSize);
+  }
+
+  /**
    * Sets new focus point from dart.
    *
    * @param result Flutter result.
@@ -1313,7 +1338,7 @@ class Camera
     cameraProperties = properties;
     cameraFeatures =
         CameraFeatures.init(
-            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset, captureMode);
+            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset, cameraFeatures.getResolution().getCaptureMode());
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
     try {
