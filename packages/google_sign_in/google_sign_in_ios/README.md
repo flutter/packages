@@ -61,13 +61,11 @@ As an alternative to editing the `Info.plist` in your Xcode project,
 you can instead configure your app in Dart code. In this case, skip steps 4 to 5
  and pass `clientId` and `serverClientId` to the `GoogleSignIn` constructor:
 
+<?code-excerpt "../google_sign_in/test/google_sign_in_test.dart (GoogleSignIn)"?>
 ```dart
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  ...
-  // The OAuth client id of your app. This is required.
-  clientId: ...,
-  // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
-  serverClientId: ...,
+final GoogleSignIn googleSignIn = GoogleSignIn(
+  clientId: 'Your Client ID',
+  serverClientId: 'Your Server ID',
 );
 ```
 

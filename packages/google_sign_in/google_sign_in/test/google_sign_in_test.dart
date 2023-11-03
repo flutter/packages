@@ -81,6 +81,26 @@ void main() {
       verify(mockPlatform.signIn());
     });
 
+    test('clientId and serverClientId parameters is forwarded to implementation', () async {
+      // #docregion GoogleSignIn
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        // The OAuth client id of your app. This is required.
+        clientId: 'Your Client ID',
+        // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
+        serverClientId: 'Your Server ID',
+      );
+      // #enddocregion GoogleSignIn
+
+      await googleSignIn.signIn();
+
+      _verifyInit(
+        mockPlatform,
+        clientId: 'Your Client ID',
+        serverClientId: 'Your Server ID',
+      );
+      verify(mockPlatform.signIn());
+    });
+
     test('forceCodeForRefreshToken sent with init method call', () async {
       final GoogleSignIn googleSignIn =
           GoogleSignIn(forceCodeForRefreshToken: true);
