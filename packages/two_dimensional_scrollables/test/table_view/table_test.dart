@@ -1256,17 +1256,18 @@ void main() {
       // TODO(Piinks): Rewrite this to remove golden files from this repo when
       //  mock_canvas is public - https://github.com/flutter/flutter/pull/131631
       //  * foreground, background, and precedence per mainAxis
-      //  * Break out a separate test for padding decorations to validate paint
-      //    rect calls
+      //  * Break out a separate test for padding and radius decorations to
+      //    validate paint rect calls
       TableView tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           padding: index == 0 ? const TableSpanPadding(trailing: 10) : null,
-          foregroundDecoration: const TableSpanDecoration(
+          foregroundDecoration: TableSpanDecoration(
             consumeSpanPadding: false,
-            border: TableSpanBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            border: const TableSpanBorder(
               trailing: BorderSide(
                 color: Colors.orange,
                 width: 3,
@@ -1276,14 +1277,16 @@ void main() {
           backgroundDecoration: TableSpanDecoration(
             // consumePadding true by default
             color: index.isEven ? Colors.red : null,
+            borderRadius: BorderRadius.circular(30.0),
           ),
         ),
         rowBuilder: (int index) => TableSpan(
           extent: const FixedTableSpanExtent(200.0),
           padding: index == 1 ? const TableSpanPadding(leading: 10) : null,
-          foregroundDecoration: const TableSpanDecoration(
+          foregroundDecoration: TableSpanDecoration(
             // consumePadding true by default
-            border: TableSpanBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            border: const TableSpanBorder(
               leading: BorderSide(
                 color: Colors.green,
                 width: 3,
@@ -1292,6 +1295,7 @@ void main() {
           ),
           backgroundDecoration: TableSpanDecoration(
             color: index.isOdd ? Colors.blue : null,
+            borderRadius: BorderRadius.circular(30.0),
             consumeSpanPadding: false,
           ),
         ),
