@@ -1,3 +1,7 @@
+## 12.1.0
+
+- Adds an ability to add a custom codec for serializing/deserializing extra.
+
 ## 12.0.3
 
 - Fixes crashes when dynamically updates routing tables with named routes.
