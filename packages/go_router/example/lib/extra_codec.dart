@@ -49,8 +49,9 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-                'If running in web, use the browser's backward and forward button to test extra codec after setting extra several times.'),
-            Text('The extra for this page is: ${GoRouterState.of(context).extra}'),
+                "If running in web, use the browser's backward and forward button to test extra codec after setting extra several times."),
+            Text(
+                'The extra for this page is: ${GoRouterState.of(context).extra}'),
             ElevatedButton(
               onPressed: () => context.go('/', extra: ComplexData1('data')),
               child: const Text('Set extra to ComplexData1'),
@@ -115,7 +116,7 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'ComplexData2') {
       return ComplexData2(inputAsList[1]! as String);
     }
-    throw UnimplementedError();
+    throw FormatException('Unable tp parse input: $input');
   }
 }
 
@@ -132,7 +133,7 @@ class _MyExtraEncoder extends Converter<Object?, Object?> {
       case ComplexData2:
         return <Object?>['ComplexData2', (input as ComplexData2).data];
       default:
-        throw UnimplementedError();
+        throw FormatException('Cannot encode type ${input.runtimeType}');
     }
   }
 }

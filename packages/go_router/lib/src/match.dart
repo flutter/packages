@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This file deals with json.
-// ignore_for_file: avoid_dynamic_calls
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -363,7 +360,7 @@ class RouteMatchList {
 /// Handles encoding and decoding of [RouteMatchList] objects to a format
 /// suitable for using with [StandardMessageCodec].
 ///
-/// The primary use of this class is for state restoration.
+/// The primary use of this class is for state restoration and browser history.
 @internal
 class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
   /// Creates a new [RouteMatchListCodec] object.
@@ -452,7 +449,8 @@ class _RouteMatchListDecoder
   RouteMatchList convert(Map<Object?, Object?> input) {
     final String rootLocation =
         input[RouteMatchListCodec._locationKey]! as String;
-    final dynamic encodedExtra = input[RouteMatchListCodec._extraKey];
+    final Map<Object?, Object?> encodedExtra =
+        input[RouteMatchListCodec._extraKey]! as Map<Object?, Object?>;
     final Object? extra;
 
     if (encodedExtra[RouteMatchListCodec._codecKey] ==
