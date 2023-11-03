@@ -105,6 +105,15 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     return this.captureSize;
   }
 
+  /**
+   * Gets the current capture mode for the configured resolution.
+   * 
+   * @return The current capture mode.
+   */
+  public CaptureMode getCaptureMode() {
+    return this.captureMode;
+  }
+
   @NonNull
   @Override
   public String getDebugName() {
