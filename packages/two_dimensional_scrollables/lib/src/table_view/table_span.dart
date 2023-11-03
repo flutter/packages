@@ -10,6 +10,42 @@ import 'package:flutter/widgets.dart';
 
 import 'table.dart';
 
+/// Defines the leading and trailing padding values of a [TableSpan].
+class TableSpanPadding {
+  /// Creates a padding configuration for a [TableSpan].
+  const TableSpanPadding({
+    this.leading = 0.0,
+    this.trailing = 0.0,
+  });
+
+  /// Creates padding where both the [leading] and [trailing] are `value`.
+  const TableSpanPadding.all(double value)
+      : leading = value,
+        trailing = value;
+
+  /// The leading amount of pixels to pad a [TableSpan] by.
+  ///
+  /// If the [TableSpan] is a row and the vertical [Axis] is not reversed, this
+  /// offset will be applied above the row. If the vertical [Axis] is reversed,
+  /// this will be applied below the row.
+  ///
+  /// If the [TableSpan] is a column and the horizontal [Axis] is not reversed,
+  /// this offset will be applied to the left the column. If the horizontal
+  /// [Axis] is reversed, this will be applied to the right of the column.
+  final double leading;
+
+  /// The trailing amount of pixels to pad a [TableSpan] by.
+  ///
+  /// If the [TableSpan] is a row and the vertical [Axis] is not reversed, this
+  /// offset will be applied below the row. If the vertical [Axis] is reversed,
+  /// this will be applied above the row.
+  ///
+  /// If the [TableSpan] is a column and the horizontal [Axis] is not reversed,
+  /// this offset will be applied to the right the column. If the horizontal
+  /// [Axis] is reversed, this will be applied to the left of the column.
+  final double trailing;
+}
+
 /// Defines the extent, visual appearance, and gesture handling of a row or
 /// column in a [TableView].
 ///
@@ -20,19 +56,25 @@ class TableSpan {
   /// The [extent] argument must be provided.
   const TableSpan({
     required this.extent,
+    TableSpanPadding? padding,
     this.recognizerFactories = const <Type, GestureRecognizerFactory>{},
     this.onEnter,
     this.onExit,
     this.cursor = MouseCursor.defer,
     this.backgroundDecoration,
     this.foregroundDecoration,
-  });
+  }) : padding = padding ?? const TableSpanPadding();
 
   /// Defines the extent of the span.
   ///
   /// If the span represents a row, this is the height of the row. If it
   /// represents a column, this is the width of the column.
   final TableSpanExtent extent;
+
+  /// Defines the leading and or trailing extent to pad the row or column by.
+  ///
+  /// Defaults to no padding.
+  final TableSpanPadding padding;
 
   /// Factory for creating [GestureRecognizer]s that want to compete for
   /// gestures within the [extent] of the span.
@@ -255,6 +297,7 @@ class TableSpanDecoration {
     this.border,
     this.color,
     this.borderRadius,
+    this.consumeSpanPadding = true,
   });
 
   /// The border drawn around the span.
@@ -268,6 +311,51 @@ class TableSpanDecoration {
 
   /// The color to fill the bounds of the span with.
   final Color? color;
+
+  /// Whether or not the decoration should extend to fill the space created by
+  /// the [TableSpanPadding].
+  ///
+  /// Defaults to true, meaning if a [TableSpan] is a row, the decoration will
+  /// apply to the full [TableSpanExtent], including the
+  /// [TableSpanPadding.leading] and [TableSpanPadding.trailing] for the row.
+  /// This same row decoration will consume any padding from the column spans so
+  /// as to decorate the row as one continuous span.
+  ///
+  /// {@tool snippet}
+  /// This example illustrates how [consumeSpanPadding] affects
+  /// [TableSpanDecoration.color]. By default, the color of the decoration
+  /// consumes the padding, coloring the row fully by including the padding
+  /// around the row. When [consumeSpanPadding] is false, the padded area of
+  /// the row is not decorated.
+  ///
+  /// ```dart
+  /// TableView.builder(
+  ///   rowCount: 4,
+  ///   columnCount: 4,
+  ///   columnBuilder: (int index) => TableSpan(
+  ///     extent: const FixedTableSpanExtent(150.0),
+  ///     padding: const TableSpanPadding(trailing: 10),
+  ///   ),
+  ///   rowBuilder: (int index) => TableSpan(
+  ///     extent: const FixedTableSpanExtent(150.0),
+  ///     padding: TableSpanPadding(leading: 10, trailing: 10),
+  ///     backgroundDecoration: TableSpanDecoration(
+  ///       color: index.isOdd ? Colors.blue : Colors.green,
+  ///       // The background color will not be applied to the padded area.
+  ///       consumeSpanPadding: false,
+  ///     ),
+  ///   ),
+  ///   cellBuilder: (_, TableVicinity vicinity) {
+  ///     return Container(
+  ///       height: 150,
+  ///       width: 150,
+  ///       child: const Center(child: FlutterLogo()),
+  ///     );
+  ///   },
+  /// );
+  /// ```
+  /// {@end-tool}
+  final bool consumeSpanPadding;
 
   /// Called to draw the decoration around a span.
   ///

@@ -1,3 +1,11 @@
+## NEXT
+
+* Fixes bug where having one reversed axis caused incorrect painting of a pinned row.
+
+## 0.0.4
+
+* Adds TableSpanPadding, TableSpan.padding, and TableSpanDecoration.consumeSpanPadding.
+
 ## 0.0.3
 
 * Fixes paint issue when axes are reversed and TableView has pinned rows and columns.
