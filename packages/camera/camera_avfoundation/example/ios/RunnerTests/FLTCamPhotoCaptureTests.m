@@ -110,9 +110,10 @@
   id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
   OCMStub([mockSettings photoSettingsWithFormat:OCMOCK_ANY]).andReturn(settings);
 
-  NSString *filePath = @"test.heif";
   id mockResult = OCMClassMock([FLTThreadSafeFlutterResult class]);
-  OCMStub([mockResult sendSuccessWithData:filePath]).andDo(^(NSInvocation *invocation) {
+  OCMStub([mockResult sendSuccessWithData:OCMOCK_ANY]).andDo(^(NSInvocation *invocation) {
+    NSString *filePath;
+    [invocation getArgument:&filePath atIndex:2];
     XCTAssertEqualObjects([filePath pathExtension], @"heif");
     [expectation fulfill];
   });
@@ -128,7 +129,7 @@
         // Completion runs on IO queue.
         dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
         dispatch_async(ioQueue, ^{
-          delegate.completionHandler(filePath, nil);
+          delegate.completionHandler(delegate.filePath, nil);
         });
       });
   cam.capturePhotoOutput = mockOutput;
@@ -153,9 +154,10 @@
   id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
   OCMStub([mockSettings photoSettings]).andReturn(settings);
 
-  NSString *filePath = @"test.jpg";
   id mockResult = OCMClassMock([FLTThreadSafeFlutterResult class]);
-  OCMStub([mockResult sendSuccessWithData:filePath]).andDo(^(NSInvocation *invocation) {
+  OCMStub([mockResult sendSuccessWithData:OCMOCK_ANY]).andDo(^(NSInvocation *invocation) {
+    NSString *filePath;
+    [invocation getArgument:&filePath atIndex:2];
     XCTAssertEqualObjects([filePath pathExtension], @"jpg");
     [expectation fulfill];
   });
@@ -168,7 +170,7 @@
         // Completion runs on IO queue.
         dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
         dispatch_async(ioQueue, ^{
-          delegate.completionHandler(filePath, nil);
+          delegate.completionHandler(delegate.filePath, nil);
         });
       });
   cam.capturePhotoOutput = mockOutput;
