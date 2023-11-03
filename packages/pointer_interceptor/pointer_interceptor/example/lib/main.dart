@@ -8,6 +8,7 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
+
 const String _htmlElementViewType = '_htmlElementViewType';
 const double _videoWidth = 640;
 const double _videoHeight = 480;

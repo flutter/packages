@@ -18,7 +18,7 @@ dependencies:
   flutter:
     sdk: flutter
   pointer_interceptor:
-    path: ../../pointer_interceptor/
+    path: ../../pointer_interceptor
   pointer_interceptor_ios:
     # When depending on this package from a real application you should use:
     #   pointer_interceptor_ios: ^x.y.z

@@ -2,11 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/widgets.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-
-import '../pointer_interceptor.dart';
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -14,6 +9,11 @@ import '../pointer_interceptor.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
+
+import 'package:flutter/widgets.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+
+import '../pointer_interceptor.dart';
 
 const String _viewType = '__webPointerInterceptorViewType__';
 const String _debug = 'debug__';
@@ -57,15 +57,12 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
     _registered = true;
   }
 
-
-
   @override
   Widget buildWidget(
       {required Widget child,
-        bool intercepting = true,
-        bool debug = false,
-        Key? key}) {
-
+      bool intercepting = true,
+      bool debug = false,
+      Key? key}) {
     final String viewType = _getViewType(debug: debug);
 
     if (!intercepting) {

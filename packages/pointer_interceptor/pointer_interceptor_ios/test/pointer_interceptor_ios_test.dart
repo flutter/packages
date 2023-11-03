@@ -1,10 +1,11 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:;
 import 'package:pointer_interceptor_ios/pointer_interceptor_ios.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 final Completer<WebViewController> _controller = Completer<WebViewController>();
 
@@ -33,9 +34,7 @@ Widget boilerplate() {
         body: const DummyPlatformView(),
         floatingActionButton: FloatingActionButton(
             onPressed: () {  },
-            child: Container(
-              child: PointerInterceptorIOSPlugin().buildWidget(child: Container()),
-            )),
+            child: PointerInterceptor()),
       ));
 }
 

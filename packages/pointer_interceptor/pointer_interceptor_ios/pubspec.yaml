@@ -20,10 +20,10 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  plugin_platform_interface: ^2.1.6
   pointer_interceptor_platform_interface:
     path: ../pointer_interceptor_platform_interface
   webview_flutter: ^3.0.4
-  plugin_platform_interface: ^2.1.6
 
 dev_dependencies:
   flutter_lints: ^2.0.0

@@ -17,9 +17,7 @@ flutter:
         pluginClass: PointerInterceptorWeb
         fileName: ./src/web.dart
       ios:
-        default_package: ./src/mobile.dart
-#        pluginClass: PointerInterceptorIOSLegacy
-#        fileName: ./src/mobile.dart
+        default_package: ./src/dummy_pointer_interceptor_ios.dart
 
 dependencies:
   flutter:

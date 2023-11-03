@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
-import 'package:pointer_interceptor_ios/pointer_interceptor_ios.dart';
+// import 'package:pointer_interceptor_ios/pointer_interceptor_ios.dart';
 
 void main() {
   runApp(const MaterialApp(home: PointerInterceptorIOSExample()));
@@ -49,7 +49,6 @@ class _PointerInterceptorIOSExampleState
         children: <Widget>[
           const _DummyPlatformView(),
           PointerInterceptor(
-              debug: true,
               child: TextButton(
                   style: TextButton.styleFrom(foregroundColor: Colors.red),
                   child: _buttonTapped

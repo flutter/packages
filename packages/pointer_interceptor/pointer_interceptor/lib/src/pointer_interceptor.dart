@@ -12,7 +12,7 @@ class PointerInterceptor extends StatelessWidget {
   PointerInterceptor({
     required this.child,
     this.intercepting = true,
-    this.debug = true,
+    this.debug = false,
     super.key,
   });
 
@@ -30,7 +30,7 @@ class PointerInterceptor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(PointerInterceptorPlatform.instance.toString());
+    print(PointerInterceptorPlatform.instance);
     return PointerInterceptorPlatform.instance.buildWidget(
         child: child, intercepting: intercepting, debug: debug, key: key);
   }
