@@ -1113,6 +1113,11 @@ class $codecName extends StandardMessageCodec {
         indent.addScoped('({', '})', () {
           indent.writeln(
               r'this.binaryMessenger, $InstanceManager? customInstanceManager,');
+          for (final ProxyApiField field in api.fields) {
+            if (!field.isAttached) {
+              indent.writeln('required this.${field.name},');
+            }
+          }
           for (final Method method in api.callbackmethods) {
             indent.writeln('this.${method.name},');
           }
@@ -1166,6 +1171,11 @@ if (replyList == null) {
       indent.addScoped('({', '})', () {
         indent.writeln(
             r'this.binaryMessenger, $InstanceManager? instanceManager,');
+        for (final ProxyApiField field in api.fields) {
+          if (!field.isAttached) {
+            indent.writeln('required this.${field.name},');
+          }
+        }
         for (final Method method in api.callbackmethods) {
           indent.writeln('this.${method.name},');
         }
@@ -1178,8 +1188,14 @@ if (replyList == null) {
         indent.writeln(
           r'BinaryMessenger? binaryMessenger, $InstanceManager? instanceManager,',
         );
-        // TODO: Add fields in here
-        indent.writeln('${api.name} Function()? \$detached,');
+
+        final String nonAttachedFieldsSignature = _getParametersSignature(
+          api.fields.where((ProxyApiField field) => !field.isAttached).toList(),
+          (_, NamedType type) => type.name,
+        );
+        indent.writeln(
+          '${api.name} Function($nonAttachedFieldsSignature)? \$detached,',
+        );
 
         for (final Method method in api.callbackmethods) {
           final bool isAsync = method.isAsynchronous;
@@ -1200,32 +1216,102 @@ if (replyList == null) {
           return '${method.name}: ${method.name},\n';
         });
 
-        indent.format('''
-{
-  final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      r'dev.flutter.pigeon.$dartPackageName.${api.name}.\$detached',
-      $codecName(instanceManager ?? \$InstanceManager.instance),
-      binaryMessenger: binaryMessenger);
-  channel.setMessageHandler((Object? message) async {
-    assert(message != null,
-        r'Argument for dev.flutter.pigeon.$dartPackageName.${api.name}.\$detached was null.');
-    final List<Object?> args = (message as List<Object?>?)!;
-    final int? instanceIdentifier = (args[0] as int?);
-    assert(instanceIdentifier != null,
-        r'Argument for dev.flutter.pigeon.$dartPackageName.${api.name}.\$detached was null, expected non-null int.');
-    (instanceManager ?? \$InstanceManager.instance).addHostCreatedInstance(
-      \$detached?.call() ??
-          ${api.name}.\$detached(
-            binaryMessenger: binaryMessenger,
-            instanceManager: instanceManager,
-            $callbackMethodFields
-          ),
-      instanceIdentifier!,
-    );
-    return;
-  });
-}        
-        ''');
+        indent.addScoped('{', '}', () {
+          indent.writeln(
+            'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+          );
+          final String channelName = makeChannelNameWithStrings(
+            apiName: api.name,
+            methodName: r'$detached',
+            dartPackageName: dartPackageName,
+          );
+          indent.nest(2, () {
+            indent.writeln(
+                "r'$channelName', $codecName(instanceManager ?? \$InstanceManager.instance),");
+            indent.writeln(
+              'binaryMessenger: binaryMessenger);',
+            );
+          });
+          indent.write(
+            'channel.setMessageHandler((Object? message) async ',
+          );
+          const String argsArray = 'args';
+          indent.addScoped('{', '});', () {
+            indent.writeln('assert(message != null,');
+            indent.writeln("r'Argument for $channelName was null.');");
+            indent.writeln(
+              'final List<Object?> $argsArray = (message as List<Object?>?)!;',
+            );
+            indent.writeln(
+              'final int? instanceIdentifier = (args[0] as int?);',
+            );
+            indent.writeln('assert(instanceIdentifier != null,');
+            indent.writeln(
+              "r'Argument for $channelName was null, expected non-null int.');",
+            );
+
+            final List<ProxyApiField> nonAttachedFields = api.fields
+                .where(
+                  (ProxyApiField field) => !field.isAttached,
+                )
+                .toList();
+            String call;
+            if (nonAttachedFields.isEmpty) {
+              call = r'$detached?.call()';
+            } else {
+              String argNameFunc(int index, NamedType type) =>
+                  _getSafeArgumentName(index, type);
+              enumerate(nonAttachedFields, (int count, NamedType arg) {
+                final String argType = _addGenericTypes(arg.type);
+                final String argName = argNameFunc(count, arg);
+                final String genericArgType =
+                    _makeGenericTypeArguments(arg.type);
+                final String castCall = _makeGenericCastCall(arg.type);
+
+                final String leftHandSide = 'final $argType? $argName';
+                if (customEnumNames.contains(arg.type.baseName)) {
+                  indent.writeln(
+                      '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
+                } else {
+                  indent.writeln(
+                      '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
+                }
+                if (!arg.type.isNullable) {
+                  indent.writeln('assert($argName != null,');
+                  indent.writeln(
+                      "    r'Argument for $channelName was null, expected non-null $argType.');");
+                }
+              });
+              final Iterable<String> argNames =
+                  indexMap(nonAttachedFields, (int index, NamedType field) {
+                final String name = _getSafeArgumentName(index, field);
+                return '$name${field.type.isNullable ? '' : '!'}';
+              });
+              call = '\$detached?.call(${argNames.join(', ')})';
+            }
+
+            indent.write(
+                r'(instanceManager ?? $InstanceManager.instance).addHostCreatedInstance');
+            indent.addScoped('(', ');', () {
+              indent.write('$call ?? ');
+              indent.addScoped('${api.name}.\$detached(', '),', () {
+                indent.writeln('binaryMessenger: binaryMessenger,');
+                indent.writeln('instanceManager: instanceManager,');
+                for (final ProxyApiField field in api.fields) {
+                  if (!field.isAttached) {
+                    // TODO: don't pass 0 here. maybe create func for named args
+                    indent.writeln(
+                      '${field.name}: ${_getSafeArgumentName(0, field)}${field.type.isNullable ? '' : '!'},',
+                    );
+                  }
+                }
+                indent.writeln(callbackMethodFields);
+              });
+              indent.writeln('instanceIdentifier!,');
+            });
+            indent.writeln('return;');
+          });
+        });
 
         for (final Method method in api.callbackmethods) {
           indent.addScoped('{', '}', () {
@@ -1341,6 +1427,12 @@ if (replyList == null) {
       indent.format(r'''
 final BinaryMessenger? binaryMessenger;
 final $InstanceManager instanceManager;''');
+      for (final ProxyApiField field in api.fields) {
+        if (!field.isAttached) {
+          indent.writeln(
+              'final ${_addGenericTypesNullable(field.type)} ${field.name};');
+        }
+      }
       for (final Method method in api.callbackmethods) {
         final bool isAsync = method.isAsynchronous;
         final String returnType = isAsync
@@ -1513,6 +1605,11 @@ if (replyList == null) {
         indent.addScoped('(', ');', () {
           indent.writeln('binaryMessenger: binaryMessenger,');
           indent.writeln('instanceManager: instanceManager,');
+          for (final ProxyApiField field in api.fields) {
+            if (!field.isAttached) {
+              indent.writeln('${field.name}: ${field.name},');
+            }
+          }
           for (final Method method in api.callbackmethods) {
             indent.writeln('${method.name}: ${method.name},');
           }
@@ -1612,11 +1709,18 @@ String _getMethodArgumentsSignature(
   Method func,
   String Function(int index, NamedType arg) getArgumentName,
 ) {
-  return func.arguments.isEmpty
+  return _getParametersSignature(func.arguments, getArgumentName);
+}
+
+String _getParametersSignature(
+  List<NamedType> parameters,
+  String Function(int index, NamedType arg) getParameterName,
+) {
+  return parameters.isEmpty
       ? ''
-      : indexMap(func.arguments, (int index, NamedType arg) {
+      : indexMap(parameters, (int index, NamedType arg) {
           final String type = _addGenericTypesNullable(arg.type);
-          final String argName = getArgumentName(index, arg);
+          final String argName = getParameterName(index, arg);
           return '$type $argName';
         }).join(', ');
 }
