@@ -161,6 +161,7 @@ void main() {
       rect: rect,
       axisDirection: AxisDirection.down,
     );
+    final BorderRadius radius = BorderRadius.circular(10.0);
     decoration.paint(details);
     expect(canvas.rect, rect);
     expect(canvas.paint.color, const Color(0xffff0000));
@@ -168,9 +169,10 @@ void main() {
     final TestTableSpanBorder border = TestTableSpanBorder(
       leading: const BorderSide(),
     );
-    decoration = TableSpanDecoration(border: border);
+    decoration = TableSpanDecoration(border: border, borderRadius: radius,);
     decoration.paint(details);
     expect(border.details, details);
+    expect(border.radius, radius);
   });
 }
 
@@ -194,8 +196,10 @@ class TestCanvas implements Canvas {
 class TestTableSpanBorder extends TableSpanBorder {
   TestTableSpanBorder({super.leading});
   TableSpanDecorationPaintDetails? details;
+  BorderRadius? radius;
   @override
-  void paint(TableSpanDecorationPaintDetails details) {
+  void paint(TableSpanDecorationPaintDetails details, BorderRadius? radius) {
     this.details = details;
+    this.radius = radius;
   }
 }
