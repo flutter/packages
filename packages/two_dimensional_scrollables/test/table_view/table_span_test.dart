@@ -169,7 +169,10 @@ void main() {
     final TestTableSpanBorder border = TestTableSpanBorder(
       leading: const BorderSide(),
     );
-    decoration = TableSpanDecoration(border: border, borderRadius: radius,);
+    decoration = TableSpanDecoration(
+      border: border,
+      borderRadius: radius,
+    );
     decoration.paint(details);
     expect(border.details, details);
     expect(border.radius, radius);
