@@ -196,6 +196,7 @@ class RouteConfiguration {
     assert(_debugCheckParentNavigatorKeys(
         routingTable.routes, <GlobalKey<NavigatorState>>[navigatorKey]));
     assert(_debugCheckStatefulShellBranchDefaultLocations(routingTable.routes));
+    _nameToPath.clear();
     _cacheNameToPath('', routingTable.routes);
     log(debugKnownRoutes());
   }
@@ -495,17 +496,19 @@ class RouteConfiguration {
     final RouteBase route = match.route;
     FutureOr<String?> routeRedirectResult;
     if (route is GoRoute && route.redirect != null) {
+      final RouteMatchList effectiveMatchList =
+          match is ImperativeRouteMatch ? match.matches : matchList;
       routeRedirectResult = route.redirect!(
         context,
         GoRouterState(
           this,
-          uri: matchList.uri,
+          uri: effectiveMatchList.uri,
           matchedLocation: match.matchedLocation,
           name: route.name,
           path: route.path,
-          fullPath: matchList.fullPath,
-          extra: matchList.extra,
-          pathParameters: matchList.pathParameters,
+          fullPath: effectiveMatchList.fullPath,
+          extra: effectiveMatchList.extra,
+          pathParameters: effectiveMatchList.pathParameters,
           pageKey: match.pageKey,
         ),
       );
