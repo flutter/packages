@@ -690,7 +690,7 @@ How is it even possible that I didn't specify a Gradle distribution?
           output,
           containsAllInOrder(<Matcher>[
             contains(
-                'Unable to find a "distributionUrl" entry to update for ${package.displayName}.'),
+                'Unable to find a gradle version entry to update for ${package.displayName}/example.'),
           ]),
         );
       });
@@ -779,30 +779,28 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
                 r'distributionUrl=https\://services.gradle.org/distributions/'
                 'gradle-$newGradleVersion-all.zip'));
       });
-    });
-  });
 
-  test('succeeds if one example app runs on Android and another does not',
-      () async {
-    final RepositoryPackage package = createFakePlugin(
-        'fake_plugin', packagesDir, examples: <String>[
-      'example_1',
-      'example_2'
-    ], extraFiles: <String>[
-      'example/example_2/android/app/gradle/wrapper/gradle-wrapper.properties'
-    ]);
-    const String newGradleVersion = '8.8.8';
+      test('succeeds if one example app runs on Android and another does not',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir, examples: <String>[
+          'example_1',
+          'example_2'
+        ], extraFiles: <String>[
+          'example/example_2/android/app/gradle/wrapper/gradle-wrapper.properties'
+        ]);
+        const String newGradleVersion = '8.8.8';
 
-    final File gradleWrapperPropertiesFile = package.directory
-        .childDirectory('example')
-        .childDirectory('example_2')
-        .childDirectory('android')
-        .childDirectory('app')
-        .childDirectory('gradle')
-        .childDirectory('wrapper')
-        .childFile('gradle-wrapper.properties');
+        final File gradleWrapperPropertiesFile = package.directory
+            .childDirectory('example')
+            .childDirectory('example_2')
+            .childDirectory('android')
+            .childDirectory('app')
+            .childDirectory('gradle')
+            .childDirectory('wrapper')
+            .childFile('gradle-wrapper.properties');
 
-    gradleWrapperPropertiesFile.writeAsStringSync(r'''
+        gradleWrapperPropertiesFile.writeAsStringSync(r'''
 distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
 zipStoreBase=GRADLE_USER_HOME
@@ -810,21 +808,315 @@ zipStorePath=wrapper/dists
 distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
 ''');
 
-    await runCapturingPrint(runner, <String>[
-      'update-dependency',
-      '--packages',
-      package.displayName,
-      '--android-dependency',
-      'gradle',
-      '--version',
-      newGradleVersion,
-    ]);
+        await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'gradle',
+          '--version',
+          newGradleVersion,
+        ]);
 
-    final String updatedGradleWrapperPropertiesContents =
-        gradleWrapperPropertiesFile.readAsStringSync();
-    expect(
-        updatedGradleWrapperPropertiesContents,
-        contains(r'distributionUrl=https\://services.gradle.org/distributions/'
-            'gradle-$newGradleVersion-all.zip'));
+        final String updatedGradleWrapperPropertiesContents =
+            gradleWrapperPropertiesFile.readAsStringSync();
+        expect(
+            updatedGradleWrapperPropertiesContents,
+            contains(
+                r'distributionUrl=https\://services.gradle.org/distributions/'
+                'gradle-$newGradleVersion-all.zip'));
+      });
+    });
+
+    group('compileSdk/compileSdkForExamples', () {
+      // Tests if the compileSdk version is updated for the provided
+      // build.gradle file and new compileSdk version to update to.
+      Future<void> testCompileSdkVersionUpdated(
+          {required RepositoryPackage package,
+          required File buildGradleFile,
+          required String oldCompileSdkVersion,
+          required String newCompileSdkVersion,
+          bool runForExamples = false,
+          bool checkForDeprecatedCompileSdkVersion = false}) async {
+        buildGradleFile.writeAsStringSync('''
+android {
+    // Conditional for compatibility with AGP <4.2.
+    if (project.android.hasProperty("namespace")) {
+        namespace 'io.flutter.plugins.pathprovider'
+    }
+    ${checkForDeprecatedCompileSdkVersion ? 'compileSdkVersion' : 'compileSdk'} $oldCompileSdkVersion
+''');
+
+        await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          if (runForExamples) 'compileSdkForExamples' else 'compileSdk',
+          '--version',
+          newCompileSdkVersion,
+        ]);
+
+        final String updatedBuildGradleContents =
+            buildGradleFile.readAsStringSync();
+        // compileSdkVersion is now deprecated, so if the tool finds any
+        // instances of compileSdk OR compileSdkVersion, it should change it
+        // to compileSdk. See https://developer.android.com/reference/tools/gradle-api/7.2/com/android/build/api/dsl/CommonExtension#compileSdkVersion(kotlin.Int).
+        expect(updatedBuildGradleContents,
+            contains('compileSdk $newCompileSdkVersion'));
+      }
+
+      test('throws if version format is invalid for compileSdk', () async {
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--android-dependency',
+          'compileSdk',
+          '--version',
+          '834',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'A valid Android SDK version number (1-2 digit numbers) must be provided.'),
+          ]),
+        );
+      });
+
+      test('throws if version format is invalid for compileSdkForExamples',
+          () async {
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--android-dependency',
+          'compileSdkForExamples',
+          '--version',
+          '438',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'A valid Android SDK version number (1-2 digit numbers) must be provided.'),
+          ]),
+        );
+      });
+
+      test('skips if plugin does not run on Android', () async {
+        final RepositoryPackage package =
+            createFakePlugin('fake_plugin', packagesDir);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'compileSdk',
+          '--version',
+          '34',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'SKIPPING: Package ${package.displayName} does not run on Android.'),
+          ]),
+        );
+      });
+
+      test('skips if plugin example does not run on Android', () async {
+        final RepositoryPackage package =
+            createFakePlugin('fake_plugin', packagesDir);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'compileSdkForExamples',
+          '--version',
+          '34',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('SKIPPING: No example apps run on Android.'),
+          ]),
+        );
+      });
+
+      test(
+          'throws if build configuration file does not have compileSdk version with expected format for compileSdk',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir,
+            extraFiles: <String>['android/build.gradle']);
+
+        final File buildGradleFile = package.directory
+            .childDirectory('android')
+            .childFile('build.gradle');
+
+        buildGradleFile.writeAsStringSync('''
+How is it even possible that I didn't specify a compileSdk version?
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'compileSdk',
+          '--version',
+          '34',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'Unable to find a compileSdk version entry to update for ${package.displayName}.'),
+          ]),
+        );
+      });
+
+      test(
+          'throws if build configuration file does not have compileSdk version with expected format for compileSdkForExamples',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir,
+            extraFiles: <String>['example/android/app/build.gradle']);
+
+        final File buildGradleFile = package.directory
+            .childDirectory('example')
+            .childDirectory('android')
+            .childDirectory('app')
+            .childFile('build.gradle');
+
+        buildGradleFile.writeAsStringSync('''
+How is it even possible that I didn't specify a compileSdk version?
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'compileSdkForExamples',
+          '--version',
+          '34',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'Unable to find a compileSdkForExamples version entry to update for ${package.displayName}/example.'),
+          ]),
+        );
+      });
+
+      test(
+          'succeeds if plugin runs on Android and valid version is supplied for compileSdkVersion entry',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir, extraFiles: <String>[
+          'android/build.gradle',
+          'example/android/app/build.gradle'
+        ]);
+        final File buildGradleFile = package.directory
+            .childDirectory('android')
+            .childFile('build.gradle');
+
+        await testCompileSdkVersionUpdated(
+            package: package,
+            buildGradleFile: buildGradleFile,
+            oldCompileSdkVersion: '8',
+            newCompileSdkVersion: '16',
+            checkForDeprecatedCompileSdkVersion: true);
+      });
+
+      test(
+          'succeeds if plugin example runs on Android and valid version is supplied for compileSdkVersion entry',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir, extraFiles: <String>[
+          'android/build.gradle',
+          'example/android/app/build.gradle'
+        ]);
+        final File exampleBuildGradleFile = package.directory
+            .childDirectory('example')
+            .childDirectory('android')
+            .childDirectory('app')
+            .childFile('build.gradle');
+
+        await testCompileSdkVersionUpdated(
+            package: package,
+            buildGradleFile: exampleBuildGradleFile,
+            oldCompileSdkVersion: '8',
+            newCompileSdkVersion: '16',
+            runForExamples: true,
+            checkForDeprecatedCompileSdkVersion: true);
+      });
+
+      test(
+          'succeeds if plugin runs on Android and valid version is supplied for compileSdk entry',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir, extraFiles: <String>[
+          'android/build.gradle',
+          'example/android/app/build.gradle'
+        ]);
+
+        final File buildGradleFile = package.directory
+            .childDirectory('android')
+            .childFile('build.gradle');
+        await testCompileSdkVersionUpdated(
+            package: package,
+            buildGradleFile: buildGradleFile,
+            oldCompileSdkVersion: '8',
+            newCompileSdkVersion: '16');
+      });
+
+      test(
+          'succeeds if plugin example runs on Android and valid version is supplied for compileSdk entry',
+          () async {
+        final RepositoryPackage package = createFakePlugin(
+            'fake_plugin', packagesDir, extraFiles: <String>[
+          'android/build.gradle',
+          'example/android/app/build.gradle'
+        ]);
+
+        final File exampleBuildGradleFile = package.directory
+            .childDirectory('example')
+            .childDirectory('android')
+            .childDirectory('app')
+            .childFile('build.gradle');
+        await testCompileSdkVersionUpdated(
+            package: package,
+            buildGradleFile: exampleBuildGradleFile,
+            oldCompileSdkVersion: '33',
+            newCompileSdkVersion: '34',
+            runForExamples: true);
+      });
+    });
   });
 }
