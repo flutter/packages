@@ -442,10 +442,11 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     }
 
     if (fromPubspec != fromChangeLog) {
-      printError(
-          '${indentation}Versions in CHANGELOG.md and pubspec.yaml do not match.\n '
-          '${indentation}The version in pubspec.yaml is $fromPubspec.\n '
-          '${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.');
+      printError('''
+${indentation}Versions in CHANGELOG.md and pubspec.yaml do not match.
+${indentation}The version in pubspec.yaml is $fromPubspec.
+${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
+''');
       return false;
     }
 
