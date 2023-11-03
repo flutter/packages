@@ -7,10 +7,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// This sample app demonstrates how to provide an extra codec for complex extra.
+/// This sample app demonstrates how to provide a codec for complex extra data.
 void main() => runApp(const MyApp());
 
-/// The route configuration.
+/// The router configuration.
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
     GoRoute(
@@ -35,9 +35,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// The home screen
+/// The home screen.
 class HomeScreen extends StatelessWidget {
-  /// Constructs a [HomeScreen]
+  /// Constructs a [HomeScreen].
   const HomeScreen({super.key});
 
   @override
@@ -49,8 +49,8 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text(
-                'If running in web, use browser backward and forward button to test extra codec after setting extra several times'),
-            Text('extra for this page is: ${GoRouterState.of(context).extra}'),
+                'If running in web, use the browser's backward and forward button to test extra codec after setting extra several times.'),
+            Text('The extra for this page is: ${GoRouterState.of(context).extra}'),
             ElevatedButton(
               onPressed: () => context.go('/', extra: ComplexData1('data')),
               child: const Text('Set extra to ComplexData1'),
@@ -92,7 +92,7 @@ class ComplexData2 {
 
 /// A codec that can serialize both [ComplexData1] and [ComplexData2].
 class MyExtraCodec extends Codec<Object?, Object?> {
-  /// Create a codec
+  /// Create a codec.
   const MyExtraCodec();
   @override
   Converter<Object?, Object?> get decoder => const _MyExtraDecoder();

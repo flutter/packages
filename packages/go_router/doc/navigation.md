@@ -97,11 +97,11 @@ and retrieve the data from GoRouterState
 final String extraString = GoRouterState.of(context).extra! as String;
 ```
 
-The extra will go through serialization when it is stored in browser.
-If you plan to use complex data as extra, consider also provide a codec
+The extra data will go through serialization when it is stored in the browser.
+If you plan to use complex data as extra, consider also providing a codec
 to GoRouter so that it won't get dropped during serialization.
 
-For an example on how to write use complex extra with codec, see
+For an example on how to use complex data in extra with a codec, see
 [extra_codec.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart).
 
 
