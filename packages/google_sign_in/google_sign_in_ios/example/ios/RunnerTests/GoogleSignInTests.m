@@ -18,6 +18,7 @@
 @property(strong, nonatomic) NSObject<FlutterPluginRegistrar> *mockPluginRegistrar;
 @property(strong, nonatomic) FLTGoogleSignInPlugin *plugin;
 @property(strong, nonatomic) id mockSignIn;
+@property(strong, nonatomic) NSDictionary<NSString *, id> *googleServiceInfo;
 
 @end
 
@@ -34,6 +35,13 @@
   OCMStub(self.mockPluginRegistrar.messenger).andReturn(self.mockBinaryMessenger);
   self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:mockSignIn];
   [FLTGoogleSignInPlugin registerWithRegistrar:self.mockPluginRegistrar];
+
+  NSString *plistPath =
+      [[NSBundle bundleForClass:[self class]] pathForResource:@"GoogleService-Info"
+                                                       ofType:@"plist"];
+  if (plistPath) {
+    self.googleServiceInfo = [[NSDictionary alloc] initWithContentsOfFile:plistPath];
+  }
 }
 
 - (void)testSignOut {
@@ -87,6 +95,8 @@
 }
 
 - (void)testInitGoogleServiceInfoPlist {
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
+                                  withGoogleServiceProperties:self.googleServiceInfo];
   FSIInitParams *params = [FSIInitParams makeWithScopes:@[]
                                            hostedDomain:@"example.com"
                                                clientId:nil
@@ -106,6 +116,7 @@
                               completion:OCMOCK_ANY]);
 
   XCTAssertEqualObjects(self.plugin.configuration.hostedDomain, @"example.com");
+  // Set in example app GoogleService-Info.plist.
   XCTAssertEqualObjects(
       self.plugin.configuration.clientID,
       @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
@@ -141,6 +152,8 @@
 }
 
 - (void)testInitDynamicServerClientIdNullDomain {
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
+                                  withGoogleServiceProperties:self.googleServiceInfo];
   FSIInitParams *params = [FSIInitParams makeWithScopes:@[]
                                            hostedDomain:nil
                                                clientId:nil
@@ -159,10 +172,30 @@
                               completion:OCMOCK_ANY]);
 
   XCTAssertEqualObjects(self.plugin.configuration.hostedDomain, nil);
+  // Set in example app GoogleService-Info.plist.
   XCTAssertEqualObjects(
       self.plugin.configuration.clientID,
       @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
   XCTAssertEqualObjects(self.plugin.configuration.serverClientID, @"mockServerClientId");
+}
+
+- (void)testInitInfoPlist {
+  FSIInitParams *params = [FSIInitParams makeWithScopes:@[ @"scope1" ]
+                                           hostedDomain:@"example.com"
+                                               clientId:nil
+                                         serverClientId:nil];
+
+  FlutterError *error;
+  self.plugin = [[FLTGoogleSignInPlugin alloc] init];
+  [self.plugin initializeSignInWithParameters:params error:&error];
+  XCTAssertNil(error);
+  XCTAssertNil(self.plugin.configuration);
+  XCTAssertNotNil(self.plugin.requestedScopes);
+  // Set in example app Info.plist.
+  XCTAssertEqualObjects(
+      self.plugin.signIn.configuration.clientID,
+      @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
+  XCTAssertEqualObjects(self.plugin.signIn.configuration.serverClientID, @"YOUR_SERVER_CLIENT_ID");
 }
 
 #pragma mark - Is signed in
@@ -229,6 +262,8 @@
 #pragma mark - Sign in
 
 - (void)testSignIn {
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
+                                  withGoogleServiceProperties:self.googleServiceInfo];
   id mockUser = OCMClassMock([GIDGoogleUser class]);
   id mockUserProfile = OCMClassMock([GIDProfileData class]);
   OCMStub([mockUserProfile name]).andReturn(@"mockDisplay");
@@ -263,6 +298,7 @@
   }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 
+  // Set in example app GoogleService-Info.plist.
   XCTAssertEqualObjects(
       self.plugin.configuration.clientID,
       @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
@@ -526,7 +562,7 @@
   [self.plugin requestScopes:@[ @"mockScope1" ]
                   completion:^(NSNumber *success, FlutterError *error) {
                     XCTAssertNil(success);
-                    XCTAssertEqualObjects(error.code, @"request_scopes");
+                    XCTAssertEqualObjects(error.code, @"mismatch_user");
                     [expectation fulfill];
                   }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];

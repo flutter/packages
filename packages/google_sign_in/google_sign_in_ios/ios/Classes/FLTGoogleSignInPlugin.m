@@ -47,16 +47,6 @@ static FlutterError *getFlutterError(NSError *error) {
 
 @interface FLTGoogleSignInPlugin ()
 
-// Permissions requested during at sign in "init" method call
-// unioned with scopes requested later with incremental authorization
-// "requestScopes" method call.
-// The "email" and "profile" base scopes are always implicitly requested.
-@property(copy) NSSet<NSString *> *requestedScopes;
-
-// Instance used to manage Google Sign In authentication including
-// sign in, sign out, and requesting additional scopes.
-@property(strong, readonly) GIDSignIn *signIn;
-
 // The contents of GoogleService-Info.plist, if it exists.
 @property(strong, nullable) NSDictionary<NSString *, id> *googleServiceProperties;
 
@@ -109,8 +99,8 @@ static FlutterError *getFlutterError(NSError *error) {
   GIDConfiguration *configuration = [self configurationWithClientIdArgument:params.clientId
                                                      serverClientIdArgument:params.serverClientId
                                                        hostedDomainArgument:params.hostedDomain];
+  self.requestedScopes = [NSSet setWithArray:params.scopes];
   if (configuration != nil) {
-    self.requestedScopes = [NSSet setWithArray:params.scopes];
     self.configuration = configuration;
   }
 }
@@ -215,7 +205,7 @@ static FlutterError *getFlutterError(NSError *error) {
                         if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
                             addedScopeError.code == kGIDSignInErrorCodeMismatchWithCurrentUser) {
                           error =
-                              [FlutterError errorWithCode:@"request_scopes"
+                              [FlutterError errorWithCode:@"mismatch_user"
                                                   message:@"There is an operation on a previous "
                                                           @"user. Try signing in again."
                                                   details:nil];
@@ -294,11 +284,16 @@ static FlutterError *getFlutterError(NSError *error) {
       // Placeholder that will be replaced by on the Dart side based on screen size.
       photoUrl = [user.profile imageURLWithDimension:1337];
     }
+    NSString *idToken;
+    if (user.idToken) {
+      idToken = user.idToken.tokenString;
+    }
     completion([FSIUserData makeWithDisplayName:user.profile.name
                                           email:user.profile.email
                                          userId:user.userID
                                        photoUrl:[photoUrl absoluteString]
-                                 serverAuthCode:serverAuthCode],
+                                 serverAuthCode:serverAuthCode
+                                        idToken:idToken],
                nil);
   }
 }

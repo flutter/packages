@@ -18,6 +18,7 @@ final GoogleSignInUserData _user = GoogleSignInUserData(
   photoUrl: 'https://lh5.googleusercontent.com/photo.jpg',
   displayName: 'John Doe',
   serverAuthCode: '789',
+  idToken: '123'
 );
 
 final GoogleSignInTokenData _token = GoogleSignInTokenData(
@@ -60,6 +61,7 @@ void main() {
           photoUrl: _user.photoUrl,
           displayName: _user.displayName,
           serverAuthCode: _user.serverAuthCode,
+          idToken: _user.idToken,
         ));
 
     final dynamic response = await googleSignIn.signInSilently();
@@ -82,6 +84,7 @@ void main() {
           photoUrl: _user.photoUrl,
           displayName: _user.displayName,
           serverAuthCode: _user.serverAuthCode,
+          idToken: _user.idToken,
         ));
 
     final dynamic response = await googleSignIn.signIn();

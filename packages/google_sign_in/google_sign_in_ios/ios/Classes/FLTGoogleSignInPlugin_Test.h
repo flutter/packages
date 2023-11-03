@@ -13,6 +13,20 @@ NS_ASSUME_NONNULL_BEGIN
 /// Methods exposed for unit testing.
 @interface FLTGoogleSignInPlugin ()
 
+// Configuration wrapping Google Cloud Console, Google Apps, OpenID,
+// and other initialization metadata.
+@property(strong) GIDConfiguration *configuration;
+
+// Permissions requested during at sign in "init" method call
+// unioned with scopes requested later with incremental authorization
+// "requestScopes" method call.
+// The "email" and "profile" base scopes are always implicitly requested.
+@property(copy) NSSet<NSString *> *requestedScopes;
+
+// Instance used to manage Google Sign In authentication including
+// sign in, sign out, and requesting additional scopes.
+@property(strong, readonly) GIDSignIn *signIn;
+
 /// Inject @c GIDSignIn for testing.
 - (instancetype)initWithSignIn:(GIDSignIn *)signIn;
 

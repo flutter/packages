@@ -10,8 +10,4 @@
 
 @interface FLTGoogleSignInPlugin : NSObject <FlutterPlugin, FSIGoogleSignInApi>
 
-// Configuration wrapping Google Cloud Console, Google Apps, OpenID,
-// and other initialization metadata.
-@property(strong) GIDConfiguration *configuration;
-
 @end
