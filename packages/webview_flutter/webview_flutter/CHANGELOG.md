@@ -1,3 +1,7 @@
+## 4.4.2
+
+* Fixes `use_build_context_synchronously` lint violations in the example app.
+
 ## 4.4.1
 
 * Exposes `JavaScriptLogLevel` from platform interface.
