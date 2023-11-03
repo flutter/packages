@@ -8,16 +8,16 @@ import 'package:go_router_examples/extra_codec.dart' as example;
 void main() {
   testWidgets('example works', (WidgetTester tester) async {
     await tester.pumpWidget(const example.MyApp());
-    expect(find.text('extra for this page is: null'), findsOneWidget);
+    expect(find.text('The extra for this page is: null'), findsOneWidget);
 
     await tester.tap(find.text('Set extra to ComplexData1'));
     await tester.pumpAndSettle();
-    expect(find.text('extra for this page is: ComplexData1(data: data)'),
+    expect(find.text('The extra for this page is: ComplexData1(data: data)'),
         findsOneWidget);
 
     await tester.tap(find.text('Set extra to ComplexData2'));
     await tester.pumpAndSettle();
-    expect(find.text('extra for this page is: ComplexData2(data: data)'),
+    expect(find.text('The extra for this page is: ComplexData2(data: data)'),
         findsOneWidget);
   });
 }
