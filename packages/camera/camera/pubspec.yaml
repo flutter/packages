@@ -21,9 +21,9 @@ flutter:
         default_package: camera_web
 
 dependencies:
-  camera_android: ^0.10.8
-  camera_avfoundation: ^0.9.13
-  camera_platform_interface: ^2.5.2
+  camera_android: ^0.10.9
+  camera_avfoundation: ^0.9.14
+  camera_platform_interface: ^2.5.3
   camera_web: ^0.3.2
   flutter:
     sdk: flutter

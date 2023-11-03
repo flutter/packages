@@ -36,6 +36,7 @@ CameraInitializedEvent get mockOnCameraInitializedEvent =>
       true,
       FocusMode.auto,
       true,
+      CaptureMode.video,
     );
 
 DeviceOrientationChangedEvent get mockOnDeviceOrientationChangedEvent =>
