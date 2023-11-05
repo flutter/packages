@@ -197,6 +197,23 @@ void main() {
         expect(events[0].eventType, VideoEventType.initialized);
       });
 
+      // Issue: https://github.com/flutter/flutter/issues/137023
+      testWidgets('loadedmetadata dispatches initialized',
+          (WidgetTester tester) async {
+        video.dispatchEvent(html.Event('loadedmetadata'));
+        video.dispatchEvent(html.Event('loadedmetadata'));
+
+        final Future<List<VideoEvent>> stream = timedStream
+            .where((VideoEvent event) =>
+                event.eventType == VideoEventType.initialized)
+            .toList();
+
+        final List<VideoEvent> events = await stream;
+
+        expect(events, hasLength(1));
+        expect(events[0].eventType, VideoEventType.initialized);
+      });
+
       // Issue: https://github.com/flutter/flutter/issues/105649
       testWidgets('supports `Infinity` duration', (WidgetTester _) async {
         setInfinityDuration(video);
