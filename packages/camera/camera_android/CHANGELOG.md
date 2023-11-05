@@ -1,6 +1,7 @@
 ## 0.10.8+14
 
-* Check captureSession before call to stopRepeating in pausePreview
+* Fixes `pausePreview` null pointer error. `pausePreview` should not be called 
+  when camera is closed or not configured.
 
 ## 0.10.8+13
 
