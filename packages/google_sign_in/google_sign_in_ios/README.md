@@ -64,7 +64,9 @@ you can instead configure your app in Dart code. In this case, skip steps 4 to 5
 <?code-excerpt "../google_sign_in/test/google_sign_in_test.dart (GoogleSignIn)"?>
 ```dart
 final GoogleSignIn googleSignIn = GoogleSignIn(
+  // The OAuth client id of your app. This is required.
   clientId: 'Your Client ID',
+  // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
   serverClientId: 'Your Server ID',
 );
 ```

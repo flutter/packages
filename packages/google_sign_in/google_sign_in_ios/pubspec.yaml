@@ -36,6 +36,7 @@ topics:
 
 # The example deliberately includes limited-use secrets.
 false_secrets:
-  - /example/ios/Runner/GoogleService-Info.plist
+  - /example/ios/Runner/Info.plist
+  - /example/ios/RunnerTests/GoogleService-Info.plist
   - /example/ios/RunnerTests/GoogleSignInTests.m
   - /example/lib/main.dart

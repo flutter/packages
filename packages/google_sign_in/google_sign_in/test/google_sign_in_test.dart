@@ -81,7 +81,9 @@ void main() {
       verify(mockPlatform.signIn());
     });
 
-    test('clientId and serverClientId parameters is forwarded to implementation', () async {
+    test(
+        'clientId and serverClientId parameters is forwarded to implementation',
+        () async {
       // #docregion GoogleSignIn
       final GoogleSignIn googleSignIn = GoogleSignIn(
         // The OAuth client id of your app. This is required.
