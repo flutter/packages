@@ -368,11 +368,11 @@ void runTests() {
 
     await tester.pumpAndSettle();
 
-    // // TODO(mossmana): Adding this delay addresses
-    // // https://github.com/flutter/flutter/issues/131783. It may be related
-    // // to https://github.com/flutter/flutter/issues/54758 and should be
-    // // re-evaluated when that issue is fixed.
-    // await Future<void>.delayed(const Duration(seconds: 1));
+    // TODO(mossmana): Adding this delay addresses
+    // https://github.com/flutter/flutter/issues/131783. It may be related
+    // to https://github.com/flutter/flutter/issues/54758 and should be
+    // re-evaluated when that issue is fixed.
+    await Future<void>.delayed(const Duration(seconds: 1));
 
     bool iwVisibleStatus =
         await controller.isMarkerInfoWindowShown(marker.markerId);
