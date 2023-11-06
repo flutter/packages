@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -121,6 +122,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
   factory GoRouter({
     required List<RouteBase> routes,
+    Codec<Object?, Object?>? extraCodec,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
@@ -144,6 +146,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
             redirect: redirect ?? RoutingConfig._defaultRedirect,
             redirectLimit: redirectLimit),
       ),
+      extraCodec: extraCodec,
       onException: onException,
       errorPageBuilder: errorPageBuilder,
       errorBuilder: errorBuilder,
@@ -165,6 +168,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// See [routing_config.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/routing_config.dart).
   GoRouter.routingConfig({
     required ValueListenable<RoutingConfig> routingConfig,
+    Codec<Object?, Object?>? extraCodec,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
@@ -201,6 +205,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     configuration = RouteConfiguration(
       _routingConfig,
       navigatorKey: navigatorKey,
+      extraCodec: extraCodec,
     );
 
     final ParserExceptionHandler? parserExceptionHandler;

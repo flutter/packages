@@ -1,6 +1,10 @@
-## 12.0.4
+## 12.1.1
 
 - Retains query parameters during refresh and first redirect.
+
+## 12.1.0
+
+- Adds an ability to add a custom codec for serializing/deserializing extra.
 
 ## 12.0.3
 
