@@ -227,7 +227,7 @@ class CameraValue {
         'isPreviewPaused: $isPreviewPaused, '
         'previewPausedOrientation: $previewPauseOrientation, '
         'description: $description, '
-        'captureMode: $captureMode )';
+        'captureMode: $captureMode)';
   }
 }
 

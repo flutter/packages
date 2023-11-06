@@ -554,14 +554,15 @@ void main() {
     final StreamQueue<CameraInitializedEvent> streamQueue =
         StreamQueue<CameraInitializedEvent>(eventStream);
     const CameraInitializedEvent testEvent = CameraInitializedEvent(
-        cameraId,
-        320,
-        80,
-        ExposureMode.auto,
-        false,
-        FocusMode.auto,
-        false,
-        CaptureMode.video,);
+      cameraId,
+      320,
+      80,
+      ExposureMode.auto,
+      false,
+      FocusMode.auto,
+      false,
+      CaptureMode.video,
+    );
 
     camera.cameraEventStreamController.add(testEvent);
 

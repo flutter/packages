@@ -95,7 +95,6 @@ class AndroidCamera extends CameraPlatform {
   Future<int> createCamera(
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
-    CaptureMode captureMode = CaptureMode.video,
     bool enableAudio = false,
   }) async {
     try {
@@ -105,7 +104,6 @@ class AndroidCamera extends CameraPlatform {
         'resolutionPreset': resolutionPreset != null
             ? _serializeResolutionPreset(resolutionPreset)
             : null,
-        'captureMode': captureMode.name,
         'enableAudio': enableAudio,
       });
 
