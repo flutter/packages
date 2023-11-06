@@ -485,13 +485,15 @@ void main() {
     // https://github.com/flutter/flutter/issues/120467
     final CameraInitializedEvent testCameraInitializedEvent =
         CameraInitializedEvent(
-            cameraId,
-            resolutionWidth.toDouble(),
-            resolutionHeight.toDouble(),
-            ExposureMode.auto,
-            false,
-            FocusMode.auto,
-            false);
+      cameraId,
+      resolutionWidth.toDouble(),
+      resolutionHeight.toDouble(),
+      ExposureMode.auto,
+      false,
+      FocusMode.auto,
+      false,
+      CaptureMode.video,
+    );
 
     camera.processCameraProvider = mockProcessCameraProvider;
 
@@ -552,7 +554,14 @@ void main() {
     final StreamQueue<CameraInitializedEvent> streamQueue =
         StreamQueue<CameraInitializedEvent>(eventStream);
     const CameraInitializedEvent testEvent = CameraInitializedEvent(
-        cameraId, 320, 80, ExposureMode.auto, false, FocusMode.auto, false);
+        cameraId,
+        320,
+        80,
+        ExposureMode.auto,
+        false,
+        FocusMode.auto,
+        false,
+        CaptureMode.video,);
 
     camera.cameraEventStreamController.add(testEvent);
 

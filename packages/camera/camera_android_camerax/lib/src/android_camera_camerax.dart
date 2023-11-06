@@ -314,6 +314,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     const FocusMode focusMode = FocusMode.auto;
     const bool focusPointSupported = false;
 
+    const CaptureMode captureMode = CaptureMode.video;
+
     cameraEventStreamController.add(CameraInitializedEvent(
         cameraId,
         previewResolutionInfo.width.toDouble(),
@@ -321,7 +323,9 @@ class AndroidCameraCameraX extends CameraPlatform {
         exposureMode,
         exposurePointSupported,
         focusMode,
-        focusPointSupported));
+        focusPointSupported,
+        captureMode,
+        ));
   }
 
   /// Releases the resources of the accessed camera.
