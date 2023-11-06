@@ -86,7 +86,7 @@ class CameraInitializedEvent extends CameraEvent {
   /// The default focus mode
   final FocusMode focusMode;
 
-  // The default capture mode
+  /// The default capture mode
   final CaptureMode captureMode;
 
   /// Whether setting exposure points is supported.
