@@ -30,26 +30,26 @@ void main() {
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
+    // Force Hybrid Composition mode.
     mapsImplementation.useAndroidViewSurface = true;
   }
   // ···
 }
 ```
 
-### Hybrid Composition
-
-This is the current default mode, and corresponds to
-`useAndroidViewSurface = true`. It ensures that the map display will work as
-expected, at the cost of some performance.
-
 ### Texture Layer Hybrid Composition
 
-This is a new display mode used by most plugins starting with Flutter 3.0, and
-corresponds to `useAndroidViewSurface = false`. This is more performant than
-Hybrid Composition, but currently [misses certain map updates][4].
+This is the the current default mode and corresponds to `useAndroidViewSurface = false`.
+This mode is more performant than Hybrid Composition and we recommend that you use this mode.
 
-This mode will likely become the default in future versions if/when the
-missed updates issue can be resolved.
+### Hybrid Composition
+
+This mode is available for backwards compatability and corresponds to `useAndroidViewSurface = true`.
+We do not recommend its use as it is less performant than Texture Layer Hybrid Composition and
+certain flutter rendering effects are not supported. 
+
+If you require this mode for correctness, please file a bug so we can investigate and fix
+the issue in the TLHC mode.
 
 ## Map renderer
 
@@ -70,8 +70,13 @@ AndroidMapRenderer mapRenderer = AndroidMapRenderer.platformDefault;
   }
 ```
 
-Available values are `AndroidMapRenderer.latest`, `AndroidMapRenderer.legacy`, `AndroidMapRenderer.platformDefault`.
-Note that getting the requested renderer as a response is not guaranteed.
+`AndroidMapRenderer.platformDefault` corresponds to `AndroidMapRenderer.latest`.
+
+You are not guaranteed to get the requested renderer. For example, on emulators without
+Google Play the latest renderer will not be available and the legacy renderer will always be used.
+
+WARNING: `AndroidMapRenderer.legacy` is known to crash apps and is no longer supported by the Google Maps team
+and therefore cannot be supported by the Flutter team.
 
 [1]: https://pub.dev/packages/google_maps_flutter
 [2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
