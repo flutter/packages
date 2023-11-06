@@ -1,6 +1,6 @@
 ## 0.6.18+2
 
-* Removes leading whitspace from list items.
+* Removes leading whitespace from list items.
 
 ## 0.6.18+1
 
