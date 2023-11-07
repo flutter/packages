@@ -1,6 +1,6 @@
 ## 0.9.3+7
 
-* Moved pointer_interceptor to subfolder.
+* Updates metadata to point to new source folder
 
 ## 0.9.3+6
 
