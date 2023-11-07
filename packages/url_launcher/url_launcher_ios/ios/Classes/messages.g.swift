@@ -159,5 +159,44 @@ class UrlLauncherApiSetup {
     } else {
       closeSafariViewControllerChannel.setMessageHandler(nil)
     }
+
+    /// Opens the URL in an in-app ASWebAuthenticationController, returning the url
+    /// that matches the provided callbackUrlScheme.
+    let openUrlInWebAuthenticationControllerChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.openUrlInWebAuthenticationController",
+      binaryMessenger: binaryMessenger)
+    if let api = api {
+      openUrlInWebAuthenticationControllerChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let urlArg = args[0] as! String
+        let callbackUrlScheme = args[1] as! String
+        api.openUrlInWebAuthenticationController(url: urlArg, callbackURLScheme: callbackUrlScheme) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res.rawValue))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      openUrlInWebAuthenticationControllerChannel.setMessageHandler(nil)
+    }
+    /// Closes the view controller opened by [openUrlInWebAuthenticationController].
+    let closeWebAuthenticationControllerChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.url_launcher_ios.UrlLauncherApi.closeWebAuthenticationController",
+      binaryMessenger: binaryMessenger)
+    if let api = api {
+      closeWebAuthenticationControllerChannel.setMessageHandler { _, reply in
+        do {
+          try api.closeWebAuthenticationControllerChannel()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      closeWebAuthenticationControllerChannel.setMessageHandler(nil)
+    }
   }
 }

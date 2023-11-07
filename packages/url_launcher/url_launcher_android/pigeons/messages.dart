@@ -14,9 +14,7 @@ import 'package:pigeon/pigeon.dart';
 /// Configuration options for an in-app WebView.
 class WebViewOptions {
   const WebViewOptions(
-      {required this.enableJavaScript,
-      required this.enableDomStorage,
-      this.headers = const <String, String>{}});
+      {required this.enableJavaScript, required this.enableDomStorage, this.headers = const <String, String>{}});
   final bool enableJavaScript;
   final bool enableDomStorage;
   // TODO(stuartmorgan): Declare these as non-nullable generics once
@@ -39,6 +37,6 @@ abstract class UrlLauncherApi {
 
   bool supportsCustomTabs();
 
-  /// Closes the view opened by [openUrlInSafariViewController].
+  /// Closes the view opened by [openUrlInApp].
   void closeWebView();
 }

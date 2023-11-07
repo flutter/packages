@@ -61,9 +61,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
         LaunchOptions(
             mode: mode,
             webViewConfiguration: InAppWebViewConfiguration(
-                enableDomStorage: enableDomStorage,
-                enableJavaScript: enableJavaScript,
-                headers: headers)));
+                enableDomStorage: enableDomStorage, enableJavaScript: enableJavaScript, headers: headers)));
   }
 
   @override
@@ -72,7 +70,8 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     switch (options.mode) {
       case PreferredLaunchMode.inAppWebView:
       case PreferredLaunchMode.inAppBrowserView:
-        // The iOS implementation doesn't distinguish between these two modes;
+      case PreferredLaunchMode.inAppAuthenticationBrowserView:
+        // The iOS implementation doesn't distinguish between these three modes;
         // both are treated as inAppBrowserView.
         inApp = true;
         break;
@@ -92,12 +91,18 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
     }
 
     if (inApp) {
-      return _mapInAppLoadResult(
-          await _hostApi.openUrlInSafariViewController(url),
-          url: url);
+      if (options.mode == PreferredLaunchMode.inAppAuthenticationBrowserView) {
+        assert(options.callbackUrlScheme != null && options.callbackUrlScheme!.isNotEmpty,
+            'callbackUrlScheme must be provided when using inAppAuthenticationBrowserView');
+
+        return _mapInAppLoadResult(await _hostApi.openUrlInWebAuthenticationController(url, options.callbackUrlScheme!),
+            url: url);
+      }
+
+      return _mapInAppLoadResult(await _hostApi.openUrlInSafariViewController(url), url: url);
     } else {
-      return _mapLaunchResult(await _hostApi.launchUrl(url,
-          options.mode == PreferredLaunchMode.externalNonBrowserApplication));
+      return _mapLaunchResult(
+          await _hostApi.launchUrl(url, options.mode == PreferredLaunchMode.externalNonBrowserApplication));
     }
   }
 
@@ -121,8 +126,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
 
   @override
   Future<bool> supportsCloseForMode(PreferredLaunchMode mode) async {
-    return mode == PreferredLaunchMode.inAppWebView ||
-        mode == PreferredLaunchMode.inAppBrowserView;
+    return mode == PreferredLaunchMode.inAppWebView || mode == PreferredLaunchMode.inAppBrowserView;
   }
 
   bool _mapLaunchResult(LaunchResult result) {

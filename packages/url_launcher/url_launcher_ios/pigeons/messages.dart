@@ -53,4 +53,13 @@ abstract class UrlLauncherApi {
 
   /// Closes the view controller opened by [openUrlInSafariViewController].
   void closeSafariViewController();
+
+  /// Opens the URL in an in-app AsWebAuthenticationSession, returning the url
+  /// that matches the callbackUrlScheme.
+  @async
+  @ObjCSelector('openUrlInWebAuthenticationControllerWithUrl:')
+  InAppLoadResult openUrlInWebAuthenticationController(String url, String callbackUrlScheme);
+
+  /// Closes the view controller opened by [openUrlInWebAuthenticationController].
+  void closeWebAuthenticationSession();
 }

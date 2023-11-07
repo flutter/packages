@@ -13,6 +13,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
   }
 
   private var currentSession: URLLaunchSession?
+  private var currentAuthenticationSession: ASWebAuthenticationSession?
   private let launcher: Launcher
 
   private var topViewController: UIViewController? {
@@ -66,8 +67,39 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     topViewController?.present(session.safariViewController, animated: true, completion: nil)
   }
 
+  func openUrlInWebAuthenticationController(
+    url: String,
+    callbackUrlScheme: String,
+    completion: @escaping (Result<InAppLoadResult, Error>) -> Void
+  ) {
+    guard let url = URL(string: url) else {
+      completion(.success(.invalidUrl))
+      return
+    }
+
+    let session = ASWebAuthenticationSession(
+      url: url, callbackURLScheme: callbackUrlScheme) { (url, error) in
+      if let error = error {
+          completion(.failure(error))
+      } else if let url = url {
+          completion(.success(url))
+      }
+    }
+
+    currentAuthenticationSession = session
+
+    session.didFinish = { [weak self] in
+      self?.currentAuthenticationSession = nil
+    }
+    topViewController?.present(session.safariViewController, animated: true, completion: nil)
+  }
+
   func closeSafariViewController() {
     currentSession?.close()
+  }
+
+  func closeWebAuthenticationSession() {
+    currentAuthenticationSession?.cancel()
   }
 }
 
