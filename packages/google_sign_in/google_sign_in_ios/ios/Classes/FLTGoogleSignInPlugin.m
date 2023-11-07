@@ -109,7 +109,7 @@ static FlutterError *getFlutterError(NSError *error) {
                                                        FlutterError *_Nullable))completion {
   [self.signIn restorePreviousSignInWithCompletion:^(GIDGoogleUser *_Nullable user,
                                                      NSError *_Nullable error) {
-    [self didSignInForUser:user serverAuthCode:nil withCompletion:completion error:error];
+    [self didSignInForUser:user withServerAuthCode:nil completion:completion error:error];
   }];
 }
 
@@ -147,8 +147,8 @@ static FlutterError *getFlutterError(NSError *error) {
                                            }
 
                                            [self didSignInForUser:user
-                                                   serverAuthCode:serverAuthCode
-                                                   withCompletion:completion
+                                               withServerAuthCode:serverAuthCode
+                                                       completion:completion
                                                             error:error];
                                          }];
   } @catch (NSException *e) {
@@ -271,8 +271,8 @@ static FlutterError *getFlutterError(NSError *error) {
 }
 
 - (void)didSignInForUser:(GIDGoogleUser *)user
-          serverAuthCode:(NSString *_Nullable)serverAuthCode
-          withCompletion:(nonnull void (^)(FSIUserData *_Nullable,
+      withServerAuthCode:(NSString *_Nullable)serverAuthCode
+              completion:(nonnull void (^)(FSIUserData *_Nullable,
                                            FlutterError *_Nullable))completion
                    error:(NSError *)error {
   if (error != nil) {

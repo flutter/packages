@@ -6,6 +6,8 @@
 
 #import <google_sign_in_ios/FLTGoogleSignInPlugin.h>
 
+#import <GoogleSignIn/GoogleSignIn.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class GIDSignIn;

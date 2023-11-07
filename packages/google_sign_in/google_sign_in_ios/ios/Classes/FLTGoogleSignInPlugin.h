@@ -6,8 +6,6 @@
 
 #import "messages.g.h"
 
-#import <GoogleSignIn/GoogleSignIn.h>
-
 @interface FLTGoogleSignInPlugin : NSObject <FlutterPlugin, FSIGoogleSignInApi>
 
 @end
