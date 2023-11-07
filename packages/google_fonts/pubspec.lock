@@ -93,10 +93,10 @@ packages:
     dependency: "direct dev"
     description:
       name: cider
-      sha256: "6501112ef9d895fbc5d2741b9a2db74cb89e84390eb215d70450c73076ba43db"
+      sha256: "918ded9f4473d8042247b9e66a90101eb5ff72935c31df5d511a55f14e085ef0"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.3"
+    version: "0.2.4"
   clock:
     dependency: transitive
     description:
@@ -487,10 +487,10 @@ packages:
     dependency: transitive
     description:
       name: rfc_6901
-      sha256: "8d97680dada633146cf75ab9382f2ce2b7e4bd63ceecd867416cf43b5832b988"
+      sha256: df1bbfa3d023009598f19636d6114c6ac1e0b7bb7bf6a260f0e6e6ce91416820
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.1"
+    version: "0.2.0"
   shelf:
     dependency: transitive
     description:
