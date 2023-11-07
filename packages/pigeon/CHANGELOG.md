@@ -1,3 +1,22 @@
+## 13.0.0
+
+* **Breaking Change** [objc] Eliminates boxing of non-nullable primitive types
+  (bool, int, double). Changes required:
+  * Implementations of host API methods that take non-nullable
+    primitives will need to be updated to match the new signatures.
+  * Calls to Flutter API methods that take non-nullable primitives will need to
+    be updated to pass unboxed values.
+  * Calls to non-nullable primitive property methods on generated data classes
+    will need to be updated.
+  * **WARNING**: Current versions of `Xcode` do not appear to warn about
+    implicit `NSNumber *` to `BOOL` conversions, so code that is no longer
+    correct after this breaking change may compile without warning. For example,
+    `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
+    `YES`. Any data class or Flutter API interactions involving `bool`s should
+    be carefully audited by hand when updating.
+
+
+
 ## 12.0.1
 
 * [swift] Adds protocol for Flutter APIs.
