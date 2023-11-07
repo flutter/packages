@@ -41,6 +41,16 @@ class SKPaymentQueueWrapper {
   SKPaymentQueueDelegateWrapper? _paymentQueueDelegate;
   SKTransactionObserverWrapper? _observer;
 
+  /// Calls [`[SKPaymentQueue storefront]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3182430-storefront?language=objc)
+  Future<SKStorefrontWrapper?> storefront() async {
+    final Map<String, dynamic>? storefrontMap = await channel
+        .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
+    if (storefrontMap == null) {
+      return null;
+    }
+    return SKStorefrontWrapper.fromJson(storefrontMap);
+  }
+
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc)
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
     return _getTransactionList((await channel
