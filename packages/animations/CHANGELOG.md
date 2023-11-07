@@ -1,3 +1,7 @@
+## 2.0.9
+
+* Fixed the problem of OpenContainer reporting an error when carrying parameters when Navigator.pop.
+
 ## 2.0.8
 
 * Adds pub topics to package metadata.
