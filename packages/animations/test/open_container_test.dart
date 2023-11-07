@@ -1783,6 +1783,51 @@ void main() {
       expect(modalRoute.settings, routeSettings);
     },
   );
+
+  testWidgets(
+    'Exceptions no longer occur when testing Navigator.pops and data is returned correctly',
+    (WidgetTester tester) async {
+      const RouteSettings routeSettings = RouteSettings(
+        name: 'route-name',
+        arguments: 'arguments',
+      );
+
+      const String data = "data";
+      Object? dataPop = "-1";
+
+      final Widget openContainer = OpenContainer(
+        routeSettings: routeSettings,
+        closedBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Closed'),
+          );
+        },
+        openBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: () {
+              Navigator.pop(context, data);
+            },
+            child: const Text('Open'),
+          );
+        },
+        onClosed: (data) {
+          dataPop = data;
+        },
+      );
+
+      await tester.pumpWidget(_boilerplate(child: openContainer));
+
+      // Open the container
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      expect(dataPop, equals(data));
+    },
+  );
 }
 
 Color _getScrimColor(WidgetTester tester) {
