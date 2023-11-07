@@ -16,18 +16,18 @@ class PointerInterceptorIOSPlugin extends PointerInterceptorPlatform {
   @override
   Widget buildWidget(
       {required Widget child,
-        bool intercepting = true,
-        bool debug = false,
-        Key? key}) {
+      bool intercepting = true,
+      bool debug = false,
+      Key? key}) {
     return Stack(alignment: Alignment.center, children: <Widget>[
       Positioned.fill(
           child: UiKitView(
-            viewType: 'plugins.flutter.dev/pointer_interceptor_ios',
-            creationParams: <String, bool>{
-              'debug': debug,
-            },
-            creationParamsCodec: const StandardMessageCodec(),
-          )),
+        viewType: 'plugins.flutter.dev/pointer_interceptor_ios',
+        creationParams: <String, bool>{
+          'debug': debug,
+        },
+        creationParamsCodec: const StandardMessageCodec(),
+      )),
       child
     ]);
   }

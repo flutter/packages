@@ -36,7 +36,6 @@ class PointerInterceptorIOSExample extends StatefulWidget {
 
 class _PointerInterceptorIOSExampleState
     extends State<PointerInterceptorIOSExample> {
-
   bool _buttonTapped = false;
 
   @override

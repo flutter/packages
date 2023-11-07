@@ -10,7 +10,10 @@ import 'pointer_interceptor_platform.dart';
 class PlaceholderPointerInterceptor extends PointerInterceptorPlatform {
   @override
   Widget buildWidget(
-      {required Widget child, bool intercepting = true, bool debug = false, Key? key}) {
+      {required Widget child,
+      bool intercepting = true,
+      bool debug = false,
+      Key? key}) {
     return child;
   }
 }

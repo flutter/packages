@@ -11,7 +11,6 @@ import 'pointer_interceptor_method_channel.dart';
 /// platform-specific class that extends [PointerInterceptorPlatform] when
 /// they register themselves.
 abstract class PointerInterceptorPlatform extends PlatformInterface {
-
   /// Constructs a PointerInterceptorPlatform.
   PointerInterceptorPlatform() : super(token: _token);
 
