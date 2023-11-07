@@ -661,6 +661,10 @@ abstract class FlutterSmallApi {
   @ObjCSelector('echoWrappedList:')
   @SwiftFunction('echo(_:)')
   TestMessage echoWrappedList(TestMessage msg);
+
+  @ObjCSelector('echoString:')
+  @SwiftFunction('echo(_:)')
+  String echoString(String aString);
 }
 
 /// A data class containing a List, used in unit tests.

@@ -182,7 +182,7 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
   /// Restored purchases are delivered through the [purchaseStream] with a
   /// status of [PurchaseStatus.restored]. You should listen for these purchases,
   /// validate their receipts, deliver the content and mark the purchase complete
-  /// by calling the [finishPurchase] method for each purchase.
+  /// by calling the [completePurchase] method for each purchase.
   ///
   /// This does not return consumed products. If you want to restore unused
   /// consumable products, you need to persist consumable product information
