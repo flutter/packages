@@ -1822,9 +1822,11 @@ void main() {
       await tester.tap(find.text('Closed'));
       await tester.pumpAndSettle();
 
+      // Pop to Closed
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
+      // The returned data should be consistent with our preset data
       expect(dataPop, equals(data));
     },
   );
