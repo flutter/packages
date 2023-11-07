@@ -1,6 +1,10 @@
-## 3.9.3
+## 3.9.4
 
 * Updates to Pigeon 13.
+
+## 3.9.3
+
+* Fixes `use_build_context_synchronously` lint violations in the example app.
 
 ## 3.9.2
 

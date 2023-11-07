@@ -1,6 +1,7 @@
 ## NEXT
 
 * Fixes bug where having one reversed axis caused incorrect painting of a pinned row.
+* Adds support for BorderRadius in TableSpanDecorations.
 
 ## 0.0.4
 
