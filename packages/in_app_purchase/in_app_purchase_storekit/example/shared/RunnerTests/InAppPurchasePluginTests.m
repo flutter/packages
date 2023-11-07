@@ -425,7 +425,8 @@
       // storefront is not nil
       XCTestExpectation *expectation = [self expectationWithDescription:@"expect success"];
       FlutterMethodCall *call =
-          [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue storefront]" arguments:nil];
+          [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue storefront]"
+                                            arguments:nil];
       SKPaymentQueue *mockQueue = OCMClassMock(SKPaymentQueue.class);
       NSDictionary *storefrontMap = @{
         @"countryCode" : @"USA",
@@ -437,17 +438,17 @@
       self.plugin.paymentQueueHandler =
           [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
                                     transactionsUpdated:nil
-                                    transactionRemoved:nil
-                              restoreTransactionFailed:nil
-                  restoreCompletedTransactionsFinished:nil
+                                     transactionRemoved:nil
+                               restoreTransactionFailed:nil
+                   restoreCompletedTransactionsFinished:nil
                                   shouldAddStorePayment:nil
-                                      updatedDownloads:nil
-                                      transactionCache:OCMClassMock(FIATransactionCache.class)];
+                                       updatedDownloads:nil
+                                       transactionCache:OCMClassMock(FIATransactionCache.class)];
       [self.plugin handleMethodCall:call
-                            result:^(id r) {
-                              resultMap = r;
-                              [expectation fulfill];
-                            }];
+                             result:^(id r) {
+                               resultMap = r;
+                               [expectation fulfill];
+                             }];
       [self waitForExpectations:@[ expectation ] timeout:5];
       XCTAssertEqualObjects(resultMap, storefrontMap);
     }
@@ -455,7 +456,8 @@
       // storefront is nil
       XCTestExpectation *expectation = [self expectationWithDescription:@"expect success"];
       FlutterMethodCall *call =
-          [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue storefront]" arguments:nil];
+          [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue storefront]"
+                                            arguments:nil];
       SKPaymentQueue *mockQueue = OCMClassMock(SKPaymentQueue.class);
       OCMStub(mockQueue.storefront).andReturn(nil);
 
@@ -463,17 +465,17 @@
       self.plugin.paymentQueueHandler =
           [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
                                     transactionsUpdated:nil
-                                    transactionRemoved:nil
-                              restoreTransactionFailed:nil
-                  restoreCompletedTransactionsFinished:nil
+                                     transactionRemoved:nil
+                               restoreTransactionFailed:nil
+                   restoreCompletedTransactionsFinished:nil
                                   shouldAddStorePayment:nil
-                                      updatedDownloads:nil
-                                      transactionCache:OCMClassMock(FIATransactionCache.class)];
+                                       updatedDownloads:nil
+                                       transactionCache:OCMClassMock(FIATransactionCache.class)];
       [self.plugin handleMethodCall:call
-                            result:^(id r) {
-                              resultMap = r;
-                              [expectation fulfill];
-                            }];
+                             result:^(id r) {
+                               resultMap = r;
+                               [expectation fulfill];
+                             }];
       [self waitForExpectations:@[ expectation ] timeout:5];
       XCTAssertNil(resultMap);
     }
