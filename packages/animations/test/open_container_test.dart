@@ -1792,8 +1792,7 @@ void main() {
         arguments: 'arguments',
       );
 
-      const String data = "data";
-      Object? dataPop = "-1";
+      const String expectedData = 'data';
 
       final Widget openContainer = OpenContainer(
         routeSettings: routeSettings,
@@ -1806,13 +1805,14 @@ void main() {
         openBuilder: (BuildContext context, VoidCallback action) {
           return GestureDetector(
             onTap: () {
-              Navigator.pop(context, data);
+              Navigator.pop(context, expectedData);
             },
             child: const Text('Open'),
           );
         },
         onClosed: (data) {
-          dataPop = data;
+          // The returned data should be consistent with our preset data
+          expect(data, equals(expectedData));
         },
       );
 
@@ -1825,9 +1825,6 @@ void main() {
       // Pop to Closed
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
-
-      // The returned data should be consistent with our preset data
-      expect(dataPop, equals(data));
     },
   );
 }
