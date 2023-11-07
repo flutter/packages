@@ -211,19 +211,29 @@ abstract class SystemServicesHostApi {
   @async
   CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
 
-  void startListeningForDeviceOrientationChange(
-      bool isFrontFacing, int sensorOrientation);
-
-  void stopListeningForDeviceOrientationChange();
-
   String getTempFilePath(String prefix, String suffix);
 }
 
 @FlutterApi()
 abstract class SystemServicesFlutterApi {
-  void onDeviceOrientationChanged(String orientation);
-
   void onCameraError(String errorDescription);
+}
+
+@HostApi(dartHostTestHandler: 'TestDeviceOrientationManagerHostApi')
+abstract class DeviceOrientationManagerHostApi {
+  void startListeningForDeviceOrientationChange(
+      bool isFrontFacing, int sensorOrientation);
+
+  void stopListeningForDeviceOrientationChange();
+
+  int getPhotoOrientation();
+
+  int getVideoOrientation();
+}
+
+@FlutterApi()
+abstract class DeviceOrientationManagerFlutterApi {
+  void onDeviceOrientationChanged(String orientation);
 }
 
 @HostApi(dartHostTestHandler: 'TestPreviewHostApi')

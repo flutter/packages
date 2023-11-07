@@ -9,7 +9,6 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraPermissionsErrorData;
@@ -25,7 +24,6 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   private Context context;
 
   @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public @Nullable DeviceOrientationManager deviceOrientationManager;
   @VisibleForTesting public @NonNull SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
   private Activity activity;
@@ -82,46 +80,6 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
             result.success(errorData);
           }
         });
-  }
-
-  /**
-   * Starts listening for device orientation changes using an instance of a {@link
-   * DeviceOrientationManager}.
-   *
-   * <p>Whenever a change in device orientation is detected by the {@code DeviceOrientationManager},
-   * the {@link SystemServicesFlutterApi} will be used to notify the Dart side.
-   */
-  @Override
-  public void startListeningForDeviceOrientationChange(
-      @NonNull Boolean isFrontFacing, @NonNull Long sensorOrientation) {
-    deviceOrientationManager =
-        cameraXProxy.createDeviceOrientationManager(
-            activity,
-            isFrontFacing,
-            sensorOrientation.intValue(),
-            (DeviceOrientation newOrientation) -> {
-              systemServicesFlutterApi.sendDeviceOrientationChangedEvent(
-                  serializeDeviceOrientation(newOrientation), reply -> {});
-            });
-    deviceOrientationManager.start();
-  }
-
-  /** Serializes {@code DeviceOrientation} into a String that the Dart side is able to recognize. */
-  String serializeDeviceOrientation(DeviceOrientation orientation) {
-    return orientation.toString();
-  }
-
-  /**
-   * Tells the {@code deviceOrientationManager} to stop listening for orientation updates.
-   *
-   * <p>Has no effect if the {@code deviceOrientationManager} was never created to listen for device
-   * orientation updates.
-   */
-  @Override
-  public void stopListeningForDeviceOrientationChange() {
-    if (deviceOrientationManager != null) {
-      deviceOrientationManager.stop();
-    }
   }
 
   /** Returns a path to be used to create a temp file in the current cache directory. */

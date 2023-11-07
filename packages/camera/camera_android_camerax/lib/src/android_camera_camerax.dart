@@ -17,6 +17,7 @@ import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
+import 'device_orientation_manager.dart';
 import 'exposure_state.dart';
 import 'fallback_strategy.dart';
 import 'image_analysis.dart';
@@ -407,18 +408,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Unlocks the capture orientation.
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
-    int? currentDeviceOrientation;
-    if (SystemServices.lastRecordedDeviceOrientation == null) {
-      currentDeviceOrientation = initialSensorOrientation;
-    } else {
-      currentDeviceOrientation = _getTargetRotationFromDeviceOrientation(
-          SystemServices.lastRecordedDeviceOrientation!);
-    }
+    final int currentPhotoOrientation = _getTargetRotation(
+        await DeviceOrientationManager.getPhotoOrientation());
+    final int currentVideoOrientation = _getTargetRotation(
+        await DeviceOrientationManager.getVideoOrientation());
 
     /// Update UseCases to use current device orientation.
-    await imageAnalysis!.setTargetRotation(currentDeviceOrientation!);
-    await imageCapture!.setTargetRotation(currentDeviceOrientation!);
-    await videoCapture!.setTargetRotation(currentDeviceOrientation!);
+    await imageAnalysis!.setTargetRotation(currentPhotoOrientation);
+    await imageCapture!.setTargetRotation(currentPhotoOrientation);
+    await videoCapture!.setTargetRotation(currentVideoOrientation);
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
@@ -500,7 +498,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return SystemServices.deviceOrientationChangedStreamController.stream;
+    return DeviceOrientationManager
+        .deviceOrientationChangedStreamController.stream;
   }
 
   /// Pause the active preview on the current frame for the selected camera.
@@ -1030,7 +1029,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   void startListeningForDeviceOrientationChange(
       bool cameraIsFrontFacing, int sensorOrientation) {
-    SystemServices.startListeningForDeviceOrientationChange(
+    DeviceOrientationManager.startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, sensorOrientation);
   }
 
