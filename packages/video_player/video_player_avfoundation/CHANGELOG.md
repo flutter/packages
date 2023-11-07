@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Updates to  Pigeon 13.
+
 ## 2.5.0
 
 * Adds support for macOS.

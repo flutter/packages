@@ -6,3 +6,4 @@ library pointer_interceptor;
 
 export 'package:pointer_interceptor/src/pointer_interceptor.dart';
 export 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
+

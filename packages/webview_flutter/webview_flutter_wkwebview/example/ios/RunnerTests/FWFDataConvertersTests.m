@@ -49,7 +49,7 @@
        makeWithSource:@"mySource"
         injectionTime:[FWFWKUserScriptInjectionTimeEnumData
                           makeWithValue:FWFWKUserScriptInjectionTimeEnumAtDocumentStart]
-      isMainFrameOnly:@NO]);
+      isMainFrameOnly:NO]);
 
   XCTAssertEqualObjects(userScript.source, @"mySource");
   XCTAssertEqual(userScript.injectionTime, WKUserScriptInjectionTimeAtDocumentStart);
@@ -94,7 +94,7 @@
   OCMStub([mockFrameInfo isMainFrame]).andReturn(YES);
 
   FWFWKFrameInfoData *targetFrameData = FWFWKFrameInfoDataFromNativeWKFrameInfo(mockFrameInfo);
-  XCTAssertEqualObjects(targetFrameData.isMainFrame, @YES);
+  XCTAssertEqual(targetFrameData.isMainFrame, YES);
 }
 
 - (void)testFWFNSErrorDataFromNSError {
@@ -104,7 +104,7 @@
                                    userInfo:@{@"a" : @"b", @"c" : unsupportedType}];
 
   FWFNSErrorData *data = FWFNSErrorDataFromNativeNSError(error);
-  XCTAssertEqualObjects(data.code, @23);
+  XCTAssertEqual(data.code, 23);
   XCTAssertEqualObjects(data.domain, @"domain");
 
   NSDictionary *userInfo = @{
@@ -133,7 +133,7 @@
   FWFWKSecurityOriginData *data =
       FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(mockSecurityOrigin);
   XCTAssertEqualObjects(data.host, @"host");
-  XCTAssertEqualObjects(data.port, @(2));
+  XCTAssertEqual(data.port, 2);
   XCTAssertEqualObjects(data.protocol, @"protocol");
 }
 

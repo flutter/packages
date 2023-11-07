@@ -1,6 +1,10 @@
 ## 0.9.4
 * Add iOS implementation
 
+## 0.9.3+7
+
+* Updates metadata to point to new source folder
+
 ## 0.9.3+6
 
 * Migrates to `dart:ui_web` APIs.

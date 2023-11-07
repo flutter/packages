@@ -43,6 +43,7 @@ class UserData {
     this.displayName,
     this.photoUrl,
     this.serverAuthCode,
+    this.idToken,
   });
 
   final String? displayName;
@@ -50,6 +51,7 @@ class UserData {
   final String userId;
   final String? photoUrl;
   final String? serverAuthCode;
+  final String? idToken;
 }
 
 /// Pigeon version of GoogleSignInTokenData.

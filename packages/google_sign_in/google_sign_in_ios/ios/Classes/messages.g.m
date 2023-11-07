@@ -86,13 +86,15 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                               email:(NSString *)email
                              userId:(NSString *)userId
                            photoUrl:(nullable NSString *)photoUrl
-                     serverAuthCode:(nullable NSString *)serverAuthCode {
+                     serverAuthCode:(nullable NSString *)serverAuthCode
+                            idToken:(nullable NSString *)idToken {
   FSIUserData *pigeonResult = [[FSIUserData alloc] init];
   pigeonResult.displayName = displayName;
   pigeonResult.email = email;
   pigeonResult.userId = userId;
   pigeonResult.photoUrl = photoUrl;
   pigeonResult.serverAuthCode = serverAuthCode;
+  pigeonResult.idToken = idToken;
   return pigeonResult;
 }
 + (FSIUserData *)fromList:(NSArray *)list {
@@ -104,6 +106,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   NSAssert(pigeonResult.userId != nil, @"");
   pigeonResult.photoUrl = GetNullableObjectAtIndex(list, 3);
   pigeonResult.serverAuthCode = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.idToken = GetNullableObjectAtIndex(list, 5);
   return pigeonResult;
 }
 + (nullable FSIUserData *)nullableFromList:(NSArray *)list {
@@ -116,6 +119,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     (self.userId ?: [NSNull null]),
     (self.photoUrl ?: [NSNull null]),
     (self.serverAuthCode ?: [NSNull null]),
+    (self.idToken ?: [NSNull null]),
   ];
 }
 @end
