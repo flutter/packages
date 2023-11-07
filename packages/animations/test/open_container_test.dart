@@ -1810,7 +1810,7 @@ void main() {
             child: const Text('Open'),
           );
         },
-        onClosed: (data) {
+        onClosed: (Object? data) {
           // The returned data should be consistent with our preset data
           expect(data, equals(expectedData));
         },
