@@ -35,12 +35,13 @@ void main() {
       );
       ImageCapture.detached(
         instanceManager: instanceManager,
+        targetRotation: 180,
         targetFlashMode: ImageCapture.flashModeOn,
         resolutionSelector: MockResolutionSelector(),
       );
 
       verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
-          argThat(isA<ResolutionSelector>())));
+          argThat(isA<ResolutionSelector>()), argThat(isA<int>())));
     });
 
     test('create calls create on the Java side', () async {
@@ -50,6 +51,8 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
+
+      const int targetRotation = 270;
       const int targetFlashMode = ImageCapture.flashModeAuto;
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
@@ -63,12 +66,14 @@ void main() {
 
       ImageCapture(
         instanceManager: instanceManager,
+        targetRotation: targetRotation,
         targetFlashMode: targetFlashMode,
         resolutionSelector: mockResolutionSelector,
       );
 
       verify(mockApi.create(
           argThat(isA<int>()),
+          argThat(equals(targetRotation)),
           argThat(equals(targetFlashMode)),
           argThat(equals(mockResolutionSelectorId))));
     });

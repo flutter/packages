@@ -33,6 +33,7 @@ class MockTestImageAnalysisHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
+    int? targetRotation,
     int? resolutionSelectorId,
   ) =>
       super.noSuchMethod(
@@ -40,6 +41,7 @@ class MockTestImageAnalysisHostApi extends _i1.Mock
           #create,
           [
             identifier,
+            targetRotation,
             resolutionSelectorId,
           ],
         ),
@@ -65,6 +67,21 @@ class MockTestImageAnalysisHostApi extends _i1.Mock
         Invocation.method(
           #clearAnalyzer,
           [identifier],
+        ),
+        returnValueForMissingStub: null,
+      );
+  @override
+  void setTargetRotation(
+    int? identifier,
+    int? rotation,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setTargetRotation,
+          [
+            identifier,
+            rotation,
+          ],
         ),
         returnValueForMissingStub: null,
       );

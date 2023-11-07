@@ -6,8 +6,7 @@ import 'package:camera_android_camerax/src/camerax_library.g.dart'
     show CameraPermissionsErrorData;
 import 'package:camera_android_camerax/src/system_services.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart'
-    show CameraException, DeviceOrientationChangedEvent;
-import 'package:flutter/services.dart';
+    show CameraException;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -60,45 +59,6 @@ void main() {
               .having((CameraException e) => e.description, 'description',
                   'Test error description')));
       verify(mockApi.requestCameraPermissions(true));
-    });
-
-    test('startListeningForDeviceOrientationChangeTest', () async {
-      final MockTestSystemServicesHostApi mockApi =
-          MockTestSystemServicesHostApi();
-      TestSystemServicesHostApi.setup(mockApi);
-
-      SystemServices.startListeningForDeviceOrientationChange(true, 90);
-      verify(mockApi.startListeningForDeviceOrientationChange(true, 90));
-    });
-
-    test('stopListeningForDeviceOrientationChangeTest', () async {
-      final MockTestSystemServicesHostApi mockApi =
-          MockTestSystemServicesHostApi();
-      TestSystemServicesHostApi.setup(mockApi);
-
-      SystemServices.stopListeningForDeviceOrientationChange();
-      verify(mockApi.stopListeningForDeviceOrientationChange());
-    });
-
-    test('onDeviceOrientationChanged adds new orientation to stream', () {
-      SystemServices.deviceOrientationChangedStreamController.stream
-          .listen((DeviceOrientationChangedEvent event) {
-        expect(event.orientation, equals(DeviceOrientation.landscapeLeft));
-      });
-      SystemServicesFlutterApiImpl()
-          .onDeviceOrientationChanged('LANDSCAPE_LEFT');
-    });
-
-    test(
-        'onDeviceOrientationChanged throws error if new orientation is invalid',
-        () {
-      expect(
-          () => SystemServicesFlutterApiImpl()
-              .onDeviceOrientationChanged('FAKE_ORIENTATION'),
-          throwsA(isA<ArgumentError>().having(
-              (ArgumentError e) => e.message,
-              'message',
-              '"FAKE_ORIENTATION" is not a valid DeviceOrientation value')));
     });
 
     test('onCameraError adds new error to stream', () {

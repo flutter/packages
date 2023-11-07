@@ -108,6 +108,21 @@ class MockTestPreviewHostApi extends _i1.Mock
           ),
         ),
       ) as _i2.ResolutionInfo);
+  @override
+  void setTargetRotation(
+    int? identifier,
+    int? rotation,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setTargetRotation,
+          [
+            identifier,
+            rotation,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [ResolutionSelector].

@@ -30,6 +30,24 @@ void main() {
       TestImageAnalysisHostApi.setup(null);
     });
 
+    test('detached create does not call create on the Java side', () {
+      final MockTestImageAnalysisHostApi mockApi =
+          MockTestImageAnalysisHostApi();
+      TestImageAnalysisHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
+      ImageAnalysis.detached(
+        targetRotation: 270,
+        resolutionSelector: MockResolutionSelector(),
+        instanceManager: instanceManager,
+      );
+
+      verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
+          argThat(isA<ResolutionSelector>())));
+    });
     test('create calls create on the Java side', () {
       final MockTestImageAnalysisHostApi mockApi =
           MockTestImageAnalysisHostApi();
@@ -39,6 +57,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
+      const int targetRotation = 90;
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
       const int mockResolutionSelectorId = 24;
@@ -50,12 +69,14 @@ void main() {
       });
 
       final ImageAnalysis instance = ImageAnalysis(
+        targetRotation: targetRotation,
         resolutionSelector: mockResolutionSelector,
         instanceManager: instanceManager,
       );
 
       verify(mockApi.create(
           argThat(equals(instanceManager.getIdentifier(instance))),
+          argThat(equals(targetRotation)),
           argThat(equals(mockResolutionSelectorId))));
     });
 

@@ -14,6 +14,7 @@ import 'package:camera_android_camerax/src/camera_selector.dart';
 import 'package:camera_android_camerax/src/camera_state.dart';
 import 'package:camera_android_camerax/src/camera_state_error.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/device_orientation_manager.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/fallback_strategy.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
@@ -611,7 +612,8 @@ void main() {
     const DeviceOrientationChangedEvent testEvent =
         DeviceOrientationChangedEvent(DeviceOrientation.portraitDown);
 
-    SystemServices.deviceOrientationChangedStreamController.add(testEvent);
+    DeviceOrientationManager.deviceOrientationChangedStreamController
+        .add(testEvent);
 
     expect(await streamQueue.next, testEvent);
     await streamQueue.cancel();

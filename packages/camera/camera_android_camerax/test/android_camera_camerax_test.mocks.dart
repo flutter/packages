@@ -484,6 +484,15 @@ class MockImageAnalysis extends _i1.Mock implements _i19.ImageAnalysis {
         returnValue: _i15.Future<void>.value(),
         returnValueForMissingStub: _i15.Future<void>.value(),
       ) as _i15.Future<void>);
+  @override
+  _i15.Future<void> setTargetRotation(int? rotation) => (super.noSuchMethod(
+        Invocation.method(
+          #setTargetRotation,
+          [rotation],
+        ),
+        returnValue: _i15.Future<void>.value(),
+        returnValueForMissingStub: _i15.Future<void>.value(),
+      ) as _i15.Future<void>);
 }
 
 /// A class which mocks [ImageCapture].
@@ -509,6 +518,15 @@ class MockImageCapture extends _i1.Mock implements _i21.ImageCapture {
         returnValue: _i15.Future<String>.value(''),
         returnValueForMissingStub: _i15.Future<String>.value(''),
       ) as _i15.Future<String>);
+  @override
+  _i15.Future<void> setTargetRotation(int? rotation) => (super.noSuchMethod(
+        Invocation.method(
+          #setTargetRotation,
+          [rotation],
+        ),
+        returnValue: _i15.Future<void>.value(),
+        returnValueForMissingStub: _i15.Future<void>.value(),
+      ) as _i15.Future<void>);
 }
 
 /// A class which mocks [ImageProxy].
@@ -626,6 +644,15 @@ class MockPreview extends _i1.Mock implements _i25.Preview {
           ),
         )),
       ) as _i15.Future<_i7.ResolutionInfo>);
+  @override
+  _i15.Future<void> setTargetRotation(int? rotation) => (super.noSuchMethod(
+        Invocation.method(
+          #setTargetRotation,
+          [rotation],
+        ),
+        returnValue: _i15.Future<void>.value(),
+        returnValueForMissingStub: _i15.Future<void>.value(),
+      ) as _i15.Future<void>);
 }
 
 /// A class which mocks [ProcessCameraProvider].
@@ -837,6 +864,15 @@ class MockVideoCapture extends _i1.Mock implements _i28.VideoCapture {
           ),
         )),
       ) as _i15.Future<_i11.Recorder>);
+  @override
+  _i15.Future<void> setTargetRotation(int? rotation) => (super.noSuchMethod(
+        Invocation.method(
+          #setTargetRotation,
+          [rotation],
+        ),
+        returnValue: _i15.Future<void>.value(),
+        returnValueForMissingStub: _i15.Future<void>.value(),
+      ) as _i15.Future<void>);
 }
 
 /// A class which mocks [BuildContext].
@@ -1045,29 +1081,6 @@ class MockTestSystemServicesHostApi extends _i1.Mock
         returnValueForMissingStub:
             _i15.Future<_i7.CameraPermissionsErrorData?>.value(),
       ) as _i15.Future<_i7.CameraPermissionsErrorData?>);
-  @override
-  void startListeningForDeviceOrientationChange(
-    bool? isFrontFacing,
-    int? sensorOrientation,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #startListeningForDeviceOrientationChange,
-          [
-            isFrontFacing,
-            sensorOrientation,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-  @override
-  void stopListeningForDeviceOrientationChange() => super.noSuchMethod(
-        Invocation.method(
-          #stopListeningForDeviceOrientationChange,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
   @override
   String getTempFilePath(
     String? prefix,

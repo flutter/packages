@@ -60,6 +60,21 @@ class MockTestVideoCaptureHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+  @override
+  void setTargetRotation(
+    int? identifier,
+    int? rotation,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setTargetRotation,
+          [
+            identifier,
+            rotation,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
