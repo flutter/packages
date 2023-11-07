@@ -218,7 +218,7 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   ///
   /// The `action` callback provided to the builder can be called to close the
   /// container.
-  final OpenContainerBuilder<T> openBuilder;
+  final OpenContainerBuilder<Object?> openBuilder;
 
   /// Whether the entire closed container can be tapped to open it.
   ///
@@ -544,7 +544,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   final double openElevation;
   final ShapeBorder openShape;
   final CloseContainerBuilder closedBuilder;
-  final OpenContainerBuilder<T> openBuilder;
+  final OpenContainerBuilder<Object?> openBuilder;
 
   // See [_OpenContainerState._hideableKey].
   final GlobalKey<_HideableState> hideableKey;
@@ -722,7 +722,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     return wasInProgress && isInProgress;
   }
 
-  void closeContainer({T? returnValue}) {
+  void closeContainer({Object? returnValue}) {
     Navigator.of(subtreeContext!).pop(returnValue);
   }
 
