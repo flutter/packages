@@ -15,7 +15,7 @@ flutter:
     platforms:
       web:
         pluginClass: PointerInterceptorWeb
-        fileName: ./src/web.dart
+        fileName: ./src/pointer_interceptor_web.dart
       ios:
         default_package: ./src/dummy_pointer_interceptor_ios.dart
 

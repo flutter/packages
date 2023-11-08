@@ -57,13 +57,8 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
   Widget buildWidget(
       {required Widget child,
       bool debug = false,
-      bool intercepting = true,
       Key? key}) {
     final String viewType = _getViewType(debug: debug);
-
-    if (!intercepting) {
-      return child;
-    }
 
     if (!_registered) {
       _register();
