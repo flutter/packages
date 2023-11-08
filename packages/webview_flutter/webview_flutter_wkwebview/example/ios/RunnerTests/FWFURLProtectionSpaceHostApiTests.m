@@ -28,14 +28,16 @@
   [flutterApi createWithInstance:protectionSpace
                             host:@"host"
                            realm:@"realm"
+            authenticationMethod:@"method"
                       completion:^(FlutterError *error){
 
                       }];
 
   long identifier = [instanceManager identifierWithStrongReferenceForInstance:protectionSpace];
-  OCMVerify([flutterApi.api createWithIdentifier:@(identifier)
+  OCMVerify([flutterApi.api createWithIdentifier:identifier
                                             host:@"host"
                                            realm:@"realm"
+                            authenticationMethod:@"method"
                                       completion:OCMOCK_ANY]);
 }
 @end
