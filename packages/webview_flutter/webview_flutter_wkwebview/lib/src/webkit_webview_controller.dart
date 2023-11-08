@@ -963,7 +963,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           final String? host = challenge.protectionSpace.host;
           final String? realm = challenge.protectionSpace.realm;
 
-          if (callback != null && host != null && realm != null) {
+          if (callback != null && host != null) {
             callback(
               HttpAuthRequest(
                 onProceed: (WebViewCredential credential) {
