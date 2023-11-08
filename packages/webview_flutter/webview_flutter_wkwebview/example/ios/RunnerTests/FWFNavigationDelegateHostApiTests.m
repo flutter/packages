@@ -242,9 +242,9 @@
   [instanceManager addDartCreatedInstance:credential withIdentifier:5];
 
   OCMStub([mockFlutterAPI
-      didReceiveAuthenticationChallengeForDelegateWithIdentifier:@0
-                                               webViewIdentifier:@1
-                                             challengeIdentifier:@(2)
+      didReceiveAuthenticationChallengeForDelegateWithIdentifier:0
+                                               webViewIdentifier:1
+                                             challengeIdentifier:2
                                                       completion:
                                                           ([OCMArg
                                                               invokeBlockWithArgs:

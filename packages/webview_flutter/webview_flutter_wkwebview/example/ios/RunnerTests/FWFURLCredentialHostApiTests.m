@@ -20,7 +20,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostApi createWithUserWithIdentifier:@0
+  [hostApi createWithUserWithIdentifier:0
                                    user:@"user"
                                password:@"password"
                             persistence:FWFNSUrlCredentialPersistencePermanent

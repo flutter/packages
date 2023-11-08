@@ -40,8 +40,8 @@
   long identifier = [instanceManager identifierWithStrongReferenceForInstance:mockChallenge];
   long protectionSpaceIdentifier =
       [instanceManager identifierWithStrongReferenceForInstance:protectionSpace];
-  OCMVerify([flutterApi.api createWithIdentifier:@(identifier)
-                       protectionSpaceIdentifier:@(protectionSpaceIdentifier)
+  OCMVerify([flutterApi.api createWithIdentifier:identifier
+                       protectionSpaceIdentifier:protectionSpaceIdentifier
                                       completion:OCMOCK_ANY]);
 }
 @end
