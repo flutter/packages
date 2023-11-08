@@ -439,6 +439,17 @@ class AndroidCameraCameraX extends CameraPlatform {
     return zoomState.minZoomRatio;
   }
 
+  /// Set the zoom level for the selected camera.
+  ///
+  /// The supplied [zoom] value should be between the minimum and the maximum
+  /// supported zoom level returned by `getMinZoomLevel` and `getMaxZoomLevel`.
+  /// Throws a `CameraException` when an illegal zoom level is supplied.
+  @override
+  Future<void> setZoomLevel(int cameraId, double zoom) async {
+    final CameraControl cameraControl = await camera!.getCameraControl();
+    await cameraControl.setZoomRatio(zoom);
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
@@ -846,7 +857,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// closest lower resolution available.
   ResolutionSelector? _getResolutionSelectorFromPreset(
       ResolutionPreset? preset) {
-    const int fallbackRule = ResolutionStrategy.fallbackRuleClosestLower;
+    const int fallbackRule =
+        ResolutionStrategy.fallbackRuleClosestLowerThenHigher;
 
     Size? boundSize;
     ResolutionStrategy? resolutionStrategy;
@@ -868,10 +880,14 @@ class AndroidCameraCameraX extends CameraPlatform {
         break;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
-        resolutionStrategy = _shouldCreateDetachedObjectForTesting
-            ? ResolutionStrategy.detachedHighestAvailableStrategy()
-            : ResolutionStrategy.highestAvailableStrategy();
-        break;
+        if (_shouldCreateDetachedObjectForTesting) {
+          resolutionStrategy =
+              ResolutionStrategy.detachedHighestAvailableStrategy();
+          return ResolutionSelector.detached(
+              resolutionStrategy: resolutionStrategy);
+        }
+        resolutionStrategy = ResolutionStrategy.highestAvailableStrategy();
+        return ResolutionSelector(resolutionStrategy: resolutionStrategy);
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
@@ -879,17 +895,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     if (_shouldCreateDetachedObjectForTesting) {
-      resolutionStrategy ??= ResolutionStrategy.detached(
+      resolutionStrategy = ResolutionStrategy.detached(
           boundSize: boundSize, fallbackRule: fallbackRule);
       return ResolutionSelector.detached(
           resolutionStrategy: resolutionStrategy);
     }
 
-    resolutionStrategy ??=
-        ResolutionStrategy(boundSize: boundSize!, fallbackRule: fallbackRule);
-    return ResolutionSelector(
-        resolutionStrategy: ResolutionStrategy(
-            boundSize: boundSize!, fallbackRule: fallbackRule));
+    resolutionStrategy =
+        ResolutionStrategy(boundSize: boundSize, fallbackRule: fallbackRule);
+    return ResolutionSelector(resolutionStrategy: resolutionStrategy);
   }
 
   /// Returns the [QualitySelector] that maps to the specified resolution
@@ -926,7 +940,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // We will choose the next highest video quality if the one desired
     // is unavailable.
     const VideoResolutionFallbackRule fallbackRule =
-        VideoResolutionFallbackRule.lowerQualityThan;
+        VideoResolutionFallbackRule.lowerQualityOrHigherThan;
     final FallbackStrategy fallbackStrategy =
         _shouldCreateDetachedObjectForTesting
             ? FallbackStrategy.detached(

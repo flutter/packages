@@ -1,3 +1,26 @@
+## 12.1.0
+
+- Adds an ability to add a custom codec for serializing/deserializing extra.
+
+## 12.0.3
+
+- Fixes crashes when dynamically updates routing tables with named routes.
+
+## 12.0.2
+
+- Fixes the problem that pathParameters is null in redirect when the Router is recreated.
+
+## 12.0.1
+
+- Fixes deep-link with no path on cold start.
+
+## 12.0.0
+
+- Adds ability to dynamically update routing table.
+- **BREAKING CHANGE**:
+  - The function signature of constructor of `RouteConfiguration` is updated.
+  - Adds a required `matchedPath` named parameter to `RouteMatch.match`.
+
 ## 11.1.4
 
 - Fixes missing parameters in the type-safe routes topic documentation.

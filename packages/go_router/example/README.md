@@ -41,6 +41,11 @@ An example to demonstrate how to use a `StatefulShellRoute` to create stateful n
 
 An example to demonstrate how to handle exception in go_router.
 
+## [Extra Codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
+`flutter run lib/extra_codec.dart`
+
+An example to demonstrate how to use a complex object as extra.
+
 ## [Books app](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/books)
 `flutter run lib/books/main.dart`
 
