@@ -113,6 +113,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
       case PreferredLaunchMode.inAppWebView:
       case PreferredLaunchMode.inAppBrowserView:
       case PreferredLaunchMode.externalApplication:
+      case PreferredLaunchMode.inAppAuthenticationBrowserView:
       case PreferredLaunchMode.externalNonBrowserApplication:
         return true;
       // Default is a desired behavior here since support for new modes is

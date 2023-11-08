@@ -20,6 +20,10 @@ enum LaunchMode {
   /// Loads the URL in an in-app web view (e.g., Android Custom Tabs, SFSafariViewController).
   inAppBrowserView,
 
+  /// Loads the URL in an in-app browser that is best suited for authentication (e.g., Android Custom Tabs,
+  /// ASWebAuthenticationController).
+  inAppAuthenticationBrowserView,
+
   /// Passes the URL to the OS to be handled by another application.
   externalApplication,
 

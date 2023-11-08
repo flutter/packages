@@ -28,6 +28,8 @@ PreferredLaunchMode convertLaunchMode(LaunchMode mode) {
       return PreferredLaunchMode.inAppWebView;
     case LaunchMode.externalApplication:
       return PreferredLaunchMode.externalApplication;
+    case LaunchMode.inAppAuthenticationBrowserView:
+      return PreferredLaunchMode.inAppAuthenticationBrowserView;
     case LaunchMode.externalNonBrowserApplication:
       return PreferredLaunchMode.externalNonBrowserApplication;
   }
