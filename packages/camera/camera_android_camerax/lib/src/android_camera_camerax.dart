@@ -234,7 +234,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     cameraSelector = createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
     startListeningForDeviceOrientationChange(
-        cameraIsFrontFacing, cameraDescription.sensorOrientation!);
+        cameraIsFrontFacing, cameraDescription.sensorOrientation);
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
@@ -248,7 +248,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve target rotation for UseCases.
     final int targetRotation =
-        _getTargetRotation(cameraDescription.sensorOrientation!);
+        getTargetRotation(cameraDescription.sensorOrientation);
 
     // Configure Preview instance.
     preview = createPreview(
@@ -403,10 +403,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Unlocks the capture orientation.
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
-    final int currentPhotoOrientation = _getTargetRotation(
-        await DeviceOrientationManager.getPhotoOrientation());
-    final int currentVideoOrientation = _getTargetRotation(
-        await DeviceOrientationManager.getVideoOrientation());
+    final int currentPhotoOrientation =
+        getTargetRotation(await DeviceOrientationManager.getPhotoOrientation());
+    final int currentVideoOrientation =
+        getTargetRotation(await DeviceOrientationManager.getVideoOrientation());
 
     /// Update UseCases to use current device orientation.
     await imageAnalysis!.setTargetRotation(currentPhotoOrientation);
@@ -875,7 +875,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Returns [Surface] target rotation constant that maps to specified sensor
   /// orientation.
-  int _getTargetRotation(int sensorOrientation) {
+  @visibleForTesting
+  int getTargetRotation(int sensorOrientation) {
     switch (sensorOrientation) {
       case 90:
         return Surface.ROTATION_90;
@@ -1027,6 +1028,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     DeviceOrientationManager.startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, sensorOrientation);
   }
+
+  // TODO: start using _shouldCreateDetachedObjectForTesting
 
   /// Returns a [CameraSelector] based on the specified camera lens direction.
   @visibleForTesting

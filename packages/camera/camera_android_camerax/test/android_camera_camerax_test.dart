@@ -453,6 +453,51 @@ void main() {
   });
 
   test(
+      'createCamera properly sets target rotation from preset sensor orientation for all use cases',
+      () async {
+    final FakeAndroidCameraCameraX camera =
+        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 270;
+    final int expectedTargetRotation =
+        camera.getTargetRotation(testSensorOrientation);
+    const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation);
+    const bool enableAudio = true;
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    when(mockProcessCameraProvider.bindToLifecycle(
+        camera.mockBackCameraSelector, <UseCase>[
+      camera.testPreview,
+      camera.testImageCapture,
+      camera.testImageAnalysis
+    ])).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    await camera.createCamera(testCameraDescription, ResolutionPreset.low,
+        enableAudio: enableAudio);
+
+    // Test non-video use cases.
+    expect(camera.preview!.targetRotation, equals(expectedTargetRotation));
+    expect(camera.imageCapture!.targetRotation, equals(expectedTargetRotation));
+    expect(
+        camera.imageAnalysis!.targetRotation, equals(expectedTargetRotation));
+
+    // Test video use case.
+    verify(camera.videoCapture!.setTargetRotation(expectedTargetRotation));
+  });
+
+  test(
       'initializeCamera throws a CameraException when createCamera has not been called before initializedCamera',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
