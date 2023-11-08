@@ -44,9 +44,9 @@
                                 NSAssert(!error, @"%@", error);
                               }];
 
-  [self.api createWithIdentifier:@([self.instanceManager addHostCreatedInstance:instance])
-       protectionSpaceIdentifier:@([self.instanceManager
-                                     identifierWithStrongReferenceForInstance:protectionSpace])
+  [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
+       protectionSpaceIdentifier:[self.instanceManager
+                                     identifierWithStrongReferenceForInstance:protectionSpace]
                       completion:completion];
 }
 @end

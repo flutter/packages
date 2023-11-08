@@ -103,6 +103,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       displayName: data.displayName,
       photoUrl: data.photoUrl,
       serverAuthCode: data.serverAuthCode,
+      idToken: data.idToken,
     );
   }
 

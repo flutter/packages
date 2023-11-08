@@ -51,7 +51,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:0 error:&error];
   FWFNavigationDelegate *navigationDelegate =
       (FWFNavigationDelegate *)[instanceManager instanceForIdentifier:0];
 
@@ -74,8 +74,8 @@
   [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
 
   [mockDelegate webView:mockWebView didFinishNavigation:OCMClassMock([WKNavigation class])];
-  OCMVerify([mockFlutterAPI didFinishNavigationForDelegateWithIdentifier:@0
-                                                       webViewIdentifier:@1
+  OCMVerify([mockFlutterAPI didFinishNavigationForDelegateWithIdentifier:0
+                                                       webViewIdentifier:1
                                                                      URL:@"https://flutter.dev/"
                                                               completion:OCMOCK_ANY]);
 }
@@ -97,8 +97,8 @@
   [mockDelegate webView:mockWebView
       didStartProvisionalNavigation:OCMClassMock([WKNavigation class])];
   OCMVerify([mockFlutterAPI
-      didStartProvisionalNavigationForDelegateWithIdentifier:@0
-                                           webViewIdentifier:@1
+      didStartProvisionalNavigationForDelegateWithIdentifier:0
+                                           webViewIdentifier:1
                                                          URL:@"https://flutter.dev/"
                                                   completion:OCMOCK_ANY]);
 }
@@ -125,8 +125,8 @@
   OCMStub([mockNavigationAction targetFrame]).andReturn(mockFrameInfo);
 
   OCMStub([mockFlutterAPI
-      decidePolicyForNavigationActionForDelegateWithIdentifier:@0
-                                             webViewIdentifier:@1
+      decidePolicyForNavigationActionForDelegateWithIdentifier:0
+                                             webViewIdentifier:1
                                               navigationAction:
                                                   [OCMArg isKindOfClass:[FWFWKNavigationActionData
                                                                             class]]
@@ -164,8 +164,8 @@
       didFailNavigation:OCMClassMock([WKNavigation class])
               withError:[NSError errorWithDomain:@"domain" code:0 userInfo:nil]];
   OCMVerify([mockFlutterAPI
-      didFailNavigationForDelegateWithIdentifier:@0
-                               webViewIdentifier:@1
+      didFailNavigationForDelegateWithIdentifier:0
+                               webViewIdentifier:1
                                            error:[OCMArg isKindOfClass:[FWFNSErrorData class]]
                                       completion:OCMOCK_ANY]);
 }
@@ -187,8 +187,8 @@
       didFailProvisionalNavigation:OCMClassMock([WKNavigation class])
                          withError:[NSError errorWithDomain:@"domain" code:0 userInfo:nil]];
   OCMVerify([mockFlutterAPI
-      didFailProvisionalNavigationForDelegateWithIdentifier:@0
-                                          webViewIdentifier:@1
+      didFailProvisionalNavigationForDelegateWithIdentifier:0
+                                          webViewIdentifier:1
                                                       error:[OCMArg isKindOfClass:[FWFNSErrorData
                                                                                       class]]
                                                  completion:OCMOCK_ANY]);
@@ -209,8 +209,8 @@
 
   [mockDelegate webViewWebContentProcessDidTerminate:mockWebView];
   OCMVerify([mockFlutterAPI
-      webViewWebContentProcessDidTerminateForDelegateWithIdentifier:@0
-                                                  webViewIdentifier:@1
+      webViewWebContentProcessDidTerminateForDelegateWithIdentifier:0
+                                                  webViewIdentifier:1
                                                          completion:OCMOCK_ANY]);
 }
 

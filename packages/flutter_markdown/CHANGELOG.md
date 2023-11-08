@@ -1,3 +1,7 @@
+## 0.6.18+2
+
+* Removes leading whitespace from list items.
+
 ## 0.6.18+1
 
 * Fixes a typo in README.

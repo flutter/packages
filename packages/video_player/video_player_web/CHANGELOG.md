@@ -1,3 +1,9 @@
+## 2.1.2
+
+* Listens to `loadedmetadata` as an event that marks that initialization is
+  complete. (Fixes playback in Safari iOS 17).
+* Sets the `src` of the underlying video element after every other attribute.
+
 ## 2.1.1
 
 * Ensures that the `autoplay` attribute of the underlying video element is set

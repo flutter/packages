@@ -26,7 +26,7 @@
       authenticationMethod:(nullable NSString *)authenticationMethod
                 completion:(void (^)(FlutterError *_Nullable))completion {
   if (![self.instanceManager containsInstance:instance]) {
-    [self.api createWithIdentifier:@([self.instanceManager addHostCreatedInstance:instance])
+    [self.api createWithIdentifier:[self.instanceManager addHostCreatedInstance:instance]
                               host:host
                              realm:realm
               authenticationMethod:authenticationMethod

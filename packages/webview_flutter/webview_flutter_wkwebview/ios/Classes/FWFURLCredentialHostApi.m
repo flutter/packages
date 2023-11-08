@@ -23,7 +23,7 @@
   return self;
 }
 
-- (void)createWithUserWithIdentifier:(nonnull NSNumber *)identifier
+- (void)createWithUserWithIdentifier:(NSInteger)identifier
                                 user:(nonnull NSString *)user
                             password:(nonnull NSString *)password
                          persistence:(FWFNSUrlCredentialPersistence)persistence
@@ -36,7 +36,7 @@
                      persistence:
                          FWFNativeNSURLCredentialPersistenceFromFWFNSUrlCredentialPersistence(
                              persistence)]
-              withIdentifier:identifier.longValue];
+              withIdentifier:identifier];
 }
 
 - (nullable NSURL *)credentialForIdentifier:(NSNumber *)identifier

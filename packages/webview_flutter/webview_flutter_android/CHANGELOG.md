@@ -2,6 +2,10 @@
 
 * Adds support for `PlatformNavigationDelegate.setOnReceiveHttpAuthRequest`.
 
+## 3.12.1
+
+* Fixes `use_build_context_synchronously` lint violations in the example app.
+
 ## 3.12.0
 
 * Adds support for `PlatformWebViewController.getUserAgent`.
