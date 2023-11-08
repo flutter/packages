@@ -129,6 +129,7 @@ class _WebViewExampleState extends State<WebViewExample> {
     if (WebViewPlatform.instance is WebKitWebViewPlatform) {
       params = WebKitWebViewControllerCreationParams(
         allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
       );
     } else {
       params = const PlatformWebViewControllerCreationParams();
