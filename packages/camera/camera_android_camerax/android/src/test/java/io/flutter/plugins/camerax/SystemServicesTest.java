@@ -97,55 +97,6 @@ public class SystemServicesTest {
   }
 
   @Test
-  public void deviceOrientationChangeTest() {
-    final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    final CameraXProxy mockCameraXProxy = mock(CameraXProxy.class);
-    final Activity mockActivity = mock(Activity.class);
-    final DeviceOrientationManager mockDeviceOrientationManager =
-        mock(DeviceOrientationManager.class);
-    final Boolean isFrontFacing = true;
-    final int sensorOrientation = 90;
-
-    SystemServicesFlutterApiImpl systemServicesFlutterApi =
-        mock(SystemServicesFlutterApiImpl.class);
-    systemServicesHostApi.systemServicesFlutterApi = systemServicesFlutterApi;
-
-    systemServicesHostApi.cameraXProxy = mockCameraXProxy;
-    systemServicesHostApi.setActivity(mockActivity);
-    when(mockCameraXProxy.createDeviceOrientationManager(
-            eq(mockActivity),
-            eq(isFrontFacing),
-            eq(sensorOrientation),
-            any(DeviceOrientationChangeCallback.class)))
-        .thenReturn(mockDeviceOrientationManager);
-
-    final ArgumentCaptor<DeviceOrientationChangeCallback> deviceOrientationChangeCallbackCaptor =
-        ArgumentCaptor.forClass(DeviceOrientationChangeCallback.class);
-
-    systemServicesHostApi.startListeningForDeviceOrientationChange(
-        isFrontFacing, Long.valueOf(sensorOrientation));
-
-    // Test callback method defined in Flutter API is called when device orientation changes.
-    verify(mockCameraXProxy)
-        .createDeviceOrientationManager(
-            eq(mockActivity),
-            eq(isFrontFacing),
-            eq(sensorOrientation),
-            deviceOrientationChangeCallbackCaptor.capture());
-    DeviceOrientationChangeCallback deviceOrientationChangeCallback =
-        deviceOrientationChangeCallbackCaptor.getValue();
-
-    deviceOrientationChangeCallback.onChange(DeviceOrientation.PORTRAIT_DOWN);
-    verify(systemServicesFlutterApi)
-        .sendDeviceOrientationChangedEvent(
-            eq(DeviceOrientation.PORTRAIT_DOWN.toString()), ArgumentMatchers.<Reply<Void>>any());
-
-    // Test that the DeviceOrientationManager starts listening for device orientation changes.
-    verify(mockDeviceOrientationManager).start();
-  }
-
-  @Test
   public void getTempFilePath_returnsCorrectPath() {
     final SystemServicesHostApiImpl systemServicesHostApi =
         new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);

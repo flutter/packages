@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.view.Surface;
 import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.test.core.app.ApplicationProvider;
@@ -56,6 +57,7 @@ public class ImageAnalysisTest {
     final ResolutionSelector mockResolutionSelector = mock(ResolutionSelector.class);
     final long instanceIdentifier = 0;
     final long mockResolutionSelectorId = 25;
+    final int targetRotation = Surface.ROTATION_90;
 
     hostApi.cameraXProxy = mockCameraXProxy;
     instanceManager.addDartCreatedInstance(mockResolutionSelector, mockResolutionSelectorId);
@@ -63,8 +65,9 @@ public class ImageAnalysisTest {
     when(mockCameraXProxy.createImageAnalysisBuilder()).thenReturn(mockImageAnalysisBuilder);
     when(mockImageAnalysisBuilder.build()).thenReturn(mockImageAnalysis);
 
-    hostApi.create(instanceIdentifier, mockResolutionSelectorId);
+    hostApi.create(instanceIdentifier, Long.valueOf(targetRotation), mockResolutionSelectorId);
 
+    verify(mockImageAnalysisBuilder).setTargetRotation(targetRotation);
     verify(mockImageAnalysisBuilder).setResolutionSelector(mockResolutionSelector);
     assertEquals(instanceManager.getInstance(instanceIdentifier), mockImageAnalysis);
   }
@@ -97,5 +100,19 @@ public class ImageAnalysisTest {
     hostApi.clearAnalyzer(instanceIdentifier);
 
     verify(mockImageAnalysis).clearAnalyzer();
+  }
+
+  @Test
+  public void setTargetRotation_makesCallToSetTargetRotation() {
+    final ImageAnalysisHostApiImpl hostApi =
+        new ImageAnalysisHostApiImpl(mockBinaryMessenger, instanceManager, context);
+    final long instanceIdentifier = 32;
+    final int targetRotation = Surface.ROTATION_180;
+
+    instanceManager.addDartCreatedInstance(mockImageAnalysis, instanceIdentifier);
+
+    hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
+
+    verify(mockImageAnalysis).setTargetRotation(targetRotation);
   }
 }

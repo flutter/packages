@@ -217,4 +217,18 @@ public class PreviewTest {
     assertEquals(resolutionInfo.getWidth(), Long.valueOf(resolutionWidth));
     assertEquals(resolutionInfo.getHeight(), Long.valueOf(resolutionHeight));
   }
+
+  @Test
+  public void setTargetRotation_makesCallToSetTargetRotation() {
+    final PreviewHostApiImpl hostApi =
+        new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry);
+    final long instanceIdentifier = 52;
+    final int targetRotation = Surface.ROTATION_180;
+
+    testInstanceManager.addDartCreatedInstance(mockPreview, instanceIdentifier);
+
+    hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
+
+    verify(mockPreview).setTargetRotation(targetRotation);
+  }
 }

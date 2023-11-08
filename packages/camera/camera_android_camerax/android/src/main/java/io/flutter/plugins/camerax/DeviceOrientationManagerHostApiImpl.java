@@ -86,9 +86,8 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
 @Override
 public @NonNull Long getPhotoOrientation() {
     if (deviceOrientationManager == null) {
-        // TODO: throw exception
+      throw new NullPointerException("startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the photo orientation.");
     }
-
     return Long.valueOf(deviceOrientationManager.getPhotoOrientation());
 }
 
@@ -96,9 +95,8 @@ public @NonNull Long getPhotoOrientation() {
 @Override
 public @NonNull Long getVideoOrientation() {
     if (deviceOrientationManager == null) {
-        // TODO: throw exception
+      throw new NullPointerException("startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the video orientation.");
     }
-
     return Long.valueOf(deviceOrientationManager.getVideoOrientation());
 }
 }
