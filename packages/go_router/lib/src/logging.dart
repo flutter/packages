@@ -16,9 +16,9 @@ final Logger logger = Logger('GoRouter');
 bool _enabled = false;
 
 /// Logs the message if logging is enabled.
-void log(String message) {
+void log(String message, {Level level = Level.INFO}) {
   if (_enabled) {
-    logger.info(message);
+    logger.log(level, message);
   }
 }
 
