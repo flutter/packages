@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import '../../webview_flutter_platform_interface.dart';
+import 'webview_credential.dart';
+import '../platform_navigation_delegate.dart';
 
 /// Defines the parameters of a pending HTTP authentication request received by
 /// the webview through a [HttpAuthRequestCallback].
