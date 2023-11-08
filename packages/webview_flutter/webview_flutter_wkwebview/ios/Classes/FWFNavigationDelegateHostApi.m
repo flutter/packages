@@ -115,8 +115,8 @@
                                       completion:
                                           (void (^)(FWFAuthenticationChallengeResponse *_Nullable,
                                                     FlutterError *_Nullable))completion {
-  NSNumber *webViewIdentifier =
-      @([self.instanceManager identifierWithStrongReferenceForInstance:webView]);
+  NSInteger webViewIdentifier =
+      [self.instanceManager identifierWithStrongReferenceForInstance:webView];
 
   FWFURLAuthenticationChallengeFlutterApiImpl *challengeApi =
       [[FWFURLAuthenticationChallengeFlutterApiImpl alloc]
@@ -128,14 +128,15 @@
                           NSAssert(!error, @"%@", error);
                         }];
 
-  [self didReceiveAuthenticationChallengeForDelegateWithIdentifier:
-            @([self identifierForDelegate:instance])
-                                                 webViewIdentifier:webViewIdentifier
-                                               challengeIdentifier:
-                                                   @([self.instanceManager
-                                                       identifierWithStrongReferenceForInstance:
-                                                           challenge])
-                                                        completion:completion];
+  [self
+      didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self
+                                                                     identifierForDelegate:instance]
+                                               webViewIdentifier:webViewIdentifier
+                                             challengeIdentifier:
+                                                 [self.instanceManager
+                                                     identifierWithStrongReferenceForInstance:
+                                                         challenge]
+                                                      completion:completion];
 }
 @end
 
@@ -179,8 +180,13 @@
                                       completion:^(FWFWKNavigationActionPolicyEnumData *policy,
                                                    FlutterError *error) {
                                         NSAssert(!error, @"%@", error);
-                                        decisionHandler(
-                                            FWFNativeWKNavigationActionPolicyFromEnumData(policy));
+                                        if (!error) {
+                                          decisionHandler(
+                                              FWFNativeWKNavigationActionPolicyFromEnumData(
+                                                  policy));
+                                        } else {
+                                          decisionHandler(WKNavigationActionPolicyCancel);
+                                        }
                                       }];
 }
 
@@ -241,6 +247,10 @@
                                                     : nil;
 
                                             completionHandler(disposition, credential);
+                                          } else {
+                                            completionHandler(
+                                                NSURLSessionAuthChallengeCancelAuthenticationChallenge,
+                                                nil);
                                           }
                                         }];
 }

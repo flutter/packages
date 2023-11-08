@@ -106,7 +106,7 @@
                        [[FWFURLHostApiImpl alloc] initWithBinaryMessenger:registrar.messenger
                                                           instanceManager:instanceManager]);
 
-  FWFNSUrlCredentialHostApiSetup(
+  SetUpFWFNSUrlCredentialHostApi(
       registrar.messenger,
       [[FWFURLCredentialHostApiImpl alloc] initWithBinaryMessenger:registrar.messenger
                                                    instanceManager:instanceManager]);
