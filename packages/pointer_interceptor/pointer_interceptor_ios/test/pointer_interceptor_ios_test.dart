@@ -39,6 +39,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(const TestApp());
     await tester.tap(find.text('Test Button'));
+    await tester.pump();
     expect(find.text('Clicked'), findsOneWidget);
   });
 }

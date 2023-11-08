@@ -8,13 +8,4 @@ public class PointerInterceptorIosPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     registrar.register(PointerInterceptorFactory(), withId: "plugins.flutter.dev/pointer_interceptor_ios")
   }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "getPlatformVersion":
-      result("iOS " + UIDevice.current.systemVersion)
-    default:
-      result(FlutterMethodNotImplemented)
-    }
-  }  
 }

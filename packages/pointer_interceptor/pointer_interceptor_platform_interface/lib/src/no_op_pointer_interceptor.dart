@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'pointer_interceptor_platform.dart';
 
 /// A default implementation of [PointerInterceptorPlatform].
-class PlaceholderPointerInterceptor extends PointerInterceptorPlatform {
+class NoOpPointerInterceptor extends PointerInterceptorPlatform {
   @override
   Widget buildWidget(
       {required Widget child,

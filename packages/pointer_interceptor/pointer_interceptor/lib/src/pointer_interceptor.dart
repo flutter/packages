@@ -30,7 +30,7 @@ class PointerInterceptor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PointerInterceptorPlatform.instance.buildWidget(
-        child: child, intercepting: intercepting, debug: debug, key: key);
+    return PointerInterceptorPlatform.instance
+        .buildWidget(child: child, debug: debug, key: key);
   }
 }

@@ -14,11 +14,7 @@ class PointerInterceptorIOSPlugin extends PointerInterceptorPlatform {
   }
 
   @override
-  Widget buildWidget(
-      {required Widget child,
-      bool intercepting = true,
-      bool debug = false,
-      Key? key}) {
+  Widget buildWidget({required Widget child, bool debug = false, Key? key}) {
     return Stack(alignment: Alignment.center, children: <Widget>[
       Positioned.fill(
           child: UiKitView(
