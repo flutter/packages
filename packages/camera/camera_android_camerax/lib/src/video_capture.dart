@@ -28,6 +28,8 @@ class VideoCapture extends UseCase {
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
+  late final VideoCaptureHostApiImpl _api;
+
   /// Creates a [VideoCapture] associated with the given [Recorder].
   static Future<VideoCapture> withOutput(Recorder recorder,
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager}) {
@@ -38,18 +40,16 @@ class VideoCapture extends UseCase {
     return api.withOutputFromInstance(recorder);
   }
 
-  /// Gets the [Recorder] associated with this VideoCapture.
-  Future<Recorder> getOutput() {
-    return _api.getOutputFromInstance(this);
-  }
-
   /// Dynamically sets the target rotation of this instance.
   ///
   /// [rotation] should be one of the [Surface] rotation constants.
   Future<void> setTargetRotation(int rotation) =>
       _api.setTargetRotationFromInstances(this, rotation);
 
-  late final VideoCaptureHostApiImpl _api;
+  /// Gets the [Recorder] associated with this VideoCapture.
+  Future<Recorder> getOutput() {
+    return _api.getOutputFromInstance(this);
+  }
 }
 
 /// Host API implementation of [VideoCapture].
@@ -82,18 +82,18 @@ class VideoCaptureHostApiImpl extends VideoCaptureHostApi {
         .getInstanceWithWeakReference<VideoCapture>(videoCaptureId)!;
   }
 
-  /// Gets the [Recorder] associated with the provided [VideoCapture] instance.
-  Future<Recorder> getOutputFromInstance(VideoCapture instance) async {
-    final int? identifier = instanceManager.getIdentifier(instance);
-    final int recorderId = await getOutput(identifier!);
-    return instanceManager.getInstanceWithWeakReference(recorderId)!;
-  }
-
   /// Dynamically sets the target rotation of [instance] to [rotation].
   Future<void> setTargetRotationFromInstances(
       VideoCapture instance, int rotation) {
     return setTargetRotation(
         instanceManager.getIdentifier(instance)!, rotation);
+  }
+
+  /// Gets the [Recorder] associated with the provided [VideoCapture] instance.
+  Future<Recorder> getOutputFromInstance(VideoCapture instance) async {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    final int recorderId = await getOutput(identifier!);
+    return instanceManager.getInstanceWithWeakReference(recorderId)!;
   }
 }
 

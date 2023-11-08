@@ -84,6 +84,12 @@ class ImageCapture extends UseCase {
   /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture#FLASH_MODE_OFF().
   static const int flashModeOff = 2;
 
+  /// Dynamically sets the target rotation of this instance.
+  ///
+  /// [rotation] should be one of the [Surface] rotation constants.
+  Future<void> setTargetRotation(int rotation) =>
+      _api.setTargetRotationFromInstances(this, rotation);
+
   /// Sets the flash mode to use for image capture.
   Future<void> setFlashMode(int newFlashMode) async {
     return _api.setFlashModeFromInstance(this, newFlashMode);
@@ -109,12 +115,6 @@ class ImageCapture extends UseCase {
   Future<String> takePicture() async {
     return _api.takePictureFromInstance(this);
   }
-
-  /// Dynamically sets the target rotation of this instance.
-  ///
-  /// [rotation] should be one of the [Surface] rotation constants.
-  Future<void> setTargetRotation(int rotation) =>
-      _api.setTargetRotationFromInstances(this, rotation);
 }
 
 /// Host API implementation of [ImageCapture].
@@ -163,6 +163,13 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
             : instanceManager.getIdentifier(resolutionSelector));
   }
 
+  /// Dynamically sets the target rotation of [instance] to [rotation].
+  Future<void> setTargetRotationFromInstances(
+      ImageCapture instance, int rotation) {
+    return setTargetRotation(
+        instanceManager.getIdentifier(instance)!, rotation);
+  }
+
   /// Sets the flash mode for the specified [ImageCapture] instance to take
   /// a picture with.
   Future<void> setFlashModeFromInstance(
@@ -182,12 +189,5 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
 
     final String picturePath = await takePicture(identifier!);
     return picturePath;
-  }
-
-  /// Dynamically sets the target rotation of [instance] to [rotation].
-  Future<void> setTargetRotationFromInstances(
-      ImageCapture instance, int rotation) {
-    return setTargetRotation(
-        instanceManager.getIdentifier(instance)!, rotation);
   }
 }

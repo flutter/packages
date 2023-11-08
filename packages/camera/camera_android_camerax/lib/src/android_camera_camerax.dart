@@ -127,11 +127,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   CameraSelector? cameraSelector;
 
-  /// The clockwise angle through which the output image needs to be rotated
-  /// to be upright on the device screen in its native orientation that is
-  /// initially set when [createCamera] is called.
-  int? initialSensorOrientation;
-
   /// The controller we need to broadcast the different camera events.
   ///
   /// It is a `broadcast` because multiple controllers will connect to
@@ -238,9 +233,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         cameraSelectorLensDirection == CameraSelector.lensFacingFront;
     cameraSelector = createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
-    initialSensorOrientation = cameraDescription.sensorOrientation;
     startListeningForDeviceOrientationChange(
-        cameraIsFrontFacing, initialSensorOrientation!);
+        cameraIsFrontFacing, cameraDescription.sensorOrientation!);
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
@@ -253,7 +247,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider!.unbindAll();
 
     // Retrieve target rotation for UseCases.
-    final int targetRotation = _getTargetRotation(initialSensorOrientation!);
+    final int targetRotation =
+        _getTargetRotation(cameraDescription.sensorOrientation!);
 
     // Configure Preview instance.
     preview = createPreview(

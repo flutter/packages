@@ -64,7 +64,7 @@ class DeviceOrientationManager {
     final DeviceOrientationManagerHostApi api =
         DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
 
-    return api.getPhotoOrientation();
+    return api.getVideoOrientation();
   }
 }
 

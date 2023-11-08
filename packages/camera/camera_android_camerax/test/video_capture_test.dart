@@ -5,6 +5,7 @@
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/recorder.dart';
+import 'package:camera_android_camerax/src/surface.dart';
 import 'package:camera_android_camerax/src/video_capture.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -48,6 +49,31 @@ void main() {
             instanceManager: instanceManager),
         videoCapture);
     verify(mockApi.withOutput(mockRecorderId));
+  });
+
+  test(
+      'setTargetRotation makes call to set target rotation for VideoCapture instance',
+      () async {
+    final MockTestVideoCaptureHostApi mockApi = MockTestVideoCaptureHostApi();
+    TestVideoCaptureHostApi.setup(mockApi);
+
+    final InstanceManager instanceManager = InstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    const int targetRotation = Surface.ROTATION_180;
+    final VideoCapture videoCapture = VideoCapture.detached(
+      instanceManager: instanceManager,
+    );
+    instanceManager.addHostCreatedInstance(
+      videoCapture,
+      0,
+      onCopy: (_) => VideoCapture.detached(instanceManager: instanceManager),
+    );
+
+    await videoCapture.setTargetRotation(targetRotation);
+
+    verify(mockApi.setTargetRotation(
+        instanceManager.getIdentifier(videoCapture), targetRotation));
   });
 
   test('getOutput calls the Java side and returns correct Recorder', () async {

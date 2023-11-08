@@ -57,6 +57,12 @@ class Preview extends UseCase {
   /// https://developer.android.com/reference/androidx/camera/core/Preview.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector).
   final ResolutionSelector? resolutionSelector;
 
+  /// Dynamically sets the target rotation of this instance.
+  ///
+  /// [rotation] should be one of the [Surface] rotation constants.
+  Future<void> setTargetRotation(int rotation) =>
+      _api.setTargetRotationFromInstances(this, rotation);
+
   /// Sets the surface provider for the preview stream.
   ///
   /// Returns the ID of the FlutterSurfaceTextureEntry used on the native end
@@ -75,12 +81,6 @@ class Preview extends UseCase {
   Future<ResolutionInfo> getResolutionInfo() {
     return _api.getResolutionInfoFromInstance(this);
   }
-
-  /// Dynamically sets the target rotation of this instance.
-  ///
-  /// [rotation] should be one of the [Surface] rotation constants.
-  Future<void> setTargetRotation(int rotation) =>
-      _api.setTargetRotationFromInstances(this, rotation);
 }
 
 /// Host API implementation of [Preview].
@@ -123,6 +123,12 @@ class PreviewHostApiImpl extends PreviewHostApi {
             : instanceManager.getIdentifier(resolutionSelector));
   }
 
+  /// Dynamically sets the target rotation of [instance] to [rotation].
+  Future<void> setTargetRotationFromInstances(Preview instance, int rotation) {
+    return setTargetRotation(
+        instanceManager.getIdentifier(instance)!, rotation);
+  }
+
   /// Sets the surface provider of the specified [Preview] instance and returns
   /// the ID corresponding to the surface it will provide.
   Future<int> setSurfaceProviderFromInstance(Preview instance) async {
@@ -144,11 +150,5 @@ class PreviewHostApiImpl extends PreviewHostApi {
     final ResolutionInfo resolutionInfo = await getResolutionInfo(identifier!);
 
     return resolutionInfo;
-  }
-
-  /// Dynamically sets the target rotation of [instance] to [rotation].
-  Future<void> setTargetRotationFromInstances(Preview instance, int rotation) {
-    return setTargetRotation(
-        instanceManager.getIdentifier(instance)!, rotation);
   }
 }

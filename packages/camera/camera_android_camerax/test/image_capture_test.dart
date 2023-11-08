@@ -5,6 +5,7 @@
 import 'package:camera_android_camerax/src/image_capture.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/resolution_selector.dart';
+import 'package:camera_android_camerax/src/surface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -35,7 +36,7 @@ void main() {
       );
       ImageCapture.detached(
         instanceManager: instanceManager,
-        targetRotation: 180,
+        targetRotation: Surface.ROTATION_180,
         targetFlashMode: ImageCapture.flashModeOn,
         resolutionSelector: MockResolutionSelector(),
       );
@@ -52,7 +53,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const int targetRotation = 270;
+      const int targetRotation = Surface.ROTATION_270;
       const int targetFlashMode = ImageCapture.flashModeAuto;
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
@@ -100,6 +101,31 @@ void main() {
 
       verify(mockApi.setFlashMode(
           instanceManager.getIdentifier(imageCapture), flashMode));
+    });
+
+    test(
+        'setTargetRotation makes call to set target rotation for ImageCapture instance',
+        () async {
+      final MockTestImageCaptureHostApi mockApi = MockTestImageCaptureHostApi();
+      TestImageCaptureHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      const int targetRotation = Surface.ROTATION_180;
+      final ImageCapture imageCapture = ImageCapture.detached(
+        instanceManager: instanceManager,
+      );
+      instanceManager.addHostCreatedInstance(
+        imageCapture,
+        0,
+        onCopy: (_) => ImageCapture.detached(instanceManager: instanceManager),
+      );
+
+      await imageCapture.setTargetRotation(targetRotation);
+
+      verify(mockApi.setTargetRotation(
+          instanceManager.getIdentifier(imageCapture), targetRotation));
     });
 
     test('takePicture makes call to capture still image', () async {

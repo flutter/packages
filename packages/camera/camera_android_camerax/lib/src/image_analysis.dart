@@ -67,18 +67,18 @@ class ImageAnalysis extends UseCase {
   /// https://developer.android.com/reference/androidx/camera/core/ImageAnalysis.Builder#setResolutionSelector(androidx.camera.core.resolutionselector.ResolutionSelector).
   final ResolutionSelector? resolutionSelector;
 
+  /// Dynamically sets the target rotation of this instance.
+  ///
+  /// [rotation] should be one of the [Surface] rotation constants.
+  Future<void> setTargetRotation(int rotation) =>
+      _api.setTargetRotationFromInstances(this, rotation);
+
   /// Sets an [Analyzer] to receive and analyze images.
   Future<void> setAnalyzer(Analyzer analyzer) =>
       _api.setAnalyzerFromInstances(this, analyzer);
 
   /// Removes a previously set [Analyzer].
   Future<void> clearAnalyzer() => _api.clearAnalyzerFromInstances(this);
-
-  /// Dynamically sets the target rotation of this instance.
-  ///
-  /// [rotation] should be one of the [Surface] rotation constants.
-  Future<void> setTargetRotation(int rotation) =>
-      _api.setTargetRotationFromInstances(this, rotation);
 }
 
 /// Host API implementation of [ImageAnalysis].
@@ -125,6 +125,13 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     );
   }
 
+  /// Dynamically sets the target rotation of [instance] to [rotation].
+  Future<void> setTargetRotationFromInstances(
+      ImageAnalysis instance, int rotation) {
+    return setTargetRotation(
+        instanceManager.getIdentifier(instance)!, rotation);
+  }
+
   /// Sets the [analyzer] to receive and analyze images on the [instance].
   Future<void> setAnalyzerFromInstances(
     ImageAnalysis instance,
@@ -143,12 +150,5 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
     return clearAnalyzer(
       instanceManager.getIdentifier(instance)!,
     );
-  }
-
-  /// Dynamically sets the target rotation of [instance] to [rotation].
-  Future<void> setTargetRotationFromInstances(
-      ImageAnalysis instance, int rotation) {
-    return setTargetRotation(
-        instanceManager.getIdentifier(instance)!, rotation);
   }
 }

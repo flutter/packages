@@ -24,7 +24,9 @@ void main() {
   group('DeviceOrientationManager', () {
     tearDown(() => TestProcessCameraProviderHostApi.setup(null));
 
-    test('startListeningForDeviceOrientationChangeTest', () async {
+    test(
+        'startListeningForDeviceOrientationChange makes request to start listening for new device orientations',
+        () async {
       final MockTestDeviceOrientationManagerHostApi mockApi =
           MockTestDeviceOrientationManagerHostApi();
       TestDeviceOrientationManagerHostApi.setup(mockApi);
@@ -34,13 +36,41 @@ void main() {
       verify(mockApi.startListeningForDeviceOrientationChange(true, 90));
     });
 
-    test('stopListeningForDeviceOrientationChangeTest', () async {
+    test(
+        'stopListeningForDeviceOrientationChange makes request to stop listening for new device orientations',
+        () async {
       final MockTestDeviceOrientationManagerHostApi mockApi =
           MockTestDeviceOrientationManagerHostApi();
       TestDeviceOrientationManagerHostApi.setup(mockApi);
 
       DeviceOrientationManager.stopListeningForDeviceOrientationChange();
       verify(mockApi.stopListeningForDeviceOrientationChange());
+    });
+
+    test('getPhotorientation retrieves expected orientation', () async {
+      final MockTestDeviceOrientationManagerHostApi mockApi =
+          MockTestDeviceOrientationManagerHostApi();
+      TestDeviceOrientationManagerHostApi.setup(mockApi);
+
+      const int photoOrientation = 270;
+      when(mockApi.getPhotoOrientation()).thenReturn(photoOrientation);
+
+      expect(await DeviceOrientationManager.getPhotoOrientation(),
+          equals(photoOrientation));
+      verify(mockApi.getPhotoOrientation());
+    });
+
+    test('getVideoOrientation retrieves expected orientation', () async {
+      final MockTestDeviceOrientationManagerHostApi mockApi =
+          MockTestDeviceOrientationManagerHostApi();
+      TestDeviceOrientationManagerHostApi.setup(mockApi);
+
+      const int videoOrientation = 180;
+      when(mockApi.getVideoOrientation()).thenReturn(videoOrientation);
+
+      expect(await DeviceOrientationManager.getVideoOrientation(),
+          equals(videoOrientation));
+      verify(mockApi.getVideoOrientation());
     });
 
     test('onDeviceOrientationChanged adds new orientation to stream', () {
