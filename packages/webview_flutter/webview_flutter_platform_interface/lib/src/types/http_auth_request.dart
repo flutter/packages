@@ -50,15 +50,17 @@ import 'webview_credential.dart';
 class HttpAuthRequest {
   /// Creates a [HttpAuthRequest].
   const HttpAuthRequest({
-    required this.onAuthenticate,
+    required this.onProceed,
+    required this.onCancel,
     required this.host,
     this.realm,
   });
 
-  /// The callback to proceed with, or cancel an auth request.
-  ///
-  /// If `credential` is `null`, the request will be canceled.
-  final void Function(WebViewCredential? credential) onAuthenticate;
+  /// The callback to authenticate.
+  final void Function(WebViewCredential credential) onProceed;
+
+  /// The callback to cancel authentication.
+  final void Function() onCancel;
 
   /// The host requiring authentication.
   final String host;

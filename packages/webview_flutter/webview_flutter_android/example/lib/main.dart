@@ -253,7 +253,7 @@ Page resource error:
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                httpRequest.onAuthenticate(
+                httpRequest.onProceed(
                   WebViewCredential(
                     user: usernameTextController.text,
                     password: passwordTextController.text,

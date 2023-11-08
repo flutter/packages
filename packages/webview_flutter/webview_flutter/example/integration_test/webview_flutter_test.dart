@@ -808,8 +808,7 @@ Future<void> main() async {
       unawaited(
         controller.setNavigationDelegate(
           NavigationDelegate(
-            onHttpAuthRequest: (HttpAuthRequest request) =>
-                request.onAuthenticate(
+            onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
               const WebViewCredential(
                 user: 'user',
                 password: 'password',

@@ -966,22 +966,21 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           if (callback != null && host != null && realm != null) {
             callback(
               HttpAuthRequest(
-                onAuthenticate: (WebViewCredential? credential) {
-                  if (credential == null) {
-                    return completionHandler(
-                      NSUrlSessionAuthChallengeDisposition
-                          .cancelAuthenticationChallenge,
-                      null,
-                    );
-                  }
-
-                  return completionHandler(
+                onProceed: (WebViewCredential credential) {
+                  completionHandler(
                     NSUrlSessionAuthChallengeDisposition.useCredential,
                     NSUrlCredential.withUser(
                       user: credential.user,
                       password: credential.password,
                       persistence: NSUrlCredentialPersistence.session,
                     ),
+                  );
+                },
+                onCancel: () {
+                  completionHandler(
+                    NSUrlSessionAuthChallengeDisposition
+                        .cancelAuthenticationChallenge,
+                    null,
                   );
                 },
                 host: host,

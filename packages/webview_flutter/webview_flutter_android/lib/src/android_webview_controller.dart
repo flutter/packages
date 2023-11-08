@@ -1279,15 +1279,11 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         if (callback != null) {
           callback(
             HttpAuthRequest(
-              onAuthenticate: (WebViewCredential? credential) {
-                if (credential == null) {
-                  httpAuthHandler.cancel();
-                } else {
-                  httpAuthHandler.proceed(
-                    credential.user,
-                    credential.password,
-                  );
-                }
+              onProceed: (WebViewCredential credential) {
+                httpAuthHandler.proceed(credential.user, credential.password);
+              },
+              onCancel: () {
+                httpAuthHandler.cancel();
               },
               host: host,
               realm: realm,
