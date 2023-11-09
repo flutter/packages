@@ -49,11 +49,14 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   GoogleSignInPlugin({
     @visibleForTesting bool debugOverrideLoader = false,
     @visibleForTesting GisSdkClient? debugOverrideGisSdkClient,
-    @visibleForTesting StreamController<GoogleSignInUserData?>? debugOverrideUserDataController,
+    @visibleForTesting
+    StreamController<GoogleSignInUserData?>? debugOverrideUserDataController,
   })  : _gisSdkClient = debugOverrideGisSdkClient,
-        _userDataController =
-            debugOverrideUserDataController ?? StreamController<GoogleSignInUserData?>.broadcast() {
-    autoDetectedClientId = html.querySelector(clientIdMetaSelector)?.getAttribute(clientIdAttributeName);
+        _userDataController = debugOverrideUserDataController ??
+            StreamController<GoogleSignInUserData?>.broadcast() {
+    autoDetectedClientId = html
+        .querySelector(clientIdMetaSelector)
+        ?.getAttribute(clientIdAttributeName);
 
     _registerButtonFactory();
 
@@ -106,7 +109,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   @visibleForTesting
   Future<void> get initialized {
     _assertIsInitCalled();
-    return Future.wait<void>(<Future<void>>[_jsSdkLoadedFuture, _initCalled!.future]);
+    return Future.wait<void>(
+        <Future<void>>[_jsSdkLoadedFuture, _initCalled!.future]);
   }
 
   /// Stores the client ID if it was set in a meta-tag of the page.
@@ -142,7 +146,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
         '<meta name="google-signin-client_id" content="CLIENT_ID" /> tag,'
         ' or pass clientId when initializing GoogleSignIn');
 
-    assert(params.serverClientId == null, 'serverClientId is not supported on Web.');
+    assert(params.serverClientId == null,
+        'serverClientId is not supported on Web.');
 
     assert(
         !params.scopes.any((String scope) => scope.contains(' ')),
@@ -181,7 +186,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   /// Render the GSI button web experience.
   Widget renderButton({GSIButtonConfiguration? configuration}) {
-    final GSIButtonConfiguration config = configuration ?? GSIButtonConfiguration();
+    final GSIButtonConfiguration config =
+        configuration ?? GSIButtonConfiguration();
     return FutureBuilder<void>(
       key: Key(config.hashCode.toString()),
       future: initialized,
@@ -190,8 +196,10 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
           return FlexHtmlElementView(
               viewType: 'gsi_login_button',
               onPlatformViewCreated: (int viewId) {
-                final DomElement? element = domDocument.querySelector('#sign_in_button_$viewId');
-                assert(element != null, 'Cannot render GSI button. DOM is not ready!');
+                final DomElement? element =
+                    domDocument.querySelector('#sign_in_button_$viewId');
+                assert(element != null,
+                    'Cannot render GSI button. DOM is not ready!');
                 _gisClient.renderButton(element!, config);
               });
         }
@@ -230,7 +238,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       throw PlatformException(
         code: reason.toString(),
         message: 'Exception raised from signIn',
-        details: 'https://developers.google.com/identity/oauth2/web/guides/error',
+        details:
+            'https://developers.google.com/identity/oauth2/web/guides/error',
       );
     }
   }
@@ -281,19 +290,14 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   }
 
   @override
-  Future<bool> canAccessScopes(List<String> scopes, {String? accessToken}) async {
+  Future<bool> canAccessScopes(List<String> scopes,
+      {String? accessToken}) async {
     await initialized;
 
     return _gisClient.canAccessScopes(scopes, accessToken);
   }
 
   @override
-  Stream<GoogleSignInUserData?>? get userDataEvents => _userDataController.stream;
-
-  /// Requests server auth code from GIS Client per:
-  /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
-  Future<String?> requestServerAuthCode() async {
-    await initialized;
-    return _gisClient.requestServerAuthCode();
-  }
+  Stream<GoogleSignInUserData?>? get userDataEvents =>
+      _userDataController.stream;
 }
