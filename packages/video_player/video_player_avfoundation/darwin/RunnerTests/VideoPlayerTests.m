@@ -285,14 +285,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         httpHeaders:@{}];
   FlutterError *createError;
   FVPTextureMessage *textureMessage = [videoPlayerPlugin create:create error:&createError];
-  NSNumber *textureId = textureMessage.textureId;
+  NSInteger textureId = textureMessage.textureId;
 
   // Ensure that the video is playing before seeking.
   FlutterError *pauseError;
   [videoPlayerPlugin play:textureMessage error:&pauseError];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
-  FVPPositionMessage *message = [FVPPositionMessage makeWithTextureId:textureId position:@1234];
+  FVPPositionMessage *message = [FVPPositionMessage makeWithTextureId:textureId position:1234];
   [videoPlayerPlugin seekTo:message
                  completion:^(FlutterError *_Nullable error) {
                    [initializedExpectation fulfill];
@@ -300,7 +300,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
   OCMVerify([mockDisplayLink setRunning:YES]);
 
-  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[@(textureId)];
   XCTAssertEqual([player position], 1234);
 
   // Simulate a buffer being available.
