@@ -41,9 +41,7 @@ class UrlLauncherWindows extends UrlLauncherPlatform {
     required Map<String, String> headers,
     String? webOnlyWindowName,
   }) async {
-    await _hostApi.launchUrl(url);
-    // Failure is handled via a PlatformException from `launchUrl`.
-    return true;
+    return _hostApi.launchUrl(url);
   }
 
   @override

@@ -66,7 +66,7 @@ class UrlLauncherApi {
   UrlLauncherApi& operator=(const UrlLauncherApi&) = delete;
   virtual ~UrlLauncherApi() {}
   virtual ErrorOr<bool> CanLaunchUrl(const std::string& url) = 0;
-  virtual std::optional<FlutterError> LaunchUrl(const std::string& url) = 0;
+  virtual ErrorOr<bool> LaunchUrl(const std::string& url) = 0;
 
   // The codec used by UrlLauncherApi.
   static const flutter::StandardMessageCodec& GetCodec();

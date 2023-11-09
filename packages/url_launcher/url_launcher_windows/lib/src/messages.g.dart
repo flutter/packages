@@ -60,7 +60,7 @@ class UrlLauncherApi {
     }
   }
 
-  Future<void> launchUrl(String arg_url) async {
+  Future<bool> launchUrl(String arg_url) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.url_launcher_windows.UrlLauncherApi.launchUrl',
         codec,
@@ -78,8 +78,13 @@ class UrlLauncherApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
     } else {
-      return;
+      return (replyList[0] as bool?)!;
     }
   }
 }

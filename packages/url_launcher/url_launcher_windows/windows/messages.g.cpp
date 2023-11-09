@@ -84,13 +84,13 @@ void UrlLauncherApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 return;
               }
               const auto& url_arg = std::get<std::string>(encodable_url_arg);
-              std::optional<FlutterError> output = api->LaunchUrl(url_arg);
-              if (output.has_value()) {
-                reply(WrapError(output.value()));
+              ErrorOr<bool> output = api->LaunchUrl(url_arg);
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
                 return;
               }
               EncodableList wrapped;
-              wrapped.push_back(EncodableValue());
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
               reply(EncodableValue(std::move(wrapped)));
             } catch (const std::exception& exception) {
               reply(WrapError(exception.what()));

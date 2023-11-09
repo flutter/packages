@@ -14,5 +14,5 @@ import 'package:pigeon/pigeon.dart';
 @HostApi(dartHostTestHandler: 'TestUrlLauncherApi')
 abstract class UrlLauncherApi {
   bool canLaunchUrl(String url);
-  void launchUrl(String url);
+  bool launchUrl(String url);
 }
