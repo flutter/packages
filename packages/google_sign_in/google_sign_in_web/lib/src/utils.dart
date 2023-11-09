@@ -20,8 +20,7 @@ final Codec<Object?, String> jwtCodec = json.fuse(utf8).fuse(base64);
 ///   header.payload.signature
 ///
 /// More info: https://regexr.com/789qc
-final RegExp jwtTokenRegexp = RegExp(
-    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
+final RegExp jwtTokenRegexp = RegExp(r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
 
 /// Decodes the `claims` of a JWT token and returns them as a Map.
 ///
@@ -65,15 +64,13 @@ Map<String, Object?>? getResponsePayload(CredentialResponse? response) {
 ///
 /// May return `null`, if the `credentialResponse` is null, or its `credential`
 /// cannot be decoded.
-GoogleSignInUserData? gisResponsesToUserData(
-    CredentialResponse? credentialResponse) {
+GoogleSignInUserData? gisResponsesToUserData(CredentialResponse? credentialResponse) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   if (payload == null) {
     return null;
   }
 
-  assert(credentialResponse?.credential != null,
-      'The CredentialResponse cannot be null and have a payload.');
+  assert(credentialResponse?.credential != null, 'The CredentialResponse cannot be null and have a payload.');
 
   return GoogleSignInUserData(
     email: payload['email']! as String,
@@ -88,8 +85,7 @@ GoogleSignInUserData? gisResponsesToUserData(
 ///
 /// May return `null` if the `credentialResponse` is null, its `credential`
 /// cannot be decoded, or the `exp` field is not set on the JWT payload.
-DateTime? getCredentialResponseExpirationTimestamp(
-    CredentialResponse? credentialResponse) {
+DateTime? getCredentialResponseExpirationTimestamp(CredentialResponse? credentialResponse) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   // Get the 'exp' field from the payload, if present.
   final int? exp = (payload != null) ? payload['exp'] as int? : null;
@@ -99,9 +95,10 @@ DateTime? getCredentialResponseExpirationTimestamp(
 
 /// Converts responses from the GIS library into TokenData for the plugin.
 GoogleSignInTokenData gisResponsesToTokenData(
-    CredentialResponse? credentialResponse, TokenResponse? tokenResponse) {
+    CredentialResponse? credentialResponse, TokenResponse? tokenResponse, CodeResponse? codeResponse) {
   return GoogleSignInTokenData(
     idToken: credentialResponse?.credential,
     accessToken: tokenResponse?.access_token,
+    serverAuthCode: codeResponse?.code,
   );
 }

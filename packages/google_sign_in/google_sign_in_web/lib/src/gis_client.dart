@@ -11,8 +11,7 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
 
-import 'button_configuration.dart'
-    show GSIButtonConfiguration, convertButtonConfiguration;
+import 'button_configuration.dart' show GSIButtonConfiguration, convertButtonConfiguration;
 import 'dom.dart';
 import 'people.dart' as people;
 import 'utils.dart' as utils;
@@ -51,6 +50,14 @@ class GisSdkClient {
       onResponse: _onTokenResponse,
       onError: _onTokenError,
     );
+
+    _codeClient = _initializeCodeClient(
+      clientId,
+      hostedDomain: hostedDomain,
+      onResponse: _onCodeResponse,
+      onError: _onCodeError,
+      scopes: initialScopes,
+    );
   }
 
   void _logIfEnabled(String message, [List<Object?>? more]) {
@@ -63,14 +70,21 @@ class GisSdkClient {
   void _configureStreams() {
     _tokenResponses = StreamController<TokenResponse>.broadcast();
     _credentialResponses = StreamController<CredentialResponse>.broadcast();
+    _codeResponses = StreamController<CodeResponse>.broadcast();
 
     _tokenResponses.stream.listen((TokenResponse response) {
       _lastTokenResponse = response;
-      _lastTokenResponseExpiration =
-          DateTime.now().add(Duration(seconds: response.expires_in));
+      _lastTokenResponseExpiration = DateTime.now().add(Duration(seconds: response.expires_in));
     }, onError: (Object error) {
       _logIfEnabled('Error on TokenResponse:', <Object>[error.toString()]);
       _lastTokenResponse = null;
+    });
+
+    _codeResponses.stream.listen((CodeResponse response) {
+      _lastCodeResponse = response;
+    }, onError: (Object error) {
+      _logIfEnabled('Error on CodeResponse:', <Object>[error.toString()]);
+      _lastCodeResponse = null;
     });
 
     _credentialResponses.stream.listen((CredentialResponse response) {
@@ -116,8 +130,7 @@ class GisSdkClient {
       cancel_on_tap_outside: false,
       auto_select: true, // Attempt to sign-in silently.
       hd: hostedDomain,
-      use_fedcm_for_prompt:
-          useFedCM, // Use the native browser prompt, when available.
+      use_fedcm_for_prompt: useFedCM, // Use the native browser prompt, when available.
     );
     id.initialize(idConfig);
   }
@@ -174,6 +187,44 @@ class GisSdkClient {
     _tokenResponses.addError(getProperty(error!, 'type'));
   }
 
+// Creates a `oauth2.CodeClient` used for authorization (scope) requests.
+  CodeClient _initializeCodeClient(
+    String clientId, {
+    String? hostedDomain,
+    required List<String> scopes,
+    required CodeClientCallbackFn onResponse,
+    required ErrorCallbackFn onError,
+  }) {
+    // Create a Token Client for authorization calls.
+    final CodeClientConfig codeConfig = CodeClientConfig(
+      client_id: clientId,
+      hosted_domain: hostedDomain,
+      callback: allowInterop(_onCodeResponse),
+      error_callback: allowInterop(_onCodeError),
+      scope: scopes.join(' '),
+      auto_select: true,
+      enable_serial_consent: true,
+      hint: 'hint',
+      redirect_uri: null,
+      select_account: true,
+      state: null,
+      ux_mode: UxMode.popup,
+    );
+    return oauth2.initCodeClient(codeConfig);
+  }
+
+  void _onCodeResponse(CodeResponse response) {
+    if (response.error != null) {
+      _codeResponses.addError(response.error!);
+    } else {
+      _codeResponses.add(response);
+    }
+  }
+
+  void _onCodeError(Object? error) {
+    _codeResponses.addError(getProperty(error!, 'type'));
+  }
+
   /// Attempts to sign-in the user using the OneTap UX flow.
   ///
   /// If the user consents, to OneTap, the [GoogleSignInUserData] will be
@@ -181,8 +232,7 @@ class GisSdkClient {
   /// Else, it'll be synthesized by a request to the People API later, and the
   /// `idToken` will be null.
   Future<GoogleSignInUserData?> signInSilently() async {
-    final Completer<GoogleSignInUserData?> userDataCompleter =
-        Completer<GoogleSignInUserData?>();
+    final Completer<GoogleSignInUserData?> userDataCompleter = Completer<GoogleSignInUserData?>();
 
     // Ask the SDK to render the OneClick sign-in.
     //
@@ -206,21 +256,17 @@ class GisSdkClient {
     }
 
     if (moment.isDismissedMoment() &&
-        moment.getDismissedReason() ==
-            MomentDismissedReason.credential_returned) {
+        moment.getDismissedReason() == MomentDismissedReason.credential_returned) {
       // Kick this part of the handler to the bottom of the JS event queue, so
       // the _credentialResponses stream has time to propagate its last value,
       // and we can use _lastCredentialResponse.
       return Future<void>.delayed(Duration.zero, () {
-        completer
-            .complete(utils.gisResponsesToUserData(_lastCredentialResponse));
+        completer.complete(utils.gisResponsesToUserData(_lastCredentialResponse));
       });
     }
 
     // In any other 'failed' moments, return null and add an error to the stream.
-    if (moment.isNotDisplayed() ||
-        moment.isSkippedMoment() ||
-        moment.isDismissedMoment()) {
+    if (moment.isNotDisplayed() || moment.isSkippedMoment() || moment.isDismissedMoment()) {
       final String reason = moment.getNotDisplayedReason()?.toString() ??
           moment.getSkippedReason()?.toString() ??
           moment.getDismissedReason()?.toString() ??
@@ -237,6 +283,14 @@ class GisSdkClient {
     GSIButtonConfiguration options,
   ) async {
     return id.renderButton(parent, convertButtonConfiguration(options)!);
+  }
+
+  /// Requests a server auth code per:
+  /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
+  Future<String?> requestServerAuthCode() async {
+    _codeClient.requestCode();
+    final CodeResponse response = await _codeResponses.stream.first;
+    return response.code;
   }
 
   // TODO(dit): Clean this up. https://github.com/flutter/flutter/issues/137727
@@ -260,8 +314,7 @@ class GisSdkClient {
         ]);
     // If we already know the user, use their `email` as a `hint`, so they don't
     // have to pick their user again in the Authorization popup.
-    final GoogleSignInUserData? knownUser =
-        utils.gisResponsesToUserData(_lastCredentialResponse);
+    final GoogleSignInUserData? knownUser = utils.gisResponsesToUserData(_lastCredentialResponse);
     // This toggles a popup, so `signIn` *must* be called with
     // user activation.
     _tokenClient.requestAccessToken(OverridableTokenClientConfig(
@@ -297,8 +350,7 @@ class GisSdkClient {
     }
     // Complete user data either with the _lastCredentialResponse seen,
     // or the synthetic _requestedUserData from above.
-    return utils.gisResponsesToUserData(_lastCredentialResponse) ??
-        _requestedUserData;
+    return utils.gisResponsesToUserData(_lastCredentialResponse) ?? _requestedUserData;
   }
 
   /// Returns a [GoogleSignInTokenData] from the latest seen responses.
@@ -306,6 +358,7 @@ class GisSdkClient {
     return utils.gisResponsesToTokenData(
       _lastCredentialResponse,
       _lastTokenResponse,
+      _lastCodeResponse,
     );
   }
 
@@ -328,8 +381,7 @@ class GisSdkClient {
   Future<bool> isSignedIn() async {
     bool isSignedIn = false;
     if (_lastCredentialResponse != null) {
-      final DateTime? expiration = utils
-          .getCredentialResponseExpirationTimestamp(_lastCredentialResponse);
+      final DateTime? expiration = utils.getCredentialResponseExpirationTimestamp(_lastCredentialResponse);
       // All Google ID Tokens provide an "exp" date. If the method above cannot
       // extract `expiration`, it's because `_lastCredentialResponse`'s contents
       // are unexpected (or wrong) in any way.
@@ -351,6 +403,7 @@ class GisSdkClient {
     _lastCredentialResponse = null;
     _lastTokenResponse = null;
     _requestedUserData = null;
+    _lastCodeResponse = null;
   }
 
   /// Requests the list of [scopes] passed in to the client.
@@ -359,8 +412,7 @@ class GisSdkClient {
   Future<bool> requestScopes(List<String> scopes) async {
     // If we already know the user, use their `email` as a `hint`, so they don't
     // have to pick their user again in the Authorization popup.
-    final GoogleSignInUserData? knownUser =
-        utils.gisResponsesToUserData(_lastCredentialResponse);
+    final GoogleSignInUserData? knownUser = utils.gisResponsesToUserData(_lastCredentialResponse);
 
     _tokenClient.requestAccessToken(OverridableTokenClientConfig(
       prompt: knownUser == null ? 'select_account' : '',
@@ -382,10 +434,8 @@ class GisSdkClient {
   Future<bool> canAccessScopes(List<String> scopes, String? accessToken) async {
     if (accessToken != null && _lastTokenResponse != null) {
       if (accessToken == _lastTokenResponse!.access_token) {
-        final bool isTokenValid =
-            _lastTokenResponseExpiration?.isAfter(DateTime.now()) ?? false;
-        return isTokenValid &&
-            oauth2.hasGrantedAllScopes(_lastTokenResponse!, scopes);
+        final bool isTokenValid = _lastTokenResponseExpiration?.isAfter(DateTime.now()) ?? false;
+        return isTokenValid && oauth2.hasGrantedAllScopes(_lastTokenResponse!, scopes);
       }
     }
     return false;
@@ -402,16 +452,19 @@ class GisSdkClient {
 
   // The Google Identity Services client for oauth requests.
   late TokenClient _tokenClient;
+  late CodeClient _codeClient;
 
   // Streams of credential and token responses.
   late StreamController<CredentialResponse> _credentialResponses;
   late StreamController<TokenResponse> _tokenResponses;
+  late StreamController<CodeResponse> _codeResponses;
 
   // The last-seen credential and token responses
   CredentialResponse? _lastCredentialResponse;
   TokenResponse? _lastTokenResponse;
   // Expiration timestamp for the lastTokenResponse, which only has an `expires_in` field.
   DateTime? _lastTokenResponseExpiration;
+  CodeResponse? _lastCodeResponse;
 
   /// The StreamController onto which the GIS Client propagates user authentication events.
   ///
