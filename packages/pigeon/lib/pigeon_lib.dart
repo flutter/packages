@@ -1219,6 +1219,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           location: apiLocation,
           arguments: arguments,
           isAsynchronous: isAsynchronous,
+          mustBeImplemented: true,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,
           offset: node.offset,
@@ -1313,13 +1314,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         final List<NamedType> arguments =
             parameters.parameters.map(formalParameterToField).toList();
         final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
-        final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
-                ?.arguments
-                ?.arguments
-                .first
-                .asNullable<dart_ast.SimpleStringLiteral>()
-                ?.value ??
-            '';
         final String swiftFunction =
             _findMetadata(node.metadata, 'SwiftFunction')
                     ?.arguments
@@ -1354,9 +1348,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               isNullable: returnType.question != null,
             ),
             location: ApiLocation.flutter,
+            mustBeImplemented: type.question == null,
             arguments: arguments,
             isAsynchronous: isAsynchronous,
-            objcSelector: objcSelector,
             swiftFunction: swiftFunction,
             offset: node.offset,
             taskQueueType: taskQueueType,

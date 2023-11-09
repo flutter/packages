@@ -1117,9 +1117,8 @@ class $InstanceManager {
     required String dartPackageName,
   }) {
     final String codecName = _getCodecName(api.name);
-    final List<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toList();
-    // TODO: ENUMS!
+
+    // TODO: Create a _writeCustomCodec just for proxy api
     indent.writeln('''
 class $codecName extends StandardMessageCodec {
  const $codecName(this.instanceManager);
@@ -1149,53 +1148,75 @@ class $codecName extends StandardMessageCodec {
 }
 ''');
 
+    // Methods implemented on the host side.
+    final Iterable<Method> hostMethods = api.methods.where(
+      (Method method) => method.location == ApiLocation.host,
+    );
+    // Methods implemented on the Flutter side.
+    final Iterable<Method> flutterMethods = api.methods.where(
+      (Method method) => method.location == ApiLocation.flutter,
+    );
+
+    final Iterable<Field> attachedFields = api.fields.where(
+      (Field field) => field.isAttached,
+    );
+    final Iterable<Field> nonAttachedFields = api.fields.where(
+      (Field field) => !field.isAttached,
+    );
+
     addDocumentationComments(
-        indent, api.documentationComments, _docCommentSpec);
-    indent.write('class ${api.name} implements \$Copyable ');
-    indent.addScoped('{', '}', () {
+      indent,
+      api.documentationComments,
+      _docCommentSpec,
+    );
+    indent.writeScoped('class ${api.name} implements \$Copyable {', '}', () {
       for (final Constructor constructor in api.constructors) {
         addDocumentationComments(
-            indent, constructor.documentationComments, _docCommentSpec);
+          indent,
+          constructor.documentationComments,
+          _docCommentSpec,
+        );
 
-        String argSignature = '';
-        String sendArgument = 'null';
+        final List<String> unAttachedFieldNames = _asParameterNamesList(
+          nonAttachedFields,
+          root.enums,
+          getArgumentName: _getArgumentName,
+        );
+        final List<String> parameterNames = _asParameterNamesList(
+          constructor.arguments,
+          root.enums,
+        );
+        final String channelSendNames =
+            (unAttachedFieldNames + parameterNames).join(', ');
 
-        if (constructor.arguments.isNotEmpty) {
-          String argNameFunc(int index, NamedType type) =>
-              _getSafeArgumentName(index, type);
+        final String sendArgument =
+            '<Object?>[instanceIdentifier, $channelSendNames]';
+        final String argSignature = _getConstructorArgumentsSignature(
+          constructor,
+          _getSafeArgumentName,
+        );
 
-          final Iterable<String> argExpressions =
-              indexMap(constructor.arguments, (int index, NamedType type) {
-            final String name = argNameFunc(index, type);
-            if (root.enums
-                .map((Enum e) => e.name)
-                .contains(type.type.baseName)) {
-              return '$name${type.type.isNullable ? '?' : ''}.index';
-            } else {
-              return name;
-            }
-          });
-          sendArgument =
-              '<Object?>[instanceIdentifier, ${argExpressions.join(', ')}]';
-          argSignature =
-              _getConstructorArgumentsSignature(constructor, argNameFunc);
-        }
+        // TODO: rename binarymessenger and instancemanager fields with $
 
+        // Adds prefixes a constructor name with a '.' if it is not empty.
         final String constructorNameWithDot =
             constructor.name.isEmpty ? '' : '.${constructor.name}';
+        indent.writeScoped('${api.name}$constructorNameWithDot({', '})', () {
+          indent.writeln(r'this.binaryMessenger,');
+          indent.writeln(r'$InstanceManager? customInstanceManager,');
 
-        indent.write('${api.name}$constructorNameWithDot');
-        indent.addScoped('({', '})', () {
-          indent.writeln(
-              r'this.binaryMessenger, $InstanceManager? customInstanceManager,');
           for (final Field field in api.fields) {
             if (!field.isAttached) {
-              indent.writeln('required this.${field.name},');
+              indent.writeln(
+                '${field.type.isNullable ? '' : 'required '}this.${field.name},',
+              );
             }
           }
-          for (final Method method in api.methods.where(
-              (Method method) => method.location == ApiLocation.flutter)) {
-            indent.writeln('this.${method.name},');
+
+          for (final Method method in flutterMethods) {
+            indent.writeln(
+              '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
+            );
           }
           indent.writeln(argSignature);
         });
@@ -1247,18 +1268,18 @@ if (replyList == null) {
       indent.addScoped('({', '})', () {
         indent.writeln(
             r'this.binaryMessenger, $InstanceManager? instanceManager,');
-        for (final Field field in api.fields) {
-          if (!field.isAttached) {
-            indent.writeln('required this.${field.name},');
-          }
+        for (final Field field in nonAttachedFields) {
+          indent.writeln('required this.${field.name},');
         }
-        for (final Method method in api.methods
-            .where((Method method) => method.location == ApiLocation.flutter)) {
-          indent.writeln('this.${method.name},');
+        for (final Method method in flutterMethods) {
+          indent.writeln(
+            '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
+          );
         }
       });
       indent.writeln(
-          r': instanceManager = instanceManager ?? $InstanceManager.instance;');
+        r': instanceManager = instanceManager ?? $InstanceManager.instance;',
+      );
 
       indent.write('static void setUpDartMessageHandlers');
       indent.addScoped('({', '})', () {
@@ -1274,8 +1295,7 @@ if (replyList == null) {
           '${api.name} Function($nonAttachedFieldsSignature)? \$detached,',
         );
 
-        for (final Method method in api.methods
-            .where((Method method) => method.location == ApiLocation.flutter)) {
+        for (final Method method in flutterMethods) {
           final bool isAsync = method.isAsynchronous;
           final String returnType = isAsync
               ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
@@ -1285,16 +1305,14 @@ if (replyList == null) {
             _getArgumentName,
           );
           indent.writeln(
-              '$returnType Function(${api.name} instance, $argSignature)? ${method.name},');
+            '$returnType Function(${api.name} instance, $argSignature)? ${method.name},',
+          );
         }
       });
-      indent.addScoped('{', '}', () {
-        final String callbackMethodFields = api.methods
-            .where((Method method) => method.location == ApiLocation.flutter)
-            .fold('', (String previousValue, Method method) {
-          return '${method.name}: ${method.name},\n';
-        });
 
+      final List<String> customEnumNames =
+          root.enums.map((Enum x) => x.name).toList();
+      indent.addScoped('{', '}', () {
         indent.addScoped('{', '}', () {
           indent.writeln(
             'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
@@ -1376,7 +1394,7 @@ if (replyList == null) {
               indent.addScoped('${api.name}.\$detached(', '),', () {
                 indent.writeln('binaryMessenger: binaryMessenger,');
                 indent.writeln('instanceManager: instanceManager,');
-                for (final Field field in api.fields) {
+                for (final Field field in nonAttachedFields) {
                   if (!field.isAttached) {
                     // TODO: don't pass 0 here. maybe create func for named args
                     indent.writeln(
@@ -1384,7 +1402,6 @@ if (replyList == null) {
                     );
                   }
                 }
-                indent.writeln(callbackMethodFields);
               });
               indent.writeln('instanceIdentifier!,');
             });
@@ -1429,10 +1446,9 @@ if (replyList == null) {
               indent.writeln(
                   "'Argument for $channelName was null, expected non-null ${api.name}');");
               String call;
-              // TODO: Nullable callback methods
               if (method.arguments.isEmpty) {
                 call =
-                    '(${method.name} ?? instance!.${method.name})?.call(instance!)';
+                    '(${method.name} ?? instance!.${method.name})${method.mustBeImplemented ? '' : '?'}.call(instance!)';
               } else {
                 String argNameFunc(int index, NamedType type) =>
                     _getSafeArgumentName(index, type);
@@ -1463,7 +1479,7 @@ if (replyList == null) {
                   return '$name${field.type.isNullable ? '' : '!'}';
                 });
                 call =
-                    '(${method.name} ?? instance!.${method.name})?.call(instance!, ${argNames.join(', ')})';
+                    '(${method.name} ?? instance!.${method.name})${method.mustBeImplemented ? '' : '?'}.call(instance!, ${argNames.join(', ')})';
               }
               indent.writeScoped('try {', '} ', () {
                 if (method.returnType.isVoid) {
@@ -1507,14 +1523,13 @@ if (replyList == null) {
       indent.format(r'''
 final BinaryMessenger? binaryMessenger;
 final $InstanceManager instanceManager;''');
-      for (final Field field in api.fields) {
+      for (final Field field in nonAttachedFields) {
         if (!field.isAttached) {
           indent.writeln(
               'final ${_addGenericTypesNullable(field.type)} ${field.name};');
         }
       }
-      for (final Method method in api.methods
-          .where((Method method) => method.location == ApiLocation.flutter)) {
+      for (final Method method in flutterMethods) {
         final bool isAsync = method.isAsynchronous;
         final String returnType = isAsync
             ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
@@ -1526,16 +1541,12 @@ final $InstanceManager instanceManager;''');
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
         indent.writeln(
-          'final $returnType Function(${api.name} instance, $argSignature)? ${method.name};',
+          'final $returnType Function(${api.name} instance, $argSignature)${method.mustBeImplemented ? '' : '?'} ${method.name};',
         );
       }
       indent.newln();
 
-      for (final Field field in api.fields) {
-        if (!field.isAttached) {
-          continue;
-        }
-
+      for (final Field field in attachedFields) {
         final String type = _addGenericTypesNullable(field.type);
         indent.writeln('late final $type ${field.name} = _${field.name}();');
         indent.write('$type _${field.name}() ');
@@ -1855,6 +1866,14 @@ String _addGenericTypesNullable(TypeDeclaration type) {
   return type.isNullable ? '$genericType?' : genericType;
 }
 
+/// Write an assertion.
+///
+/// ```
+/// assert(
+///   $assertion,
+///   ${rawErrorMessageString ? r : ''}'$errorMessage',
+/// );
+/// ```
 void _writeAssert(
   Indent indent, {
   required String assertion,
@@ -1865,6 +1884,31 @@ void _writeAssert(
     indent.writeln('$assertion,');
     indent.writeln("${rawErrorMessageString ? 'r' : ''}'$errorMessage',");
   });
+}
+
+/// Create a list of parameter names from a list of of parameters.
+///
+/// Converts enums to use their index.
+///
+/// ```dart
+/// apple, banana, myEnum${type.isNullable : '?' : ''}.index
+/// ```
+List<String> _asParameterNamesList(
+  Iterable<NamedType> parameters,
+  List<Enum> enums, {
+  String Function(int index, NamedType arg) getArgumentName =
+      _getSafeArgumentName,
+}) {
+  final List<String> names = <String>[];
+  enumerate(parameters, (int index, NamedType type) {
+    final String name = getArgumentName(index, type);
+    if (enums.map((Enum e) => e.name).contains(type.type.baseName)) {
+      names.add('$name${type.type.isNullable ? '?' : ''}.index');
+    } else {
+      names.add(name);
+    }
+  });
+  return names;
 }
 
 /// Converts [inputPath] to a posix absolute path.

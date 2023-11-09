@@ -33,6 +33,7 @@ class Method extends Node {
     required this.returnType,
     required this.arguments,
     required this.location,
+    required this.mustBeImplemented,
     this.isAsynchronous = false,
     this.offset,
     this.objcSelector = '',
@@ -74,6 +75,12 @@ class Method extends Node {
 
   /// Where the API's implementation of this method is located, host or Flutter.
   ApiLocation location;
+
+  /// Whether this method is required to be implemented.
+  ///
+  /// This flag is typically used to determine whether a callback method for
+  /// a `ProxyApi` is nullable or not.
+  bool mustBeImplemented;
 
   @override
   String toString() {
