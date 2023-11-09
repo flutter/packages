@@ -1,7 +1,3 @@
-## 0.12.2
-
-* Adds server auth code retrieval to google_sign_in_web.
-
 ## 0.12.1
 
 * Enables FedCM on browsers that support this authentication mechanism.
