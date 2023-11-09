@@ -5,14 +5,14 @@
 Pod::Spec.new do |s|
   s.name             = 'pointer_interceptor_ios'
   s.version          = '0.0.1'
-  s.summary          = 'A new Flutter plugin project.'
+  s.summary          = 'Pointer Interceptor IOS'
   s.description      = <<-DESC
-A new Flutter plugin project.
+This Flutter plugin provides means to prevent gestures from being swallowed by PlatformView on iOS.
                        DESC
-  s.homepage         = 'http://example.com'
-  s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
-  s.source           = { :path => '.' }
+  s.homepage         = 'https://github.com/flutter/packages'
+  s.license          = { :type => 'BSD', :file => '../LICENSE' }
+  s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
+  s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor_ios' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
   s.platform = :ios, '11.0'
