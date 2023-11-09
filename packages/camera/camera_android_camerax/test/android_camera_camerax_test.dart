@@ -168,8 +168,7 @@ void main() {
   test(
       'createCamera requests permissions, starts listening for device orientation changes, updates camera state observers, and returns flutter surface texture ID',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -236,8 +235,7 @@ void main() {
   test(
       'createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -283,7 +281,7 @@ void main() {
       'createCamera properly sets preset resolution for non-video capture use cases',
       () async {
     final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+        FakeAndroidCameraCameraX(); // TODO: this one has issues
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -1458,10 +1456,19 @@ void main() {
 }
 
 /// Fake [AndroidCameraCameraX] that stubs behavior of some methods for testing.
+///
+/// Note that this class depends on the `create...` methods diretly mirroring
+/// the implementation for [AndroidCameraCameraX], and thus is only useful for
+/// making sure the `create...` methods are called to create the relevant object.
+///  This error-prone method should be fixed; see
+/// https://github.com/flutter/flutter/issues/125926 for more details.
 class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
-  FakeAndroidCameraCameraX({super.shouldCreateDetachedObjectForTesting})
-      : super.forTesting();
+  FakeAndroidCameraCameraX({this.shouldCreateDetachedObjectForTesting = false})
+      : super.forTesting(
+            shouldCreateDetachedObjectForTesting:
+                shouldCreateDetachedObjectForTesting);
 
+  late bool shouldCreateDetachedObjectForTesting;
   bool cameraPermissionsRequested = false;
   bool startedListeningForDeviceOrientationChanges = false;
 
@@ -1500,6 +1507,11 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   @override
   Preview createPreview(
       {required int targetRotation, ResolutionSelector? resolutionSelector}) {
+    if (shouldCreateDetachedObjectForTesting) {
+      return Preview.detached(
+          targetRotation: targetRotation,
+          resolutionSelector: resolutionSelector);
+    }
     when(testPreview.resolutionSelector).thenReturn(resolutionSelector);
     return testPreview;
   }
@@ -1507,6 +1519,11 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   @override
   ImageCapture createImageCapture(
       {required int targetRotation, ResolutionSelector? resolutionSelector}) {
+    if (shouldCreateDetachedObjectForTesting) {
+      return ImageCapture.detached(
+          targetRotation: targetRotation,
+          resolutionSelector: resolutionSelector);
+    }
     when(testImageCapture.resolutionSelector).thenReturn(resolutionSelector);
     return testImageCapture;
   }
@@ -1525,6 +1542,11 @@ class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
   @override
   ImageAnalysis createImageAnalysis(
       {required int targetRotation, ResolutionSelector? resolutionSelector}) {
+    if (shouldCreateDetachedObjectForTesting) {
+      return ImageAnalysis.detached(
+          targetRotation: targetRotation,
+          resolutionSelector: resolutionSelector);
+    }
     when(testImageAnalysis.resolutionSelector).thenReturn(resolutionSelector);
     return testImageAnalysis;
   }

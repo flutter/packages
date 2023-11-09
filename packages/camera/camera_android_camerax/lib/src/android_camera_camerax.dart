@@ -1029,8 +1029,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         cameraIsFrontFacing, sensorOrientation);
   }
 
-  // TODO: start using _shouldCreateDetachedObjectForTesting
-
   /// Returns a [CameraSelector] based on the specified camera lens direction.
   @visibleForTesting
   CameraSelector createCameraSelector(int cameraSelectorLensDirection) {
