@@ -1177,40 +1177,19 @@ class $codecName extends StandardMessageCodec {
           _docCommentSpec,
         );
 
-        final List<String> unAttachedFieldNames = _asParameterNamesList(
-          nonAttachedFields,
-          root.enums,
-          getArgumentName: _getArgumentName,
-        );
-        final List<String> parameterNames = _asParameterNamesList(
-          constructor.arguments,
-          root.enums,
-        );
-        final String channelSendNames =
-            (unAttachedFieldNames + parameterNames).join(', ');
-
-        final String sendArgument =
-            '<Object?>[instanceIdentifier, $channelSendNames]';
-        final String argSignature = _getConstructorArgumentsSignature(
-          constructor,
-          _getSafeArgumentName,
-        );
-
         // TODO: rename binarymessenger and instancemanager fields with $
 
         // Adds prefixes a constructor name with a '.' if it is not empty.
         final String constructorNameWithDot =
             constructor.name.isEmpty ? '' : '.${constructor.name}';
-        indent.writeScoped('${api.name}$constructorNameWithDot({', '})', () {
+        indent.writeScoped('${api.name}$constructorNameWithDot({', '}) ', () {
           indent.writeln(r'this.binaryMessenger,');
           indent.writeln(r'$InstanceManager? customInstanceManager,');
 
-          for (final Field field in api.fields) {
-            if (!field.isAttached) {
-              indent.writeln(
-                '${field.type.isNullable ? '' : 'required '}this.${field.name},',
-              );
-            }
+          for (final Field field in nonAttachedFields) {
+            indent.writeln(
+              '${field.type.isNullable ? '' : 'required '}this.${field.name},',
+            );
           }
 
           for (final Method method in flutterMethods) {
@@ -1218,68 +1197,101 @@ class $codecName extends StandardMessageCodec {
               '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
             );
           }
-          indent.writeln(argSignature);
-        });
-        indent.write(
-            r': instanceManager = customInstanceManager ?? $InstanceManager.instance');
 
-        indent.addScoped('{', '}', () {
-          final String channelName =
-              makeChannelNameForConstructor(api, constructor, dartPackageName);
-          indent.writeln(
-              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
-          indent.nest(2, () {
-            indent.writeln("r'$channelName', $codecName(instanceManager),");
-            indent.writeln('binaryMessenger: binaryMessenger);');
+          enumerate(constructor.arguments, (int index, NamedType parameter) {
+            indent.writeln(
+              '${_asDeclaredParameter(index, parameter, isNamedParameter: true)},',
+            );
           });
+        }, addTrailingNewline: false);
 
-          indent.writeln(
-            'final int instanceIdentifier = instanceManager.addDartCreatedInstance(this);',
-          );
-          indent.write(
-            'channel.send($sendArgument).then<void>((Object? value)',
-          );
+        indent.addScoped(
+          r': instanceManager = customInstanceManager ?? $InstanceManager.instance {',
+          '}',
+          () {
+            final String channelName = makeChannelNameForConstructor(
+              api,
+              constructor,
+              dartPackageName,
+            );
+            _writeBasicMessageChannel(
+              indent,
+              channelName: channelName,
+              codecVariableName: '$codecName(instanceManager)',
+            );
+            indent.writeln(
+              'final int instanceIdentifier = instanceManager.addDartCreatedInstance(this);',
+            );
 
-          indent.addScoped('{', '});', () {
-            indent.format('''
-final List<Object?>? replyList = value as List<Object?>?;
-if (replyList == null) {
-\tthrow PlatformException(
-\t\tcode: 'channel-error',
-\t\tmessage: 'Unable to establish connection on channel.',
-\t);
-} else {
-\tthrow PlatformException(
-\t\tcode: replyList[0]! as String,
-\t\tmessage: replyList[1] as String?,
-\t\tdetails: replyList[2],
-\t);
-}''');
-          });
-        });
+            final List<String> unAttachedFieldNames = _asParameterNamesList(
+              nonAttachedFields,
+              root.enums,
+              getArgumentName: _getArgumentName,
+            );
+            final List<String> parameterNames = _asParameterNamesList(
+              constructor.arguments,
+              root.enums,
+            );
+            final String channelSendNames =
+                (unAttachedFieldNames + parameterNames).join(', ');
+
+            final String sendArgument =
+                '<Object?>[instanceIdentifier, $channelSendNames]';
+
+            indent.writeScoped(
+              'channel.send($sendArgument).then<void>((Object? value) {',
+              '});',
+              () {
+                indent.writeln(
+                  'final List<Object?>? replyList = value as List<Object?>?;',
+                );
+                indent.writeScoped('if (replyList == null) {', '} ', () {
+                  indent.writeScoped('throw PlatformException(', ');', () {
+                    indent.writeln("code: 'channel-error',");
+                    indent.writeln(
+                      "message: 'Unable to establish connection on channel.',",
+                    );
+                  });
+                }, addTrailingNewline: false);
+                indent.writeScoped('else {', '} ', () {
+                  indent.writeScoped('throw PlatformException(', ');', () {
+                    indent.writeln('code: replyList[0]! as String,');
+                    indent.writeln('message: replyList[1] as String?,');
+                    indent.writeln('details: replyList[2],');
+                  });
+                });
+              },
+            );
+          },
+        );
       }
+      indent.newln();
 
-      indent.format('''
-/// Constructs ${api.name} without creating the associated native object.
-///
-/// This should only be used by subclasses created by this library or to
-/// create copies.''');
-      indent.write('${api.name}.\$detached');
-      indent.addScoped('({', '})', () {
-        indent.writeln(
-            r'this.binaryMessenger, $InstanceManager? instanceManager,');
+      indent.format(
+        '/// Constructs ${api.name} without creating the associated native object.\n'
+        '///\n'
+        '/// This should only be used by subclasses created by this library or to\n'
+        '/// create copies.',
+      );
+      indent.writeScoped('${api.name}.\$detached({', '}) ', () {
+        indent.writeln('this.binaryMessenger,');
+        indent.writeln(r'$InstanceManager? instanceManager,');
         for (final Field field in nonAttachedFields) {
-          indent.writeln('required this.${field.name},');
+          indent.writeln(
+            '${field.type.isNullable ? '' : 'required '}this.${field.name},',
+          );
         }
         for (final Method method in flutterMethods) {
           indent.writeln(
             '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
           );
         }
-      });
+
+      }, addTrailingNewline: false);
       indent.writeln(
         r': instanceManager = instanceManager ?? $InstanceManager.instance;',
       );
+      indent.newln();
 
       indent.write('static void setUpDartMessageHandlers');
       indent.addScoped('({', '})', () {
@@ -1593,8 +1605,7 @@ if (replyList == null) {
         });
       }
 
-      for (final Method method in api.methods
-          .where((Method method) => method.location == ApiLocation.host)) {
+      for (final Method method in hostMethods) {
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
 
@@ -1833,6 +1844,23 @@ String _getConstructorArgumentsSignature(
         }).join(', ');
 }
 
+/// Converts a type to a declared parameter of a method/constructor.
+///
+/// ${isNamedParameter && isNonnull ? 'required' : ''} MyType myParameter
+String _asDeclaredParameter(
+  int index,
+  NamedType parameter, {
+  bool isNamedParameter = false,
+  String Function(int index, NamedType arg) getArgumentName =
+      _getSafeArgumentName,
+}) {
+  final String type = _addGenericTypesNullable(parameter.type);
+  final String argName = getArgumentName(index, parameter);
+  final String required =
+      !parameter.type.isNullable && isNamedParameter ? 'required' : '';
+  return '$required $type $argName';
+}
+
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Dart code.
 String _flattenTypeArguments(List<TypeDeclaration> args) {
@@ -1884,6 +1912,23 @@ void _writeAssert(
     indent.writeln('$assertion,');
     indent.writeln("${rawErrorMessageString ? 'r' : ''}'$errorMessage',");
   });
+}
+
+void _writeBasicMessageChannel(
+  Indent indent, {
+  required String channelName,
+  String codecVariableName = 'codec',
+  String binaryMessengerVariableName = 'binaryMessenger',
+}) {
+  indent.writeScoped(
+    'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+    ');',
+    () {
+      indent.writeln("r'$channelName',");
+      indent.writeln('$codecVariableName,');
+      indent.writeln('binaryMessenger: $binaryMessengerVariableName,');
+    },
+  );
 }
 
 /// Create a list of parameter names from a list of of parameters.
