@@ -1,3 +1,7 @@
+## 3.1.1
+
+* Updates launchUrl to return false instead of throwing when there is no handler.
+
 ## 3.1.0
 
 * Implements `supportsMode` and `supportsCloseForMode`.
