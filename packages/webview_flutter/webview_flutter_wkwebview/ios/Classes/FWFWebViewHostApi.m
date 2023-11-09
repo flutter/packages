@@ -276,7 +276,6 @@
 }
 
 - (void)
-<<<<<<< HEAD
     setAllowsLinkPreviewForWebViewWithIdentifier:(nonnull NSNumber *)identifier
                                        isAllowed:(nonnull NSNumber *)allow
                                            error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
@@ -285,10 +284,7 @@
 }
 
 - (void)
-    setNavigationDelegateForWebViewWithIdentifier:(nonnull NSNumber *)identifier
-=======
     setNavigationDelegateForWebViewWithIdentifier:(NSInteger)identifier
->>>>>>> origin/main
                                delegateIdentifier:(nullable NSNumber *)navigationDelegateIdentifier
                                             error:
                                                 (FlutterError *_Nullable __autoreleasing *_Nonnull)
