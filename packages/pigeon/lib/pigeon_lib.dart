@@ -19,7 +19,6 @@ import 'package:analyzer/dart/ast/syntactic_entity.dart'
     as dart_ast_syntactic_entity;
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
-import 'package:analyzer/dart/element/type.dart';
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:path/path.dart' as path;
@@ -45,13 +44,15 @@ class _Attached {
 
 class _Static {
   const _Static();
-
 }
-/// Metadata to annotate a Api method as asynchronous
+
+/// Metadata to annotate a Api method as asynchronous.
 const Object async = _Asynchronous();
 
+/// Metadata to annotate the field of a ProxyApi as an Attached Field.
 const Object attached = _Attached();
 
+/// Metadata to annotate an method or an Attached Field of a ProxyApi as static.
 const Object static = _Static();
 
 /// Metadata annotation used to configure how Pigeon will generate code.
@@ -100,7 +101,14 @@ class FlutterApi {
   const FlutterApi();
 }
 
+/// Metadata to annotate a Pigeon API that wraps a native type.
+///
+/// The abstract class with this annotation groups a collection of Dart↔host
+/// constructors, fields, methods used to wrap a native type. The generated
+/// Dart class acts as a proxy to a native type and maintains instances
+/// automatically with an `InstanceManager`.
 class ProxyApi {
+  /// Parametric constructor for [ProxyApi].
   const ProxyApi();
 }
 
@@ -803,6 +811,9 @@ List<Error> _validateAst(Root root, String source) {
     }
   }
   for (final Api api in root.apis) {
+    if (api is ProxyApiNode) {
+      continue;
+    }
     for (final Method method in api.methods) {
       for (final NamedType unnamedType in method.arguments
           .where((NamedType element) => element.type.baseName.isEmpty)) {
@@ -861,7 +872,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   _RootBuilder(this.source);
 
   final List<Api> _apis = <Api>[];
-  final List<ProxyApiNode> _proxyApis = <ProxyApiNode>[];
   final List<Enum> _enums = <Enum>[];
   final List<Class> _classes = <Class>[];
   final List<Error> _errors = <Error>[];
@@ -869,7 +879,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   Class? _currentClass;
   Api? _currentApi;
-  ProxyApiNode? _currentProxyApi;
   Map<String, Object>? _pigeonOptions;
 
   void _storeCurrentApi() {
@@ -886,17 +895,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
   }
 
-  void _storeCurrentProxyApi() {
-    if (_currentProxyApi != null) {
-      _proxyApis.add(_currentProxyApi!);
-      _currentProxyApi = null;
-    }
-  }
-
   ParseResults results() {
     _storeCurrentApi();
     _storeCurrentClass();
-    _storeCurrentProxyApi();
 
     final Map<TypeDeclaration, List<int>> referencedTypes =
         getReferencedTypes(_apis, _classes);
@@ -911,7 +912,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       apis: _apis,
       classes: referencedClasses,
       enums: referencedEnums,
-      proxyApis: _proxyApis,
     );
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
@@ -947,7 +947,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               apis: <Api>[],
               classes: <Class>[],
               enums: <Enum>[],
-              proxyApis: <ProxyApiNode>[],
             ),
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
@@ -1033,7 +1032,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object? visitClassDeclaration(dart_ast.ClassDeclaration node) {
     _storeCurrentApi();
     _storeCurrentClass();
-    _storeCurrentProxyApi();
 
     if (node.abstractKeyword != null) {
       if (_hasMetadata(node.metadata, 'HostApi')) {
@@ -1072,12 +1070,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'ProxyApi')) {
-        _currentProxyApi = ProxyApiNode(
+        _currentApi = ProxyApiNode(
           name: node.name.lexeme,
           methods: <Method>[],
           constructors: <Constructor>[],
-          callbackmethods: <Method>[],
-          fields: <ProxyApiField>[],
+          fields: <Field>[],
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
@@ -1188,6 +1185,29 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = node.returnType!;
       returnType as dart_ast.NamedType;
+
+      late final ApiLocation apiLocation;
+      switch (_currentApi!.location) {
+        case ApiLocation.host:
+          apiLocation = ApiLocation.host;
+          break;
+        case ApiLocation.flutter:
+          apiLocation = ApiLocation.flutter;
+          break;
+        case ApiLocation.hostAndFlutter:
+          if (_currentApi is ProxyApiNode) {
+            apiLocation = ApiLocation.host;
+          } else {
+            _errors.add(
+              Error(
+                message:
+                    'Failed to save a method in a ProxyApi ("${node.name.lexeme}").',
+                lineNumber: _calculateLineNumber(source, node.offset),
+              ),
+            );
+          }
+          break;
+      }
       _currentApi!.methods.add(
         Method(
           name: node.name.lexeme,
@@ -1196,6 +1216,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               typeArguments:
                   typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
+          location: apiLocation,
           arguments: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
@@ -1211,29 +1232,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           message:
               'Methods aren\'t supported in Pigeon data classes ("${node.name.lexeme}").',
           lineNumber: _calculateLineNumber(source, node.offset)));
-    } else if (_currentProxyApi != null) {
-      // Methods without named return types aren't supported.
-      final dart_ast.TypeAnnotation returnType = node.returnType!;
-      returnType as dart_ast.NamedType;
-      _currentProxyApi!.methods.add(
-        Method(
-          name: node.name.lexeme,
-          returnType: TypeDeclaration(
-            baseName: _getNamedTypeQualifiedName(returnType),
-            typeArguments:
-                typeAnnotationsToTypeArguments(returnType.typeArguments),
-            isNullable: returnType.question != null,
-          ),
-          arguments: arguments,
-          isAsynchronous: isAsynchronous,
-          objcSelector: objcSelector,
-          swiftFunction: swiftFunction,
-          offset: node.offset,
-          taskQueueType: taskQueueType,
-          documentationComments:
-              _documentationCommentsParser(node.documentationComment?.tokens),
-        ),
-      );
     }
     node.visitChildren(this);
     return null;
@@ -1309,11 +1307,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             message: 'Expected a named type but found "$node".',
             lineNumber: _calculateLineNumber(source, node.offset)));
       }
-    } else if (_currentApi != null) {
-      _errors.add(Error(
-          message: 'Fields aren\'t supported in Pigeon API classes ("$node").',
-          lineNumber: _calculateLineNumber(source, node.offset)));
-    } else if (_currentProxyApi != null) {
+    } else if (_currentApi is ProxyApiNode) {
       if (type is dart_ast.GenericFunctionType) {
         final dart_ast.FormalParameterList parameters = type.parameters;
         final List<NamedType> arguments =
@@ -1350,7 +1344,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         final dart_ast.TypeAnnotation returnType = type.returnType!;
         returnType as dart_ast.NamedType;
 
-        _currentProxyApi!.callbackmethods.add(
+        _currentApi!.methods.add(
           Method(
             name: node.fields.variables[0].name.lexeme,
             returnType: TypeDeclaration(
@@ -1359,6 +1353,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                   typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null,
             ),
+            location: ApiLocation.flutter,
             arguments: arguments,
             isAsynchronous: isAsynchronous,
             objcSelector: objcSelector,
@@ -1375,25 +1370,34 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         if (findInitializerVisitor.initializer != null) {
           _errors.add(Error(
               message:
-              'Initialization isn\'t supported for fields in Pigeon data classes ("$node"), just use nullable types with no initializer (example "int? x;").',
+                  'Initialization isn\'t supported for fields in ProxyApis ("$node"), just use nullable types with no initializer (example "int? x;").',
               lineNumber: _calculateLineNumber(source, node.offset)));
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           final bool isAttached = _hasMetadata(node.metadata, 'attached');
-          _currentProxyApi!.fields.add(ProxyApiField(
-            type: TypeDeclaration(
-              baseName: _getNamedTypeQualifiedName(type),
-              isNullable: type.question != null,
-              typeArguments: typeAnnotationsToTypeArguments(typeArguments),
-            ),
-            name: node.fields.variables[0].name.lexeme,
-            isAttached: isAttached,
-            offset: node.offset,
-            documentationComments:
-            _documentationCommentsParser(node.documentationComment?.tokens),
-          ));
+          (_currentApi as ProxyApiNode?)!.fields.add(
+                Field(
+                  type: TypeDeclaration(
+                    baseName: _getNamedTypeQualifiedName(type),
+                    isNullable: type.question != null,
+                    typeArguments: typeAnnotationsToTypeArguments(
+                      typeArguments,
+                    ),
+                  ),
+                  name: node.fields.variables[0].name.lexeme,
+                  isAttached: isAttached,
+                  offset: node.offset,
+                  documentationComments: _documentationCommentsParser(
+                    node.documentationComment?.tokens,
+                  ),
+                ),
+              );
         }
       }
+    } else if (_currentApi != null) {
+      _errors.add(Error(
+          message: 'Fields aren\'t supported in Pigeon API classes ("$node").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
     }
     node.visitChildren(this);
     return null;
@@ -1401,11 +1405,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
   @override
   Object? visitConstructorDeclaration(dart_ast.ConstructorDeclaration node) {
-    if (_currentApi != null) {
-      _errors.add(Error(
-          message: 'Constructors aren\'t supported in API classes ("$node").',
-          lineNumber: _calculateLineNumber(source, node.offset)));
-    } else if (_currentProxyApi != null) {
+    if (_currentApi is ProxyApiNode) {
       final dart_ast.FormalParameterList parameters = node.parameters;
       final List<NamedType> arguments =
           parameters.parameters.map(formalParameterToField).toList();
@@ -1435,18 +1435,23 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
               TaskQueueType.serial;
 
-      _currentProxyApi!.constructors.add(
-        Constructor(
-          name: node.name?.lexeme ?? '',
-          arguments: arguments,
-          objcSelector: objcSelector,
-          swiftFunction: swiftFunction,
-          offset: node.offset,
-          taskQueueType: taskQueueType,
-          documentationComments:
-              _documentationCommentsParser(node.documentationComment?.tokens),
-        ),
-      );
+      (_currentApi as ProxyApiNode?)!.constructors.add(
+            Constructor(
+              name: node.name?.lexeme ?? '',
+              arguments: arguments,
+              objcSelector: objcSelector,
+              swiftFunction: swiftFunction,
+              offset: node.offset,
+              taskQueueType: taskQueueType,
+              documentationComments: _documentationCommentsParser(
+                node.documentationComment?.tokens,
+              ),
+            ),
+          );
+    } else if (_currentApi != null) {
+      _errors.add(Error(
+          message: 'Constructors aren\'t supported in API classes ("$node").',
+          lineNumber: _calculateLineNumber(source, node.offset)));
     } else {
       if (node.body.beginToken.lexeme != ';') {
         _errors.add(Error(

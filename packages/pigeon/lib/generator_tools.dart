@@ -197,7 +197,7 @@ String makeChannelNameForConstructor(
 
 String makeChannelNameForField(
   Api api,
-  ProxyApiField field,
+  Field field,
   String dartPackageName,
 ) {
   return makeChannelNameWithStrings(

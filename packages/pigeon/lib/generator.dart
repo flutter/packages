@@ -4,7 +4,6 @@
 
 import 'ast.dart';
 import 'generator_tools.dart';
-import 'pigeon.dart';
 
 /// An abstract base class of generators.
 ///
@@ -64,6 +63,22 @@ abstract class StructuredGenerator<T> extends Generator<T> {
       dartPackageName: dartPackageName,
     );
 
+    if (root.apis.any((Api api) => api is ProxyApiNode)) {
+      writeInstanceManager(
+        generatorOptions,
+        root,
+        indent,
+        dartPackageName: dartPackageName,
+      );
+
+      writeInstanceManagerApi(
+        generatorOptions,
+        root,
+        indent,
+        dartPackageName: dartPackageName,
+      );
+    }
+
     writeEnums(
       generatorOptions,
       root,
@@ -79,13 +94,6 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     );
 
     writeApis(
-      generatorOptions,
-      root,
-      indent,
-      dartPackageName: dartPackageName,
-    );
-
-    writeProxyApis(
       generatorOptions,
       root,
       indent,
@@ -252,6 +260,14 @@ abstract class StructuredGenerator<T> extends Generator<T> {
           api,
           dartPackageName: dartPackageName,
         );
+      } else if (api is ProxyApiNode) {
+        writeProxyApi(
+          generatorOptions,
+          root,
+          indent,
+          api,
+          dartPackageName: dartPackageName,
+        );
       }
     }
   }
@@ -274,41 +290,24 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     required String dartPackageName,
   });
 
+  /// Writes the implementation of an `InstanceManager` to [indent].
   void writeInstanceManager(
-    T generatorOptions,
-    Root root,
-    Indent indent,
-  ) {}
-
-  void writeInstanceManagerApi(
-    T generatorOptions,
-    Root root,
-    Indent indent,
-  ) {}
-
-  void writeProxyApis(
     T generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
-  }) {
-    if (root.proxyApis.isNotEmpty) {
-      writeInstanceManager(generatorOptions, root, indent);
+  }) {}
 
-      writeInstanceManagerApi(generatorOptions, root, indent);
-    }
+  /// Writes the implementation of the API for the `InstanceManager` to
+  /// [indent].
+  void writeInstanceManagerApi(
+    T generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {}
 
-    for (final ProxyApiNode api in root.proxyApis) {
-      writeProxyApi(
-        generatorOptions,
-        root,
-        indent,
-        api,
-        dartPackageName: dartPackageName,
-      );
-    }
-  }
-
+  /// Writes a single Proxy Api to [indent].
   void writeProxyApi(
     T generatorOptions,
     Root root,

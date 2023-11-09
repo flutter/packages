@@ -18,7 +18,8 @@ enum ApiLocation {
   /// The API is for calling functions defined in Flutter.
   flutter,
 
-  proxy,
+  /// The API is for calling functions defined on the host and/or in Flutter.
+  hostAndFlutter,
 }
 
 /// Superclass for all AST nodes.
@@ -31,6 +32,7 @@ class Method extends Node {
     required this.name,
     required this.returnType,
     required this.arguments,
+    required this.location,
     this.isAsynchronous = false,
     this.offset,
     this.objcSelector = '',
@@ -70,6 +72,9 @@ class Method extends Node {
   /// For example: [" List of documentation comments, separated by line.", ...]
   List<String> documentationComments;
 
+  /// Where the API's implementation of this method is located, host or Flutter.
+  ApiLocation location;
+
   @override
   String toString() {
     final String objcSelectorStr =
@@ -80,9 +85,9 @@ class Method extends Node {
   }
 }
 
-/// Represents a method on an [ProxyApiNode].
+/// Represents a constructor for an API.
 class Constructor extends Node {
-  /// Parametric constructor for [Method].
+  /// Parametric constructor for [Constructor].
   Constructor({
     required this.name,
     required this.arguments,
@@ -128,33 +133,26 @@ class Constructor extends Node {
   }
 }
 
+/// Represents an API that wraps a native type.
 class ProxyApiNode extends Api {
   /// Parametric constructor for [ProxyApiNode].
   ProxyApiNode({
     required super.name,
     required super.methods,
-    required this.callbackmethods,
+    required super.documentationComments,
     required this.constructors,
     required this.fields,
-    this.documentationComments = const <String>[],
-  }) : super(location: ApiLocation.proxy);
+  }) : super(location: ApiLocation.hostAndFlutter);
 
-  /// List of documentation comments, separated by line.
-  ///
-  /// Lines should not include the comment marker itself, but should include any
-  /// leading whitespace, so that any indentation in the original comment is preserved.
-  /// For example: [" List of documentation comments, separated by line.", ...]
-  final List<String> documentationComments;
-
+  /// List of constructors inside the API.
   List<Constructor> constructors;
 
-  List<Method> callbackmethods;
-
-  List<ProxyApiField> fields;
+  /// List of fields inside the API.
+  List<Field> fields;
 
   @override
   String toString() {
-    return '(ProxyApi name:$name methods:$methods documentationComments:$documentationComments)';
+    return '(ProxyApiNode name:$name methods:$methods documentationComments:$documentationComments constructors:$constructors fields:$fields)';
   }
 }
 
@@ -255,8 +253,10 @@ class TypeDeclaration {
   }
 }
 
-class ProxyApiField extends NamedType {
-  ProxyApiField({
+/// Represents a field of an API.
+class Field extends NamedType {
+  /// Constructor for [Field].
+  Field({
     required super.name,
     required super.type,
     required this.isAttached,
@@ -264,6 +264,10 @@ class ProxyApiField extends NamedType {
     super.documentationComments,
   });
 
+  /// Whether this is an attached field for a [ProxyApiNode].
+  ///
+  /// Attached fields provide a synchronous [ProxyApiNode] instance as a field for
+  /// another [ProxyApiNode]
   bool isAttached;
 }
 
@@ -386,7 +390,6 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
-    required this.proxyApis,
   });
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
@@ -395,7 +398,6 @@ class Root extends Node {
       apis: <Api>[],
       classes: <Class>[],
       enums: <Enum>[],
-      proxyApis: <ProxyApiNode>[],
     );
   }
 
@@ -407,8 +409,6 @@ class Root extends Node {
 
   /// All of the enums contained in the AST.
   List<Enum> enums;
-
-  List<ProxyApiNode> proxyApis;
 
   @override
   String toString() {

@@ -732,8 +732,9 @@ if (replyList == null) {
   void writeInstanceManager(
     DartOptions generatorOptions,
     Root root,
-    Indent indent,
-  ) {
+    Indent indent, {
+    required String dartPackageName,
+  }) {
     indent.writeln(r'''
 /// An immutable object that can provide functional copies of itself.
 ///
@@ -945,92 +946,166 @@ class $InstanceManager {
   void writeInstanceManagerApi(
     DartOptions generatorOptions,
     Root root,
-    Indent indent,
-  ) {
-    // TODO: use make channel name
-    indent.writeln(r'''
-/// API for managing the Dart and native `InstanceManager`s.
-class $InstanceManagerApi {
-  /// Constructor for [$InstanceManagerApi].
-  ///
-  /// The [binaryMessenger] named argument is available for dependency
-  /// injection. If it is left null, the default [BinaryMessenger] will be used
-  /// which routes to the host platform.
-  $InstanceManagerApi({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
-  final BinaryMessenger? _binaryMessenger;
-
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
-
-  static void setUpDartMessageHandlers({
-    BinaryMessenger? binaryMessenger,
-    $InstanceManager? instanceManager,
+    Indent indent, {
+    required String dartPackageName,
   }) {
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          r'dev.flutter.pigeon.$InstanceManager.removeStrongReference',
-          codec,
-          binaryMessenger: binaryMessenger);
-      channel.setMessageHandler((Object? message) async {
-        assert(message != null,
-            r'Argument for dev.flutter.pigeon.$InstanceManager.removeStrongReference was null.');
-        final int? identifier = message as int?;
-        assert(identifier != null,
-            r'Argument for dev.flutter.pigeon.$InstanceManager.removeStrongReference was null, expected non-null int.');
-        (instanceManager ?? $InstanceManager.instance).remove(identifier!);
-        return;
+    // TODO: move api method names somewhere else
+    indent.writeln(
+      '/// API for managing the Dart and native `InstanceManager`s.',
+    );
+    indent.writeScoped(r'class $InstanceManagerApi {', '}', () {
+      indent.format(
+        '/// Constructor for [\$InstanceManagerApi].\n'
+        '///\n'
+        '/// The [binaryMessenger] named argument is available for dependency\n'
+        '/// injection. If it is left null, the default [BinaryMessenger] will be used\n'
+        '/// which routes to the host platform.\n'
+        '\$InstanceManagerApi({BinaryMessenger? binaryMessenger})\n'
+        '    : _binaryMessenger = binaryMessenger;\n\n'
+        'final BinaryMessenger? _binaryMessenger;\n'
+        'static const MessageCodec<Object?> codec = StandardMessageCodec();',
+      );
+      indent.newln();
+
+      indent.writeScoped(
+        'static void setUpDartMessageHandlers({',
+        '}) ',
+        () {
+          indent.writeln('BinaryMessenger? binaryMessenger,');
+          indent.writeln(r'$InstanceManager? instanceManager,');
+        },
+        addTrailingNewline: false,
+      );
+      indent.writeScoped('{', '}', () {
+        indent.writeScoped('{', '}', () {
+          final String channelName = makeChannelNameWithStrings(
+            apiName: r'$InstanceManagerApi',
+            methodName: 'removeStrongReference',
+            dartPackageName: dartPackageName,
+          );
+          indent.writeScoped(
+            'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+            ');',
+            () {
+              indent.writeln("r'$channelName',");
+              indent.writeln('codec,');
+              indent.writeln('binaryMessenger: binaryMessenger,');
+            },
+          );
+          indent.writeScoped(
+            'channel.setMessageHandler((Object? message) async {',
+            '});',
+            () {
+              _writeAssert(
+                indent,
+                assertion: 'message != null',
+                errorMessage: 'Argument for $channelName was null.',
+                rawErrorMessageString: true,
+              );
+              indent.writeln('final int? identifier = message as int?;');
+              _writeAssert(
+                indent,
+                assertion: 'identifier != null',
+                errorMessage:
+                    'Argument for $channelName, expected non-null int.',
+                rawErrorMessageString: true,
+              );
+              indent.writeln(
+                r'(instanceManager ?? $InstanceManager.instance).remove(identifier!);',
+              );
+              indent.writeln('return;');
+            },
+          );
+        });
       });
-    }
-  }
+      indent.newln();
 
-  Future<void> removeStrongReference(int identifier) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        r'dev.flutter.pigeon.$InstanceManager.removeStrongReference',
-        codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(identifier) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
+      indent.writeScoped(
+        'Future<void> removeStrongReference(int identifier) async {',
+        '}',
+        () {
+          final String channelName = makeChannelNameWithStrings(
+            apiName: r'$InstanceManagerApi',
+            methodName: 'removeStrongReference',
+            dartPackageName: dartPackageName,
+          );
+          indent.writeScoped(
+            'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+            ');',
+            () {
+              indent.writeln("r'$channelName',");
+              indent.writeln('codec,');
+              indent.writeln('binaryMessenger: _binaryMessenger,');
+            },
+          );
+          indent.writeln(
+            'final List<Object?>? replyList = await channel.send(identifier) as List<Object?>?;',
+          );
+          indent.writeScoped('if (replyList == null) {', '} ', () {
+            indent.writeScoped('throw PlatformException(', ');', () {
+              indent.writeln("code: 'channel-error',");
+              indent.writeln(
+                "message: 'Unable to establish connection on channel.',",
+              );
+            });
+          }, addTrailingNewline: false);
+          indent.writeScoped('else if (replyList.length > 1) {', '} ', () {
+            indent.writeScoped('throw PlatformException(', ');', () {
+              indent.writeln('code: replyList[0]! as String,');
+              indent.writeln('message: replyList[1] as String?,');
+              indent.writeln('details: replyList[2],');
+            });
+          }, addTrailingNewline: false);
+          indent.writeScoped('else {', '}', () {
+            indent.writeln('return;');
+          });
+        },
       );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
+      indent.newln();
 
-  /// Clear the native `InstanceManager`.
-  ///
-  /// This is typically only used after a hot restart.
-  Future<void> clear() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        r'dev.flutter.pigeon.$InstanceManager.clear', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
+      indent.format(
+        '/// Clear the native `InstanceManager`.\n'
+        '///\n'
+        '/// This is typically only used after a hot restart.',
       );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-}    
-''');
+      indent.writeScoped('Future<void> clear() async {', '}', () {
+        final String channelName = makeChannelNameWithStrings(
+          apiName: r'$InstanceManagerApi',
+          methodName: 'clear',
+          dartPackageName: dartPackageName,
+        );
+        indent.writeScoped(
+          'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+          ');',
+          () {
+            indent.writeln("r'$channelName',");
+            indent.writeln('codec,');
+            indent.writeln('binaryMessenger: _binaryMessenger,');
+          },
+        );
+        indent.writeln(
+          'final List<Object?>? replyList = await channel.send(null) as List<Object?>?;',
+        );
+        indent.writeScoped('if (replyList == null) {', '} ', () {
+          indent.writeScoped('throw PlatformException(', ');', () {
+            indent.writeln("code: 'channel-error',");
+            indent.writeln(
+              "message: 'Unable to establish connection on channel.',",
+            );
+          });
+        }, addTrailingNewline: false);
+        indent.writeScoped('else if (replyList.length > 1) {', '} ', () {
+          indent.writeScoped('throw PlatformException(', ');', () {
+            indent.writeln('code: replyList[0]! as String,');
+            indent.writeln('message: replyList[1] as String?,');
+            indent.writeln('details: replyList[2],');
+          });
+        }, addTrailingNewline: false);
+        indent.writeScoped('else {', '}', () {
+          indent.writeln('return;');
+        });
+      });
+    });
   }
 
   @override
@@ -1113,12 +1188,13 @@ class $codecName extends StandardMessageCodec {
         indent.addScoped('({', '})', () {
           indent.writeln(
               r'this.binaryMessenger, $InstanceManager? customInstanceManager,');
-          for (final ProxyApiField field in api.fields) {
+          for (final Field field in api.fields) {
             if (!field.isAttached) {
               indent.writeln('required this.${field.name},');
             }
           }
-          for (final Method method in api.callbackmethods) {
+          for (final Method method in api.methods.where(
+              (Method method) => method.location == ApiLocation.flutter)) {
             indent.writeln('this.${method.name},');
           }
           indent.writeln(argSignature);
@@ -1171,12 +1247,13 @@ if (replyList == null) {
       indent.addScoped('({', '})', () {
         indent.writeln(
             r'this.binaryMessenger, $InstanceManager? instanceManager,');
-        for (final ProxyApiField field in api.fields) {
+        for (final Field field in api.fields) {
           if (!field.isAttached) {
             indent.writeln('required this.${field.name},');
           }
         }
-        for (final Method method in api.callbackmethods) {
+        for (final Method method in api.methods
+            .where((Method method) => method.location == ApiLocation.flutter)) {
           indent.writeln('this.${method.name},');
         }
       });
@@ -1190,14 +1267,15 @@ if (replyList == null) {
         );
 
         final String nonAttachedFieldsSignature = _getParametersSignature(
-          api.fields.where((ProxyApiField field) => !field.isAttached).toList(),
+          api.fields.where((Field field) => !field.isAttached).toList(),
           (_, NamedType type) => type.name,
         );
         indent.writeln(
           '${api.name} Function($nonAttachedFieldsSignature)? \$detached,',
         );
 
-        for (final Method method in api.callbackmethods) {
+        for (final Method method in api.methods
+            .where((Method method) => method.location == ApiLocation.flutter)) {
           final bool isAsync = method.isAsynchronous;
           final String returnType = isAsync
               ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
@@ -1211,8 +1289,9 @@ if (replyList == null) {
         }
       });
       indent.addScoped('{', '}', () {
-        final String callbackMethodFields =
-            api.callbackmethods.fold('', (String previousValue, Method method) {
+        final String callbackMethodFields = api.methods
+            .where((Method method) => method.location == ApiLocation.flutter)
+            .fold('', (String previousValue, Method method) {
           return '${method.name}: ${method.name},\n';
         });
 
@@ -1250,9 +1329,9 @@ if (replyList == null) {
               "r'Argument for $channelName was null, expected non-null int.');",
             );
 
-            final List<ProxyApiField> nonAttachedFields = api.fields
+            final List<Field> nonAttachedFields = api.fields
                 .where(
-                  (ProxyApiField field) => !field.isAttached,
+                  (Field field) => !field.isAttached,
                 )
                 .toList();
             String call;
@@ -1297,7 +1376,7 @@ if (replyList == null) {
               indent.addScoped('${api.name}.\$detached(', '),', () {
                 indent.writeln('binaryMessenger: binaryMessenger,');
                 indent.writeln('instanceManager: instanceManager,');
-                for (final ProxyApiField field in api.fields) {
+                for (final Field field in api.fields) {
                   if (!field.isAttached) {
                     // TODO: don't pass 0 here. maybe create func for named args
                     indent.writeln(
@@ -1313,7 +1392,8 @@ if (replyList == null) {
           });
         });
 
-        for (final Method method in api.callbackmethods) {
+        for (final Method method in api.methods
+            .where((Method method) => method.location == ApiLocation.flutter)) {
           indent.addScoped('{', '}', () {
             indent.writeln(
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
@@ -1427,13 +1507,14 @@ if (replyList == null) {
       indent.format(r'''
 final BinaryMessenger? binaryMessenger;
 final $InstanceManager instanceManager;''');
-      for (final ProxyApiField field in api.fields) {
+      for (final Field field in api.fields) {
         if (!field.isAttached) {
           indent.writeln(
               'final ${_addGenericTypesNullable(field.type)} ${field.name};');
         }
       }
-      for (final Method method in api.callbackmethods) {
+      for (final Method method in api.methods
+          .where((Method method) => method.location == ApiLocation.flutter)) {
         final bool isAsync = method.isAsynchronous;
         final String returnType = isAsync
             ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
@@ -1450,7 +1531,7 @@ final $InstanceManager instanceManager;''');
       }
       indent.newln();
 
-      for (final ProxyApiField field in api.fields) {
+      for (final Field field in api.fields) {
         if (!field.isAttached) {
           continue;
         }
@@ -1501,7 +1582,8 @@ if (replyList == null) {
         });
       }
 
-      for (final Method method in api.methods) {
+      for (final Method method in api.methods
+          .where((Method method) => method.location == ApiLocation.host)) {
         addDocumentationComments(
             indent, method.documentationComments, _docCommentSpec);
 
@@ -1605,12 +1687,13 @@ if (replyList == null) {
         indent.addScoped('(', ');', () {
           indent.writeln('binaryMessenger: binaryMessenger,');
           indent.writeln('instanceManager: instanceManager,');
-          for (final ProxyApiField field in api.fields) {
+          for (final Field field in api.fields) {
             if (!field.isAttached) {
               indent.writeln('${field.name}: ${field.name},');
             }
           }
-          for (final Method method in api.callbackmethods) {
+          for (final Method method in api.methods.where(
+              (Method method) => method.location == ApiLocation.flutter)) {
             indent.writeln('${method.name}: ${method.name},');
           }
         });
@@ -1770,6 +1853,18 @@ String _addGenericTypes(TypeDeclaration type) {
 String _addGenericTypesNullable(TypeDeclaration type) {
   final String genericType = _addGenericTypes(type);
   return type.isNullable ? '$genericType?' : genericType;
+}
+
+void _writeAssert(
+  Indent indent, {
+  required String assertion,
+  required String errorMessage,
+  bool rawErrorMessageString = false,
+}) {
+  indent.writeScoped('assert(', ');', () {
+    indent.writeln('$assertion,');
+    indent.writeln("${rawErrorMessageString ? 'r' : ''}'$errorMessage',");
+  });
 }
 
 /// Converts [inputPath] to a posix absolute path.
