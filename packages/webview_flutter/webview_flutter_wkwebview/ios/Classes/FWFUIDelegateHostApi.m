@@ -43,18 +43,18 @@
                                                       }];
   }
 
-  NSNumber *configurationIdentifier =
-      @([self.instanceManager identifierWithStrongReferenceForInstance:configuration]);
+  NSInteger configurationIdentifier =
+      [self.instanceManager identifierWithStrongReferenceForInstance:configuration];
   FWFWKNavigationActionData *navigationActionData =
       FWFWKNavigationActionDataFromNativeWKNavigationAction(navigationAction);
 
-  [self onCreateWebViewForDelegateWithIdentifier:@([self identifierForDelegate:instance])
-                               webViewIdentifier:
-                                   @([self.instanceManager
-                                       identifierWithStrongReferenceForInstance:webView])
-                         configurationIdentifier:configurationIdentifier
-                                navigationAction:navigationActionData
-                                      completion:completion];
+  [self
+      onCreateWebViewForDelegateWithIdentifier:[self identifierForDelegate:instance]
+                             webViewIdentifier:[self.instanceManager
+                                                   identifierWithStrongReferenceForInstance:webView]
+                       configurationIdentifier:configurationIdentifier
+                              navigationAction:navigationActionData
+                                    completion:completion];
 }
 
 - (void)requestMediaCapturePermissionForDelegateWithIdentifier:(FWFUIDelegate *)instance
@@ -66,12 +66,10 @@
                                                         (void (^)(WKPermissionDecision))completion
     API_AVAILABLE(ios(15.0)) {
   [self
-      requestMediaCapturePermissionForDelegateWithIdentifier:@([self
-                                                                 identifierForDelegate:instance])
+      requestMediaCapturePermissionForDelegateWithIdentifier:[self identifierForDelegate:instance]
                                            webViewIdentifier:
-                                               @([self.instanceManager
-                                                   identifierWithStrongReferenceForInstance:
-                                                       webView])
+                                               [self.instanceManager
+                                                   identifierWithStrongReferenceForInstance:webView]
                                                       origin:
                                                           FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(
                                                               origin)
@@ -158,10 +156,9 @@
   return (FWFUIDelegate *)[self.instanceManager instanceForIdentifier:identifier.longValue];
 }
 
-- (void)createWithIdentifier:(nonnull NSNumber *)identifier
-                       error:(FlutterError *_Nullable *_Nonnull)error {
+- (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error {
   FWFUIDelegate *uIDelegate = [[FWFUIDelegate alloc] initWithBinaryMessenger:self.binaryMessenger
                                                              instanceManager:self.instanceManager];
-  [self.instanceManager addDartCreatedInstance:uIDelegate withIdentifier:identifier.longValue];
+  [self.instanceManager addDartCreatedInstance:uIDelegate withIdentifier:identifier];
 }
 @end
