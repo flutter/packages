@@ -1,0 +1,30 @@
+RouteBase get $requiredNullableTypeArgumentsExtraValueRoute =>
+    GoRouteData.$route(
+      path: '/default-value-route',
+      factory:
+          $RequiredNullableTypeArgumentsExtraValueRouteExtension._fromState,
+    );
+
+extension $RequiredNullableTypeArgumentsExtraValueRouteExtension
+    on RequiredNullableTypeArgumentsExtraValueRoute {
+  static RequiredNullableTypeArgumentsExtraValueRoute _fromState(
+          GoRouterState state) =>
+      RequiredNullableTypeArgumentsExtraValueRoute(
+        $extra: state.extra as List<int?>,
+      );
+
+  String get location => GoRouteData.$location(
+        '/default-value-route',
+      );
+
+  void go(BuildContext context) => context.go(location, extra: $extra);
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location, extra: $extra);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location, extra: $extra);
+
+  void replace(BuildContext context) =>
+      context.replace(location, extra: $extra);
+}

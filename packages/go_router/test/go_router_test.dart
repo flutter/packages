@@ -2445,8 +2445,8 @@ void main() {
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
       expect(router.routeInformationProvider.value.location, '/dummy');
-      TestWidgetsFlutterBinding
-          .instance.platformDispatcher.defaultRouteNameTestValue = '/';
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
     });
 
     test('throws assertion if initialExtra is set w/o initialLocation', () {
@@ -2463,6 +2463,45 @@ void main() {
           ),
         ),
       );
+    });
+  });
+
+  group('_effectiveInitialLocation()', () {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+      ),
+    ];
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path', (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
+    });
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path, but trailing slash',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com/';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
     });
   });
 
@@ -5008,6 +5047,44 @@ void main() {
       expect(router.routeInformationProvider.value.uri.toString(),
           expectedInitialRoute);
     });
+  });
+
+  testWidgets(
+      'test the pathParameters in redirect when the Router is recreated',
+      (WidgetTester tester) async {
+    final GoRouter router = GoRouter(
+      initialLocation: '/foo',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/foo',
+          builder: dummy,
+          routes: <GoRoute>[
+            GoRoute(
+              path: ':id',
+              redirect: (_, GoRouterState state) {
+                expect(state.pathParameters['id'], isNotNull);
+                return null;
+              },
+              builder: dummy,
+            ),
+          ],
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: UniqueKey(),
+        routerConfig: router,
+      ),
+    );
+    router.push('/foo/123');
+    await tester.pump(); // wait reportRouteInformation
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: UniqueKey(),
+        routerConfig: router,
+      ),
+    );
   });
 }
 

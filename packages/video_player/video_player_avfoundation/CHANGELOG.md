@@ -1,6 +1,10 @@
-## 2.5.1
+## 2.5.2
 
 * Fixes flickering and seek-while-paused on macOS.
+
+## 2.5.1
+
+* Updates to  Pigeon 13.
 
 ## 2.5.0
 
