@@ -1253,13 +1253,17 @@ class $codecName extends StandardMessageCodec {
                     );
                   });
                 }, addTrailingNewline: false);
-                indent.writeScoped('else {', '} ', () {
-                  indent.writeScoped('throw PlatformException(', ');', () {
-                    indent.writeln('code: replyList[0]! as String,');
-                    indent.writeln('message: replyList[1] as String?,');
-                    indent.writeln('details: replyList[2],');
-                  });
-                });
+                indent.writeScoped(
+                  'else if (replyList.length > 1) {',
+                  '} ',
+                  () {
+                    indent.writeScoped('throw PlatformException(', ');', () {
+                      indent.writeln('code: replyList[0]! as String,');
+                      indent.writeln('message: replyList[1] as String?,');
+                      indent.writeln('details: replyList[2],');
+                    });
+                  },
+                );
               },
             );
           },
@@ -1509,18 +1513,22 @@ class $codecName extends StandardMessageCodec {
       });
       indent.newln();
 
-      indent.format(r'''
-final BinaryMessenger? binaryMessenger;
-final $InstanceManager instanceManager;''');
+      // fields
+      indent.writeln('final BinaryMessenger? binaryMessenger;');
+      indent.writeln(r'final $InstanceManager instanceManager;');
       for (final Field field in nonAttachedFields) {
-        if (!field.isAttached) {
-          indent.writeln(
-              'final ${_addGenericTypesNullable(field.type)} ${field.name};');
-        }
+        addDocumentationComments(
+          indent,
+          field.documentationComments,
+          _docCommentSpec,
+        );
+        indent.writeln(
+          'final ${_addGenericTypesNullable(field.type)} ${field.name};',
+        );
       }
       for (final Method method in flutterMethods) {
-        final bool isAsync = method.isAsynchronous;
-        final String returnType = isAsync
+        // TODO: dupe?
+        final String returnType = method.isAsynchronous
             ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
             : _addGenericTypesNullable(method.returnType);
         final String argSignature = _getMethodArgumentsSignature(
@@ -1528,7 +1536,10 @@ final $InstanceManager instanceManager;''');
           _getArgumentName,
         );
         addDocumentationComments(
-            indent, method.documentationComments, _docCommentSpec);
+          indent,
+          method.documentationComments,
+          _docCommentSpec,
+        );
         indent.writeln(
           'final $returnType Function(${api.name} instance, $argSignature)${method.mustBeImplemented ? '' : '?'} ${method.name};',
         );
@@ -1536,47 +1547,62 @@ final $InstanceManager instanceManager;''');
       indent.newln();
 
       for (final Field field in attachedFields) {
+        addDocumentationComments(
+          indent,
+          field.documentationComments,
+          _docCommentSpec,
+        );
+
         final String type = _addGenericTypesNullable(field.type);
         indent.writeln('late final $type ${field.name} = _${field.name}();');
-        indent.write('$type _${field.name}() ');
-        indent.addScoped('{', '}', () {
-          indent.format('''
-final $type instance = $type.\$detached(
-  binaryMessenger: binaryMessenger,
-  instanceManager: instanceManager,
-);
-''');
-          final String channelName =
-              makeChannelNameForField(api, field, dartPackageName);
-          indent.writeln(
-              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
-          indent.nest(2, () {
-            indent.writeln("'$channelName', $codecName(instanceManager),");
-            indent.writeln('binaryMessenger: binaryMessenger);');
-          });
+        indent.writeScoped('$type _${field.name}() {', '}', () {
+          indent.writeScoped(
+            'final $type instance = $type.\$detached(',
+            ');',
+            () {
+              indent.writeln('binaryMessenger: binaryMessenger,');
+              indent.writeln('instanceManager: instanceManager,');
+            },
+          );
+
+          final String channelName = makeChannelNameForField(
+            api,
+            field,
+            dartPackageName,
+          );
+          _writeBasicMessageChannel(
+            indent,
+            channelName: channelName,
+            codecVariableName: '$codecName(instanceManager)',
+          );
 
           indent.writeln(
             'final int instanceIdentifier = instanceManager.addDartCreatedInstance(instance);',
           );
-          indent.write(
-            'channel.send(<Object?>[this, instanceIdentifier]).then<void>((Object? value) ',
+          indent.writeScoped(
+            'channel.send(<Object?>[this, instanceIdentifier]).then<void>((Object? value) {',
+            '});',
+            () {
+              indent.writeln(
+                'final List<Object?>? replyList = value as List<Object?>?;',
+              );
+              indent.writeScoped('if (replyList == null) {', '} ', () {
+                indent.writeScoped('throw PlatformException(', ');', () {
+                  indent.writeln("code: 'channel-error',");
+                  indent.writeln(
+                    "message: 'Unable to establish connection on channel.',",
+                  );
+                });
+              }, addTrailingNewline: false);
+              indent.writeScoped('else if (replyList.length > 1) {', '} ', () {
+                indent.writeScoped('throw PlatformException(', ');', () {
+                  indent.writeln('code: replyList[0]! as String,');
+                  indent.writeln('message: replyList[1] as String?,');
+                  indent.writeln('details: replyList[2],');
+                });
+              });
+            },
           );
-          indent.addScoped('{', '});', () {
-            indent.format('''
-final List<Object?>? replyList = value as List<Object?>?;
-if (replyList == null) {
-\tthrow PlatformException(
-\t\tcode: 'channel-error',
-\t\tmessage: 'Unable to establish connection on channel.',
-\t);
-} else {
-\tthrow PlatformException(
-\t\tcode: replyList[0]! as String,
-\t\tmessage: replyList[1] as String?,
-\t\tdetails: replyList[2],
-\t);
-}''');
-          });
 
           indent.writeln('return instance;');
         });
