@@ -456,7 +456,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       for (final Method func in api.methods) {
         final String resultType =
             func.returnType.isNullable ? 'NullableResult' : 'Result';
-        final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
             ? 'Void'
             : _javaTypeForDartType(func.returnType);
@@ -489,11 +488,13 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         }
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
+          indent.writeln(
+              'final String channelName = "${makeChannelName(api, func, dartPackageName)}";');
           indent.writeln('BasicMessageChannel<Object> $channel =');
           indent.nest(2, () {
             indent.writeln('new BasicMessageChannel<>(');
             indent.nest(2, () {
-              indent.writeln('binaryMessenger, "$channelName", getCodec());');
+              indent.writeln('binaryMessenger, channelName, getCodec());');
             });
           });
           indent.writeln('$channel.send(');
@@ -545,7 +546,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
               }, addTrailingNewline: false);
               indent.addScoped(' else {', '} ', () {
                 indent.writeln(
-                    'result.error(new FlutterError("channel-error",  "Unable to establish connection on channel.", ""));');
+                    'result.error(createConnectionError(channelName));');
               });
             });
           });
@@ -945,6 +946,16 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 }''');
   }
 
+  void _writeCreateConnectionError(Indent indent) {
+    indent.writeln('@NonNull');
+    indent.writeScoped(
+        'protected static FlutterError createConnectionError(@NonNull String channelName) {',
+        '}', () {
+      indent.writeln(
+          'return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");');
+    });
+  }
+
   @override
   void writeGeneralUtilities(
     JavaOptions generatorOptions,
@@ -952,10 +963,21 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     Indent indent, {
     required String dartPackageName,
   }) {
+    final bool hasHostApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.host);
+    final bool hasFlutterApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+
     indent.newln();
     _writeErrorClass(indent);
-    indent.newln();
-    _writeWrapError(indent);
+    if (hasHostApi) {
+      indent.newln();
+      _writeWrapError(indent);
+    }
+    if (hasFlutterApi) {
+      indent.newln();
+      _writeCreateConnectionError(indent);
+    }
   }
 
   @override

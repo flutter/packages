@@ -1,3 +1,12 @@
+## 13.1.0
+
+* [swift] Fixes Flutter Api void return error handling.
+  * This shouldn't be breaking for anyone, but if you were incorrectly getting 
+    success responses, you may now be failing (correctly).
+* Adds method channel name to error response when channel fails to connect.
+* Reduces code generation duplication.
+* Changes some methods to only be generated if needed.
+
 ## 13.0.0
 
 * **Breaking Change** [objc] Eliminates boxing of non-nullable primitive types
