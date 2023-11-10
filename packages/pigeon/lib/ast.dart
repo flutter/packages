@@ -35,6 +35,7 @@ class Method extends Node {
     required this.location,
     required this.mustBeImplemented,
     this.isAsynchronous = false,
+    this.isStatic = false,
     this.offset,
     this.objcSelector = '',
     this.swiftFunction = '',
@@ -81,6 +82,9 @@ class Method extends Node {
   /// This flag is typically used to determine whether a callback method for
   /// a `ProxyApi` is nullable or not.
   bool mustBeImplemented;
+
+  /// Whether this is a static method of a ProxyApi.
+  bool isStatic;
 
   @override
   String toString() {

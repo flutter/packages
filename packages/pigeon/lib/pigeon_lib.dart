@@ -1155,6 +1155,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final List<NamedType> arguments =
         parameters.parameters.map(formalParameterToField).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+    final bool isStatic = _hasMetadata(node.metadata, 'static');
     final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
             ?.arguments
             ?.arguments
@@ -1219,6 +1220,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           location: apiLocation,
           arguments: arguments,
           isAsynchronous: isAsynchronous,
+          isStatic: isStatic,
           mustBeImplemented: true,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,

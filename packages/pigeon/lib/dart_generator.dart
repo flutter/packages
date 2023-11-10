@@ -949,7 +949,6 @@ class $InstanceManager {
     Indent indent, {
     required String dartPackageName,
   }) {
-    // TODO: move api method names somewhere else
     indent.writeln(
       '/// API for managing the Dart and native `InstanceManager`s.',
     );
@@ -1118,7 +1117,6 @@ class $InstanceManager {
   }) {
     final String codecName = _getCodecName(api.name);
 
-    // TODO: Create a _writeCustomCodec just for proxy api
     // Write Codec
     indent.writeln('''
 class $codecName extends StandardMessageCodec {
@@ -1615,38 +1613,29 @@ class $codecName extends StandardMessageCodec {
           _docCommentSpec,
         );
 
-        String argSignature = '';
-        String sendArgument = 'null';
-
-        if (method.arguments.isNotEmpty) {
-          String argNameFunc(int index, NamedType type) =>
-              _getSafeArgumentName(index, type);
-
-          final Iterable<String> argExpressions =
-              indexMap(method.arguments, (int index, NamedType type) {
-            final String name = argNameFunc(index, type);
-            if (root.enums
-                .map((Enum e) => e.name)
-                .contains(type.type.baseName)) {
-              return '$name${type.type.isNullable ? '?' : ''}.index';
-            } else {
-              return name;
-            }
-          });
-          sendArgument = '<Object?>[this, ${argExpressions.join(', ')}]';
-          argSignature = _getMethodArgumentsSignature(method, argNameFunc);
-        }
-
+        final String staticKeyword = method.isStatic ? 'static ' : '';
+        final String returnType = _addGenericTypesNullable(method.returnType);
+        final String methodParamsSignature = _getMethodArgumentsSignature(
+          method,
+          _getSafeArgumentName,
+        );
+        final String messengerAndManager = method.isStatic
+            ? '${method.arguments.isEmpty ? '' : ', '}{BinaryMessenger? binaryMessenger, \$InstanceManager? instanceManager,}'
+            : '';
         indent.writeScoped(
-          'Future<${_addGenericTypesNullable(method.returnType)}> ${method.name}($argSignature) async {',
+          '${staticKeyword}Future<$returnType> ${method.name}($methodParamsSignature$messengerAndManager) async {',
           '}',
           () {
-            final String channelName =
-                makeChannelName(api, method, dartPackageName);
+            final String channelName = makeChannelName(
+              api,
+              method,
+              dartPackageName,
+            );
             _writeBasicMessageChannel(
               indent,
               channelName: channelName,
-              codecVariableName: '$codecName(instanceManager)',
+              codecVariableName:
+                  '$codecName(instanceManager${method.isStatic ? r' ?? $InstanceManager.instance' : ''})',
             );
 
             final String sendMessageArgsNames =
@@ -1654,7 +1643,7 @@ class $codecName extends StandardMessageCodec {
             indent.writeln('final List<Object?>? replyList =');
             indent.nest(2, () {
               indent.writeln(
-                'await channel.send(<Object?>[this, $sendMessageArgsNames]) as List<Object?>?;',
+                'await channel.send(<Object?>[${method.isStatic ? '' : 'this, '}$sendMessageArgsNames]) as List<Object?>?;',
               );
             });
             indent.writeScoped('if (replyList == null) {', '} ', () {
@@ -1817,20 +1806,6 @@ String _getParametersSignature(
           final String type = _addGenericTypesNullable(arg.type);
           final String argName = getParameterName(index, arg);
           return '$type $argName';
-        }).join(', ');
-}
-
-String _getConstructorArgumentsSignature(
-  Constructor constructor,
-  String Function(int index, NamedType arg) getArgumentName,
-) {
-  return constructor.arguments.isEmpty
-      ? ''
-      : indexMap(constructor.arguments, (int index, NamedType arg) {
-          final String type = _addGenericTypesNullable(arg.type);
-          final String argName = getArgumentName(index, arg);
-          final String required = arg.type.isNullable ? '' : 'required';
-          return '$required $type $argName';
         }).join(', ');
 }
 
