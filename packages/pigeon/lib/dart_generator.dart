@@ -1235,11 +1235,8 @@ class $codecName extends StandardMessageCodec {
             final String channelSendNames =
                 (unAttachedFieldNames + parameterNames).join(', ');
 
-            final String sendArgument =
-                '<Object?>[instanceIdentifier, $channelSendNames]';
-
             indent.writeScoped(
-              'channel.send($sendArgument).then<void>((Object? value) {',
+              'channel.send(<Object?>[instanceIdentifier, $channelSendNames]).then<void>((Object? value) {',
               '});',
               () {
                 indent.writeln(
@@ -1286,22 +1283,19 @@ class $codecName extends StandardMessageCodec {
             '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
           );
         }
-
       }, addTrailingNewline: false);
       indent.writeln(
         r': instanceManager = instanceManager ?? $InstanceManager.instance;',
       );
       indent.newln();
 
-      indent.write('static void setUpDartMessageHandlers');
-      indent.addScoped('({', '})', () {
-        indent.writeln(
-          r'BinaryMessenger? binaryMessenger, $InstanceManager? instanceManager,',
-        );
+      indent.writeScoped('static void setUpDartMessageHandlers ({', '})', () {
+        indent.writeln('BinaryMessenger? binaryMessenger,');
+        indent.writeln(r'$InstanceManager? instanceManager,');
 
         final String nonAttachedFieldsSignature = _getParametersSignature(
-          api.fields.where((Field field) => !field.isAttached).toList(),
-          (_, NamedType type) => type.name,
+          nonAttachedFields.toList(),
+          _getArgumentName,
         );
         indent.writeln(
           '${api.name} Function($nonAttachedFieldsSignature)? \$detached,',
@@ -1320,109 +1314,93 @@ class $codecName extends StandardMessageCodec {
             '$returnType Function(${api.name} instance, $argSignature)? ${method.name},',
           );
         }
-      });
+      }, addTrailingNewline: false);
 
       final List<String> customEnumNames =
           root.enums.map((Enum x) => x.name).toList();
-      indent.addScoped('{', '}', () {
-        indent.addScoped('{', '}', () {
-          indent.writeln(
-            'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
-          );
+      indent.writeScoped('{', '}', () {
+        indent.writeScoped('{', '}', () {
           final String channelName = makeChannelNameWithStrings(
             apiName: api.name,
             methodName: r'$detached',
             dartPackageName: dartPackageName,
           );
-          indent.nest(2, () {
-            indent.writeln(
-                "r'$channelName', $codecName(instanceManager ?? \$InstanceManager.instance),");
-            indent.writeln(
-              'binaryMessenger: binaryMessenger);',
-            );
-          });
-          indent.write(
-            'channel.setMessageHandler((Object? message) async ',
+          _writeBasicMessageChannel(
+            indent,
+            channelName: channelName,
+            codecVariableName:
+                '$codecName(instanceManager ?? \$InstanceManager.instance)',
           );
-          const String argsArray = 'args';
-          indent.addScoped('{', '});', () {
-            indent.writeln('assert(message != null,');
-            indent.writeln("r'Argument for $channelName was null.');");
+
+          indent.writeScoped(
+              'channel.setMessageHandler((Object? message) async {', '});', () {
+            const String argsArray = 'args';
+
+            _writeAssert(
+              indent,
+              assertion: 'message != null',
+              errorMessage: 'Argument for $channelName was null.',
+              rawErrorMessageString: true,
+            );
             indent.writeln(
               'final List<Object?> $argsArray = (message as List<Object?>?)!;',
             );
             indent.writeln(
               'final int? instanceIdentifier = (args[0] as int?);',
             );
-            indent.writeln('assert(instanceIdentifier != null,');
-            indent.writeln(
-              "r'Argument for $channelName was null, expected non-null int.');",
+            _writeAssert(
+              indent,
+              assertion: 'instanceIdentifier != null',
+              errorMessage:
+                  'Argument for $channelName was null, expected non-null int.',
+              rawErrorMessageString: true,
             );
 
-            final List<Field> nonAttachedFields = api.fields
-                .where(
-                  (Field field) => !field.isAttached,
-                )
-                .toList();
-            String call;
+            late Iterable<String> argsNames;
             if (nonAttachedFields.isEmpty) {
-              call = r'$detached?.call()';
+              argsNames = <String>[];
             } else {
-              String argNameFunc(int index, NamedType type) =>
-                  _getSafeArgumentName(index, type);
-              enumerate(nonAttachedFields, (int count, NamedType arg) {
-                final String argType = _addGenericTypes(arg.type);
-                final String argName = argNameFunc(count, arg);
-                final String genericArgType =
-                    _makeGenericTypeArguments(arg.type);
-                final String castCall = _makeGenericCastCall(arg.type);
-
-                final String leftHandSide = 'final $argType? $argName';
-                if (customEnumNames.contains(arg.type.baseName)) {
-                  indent.writeln(
-                      '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
-                } else {
-                  indent.writeln(
-                      '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};');
-                }
-                if (!arg.type.isNullable) {
-                  indent.writeln('assert($argName != null,');
-                  indent.writeln(
-                      "    r'Argument for $channelName was null, expected non-null $argType.');");
-                }
+              enumerate(nonAttachedFields, (int index, NamedType field) {
+                _writeMessageArgumentVariable(
+                  indent,
+                  index,
+                  field,
+                  channelName: channelName,
+                  customEnumNames: customEnumNames,
+                );
               });
-              final Iterable<String> argNames =
+              argsNames =
                   indexMap(nonAttachedFields, (int index, NamedType field) {
                 final String name = _getSafeArgumentName(index, field);
                 return '$name${field.type.isNullable ? '' : '!'}';
               });
-              call = '\$detached?.call(${argNames.join(', ')})';
             }
 
-            indent.write(
-                r'(instanceManager ?? $InstanceManager.instance).addHostCreatedInstance');
-            indent.addScoped('(', ');', () {
-              indent.write('$call ?? ');
-              indent.addScoped('${api.name}.\$detached(', '),', () {
-                indent.writeln('binaryMessenger: binaryMessenger,');
-                indent.writeln('instanceManager: instanceManager,');
-                for (final Field field in nonAttachedFields) {
-                  if (!field.isAttached) {
-                    // TODO: don't pass 0 here. maybe create func for named args
-                    indent.writeln(
-                      '${field.name}: ${_getSafeArgumentName(0, field)}${field.type.isNullable ? '' : '!'},',
-                    );
-                  }
-                }
-              });
-              indent.writeln('instanceIdentifier!,');
-            });
+            indent.writeScoped(
+              r'(instanceManager ?? $InstanceManager.instance).addHostCreatedInstance(',
+              ');',
+              () {
+                indent.writeScoped(
+                  '\$detached?.call(${argsNames.join(', ')}) ?? ${api.name}.\$detached(',
+                  '),',
+                  () {
+                    indent.writeln('binaryMessenger: binaryMessenger,');
+                    indent.writeln('instanceManager: instanceManager,');
+                    enumerate(nonAttachedFields, (int index, NamedType field) {
+                      indent.writeln(
+                        '${field.name}: ${_getSafeArgumentName(index, field)}${field.type.isNullable ? '' : '!'},',
+                      );
+                    });
+                  },
+                );
+                indent.writeln('instanceIdentifier!,');
+              },
+            );
             indent.writeln('return;');
           });
         });
 
-        for (final Method method in api.methods
-            .where((Method method) => method.location == ApiLocation.flutter)) {
+        for (final Method method in flutterMethods) {
           indent.addScoped('{', '}', () {
             indent.writeln(
               'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
@@ -1954,6 +1932,42 @@ List<String> _asParameterNamesList(
     }
   });
   return names;
+}
+
+/// final <type> <name> = (<argsVariableName>[<index>] as <type>);
+void _writeMessageArgumentVariable(
+  Indent indent,
+  int index,
+  NamedType parameter, {
+  required List<String> customEnumNames,
+  required String channelName,
+  String argsVariableName = 'args',
+}) {
+  final String argType = _addGenericTypes(parameter.type);
+  final String argName = _getSafeArgumentName(index, parameter);
+  final String genericArgType = _makeGenericTypeArguments(parameter.type);
+  final String castCall = _makeGenericCastCall(parameter.type);
+
+  final String leftHandSide = 'final $argType? $argName';
+  if (customEnumNames.contains(parameter.type.baseName)) {
+    indent.writeln(
+      '$leftHandSide = $argsVariableName[$index] == null ? null : $argType.values[$argsVariableName[$index]! as int];',
+    );
+  } else {
+    indent.writeln(
+      '$leftHandSide = ($argsVariableName[$index] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};',
+    );
+  }
+
+  if (!parameter.type.isNullable) {
+    _writeAssert(
+      indent,
+      assertion: '$argName != null',
+      errorMessage:
+          'Argument for $channelName was null, expected non-null $argType.',
+      rawErrorMessageString: true,
+    );
+  }
 }
 
 /// Converts [inputPath] to a posix absolute path.
