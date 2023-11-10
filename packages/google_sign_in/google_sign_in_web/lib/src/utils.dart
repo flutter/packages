@@ -99,7 +99,10 @@ DateTime? getCredentialResponseExpirationTimestamp(
 
 /// Converts responses from the GIS library into TokenData for the plugin.
 GoogleSignInTokenData gisResponsesToTokenData(
-    CredentialResponse? credentialResponse, TokenResponse? tokenResponse, CodeResponse? codeResponse) {
+  CredentialResponse? credentialResponse,
+  TokenResponse? tokenResponse, [
+  CodeResponse? codeResponse,
+]) {
   return GoogleSignInTokenData(
     idToken: credentialResponse?.credential,
     accessToken: tokenResponse?.access_token,

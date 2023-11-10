@@ -205,12 +205,7 @@ class GisSdkClient {
       callback: allowInterop(_onCodeResponse),
       error_callback: allowInterop(_onCodeError),
       scope: scopes.join(' '),
-      auto_select: true,
-      enable_serial_consent: true,
-      hint: 'hint',
-      redirect_uri: null,
       select_account: true,
-      state: null,
       ux_mode: UxMode.popup,
     );
     return oauth2.initCodeClient(codeConfig);
