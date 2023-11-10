@@ -1544,6 +1544,7 @@ class $codecName extends StandardMessageCodec {
       }
       indent.newln();
 
+      // attached fields
       for (final Field field in attachedFields) {
         addDocumentationComments(
           indent,
@@ -1552,58 +1553,75 @@ class $codecName extends StandardMessageCodec {
         );
 
         final String type = _addGenericTypesNullable(field.type);
-        indent.writeln('late final $type ${field.name} = _${field.name}();');
-        indent.writeScoped('$type _${field.name}() {', '}', () {
-          indent.writeScoped(
-            'final $type instance = $type.\$detached(',
-            ');',
-            () {
-              indent.writeln('binaryMessenger: binaryMessenger,');
-              indent.writeln('instanceManager: instanceManager,');
-            },
-          );
+        indent.writeln(
+            '${field.isStatic ? 'static' : 'late'} final $type ${field.name} = _${field.name}();');
+        indent.writeScoped(
+          '${field.isStatic ? 'static ' : ''}$type _${field.name}() {',
+          '}',
+          () {
+            indent.writeScoped(
+              'final $type instance = $type.\$detached(',
+              ');',
+              () {
+                if (!field.isStatic) {
+                  indent.writeln('binaryMessenger: binaryMessenger,');
+                  indent.writeln('instanceManager: instanceManager,');
+                }
+              },
+            );
 
-          final String channelName = makeChannelNameForField(
-            api,
-            field,
-            dartPackageName,
-          );
-          _writeBasicMessageChannel(
-            indent,
-            channelName: channelName,
-            codecVariableName: '$codecName(instanceManager)',
-          );
-
-          indent.writeln(
-            'final int instanceIdentifier = instanceManager.addDartCreatedInstance(instance);',
-          );
-          indent.writeScoped(
-            'channel.send(<Object?>[this, instanceIdentifier]).then<void>((Object? value) {',
-            '});',
-            () {
-              indent.writeln(
-                'final List<Object?>? replyList = value as List<Object?>?;',
-              );
-              indent.writeScoped('if (replyList == null) {', '} ', () {
-                indent.writeScoped('throw PlatformException(', ');', () {
-                  indent.writeln("code: 'channel-error',");
+            final String channelName = makeChannelNameForField(
+              api,
+              field,
+              dartPackageName,
+            );
+            indent.writeScoped(
+              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+              ');',
+              () {
+                indent.writeln("r'$channelName',");
+                indent.writeln(
+                    '$codecName(${field.isStatic ? r'$InstanceManager.instance' : 'instanceManager'}),');
+                if (!field.isStatic) {
                   indent.writeln(
-                    "message: 'Unable to establish connection on channel.',",
+                    'binaryMessenger: binaryMessenger,',
                   );
-                });
-              }, addTrailingNewline: false);
-              indent.writeScoped('else if (replyList.length > 1) {', '} ', () {
-                indent.writeScoped('throw PlatformException(', ');', () {
-                  indent.writeln('code: replyList[0]! as String,');
-                  indent.writeln('message: replyList[1] as String?,');
-                  indent.writeln('details: replyList[2],');
-                });
-              });
-            },
-          );
+                }
+              },
+            );
 
-          indent.writeln('return instance;');
-        });
+            indent.writeln(
+              'final int instanceIdentifier = ${field.isStatic ? r'$InstanceManager.instance' : 'instanceManager'}.addDartCreatedInstance(instance);',
+            );
+            indent.writeScoped(
+              'channel.send(<Object?>[${field.isStatic ? '' : 'this, '}instanceIdentifier]).then<void>((Object? value) {',
+              '});',
+              () {
+                indent.writeln(
+                  'final List<Object?>? replyList = value as List<Object?>?;',
+                );
+                indent.writeScoped('if (replyList == null) {', '} ', () {
+                  indent.writeScoped('throw PlatformException(', ');', () {
+                    indent.writeln("code: 'channel-error',");
+                    indent.writeln(
+                      "message: 'Unable to establish connection on channel.',",
+                    );
+                  });
+                }, addTrailingNewline: false);
+                indent.writeScoped('else if (replyList.length > 1) {', '} ',
+                    () {
+                  indent.writeScoped('throw PlatformException(', ');', () {
+                    indent.writeln('code: replyList[0]! as String,');
+                    indent.writeln('message: replyList[1] as String?,');
+                    indent.writeln('details: replyList[2],');
+                  });
+                });
+              },
+            );
+
+            indent.writeln('return instance;');
+          },
+        );
       }
 
       for (final Method method in hostMethods) {

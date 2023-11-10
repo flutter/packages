@@ -271,6 +271,7 @@ class Field extends NamedType {
     required super.name,
     required super.type,
     required this.isAttached,
+    required this.isStatic,
     super.offset,
     super.documentationComments,
   });
@@ -280,6 +281,9 @@ class Field extends NamedType {
   /// Attached fields provide a synchronous [ProxyApiNode] instance as a field for
   /// another [ProxyApiNode]
   bool isAttached;
+
+  /// Whether this is a static field of a ProxyApi.
+  bool isStatic;
 }
 
 /// Represents a named entity that has a type.

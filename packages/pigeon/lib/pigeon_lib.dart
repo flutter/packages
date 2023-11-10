@@ -1371,6 +1371,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
           final bool isAttached = _hasMetadata(node.metadata, 'attached');
+          final bool isStatic = _hasMetadata(node.metadata, 'static');
           (_currentApi as ProxyApiNode?)!.fields.add(
                 Field(
                   type: TypeDeclaration(
@@ -1382,6 +1383,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                   ),
                   name: node.fields.variables[0].name.lexeme,
                   isAttached: isAttached,
+                  isStatic: isStatic,
                   offset: node.offset,
                   documentationComments: _documentationCommentsParser(
                     node.documentationComment?.tokens,
