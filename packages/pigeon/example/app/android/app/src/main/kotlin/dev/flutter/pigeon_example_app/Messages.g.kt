@@ -33,6 +33,9 @@ private fun wrapError(exception: Throwable): List<Any?> {
   }
 }
 
+private fun createConnectionError(channelName: String): FlutterError {
+  return FlutterError("channel-error",  "Unable to establish connection on channel: '$channelName'.", "")}
+
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
  * @property code The error code.
@@ -189,7 +192,8 @@ class MessageFlutterApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod", codec)
+    val channelName = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
@@ -201,7 +205,7 @@ class MessageFlutterApi(private val binaryMessenger: BinaryMessenger) {
           callback(Result.success(output));
         }
       } else {
-        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));
+        callback(Result.failure(createConnectionError(channelName)));
       } 
     }
   }
