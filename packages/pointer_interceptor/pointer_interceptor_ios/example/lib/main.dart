@@ -23,7 +23,7 @@ class _DummyPlatformView extends StatelessWidget {
   }
 }
 
-/// Example flutter app with a button overlaying the native view
+/// Example flutter app with a button overlaying the native view.
 class PointerInterceptorIOSExample extends StatefulWidget {
   /// Constructor
   const PointerInterceptorIOSExample({super.key});

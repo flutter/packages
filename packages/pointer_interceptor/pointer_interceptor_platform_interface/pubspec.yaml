@@ -1,10 +1,10 @@
 name: pointer_interceptor_platform_interface
-description: "A new Flutter plugin project."
+description: "A common platform interface for the pointer_interceptor plugin."
 version: 0.0.1
 
 environment:
   sdk: '>=3.1.0-134.0.dev <4.0.0'
-  flutter: '>=3.13.0'
+  flutter: '>=3.1.0'
 
 dependencies:
   flutter:
@@ -12,9 +12,6 @@ dependencies:
   plugin_platform_interface: ^2.1.0
 
 dev_dependencies:
-  flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec

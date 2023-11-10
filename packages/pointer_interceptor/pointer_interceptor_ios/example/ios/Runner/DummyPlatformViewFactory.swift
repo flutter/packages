@@ -1,6 +1,9 @@
 import Flutter
 import UIKit
 
+/**
+ * A  simple factory that creates a dummy platform view for testing.
+ */
 public class DummyPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
   private var messenger: FlutterBinaryMessenger
 
@@ -26,6 +29,9 @@ public class DummyPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
   }
 }
 
+/**
+ * A native view that will remove it's tag if clicked.
+ */
 public class CustomView: UIView {
 
   override public func hitTest(
@@ -37,6 +43,9 @@ public class CustomView: UIView {
   }
 }
 
+/**
+ * A flutter platform view that displays a simple native view.
+ */
 class DummyPlatformView: NSObject, FlutterPlatformView {
   private var _view: CustomView;
 

@@ -54,10 +54,11 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
   }
 
   @override
-  Widget buildWidget(
-      {required Widget child,
-      bool debug = false,
-      Key? key}) {
+  Widget buildWidget({
+    required Widget child,
+    bool debug = false,
+    Key? key,
+  }) {
     final String viewType = _getViewType(debug: debug);
 
     if (!_registered) {

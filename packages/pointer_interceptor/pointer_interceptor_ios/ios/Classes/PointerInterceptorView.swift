@@ -9,18 +9,11 @@ public class PointerInterceptorView: NSObject, FlutterPlatformView {
   let interceptorView: UIView
 
   init(frame:CGRect, debug:Bool) {
-
     interceptorView = UIView(frame:frame)
-    if debug {
-      interceptorView.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.5)
-    } else {
-      interceptorView.backgroundColor = UIColor.clear
-    }
+    interceptorView.backgroundColor = debug ? UIColor(red: 1, green: 0, blue: 0, alpha: 0.5) : UIColor.clear
   }
 
   public func view() -> UIView {
     return interceptorView;
   }
-
-
 }

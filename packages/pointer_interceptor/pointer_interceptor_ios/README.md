@@ -1,15 +1,10 @@
-# pointer_interceptor_ios
+# pointer\_interceptor\_ios
 
-A new Flutter plugin project.
+The iOS implementation of [`pointer interceptor`][1].
 
-## Getting Started
+## Usage
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+This package is NOT [endorsed][2]. To use this package, please include this into your `pubspec.yaml` along with [`pointer_interceptor`][1].
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+[1]: https://pub.dev/packages/pointer_interceptor
+[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin

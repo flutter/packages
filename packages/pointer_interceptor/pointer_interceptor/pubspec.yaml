@@ -33,8 +33,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-#  pointer_interceptor_ios:
-#    path: ../pointer_interceptor_ios
 
 topics:
   - web
