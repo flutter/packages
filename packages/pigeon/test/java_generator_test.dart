@@ -41,12 +41,6 @@ void main() {
     expect(code, contains('public static final class Foobar'));
     expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
-    expect(
-        code,
-        contains(RegExp(
-            r'@NonNull\s*protected static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
-    expect(code, isNot(contains('ArrayList ')));
-    expect(code, isNot(contains('ArrayList<>')));
   });
 
   test('gen one enum', () {
@@ -170,6 +164,12 @@ void main() {
         code,
         contains(
             'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value)'));
+    expect(
+        code,
+        contains(RegExp(
+            r'@NonNull\s*protected static ArrayList<Object> wrapError\(@NonNull Throwable exception\)')));
+    expect(code, isNot(contains('ArrayList ')));
+    expect(code, isNot(contains('ArrayList<>')));
   });
 
   test('all the simple datatypes header', () {
@@ -1558,10 +1558,48 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('class FlutterError'));
-    expect(code, contains('if (exception instanceof FlutterError)'));
-    expect(code, contains('FlutterError error = (FlutterError) exception;'));
-    expect(code, contains('errorList.add(error.code);'));
-    expect(code, contains('errorList.add(error.getMessage());'));
-    expect(code, contains('errorList.add(error.details);'));
+  });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaGenerator generator = JavaGenerator();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('createConnectionError(channelName)'));
+    expect(
+        code,
+        contains(
+            'return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");'));
   });
 }
