@@ -1610,7 +1610,10 @@ class $codecName extends StandardMessageCodec {
 
       for (final Method method in hostMethods) {
         addDocumentationComments(
-            indent, method.documentationComments, _docCommentSpec);
+          indent,
+          method.documentationComments,
+          _docCommentSpec,
+        );
 
         String argSignature = '';
         String sendArgument = 'null';
@@ -1634,91 +1637,75 @@ class $codecName extends StandardMessageCodec {
           argSignature = _getMethodArgumentsSignature(method, argNameFunc);
         }
 
-        indent.write(
-          'Future<${_addGenericTypesNullable(method.returnType)}> ${method.name}($argSignature) async ',
-        );
+        indent.writeScoped(
+          'Future<${_addGenericTypesNullable(method.returnType)}> ${method.name}($argSignature) async {',
+          '}',
+          () {
+            final String channelName =
+                makeChannelName(api, method, dartPackageName);
+            _writeBasicMessageChannel(
+              indent,
+              channelName: channelName,
+              codecVariableName: '$codecName(instanceManager)',
+            );
 
-        indent.addScoped('{', '}', () {
-          final String channelName =
-              makeChannelName(api, method, dartPackageName);
-          indent.writeln(
-              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
-          indent.nest(2, () {
-            indent.writeln("'$channelName', $codecName(instanceManager),");
-            indent.writeln('binaryMessenger: binaryMessenger);');
-          });
-          final String returnType =
-              _makeGenericTypeArguments(method.returnType);
-          final String genericCastCall =
-              _makeGenericCastCall(method.returnType);
-          const String accessor = 'replyList[0]';
-          // Avoid warnings from pointlessly casting to `Object?`.
-          final String nullablyTypedAccessor =
-              returnType == 'Object' ? accessor : '($accessor as $returnType?)';
-          final String nullHandler = method.returnType.isNullable
-              ? (genericCastCall.isEmpty ? '' : '?')
-              : '!';
-          String returnStatement = 'return';
-          if (customEnumNames.contains(returnType)) {
-            if (method.returnType.isNullable) {
-              returnStatement =
-                  '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
-            } else {
-              returnStatement =
-                  '$returnStatement $returnType.values[$accessor! as int]';
+            final String sendMessageArgsNames =
+                _asParameterNamesList(method.arguments, root.enums).join(', ');
+            indent.writeln('final List<Object?>? replyList =');
+            indent.nest(2, () {
+              indent.writeln(
+                'await channel.send(<Object?>[this, $sendMessageArgsNames]) as List<Object?>?;',
+              );
+            });
+            indent.writeScoped('if (replyList == null) {', '} ', () {
+              indent.writeScoped('throw PlatformException(', ');', () {
+                indent.writeln("code: 'channel-error',");
+                indent.writeln(
+                  "message: 'Unable to establish connection on channel.',",
+                );
+              });
+            }, addTrailingNewline: false);
+            indent.writeScoped('else if (replyList.length > 1) {', '} ', () {
+              indent.writeScoped('throw PlatformException(', ');', () {
+                indent.writeln('code: replyList[0]! as String,');
+                indent.writeln('message: replyList[1] as String?,');
+                indent.writeln('details: replyList[2],');
+              });
+            }, addTrailingNewline: false);
+            // On iOS we can return nil from functions to accommodate error
+            // handling.  Returning a nil value and not returning an error is an
+            // exception.
+            if (!method.returnType.isNullable && !method.returnType.isVoid) {
+              indent.writeScoped('else if (replyList[0] == null) {', '} ', () {
+                indent.writeScoped('throw PlatformException(', ');', () {
+                  indent.writeln("code: 'null-error',");
+                  indent.writeln(
+                    "message: 'Host platform returned null value for non-null return value.',",
+                  );
+                });
+              }, addTrailingNewline: false);
             }
-          } else if (!method.returnType.isVoid) {
-            returnStatement =
-                '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
-          }
-          returnStatement = '$returnStatement;';
-
-          indent.format('''
-final List<Object?>? replyList =
-\t\tawait channel.send($sendArgument) as List<Object?>?;
-if (replyList == null) {
-\tthrow PlatformException(
-\t\tcode: 'channel-error',
-\t\tmessage: 'Unable to establish connection on channel.',
-\t);
-} else if (replyList.length > 1) {
-\tthrow PlatformException(
-\t\tcode: replyList[0]! as String,
-\t\tmessage: replyList[1] as String?,
-\t\tdetails: replyList[2],
-\t);''');
-          // On iOS we can return nil from functions to accommodate error
-          // handling.  Returning a nil value and not returning an error is an
-          // exception.
-          if (!method.returnType.isNullable && !method.returnType.isVoid) {
-            indent.format('''
-} else if (replyList[0] == null) {
-\tthrow PlatformException(
-\t\tcode: 'null-error',
-\t\tmessage: 'Host platform returned null value for non-null return value.',
-\t);''');
-          }
-          indent.format('''
-} else {
-\t$returnStatement
-}''');
-        });
+            indent.writeScoped('else {', '}', () {
+              _writeHostReturnStatement(
+                indent,
+                method.returnType,
+                customEnumNames: customEnumNames,
+              );
+            });
+          },
+        );
       }
 
+      // copy method
       indent.writeln('@override');
-      indent.write('${api.name} copy() ');
-      indent.addScoped('{', '}', () {
-        indent.write('return ${api.name}.\$detached');
-        indent.addScoped('(', ');', () {
+      indent.writeScoped('${api.name} copy() {', '}', () {
+        indent.writeScoped('return ${api.name}.\$detached(', ');', () {
           indent.writeln('binaryMessenger: binaryMessenger,');
           indent.writeln('instanceManager: instanceManager,');
-          for (final Field field in api.fields) {
-            if (!field.isAttached) {
-              indent.writeln('${field.name}: ${field.name},');
-            }
+          for (final Field field in nonAttachedFields) {
+            indent.writeln('${field.name}: ${field.name},');
           }
-          for (final Method method in api.methods.where(
-              (Method method) => method.location == ApiLocation.flutter)) {
+          for (final Method method in flutterMethods) {
             indent.writeln('${method.name}: ${method.name},');
           }
         });
@@ -1957,6 +1944,35 @@ List<String> _asParameterNamesList(
     }
   });
   return names;
+}
+
+/// return (replyList[0] as String?)!;
+void _writeHostReturnStatement(
+  Indent indent,
+  TypeDeclaration returnType, {
+  required List<String> customEnumNames,
+}) {
+  final String type = _makeGenericTypeArguments(returnType);
+  final String genericCastCall = _makeGenericCastCall(returnType);
+  const String accessor = 'replyList[0]';
+  // Avoid warnings from pointlessly casting to `Object?`.
+  final String nullablyTypedAccessor =
+      type == 'Object' ? accessor : '($accessor as $type?)';
+  final String nullHandler =
+      returnType.isNullable ? (genericCastCall.isEmpty ? '' : '?') : '!';
+  String returnStatement = 'return';
+  if (customEnumNames.contains(type)) {
+    if (returnType.isNullable) {
+      returnStatement =
+          '$returnStatement ($accessor as int?) == null ? null : $type.values[$accessor! as int]';
+    } else {
+      returnStatement = '$returnStatement $type.values[$accessor! as int]';
+    }
+  } else if (!returnType.isVoid) {
+    returnStatement =
+        '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
+  }
+  indent.writeln('$returnStatement;');
 }
 
 /// final <type> <name> = (<argsVariableName>[<index>] as <type>);
