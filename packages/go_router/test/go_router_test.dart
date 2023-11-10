@@ -2503,6 +2503,21 @@ void main() {
       TestWidgetsFlutterBinding.instance.platformDispatcher
           .clearDefaultRouteNameTestValue();
     });
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path, and query parameters',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com?param=1';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.toString(), '/?param=1');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
+    });
   });
 
   group('params', () {
@@ -5047,6 +5062,44 @@ void main() {
       expect(router.routeInformationProvider.value.uri.toString(),
           expectedInitialRoute);
     });
+  });
+
+  testWidgets(
+      'test the pathParameters in redirect when the Router is recreated',
+      (WidgetTester tester) async {
+    final GoRouter router = GoRouter(
+      initialLocation: '/foo',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/foo',
+          builder: dummy,
+          routes: <GoRoute>[
+            GoRoute(
+              path: ':id',
+              redirect: (_, GoRouterState state) {
+                expect(state.pathParameters['id'], isNotNull);
+                return null;
+              },
+              builder: dummy,
+            ),
+          ],
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: UniqueKey(),
+        routerConfig: router,
+      ),
+    );
+    router.push('/foo/123');
+    await tester.pump(); // wait reportRouteInformation
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: UniqueKey(),
+        routerConfig: router,
+      ),
+    );
   });
 }
 

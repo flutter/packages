@@ -51,7 +51,6 @@
 @property NSMapTable<NSObject *, NSNumber *> *identifiers;
 @property NSMapTable<NSNumber *, NSObject *> *weakInstances;
 @property NSMapTable<NSNumber *, NSObject *> *strongInstances;
-@property long nextIdentifier;
 @end
 
 @implementation FWFInstanceManager
