@@ -4,6 +4,7 @@
 
 import 'package:cross_file/cross_file.dart';
 import 'package:cross_file_example/readme_excerpts.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -19,5 +20,5 @@ void main() {
     // And the example file should have contents.
     final String fileContent = await xFile.readAsString();
     expect(fileContent, allOf(isNotNull, isNotEmpty));
-  });
+  }, skip: kIsWeb);
 }
