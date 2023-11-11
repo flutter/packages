@@ -702,7 +702,7 @@ import FlutterMacOS
       } else if (type.isEnum) {
         indent.writeln('var $variableName: $fieldType? = nil');
         indent.writeln(
-            'let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, TypeDeclaration(baseName: 'Int', isNullable: true))}');
+            'let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true))}');
         indent
             .write('if let ${variableName}RawValue = ${variableName}EnumVal ');
         indent.addScoped('{', '}', () {

@@ -1122,7 +1122,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else {
       return Parameter(
         name: '',
-        type: TypeDeclaration(baseName: '', isNullable: false),
+        type: const TypeDeclaration(baseName: '', isNullable: false),
         offset: formalParameter.offset,
       );
     }
