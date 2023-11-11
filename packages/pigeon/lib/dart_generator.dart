@@ -1212,7 +1212,7 @@ class $codecName extends StandardMessageCodec {
             '${superClassApi != null ? 'super' : 'this'}.binaryMessenger,',
           );
           indent.writeln(
-            '${superClassApi != null ? 'super.instanceManager' : r'$InstanceManager? customInstanceManager'},',
+            '${superClassApi != null ? 'super.' : r'$InstanceManager? '}instanceManager,',
           );
 
           for (final Field field in nonAttachedFields) {
@@ -1242,7 +1242,7 @@ class $codecName extends StandardMessageCodec {
 
         final String initializerStatement = superClassApi != null
             ? r'super.$detached()'
-            : r'instanceManager = customInstanceManager ?? $InstanceManager.instance';
+            : r'instanceManager = instanceManager ?? $InstanceManager.instance';
         indent.addScoped(': $initializerStatement {', '}', () {
           final String channelName = makeChannelNameForConstructor(
             api,
@@ -1252,10 +1252,11 @@ class $codecName extends StandardMessageCodec {
           _writeBasicMessageChannel(
             indent,
             channelName: channelName,
-            codecVariableName: '$codecName(instanceManager)',
+            codecVariableName:
+                '$codecName(${superClassApi != null ? '' : 'this.'}instanceManager)',
           );
           indent.writeln(
-            'final int instanceIdentifier = instanceManager.addDartCreatedInstance(this);',
+            'final int instanceIdentifier = ${superClassApi != null ? '' : 'this.'}instanceManager.addDartCreatedInstance(this);',
           );
 
           final List<String> unAttachedFieldNames = _asParameterNamesList(
