@@ -37,6 +37,18 @@ bool _equalMaps(Map<String, Object> x, Map<String, Object> y) {
   return true;
 }
 
+final Class emptyClass = Class(name: 'className', fields: <NamedType>[
+  NamedType(
+    name: 'namedTypeName',
+    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+  )
+]);
+
+final Enum emptyEnum = Enum(
+  name: 'enumName',
+  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
+);
+
 void main() {
   test('test merge maps', () {
     final Map<String, Object> source = <String, Object>{
@@ -79,7 +91,7 @@ void main() {
                 TypeDeclaration(
                   baseName: 'Input',
                   isNullable: true,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 )
               ],
             ),
@@ -89,7 +101,7 @@ void main() {
         returnType: TypeDeclaration(
           baseName: 'Output',
           isNullable: false,
-          associatedClass: Class(name: '', fields: <NamedType>[]),
+          associatedClass: emptyClass,
         ),
         isAsynchronous: true,
       )
@@ -120,7 +132,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Output',
               isNullable: false,
-              associatedClass: Class(name: '', fields: <NamedType>[]),
+              associatedClass: emptyClass,
             ),
             name: '',
           )
@@ -132,7 +144,7 @@ void main() {
             TypeDeclaration(
               baseName: 'Input',
               isNullable: true,
-              associatedClass: Class(name: '', fields: <NamedType>[]),
+              associatedClass: emptyClass,
             )
           ],
         ),
@@ -165,7 +177,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Foo',
               isNullable: false,
-              associatedClass: Class(name: '', fields: <NamedType>[]),
+              associatedClass: emptyClass,
             ),
             name: '',
           ),
@@ -173,10 +185,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Bar',
               isNullable: false,
-              associatedEnum: Enum(
-                name: 'name',
-                members: <EnumMember>[EnumMember(name: 'member')],
-              ),
+              associatedEnum: emptyEnum,
             ),
             name: '',
           ),
@@ -220,7 +229,7 @@ void main() {
                       TypeDeclaration(
                         baseName: 'Foo',
                         isNullable: true,
-                        associatedClass: Class(name: '', fields: <NamedType>[]),
+                        associatedClass: emptyClass,
                       )
                     ])),
           ],
@@ -234,7 +243,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Bar',
               isNullable: true,
-              associatedClass: Class(name: '', fields: <NamedType>[]),
+              associatedClass: emptyClass,
             )),
       ]),
       Class(name: 'Bar', fields: <NamedType>[
@@ -314,7 +323,7 @@ void main() {
                   type: TypeDeclaration(
                     isNullable: false,
                     baseName: 'Foo',
-                    associatedClass: Class(name: '', fields: <NamedType>[]),
+                    associatedClass: emptyClass,
                   )),
             ],
             returnType: const TypeDeclaration.voidDeclaration(),
@@ -333,7 +342,7 @@ void main() {
                   type: TypeDeclaration(
                     isNullable: false,
                     baseName: 'Foo',
-                    associatedClass: Class(name: '', fields: <NamedType>[]),
+                    associatedClass: emptyClass,
                   )),
             ],
             returnType: const TypeDeclaration.voidDeclaration(),

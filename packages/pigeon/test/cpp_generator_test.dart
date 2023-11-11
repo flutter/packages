@@ -10,6 +10,18 @@ import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
 
+final Class emptyClass = Class(name: 'className', fields: <NamedType>[
+  NamedType(
+    name: 'namedTypeName',
+    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+  )
+]);
+
+final Enum emptyEnum = Enum(
+  name: 'enumName',
+  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
+);
+
 void main() {
   test('gen one api', () {
     final Root root = Root(apis: <Api>[
@@ -21,14 +33,14 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 ),
                 name: 'input')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            associatedClass: Class(name: '', fields: <NamedType>[]),
+            associatedClass: emptyClass,
           ),
         )
       ])
@@ -97,14 +109,14 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            associatedClass: Class(name: '', fields: <NamedType>[]),
+            associatedClass: emptyClass,
           ),
         )
       ])
@@ -269,14 +281,14 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 ),
                 name: 'input')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            associatedClass: Class(name: '', fields: <NamedType>[]),
+            associatedClass: emptyClass,
           ),
         )
       ])
@@ -474,7 +486,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
@@ -513,7 +525,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: true,
-              associatedClass: Class(name: '', fields: <NamedType>[]),
+              associatedClass: emptyClass,
             ),
             name: 'nullableNested'),
       ]),
@@ -657,7 +669,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
@@ -696,7 +708,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: false,
-              associatedClass: Class(name: '', fields: <NamedType>[]),
+              associatedClass: emptyClass,
             ),
             name: 'nonNullableNested'),
       ]),
@@ -855,7 +867,7 @@ void main() {
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: true,
-            associatedClass: Class(name: '', fields: <NamedType>[]),
+            associatedClass: emptyClass,
           ),
         ),
       ])
@@ -972,7 +984,7 @@ void main() {
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: false,
-            associatedClass: Class(name: '', fields: <NamedType>[]),
+            associatedClass: emptyClass,
           ),
         ),
       ])
@@ -1058,7 +1070,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 )),
             Parameter(
                 name: 'aGenericObject',
@@ -1213,7 +1225,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 )),
             Parameter(
                 name: 'aGenericObject',
@@ -1363,7 +1375,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 )),
             Parameter(
                 name: 'aGenericObject',
@@ -1522,7 +1534,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 )),
             Parameter(
                 name: 'aGenericObject',
@@ -1659,10 +1671,7 @@ void main() {
                   type: TypeDeclaration(
                     baseName: 'Foo',
                     isNullable: false,
-                    associatedEnum: Enum(
-                      name: '',
-                      members: <EnumMember>[EnumMember(name: '')],
-                    ),
+                    associatedEnum: emptyEnum,
                   ),
                 )
               ])
@@ -1826,14 +1835,14 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            associatedClass: Class(name: '', fields: <NamedType>[]),
+            associatedClass: emptyClass,
           ),
           isAsynchronous: true,
         )
@@ -1921,7 +1930,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
-                  associatedClass: Class(name: '', fields: <NamedType>[]),
+                  associatedClass: emptyClass,
                 )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
