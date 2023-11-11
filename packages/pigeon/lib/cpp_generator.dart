@@ -250,8 +250,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         for (final NamedType field in orderedFields) {
           addDocumentationComments(
               indent, field.documentationComments, _docCommentSpec);
-          final HostDatatype baseDatatype = getFieldHostDatatype(
-              field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+          final HostDatatype baseDatatype =
+              getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType);
           // Declare a getter and setter.
           _writeFunctionDeclaration(indent, _makeGetterName(field),
               returnType: _getterReturnType(baseDatatype), isConst: true);
@@ -301,8 +301,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         }
 
         for (final NamedType field in orderedFields) {
-          final HostDatatype hostDatatype = getFieldHostDatatype(
-              field, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+          final HostDatatype hostDatatype =
+              getFieldHostDatatype(field, _baseCppTypeForBuiltinDartType);
           indent.writeln(
               '${_valueType(hostDatatype)} ${_makeInstanceVariableName(field)};');
         }
@@ -336,14 +336,14 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         _writeFunctionDeclaration(indent, 'GetCodec',
             returnType: 'const flutter::StandardMessageCodec&', isStatic: true);
         for (final Method func in api.methods) {
-          final HostDatatype returnType = getHostDatatype(func.returnType,
-              root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+          final HostDatatype returnType =
+              getHostDatatype(func.returnType, _baseCppTypeForBuiltinDartType);
           addDocumentationComments(
               indent, func.documentationComments, _docCommentSpec);
 
           final Iterable<String> argTypes = func.arguments.map((NamedType arg) {
-            final HostDatatype hostType = getFieldHostDatatype(
-                arg, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+            final HostDatatype hostType =
+                getFieldHostDatatype(arg, _baseCppTypeForBuiltinDartType);
             return _flutterApiArgumentType(hostType);
           });
           final Iterable<String> argNames =
@@ -394,16 +394,16 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         _writeFunctionDeclaration(indent, '~${api.name}',
             isVirtual: true, inlineNoop: true);
         for (final Method method in api.methods) {
-          final HostDatatype returnType = getHostDatatype(method.returnType,
-              root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+          final HostDatatype returnType = getHostDatatype(
+              method.returnType, _baseCppTypeForBuiltinDartType);
           final String returnTypeName = _hostApiReturnType(returnType);
 
           final List<String> parameters = <String>[];
           if (method.arguments.isNotEmpty) {
             final Iterable<String> argTypes =
                 method.arguments.map((NamedType arg) {
-              final HostDatatype hostType = getFieldHostDatatype(arg,
-                  root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+              final HostDatatype hostType =
+                  getFieldHostDatatype(arg, _baseCppTypeForBuiltinDartType);
               return _hostApiArgumentType(hostType);
             });
             final Iterable<String> argNames =
@@ -460,8 +460,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
   void _writeClassConstructor(Root root, Indent indent, Class klass,
       Iterable<NamedType> params, String docComment) {
     final List<String> paramStrings = params.map((NamedType param) {
-      final HostDatatype hostDatatype = getFieldHostDatatype(
-          param, root.classes, root.enums, _baseCppTypeForBuiltinDartType);
+      final HostDatatype hostDatatype =
+          getFieldHostDatatype(param, _baseCppTypeForBuiltinDartType);
       return '${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
     }).toList();
     indent.writeln('$_commentPrefix $docComment');
@@ -667,11 +667,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     Class klass, {
     required String dartPackageName,
   }) {
-    final Set<String> customClassNames =
-        root.classes.map((Class x) => x.name).toSet();
-    final Set<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toSet();
-
     indent.writeln('$_commentPrefix ${klass.name}');
     indent.newln();
 
@@ -697,8 +692,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       root,
       indent,
       klass,
-      customClassNames,
-      customEnumNames,
       dartPackageName: dartPackageName,
     );
 
@@ -708,8 +701,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       root,
       indent,
       klass,
-      customClassNames,
-      customEnumNames,
       dartPackageName: dartPackageName,
     );
   }
@@ -719,9 +710,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     _writeFunctionDefinition(indent, 'ToEncodableList',
@@ -731,8 +720,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       indent.writeln('EncodableList list;');
       indent.writeln('list.reserve(${klass.fields.length});');
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        final HostDatatype hostDatatype = getFieldHostDatatype(field,
-            root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
+        final HostDatatype hostDatatype =
+            getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
         final String encodableValue = _wrappedHostApiArgumentExpression(
             root, _makeInstanceVariableName(field), field.type, hostDatatype,
             preSerializeClasses: true);
@@ -747,23 +736,21 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     // Returns the expression to convert the given EncodableValue to a field
     // value.
     String getValueExpression(NamedType field, String encodable) {
-      if (customEnumNames.contains(field.type.baseName)) {
+      if (field.type.isEnum) {
         return '(${field.type.baseName})(std::get<int32_t>($encodable))';
       } else if (field.type.baseName == 'int') {
         return '$encodable.LongValue()';
       } else if (field.type.baseName == 'Object') {
         return encodable;
       } else {
-        final HostDatatype hostDatatype = getFieldHostDatatype(field,
-            root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
+        final HostDatatype hostDatatype =
+            getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
         if (!hostDatatype.isBuiltin &&
             root.classes
                 .map((Class x) => x.name)
@@ -850,15 +837,15 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           'return flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());');
     });
     for (final Method func in api.methods) {
-      final HostDatatype returnType = getHostDatatype(func.returnType,
-          root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
+      final HostDatatype returnType =
+          getHostDatatype(func.returnType, _shortBaseCppTypeForBuiltinDartType);
 
       // Determine the input parameter list, saved in a structured form for later
       // use as platform channel call arguments.
       final Iterable<_HostNamedType> hostParameters =
           indexMap(func.arguments, (int i, NamedType arg) {
-        final HostDatatype hostType = getFieldHostDatatype(
-            arg, root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
+        final HostDatatype hostType =
+            getFieldHostDatatype(arg, _shortBaseCppTypeForBuiltinDartType);
         return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
       });
       final List<String> parameters = <String>[
@@ -988,8 +975,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                   enumerate(method.arguments, (int index, NamedType arg) {
                     final HostDatatype hostType = getHostDatatype(
                         arg.type,
-                        root.classes,
-                        root.enums,
                         (TypeDeclaration x) =>
                             _shortBaseCppTypeForBuiltinDartType(x));
                     final String argName = _getSafeArgumentName(index, arg);
@@ -1015,7 +1000,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                       apiType: ApiType.host,
                     );
                     final String unwrapEnum =
-                        isEnum(root, arg.type) && arg.type.isNullable
+                        arg.type.isEnum && arg.type.isNullable
                             ? ' ? &(*$argName) : nullptr'
                             : '';
                     methodArgument.add('$argName$unwrapEnum');
@@ -1023,10 +1008,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                 }
 
                 final HostDatatype returnType = getHostDatatype(
-                    method.returnType,
-                    root.classes,
-                    root.enums,
-                    _shortBaseCppTypeForBuiltinDartType);
+                    method.returnType, _shortBaseCppTypeForBuiltinDartType);
                 final String returnTypeName = _hostApiReturnType(returnType);
                 if (method.isAsynchronous) {
                   methodArgument.add(
@@ -1157,8 +1139,6 @@ return EncodableValue(EncodableList{
         _makeVariableName(param),
         getFieldHostDatatype(
           param,
-          root.classes,
-          root.enums,
           _shortBaseCppTypeForBuiltinDartType,
         ),
         param.type,
@@ -1181,8 +1161,8 @@ return EncodableValue(EncodableList{
 
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
       Indent indent, Class klass, NamedType field) {
-    final HostDatatype hostDatatype = getFieldHostDatatype(
-        field, root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
+    final HostDatatype hostDatatype =
+        getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
     final String instanceVariableName = _makeInstanceVariableName(field);
     final String setterName = _makeSetterName(field);
     final String returnExpression = hostDatatype.isNullable
@@ -1247,7 +1227,7 @@ return EncodableValue(EncodableList{
 
     const String nullValue = 'EncodableValue()';
     String enumPrefix = '';
-    if (isEnum(root, returnType)) {
+    if (returnType.isEnum) {
       enumPrefix = '(int) ';
     }
     if (returnType.isVoid) {
@@ -1255,11 +1235,11 @@ return EncodableValue(EncodableList{
       errorCondition = 'output.has_value()';
       errorGetter = 'value';
     } else {
-      final HostDatatype hostType = getHostDatatype(returnType, root.classes,
-          root.enums, _shortBaseCppTypeForBuiltinDartType);
+      final HostDatatype hostType =
+          getHostDatatype(returnType, _shortBaseCppTypeForBuiltinDartType);
 
       const String extractedValue = 'std::move(output).TakeValue()';
-      final String wrapperType = hostType.isBuiltin || isEnum(root, returnType)
+      final String wrapperType = hostType.isBuiltin || returnType.isEnum
           ? 'EncodableValue'
           : 'CustomEncodableValue';
       if (returnType.isNullable) {
@@ -1819,7 +1799,7 @@ List<Error> validateCpp(CppOptions options, Root root) {
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
       for (final NamedType arg in method.arguments) {
-        if (isEnum(root, arg.type)) {
+        if (arg.type.isEnum) {
           // TODO(gaaclarke): Add line number and filename.
           result.add(Error(
               message:

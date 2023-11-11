@@ -40,7 +40,7 @@ class MultipleArityHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<int> subtract(int arg_x, int arg_y) async {
+  Future<int> subtract(int x, int y) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -49,7 +49,7 @@ class MultipleArityHostApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_x, arg_y]) as List<Object?>?;
+        await channel.send(<Object?>[x, y]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

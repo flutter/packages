@@ -16,22 +16,26 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  isClass: true,
                 ),
                 name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            isClass: true,
+          ),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -39,7 +43,7 @@ void main() {
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -88,22 +92,26 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  isClass: true,
                 ),
                 name: 'someInput')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            isClass: true,
+          ),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -111,7 +119,7 @@ void main() {
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -162,15 +170,15 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 ),
                 name: 'someInput')
           ],
-          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -213,15 +221,15 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 ),
                 name: 'someInput')
           ],
-          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -256,22 +264,26 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  isClass: true,
                 ),
                 name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            isClass: true,
+          ),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -279,7 +291,7 @@ void main() {
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -329,15 +341,15 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 ),
                 name: 'input')
           ],
-          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -402,15 +414,15 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 ),
                 name: 'input')
           ],
-          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -457,21 +469,22 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  isClass: true,
                 ),
                 name: 'someInput')
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          returnType: TypeDeclaration.voidDeclaration(),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: true,
             ),
@@ -479,27 +492,28 @@ void main() {
       ]),
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: true,
             ),
             name: 'nullableBool'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'int',
               isNullable: true,
             ),
             name: 'nullableInt'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
             name: 'nullableString'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: true,
+              isClass: true,
             ),
             name: 'nullableNested'),
       ]),
@@ -638,21 +652,22 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  isClass: true,
                 ),
                 name: 'someInput')
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          returnType: TypeDeclaration.voidDeclaration(),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -660,27 +675,28 @@ void main() {
       ]),
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
             name: 'nonNullableBool'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'int',
               isNullable: false,
             ),
             name: 'nonNullableInt'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'String',
               isNullable: false,
             ),
             name: 'nonNullableString'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: false,
+              isClass: true,
             ),
             name: 'nonNullableNested'),
       ]),
@@ -779,32 +795,32 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'returnNullableBool',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'bool',
             isNullable: true,
           ),
         ),
         Method(
           name: 'returnNullableInt',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'int',
             isNullable: true,
           ),
         ),
         Method(
           name: 'returnNullableString',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'String',
             isNullable: true,
           ),
         ),
         Method(
           name: 'returnNullableList',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
               TypeDeclaration(
@@ -817,8 +833,8 @@ void main() {
         ),
         Method(
           name: 'returnNullableMap',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
               TypeDeclaration(
@@ -835,17 +851,18 @@ void main() {
         ),
         Method(
           name: 'returnNullableDataClass',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: true,
+            isClass: true,
           ),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ReturnData', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -895,32 +912,32 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'returnBool',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'bool',
             isNullable: false,
           ),
         ),
         Method(
           name: 'returnInt',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'int',
             isNullable: false,
           ),
         ),
         Method(
           name: 'returnString',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'String',
             isNullable: false,
           ),
         ),
         Method(
           name: 'returnList',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
               TypeDeclaration(
@@ -933,8 +950,8 @@ void main() {
         ),
         Method(
           name: 'returnMap',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
               TypeDeclaration(
@@ -951,17 +968,18 @@ void main() {
         ),
         Method(
           name: 'returnDataClass',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: false,
+            isClass: true,
           ),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ReturnData', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -997,37 +1015,37 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          arguments: <Parameter>[
+            Parameter(
                 name: 'aBool',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1035,26 +1053,27 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
+                  isClass: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Object',
                   isNullable: true,
                 )),
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          returnType: TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1123,7 +1142,7 @@ void main() {
           contains(
               'const auto* a_map_arg = std::get_if<EncodableMap>(&encodable_a_map_arg);'));
       // Ints are complicated since there are two possible pointer types, but
-      // the paramter always needs an int64_t*.
+      // the parameter always needs an int64_t*.
       expect(
           code,
           contains(
@@ -1151,37 +1170,37 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          arguments: <Parameter>[
+            Parameter(
                 name: 'aBool',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1189,26 +1208,27 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  isClass: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Object',
                   isNullable: false,
                 )),
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          returnType: TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1275,7 +1295,7 @@ void main() {
           contains(
               'const auto& a_map_arg = std::get<EncodableMap>(encodable_a_map_arg);'));
       // Ints use a copy since there are two possible reference types, but
-      // the paramter always needs an int64_t.
+      // the parameter always needs an int64_t.
       expect(
           code,
           contains(
@@ -1300,37 +1320,37 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          arguments: <Parameter>[
+            Parameter(
                 name: 'aBool',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1338,20 +1358,21 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
+                  isClass: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Object',
                   isNullable: true,
                 )),
           ],
-          returnType: const TypeDeclaration(
+          returnType: TypeDeclaration(
             baseName: 'bool',
             isNullable: true,
           ),
@@ -1360,7 +1381,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1458,37 +1479,37 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          arguments: <Parameter>[
+            Parameter(
                 name: 'aBool',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1496,20 +1517,21 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  isClass: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Object',
                   isNullable: false,
                 )),
           ],
-          returnType: const TypeDeclaration(
+          returnType: TypeDeclaration(
             baseName: 'bool',
             isNullable: false,
           ),
@@ -1518,7 +1540,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1590,15 +1612,15 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          arguments: <Parameter>[
+            Parameter(
                 name: 'anArg',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          returnType: TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -1630,12 +1652,15 @@ void main() {
         Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'bar',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              returnType: TypeDeclaration.voidDeclaration(),
+              arguments: <Parameter>[
+                Parameter(
                     name: 'foo',
-                    type: const TypeDeclaration(
-                        baseName: 'Foo', isNullable: false))
+                    type: TypeDeclaration(
+                      baseName: 'Foo',
+                      isNullable: false,
+                      isEnum: true,
+                    ))
               ])
         ])
       ],
@@ -1674,12 +1699,12 @@ void main() {
           methods: <Method>[
             Method(
               name: 'method',
-              returnType: const TypeDeclaration.voidDeclaration(),
+              returnType: TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
-              arguments: <NamedType>[
-                NamedType(
+              arguments: <Parameter>[
+                Parameter(
                   name: 'field',
-                  type: const TypeDeclaration(
+                  type: TypeDeclaration(
                     baseName: 'int',
                     isNullable: true,
                   ),
@@ -1696,7 +1721,7 @@ void main() {
           fields: <NamedType>[
             NamedType(
                 documentationComments: <String>[comments[count++]],
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                     baseName: 'Map',
                     isNullable: true,
                     typeArguments: <TypeDeclaration>[
@@ -1753,11 +1778,11 @@ void main() {
           methods: <Method>[
             Method(
               name: 'method',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              returnType: TypeDeclaration.voidDeclaration(),
+              arguments: <Parameter>[
+                Parameter(
                   name: 'field',
-                  type: const TypeDeclaration(
+                  type: TypeDeclaration(
                     baseName: 'int',
                     isNullable: true,
                   ),
@@ -1792,23 +1817,27 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  isClass: true,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            isClass: true,
+          ),
           isAsynchronous: true,
         )
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -1816,7 +1845,7 @@ void main() {
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -1845,37 +1874,37 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          arguments: <Parameter>[
+            Parameter(
                 name: 'aBool',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1883,20 +1912,21 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  isClass: true,
                 )),
           ],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          returnType: TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1926,44 +1956,42 @@ void main() {
       Api(name: 'HostApi', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'noop',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'double', isNullable: false),
+          returnType: TypeDeclaration(baseName: 'double', isNullable: false),
           isAsynchronous: true,
         ),
       ]),
       Api(name: 'FlutterApi', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'noop',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration.voidDeclaration(),
+          arguments: <Parameter>[],
+          returnType: TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          arguments: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'bool', isNullable: false),
+          returnType: TypeDeclaration(baseName: 'bool', isNullable: false),
           isAsynchronous: true,
         ),
       ])
@@ -2001,11 +2029,11 @@ void main() {
           methods: <Method>[
             Method(
               name: 'method',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              returnType: TypeDeclaration.voidDeclaration(),
+              arguments: <Parameter>[
+                Parameter(
                   name: 'field',
-                  type: const TypeDeclaration(
+                  type: TypeDeclaration(
                     baseName: 'int',
                     isNullable: true,
                   ),

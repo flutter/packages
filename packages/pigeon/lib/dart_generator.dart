@@ -136,11 +136,6 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Class klass, {
     required String dartPackageName,
   }) {
-    final Set<String> customClassNames =
-        root.classes.map((Class x) => x.name).toSet();
-    final Set<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toSet();
-
     indent.newln();
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec);
@@ -162,8 +157,6 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         root,
         indent,
         klass,
-        customClassNames,
-        customEnumNames,
         dartPackageName: dartPackageName,
       );
       indent.newln();
@@ -172,8 +165,6 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         root,
         indent,
         klass,
-        customClassNames,
-        customEnumNames,
         dartPackageName: dartPackageName,
       );
     });
@@ -183,8 +174,13 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.write(klass.name);
     indent.addScoped('({', '});', () {
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        final String required = field.type.isNullable ? '' : 'required ';
-        indent.writeln('${required}this.${field.name},');
+        final String required =
+            !field.type.isNullable && field.defaultValue == null
+                ? 'required '
+                : '';
+        final String defaultValueString =
+            field.defaultValue == null ? '' : ' = ${field.defaultValue}';
+        indent.writeln('${required}this.${field.name}$defaultValueString,');
       }
     });
   }
@@ -194,9 +190,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     DartOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     indent.write('Object encode() ');
@@ -207,11 +201,11 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       indent.addScoped('[', '];', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
           final String conditional = field.type.isNullable ? '?' : '';
-          if (customClassNames.contains(field.type.baseName)) {
+          if (field.type.isClass) {
             indent.writeln(
               '${field.name}$conditional.encode(),',
             );
-          } else if (customEnumNames.contains(field.type.baseName)) {
+          } else if (field.type.isEnum) {
             indent.writeln(
               '${field.name}$conditional.index,',
             );
@@ -228,9 +222,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     DartOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     void writeValueDecode(NamedType field, int index) {
@@ -239,7 +231,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
       final String nullableTag = field.type.isNullable ? '?' : '';
-      if (customClassNames.contains(field.type.baseName)) {
+      if (field.type.isClass) {
         final String nonNullValue =
             '${field.type.baseName}.decode($resultAt! as List<Object?>)';
         if (field.type.isNullable) {
@@ -250,7 +242,7 @@ $resultAt != null
         } else {
           indent.add(nonNullValue);
         }
-      } else if (customEnumNames.contains(field.type.baseName)) {
+      } else if (field.type.isEnum) {
         final String nonNullValue =
             '${field.type.baseName}.values[$resultAt! as int]';
         if (field.type.isNullable) {
@@ -314,8 +306,6 @@ $resultAt != null
     required String dartPackageName,
   }) {
     assert(api.location == ApiLocation.flutter);
-    final List<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toList();
     String codecName = _standardMessageCodec;
     if (getCodecClasses(api, root).isNotEmpty) {
       codecName = _getCodecName(api);
@@ -342,10 +332,7 @@ $resultAt != null
         final String returnType = isAsync
             ? 'Future<${_addGenericTypesNullable(func.returnType)}>'
             : _addGenericTypesNullable(func.returnType);
-        final String argSignature = _getMethodArgumentsSignature(
-          func,
-          _getArgumentName,
-        );
+        final String argSignature = _getMethodArgumentsSignature(func);
         indent.writeln('$returnType ${func.name}($argSignature);');
         indent.newln();
       }
@@ -405,7 +392,7 @@ $resultAt != null
                     final String castCall = _makeGenericCastCall(arg.type);
 
                     final String leftHandSide = 'final $argType? $argName';
-                    if (customEnumNames.contains(arg.type.baseName)) {
+                    if (arg.type.isEnum) {
                       indent.writeln(
                           '$leftHandSide = $argsArray[$count] == null ? null : $argType.values[$argsArray[$count]! as int];');
                     } else {
@@ -443,9 +430,8 @@ $resultAt != null
                     const String returnExpression = 'output';
                     final String nullability =
                         func.returnType.isNullable ? '?' : '';
-                    final String valueExtraction = isEnum(root, func.returnType)
-                        ? '$nullability.index'
-                        : '';
+                    final String valueExtraction =
+                        func.returnType.isEnum ? '$nullability.index' : '';
                     final String returnStatement = isMockHandler
                         ? 'return <Object?>[$returnExpression$valueExtraction];'
                         : 'return wrapResponse(result: $returnExpression$valueExtraction);';
@@ -499,8 +485,6 @@ $resultAt != null
       codecName = _getCodecName(api);
       _writeCodec(indent, codecName, api, root);
     }
-    final List<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toList();
     indent.newln();
     bool first = true;
     addDocumentationComments(
@@ -530,21 +514,17 @@ final BinaryMessenger? _binaryMessenger;
         String argSignature = '';
         String sendArgument = 'null';
         if (func.arguments.isNotEmpty) {
-          String argNameFunc(int index, NamedType type) =>
-              _getSafeArgumentName(index, type);
           final Iterable<String> argExpressions =
               indexMap(func.arguments, (int index, NamedType type) {
-            final String name = argNameFunc(index, type);
-            if (root.enums
-                .map((Enum e) => e.name)
-                .contains(type.type.baseName)) {
+            final String name = _getArgumentName(index, type);
+            if (type.type.isEnum) {
               return '$name${type.type.isNullable ? '?' : ''}.index';
             } else {
               return name;
             }
           });
           sendArgument = '<Object?>[${argExpressions.join(', ')}]';
-          argSignature = _getMethodArgumentsSignature(func, argNameFunc);
+          argSignature = _getMethodArgumentsSignature(func);
         }
         indent.write(
           'Future<${_addGenericTypesNullable(func.returnType)}> ${func.name}($argSignature) async ',
@@ -569,7 +549,7 @@ final BinaryMessenger? _binaryMessenger;
               ? (genericCastCall.isEmpty ? '' : '?')
               : '!';
           String returnStatement = 'return';
-          if (customEnumNames.contains(returnType)) {
+          if (func.returnType.isEnum) {
             if (func.returnType.isNullable) {
               returnStatement =
                   '$returnStatement ($accessor as int?) == null ? null : $returnType.values[$accessor! as int]';
@@ -831,17 +811,54 @@ String _getArgumentName(int count, NamedType field) =>
 
 /// Generates the arguments code for [func]
 /// Example: (func, getArgumentName) -> 'String? foo, int bar'
-String _getMethodArgumentsSignature(
-  Method func,
-  String Function(int index, NamedType arg) getArgumentName,
-) {
-  return func.arguments.isEmpty
-      ? ''
-      : indexMap(func.arguments, (int index, NamedType arg) {
-          final String type = _addGenericTypesNullable(arg.type);
-          final String argName = getArgumentName(index, arg);
-          return '$type $argName';
-        }).join(', ');
+String _getMethodArgumentsSignature(Method func) {
+  if (func.arguments.isEmpty) {
+    return '';
+  }
+  bool firstNonPositionalArgument = true;
+  bool firstOptionalPositional = true;
+
+  final List<String> stringArgs = <String>[];
+
+  int index = 0;
+  for (final Parameter arg in func.arguments) {
+    String preArgSymbol = '';
+    if (!arg.isPositional && firstNonPositionalArgument) {
+      firstNonPositionalArgument = false;
+      preArgSymbol = '{';
+    } else if (arg.isPositional && arg.isOptional && firstOptionalPositional) {
+      firstOptionalPositional = false;
+      preArgSymbol = '[';
+    }
+
+    final String required =
+        arg.isRequired && !arg.isPositional ? 'required ' : '';
+
+    final String type = _addGenericTypesNullable(arg.type);
+
+    final String argName = _getArgumentName(index, arg);
+
+    final String defaultValue =
+        arg.defaultValue == null ? '' : ' = ${arg.defaultValue}';
+
+    String postArgSymbol = '';
+    if (!arg.isPositional &&
+        !firstNonPositionalArgument &&
+        func.arguments.length - 1 == index) {
+      postArgSymbol = '}';
+    } else if (arg.isPositional &&
+        !firstOptionalPositional &&
+        (func.arguments.length - 1 == index ||
+            func.arguments[index + 1].defaultValue == null ||
+            !func.arguments[index + 1].isPositional)) {
+      postArgSymbol = ']';
+    }
+    stringArgs
+        .add('$preArgSymbol$required$type $argName$defaultValue$postArgSymbol');
+    index++;
+  }
+
+  return stringArgs.join(', ');
 }
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be

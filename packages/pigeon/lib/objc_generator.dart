@@ -202,7 +202,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     final List<Class> classes = root.classes;
     final List<Enum> enums = root.enums;
     final String? prefix = generatorOptions.prefix;
-    final List<String> customEnumNames = enums.map((Enum x) => x.name).toList();
 
     addDocumentationComments(
         indent, klass.documentationComments, _docCommentSpec);
@@ -230,21 +229,18 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     for (final NamedType field in getFieldsInSerializationOrder(klass)) {
       final HostDatatype hostDatatype = getFieldHostDatatype(
           field,
-          classes,
-          enums,
           (TypeDeclaration x) => _objcTypeStringForPrimitiveDartType(prefix, x,
               beforeString: true),
-          customResolver: customEnumNames.contains(field.type.baseName)
+          customResolver: field.type.isEnum
               ? (String x) => _enumName(x, prefix: prefix)
               : (String x) => '${_className(prefix, x)} *');
       late final String propertyType;
       addDocumentationComments(
           indent, field.documentationComments, _docCommentSpec);
       propertyType = _propertyTypeForDartType(field.type,
-          isNullable: field.type.isNullable,
-          isEnum: customEnumNames.contains(field.type.baseName));
+          isNullable: field.type.isNullable, isEnum: field.type.isEnum);
       final String nullability = field.type.isNullable ? ', nullable' : '';
-      final String fieldType = isEnum(root, field.type) && field.type.isNullable
+      final String fieldType = field.type.isEnum && field.type.isNullable
           ? _enumName(field.type.baseName,
               suffix: ' *',
               prefix: generatorOptions.prefix,
@@ -262,9 +258,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {}
 
@@ -273,9 +267,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {}
 
@@ -318,7 +310,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         forceNullability: true,
       );
       final String callbackType =
-          _callbackForType(root, func.returnType, returnType, generatorOptions);
+          _callbackForType(func.returnType, returnType, generatorOptions);
       addDocumentationComments(
           indent, func.documentationComments, _docCommentSpec);
 
@@ -328,8 +320,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         returnType: 'void',
         lastArgName: 'completion',
         lastArgType: callbackType,
-        isEnum: (TypeDeclaration t) => isEnum(root, t),
-        root: root,
       )};');
     }
     indent.writeln('@end');
@@ -377,7 +367,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         lastArgName = 'completion';
         if (func.returnType.isVoid) {
           lastArgType = 'void (^)(FlutterError *_Nullable)';
-        } else if (isEnum(root, func.returnType)) {
+        } else if (func.returnType.isEnum) {
           lastArgType = 'void (^)($enumReturnType, FlutterError *_Nullable)';
         } else {
           lastArgType =
@@ -386,7 +376,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       } else {
         if (func.returnType.isVoid) {
           returnType = 'void';
-        } else if (isEnum(root, func.returnType)) {
+        } else if (func.returnType.isEnum) {
           returnType = enumReturnType;
         } else {
           returnType = 'nullable $returnTypeName';
@@ -411,8 +401,6 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         returnType: returnType,
         lastArgName: lastArgName,
         lastArgType: lastArgType,
-        isEnum: (TypeDeclaration t) => isEnum(root, t),
-        root: root,
       );
       indent.writeln('$signature;');
     }
@@ -534,8 +522,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       root,
       indent,
       klass,
-      customClassNames,
-      customEnumNames,
       dartPackageName: dartPackageName,
     );
     writeClassEncode(
@@ -543,8 +529,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       root,
       indent,
       klass,
-      customClassNames,
-      customEnumNames,
       dartPackageName: dartPackageName,
     );
     indent.writeln('@end');
@@ -556,9 +540,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     indent.write('- (NSArray *)toList ');
@@ -566,8 +548,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       indent.write('return');
       indent.addScoped(' @[', '];', () {
         for (final NamedType field in klass.fields) {
-          indent.writeln(
-              '${_arrayValue(customClassNames, customEnumNames, field)},');
+          indent.writeln('${_arrayValue(field)},');
         }
       });
     });
@@ -578,9 +559,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     final String className = _className(generatorOptions.prefix, klass.name);
@@ -590,11 +569,11 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       indent.writeln('$className *$resultName = [[$className alloc] init];');
       enumerate(getFieldsInSerializationOrder(klass),
           (int index, final NamedType field) {
-        final bool isEnumType = customEnumNames.contains(field.type.baseName);
-        final String valueGetter = _listGetter(
-            customClassNames, 'list', field, index, generatorOptions.prefix);
+        final bool isEnumType = field.type.isEnum;
+        final String valueGetter =
+            _listGetter('list', field, index, generatorOptions.prefix);
         final String? primitiveExtractionMethod =
-            _nsnumberExtractionMethod(field.type, isEnum: isEnumType);
+            _nsnumberExtractionMethod(field.type);
         final String ivarValueExpression;
         if (primitiveExtractionMethod != null) {
           ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
@@ -768,17 +747,17 @@ static FlutterError *createConnectionError(NSString *channelName) {
       int count = 0;
       for (final NamedType arg in func.arguments) {
         final String argName = _getSafeArgName(count, arg);
-        final bool isEnumType = isEnum(root, arg.type);
         final String valueGetter = 'GetNullableObjectAtIndex(args, $count)';
         final String? primitiveExtractionMethod =
-            _nsnumberExtractionMethod(arg.type, isEnum: isEnumType);
+            _nsnumberExtractionMethod(arg.type);
         final _ObjcType objcArgType = _objcTypeForDartType(
-            generatorOptions.prefix, arg.type,
-            isEnum: isEnumType);
+          generatorOptions.prefix,
+          arg.type,
+        );
         if (primitiveExtractionMethod != null) {
           indent.writeln(
               '${objcArgType.beforeString}$argName = [$valueGetter $primitiveExtractionMethod];');
-        } else if (isEnumType) {
+        } else if (arg.type.isEnum) {
           indent.writeln('NSNumber *${argName}AsNumber = $valueGetter;');
           indent.writeln(
               '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
@@ -813,7 +792,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
         const String enumConversionExpression =
             'enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];';
 
-        if (isEnum(root, func.returnType)) {
+        if (func.returnType.isEnum) {
           returnTypeString =
               '${_enumName(returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
         }
@@ -821,7 +800,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
           indent.writeScoped(
               '[api ${selectorComponents.first}:^($returnTypeString, FlutterError *_Nullable error) {',
               '}];', () {
-            if (isEnum(root, func.returnType)) {
+            if (func.returnType.isEnum) {
               indent.writeln('$numberOutput $enumConversionExpression');
             }
             indent.writeln(callback);
@@ -830,7 +809,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
           indent.writeScoped(
               '[api $callSignature ${selectorComponents.last}:^($returnTypeString, FlutterError *_Nullable error) {',
               '}];', () {
-            if (isEnum(root, func.returnType)) {
+            if (func.returnType.isEnum) {
               indent.writeln('$numberOutput $enumConversionExpression');
             }
             indent.writeln(callback);
@@ -845,7 +824,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
         indent.writeln('$call;');
         indent.writeln('callback(wrapResult(nil, error));');
       } else {
-        if (isEnum(root, func.returnType)) {
+        if (func.returnType.isEnum) {
           indent.writeln(
               '${_enumName(func.returnType.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)} enumBox = $call;');
           indent.writeln(
@@ -1082,7 +1061,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       forceNullability: true,
     );
     final String callbackType =
-        _callbackForType(root, func.returnType, returnType, languageOptions);
+        _callbackForType(func.returnType, returnType, languageOptions);
 
     String argNameFunc(int count, NamedType arg) => _getSafeArgName(count, arg);
     String sendArgument;
@@ -1092,10 +1071,8 @@ static FlutterError *createConnectionError(NSString *channelName) {
       int count = 0;
       String makeVarOrNSNullExpression(NamedType arg) {
         final String argName = argNameFunc(count, arg);
-        final bool isEnumType = isEnum(root, arg.type);
-        String varExpression =
-            _collectionSafeExpression(argName, arg.type, isEnum: isEnumType);
-        if (isEnumType) {
+        String varExpression = _collectionSafeExpression(argName, arg.type);
+        if (arg.type.isEnum) {
           if (arg.type.isNullable) {
             varExpression =
                 '${argNameFunc(count, arg)} == nil ? [NSNull null] : [NSNumber numberWithInteger:$argName.value]';
@@ -1117,8 +1094,6 @@ static FlutterError *createConnectionError(NSString *channelName) {
       lastArgName: 'completion',
       lastArgType: callbackType,
       argNameFunc: argNameFunc,
-      isEnum: (TypeDeclaration t) => isEnum(root, t),
-      root: root,
     ));
     indent.addScoped(' {', '}', () {
       indent.writeln(
@@ -1149,7 +1124,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
             if (func.returnType.isVoid) {
               indent.writeln('completion(nil);');
             } else {
-              if (isEnum(root, func.returnType)) {
+              if (func.returnType.isEnum) {
                 final String enumName = _enumName(returnType.baseName,
                     prefix: languageOptions.prefix, box: true);
                 indent.writeln('NSNumber *outputAsNumber = $nullCheck;');
@@ -1183,7 +1158,6 @@ void _writeObjcSourceClassInitializerDeclaration(
     List<Class> classes,
     List<Enum> enums,
     String? prefix) {
-  final List<String> customEnumNames = enums.map((Enum x) => x.name).toList();
   indent.write('+ (instancetype)makeWith');
   bool isFirst = true;
   indent.nest(2, () {
@@ -1198,11 +1172,9 @@ void _writeObjcSourceClassInitializerDeclaration(
       isFirst = false;
       final HostDatatype hostDatatype = getFieldHostDatatype(
           field,
-          classes,
-          enums,
           (TypeDeclaration x) => _objcTypeStringForPrimitiveDartType(prefix, x,
               beforeString: true),
-          customResolver: customEnumNames.contains(field.type.baseName)
+          customResolver: field.type.isEnum
               ? (String x) => field.type.isNullable
                   ? _enumName(x, suffix: ' *', prefix: prefix, box: true)
                   : _enumName(x, prefix: prefix)
@@ -1228,10 +1200,10 @@ String _className(String? prefix, String className) {
 
 /// Calculates callback block signature for async methods.
 String _callbackForType(
-    Root root, TypeDeclaration type, _ObjcType objcType, ObjcOptions options) {
+    TypeDeclaration type, _ObjcType objcType, ObjcOptions options) {
   if (type.isVoid) {
     return 'void (^)(FlutterError *_Nullable)';
-  } else if (isEnum(root, type)) {
+  } else if (type.isEnum) {
     return 'void (^)(${_enumName(objcType.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
   } else {
     return 'void (^)(${objcType.beforeString}_Nullable, FlutterError *_Nullable)';
@@ -1287,10 +1259,10 @@ const Map<String, _ObjcType> _objcTypeForNonNullableDartTypeMap =
   'Object': _ObjcType(baseName: 'id'),
 };
 
-bool _usesPrimitive(TypeDeclaration type, {required bool isEnum}) {
+bool _usesPrimitive(TypeDeclaration type) {
   // Only non-nullable types are unboxed.
   if (!type.isNullable) {
-    if (isEnum) {
+    if (type.isEnum) {
       return true;
     }
     switch (type.baseName) {
@@ -1303,20 +1275,23 @@ bool _usesPrimitive(TypeDeclaration type, {required bool isEnum}) {
   return false;
 }
 
-String _collectionSafeExpression(String expression, TypeDeclaration type,
-    {required bool isEnum}) {
-  return _usesPrimitive(type, isEnum: isEnum)
+String _collectionSafeExpression(
+  String expression,
+  TypeDeclaration type,
+) {
+  return _usesPrimitive(type)
       ? '@($expression)'
       : '$expression ?: [NSNull null]';
 }
 
 /// Returns the method to convert [type] from a boxed NSNumber to its
 /// corresponding primitive value, if any.
-String? _nsnumberExtractionMethod(TypeDeclaration type,
-    {required bool isEnum}) {
+String? _nsnumberExtractionMethod(
+  TypeDeclaration type,
+) {
   // Only non-nullable types are unboxed.
   if (!type.isNullable) {
-    if (isEnum) {
+    if (type.isEnum) {
       return 'integerValue';
     }
     switch (type.baseName) {
@@ -1368,14 +1343,14 @@ String? _objcTypeStringForPrimitiveDartType(
 /// Returns the Objective-C type for a Dart [field], prepending the
 /// [classPrefix] for generated classes.
 _ObjcType _objcTypeForDartType(String? classPrefix, TypeDeclaration field,
-    {bool isEnum = false, bool forceNullability = false}) {
+    {bool forceNullability = false}) {
   final _ObjcType? primitiveType =
       _objcTypeForPrimitiveDartType(field, forceNullability: forceNullability);
   return primitiveType == null
       ? _ObjcType(
           baseName: _className(classPrefix, field.baseName),
           // Non-nullable enums are non-pointer types.
-          isPointer: !isEnum || (field.isNullable || forceNullability))
+          isPointer: !field.isEnum || (field.isNullable || forceNullability))
       : field.typeArguments.isEmpty
           ? primitiveType
           : _ObjcType(
@@ -1464,20 +1439,18 @@ String _makeObjcSignature({
   required String returnType,
   required String lastArgType,
   required String lastArgName,
-  required bool Function(TypeDeclaration) isEnum,
-  required Root root,
   String Function(int, NamedType)? argNameFunc,
 }) {
   argNameFunc = argNameFunc ??
       (int _, NamedType e) =>
-          e.type.isNullable && isEnum(e.type) ? '${e.name}Boxed' : e.name;
+          e.type.isNullable && e.type.isEnum ? '${e.name}Boxed' : e.name;
   final Iterable<String> argNames =
       followedByOne(indexMap(func.arguments, argNameFunc), lastArgName);
   final Iterable<String> selectorComponents =
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
     func.arguments.map((NamedType arg) {
-      if (isEnum(arg.type)) {
+      if (arg.type.isEnum) {
         return '${arg.type.isNullable ? 'nullable ' : ''}${_enumName(arg.type.baseName, suffix: arg.type.isNullable ? ' *' : '', prefix: options.prefix, box: arg.type.isNullable)}';
       } else {
         final String nullable = arg.type.isNullable ? 'nullable ' : '';
@@ -1503,9 +1476,8 @@ String _makeObjcSignature({
 /// provided [options].
 void generateObjcHeader(ObjcOptions options, Root root, Indent indent) {}
 
-String _listGetter(Set<String> customClassNames, String list, NamedType field,
-    int index, String? prefix) {
-  if (customClassNames.contains(field.type.baseName)) {
+String _listGetter(String list, NamedType field, int index, String? prefix) {
+  if (field.type.isClass) {
     String className = field.type.baseName;
     if (prefix != null) {
       className = '$prefix$className';
@@ -1516,19 +1488,19 @@ String _listGetter(Set<String> customClassNames, String list, NamedType field,
   }
 }
 
-String _arrayValue(Set<String> customClassNames, Set<String> customEnumNames,
-    NamedType field) {
-  final bool isEnumType = customEnumNames.contains(field.type.baseName);
-  if (customClassNames.contains(field.type.baseName)) {
+String _arrayValue(NamedType field) {
+  if (field.type.isClass) {
     return '(self.${field.name} ? [self.${field.name} toList] : [NSNull null])';
-  } else if (isEnumType) {
+  } else if (field.type.isEnum) {
     if (field.type.isNullable) {
       return '(self.${field.name} == nil ? [NSNull null] : [NSNumber numberWithInteger:self.${field.name}.value])';
     }
     return '@(self.${field.name})';
   } else {
-    return _collectionSafeExpression('self.${field.name}', field.type,
-        isEnum: isEnumType);
+    return _collectionSafeExpression(
+      'self.${field.name}',
+      field.type,
+    );
   }
 }
 
@@ -1566,7 +1538,7 @@ List<Error> validateObjc(ObjcOptions options, Root root) {
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
       for (final NamedType arg in method.arguments) {
-        if (isEnum(root, arg.type) && arg.type.isNullable) {
+        if (arg.type.isEnum && arg.type.isNullable) {
           // TODO(gaaclarke): Add line number.
           errors.add(Error(
               message:

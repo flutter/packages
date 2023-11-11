@@ -55,7 +55,7 @@ class AllNullableTypes {
     this.aNullableByteArray,
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
-    this.aNullableFloatArray,
+    this.aNullableFloatArray, {
     this.aNullableList,
     this.aNullableMap,
     this.nullableNestedList,
@@ -64,7 +64,7 @@ class AllNullableTypes {
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
-  );
+  });
 
   bool? aNullableBool;
   int? aNullableInt;
@@ -124,12 +124,12 @@ abstract class HostIntegrationCoreApi {
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
   @SwiftFunction('echo(_:)')
-  int echoInt(int anInt);
+  int echoInt({int anInt = 42});
 
   /// Returns passed in double.
   @ObjCSelector('echoDouble:')
   @SwiftFunction('echo(_:)')
-  double echoDouble(double aDouble);
+  double echoDouble({required double aDouble});
 
   /// Returns the passed in boolean.
   @ObjCSelector('echoBool:')
@@ -139,7 +139,7 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed in string.
   @ObjCSelector('echoString:')
   @SwiftFunction('echo(_:)')
-  String echoString(String aString);
+  String echoString([String aString = 'default']);
 
   /// Returns the passed in Uint8List.
   @ObjCSelector('echoUint8List:')
@@ -209,12 +209,12 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed in boolean.
   @ObjCSelector('echoNullableBool:')
   @SwiftFunction('echo(_:)')
-  bool? echoNullableBool(bool? aNullableBool);
+  bool? echoNullableBool({bool? aNullableBool});
 
   /// Returns the passed in string.
   @ObjCSelector('echoNullableString:')
   @SwiftFunction('echo(_:)')
-  String? echoNullableString(String? aNullableString);
+  String? echoNullableString([String? aNullableString]);
 
   /// Returns the passed in Uint8List.
   @ObjCSelector('echoNullableUint8List:')

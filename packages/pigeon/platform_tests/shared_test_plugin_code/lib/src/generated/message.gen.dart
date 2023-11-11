@@ -211,7 +211,7 @@ class MessageApi {
   }
 
   /// This comment is to test method documentation comments.
-  Future<MessageSearchReply> search(MessageSearchRequest arg_request) async {
+  Future<MessageSearchReply> search(MessageSearchRequest request) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -220,7 +220,7 @@ class MessageApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_request]) as List<Object?>?;
+        await channel.send(<Object?>[request]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -287,7 +287,7 @@ class MessageNestedApi {
   /// This comment is to test method documentation comments.
   ///
   /// This comment also tests multiple line comments.
-  Future<MessageSearchReply> search(MessageNested arg_nested) async {
+  Future<MessageSearchReply> search(MessageNested nested) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -296,7 +296,7 @@ class MessageNestedApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_nested]) as List<Object?>?;
+        await channel.send(<Object?>[nested]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

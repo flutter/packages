@@ -144,8 +144,7 @@ class NullFieldsHostApi {
 
   static const MessageCodec<Object?> codec = _NullFieldsHostApiCodec();
 
-  Future<NullFieldsSearchReply> search(
-      NullFieldsSearchRequest arg_nested) async {
+  Future<NullFieldsSearchReply> search(NullFieldsSearchRequest nested) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -154,7 +153,7 @@ class NullFieldsHostApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_nested]) as List<Object?>?;
+        await channel.send(<Object?>[nested]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

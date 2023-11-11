@@ -201,9 +201,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {}
 
@@ -212,9 +210,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {}
 

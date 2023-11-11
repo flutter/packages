@@ -104,7 +104,7 @@ class NullableArgHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<int> doit(int? arg_x) async {
+  Future<int> doit(int? x) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -113,7 +113,7 @@ class NullableArgHostApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_x]) as List<Object?>?;
+        await channel.send(<Object?>[x]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -242,7 +242,7 @@ class NullableCollectionArgHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<List<String?>> doit(List<String?>? arg_x) async {
+  Future<List<String?>> doit(List<String?>? x) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgHostApi.doit';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -251,7 +251,7 @@ class NullableCollectionArgHostApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_x]) as List<Object?>?;
+        await channel.send(<Object?>[x]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

@@ -100,7 +100,7 @@ class EnumApi2Host {
   static const MessageCodec<Object?> codec = _EnumApi2HostCodec();
 
   /// This comment is to test method documentation comments.
-  Future<DataWithEnum> echo(DataWithEnum arg_data) async {
+  Future<DataWithEnum> echo(DataWithEnum data) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -109,7 +109,7 @@ class EnumApi2Host {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_data]) as List<Object?>?;
+        await channel.send(<Object?>[data]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

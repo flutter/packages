@@ -29,7 +29,7 @@ class BackgroundApi2Host {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<int> add(int arg_x, int arg_y) async {
+  Future<int> add(int x, int y) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -38,7 +38,7 @@ class BackgroundApi2Host {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_x, arg_y]) as List<Object?>?;
+        await channel.send(<Object?>[x, y]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

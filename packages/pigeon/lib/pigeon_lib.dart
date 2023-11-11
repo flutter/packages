@@ -21,6 +21,7 @@ import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
+import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
 
 import 'ast.dart';
@@ -850,6 +851,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   final String source;
 
   Class? _currentClass;
+  Map<String, String> _currentClassDefaultValues = <String, String>{};
   Api? _currentApi;
   Map<String, Object>? _pigeonOptions;
 
@@ -864,6 +866,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentClass != null) {
       _classes.add(_currentClass!);
       _currentClass = null;
+      _currentClassDefaultValues = <String, String>{};
     }
   }
 
@@ -908,6 +911,21 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
+    for (final Class klass in referencedClasses) {
+      for (final NamedType field in klass.fields) {
+        _attachClassesAndEnums(field.type);
+      }
+    }
+
+    for (final Api api in _apis) {
+      for (final Method func in api.methods) {
+        for (final Parameter param in func.arguments) {
+          _attachClassesAndEnums(param.type);
+        }
+        final TypeDeclaration returnType = func.returnType;
+        _attachClassesAndEnums(returnType);
+      }
+    }
 
     return ParseResults(
       root: totalErrors.isEmpty
@@ -916,6 +934,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );
+  }
+
+  void _attachClassesAndEnums(TypeDeclaration type) {
+    final Enum? assocEnum =
+        _enums.firstWhereOrNull((Enum enu) => enu.name == type.baseName);
+    final Class? assocClass =
+        _classes.firstWhereOrNull((Class klass) => klass.name == type.baseName);
+    type.isEnum = assocEnum != null;
+    type.associatedEnum = assocEnum;
+    type.isClass = assocClass != null;
+    type.associatedClass = assocClass;
   }
 
   Object _expressionToMap(dart_ast.Expression expression) {
@@ -1059,26 +1088,41 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         <String>[];
   }
 
-  NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.NamedType? namedType =
-        getFirstChildOfType<dart_ast.NamedType>(parameter);
-    if (namedType != null) {
-      final String argTypeBaseName = _getNamedTypeQualifiedName(namedType);
-      final bool isNullable = namedType.question != null;
+  Parameter formalParameterToPigeonParameter(
+      dart_ast.FormalParameter formalParameter) {
+    final dart_ast.NamedType? parameter =
+        getFirstChildOfType<dart_ast.NamedType>(formalParameter);
+    final dart_ast.SimpleFormalParameter? simpleFormalParameter =
+        getFirstChildOfType<dart_ast.SimpleFormalParameter>(formalParameter);
+    if (parameter != null) {
+      final String argTypeBaseName = _getNamedTypeQualifiedName(parameter);
+      final bool isNullable = parameter.question != null;
       final List<TypeDeclaration> argTypeArguments =
-          typeAnnotationsToTypeArguments(namedType.typeArguments);
-      return NamedType(
+          typeAnnotationsToTypeArguments(parameter.typeArguments);
+      return Parameter(
           type: TypeDeclaration(
-              baseName: argTypeBaseName,
-              isNullable: isNullable,
-              typeArguments: argTypeArguments),
-          name: parameter.name?.lexeme ?? '',
-          offset: parameter.offset);
+            baseName: argTypeBaseName,
+            isNullable: isNullable,
+            typeArguments: argTypeArguments,
+          ),
+          name: formalParameter.name?.lexeme ?? '',
+          offset: formalParameter.offset);
+    } else if (simpleFormalParameter != null) {
+      final Parameter parameter =
+          formalParameterToPigeonParameter(simpleFormalParameter);
+      if (formalParameter is dart_ast.DefaultFormalParameter) {
+        parameter.defaultValue = formalParameter.defaultValue?.toString();
+      }
+      parameter.isNamed = simpleFormalParameter.isNamed;
+      parameter.isOptional = simpleFormalParameter.isOptional;
+      parameter.isPositional = simpleFormalParameter.isPositional;
+      parameter.isRequired = simpleFormalParameter.isRequired;
+      return parameter;
     } else {
-      return NamedType(
+      return Parameter(
         name: '',
-        type: const TypeDeclaration(baseName: '', isNullable: false),
-        offset: parameter.offset,
+        type: TypeDeclaration(baseName: '', isNullable: false),
+        offset: formalParameter.offset,
       );
     }
   }
@@ -1108,8 +1152,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    final List<NamedType> arguments =
-        parameters.parameters.map(formalParameterToField).toList();
+    final List<Parameter> arguments =
+        parameters.parameters.map(formalParameterToPigeonParameter).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
             ?.arguments
@@ -1222,17 +1266,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               lineNumber: _calculateLineNumber(source, node.offset)));
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-          _currentClass!.fields.add(NamedType(
+          final String name = node.fields.variables[0].name.lexeme;
+          final NamedType field = NamedType(
             type: TypeDeclaration(
               baseName: _getNamedTypeQualifiedName(type),
               isNullable: type.question != null,
               typeArguments: typeAnnotationsToTypeArguments(typeArguments),
             ),
-            name: node.fields.variables[0].name.lexeme,
+            name: name,
             offset: node.offset,
+            defaultValue: _currentClassDefaultValues[name],
             documentationComments:
                 _documentationCommentsParser(node.documentationComment?.tokens),
-          ));
+          );
+          _currentClass!.fields.add(field);
         }
       } else {
         _errors.add(Error(
@@ -1265,6 +1312,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             message:
                 'Constructor initializers aren\'t supported in data classes (use "this.fieldName") ("$node").',
             lineNumber: _calculateLineNumber(source, node.offset)));
+      } else {
+        for (final dart_ast.FormalParameter param
+            in node.parameters.parameters) {
+          if (param is dart_ast.DefaultFormalParameter) {
+            if (param.name != null && param.defaultValue != null) {
+              _currentClassDefaultValues[param.name!.toString()] =
+                  param.defaultValue!.toString();
+            }
+          }
+        }
       }
     }
     node.visitChildren(this);

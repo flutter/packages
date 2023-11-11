@@ -167,7 +167,7 @@ class NonNullFieldHostApi {
   static const MessageCodec<Object?> codec = _NonNullFieldHostApiCodec();
 
   Future<NonNullFieldSearchReply> search(
-      NonNullFieldSearchRequest arg_nested) async {
+      NonNullFieldSearchRequest nested) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldHostApi.search';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -176,7 +176,7 @@ class NonNullFieldHostApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_nested]) as List<Object?>?;
+        await channel.send(<Object?>[nested]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

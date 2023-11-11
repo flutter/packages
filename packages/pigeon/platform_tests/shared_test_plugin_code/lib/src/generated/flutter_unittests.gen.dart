@@ -155,7 +155,7 @@ class Api {
 
   static const MessageCodec<Object?> codec = _ApiCodec();
 
-  Future<FlutterSearchReply> search(FlutterSearchRequest arg_request) async {
+  Future<FlutterSearchReply> search(FlutterSearchRequest request) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.Api.search';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -164,7 +164,7 @@ class Api {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_request]) as List<Object?>?;
+        await channel.send(<Object?>[request]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -183,8 +183,7 @@ class Api {
     }
   }
 
-  Future<FlutterSearchReplies> doSearches(
-      FlutterSearchRequests arg_request) async {
+  Future<FlutterSearchReplies> doSearches(FlutterSearchRequests request) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.Api.doSearches';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -193,7 +192,7 @@ class Api {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_request]) as List<Object?>?;
+        await channel.send(<Object?>[request]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -212,7 +211,7 @@ class Api {
     }
   }
 
-  Future<FlutterSearchRequests> echo(FlutterSearchRequests arg_requests) async {
+  Future<FlutterSearchRequests> echo(FlutterSearchRequests requests) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.Api.echo';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -221,7 +220,7 @@ class Api {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_requests]) as List<Object?>?;
+        await channel.send(<Object?>[requests]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -240,7 +239,7 @@ class Api {
     }
   }
 
-  Future<int> anInt(int arg_value) async {
+  Future<int> anInt(int value) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -249,7 +248,7 @@ class Api {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_value]) as List<Object?>?;
+        await channel.send(<Object?>[value]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

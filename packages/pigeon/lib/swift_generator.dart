@@ -116,11 +116,6 @@ import FlutterMacOS
     Class klass, {
     required String dartPackageName,
   }) {
-    final Set<String> customClassNames =
-        root.classes.map((Class x) => x.name).toSet();
-    final Set<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toSet();
-
     const List<String> generatedComments = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
@@ -141,8 +136,6 @@ import FlutterMacOS
         root,
         indent,
         klass,
-        customClassNames,
-        customEnumNames,
         dartPackageName: dartPackageName,
       );
       writeClassEncode(
@@ -150,8 +143,6 @@ import FlutterMacOS
         root,
         indent,
         klass,
-        customClassNames,
-        customEnumNames,
         dartPackageName: dartPackageName,
       );
     });
@@ -162,9 +153,7 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     indent.write('func toList() -> [Any?] ');
@@ -172,15 +161,12 @@ import FlutterMacOS
       indent.write('return ');
       indent.addScoped('[', ']', () {
         for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-          final HostDatatype hostDatatype = _getHostDatatype(root, field);
           String toWriteValue = '';
           final String fieldName = field.name;
           final String nullsafe = field.type.isNullable ? '?' : '';
-          if (!hostDatatype.isBuiltin &&
-              customClassNames.contains(field.type.baseName)) {
+          if (field.type.isClass) {
             toWriteValue = '$fieldName$nullsafe.toList()';
-          } else if (!hostDatatype.isBuiltin &&
-              customEnumNames.contains(field.type.baseName)) {
+          } else if (field.type.isEnum) {
             toWriteValue = '$fieldName$nullsafe.rawValue';
           } else {
             toWriteValue = field.name;
@@ -197,9 +183,7 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     final String className = klass.name;
@@ -211,13 +195,10 @@ import FlutterMacOS
         final String listValue = 'list[$index]';
 
         _writeDecodeCasting(
-          root: root,
           indent: indent,
           value: listValue,
           variableName: field.name,
           type: field.type,
-          listEncodedClassNames: customClassNames,
-          listEncodedEnumNames: customEnumNames,
         );
       });
 
@@ -280,7 +261,7 @@ import FlutterMacOS
     String getEnumSafeArgumentExpression(
         Root root, int count, NamedType argument) {
       String enumTag = '';
-      if (isEnum(root, argument.type)) {
+      if (argument.type.isEnum) {
         enumTag = argument.type.isNullable ? '?.rawValue' : '.rawValue';
       }
 
@@ -367,13 +348,15 @@ import FlutterMacOS
               if (func.returnType.isVoid) {
                 indent.writeln('completion(.success(Void()))');
               } else {
-                _writeDecodeCasting(
-                  root: root,
-                  indent: indent,
-                  value: 'listResponse[0]',
-                  variableName: 'result',
-                  type: func.returnType,
-                );
+                final String fieldType = _swiftTypeForDartType(func.returnType);
+
+                _writeGenericCasting(
+                    indent: indent,
+                    value: 'listResponse[0]',
+                    variableName: 'result',
+                    fieldType: fieldType,
+                    type: func.returnType);
+
                 indent.writeln('completion(.success(result))');
               }
             });
@@ -491,13 +474,15 @@ import FlutterMacOS
                   final String argName =
                       _getSafeArgumentName(index, arg.namedType);
                   final String argIndex = 'args[$index]';
-                  _writeDecodeCasting(
-                    root: root,
-                    indent: indent,
-                    value: argIndex,
-                    variableName: argName,
-                    type: arg.type,
-                  );
+                  final String fieldType = _swiftTypeForDartType(arg.type);
+
+                  _writeGenericCasting(
+                      indent: indent,
+                      value: argIndex,
+                      variableName: argName,
+                      fieldType: fieldType,
+                      type: arg.type);
+
                   if (arg.label == '_') {
                     methodArgument.add(argName);
                   } else {
@@ -520,9 +505,8 @@ import FlutterMacOS
                   indent.addScoped('{', '}', () {
                     final String nullsafe =
                         method.returnType.isNullable ? '?' : '';
-                    final String enumTag = isEnum(root, method.returnType)
-                        ? '$nullsafe.rawValue'
-                        : '';
+                    final String enumTag =
+                        method.returnType.isEnum ? '$nullsafe.rawValue' : '';
                     indent.writeln('case .success$successVariableInit:');
                     indent.nest(1, () {
                       indent.writeln('reply(wrapResult($resultName$enumTag))');
@@ -541,13 +525,13 @@ import FlutterMacOS
                     indent.writeln('reply(wrapResult(nil))');
                   } else {
                     String enumTag = '';
-                    if (isEnum(root, method.returnType)) {
+                    if (method.returnType.isEnum) {
                       enumTag = '.rawValue';
                     }
-                    enumTag = method.returnType.isNullable &&
-                            isEnum(root, method.returnType)
-                        ? '?$enumTag'
-                        : enumTag;
+                    enumTag =
+                        method.returnType.isNullable && method.returnType.isEnum
+                            ? '?$enumTag'
+                            : enumTag;
                     indent.writeln('let result = $call');
                     indent.writeln('reply(wrapResult(result$enumTag))');
                   }
@@ -654,49 +638,60 @@ import FlutterMacOS
     indent.newln();
   }
 
+  String _castForceUnwrap(String value, TypeDeclaration type) {
+    assert(!type.isVoid);
+    if (type.isEnum) {
+      String output =
+          '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
+      if (type.isNullable) {
+        output = 'isNullish($value) ? nil : $output';
+      }
+      return output;
+    } else if (type.baseName == 'Object') {
+      return value + (type.isNullable ? '' : '!');
+    } else if (type.baseName == 'int') {
+      if (type.isNullable) {
+        // Nullable ints need to check for NSNull, and Int32 before casting can be done safely.
+        // This nested ternary is a necessary evil to avoid less efficient conversions.
+        return 'isNullish($value) ? nil : ($value is Int64? ? $value as! Int64? : Int64($value as! Int32))';
+      } else {
+        return '$value is Int64 ? $value as! Int64 : Int64($value as! Int32)';
+      }
+    } else if (type.isNullable) {
+      return 'nilOrValue($value)';
+    } else {
+      return '$value as! ${_swiftTypeForDartType(type)}';
+    }
+  }
+
+  void _writeGenericCasting({
+    required Indent indent,
+    required String value,
+    required String variableName,
+    required String fieldType,
+    required TypeDeclaration type,
+  }) {
+    if (type.isNullable) {
+      indent.writeln(
+          'let $variableName: $fieldType? = ${_castForceUnwrap(value, type)}');
+    } else {
+      indent.writeln('let $variableName = ${_castForceUnwrap(value, type)}');
+    }
+  }
+
   /// Writes decode and casting code for any type.
   ///
   /// Optional parameters should only be used for class decoding.
   void _writeDecodeCasting({
-    required Root root,
     required Indent indent,
     required String value,
     required String variableName,
     required TypeDeclaration type,
-    Set<String>? listEncodedClassNames,
-    Set<String>? listEncodedEnumNames,
   }) {
-    String castForceUnwrap(String value, TypeDeclaration type, Root root) {
-      assert(!type.isVoid);
-      if (isEnum(root, type)) {
-        String output =
-            '${_swiftTypeForDartType(type)}(rawValue: $value as! Int)!';
-        if (type.isNullable) {
-          output = 'isNullish($value) ? nil : $output';
-        }
-        return output;
-      } else if (type.baseName == 'Object') {
-        return value + (type.isNullable ? '' : '!');
-      } else if (type.baseName == 'int') {
-        if (type.isNullable) {
-          // Nullable ints need to check for NSNull, and Int32 before casting can be done safely.
-          // This nested ternary is a necessary evil to avoid less efficient conversions.
-          return 'isNullish($value) ? nil : ($value is Int64? ? $value as! Int64? : Int64($value as! Int32))';
-        } else {
-          return '$value is Int64 ? $value as! Int64 : Int64($value as! Int32)';
-        }
-      } else if (type.isNullable) {
-        return 'nilOrValue($value)';
-      } else {
-        return '$value as! ${_swiftTypeForDartType(type)}';
-      }
-    }
-
     final String fieldType = _swiftTypeForDartType(type);
 
     if (type.isNullable) {
-      if (listEncodedClassNames != null &&
-          listEncodedClassNames.contains(type.baseName)) {
+      if (type.isClass) {
         indent.writeln('var $variableName: $fieldType? = nil');
         indent
             .write('if let ${variableName}List: [Any?] = nilOrValue($value) ');
@@ -704,11 +699,10 @@ import FlutterMacOS
           indent.writeln(
               '$variableName = $fieldType.fromList(${variableName}List)');
         });
-      } else if (listEncodedEnumNames != null &&
-          listEncodedEnumNames.contains(type.baseName)) {
+      } else if (type.isEnum) {
         indent.writeln('var $variableName: $fieldType? = nil');
         indent.writeln(
-            'let ${variableName}EnumVal: Int? = ${castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true), root)}');
+            'let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, TypeDeclaration(baseName: 'Int', isNullable: true))}');
         indent
             .write('if let ${variableName}RawValue = ${variableName}EnumVal ');
         indent.addScoped('{', '}', () {
@@ -716,17 +710,26 @@ import FlutterMacOS
               '$variableName = $fieldType(rawValue: ${variableName}RawValue)!');
         });
       } else {
-        indent.writeln(
-            'let $variableName: $fieldType? = ${castForceUnwrap(value, type, root)}');
+        _writeGenericCasting(
+          indent: indent,
+          value: value,
+          variableName: variableName,
+          fieldType: fieldType,
+          type: type,
+        );
       }
     } else {
-      if (listEncodedClassNames != null &&
-          listEncodedClassNames.contains(type.baseName)) {
+      if (type.isClass) {
         indent.writeln(
             'let $variableName = $fieldType.fromList($value as! [Any?])!');
       } else {
-        indent.writeln(
-            'let $variableName = ${castForceUnwrap(value, type, root)}');
+        _writeGenericCasting(
+          indent: indent,
+          value: value,
+          variableName: variableName,
+          fieldType: fieldType,
+          type: type,
+        );
       }
     }
   }
@@ -810,11 +813,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     _writeIsNullish(indent);
     _writeNilOrValue(indent);
   }
-}
-
-HostDatatype _getHostDatatype(Root root, NamedType field) {
-  return getFieldHostDatatype(field, root.classes, root.enums,
-      (TypeDeclaration x) => _swiftTypeForBuiltinDartType(x));
 }
 
 /// Calculates the name of the codec that will be generated for [api].

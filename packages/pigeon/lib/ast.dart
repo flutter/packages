@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
+
 import 'package:collection/collection.dart' show ListEquality;
-import 'package:meta/meta.dart';
 import 'pigeon_lib.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
@@ -44,7 +45,7 @@ class Method extends Node {
   TypeDeclaration returnType;
 
   /// The arguments passed into the [Method].
-  List<NamedType> arguments;
+  List<Parameter> arguments;
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
@@ -115,19 +116,24 @@ class Api extends Node {
 }
 
 /// A specific instance of a type.
-@immutable
 class TypeDeclaration {
   /// Constructor for [TypeDeclaration].
-  const TypeDeclaration({
+  TypeDeclaration({
     required this.baseName,
     required this.isNullable,
+    this.isEnum = false,
+    this.associatedEnum,
+    this.isClass = false,
+    this.associatedClass,
     this.typeArguments = const <TypeDeclaration>[],
   });
 
   /// Void constructor.
-  const TypeDeclaration.voidDeclaration()
+  TypeDeclaration.voidDeclaration()
       : baseName = 'void',
         isNullable = false,
+        isEnum = false,
+        isClass = false,
         typeArguments = const <TypeDeclaration>[];
 
   /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
@@ -141,6 +147,18 @@ class TypeDeclaration {
 
   /// True if the type is nullable.
   final bool isNullable;
+
+  /// Whether the [TypeDeclaration] represents an [Enum].
+  bool isEnum;
+
+  /// Associated [Enum], if any.
+  Enum? associatedEnum;
+
+  /// Whether the [TypeDeclaration] represents a [Class].
+  bool isClass;
+
+  /// Associated [Class], if any.
+  Class? associatedClass;
 
   @override
   int get hashCode {
@@ -163,7 +181,11 @@ class TypeDeclaration {
       return other is TypeDeclaration &&
           baseName == other.baseName &&
           isNullable == other.isNullable &&
-          _listEquals(typeArguments, other.typeArguments);
+          _listEquals(typeArguments, other.typeArguments) &&
+          isEnum == other.isEnum &&
+          isClass == other.isClass &&
+          associatedClass == other.associatedClass &&
+          associatedEnum == other.associatedEnum;
     }
   }
 
@@ -171,7 +193,7 @@ class TypeDeclaration {
   String toString() {
     final String typeArgumentsStr =
         typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
-    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr)';
+    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass)';
   }
 }
 
@@ -182,6 +204,7 @@ class NamedType extends Node {
     required this.name,
     required this.type,
     this.offset,
+    this.defaultValue,
     this.documentationComments = const <String>[],
   });
 
@@ -194,6 +217,9 @@ class NamedType extends Node {
   /// The offset in the source file where the [NamedType] appears.
   int? offset;
 
+  /// Stringified version of the default value of types that have default values.
+  String? defaultValue;
+
   /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
@@ -203,7 +229,48 @@ class NamedType extends Node {
 
   @override
   String toString() {
-    return '(NamedType name:$name type:$type documentationComments:$documentationComments)';
+    return '(NamedType name:$name type:$type defaultValue:$defaultValue documentationComments:$documentationComments)';
+  }
+}
+
+/// Represents a [Method]'s parameter that has a type and a name.
+class Parameter extends NamedType {
+  /// Parametric constructor for [Parameter].
+  Parameter({
+    required super.name,
+    required super.type,
+    super.offset,
+    super.defaultValue,
+    this.isNamed = true,
+    this.isOptional = false,
+    this.isPositional = true,
+    this.isRequired = true,
+    super.documentationComments,
+  });
+
+  /// Return `true` if this parameter is a named parameter.
+  ///
+  /// Defaults to `true`.
+  bool isNamed;
+
+  /// Return `true` if this parameter is an optional parameter.
+  ///
+  /// Defaults to `false`.
+  bool isOptional;
+
+  /// Return `true` if this parameter is a positional parameter.
+  ///
+  /// Defaults to `true`.
+  bool isPositional;
+
+  /// Return `true` if this parameter is a required parameter.
+  ///
+  /// Defaults to `true`.
+  bool isRequired;
+
+  @override
+  String toString() {
+    return '(Parameter name:$name type:$type isNamed:$isNamed isOptional:$isOptional isPositional:$isPositional isRequired:$isRequired documentationComments:$documentationComments)';
   }
 }
 

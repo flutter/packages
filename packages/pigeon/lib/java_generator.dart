@@ -199,11 +199,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     Class klass, {
     required String dartPackageName,
   }) {
-    final Set<String> customClassNames =
-        root.classes.map((Class x) => x.name).toSet();
-    final Set<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toSet();
-
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
@@ -234,8 +229,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         root,
         indent,
         klass,
-        customClassNames,
-        customEnumNames,
         dartPackageName: dartPackageName,
       );
       writeClassDecode(
@@ -243,8 +236,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         root,
         indent,
         klass,
-        customClassNames,
-        customEnumNames,
         dartPackageName: dartPackageName,
       );
     });
@@ -252,8 +243,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   void _writeClassField(
       JavaOptions generatorOptions, Root root, Indent indent, NamedType field) {
-    final HostDatatype hostDatatype = getFieldHostDatatype(field, root.classes,
-        root.enums, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+    final HostDatatype hostDatatype = getFieldHostDatatype(
+        field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
     final String nullability = field.type.isNullable ? '@Nullable' : '@NonNull';
     addDocumentationComments(
         indent, field.documentationComments, _docCommentSpec);
@@ -290,10 +281,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.addScoped('{', '}', () {
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
         final HostDatatype hostDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+            field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
         final String nullability =
             field.type.isNullable ? '@Nullable' : '@NonNull';
         indent.newln();
@@ -325,9 +313,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     indent.newln();
@@ -337,18 +323,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.writeln(
           'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
       for (final NamedType field in getFieldsInSerializationOrder(klass)) {
-        final HostDatatype hostDatatype = getFieldHostDatatype(
-            field,
-            root.classes,
-            root.enums,
-            (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
         String toWriteValue = '';
         final String fieldName = field.name;
-        if (!hostDatatype.isBuiltin &&
-            customClassNames.contains(field.type.baseName)) {
+        if (field.type.isClass) {
           toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
-        } else if (!hostDatatype.isBuiltin &&
-            customEnumNames.contains(field.type.baseName)) {
+        } else if (field.type.isEnum) {
           toWriteValue = '$fieldName == null ? null : $fieldName.index';
         } else {
           toWriteValue = field.name;
@@ -364,9 +343,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     indent.newln();
@@ -380,12 +357,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         final String fieldVariable = field.name;
         final String setter = _makeSetter(field);
         indent.writeln('Object $fieldVariable = list.get($index);');
-        if (customEnumNames.contains(field.type.baseName)) {
+        if (field.type.isEnum) {
           indent.writeln(
               '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName, field.type.isNullable)});');
         } else {
           indent.writeln(
-              '$result.$setter(${_castObject(field, root.classes, root.enums, fieldVariable)});');
+              '$result.$setter(${_castObject(field, fieldVariable)});');
         }
       });
       indent.writeln('return $result;');
@@ -412,7 +389,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     /// Returns an argument name that can be used in a context where it is possible to collide
     /// and append `.index` to enums.
     String getEnumSafeArgumentExpression(int count, NamedType argument) {
-      if (isEnum(root, argument.type)) {
+      if (argument.type.isEnum) {
         return argument.type.isNullable
             ? '${_getArgumentName(count, argument)}Arg == null ? null : ${_getArgumentName(count, argument)}Arg.index'
             : '${_getArgumentName(count, argument)}Arg.index';
@@ -527,7 +504,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     if (func.returnType.baseName == 'int') {
                       outputExpression =
                           'listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();';
-                    } else if (isEnum(root, func.returnType)) {
+                    } else if (func.returnType.isEnum) {
                       if (func.returnType.isNullable) {
                         outputExpression =
                             'listReply.get(0) == null ? null : $returnType.values()[(int) listReply.get(0)];';
@@ -736,7 +713,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     ? '($argName == null) ? null : $argName.longValue()'
                     : argName;
                 String accessor = 'args.get($index)';
-                if (isEnum(root, arg.type)) {
+                if (arg.type.isEnum) {
                   accessor = _intToEnum(
                       accessor, arg.type.baseName, arg.type.isNullable);
                 } else if (argType != 'Object') {
@@ -749,7 +726,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             if (method.isAsynchronous) {
               final String resultValue =
                   method.returnType.isVoid ? 'null' : 'result';
-              if (isEnum(root, method.returnType)) {
+              if (method.returnType.isEnum) {
                 enumTag = method.returnType.isNullable
                     ? ' == null ? null : $resultValue.index'
                     : '.index';
@@ -784,7 +761,7 @@ $resultType<$returnType> $resultName =
                   indent.writeln('$call;');
                   indent.writeln('wrapped.add(0, null);');
                 } else {
-                  if (isEnum(root, method.returnType)) {
+                  if (method.returnType.isEnum) {
                     enumTag = method.returnType.isNullable
                         ? ' == null ? null : output.index'
                         : '.index';
@@ -1083,14 +1060,12 @@ String _cast(String variable, {required String javaType}) {
 /// Casts variable named [varName] to the correct host datatype for [field].
 /// This is for use in codecs where we may have a map representation of an
 /// object.
-String _castObject(
-    NamedType field, List<Class> classes, List<Enum> enums, String varName) {
-  final HostDatatype hostDatatype = getFieldHostDatatype(field, classes, enums,
-      (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
+String _castObject(NamedType field, String varName) {
+  final HostDatatype hostDatatype = getFieldHostDatatype(
+      field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
   if (field.type.baseName == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer) $varName : (${hostDatatype.datatype}) $varName)';
-  } else if (!hostDatatype.isBuiltin &&
-      classes.map((Class x) => x.name).contains(field.type.baseName)) {
+  } else if (field.type.isClass) {
     return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<Object>) $varName)';
   } else {
     return _cast(varName, javaType: hostDatatype.datatype);

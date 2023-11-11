@@ -1,3 +1,10 @@
+## 13.2.0
+
+* Adds named parameters to api methods.
+* Adds optional parameters to api methods.
+* Adds default values for class constructors and api methods.
+* Adds `isEnum` and `isClass` to `TypeDeclaration`s.
+
 ## 13.1.0
 
 * [swift] Fixes Flutter Api void return error handling.

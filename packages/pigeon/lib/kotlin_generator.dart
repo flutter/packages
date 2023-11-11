@@ -154,11 +154,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Class klass, {
     required String dartPackageName,
   }) {
-    final Set<String> customClassNames =
-        root.classes.map((Class x) => x.name).toSet();
-    final Set<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toSet();
-
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents data sent in messages.'
     ];
@@ -185,8 +180,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         root,
         indent,
         klass,
-        customClassNames,
-        customEnumNames,
         dartPackageName: dartPackageName,
       );
       writeClassEncode(
@@ -194,8 +187,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         root,
         indent,
         klass,
-        customClassNames,
-        customEnumNames,
         dartPackageName: dartPackageName,
       );
     });
@@ -206,9 +197,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     indent.write('fun toList(): List<Any?> ');
@@ -220,11 +209,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           String toWriteValue = '';
           final String fieldName = field.name;
           final String safeCall = field.type.isNullable ? '?' : '';
-          if (!hostDatatype.isBuiltin &&
-              customClassNames.contains(field.type.baseName)) {
+          if (field.type.isClass) {
             toWriteValue = '$fieldName$safeCall.toList()';
-          } else if (!hostDatatype.isBuiltin &&
-              customEnumNames.contains(field.type.baseName)) {
+          } else if (!hostDatatype.isBuiltin && field.type.isEnum) {
             toWriteValue = '$fieldName$safeCall.raw';
           } else {
             toWriteValue = fieldName;
@@ -240,9 +227,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
-    Set<String> customClassNames,
-    Set<String> customEnumNames, {
+    Class klass, {
     required String dartPackageName,
   }) {
     final String className = klass.name;
@@ -255,21 +240,17 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       indent.addScoped('{', '}', () {
         enumerate(getFieldsInSerializationOrder(klass),
             (int index, final NamedType field) {
-          final HostDatatype hostDatatype = _getHostDatatype(root, field);
-
           final String listValue = 'list[$index]';
           final String fieldType = _kotlinTypeForDartType(field.type);
 
           if (field.type.isNullable) {
-            if (!hostDatatype.isBuiltin &&
-                customClassNames.contains(field.type.baseName)) {
+            if (field.type.isClass) {
               indent.write('val ${field.name}: $fieldType? = ');
               indent.add('($listValue as List<Any?>?)?.let ');
               indent.addScoped('{', '}', () {
                 indent.writeln('$fieldType.fromList(it)');
               });
-            } else if (!hostDatatype.isBuiltin &&
-                customEnumNames.contains(field.type.baseName)) {
+            } else if (field.type.isEnum) {
               indent.write('val ${field.name}: $fieldType? = ');
               indent.add('($listValue as Int?)?.let ');
               indent.addScoped('{', '}', () {
@@ -277,20 +258,18 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               });
             } else {
               indent.writeln(
-                  'val ${field.name} = ${_cast(root, indent, listValue, type: field.type)}');
+                  'val ${field.name} = ${_cast(indent, listValue, type: field.type)}');
             }
           } else {
-            if (!hostDatatype.isBuiltin &&
-                customClassNames.contains(field.type.baseName)) {
+            if (field.type.isClass) {
               indent.writeln(
                   'val ${field.name} = $fieldType.fromList($listValue as List<Any?>)');
-            } else if (!hostDatatype.isBuiltin &&
-                customEnumNames.contains(field.type.baseName)) {
+            } else if (field.type.isEnum) {
               indent.writeln(
                   'val ${field.name} = $fieldType.ofRaw($listValue as Int)!!');
             } else {
               indent.writeln(
-                  'val ${field.name} = ${_cast(root, indent, listValue, type: field.type)}');
+                  'val ${field.name} = ${_cast(indent, listValue, type: field.type)}');
             }
           }
         });
@@ -395,7 +374,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           final Iterable<String> enumSafeArgNames = indexMap(
               func.arguments,
               (int count, NamedType type) =>
-                  _getEnumSafeArgumentExpression(root, count, type));
+                  _getEnumSafeArgumentExpression(count, type));
           sendArgument = 'listOf(${enumSafeArgNames.join(', ')})';
           final String argsSignature = map2(argTypes, argNames,
               (String type, String name) => '$name: $type').join(', ');
@@ -426,15 +405,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 } else {
                   const String output = 'output';
                   // Nullable enums require special handling.
-                  if (isEnum(root, func.returnType) &&
-                      func.returnType.isNullable) {
+                  if (func.returnType.isEnum && func.returnType.isNullable) {
                     indent.writeScoped(
                         'val $output = (it[0] as Int?)?.let {', '}', () {
                       indent.writeln('${func.returnType.baseName}.ofRaw(it)');
                     });
                   } else {
                     indent.writeln(
-                        'val $output = ${_cast(root, indent, 'it[0]', type: func.returnType)}');
+                        'val $output = ${_cast(indent, 'it[0]', type: func.returnType)}');
                   }
                   indent.writeln('callback(Result.success($output));');
                 }
@@ -571,7 +549,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                       final String argName = _getSafeArgumentName(index, arg);
                       final String argIndex = 'args[$index]';
                       indent.writeln(
-                          'val $argName = ${_castForceUnwrap(argIndex, arg.type, root, indent)}');
+                          'val $argName = ${_castForceUnwrap(argIndex, arg.type, indent)}');
                       methodArguments.add(argName);
                     });
                   }
@@ -592,7 +570,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                       indent.addScoped(' else {', '}', () {
                         final String enumTagNullablePrefix =
                             method.returnType.isNullable ? '?' : '!!';
-                        final String enumTag = isEnum(root, method.returnType)
+                        final String enumTag = method.returnType.isEnum
                             ? '$enumTagNullablePrefix.raw'
                             : '';
                         if (method.returnType.isVoid) {
@@ -613,7 +591,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                         indent.writeln('wrapped = listOf<Any?>(null)');
                       } else {
                         String enumTag = '';
-                        if (isEnum(root, method.returnType)) {
+                        if (method.returnType.isEnum) {
                           final String safeUnwrap =
                               method.returnType.isNullable ? '?' : '';
                           enumTag = '$safeUnwrap.raw';
@@ -773,8 +751,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 }
 
 HostDatatype _getHostDatatype(Root root, NamedType field) {
-  return getFieldHostDatatype(field, root.classes, root.enums,
-      (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
+  return getFieldHostDatatype(
+      field, (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
 }
 
 /// Calculates the name of the codec that will be generated for [api].
@@ -785,9 +763,8 @@ String _getArgumentName(int count, NamedType argument) =>
 
 /// Returns an argument name that can be used in a context where it is possible to collide
 /// and append `.index` to enums.
-String _getEnumSafeArgumentExpression(
-    Root root, int count, NamedType argument) {
-  if (isEnum(root, argument.type)) {
+String _getEnumSafeArgumentExpression(int count, NamedType argument) {
+  if (argument.type.isEnum) {
     return argument.type.isNullable
         ? '${_getArgumentName(count, argument)}Arg?.raw'
         : '${_getArgumentName(count, argument)}Arg.raw';
@@ -799,15 +776,14 @@ String _getEnumSafeArgumentExpression(
 String _getSafeArgumentName(int count, NamedType argument) =>
     '${_getArgumentName(count, argument)}Arg';
 
-String _castForceUnwrap(
-    String value, TypeDeclaration type, Root root, Indent indent) {
-  if (isEnum(root, type)) {
+String _castForceUnwrap(String value, TypeDeclaration type, Indent indent) {
+  if (type.isEnum) {
     final String forceUnwrap = type.isNullable ? '' : '!!';
     final String nullableConditionPrefix =
         type.isNullable ? 'if ($value == null) null else ' : '';
     return '$nullableConditionPrefix${_kotlinTypeForDartType(type)}.ofRaw($value as Int)$forceUnwrap';
   } else {
-    return _cast(root, indent, value, type: type);
+    return _cast(indent, value, type: type);
   }
 }
 
@@ -872,8 +848,7 @@ String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
 }
 
 /// Returns an expression to cast [variable] to [kotlinType].
-String _cast(Root root, Indent indent, String variable,
-    {required TypeDeclaration type}) {
+String _cast(Indent indent, String variable, {required TypeDeclaration type}) {
   // Special-case Any, since no-op casts cause warnings.
   final String typeString = _kotlinTypeForDartType(type);
   if (type.isNullable && typeString == 'Any') {
@@ -882,7 +857,7 @@ String _cast(Root root, Indent indent, String variable,
   if (typeString == 'Int' || typeString == 'Long') {
     return '$variable${_castInt(type.isNullable)}';
   }
-  if (isEnum(root, type)) {
+  if (type.isEnum) {
     if (type.isNullable) {
       return '($variable as Int?)?.let {\n'
           '${indent.str}  $typeString.ofRaw(it)\n'

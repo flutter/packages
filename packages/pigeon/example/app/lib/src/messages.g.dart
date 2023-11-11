@@ -130,7 +130,7 @@ class ExampleHostApi {
     }
   }
 
-  Future<int> add(int arg_a, int arg_b) async {
+  Future<int> add(int a, int b) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -139,7 +139,7 @@ class ExampleHostApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_a, arg_b]) as List<Object?>?;
+        await channel.send(<Object?>[a, b]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -158,7 +158,7 @@ class ExampleHostApi {
     }
   }
 
-  Future<bool> sendMessage(MessageData arg_message) async {
+  Future<bool> sendMessage(MessageData message) async {
     const String channelName =
         'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -167,7 +167,7 @@ class ExampleHostApi {
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_message]) as List<Object?>?;
+        await channel.send(<Object?>[message]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
