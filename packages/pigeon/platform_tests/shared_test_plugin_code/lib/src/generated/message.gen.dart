@@ -12,6 +12,13 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+PlatformException _createConnectionError(String channelName) {
+  return PlatformException(
+    code: 'channel-error',
+    message: 'Unable to establish connection on channel: "$channelName".',
+  );
+}
+
 List<Object?> wrapResponse(
     {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
@@ -182,16 +189,16 @@ class MessageApi {
   ///
   /// This comment also tests multiple line comments.
   Future<void> initialize() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -205,16 +212,17 @@ class MessageApi {
 
   /// This comment is to test method documentation comments.
   Future<MessageSearchReply> search(MessageSearchRequest arg_request) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search', codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_request]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -280,17 +288,17 @@ class MessageNestedApi {
   ///
   /// This comment also tests multiple line comments.
   Future<MessageSearchReply> search(MessageNested arg_nested) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_nested]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,

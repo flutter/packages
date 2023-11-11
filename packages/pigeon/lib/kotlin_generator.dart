@@ -375,7 +375,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       });
 
       for (final Method func in api.methods) {
-        final String channelName = makeChannelName(api, func, dartPackageName);
         final String returnType = func.returnType.isVoid
             ? 'Unit'
             : _nullsafeKotlinTypeForDartType(func.returnType);
@@ -406,7 +405,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln(
-              'val $channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec)');
+              'val channelName = "${makeChannelName(api, func, dartPackageName)}"');
+          indent.writeln(
+              'val $channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)');
           indent.writeScoped('$channel.send($sendArgument) {', '}', () {
             indent.writeScoped('if (it is List<*>) {', '} ', () {
               indent.writeScoped('if (it.size > 1) {', '} ', () {
@@ -441,7 +442,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             }, addTrailingNewline: false);
             indent.addScoped('else {', '} ', () {
               indent.writeln(
-                  'callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")));');
+                  'callback(Result.failure(createConnectionError(channelName)));');
             });
           });
         });
@@ -738,6 +739,16 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.addln(' : Throwable()');
   }
 
+  void _writeCreateConnectionError(Indent indent) {
+    indent.newln();
+    indent.write(
+        'private fun createConnectionError(channelName: String): FlutterError ');
+    indent.addScoped('{', '}', () {
+      indent.write(
+          'return FlutterError("channel-error",  "Unable to establish connection on channel: \'\$channelName\'.", "")');
+    });
+  }
+
   @override
   void writeGeneralUtilities(
     KotlinOptions generatorOptions,
@@ -745,8 +756,18 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    _writeWrapResult(indent);
-    _writeWrapError(generatorOptions, indent);
+    final bool hasHostApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.host);
+    final bool hasFlutterApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+
+    if (hasHostApi) {
+      _writeWrapResult(indent);
+      _writeWrapError(generatorOptions, indent);
+    }
+    if (hasFlutterApi) {
+      _writeCreateConnectionError(indent);
+    }
     _writeErrorClass(generatorOptions, indent);
   }
 }

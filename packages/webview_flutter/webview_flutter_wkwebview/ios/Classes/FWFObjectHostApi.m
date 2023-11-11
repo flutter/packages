@@ -58,12 +58,12 @@
                          ? @([self.instanceManager identifierWithStrongReferenceForInstance:value])
                          : value;
     [changeValues addObject:[FWFObjectOrIdentifier makeWithValue:returnValue
-                                                    isIdentifier:@(isIdentifier)]];
+                                                    isIdentifier:isIdentifier]];
   }];
 
-  NSNumber *objectIdentifier =
-      @([self.instanceManager identifierWithStrongReferenceForInstance:object]);
-  [self observeValueForObjectWithIdentifier:@([self identifierForObject:instance])
+  NSInteger objectIdentifier =
+      [self.instanceManager identifierWithStrongReferenceForInstance:object];
+  [self observeValueForObjectWithIdentifier:[self identifierForObject:instance]
                                     keyPath:keyPath
                            objectIdentifier:objectIdentifier
                                  changeKeys:changeKeys
@@ -111,12 +111,12 @@
   return self;
 }
 
-- (NSObject *)objectForIdentifier:(NSNumber *)identifier {
-  return (NSObject *)[self.instanceManager instanceForIdentifier:identifier.longValue];
+- (NSObject *)objectForIdentifier:(NSInteger)identifier {
+  return (NSObject *)[self.instanceManager instanceForIdentifier:identifier];
 }
 
-- (void)addObserverForObjectWithIdentifier:(nonnull NSNumber *)identifier
-                        observerIdentifier:(nonnull NSNumber *)observer
+- (void)addObserverForObjectWithIdentifier:(NSInteger)identifier
+                        observerIdentifier:(NSInteger)observer
                                    keyPath:(nonnull NSString *)keyPath
                                    options:
                                        (nonnull NSArray<FWFNSKeyValueObservingOptionsEnumData *> *)
@@ -132,16 +132,16 @@
                                              context:nil];
 }
 
-- (void)removeObserverForObjectWithIdentifier:(nonnull NSNumber *)identifier
-                           observerIdentifier:(nonnull NSNumber *)observer
+- (void)removeObserverForObjectWithIdentifier:(NSInteger)identifier
+                           observerIdentifier:(NSInteger)observer
                                       keyPath:(nonnull NSString *)keyPath
                                         error:(FlutterError *_Nullable *_Nonnull)error {
   [[self objectForIdentifier:identifier] removeObserver:[self objectForIdentifier:observer]
                                              forKeyPath:keyPath];
 }
 
-- (void)disposeObjectWithIdentifier:(nonnull NSNumber *)identifier
+- (void)disposeObjectWithIdentifier:(NSInteger)identifier
                               error:(FlutterError *_Nullable *_Nonnull)error {
-  [self.instanceManager removeInstanceWithIdentifier:identifier.longValue];
+  [self.instanceManager removeInstanceWithIdentifier:identifier];
 }
 @end
