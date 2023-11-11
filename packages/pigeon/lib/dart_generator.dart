@@ -1115,17 +1115,21 @@ class $InstanceManager {
     ProxyApiNode api, {
     required String dartPackageName,
   }) {
+    // TODO: auto $detached can't exist if there are required callback methods that require a value? including inherited ones.
+
     final String codecName = _getCodecName(api.name);
 
-    late final ProxyApiNode? superClassApi;
-    if (api.superClass != null) {
+    ProxyApiNode? superClassApi;
+    final Set<ProxyApiNode> interfacesApis = <ProxyApiNode>{};
+
+    if (api.superClass != null || api.interfaces.isNotEmpty) {
       for (final ProxyApiNode proxyApi in root.apis.whereType<ProxyApiNode>()) {
         if (api.superClass == proxyApi.name) {
           superClassApi = proxyApi;
+        } else if (api.interfaces.contains(proxyApi.name)) {
+          interfacesApis.add(proxyApi);
         }
       }
-    } else {
-      superClassApi = null;
     }
 
     // Write Codec
@@ -1174,13 +1178,13 @@ class $codecName extends StandardMessageCodec {
       (Field field) => !field.isAttached,
     );
 
-    late final Iterable<Method> superClassFlutterMethods;
+    final List<Method> superClassFlutterMethods = <Method>[];
     if (superClassApi != null) {
-      superClassFlutterMethods = superClassApi.methods.where(
-        (Method method) => method.location == ApiLocation.flutter,
-      );
-    } else {
-      superClassFlutterMethods = <Method>[];
+      for (final Method method in superClassApi.methods) {
+        if (method.location == ApiLocation.flutter) {
+          superClassFlutterMethods.add(method);
+        }
+      }
     }
 
     // api class
@@ -1190,10 +1194,18 @@ class $codecName extends StandardMessageCodec {
       _docCommentSpec,
     );
 
-    final String classInheritance = superClassApi != null
-        ? 'extends ${superClassApi.name}'
-        : r'implements $Copyable';
-    indent.writeScoped('class ${api.name} $classInheritance {', '}', () {
+    String classInheritance = '';
+    if (superClassApi == null && interfacesApis.isEmpty) {
+      classInheritance = r'implements $Copyable ';
+    } else {
+      if (superClassApi != null) {
+        classInheritance += 'extends ${superClassApi.name} ';
+      }
+      if (api.interfaces.isNotEmpty) {
+        classInheritance += 'implements ${api.interfaces.join(', ')} ';
+      }
+    }
+    indent.writeScoped('class ${api.name} $classInheritance{', '}', () {
       // constructors
       for (final Constructor constructor in api.constructors) {
         addDocumentationComments(
@@ -1225,6 +1237,14 @@ class $codecName extends StandardMessageCodec {
             indent.writeln(
               '${method.mustBeImplemented ? 'required ' : ''}super.${method.name},',
             );
+          }
+
+          for (final ProxyApiNode proxyApi in interfacesApis) {
+            for (final Method method in proxyApi.methods) {
+              indent.writeln(
+                '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
+              );
+            }
           }
 
           for (final Method method in flutterMethods) {
@@ -1325,6 +1345,13 @@ class $codecName extends StandardMessageCodec {
           indent.writeln(
             '${method.mustBeImplemented ? 'required ' : ''}super.${method.name},',
           );
+        }
+        for (final ProxyApiNode proxyApi in interfacesApis) {
+          for (final Method method in proxyApi.methods) {
+            indent.writeln(
+              '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
+            );
+          }
         }
         for (final Method method in flutterMethods) {
           indent.writeln(
@@ -1571,6 +1598,27 @@ class $codecName extends StandardMessageCodec {
           'final ${_addGenericTypesNullable(field.type)} ${field.name};',
         );
       }
+      for (final ProxyApiNode proxyApi in interfacesApis) {
+        for (final Method method in proxyApi.methods) {
+          // TODO: dupe?
+          final String returnType = method.isAsynchronous
+              ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
+              : _addGenericTypesNullable(method.returnType);
+          final String argSignature = _getMethodArgumentsSignature(
+            method,
+            _getArgumentName,
+          );
+          addDocumentationComments(
+            indent,
+            method.documentationComments,
+            _docCommentSpec,
+          );
+          indent.writeln('@override');
+          indent.writeln(
+            'final $returnType Function(${proxyApi.name} instance, $argSignature)${method.mustBeImplemented ? '' : '?'} ${method.name};',
+          );
+        }
+      }
       for (final Method method in flutterMethods) {
         // TODO: dupe?
         final String returnType = method.isAsynchronous
@@ -1761,6 +1809,11 @@ class $codecName extends StandardMessageCodec {
           }
           for (final Method method in superClassFlutterMethods) {
             indent.writeln('${method.name}: ${method.name},');
+          }
+          for (final ProxyApiNode proxyApi in interfacesApis) {
+            for (final Method method in proxyApi.methods) {
+              indent.writeln('${method.name}: ${method.name},');
+            }
           }
           for (final Method method in flutterMethods) {
             indent.writeln('${method.name}: ${method.name},');

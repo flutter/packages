@@ -154,6 +154,7 @@ class ProxyApiNode extends Api {
     required this.constructors,
     required this.fields,
     this.superClass,
+    this.interfaces = const <String>{}
   }) : super(location: ApiLocation.hostAndFlutter);
 
   /// List of constructors inside the API.
@@ -163,6 +164,8 @@ class ProxyApiNode extends Api {
   List<Field> fields;
 
   final String? superClass;
+
+  final Set<String> interfaces;
 
   @override
   String toString() {

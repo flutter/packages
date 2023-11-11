@@ -113,7 +113,7 @@ class ProxyApi {
 
   final Type? superClass;
 
-  final List<Type>? interfaces;
+  final Set<Type>? interfaces;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1078,6 +1078,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           (dart_ast.Annotation element) => element.name.name == 'ProxyApi',
         );
         String? superClass;
+        final Set<String> interfaces = <String>{};
         if (proxyApiAnnotation.arguments != null) {
           for (final dart_ast.Expression expression
               in proxyApiAnnotation.arguments!.arguments) {
@@ -1087,6 +1088,23 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                     expression.expression;
                 if (superClassExpression is dart_ast.SimpleIdentifier) {
                   superClass = superClassExpression.name;
+                }
+              } else if (expression.name.label.name == 'interfaces') {
+                final dart_ast.Expression interfacesExpression =
+                    expression.expression;
+                if (interfacesExpression is dart_ast.SetOrMapLiteral) {
+                  for (final dart_ast.CollectionElement element
+                      in interfacesExpression.elements) {
+                    if (element is dart_ast.SimpleIdentifier) {
+                      interfaces.add(element.name);
+                    } else {
+                      _errors.add(Error(
+                        message: 'expected Expression but found $element',
+                        lineNumber:
+                            _calculateLineNumber(source, element.offset),
+                      ));
+                    }
+                  }
                 }
               }
             }
@@ -1098,6 +1116,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           constructors: <Constructor>[],
           fields: <Field>[],
           superClass: superClass,
+          interfaces: interfaces,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
