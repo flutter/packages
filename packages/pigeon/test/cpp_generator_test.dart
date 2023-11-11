@@ -21,21 +21,21 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 ),
                 name: 'input')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            isClass: true,
+            associatedClass: Class(name: '', fields: <NamedType>[]),
           ),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -43,7 +43,7 @@ void main() {
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -97,21 +97,21 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 ),
                 name: 'someInput')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            isClass: true,
+            associatedClass: Class(name: '', fields: <NamedType>[]),
           ),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -119,7 +119,7 @@ void main() {
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -172,13 +172,13 @@ void main() {
           name: 'doSomething',
           arguments: <Parameter>[
             Parameter(
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 ),
                 name: 'someInput')
           ],
-          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -223,13 +223,13 @@ void main() {
           name: 'doSomething',
           arguments: <Parameter>[
             Parameter(
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 ),
                 name: 'someInput')
           ],
-          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -269,21 +269,21 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 ),
                 name: 'input')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            isClass: true,
+            associatedClass: Class(name: '', fields: <NamedType>[]),
           ),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -291,7 +291,7 @@ void main() {
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -343,13 +343,13 @@ void main() {
           name: 'doSomething',
           arguments: <Parameter>[
             Parameter(
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 ),
                 name: 'input')
           ],
-          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -416,13 +416,13 @@ void main() {
           name: 'doSomething',
           arguments: <Parameter>[
             Parameter(
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 ),
                 name: 'input')
           ],
-          returnType: TypeDeclaration(baseName: 'int', isNullable: false),
+          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
         )
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -474,17 +474,17 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 ),
                 name: 'someInput')
           ],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: true,
             ),
@@ -492,19 +492,19 @@ void main() {
       ]),
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: true,
             ),
             name: 'nullableBool'),
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'int',
               isNullable: true,
             ),
             name: 'nullableInt'),
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -513,7 +513,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: true,
-              isClass: true,
+              associatedClass: Class(name: '', fields: <NamedType>[]),
             ),
             name: 'nullableNested'),
       ]),
@@ -657,17 +657,17 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 ),
                 name: 'someInput')
           ],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
         )
       ])
     ], classes: <Class>[
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -675,19 +675,19 @@ void main() {
       ]),
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
             name: 'nonNullableBool'),
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'int',
               isNullable: false,
             ),
             name: 'nonNullableInt'),
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'String',
               isNullable: false,
             ),
@@ -696,7 +696,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: false,
-              isClass: true,
+              associatedClass: Class(name: '', fields: <NamedType>[]),
             ),
             name: 'nonNullableNested'),
       ]),
@@ -796,7 +796,7 @@ void main() {
         Method(
           name: 'returnNullableBool',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: true,
           ),
@@ -804,7 +804,7 @@ void main() {
         Method(
           name: 'returnNullableInt',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'int',
             isNullable: true,
           ),
@@ -812,7 +812,7 @@ void main() {
         Method(
           name: 'returnNullableString',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'String',
             isNullable: true,
           ),
@@ -820,7 +820,7 @@ void main() {
         Method(
           name: 'returnNullableList',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
               TypeDeclaration(
@@ -834,7 +834,7 @@ void main() {
         Method(
           name: 'returnNullableMap',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
               TypeDeclaration(
@@ -855,14 +855,14 @@ void main() {
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: true,
-            isClass: true,
+            associatedClass: Class(name: '', fields: <NamedType>[]),
           ),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ReturnData', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -913,7 +913,7 @@ void main() {
         Method(
           name: 'returnBool',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: false,
           ),
@@ -921,7 +921,7 @@ void main() {
         Method(
           name: 'returnInt',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'int',
             isNullable: false,
           ),
@@ -929,7 +929,7 @@ void main() {
         Method(
           name: 'returnString',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'String',
             isNullable: false,
           ),
@@ -937,7 +937,7 @@ void main() {
         Method(
           name: 'returnList',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
               TypeDeclaration(
@@ -951,7 +951,7 @@ void main() {
         Method(
           name: 'returnMap',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
               TypeDeclaration(
@@ -972,14 +972,14 @@ void main() {
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: false,
-            isClass: true,
+            associatedClass: Class(name: '', fields: <NamedType>[]),
           ),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ReturnData', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1018,25 +1018,25 @@ void main() {
           arguments: <Parameter>[
             Parameter(
                 name: 'aBool',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
             Parameter(
                 name: 'anInt',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
             Parameter(
                 name: 'aString',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
             Parameter(
                 name: 'aList',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
@@ -1045,7 +1045,7 @@ void main() {
                 )),
             Parameter(
                 name: 'aMap',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1058,22 +1058,22 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 )),
             Parameter(
                 name: 'aGenericObject',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Object',
                   isNullable: true,
                 )),
           ],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1173,25 +1173,25 @@ void main() {
           arguments: <Parameter>[
             Parameter(
                 name: 'aBool',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'anInt',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'aString',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'aList',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
@@ -1200,7 +1200,7 @@ void main() {
                 )),
             Parameter(
                 name: 'aMap',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1213,22 +1213,22 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 )),
             Parameter(
                 name: 'aGenericObject',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Object',
                   isNullable: false,
                 )),
           ],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1323,25 +1323,25 @@ void main() {
           arguments: <Parameter>[
             Parameter(
                 name: 'aBool',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
             Parameter(
                 name: 'anInt',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
             Parameter(
                 name: 'aString',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
             Parameter(
                 name: 'aList',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
@@ -1350,7 +1350,7 @@ void main() {
                 )),
             Parameter(
                 name: 'aMap',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1363,16 +1363,16 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 )),
             Parameter(
                 name: 'aGenericObject',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Object',
                   isNullable: true,
                 )),
           ],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: true,
           ),
@@ -1381,7 +1381,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1482,25 +1482,25 @@ void main() {
           arguments: <Parameter>[
             Parameter(
                 name: 'aBool',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'anInt',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'aString',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'aList',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
@@ -1509,7 +1509,7 @@ void main() {
                 )),
             Parameter(
                 name: 'aMap',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1522,16 +1522,16 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 )),
             Parameter(
                 name: 'aGenericObject',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Object',
                   isNullable: false,
                 )),
           ],
-          returnType: TypeDeclaration(
+          returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: false,
           ),
@@ -1540,7 +1540,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1615,12 +1615,12 @@ void main() {
           arguments: <Parameter>[
             Parameter(
                 name: 'anArg',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
           ],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[], enums: <Enum>[]);
@@ -1640,7 +1640,7 @@ void main() {
     );
     final String code = sink.toString();
     // A bare 'auto' here would create a copy, not a reference, which is
-    // ineffecient.
+    // inefficient.
     expect(
         code, contains('const auto& args = std::get<EncodableList>(message);'));
     expect(code, contains('const auto& encodable_an_arg_arg = args.at(0);'));
@@ -1652,15 +1652,19 @@ void main() {
         Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
           Method(
               name: 'bar',
-              returnType: TypeDeclaration.voidDeclaration(),
+              returnType: const TypeDeclaration.voidDeclaration(),
               arguments: <Parameter>[
                 Parameter(
-                    name: 'foo',
-                    type: TypeDeclaration(
-                      baseName: 'Foo',
-                      isNullable: false,
-                      isEnum: true,
-                    ))
+                  name: 'foo',
+                  type: TypeDeclaration(
+                    baseName: 'Foo',
+                    isNullable: false,
+                    associatedEnum: Enum(
+                      name: '',
+                      members: <EnumMember>[EnumMember(name: '')],
+                    ),
+                  ),
+                )
               ])
         ])
       ],
@@ -1699,12 +1703,12 @@ void main() {
           methods: <Method>[
             Method(
               name: 'method',
-              returnType: TypeDeclaration.voidDeclaration(),
+              returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
               arguments: <Parameter>[
                 Parameter(
                   name: 'field',
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'int',
                     isNullable: true,
                   ),
@@ -1721,7 +1725,7 @@ void main() {
           fields: <NamedType>[
             NamedType(
                 documentationComments: <String>[comments[count++]],
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                     baseName: 'Map',
                     isNullable: true,
                     typeArguments: <TypeDeclaration>[
@@ -1769,7 +1773,7 @@ void main() {
     expect(code, contains('// ///'));
   });
 
-  test('doesnt create codecs if no custom datatypes', () {
+  test("doesn't create codecs if no custom datatypes", () {
     final Root root = Root(
       apis: <Api>[
         Api(
@@ -1778,11 +1782,11 @@ void main() {
           methods: <Method>[
             Method(
               name: 'method',
-              returnType: TypeDeclaration.voidDeclaration(),
+              returnType: const TypeDeclaration.voidDeclaration(),
               arguments: <Parameter>[
                 Parameter(
                   name: 'field',
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'int',
                     isNullable: true,
                   ),
@@ -1822,14 +1826,14 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 ),
                 name: '')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            isClass: true,
+            associatedClass: Class(name: '', fields: <NamedType>[]),
           ),
           isAsynchronous: true,
         )
@@ -1837,7 +1841,7 @@ void main() {
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -1845,7 +1849,7 @@ void main() {
       ]),
       Class(name: 'Output', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'String',
               isNullable: true,
             ),
@@ -1877,25 +1881,25 @@ void main() {
           arguments: <Parameter>[
             Parameter(
                 name: 'aBool',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'anInt',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'aString',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
             Parameter(
                 name: 'aList',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'List',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'Object', isNullable: true)
@@ -1904,7 +1908,7 @@ void main() {
                 )),
             Parameter(
                 name: 'aMap',
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'Map',
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'String', isNullable: true),
@@ -1917,16 +1921,16 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 )),
           ],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[
       Class(name: 'ParameterObject', fields: <NamedType>[
         NamedType(
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'bool',
               isNullable: false,
             ),
@@ -1957,20 +1961,21 @@ void main() {
         Method(
           name: 'noop',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
           arguments: <Parameter>[
             Parameter(
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 ),
                 name: '')
           ],
-          returnType: TypeDeclaration(baseName: 'double', isNullable: false),
+          returnType:
+              const TypeDeclaration(baseName: 'double', isNullable: false),
           isAsynchronous: true,
         ),
       ]),
@@ -1978,20 +1983,21 @@ void main() {
         Method(
           name: 'noop',
           arguments: <Parameter>[],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
           arguments: <Parameter>[
             Parameter(
-                type: TypeDeclaration(
+                type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 ),
                 name: '')
           ],
-          returnType: TypeDeclaration(baseName: 'bool', isNullable: false),
+          returnType:
+              const TypeDeclaration(baseName: 'bool', isNullable: false),
           isAsynchronous: true,
         ),
       ])
@@ -2029,11 +2035,11 @@ void main() {
           methods: <Method>[
             Method(
               name: 'method',
-              returnType: TypeDeclaration.voidDeclaration(),
+              returnType: const TypeDeclaration.voidDeclaration(),
               arguments: <Parameter>[
                 Parameter(
                   name: 'field',
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                     baseName: 'int',
                     isNullable: true,
                   ),

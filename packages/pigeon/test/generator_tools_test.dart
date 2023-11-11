@@ -79,7 +79,7 @@ void main() {
                 TypeDeclaration(
                   baseName: 'Input',
                   isNullable: true,
-                  isClass: true,
+                  associatedClass: Class(name: '', fields: <NamedType>[]),
                 )
               ],
             ),
@@ -89,7 +89,7 @@ void main() {
         returnType: TypeDeclaration(
           baseName: 'Output',
           isNullable: false,
-          isClass: true,
+          associatedClass: Class(name: '', fields: <NamedType>[]),
         ),
         isAsynchronous: true,
       )
@@ -120,7 +120,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Output',
               isNullable: false,
-              isClass: true,
+              associatedClass: Class(name: '', fields: <NamedType>[]),
             ),
             name: '',
           )
@@ -132,7 +132,7 @@ void main() {
             TypeDeclaration(
               baseName: 'Input',
               isNullable: true,
-              isClass: true,
+              associatedClass: Class(name: '', fields: <NamedType>[]),
             )
           ],
         ),
@@ -165,7 +165,7 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Foo',
               isNullable: false,
-              isClass: true,
+              associatedClass: Class(name: '', fields: <NamedType>[]),
             ),
             name: '',
           ),
@@ -173,12 +173,15 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Bar',
               isNullable: false,
-              isEnum: true,
+              associatedEnum: Enum(
+                name: 'name',
+                members: <EnumMember>[EnumMember(name: 'member')],
+              ),
             ),
             name: '',
           ),
         ],
-        returnType: TypeDeclaration(
+        returnType: const TypeDeclaration(
           baseName: 'List',
           isNullable: false,
           typeArguments: <TypeDeclaration>[TypeDeclaration.voidDeclaration()],
@@ -217,11 +220,11 @@ void main() {
                       TypeDeclaration(
                         baseName: 'Foo',
                         isNullable: true,
-                        isClass: true,
+                        associatedClass: Class(name: '', fields: <NamedType>[]),
                       )
                     ])),
           ],
-          returnType: TypeDeclaration.voidDeclaration(),
+          returnType: const TypeDeclaration.voidDeclaration(),
         )
       ])
     ], classes: <Class>[
@@ -231,13 +234,13 @@ void main() {
             type: TypeDeclaration(
               baseName: 'Bar',
               isNullable: true,
-              isClass: true,
+              associatedClass: Class(name: '', fields: <NamedType>[]),
             )),
       ]),
       Class(name: 'Bar', fields: <NamedType>[
         NamedType(
             name: 'value',
-            type: TypeDeclaration(
+            type: const TypeDeclaration(
               baseName: 'int',
               isNullable: true,
             ))
@@ -269,14 +272,14 @@ void main() {
             arguments: <Parameter>[
               Parameter(
                   name: 'x',
-                  type: TypeDeclaration(
+                  type: const TypeDeclaration(
                       isNullable: false,
                       baseName: 'List',
                       typeArguments: <TypeDeclaration>[
                         TypeDeclaration(baseName: 'Object', isNullable: true)
                       ])),
             ],
-            returnType: TypeDeclaration.voidDeclaration(),
+            returnType: const TypeDeclaration.voidDeclaration(),
           )
         ],
       ),
@@ -284,7 +287,7 @@ void main() {
       Class(name: 'Foo', fields: <NamedType>[
         NamedType(
             name: 'bar',
-            type: TypeDeclaration(baseName: 'int', isNullable: true)),
+            type: const TypeDeclaration(baseName: 'int', isNullable: true)),
       ]),
     ], enums: <Enum>[]);
     final List<EnumeratedClass> classes =
@@ -311,10 +314,10 @@ void main() {
                   type: TypeDeclaration(
                     isNullable: false,
                     baseName: 'Foo',
-                    isClass: true,
+                    associatedClass: Class(name: '', fields: <NamedType>[]),
                   )),
             ],
-            returnType: TypeDeclaration.voidDeclaration(),
+            returnType: const TypeDeclaration.voidDeclaration(),
           )
         ],
       ),
@@ -330,10 +333,10 @@ void main() {
                   type: TypeDeclaration(
                     isNullable: false,
                     baseName: 'Foo',
-                    isClass: true,
+                    associatedClass: Class(name: '', fields: <NamedType>[]),
                   )),
             ],
-            returnType: TypeDeclaration.voidDeclaration(),
+            returnType: const TypeDeclaration.voidDeclaration(),
           )
         ],
       )
@@ -341,7 +344,7 @@ void main() {
       Class(name: 'Foo', fields: <NamedType>[
         NamedType(
             name: 'bar',
-            type: TypeDeclaration(baseName: 'int', isNullable: true)),
+            type: const TypeDeclaration(baseName: 'int', isNullable: true)),
       ]),
     ], enums: <Enum>[]);
     final List<EnumeratedClass> classes =

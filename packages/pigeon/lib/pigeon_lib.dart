@@ -913,17 +913,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
     for (final Class klass in referencedClasses) {
       for (final NamedType field in klass.fields) {
-        _attachClassesAndEnums(field.type);
+        field.type = _attachClassesAndEnums(field.type);
       }
     }
 
     for (final Api api in _apis) {
       for (final Method func in api.methods) {
         for (final Parameter param in func.arguments) {
-          _attachClassesAndEnums(param.type);
+          param.type = _attachClassesAndEnums(param.type);
         }
-        final TypeDeclaration returnType = func.returnType;
-        _attachClassesAndEnums(returnType);
+        func.returnType = _attachClassesAndEnums(func.returnType);
       }
     }
 
@@ -936,15 +935,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     );
   }
 
-  void _attachClassesAndEnums(TypeDeclaration type) {
+  TypeDeclaration _attachClassesAndEnums(TypeDeclaration type) {
     final Enum? assocEnum =
         _enums.firstWhereOrNull((Enum enu) => enu.name == type.baseName);
     final Class? assocClass =
         _classes.firstWhereOrNull((Class klass) => klass.name == type.baseName);
-    type.isEnum = assocEnum != null;
-    type.associatedEnum = assocEnum;
-    type.isClass = assocClass != null;
-    type.associatedClass = assocClass;
+    if (assocClass != null) {
+      return type.duplicateWithClass(assocClass);
+    } else if (assocEnum != null) {
+      return type.duplicateWithEnum(assocEnum);
+    }
+    return type;
   }
 
   Object _expressionToMap(dart_ast.Expression expression) {

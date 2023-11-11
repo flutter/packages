@@ -5,6 +5,7 @@
 // ignore_for_file: avoid_equals_and_hash_code_on_mutable_classes
 
 import 'package:collection/collection.dart' show ListEquality;
+import 'package:meta/meta.dart';
 import 'pigeon_lib.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
@@ -116,24 +117,23 @@ class Api extends Node {
 }
 
 /// A specific instance of a type.
+@immutable
 class TypeDeclaration {
   /// Constructor for [TypeDeclaration].
-  TypeDeclaration({
+  const TypeDeclaration({
     required this.baseName,
     required this.isNullable,
-    this.isEnum = false,
     this.associatedEnum,
-    this.isClass = false,
     this.associatedClass,
     this.typeArguments = const <TypeDeclaration>[],
   });
 
   /// Void constructor.
-  TypeDeclaration.voidDeclaration()
+  const TypeDeclaration.voidDeclaration()
       : baseName = 'void',
         isNullable = false,
-        isEnum = false,
-        isClass = false,
+        associatedEnum = null,
+        associatedClass = null,
         typeArguments = const <TypeDeclaration>[];
 
   /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
@@ -148,17 +148,17 @@ class TypeDeclaration {
   /// True if the type is nullable.
   final bool isNullable;
 
-  /// Whether the [TypeDeclaration] represents an [Enum].
-  bool isEnum;
+  /// Whether the [TypeDeclaration] has an [associatedEnum].
+  bool get isEnum => associatedEnum != null;
 
   /// Associated [Enum], if any.
-  Enum? associatedEnum;
+  final Enum? associatedEnum;
 
-  /// Whether the [TypeDeclaration] represents a [Class].
-  bool isClass;
+  /// Whether the [TypeDeclaration] has an [associatedClass].
+  bool get isClass => associatedClass != null;
 
   /// Associated [Class], if any.
-  Class? associatedClass;
+  final Class? associatedClass;
 
   @override
   int get hashCode {
@@ -187,6 +187,26 @@ class TypeDeclaration {
           associatedClass == other.associatedClass &&
           associatedEnum == other.associatedEnum;
     }
+  }
+
+  /// Returns duplicated `TypeDeclaration` with attached `associatedEnum` value.
+  TypeDeclaration duplicateWithEnum(Enum enu) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      associatedEnum: enu,
+      typeArguments: typeArguments,
+    );
+  }
+
+  /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
+  TypeDeclaration duplicateWithClass(Class klass) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      associatedClass: klass,
+      typeArguments: typeArguments,
+    );
   }
 
   @override
