@@ -109,7 +109,11 @@ class FlutterApi {
 /// automatically with an `InstanceManager`.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi();
+  const ProxyApi({this.superClass, this.interfaces});
+
+  final Type? superClass;
+
+  final List<Type>? interfaces;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1070,11 +1074,30 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'ProxyApi')) {
+        final dart_ast.Annotation proxyApiAnnotation = node.metadata.firstWhere(
+          (dart_ast.Annotation element) => element.name.name == 'ProxyApi',
+        );
+        String? superClass;
+        if (proxyApiAnnotation.arguments != null) {
+          for (final dart_ast.Expression expression
+              in proxyApiAnnotation.arguments!.arguments) {
+            if (expression is dart_ast.NamedExpression) {
+              if (expression.name.label.name == 'superClass') {
+                final dart_ast.Expression superClassExpression =
+                    expression.expression;
+                if (superClassExpression is dart_ast.SimpleIdentifier) {
+                  superClass = superClassExpression.name;
+                }
+              }
+            }
+          }
+        }
         _currentApi = ProxyApiNode(
           name: node.name.lexeme,
           methods: <Method>[],
           constructors: <Constructor>[],
           fields: <Field>[],
+          superClass: superClass,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );

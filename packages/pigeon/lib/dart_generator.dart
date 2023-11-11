@@ -1117,6 +1117,17 @@ class $InstanceManager {
   }) {
     final String codecName = _getCodecName(api.name);
 
+    late final ProxyApiNode? superClassApi;
+    if (api.superClass != null) {
+      for (final ProxyApiNode proxyApi in root.apis.whereType<ProxyApiNode>()) {
+        if (api.superClass == proxyApi.name) {
+          superClassApi = proxyApi;
+        }
+      }
+    } else {
+      superClassApi = null;
+    }
+
     // Write Codec
     indent.writeln('''
 class $codecName extends StandardMessageCodec {
@@ -1163,13 +1174,26 @@ class $codecName extends StandardMessageCodec {
       (Field field) => !field.isAttached,
     );
 
+    late final Iterable<Method> superClassFlutterMethods;
+    if (superClassApi != null) {
+      superClassFlutterMethods = superClassApi.methods.where(
+        (Method method) => method.location == ApiLocation.flutter,
+      );
+    } else {
+      superClassFlutterMethods = <Method>[];
+    }
+
     // api class
     addDocumentationComments(
       indent,
       api.documentationComments,
       _docCommentSpec,
     );
-    indent.writeScoped('class ${api.name} implements \$Copyable {', '}', () {
+
+    final String classInheritance = superClassApi != null
+        ? 'extends ${superClassApi.name}'
+        : r'implements $Copyable';
+    indent.writeScoped('class ${api.name} $classInheritance {', '}', () {
       // constructors
       for (final Constructor constructor in api.constructors) {
         addDocumentationComments(
@@ -1184,12 +1208,22 @@ class $codecName extends StandardMessageCodec {
         final String constructorNameWithDot =
             constructor.name.isEmpty ? '' : '.${constructor.name}';
         indent.writeScoped('${api.name}$constructorNameWithDot({', '}) ', () {
-          indent.writeln(r'this.binaryMessenger,');
-          indent.writeln(r'$InstanceManager? customInstanceManager,');
+          indent.writeln(
+            '${superClassApi != null ? 'super' : 'this'}.binaryMessenger,',
+          );
+          indent.writeln(
+            '${superClassApi != null ? 'super.instanceManager' : r'$InstanceManager? customInstanceManager'},',
+          );
 
           for (final Field field in nonAttachedFields) {
             indent.writeln(
               '${field.type.isNullable ? '' : 'required '}this.${field.name},',
+            );
+          }
+
+          for (final Method method in superClassFlutterMethods) {
+            indent.writeln(
+              '${method.mustBeImplemented ? 'required ' : ''}super.${method.name},',
             );
           }
 
@@ -1206,66 +1240,65 @@ class $codecName extends StandardMessageCodec {
           });
         }, addTrailingNewline: false);
 
-        indent.addScoped(
-          r': instanceManager = customInstanceManager ?? $InstanceManager.instance {',
-          '}',
-          () {
-            final String channelName = makeChannelNameForConstructor(
-              api,
-              constructor,
-              dartPackageName,
-            );
-            _writeBasicMessageChannel(
-              indent,
-              channelName: channelName,
-              codecVariableName: '$codecName(instanceManager)',
-            );
-            indent.writeln(
-              'final int instanceIdentifier = instanceManager.addDartCreatedInstance(this);',
-            );
+        final String initializerStatement = superClassApi != null
+            ? r'super.$detached()'
+            : r'instanceManager = customInstanceManager ?? $InstanceManager.instance';
+        indent.addScoped(': $initializerStatement {', '}', () {
+          final String channelName = makeChannelNameForConstructor(
+            api,
+            constructor,
+            dartPackageName,
+          );
+          _writeBasicMessageChannel(
+            indent,
+            channelName: channelName,
+            codecVariableName: '$codecName(instanceManager)',
+          );
+          indent.writeln(
+            'final int instanceIdentifier = instanceManager.addDartCreatedInstance(this);',
+          );
 
-            final List<String> unAttachedFieldNames = _asParameterNamesList(
-              nonAttachedFields,
-              root.enums,
-              getArgumentName: _getArgumentName,
-            );
-            final List<String> parameterNames = _asParameterNamesList(
-              constructor.arguments,
-              root.enums,
-            );
-            final String channelSendNames =
-                (unAttachedFieldNames + parameterNames).join(', ');
+          final List<String> unAttachedFieldNames = _asParameterNamesList(
+            nonAttachedFields,
+            root.enums,
+            getArgumentName: _getArgumentName,
+          );
+          final List<String> parameterNames = _asParameterNamesList(
+            constructor.arguments,
+            root.enums,
+          );
+          final String channelSendNames =
+              (unAttachedFieldNames + parameterNames).join(', ');
 
-            indent.writeScoped(
-              'channel.send(<Object?>[instanceIdentifier, $channelSendNames]).then<void>((Object? value) {',
-              '});',
-              () {
-                indent.writeln(
-                  'final List<Object?>? replyList = value as List<Object?>?;',
-                );
-                indent.writeScoped('if (replyList == null) {', '} ', () {
+          indent.writeScoped(
+            'channel.send(<Object?>[instanceIdentifier, $channelSendNames]).then<void>((Object? value) {',
+            '});',
+            () {
+              indent.writeln(
+                'final List<Object?>? replyList = value as List<Object?>?;',
+              );
+              indent.writeScoped('if (replyList == null) {', '} ', () {
+                indent.writeScoped('throw PlatformException(', ');', () {
+                  indent.writeln("code: 'channel-error',");
+                  indent.writeln(
+                    "message: 'Unable to establish connection on channel.',",
+                  );
+                });
+              }, addTrailingNewline: false);
+              indent.writeScoped(
+                'else if (replyList.length > 1) {',
+                '} ',
+                () {
                   indent.writeScoped('throw PlatformException(', ');', () {
-                    indent.writeln("code: 'channel-error',");
-                    indent.writeln(
-                      "message: 'Unable to establish connection on channel.',",
-                    );
+                    indent.writeln('code: replyList[0]! as String,');
+                    indent.writeln('message: replyList[1] as String?,');
+                    indent.writeln('details: replyList[2],');
                   });
-                }, addTrailingNewline: false);
-                indent.writeScoped(
-                  'else if (replyList.length > 1) {',
-                  '} ',
-                  () {
-                    indent.writeScoped('throw PlatformException(', ');', () {
-                      indent.writeln('code: replyList[0]! as String,');
-                      indent.writeln('message: replyList[1] as String?,');
-                      indent.writeln('details: replyList[2],');
-                    });
-                  },
-                );
-              },
-            );
-          },
-        );
+                },
+              );
+            },
+          );
+        });
       }
       indent.newln();
 
@@ -1276,11 +1309,20 @@ class $codecName extends StandardMessageCodec {
         '/// create copies.',
       );
       indent.writeScoped('${api.name}.\$detached({', '}) ', () {
-        indent.writeln('this.binaryMessenger,');
-        indent.writeln(r'$InstanceManager? instanceManager,');
+        indent.writeln(
+          '${superClassApi != null ? 'super' : 'this'}.binaryMessenger,',
+        );
+        indent.writeln(
+          '${superClassApi != null ? 'super.' : r'$InstanceManager? '}instanceManager,',
+        );
         for (final Field field in nonAttachedFields) {
           indent.writeln(
             '${field.type.isNullable ? '' : 'required '}this.${field.name},',
+          );
+        }
+        for (final Method method in superClassFlutterMethods) {
+          indent.writeln(
+            '${method.mustBeImplemented ? 'required ' : ''}super.${method.name},',
           );
         }
         for (final Method method in flutterMethods) {
@@ -1289,9 +1331,11 @@ class $codecName extends StandardMessageCodec {
           );
         }
       }, addTrailingNewline: false);
-      indent.writeln(
-        r': instanceManager = instanceManager ?? $InstanceManager.instance;',
-      );
+
+      final String initializerStatement = superClassApi != null
+          ? r'super.$detached()'
+          : r'instanceManager = instanceManager ?? $InstanceManager.instance';
+      indent.writeln(': $initializerStatement;');
       indent.newln();
 
       // callback methods
@@ -1512,8 +1556,10 @@ class $codecName extends StandardMessageCodec {
       indent.newln();
 
       // fields
-      indent.writeln('final BinaryMessenger? binaryMessenger;');
-      indent.writeln(r'final $InstanceManager instanceManager;');
+      if (superClassApi == null) {
+        indent.writeln('final BinaryMessenger? binaryMessenger;');
+        indent.writeln(r'final $InstanceManager instanceManager;');
+      }
       for (final Field field in nonAttachedFields) {
         addDocumentationComments(
           indent,
@@ -1711,6 +1757,9 @@ class $codecName extends StandardMessageCodec {
           indent.writeln('instanceManager: instanceManager,');
           for (final Field field in nonAttachedFields) {
             indent.writeln('${field.name}: ${field.name},');
+          }
+          for (final Method method in superClassFlutterMethods) {
+            indent.writeln('${method.name}: ${method.name},');
           }
           for (final Method method in flutterMethods) {
             indent.writeln('${method.name}: ${method.name},');
