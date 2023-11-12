@@ -1,3 +1,8 @@
+## 3.1.1
+
+* Implements `launchUrl`.
+* Simplifies method channel interface by removing unused elements.
+
 ## 3.1.0
 
 * Implements `supportsMode` and `supportsCloseForMode`.

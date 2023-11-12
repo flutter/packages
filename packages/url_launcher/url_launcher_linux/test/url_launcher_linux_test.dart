@@ -38,11 +38,7 @@ void main() {
       await launcher.canLaunch('http://example.com/');
       expect(
         log,
-        <Matcher>[
-          isMethodCall('canLaunch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-          })
-        ],
+        <Matcher>[isMethodCall('canLaunch', arguments: 'http://example.com/')],
       );
     });
 
@@ -66,65 +62,7 @@ void main() {
       );
       expect(
         log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{},
-          })
-        ],
-      );
-    });
-
-    test('launch with headers', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{'key': 'value'},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{'key': 'value'},
-          })
-        ],
-      );
-    });
-
-    test('launch universal links only', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: true,
-        headers: const <String, String>{},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': true,
-            'headers': <String, String>{},
-          })
-        ],
+        <Matcher>[isMethodCall('launch', arguments: 'http://example.com/')],
       );
     });
 
@@ -141,6 +79,25 @@ void main() {
       );
 
       expect(launched, false);
+    });
+
+    group('launchUrl', () {
+      test('passes URL', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        await launcher.launchUrl('http://example.com/', const LaunchOptions());
+        expect(
+          log,
+          <Matcher>[isMethodCall('launch', arguments: 'http://example.com/')],
+        );
+      });
+
+      test('returns false if platform returns null', () async {
+        final UrlLauncherLinux launcher = UrlLauncherLinux();
+        final bool launched = await launcher.launchUrl(
+            'http://example.com/', const LaunchOptions());
+
+        expect(launched, false);
+      });
     });
 
     group('supportsMode', () {
