@@ -2719,4 +2719,51 @@ void main() {
     final String code = sink.toString();
     expect(code, contains(' : FlutterStandardReader'));
   });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const ObjcGenerator generator = ObjcGenerator();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'return [FlutterError errorWithCode:@"channel-error" message:[NSString stringWithFormat:@"%@/%@/%@", @"Unable to establish connection on channel: \'", channelName, @"\'."] details:@""]'));
+    expect(code, contains('completion(createConnectionError(channelName))'));
+  });
 }
