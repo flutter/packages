@@ -1,6 +1,7 @@
 name: pointer_interceptor_platform_interface
 description: "A common platform interface for the pointer_interceptor plugin."
 version: 0.0.1
+publish_to: none
 
 environment:
   sdk: '>=3.1.0-134.0.dev <4.0.0'
