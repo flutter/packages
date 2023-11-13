@@ -1116,26 +1116,8 @@ class $InstanceManager {
     required String dartPackageName,
   }) {
     // TODO: auto $detached can't exist if there are required callback methods that require a value? including inherited ones.
-    // TODO: extended classes of extended classes
 
     final String codecName = _getCodecName(api.name);
-
-    final Iterable<ProxyApiNode> allProxyApis =
-        root.apis.whereType<ProxyApiNode>();
-
-    final Set<ProxyApiNode> interfacesApis = _recursiveFindAllInterfacesApis(
-      api.interfacesNames,
-      root.apis.whereType<ProxyApiNode>(),
-    );
-
-    ProxyApiNode? superClassApi;
-    if (api.superClassName != null) {
-      for (final ProxyApiNode proxyApi in allProxyApis) {
-        if (api.superClassName == proxyApi.name) {
-          superClassApi = proxyApi;
-        }
-      }
-    }
 
     // Write Codec
     indent.writeln('''
@@ -1183,11 +1165,32 @@ class $codecName extends StandardMessageCodec {
       (Field field) => !field.isAttached,
     );
 
+    final Iterable<ProxyApiNode> allProxyApis =
+        root.apis.whereType<ProxyApiNode>();
+
+    final Set<ProxyApiNode> interfacesApis = _recursiveFindAllInterfacesApis(
+      api.interfacesNames,
+      root.apis.whereType<ProxyApiNode>(),
+    );
+
+    final List<ProxyApiNode> superClassApisChain =
+        _recursiveGetSuperClassApisChain(
+      api,
+      allProxyApis,
+    );
+
+    ProxyApiNode? superClassApi;
+    if (api.superClassName != null) {
+      superClassApi = superClassApisChain.first;
+    }
+
     final List<Method> superClassFlutterMethods = <Method>[];
     if (superClassApi != null) {
-      for (final Method method in superClassApi.methods) {
-        if (method.location == ApiLocation.flutter) {
-          superClassFlutterMethods.add(method);
+      for (final ProxyApiNode proxyApi in superClassApisChain) {
+        for (final Method method in proxyApi.methods) {
+          if (method.location == ApiLocation.flutter) {
+            superClassFlutterMethods.add(method);
+          }
         }
       }
 
@@ -2149,6 +2152,29 @@ Set<ProxyApiNode> _recursiveFindAllInterfacesApis(
   }
 
   return interfacesApis;
+}
+
+/// Recursively find super classes a place them in order in a list.
+List<ProxyApiNode> _recursiveGetSuperClassApisChain(
+  ProxyApiNode proxyApi,
+  Iterable<ProxyApiNode> allProxyApis,
+) {
+  final List<ProxyApiNode> proxyApis = <ProxyApiNode>[];
+
+  String? currentProxyApiName = proxyApi.superClassName;
+  while (currentProxyApiName != null) {
+    ProxyApiNode? nextProxyApi;
+    for (final ProxyApiNode node in allProxyApis) {
+      if (currentProxyApiName == node.name) {
+        nextProxyApi = node;
+        proxyApis.add(node);
+      }
+    }
+
+    currentProxyApiName = nextProxyApi?.superClassName;
+  }
+
+  return proxyApis;
 }
 
 /// Converts [inputPath] to a posix absolute path.
