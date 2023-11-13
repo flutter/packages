@@ -412,17 +412,17 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             indent.writeScoped('if (it is List<*>) {', '} ', () {
               indent.writeScoped('if (it.size > 1) {', '} ', () {
                 indent.writeln(
-                    'callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)));');
+                    'callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))');
               }, addTrailingNewline: false);
               if (!func.returnType.isNullable && !func.returnType.isVoid) {
                 indent.addScoped('else if (it[0] == null) {', '} ', () {
                   indent.writeln(
-                      'callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")));');
+                      'callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))');
                 }, addTrailingNewline: false);
               }
               indent.addScoped('else {', '}', () {
                 if (func.returnType.isVoid) {
-                  indent.writeln('callback(Result.success(Unit));');
+                  indent.writeln('callback(Result.success(Unit))');
                 } else {
                   const String output = 'output';
                   // Nullable enums require special handling.
@@ -436,13 +436,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                     indent.writeln(
                         'val $output = ${_cast(root, indent, 'it[0]', type: func.returnType)}');
                   }
-                  indent.writeln('callback(Result.success($output));');
+                  indent.writeln('callback(Result.success($output))');
                 }
               });
             }, addTrailingNewline: false);
             indent.addScoped('else {', '} ', () {
               indent.writeln(
-                  'callback(Result.failure(createConnectionError(channelName)));');
+                  'callback(Result.failure(createConnectionError(channelName)))');
             });
           });
         });
