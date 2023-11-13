@@ -14,7 +14,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		F243D6112AE053F700F4A2FC /* RunnerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F243D6102AE053F700F4A2FC /* RunnerUITests.swift */; };
+		F243D6112AE053F700F4A2FC /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F243D6102AE053F700F4A2FC /* RunnerTests.swift */; };
 		F2FC28712AE9D8C7000AB127 /* DummyPlatformViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FC28702AE9D8C7000AB127 /* DummyPlatformViewFactory.swift */; };
 		F70CF50607AC59EC61498F31 /* Pods_RunnerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBB792912A46DD7C5A654473 /* Pods_RunnerUITests.framework */; };
 /* End PBXBuildFile section */
@@ -65,7 +65,7 @@
 		EBB792912A46DD7C5A654473 /* Pods_RunnerUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4CC0B2FE0461A7E900B600 /* Pods-RunnerUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerUITests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerUITests/Pods-RunnerUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		F243D60E2AE053F700F4A2FC /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F243D6102AE053F700F4A2FC /* RunnerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerUITests.swift; sourceTree = "<group>"; };
+		F243D6102AE053F700F4A2FC /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		F2FC28702AE9D8C7000AB127 /* DummyPlatformViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyPlatformViewFactory.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,7 +114,7 @@
 			children = (
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
-				F243D60F2AE053F700F4A2FC /* RunnerUITests */,
+				F243D60F2AE053F700F4A2FC /* RunnerTests */,
 				97C146EF1CF9000F007C117D /* Products */,
 				CA6EAE272C76E7B047DA5950 /* Pods */,
 				82C4B0C219FA8A2BE76C1522 /* Frameworks */,
@@ -159,12 +159,12 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		F243D60F2AE053F700F4A2FC /* RunnerUITests */ = {
+		F243D60F2AE053F700F4A2FC /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				F243D6102AE053F700F4A2FC /* RunnerUITests.swift */,
+				F243D6102AE053F700F4A2FC /* RunnerTests.swift */,
 			);
-			path = RunnerUITests;
+			path = RunnerTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -382,7 +382,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F243D6112AE053F700F4A2FC /* RunnerUITests.swift in Sources */,
+				F243D6112AE053F700F4A2FC /* RunnerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

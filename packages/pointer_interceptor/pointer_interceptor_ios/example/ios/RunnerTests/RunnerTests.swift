@@ -4,7 +4,7 @@
 
 import XCTest
 
-final class RunnerUITests: XCTestCase {
+final class RunnerTests: XCTestCase {
 
     override func setUp() {
       continueAfterFailure = false
