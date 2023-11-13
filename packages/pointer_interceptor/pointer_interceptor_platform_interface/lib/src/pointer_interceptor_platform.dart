@@ -40,7 +40,6 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
     bool debug = false,
     Key? key,
   }) {
-    print(instance);
     throw UnimplementedError('buildWidget() has not been implemented.');
   }
 }

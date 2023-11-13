@@ -33,7 +33,6 @@ class PointerInterceptor extends StatelessWidget {
     if (!intercepting) {
       return child;
     }
-    print(PointerInterceptorPlatform.instance);
     return PointerInterceptorPlatform.instance
         .buildWidget(child: child, debug: debug, key: key);
   }
