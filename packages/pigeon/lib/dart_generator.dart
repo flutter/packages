@@ -1116,18 +1116,23 @@ class $InstanceManager {
     required String dartPackageName,
   }) {
     // TODO: auto $detached can't exist if there are required callback methods that require a value? including inherited ones.
+    // TODO: extended classes of extended classes
 
     final String codecName = _getCodecName(api.name);
 
-    ProxyApiNode? superClassApi;
-    final Set<ProxyApiNode> interfacesApis = <ProxyApiNode>{};
+    final Iterable<ProxyApiNode> allProxyApis =
+        root.apis.whereType<ProxyApiNode>();
 
-    if (api.superClass != null || api.interfaces.isNotEmpty) {
-      for (final ProxyApiNode proxyApi in root.apis.whereType<ProxyApiNode>()) {
-        if (api.superClass == proxyApi.name) {
+    final Set<ProxyApiNode> interfacesApis = _recursiveFindAllInterfacesApis(
+      api.interfacesNames,
+      root.apis.whereType<ProxyApiNode>(),
+    );
+
+    ProxyApiNode? superClassApi;
+    if (api.superClassName != null) {
+      for (final ProxyApiNode proxyApi in allProxyApis) {
+        if (api.superClassName == proxyApi.name) {
           superClassApi = proxyApi;
-        } else if (api.interfaces.contains(proxyApi.name)) {
-          interfacesApis.add(proxyApi);
         }
       }
     }
@@ -1185,6 +1190,15 @@ class $codecName extends StandardMessageCodec {
           superClassFlutterMethods.add(method);
         }
       }
+
+      final Set<ProxyApiNode> superClassInterfacesApis =
+          _recursiveFindAllInterfacesApis(
+        superClassApi.interfacesNames,
+        root.apis.whereType<ProxyApiNode>(),
+      );
+      for (final ProxyApiNode proxyApi in superClassInterfacesApis) {
+        superClassFlutterMethods.addAll(proxyApi.methods);
+      }
     }
 
     // api class
@@ -1201,8 +1215,8 @@ class $codecName extends StandardMessageCodec {
       if (superClassApi != null) {
         classInheritance += 'extends ${superClassApi.name} ';
       }
-      if (api.interfaces.isNotEmpty) {
-        classInheritance += 'implements ${api.interfaces.join(', ')} ';
+      if (api.interfacesNames.isNotEmpty) {
+        classInheritance += 'implements ${api.interfacesNames.join(', ')} ';
       }
     }
     indent.writeScoped('class ${api.name} $classInheritance{', '}', () {
@@ -1585,7 +1599,14 @@ class $codecName extends StandardMessageCodec {
 
       // fields
       if (superClassApi == null) {
+        if (superClassApi == null && interfacesApis.isNotEmpty) {
+          indent.writeln('@override');
+        }
         indent.writeln('final BinaryMessenger? binaryMessenger;');
+
+        if (superClassApi == null && interfacesApis.isNotEmpty) {
+          indent.writeln('@override');
+        }
         indent.writeln(r'final $InstanceManager instanceManager;');
       }
       for (final Field field in nonAttachedFields) {
@@ -2105,6 +2126,29 @@ void _writeMessageArgumentVariable(
       rawErrorMessageString: true,
     );
   }
+}
+
+/// Recursively search for all the interfaces apis from a list of names of
+/// interfaces.
+Set<ProxyApiNode> _recursiveFindAllInterfacesApis(
+  Set<String> interfaces,
+  Iterable<ProxyApiNode> allProxyApis,
+) {
+  final Set<ProxyApiNode> interfacesApis = <ProxyApiNode>{};
+
+  for (final ProxyApiNode proxyApi in allProxyApis) {
+    if (interfaces.contains(proxyApi.name)) {
+      interfacesApis.add(proxyApi);
+    }
+  }
+
+  for (final ProxyApiNode proxyApi in Set<ProxyApiNode>.from(interfacesApis)) {
+    interfacesApis.addAll(
+      _recursiveFindAllInterfacesApis(proxyApi.interfacesNames, allProxyApis),
+    );
+  }
+
+  return interfacesApis;
 }
 
 /// Converts [inputPath] to a posix absolute path.

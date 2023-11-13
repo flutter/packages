@@ -1115,8 +1115,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           methods: <Method>[],
           constructors: <Constructor>[],
           fields: <Field>[],
-          superClass: superClass,
-          interfaces: interfaces,
+          superClassName: superClass,
+          interfacesNames: interfaces,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
