@@ -1,8 +1,10 @@
 # pointer_interceptor
 
-`PointerInterceptor` is a widget that prevents mouse events (in web) from being captured by an underlying [`HtmlElementView`](https://api.flutter.dev/flutter/widgets/HtmlElementView-class.html).
+|             | iOS     | Web |
+|-------------|---------|-----|
+| **Support** | iOS 11+ | Any |
 
-You can use this widget in a cross-platform app freely. In mobile, where the issue that this plugin fixes does not exist, the widget acts as a pass-through of its `children`, without adding anything to the render tree.
+`PointerInterceptor` is a widget that prevents mouse events (in web) from being captured by an underlying [`HtmlElementView`](https://api.flutter.dev/flutter/widgets/HtmlElementView-class.html).
 
 ## What is the problem?
 
