@@ -196,7 +196,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     const List<String> generatedMessages = <String>[
@@ -204,38 +204,39 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     ];
     indent.newln();
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
+        indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
-    indent.write('public static final class ${klass.name} ');
+    indent.write('public static final class ${classDefinition.name} ');
     indent.addScoped('{', '}', () {
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         _writeClassField(generatorOptions, root, indent, field);
         indent.newln();
       }
 
-      if (getFieldsInSerializationOrder(klass)
+      if (getFieldsInSerializationOrder(classDefinition)
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
             '$_docCommentPrefix Constructor is non-public to enforce null safety; use Builder.$_docCommentSuffix');
-        indent.writeln('${klass.name}() {}');
+        indent.writeln('${classDefinition.name}() {}');
         indent.newln();
       }
 
-      _writeClassBuilder(generatorOptions, root, indent, klass);
+      _writeClassBuilder(generatorOptions, root, indent, classDefinition);
       writeClassEncode(
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
       writeClassDecode(
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
     });
@@ -275,11 +276,12 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass,
+    Class classDefinition,
   ) {
     indent.write('public static final class Builder ');
     indent.addScoped('{', '}', () {
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         final HostDatatype hostDatatype = getFieldHostDatatype(
             field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
         final String nullability =
@@ -296,11 +298,13 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         });
       }
       indent.newln();
-      indent.write('public @NonNull ${klass.name} build() ');
+      indent.write('public @NonNull ${classDefinition.name} build() ');
       indent.addScoped('{', '}', () {
         const String returnVal = 'pigeonReturn';
-        indent.writeln('${klass.name} $returnVal = new ${klass.name}();');
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        indent.writeln(
+            '${classDefinition.name} $returnVal = new ${classDefinition.name}();');
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
           indent.writeln('$returnVal.${_makeSetter(field)}(${field.name});');
         }
         indent.writeln('return $returnVal;');
@@ -313,7 +317,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     indent.newln();
@@ -321,8 +325,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.write('ArrayList<Object> toList() ');
     indent.addScoped('{', '}', () {
       indent.writeln(
-          'ArrayList<Object> toListResult = new ArrayList<Object>(${klass.fields.length});');
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+          'ArrayList<Object> toListResult = new ArrayList<Object>(${classDefinition.fields.length});');
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         String toWriteValue = '';
         final String fieldName = field.name;
         if (field.type.isClass) {
@@ -343,16 +348,17 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     indent.newln();
     indent.write(
-        'static @NonNull ${klass.name} fromList(@NonNull ArrayList<Object> list) ');
+        'static @NonNull ${classDefinition.name} fromList(@NonNull ArrayList<Object> list) ');
     indent.addScoped('{', '}', () {
       const String result = 'pigeonResult';
-      indent.writeln('${klass.name} $result = new ${klass.name}();');
-      enumerate(getFieldsInSerializationOrder(klass),
+      indent.writeln(
+          '${classDefinition.name} $result = new ${classDefinition.name}();');
+      enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final String fieldVariable = field.name;
         final String setter = _makeSetter(field);

@@ -181,11 +181,11 @@ abstract class Api1 {
 
     Class? input;
     Class? output;
-    for (final Class klass in root.classes) {
-      if (klass.name == 'Input1') {
-        input = klass;
-      } else if (klass.name == 'Output1') {
-        output = klass;
+    for (final Class classDefinition in root.classes) {
+      if (classDefinition.name == 'Input1') {
+        input = classDefinition;
+      } else if (classDefinition.name == 'Output1') {
+        output = classDefinition;
       }
     }
     expect(input, isNotNull);

@@ -178,9 +178,9 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    for (final Class klass in root.classes) {
+    for (final Class classDefinition in root.classes) {
       indent.writeln(
-          '@class ${_className(generatorOptions.prefix, klass.name)};');
+          '@class ${_className(generatorOptions.prefix, classDefinition.name)};');
     }
     indent.newln();
     super.writeDataClasses(
@@ -196,7 +196,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     final List<Class> classes = root.classes;
@@ -204,11 +204,12 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     final String? prefix = generatorOptions.prefix;
 
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec);
+        indent, classDefinition.documentationComments, _docCommentSpec);
 
-    indent.writeln('@interface ${_className(prefix, klass.name)} : NSObject');
-    if (getFieldsInSerializationOrder(klass).isNotEmpty) {
-      if (getFieldsInSerializationOrder(klass)
+    indent.writeln(
+        '@interface ${_className(prefix, classDefinition.name)} : NSObject');
+    if (getFieldsInSerializationOrder(classDefinition).isNotEmpty) {
+      if (getFieldsInSerializationOrder(classDefinition)
           .map((NamedType e) => !e.type.isNullable)
           .any((bool e) => e)) {
         indent.writeln(
@@ -219,14 +220,15 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
         indent,
         generatorOptions,
         root,
-        klass,
+        classDefinition,
         classes,
         enums,
         prefix,
       );
       indent.addln(';');
     }
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+    for (final NamedType field
+        in getFieldsInSerializationOrder(classDefinition)) {
       final HostDatatype hostDatatype = getFieldHostDatatype(
           field,
           (TypeDeclaration x) => _objcTypeStringForPrimitiveDartType(prefix, x,
@@ -258,7 +260,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {}
 
@@ -267,7 +269,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {}
 
@@ -488,8 +490,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    for (final Class klass in root.classes) {
-      _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
+    for (final Class classDefinition in root.classes) {
+      _writeObjcSourceDataClassExtension(
+          generatorOptions, indent, classDefinition);
     }
     indent.newln();
     super.writeDataClasses(
@@ -505,30 +508,31 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     final Set<String> customClassNames =
         root.classes.map((Class x) => x.name).toSet();
     final Set<String> customEnumNames =
         root.enums.map((Enum x) => x.name).toSet();
-    final String className = _className(generatorOptions.prefix, klass.name);
+    final String className =
+        _className(generatorOptions.prefix, classDefinition.name);
 
     indent.writeln('@implementation $className');
-    _writeObjcSourceClassInitializer(generatorOptions, root, indent, klass,
-        customClassNames, customEnumNames, className);
+    _writeObjcSourceClassInitializer(generatorOptions, root, indent,
+        classDefinition, customClassNames, customEnumNames, className);
     writeClassDecode(
       generatorOptions,
       root,
       indent,
-      klass,
+      classDefinition,
       dartPackageName: dartPackageName,
     );
     writeClassEncode(
       generatorOptions,
       root,
       indent,
-      klass,
+      classDefinition,
       dartPackageName: dartPackageName,
     );
     indent.writeln('@end');
@@ -540,14 +544,14 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     indent.write('- (NSArray *)toList ');
     indent.addScoped('{', '}', () {
       indent.write('return');
       indent.addScoped(' @[', '];', () {
-        for (final NamedType field in klass.fields) {
+        for (final NamedType field in classDefinition.fields) {
           indent.writeln('${_arrayValue(field)},');
         }
       });
@@ -559,15 +563,16 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     ObjcOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
-    final String className = _className(generatorOptions.prefix, klass.name);
+    final String className =
+        _className(generatorOptions.prefix, classDefinition.name);
     indent.write('+ ($className *)fromList:(NSArray *)list ');
     indent.addScoped('{', '}', () {
       const String resultName = 'pigeonResult';
       indent.writeln('$className *$resultName = [[$className alloc] init];');
-      enumerate(getFieldsInSerializationOrder(klass),
+      enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final bool isEnumType = field.type.isEnum;
         final String valueGetter =
@@ -904,8 +909,9 @@ static FlutterError *createConnectionError(NSString *channelName) {
   }
 
   void _writeObjcSourceDataClassExtension(
-      ObjcOptions languageOptions, Indent indent, Class klass) {
-    final String className = _className(languageOptions.prefix, klass.name);
+      ObjcOptions languageOptions, Indent indent, Class classDefinition) {
+    final String className =
+        _className(languageOptions.prefix, classDefinition.name);
     indent.newln();
     indent.writeln('@interface $className ()');
     indent.writeln('+ ($className *)fromList:(NSArray *)list;');
@@ -919,7 +925,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
     ObjcOptions languageOptions,
     Root root,
     Indent indent,
-    Class klass,
+    Class classDefinition,
     Set<String> customClassNames,
     Set<String> customEnumNames,
     String className,
@@ -928,7 +934,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       indent,
       languageOptions,
       root,
-      klass,
+      classDefinition,
       root.classes,
       root.enums,
       languageOptions.prefix,
@@ -936,7 +942,8 @@ static FlutterError *createConnectionError(NSString *channelName) {
     indent.writeScoped(' {', '}', () {
       const String result = 'pigeonResult';
       indent.writeln('$className* $result = [[$className alloc] init];');
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         indent.writeln('$result.${field.name} = ${field.name};');
       }
       indent.writeln('return $result;');
@@ -1154,14 +1161,15 @@ void _writeObjcSourceClassInitializerDeclaration(
     Indent indent,
     ObjcOptions generatorOptions,
     Root root,
-    Class klass,
+    Class classDefinition,
     List<Class> classes,
     List<Enum> enums,
     String? prefix) {
   indent.write('+ (instancetype)makeWith');
   bool isFirst = true;
   indent.nest(2, () {
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+    for (final NamedType field
+        in getFieldsInSerializationOrder(classDefinition)) {
       final String label = isFirst ? _capitalize(field.name) : field.name;
       final void Function(String) printer = isFirst
           ? indent.add

@@ -113,7 +113,7 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     const List<String> generatedComments = <String>[
@@ -121,12 +121,12 @@ import FlutterMacOS
     ];
     indent.newln();
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
+        indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    indent.write('struct ${klass.name} ');
+    indent.write('struct ${classDefinition.name} ');
     indent.addScoped('{', '}', () {
-      getFieldsInSerializationOrder(klass).forEach((NamedType field) {
+      getFieldsInSerializationOrder(classDefinition).forEach((NamedType field) {
         _writeClassField(indent, field);
       });
 
@@ -135,14 +135,14 @@ import FlutterMacOS
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
       writeClassEncode(
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
     });
@@ -153,14 +153,15 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     indent.write('func toList() -> [Any?] ');
     indent.addScoped('{', '}', () {
       indent.write('return ');
       indent.addScoped('[', ']', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
           String toWriteValue = '';
           final String fieldName = field.name;
           final String nullsafe = field.type.isNullable ? '?' : '';
@@ -183,14 +184,14 @@ import FlutterMacOS
     SwiftOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
-    final String className = klass.name;
+    final String className = classDefinition.name;
     indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
     indent.addScoped('{', '}', () {
-      enumerate(getFieldsInSerializationOrder(klass),
+      enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final String listValue = 'list[$index]';
 
@@ -205,9 +206,12 @@ import FlutterMacOS
       indent.newln();
       indent.write('return ');
       indent.addScoped('$className(', ')', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
           final String comma =
-              getFieldsInSerializationOrder(klass).last == field ? '' : ',';
+              getFieldsInSerializationOrder(classDefinition).last == field
+                  ? ''
+                  : ',';
           indent.writeln('${field.name}: ${field.name}$comma');
         }
       });

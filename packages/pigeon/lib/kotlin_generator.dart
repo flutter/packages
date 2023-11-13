@@ -151,7 +151,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     const List<String> generatedMessages = <String>[
@@ -159,14 +159,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     ];
     indent.newln();
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
+        indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
-    indent.write('data class ${klass.name} ');
+    indent.write('data class ${classDefinition.name} ');
     indent.addScoped('(', '', () {
-      for (final NamedType element in getFieldsInSerializationOrder(klass)) {
+      for (final NamedType element
+          in getFieldsInSerializationOrder(classDefinition)) {
         _writeClassField(indent, element);
-        if (getFieldsInSerializationOrder(klass).last != element) {
+        if (getFieldsInSerializationOrder(classDefinition).last != element) {
           indent.addln(',');
         } else {
           indent.newln();
@@ -179,14 +180,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
       writeClassEncode(
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
     });
@@ -197,14 +198,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     indent.write('fun toList(): List<Any?> ');
     indent.addScoped('{', '}', () {
       indent.write('return listOf<Any?>');
       indent.addScoped('(', ')', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
           final HostDatatype hostDatatype = _getHostDatatype(root, field);
           String toWriteValue = '';
           final String fieldName = field.name;
@@ -227,10 +229,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     KotlinOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
-    final String className = klass.name;
+    final String className = classDefinition.name;
 
     indent.write('companion object ');
     indent.addScoped('{', '}', () {
@@ -238,7 +240,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       indent.write('fun fromList(list: List<Any?>): $className ');
 
       indent.addScoped('{', '}', () {
-        enumerate(getFieldsInSerializationOrder(klass),
+        enumerate(getFieldsInSerializationOrder(classDefinition),
             (int index, final NamedType field) {
           final String listValue = 'list[$index]';
           final String fieldType = _kotlinTypeForDartType(field.type);
@@ -275,9 +277,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         });
 
         indent.write('return $className(');
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
           final String comma =
-              getFieldsInSerializationOrder(klass).last == field ? '' : ', ';
+              getFieldsInSerializationOrder(classDefinition).last == field
+                  ? ''
+                  : ', ';
           indent.add('${field.name}$comma');
         }
         indent.addln(')');

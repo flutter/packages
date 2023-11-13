@@ -176,12 +176,12 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    for (final Class klass in root.classes) {
+    for (final Class classDefinition in root.classes) {
       writeDataClass(
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
     }
@@ -192,7 +192,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   });
 
@@ -201,7 +201,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {}
 
@@ -210,7 +210,7 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     T generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {}
 

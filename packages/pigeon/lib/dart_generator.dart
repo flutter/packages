@@ -133,18 +133,19 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     DartOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     indent.newln();
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec);
+        indent, classDefinition.documentationComments, _docCommentSpec);
 
-    indent.write('class ${klass.name} ');
+    indent.write('class ${classDefinition.name} ');
     indent.addScoped('{', '}', () {
-      _writeConstructor(indent, klass);
+      _writeConstructor(indent, classDefinition);
       indent.newln();
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         addDocumentationComments(
             indent, field.documentationComments, _docCommentSpec);
 
@@ -156,7 +157,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
       indent.newln();
@@ -164,16 +165,17 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         generatorOptions,
         root,
         indent,
-        klass,
+        classDefinition,
         dartPackageName: dartPackageName,
       );
     });
   }
 
-  void _writeConstructor(Indent indent, Class klass) {
-    indent.write(klass.name);
+  void _writeConstructor(Indent indent, Class classDefinition) {
+    indent.write(classDefinition.name);
     indent.addScoped('({', '});', () {
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         final String required =
             !field.type.isNullable && field.defaultValue == null
                 ? 'required '
@@ -190,7 +192,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     DartOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     indent.write('Object encode() ');
@@ -199,7 +201,8 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         'return <Object?>',
       );
       indent.addScoped('[', '];', () {
-        for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
           final String conditional = field.type.isNullable ? '?' : '';
           if (field.type.isClass) {
             indent.writeln(
@@ -222,7 +225,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     DartOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     void writeValueDecode(NamedType field, int index) {
@@ -270,13 +273,13 @@ $resultAt != null
     }
 
     indent.write(
-      'static ${klass.name} decode(Object result) ',
+      'static ${classDefinition.name} decode(Object result) ',
     );
     indent.addScoped('{', '}', () {
       indent.writeln('result as List<Object?>;');
-      indent.write('return ${klass.name}');
+      indent.write('return ${classDefinition.name}');
       indent.addScoped('(', ');', () {
-        enumerate(getFieldsInSerializationOrder(klass),
+        enumerate(getFieldsInSerializationOrder(classDefinition),
             (int index, final NamedType field) {
           indent.write('${field.name}: ');
           writeValueDecode(field, index);

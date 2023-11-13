@@ -22,7 +22,7 @@ final Enum emptyEnum = Enum(
 
 void main() {
   test('gen one class', () {
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
@@ -35,7 +35,7 @@ void main() {
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass],
+      classes: <Class>[classDefinition],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
@@ -512,7 +512,7 @@ void main() {
   });
 
   test('gen nested', () {
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'Outer',
       fields: <NamedType>[
         NamedType(
@@ -537,7 +537,7 @@ void main() {
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass, nestedClass],
+      classes: <Class>[classDefinition, nestedClass],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
@@ -675,7 +675,7 @@ void main() {
         EnumMember(name: 'two'),
       ],
     );
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'EnumClass',
       fields: <NamedType>[
         NamedType(
@@ -689,7 +689,7 @@ void main() {
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass],
+      classes: <Class>[classDefinition],
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
@@ -729,7 +729,7 @@ void main() {
   });
 
   test('generics - list', () {
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
@@ -744,7 +744,7 @@ void main() {
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass],
+      classes: <Class>[classDefinition],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
@@ -762,7 +762,7 @@ void main() {
   });
 
   test('generics - maps', () {
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
@@ -778,7 +778,7 @@ void main() {
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass],
+      classes: <Class>[classDefinition],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();

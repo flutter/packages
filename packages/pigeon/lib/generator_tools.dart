@@ -540,9 +540,9 @@ void addDocumentationComments(
 }
 
 /// Returns an ordered list of fields to provide consistent serialization order.
-Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+Iterable<NamedType> getFieldsInSerializationOrder(Class classDefinition) {
   // This returns the fields in the order they are declared in the pigeon file.
-  return klass.fields;
+  return classDefinition.fields;
 }
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a

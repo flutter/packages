@@ -190,21 +190,21 @@ class TypeDeclaration {
   }
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedEnum` value.
-  TypeDeclaration duplicateWithEnum(Enum enu) {
+  TypeDeclaration duplicateWithEnum(Enum enumDefinition) {
     return TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
-      associatedEnum: enu,
+      associatedEnum: enumDefinition,
       typeArguments: typeArguments,
     );
   }
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
-  TypeDeclaration duplicateWithClass(Class klass) {
+  TypeDeclaration duplicateWithClass(Class classDefinition) {
     return TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
-      associatedClass: klass,
+      associatedClass: classDefinition,
       typeArguments: typeArguments,
     );
   }

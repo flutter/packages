@@ -209,7 +209,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     // When generating for a Pigeon unit test, add a test fixture friend class to
@@ -227,24 +227,24 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     ];
 
     addDocumentationComments(
-        indent, klass.documentationComments, _docCommentSpec,
+        indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
 
     final Iterable<NamedType> orderedFields =
-        getFieldsInSerializationOrder(klass);
+        getFieldsInSerializationOrder(classDefinition);
 
-    indent.write('class ${klass.name} ');
+    indent.write('class ${classDefinition.name} ');
     indent.addScoped('{', '};', () {
       _writeAccessBlock(indent, _ClassAccess.public, () {
         final Iterable<NamedType> requiredFields =
             orderedFields.where((NamedType type) => !type.type.isNullable);
         // Minimal constructor, if needed.
         if (requiredFields.length != orderedFields.length) {
-          _writeClassConstructor(root, indent, klass, requiredFields,
+          _writeClassConstructor(root, indent, classDefinition, requiredFields,
               'Constructs an object setting all non-nullable fields.');
         }
         // All-field constructor.
-        _writeClassConstructor(root, indent, klass, orderedFields,
+        _writeClassConstructor(root, indent, classDefinition, orderedFields,
             'Constructs an object setting all fields.');
 
         for (final NamedType field in orderedFields) {
@@ -278,15 +278,15 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
       _writeAccessBlock(indent, _ClassAccess.private, () {
         _writeFunctionDeclaration(indent, 'FromEncodableList',
-            returnType: klass.name,
+            returnType: classDefinition.name,
             parameters: <String>['const flutter::EncodableList& list'],
             isStatic: true);
         _writeFunctionDeclaration(indent, 'ToEncodableList',
             returnType: 'flutter::EncodableList', isConst: true);
         for (final Class friend in root.classes) {
-          if (friend != klass &&
-              friend.fields.any(
-                  (NamedType element) => element.type.baseName == klass.name)) {
+          if (friend != classDefinition &&
+              friend.fields.any((NamedType element) =>
+                  element.type.baseName == classDefinition.name)) {
             indent.writeln('friend class ${friend.name};');
           }
         }
@@ -457,7 +457,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     }, nestCount: 0);
   }
 
-  void _writeClassConstructor(Root root, Indent indent, Class klass,
+  void _writeClassConstructor(Root root, Indent indent, Class classDefinition,
       Iterable<NamedType> params, String docComment) {
     final List<String> paramStrings = params.map((NamedType param) {
       final HostDatatype hostDatatype =
@@ -465,7 +465,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       return '${_hostApiArgumentType(hostDatatype)} ${_makeVariableName(param)}';
     }).toList();
     indent.writeln('$_commentPrefix $docComment');
-    _writeFunctionDeclaration(indent, klass.name,
+    _writeFunctionDeclaration(indent, classDefinition.name,
         isConstructor: true, parameters: paramStrings);
     indent.newln();
   }
@@ -664,26 +664,27 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
-    indent.writeln('$_commentPrefix ${klass.name}');
+    indent.writeln('$_commentPrefix ${classDefinition.name}');
     indent.newln();
 
     final Iterable<NamedType> orderedFields =
-        getFieldsInSerializationOrder(klass);
+        getFieldsInSerializationOrder(classDefinition);
     final Iterable<NamedType> requiredFields =
         orderedFields.where((NamedType type) => !type.type.isNullable);
     // Minimal constructor, if needed.
     if (requiredFields.length != orderedFields.length) {
-      _writeClassConstructor(root, indent, klass, requiredFields);
+      _writeClassConstructor(root, indent, classDefinition, requiredFields);
     }
     // All-field constructor.
-    _writeClassConstructor(root, indent, klass, orderedFields);
+    _writeClassConstructor(root, indent, classDefinition, orderedFields);
 
     // Getters and setters.
     for (final NamedType field in orderedFields) {
-      _writeCppSourceClassField(generatorOptions, root, indent, klass, field);
+      _writeCppSourceClassField(
+          generatorOptions, root, indent, classDefinition, field);
     }
 
     // Serialization.
@@ -691,7 +692,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       generatorOptions,
       root,
       indent,
-      klass,
+      classDefinition,
       dartPackageName: dartPackageName,
     );
 
@@ -700,7 +701,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       generatorOptions,
       root,
       indent,
-      klass,
+      classDefinition,
       dartPackageName: dartPackageName,
     );
   }
@@ -710,16 +711,17 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     _writeFunctionDefinition(indent, 'ToEncodableList',
-        scope: klass.name,
+        scope: classDefinition.name,
         returnType: 'EncodableList',
         isConst: true, body: () {
       indent.writeln('EncodableList list;');
-      indent.writeln('list.reserve(${klass.fields.length});');
-      for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+      indent.writeln('list.reserve(${classDefinition.fields.length});');
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
         final HostDatatype hostDatatype =
             getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
         final String encodableValue = _wrappedHostApiArgumentExpression(
@@ -736,7 +738,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Class klass, {
+    Class classDefinition, {
     required String dartPackageName,
   }) {
     // Returns the expression to convert the given EncodableValue to a field
@@ -763,12 +765,12 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     }
 
     _writeFunctionDefinition(indent, 'FromEncodableList',
-        scope: klass.name,
-        returnType: klass.name,
+        scope: classDefinition.name,
+        returnType: classDefinition.name,
         parameters: <String>['const EncodableList& list'], body: () {
       const String instanceVariable = 'decoded';
       final Iterable<_IndexedField> indexedFields = indexMap(
-          getFieldsInSerializationOrder(klass),
+          getFieldsInSerializationOrder(classDefinition),
           (int index, NamedType field) => _IndexedField(index, field));
       final Iterable<_IndexedField> nullableFields = indexedFields
           .where((_IndexedField field) => field.field.type.isNullable);
@@ -783,7 +785,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       if (constructorArgs.isNotEmpty) {
         constructorArgs = '(\n\t$constructorArgs)';
       }
-      indent.format('${klass.name} $instanceVariable$constructorArgs;');
+      indent
+          .format('${classDefinition.name} $instanceVariable$constructorArgs;');
 
       // Add the nullable fields via setters, since converting the encodable
       // values to the pointer types that the convenience constructor uses for
@@ -1132,8 +1135,8 @@ return EncodableValue(EncodableList{
     });
   }
 
-  void _writeClassConstructor(
-      Root root, Indent indent, Class klass, Iterable<NamedType> params) {
+  void _writeClassConstructor(Root root, Indent indent, Class classDefinition,
+      Iterable<NamedType> params) {
     final Iterable<_HostNamedType> hostParams = params.map((NamedType param) {
       return _HostNamedType(
         _makeVariableName(param),
@@ -1153,14 +1156,14 @@ return EncodableValue(EncodableList{
         .map((_HostNamedType param) =>
             '${param.name}_(${_fieldValueExpression(param.hostType, param.name)})')
         .toList();
-    _writeFunctionDefinition(indent, klass.name,
-        scope: klass.name,
+    _writeFunctionDefinition(indent, classDefinition.name,
+        scope: classDefinition.name,
         parameters: paramStrings,
         initializers: initializerStrings);
   }
 
   void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
-      Indent indent, Class klass, NamedType field) {
+      Indent indent, Class classDefinition, NamedType field) {
     final HostDatatype hostDatatype =
         getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
     final String instanceVariableName = _makeInstanceVariableName(field);
@@ -1176,7 +1179,7 @@ return EncodableValue(EncodableList{
       _writeFunctionDefinition(
         indent,
         setterName,
-        scope: klass.name,
+        scope: classDefinition.name,
         returnType: _voidType,
         parameters: <String>[
           '${_unownedArgumentType(type)} $setterArgumentName'
@@ -1191,7 +1194,7 @@ return EncodableValue(EncodableList{
     _writeFunctionDefinition(
       indent,
       _makeGetterName(field),
-      scope: klass.name,
+      scope: classDefinition.name,
       returnType: _getterReturnType(hostDatatype),
       isConst: true,
       body: () {

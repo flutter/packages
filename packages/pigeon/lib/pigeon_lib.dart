@@ -757,20 +757,21 @@ List<Error> _validateAst(Root root, String source) {
   final List<String> customClasses =
       root.classes.map((Class x) => x.name).toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
-  for (final Class klass in root.classes) {
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+  for (final Class classDefinition in root.classes) {
+    for (final NamedType field
+        in getFieldsInSerializationOrder(classDefinition)) {
       for (final TypeDeclaration typeArgument in field.type.typeArguments) {
         if (!typeArgument.isNullable) {
           result.add(Error(
             message:
-                'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
+                'Generic type arguments must be nullable in field "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
         if (customEnums.contains(typeArgument.baseName)) {
           result.add(Error(
             message:
-                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
+                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
@@ -780,7 +781,7 @@ List<Error> _validateAst(Root root, String source) {
           customEnums.contains(field.type.baseName))) {
         result.add(Error(
           message:
-              'Unsupported datatype:"${field.type.baseName}" in class "${klass.name}".',
+              'Unsupported datatype:"${field.type.baseName}" in class "${classDefinition.name}".',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
@@ -911,8 +912,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
-    for (final Class klass in referencedClasses) {
-      for (final NamedType field in klass.fields) {
+    for (final Class classDefinition in referencedClasses) {
+      for (final NamedType field in classDefinition.fields) {
         field.type = _attachClassesAndEnums(field.type);
       }
     }
@@ -936,10 +937,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 
   TypeDeclaration _attachClassesAndEnums(TypeDeclaration type) {
-    final Enum? assocEnum =
-        _enums.firstWhereOrNull((Enum enu) => enu.name == type.baseName);
-    final Class? assocClass =
-        _classes.firstWhereOrNull((Class klass) => klass.name == type.baseName);
+    final Enum? assocEnum = _enums.firstWhereOrNull(
+        (Enum enumDefinition) => enumDefinition.name == type.baseName);
+    final Class? assocClass = _classes.firstWhereOrNull(
+        (Class classDefinition) => classDefinition.name == type.baseName);
     if (assocClass != null) {
       return type.duplicateWithClass(assocClass);
     } else if (assocEnum != null) {
