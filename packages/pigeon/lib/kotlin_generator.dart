@@ -367,17 +367,17 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
 
-        if (func.arguments.isEmpty) {
+        if (func.parameters.isEmpty) {
           indent.write(
               'fun ${func.name}(callback: (Result<$returnType>) -> Unit) ');
           sendArgument = 'null';
         } else {
-          final Iterable<String> argTypes = func.arguments
+          final Iterable<String> argTypes = func.parameters
               .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
           final Iterable<String> argNames =
-              indexMap(func.arguments, _getSafeArgumentName);
+              indexMap(func.parameters, _getSafeArgumentName);
           final Iterable<String> enumSafeArgNames = indexMap(
-              func.arguments,
+              func.parameters,
               (int count, NamedType type) =>
                   _getEnumSafeArgumentExpression(count, type));
           sendArgument = 'listOf(${enumSafeArgNames.join(', ')})';
@@ -469,11 +469,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         final List<String> argSignature = <String>[];
-        if (method.arguments.isNotEmpty) {
-          final Iterable<String> argTypes = method.arguments
+        if (method.parameters.isNotEmpty) {
+          final Iterable<String> argTypes = method.parameters
               .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
           final Iterable<String> argNames =
-              method.arguments.map((NamedType e) => e.name);
+              method.parameters.map((NamedType e) => e.name);
           argSignature.addAll(
               map2(argTypes, argNames, (String argType, String argName) {
             return '$argName: $argType';
@@ -543,14 +543,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               indent.write('if (api != null) ');
               indent.addScoped('{', '}', () {
                 final String messageVarName =
-                    method.arguments.isNotEmpty ? 'message' : '_';
+                    method.parameters.isNotEmpty ? 'message' : '_';
 
                 indent.write('channel.setMessageHandler ');
                 indent.addScoped('{ $messageVarName, reply ->', '}', () {
                   final List<String> methodArguments = <String>[];
-                  if (method.arguments.isNotEmpty) {
+                  if (method.parameters.isNotEmpty) {
                     indent.writeln('val args = message as List<Any?>');
-                    enumerate(method.arguments, (int index, NamedType arg) {
+                    enumerate(method.parameters, (int index, NamedType arg) {
                       final String argName = _getSafeArgumentName(index, arg);
                       final String argIndex = 'args[$index]';
                       indent.writeln(

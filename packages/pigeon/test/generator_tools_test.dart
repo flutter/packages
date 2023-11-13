@@ -82,7 +82,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
       Method(
         name: 'doSomething',
-        arguments: <Parameter>[
+        parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
               baseName: 'List',
@@ -127,7 +127,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
       Method(
         name: 'doSomething',
-        arguments: <Parameter>[
+        parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
               baseName: 'Output',
@@ -172,7 +172,7 @@ void main() {
         Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
       Method(
         name: 'doSomething',
-        arguments: <Parameter>[
+        parameters: <Parameter>[
           Parameter(
             type: TypeDeclaration(
               baseName: 'Foo',
@@ -219,7 +219,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'foo',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'x',
                 type: TypeDeclaration(
@@ -278,7 +278,7 @@ void main() {
         methods: <Method>[
           Method(
             name: 'foo',
-            arguments: <Parameter>[
+            parameters: <Parameter>[
               Parameter(
                   name: 'x',
                   type: const TypeDeclaration(
@@ -317,7 +317,7 @@ void main() {
         methods: <Method>[
           Method(
             name: 'foo',
-            arguments: <Parameter>[
+            parameters: <Parameter>[
               Parameter(
                   name: 'x',
                   type: TypeDeclaration(
@@ -336,7 +336,7 @@ void main() {
         methods: <Method>[
           Method(
             name: 'foo',
-            arguments: <Parameter>[
+            parameters: <Parameter>[
               Parameter(
                   name: 'x',
                   type: TypeDeclaration(

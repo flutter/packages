@@ -750,7 +750,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
     void unpackArgs(String variable) {
       indent.writeln('NSArray *args = $variable;');
       int count = 0;
-      for (final NamedType arg in func.arguments) {
+      for (final NamedType arg in func.parameters) {
         final String argName = _getSafeArgName(count, arg);
         final String valueGetter = 'GetNullableObjectAtIndex(args, $count)';
         final String? primitiveExtractionMethod =
@@ -777,7 +777,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
         String callSignature, _ObjcType returnType) {
       if (func.returnType.isVoid) {
         const String callback = 'callback(wrapResult(nil, error));';
-        if (func.arguments.isEmpty) {
+        if (func.parameters.isEmpty) {
           indent.writeScoped(
               '[api ${selectorComponents.first}:^(FlutterError *_Nullable error) {',
               '}];', () {
@@ -801,7 +801,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
           returnTypeString =
               '${_enumName(returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
         }
-        if (func.arguments.isEmpty) {
+        if (func.parameters.isEmpty) {
           indent.writeScoped(
               '[api ${selectorComponents.first}:^($returnTypeString, FlutterError *_Nullable error) {',
               '}];', () {
@@ -858,19 +858,19 @@ static FlutterError *createConnectionError(NSString *channelName) {
       final Iterable<String> selectorComponents =
           _getSelectorComponents(func, lastSelectorComponent);
       final Iterable<String> argNames =
-          indexMap(func.arguments, _getSafeArgName);
+          indexMap(func.parameters, _getSafeArgName);
       final String callSignature =
           map2(selectorComponents.take(argNames.length), argNames,
               (String selectorComponent, String argName) {
         return '$selectorComponent:$argName';
       }).join(' ');
-      if (func.arguments.isNotEmpty) {
+      if (func.parameters.isNotEmpty) {
         unpackArgs('message');
       }
       if (func.isAsynchronous) {
         writeAsyncBindings(selectorComponents, callSignature, returnType);
       } else {
-        final String syncCall = func.arguments.isEmpty
+        final String syncCall = func.parameters.isEmpty
             ? '[api ${selectorComponents.first}:&error]'
             : '[api $callSignature error:&error]';
         writeSyncBindings(syncCall, returnType);
@@ -1072,7 +1072,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
 
     String argNameFunc(int count, NamedType arg) => _getSafeArgName(count, arg);
     String sendArgument;
-    if (func.arguments.isEmpty) {
+    if (func.parameters.isEmpty) {
       sendArgument = 'nil';
     } else {
       int count = 0;
@@ -1092,7 +1092,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       }
 
       sendArgument =
-          '@[${func.arguments.map(makeVarOrNSNullExpression).join(', ')}]';
+          '@[${func.parameters.map(makeVarOrNSNullExpression).join(', ')}]';
     }
     indent.write(_makeObjcSignature(
       func: func,
@@ -1411,24 +1411,24 @@ String _capitalize(String str) =>
 Iterable<String> _getSelectorComponents(
     Method func, String lastSelectorComponent) sync* {
   if (func.objcSelector.isEmpty) {
-    final Iterator<NamedType> it = func.arguments.iterator;
+    final Iterator<NamedType> it = func.parameters.iterator;
     final bool hasArguments = it.moveNext();
     final String namePostfix =
-        (lastSelectorComponent.isNotEmpty && func.arguments.isEmpty)
+        (lastSelectorComponent.isNotEmpty && func.parameters.isEmpty)
             ? 'With${_capitalize(lastSelectorComponent)}'
             : '';
-    yield '${func.name}${hasArguments ? _capitalize(func.arguments[0].name) : namePostfix}';
+    yield '${func.name}${hasArguments ? _capitalize(func.parameters[0].name) : namePostfix}';
     while (it.moveNext()) {
       yield it.current.name;
     }
   } else {
-    assert(':'.allMatches(func.objcSelector).length == func.arguments.length);
+    assert(':'.allMatches(func.objcSelector).length == func.parameters.length);
     final Iterable<String> customComponents = func.objcSelector
         .split(':')
         .where((String element) => element.isNotEmpty);
     yield* customComponents;
   }
-  if (lastSelectorComponent.isNotEmpty && func.arguments.isNotEmpty) {
+  if (lastSelectorComponent.isNotEmpty && func.parameters.isNotEmpty) {
     yield lastSelectorComponent;
   }
 }
@@ -1440,7 +1440,7 @@ Iterable<String> _getSelectorComponents(
 /// [func].  This is typically used for passing in 'error' or 'completion'
 /// arguments that don't exist in the pigeon file but are required in the objc
 /// output.  [argNameFunc] is the function used to generate the argument name
-/// [func.arguments].
+/// [func.parameters].
 String _makeObjcSignature({
   required Method func,
   required ObjcOptions options,
@@ -1453,11 +1453,11 @@ String _makeObjcSignature({
       (int _, NamedType e) =>
           e.type.isNullable && e.type.isEnum ? '${e.name}Boxed' : e.name;
   final Iterable<String> argNames =
-      followedByOne(indexMap(func.arguments, argNameFunc), lastArgName);
+      followedByOne(indexMap(func.parameters, argNameFunc), lastArgName);
   final Iterable<String> selectorComponents =
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(
-    func.arguments.map((NamedType arg) {
+    func.parameters.map((NamedType arg) {
       if (arg.type.isEnum) {
         return '${arg.type.isNullable ? 'nullable ' : ''}${_enumName(arg.type.baseName, suffix: arg.type.isNullable ? ' *' : '', prefix: options.prefix, box: arg.type.isNullable)}';
       } else {
@@ -1545,7 +1545,7 @@ List<Error> validateObjc(ObjcOptions options, Root root) {
   final List<Error> errors = <Error>[];
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      for (final NamedType arg in method.arguments) {
+      for (final NamedType arg in method.parameters) {
         if (arg.type.isEnum && arg.type.isNullable) {
           // TODO(gaaclarke): Add line number.
           errors.add(Error(

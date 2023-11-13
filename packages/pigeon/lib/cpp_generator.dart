@@ -341,13 +341,14 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
           addDocumentationComments(
               indent, func.documentationComments, _docCommentSpec);
 
-          final Iterable<String> argTypes = func.arguments.map((NamedType arg) {
+          final Iterable<String> argTypes =
+              func.parameters.map((NamedType arg) {
             final HostDatatype hostType =
                 getFieldHostDatatype(arg, _baseCppTypeForBuiltinDartType);
             return _flutterApiArgumentType(hostType);
           });
           final Iterable<String> argNames =
-              indexMap(func.arguments, _getArgumentName);
+              indexMap(func.parameters, _getArgumentName);
           final List<String> parameters = <String>[
             ...map2(argTypes, argNames, (String x, String y) => '$x $y'),
             ..._flutterApiCallbackParameters(returnType),
@@ -399,15 +400,15 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
           final String returnTypeName = _hostApiReturnType(returnType);
 
           final List<String> parameters = <String>[];
-          if (method.arguments.isNotEmpty) {
+          if (method.parameters.isNotEmpty) {
             final Iterable<String> argTypes =
-                method.arguments.map((NamedType arg) {
+                method.parameters.map((NamedType arg) {
               final HostDatatype hostType =
                   getFieldHostDatatype(arg, _baseCppTypeForBuiltinDartType);
               return _hostApiArgumentType(hostType);
             });
             final Iterable<String> argNames =
-                method.arguments.map((NamedType e) => _makeVariableName(e));
+                method.parameters.map((NamedType e) => _makeVariableName(e));
             parameters.addAll(
                 map2(argTypes, argNames, (String argType, String argName) {
               return '$argType $argName';
@@ -846,7 +847,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       // Determine the input parameter list, saved in a structured form for later
       // use as platform channel call arguments.
       final Iterable<_HostNamedType> hostParameters =
-          indexMap(func.arguments, (int i, NamedType arg) {
+          indexMap(func.parameters, (int i, NamedType arg) {
         final HostDatatype hostType =
             getFieldHostDatatype(arg, _shortBaseCppTypeForBuiltinDartType);
         return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
@@ -870,7 +871,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         // Convert arguments to EncodableValue versions.
         const String argumentListVariableName = 'encoded_api_arguments';
         indent.write('EncodableValue $argumentListVariableName = ');
-        if (func.arguments.isEmpty) {
+        if (func.parameters.isEmpty) {
           indent.addln('EncodableValue();');
         } else {
           indent.addScoped('EncodableValue(EncodableList{', '});', () {
@@ -971,11 +972,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
             indent.addScoped('{', '});', () {
               indent.writeScoped('try {', '}', () {
                 final List<String> methodArgument = <String>[];
-                if (method.arguments.isNotEmpty) {
+                if (method.parameters.isNotEmpty) {
                   indent.writeln(
                       'const auto& args = std::get<EncodableList>(message);');
 
-                  enumerate(method.arguments, (int index, NamedType arg) {
+                  enumerate(method.parameters, (int index, NamedType arg) {
                     final HostDatatype hostType = getHostDatatype(
                         arg.type,
                         (TypeDeclaration x) =>
@@ -1801,7 +1802,7 @@ List<Error> validateCpp(CppOptions options, Root root) {
   final List<Error> result = <Error>[];
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      for (final NamedType arg in method.arguments) {
+      for (final NamedType arg in method.parameters) {
         if (arg.type.isEnum) {
           // TODO(gaaclarke): Add line number and filename.
           result.add(Error(

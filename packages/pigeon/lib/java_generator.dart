@@ -445,18 +445,18 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         String sendArgument;
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
-        if (func.arguments.isEmpty) {
+        if (func.parameters.isEmpty) {
           indent.write(
               'public void ${func.name}(@NonNull $resultType<$returnType> result) ');
           sendArgument = 'null';
         } else {
-          final Iterable<String> argTypes = func.arguments
+          final Iterable<String> argTypes = func.parameters
               .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
           final Iterable<String> argNames =
-              indexMap(func.arguments, _getSafeArgumentName);
+              indexMap(func.parameters, _getSafeArgumentName);
           final Iterable<String> enumSafeArgNames =
-              indexMap(func.arguments, getEnumSafeArgumentExpression);
-          if (func.arguments.length == 1) {
+              indexMap(func.parameters, getEnumSafeArgumentExpression);
+          if (func.parameters.length == 1) {
             sendArgument =
                 'new ArrayList<Object>(Collections.singletonList(${enumSafeArgNames.first}))';
           } else {
@@ -631,11 +631,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         ? 'void'
         : _javaTypeForDartType(method.returnType);
     final List<String> argSignature = <String>[];
-    if (method.arguments.isNotEmpty) {
-      final Iterable<String> argTypes = method.arguments
+    if (method.parameters.isNotEmpty) {
+      final Iterable<String> argTypes = method.parameters
           .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
       final Iterable<String> argNames =
-          method.arguments.map((NamedType e) => e.name);
+          method.parameters.map((NamedType e) => e.name);
       argSignature
           .addAll(map2(argTypes, argNames, (String argType, String argName) {
         return '$argType $argName';
@@ -704,10 +704,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             indent.writeln(
                 'ArrayList<Object> wrapped = new ArrayList<Object>();');
             final List<String> methodArgument = <String>[];
-            if (method.arguments.isNotEmpty) {
+            if (method.parameters.isNotEmpty) {
               indent.writeln(
                   'ArrayList<Object> args = (ArrayList<Object>) message;');
-              enumerate(method.arguments, (int index, NamedType arg) {
+              enumerate(method.parameters, (int index, NamedType arg) {
                 // The StandardMessageCodec can give us [Integer, Long] for
                 // a Dart 'int'.  To keep things simple we just use 64bit
                 // longs in Pigeon with Java.

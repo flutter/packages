@@ -789,7 +789,7 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      for (final NamedType unnamedType in method.arguments
+      for (final NamedType unnamedType in method.parameters
           .where((NamedType element) => element.type.baseName.isEmpty)) {
         result.add(Error(
           message:
@@ -799,21 +799,21 @@ List<Error> _validateAst(Root root, String source) {
       }
       if (method.objcSelector.isNotEmpty) {
         if (':'.allMatches(method.objcSelector).length !=
-            method.arguments.length) {
+            method.parameters.length) {
           result.add(Error(
             message:
-                'Invalid selector, expected ${method.arguments.length} arguments.',
+                'Invalid selector, expected ${method.parameters.length} arguments.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
       }
       if (method.swiftFunction.isNotEmpty) {
         final RegExp signatureRegex =
-            RegExp('\\w+ *\\((\\w+:){${method.arguments.length}}\\)');
+            RegExp('\\w+ *\\((\\w+:){${method.parameters.length}}\\)');
         if (!signatureRegex.hasMatch(method.swiftFunction)) {
           result.add(Error(
             message:
-                'Invalid function signature, expected ${method.arguments.length} arguments.',
+                'Invalid function signature, expected ${method.parameters.length} arguments.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
@@ -913,15 +913,18 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     }
     for (final Class classDefinition in referencedClasses) {
+      final List<NamedType> fields = <NamedType>[];
       for (final NamedType field in classDefinition.fields) {
-        field.type = _attachClassesAndEnums(field.type);
+        fields.add(field.copyWithType(_attachClassesAndEnums(field.type)));
       }
+      classDefinition.fields = fields;
     }
 
     for (final Api api in _apis) {
       for (final Method func in api.methods) {
-        for (final Parameter param in func.arguments) {
-          param.type = _attachClassesAndEnums(param.type);
+        final List<Parameter> paramList = <Parameter>[];
+        for (final Parameter param in func.parameters) {
+          paramList.add(param.copyWithType(_attachClassesAndEnums(param.type)));
         }
         func.returnType = _attachClassesAndEnums(func.returnType);
       }
@@ -942,9 +945,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Class? assocClass = _classes.firstWhereOrNull(
         (Class classDefinition) => classDefinition.name == type.baseName);
     if (assocClass != null) {
-      return type.duplicateWithClass(assocClass);
+      return type.copyWithClass(assocClass);
     } else if (assocEnum != null) {
-      return type.duplicateWithEnum(assocEnum);
+      return type.copyWithEnum(assocEnum);
     }
     return type;
   }
@@ -1112,14 +1115,25 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else if (simpleFormalParameter != null) {
       final Parameter parameter =
           formalParameterToPigeonParameter(simpleFormalParameter);
+      String? defaultValue;
       if (formalParameter is dart_ast.DefaultFormalParameter) {
-        parameter.defaultValue = formalParameter.defaultValue?.toString();
+        defaultValue = formalParameter.defaultValue?.toString();
       }
-      parameter.isNamed = simpleFormalParameter.isNamed;
-      parameter.isOptional = simpleFormalParameter.isOptional;
-      parameter.isPositional = simpleFormalParameter.isPositional;
-      parameter.isRequired = simpleFormalParameter.isRequired;
-      return parameter;
+      final bool isNamed = simpleFormalParameter.isNamed;
+      final bool isOptional = simpleFormalParameter.isOptional;
+      final bool isPositional = simpleFormalParameter.isPositional;
+      final bool isRequired = simpleFormalParameter.isRequired;
+      return Parameter(
+        name: parameter.name,
+        type: parameter.type,
+        offset: parameter.offset,
+        documentationComments: parameter.documentationComments,
+        isNamed: isNamed,
+        isOptional: isOptional,
+        isPositional: isPositional,
+        isRequired: isRequired,
+        defaultValue: defaultValue,
+      );
     } else {
       return Parameter(
         name: '',
@@ -1195,7 +1209,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               typeArguments:
                   typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
-          arguments: arguments,
+          parameters: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,

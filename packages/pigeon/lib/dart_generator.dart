@@ -335,7 +335,7 @@ $resultAt != null
         final String returnType = isAsync
             ? 'Future<${_addGenericTypesNullable(func.returnType)}>'
             : _addGenericTypesNullable(func.returnType);
-        final String argSignature = _getMethodArgumentsSignature(func);
+        final String argSignature = _getMethodParameterSignature(func);
         indent.writeln('$returnType ${func.name}($argSignature);');
         indent.newln();
       }
@@ -377,7 +377,7 @@ $resultAt != null
                 const String emptyReturnStatement =
                     'return wrapResponse(empty: true);';
                 String call;
-                if (func.arguments.isEmpty) {
+                if (func.parameters.isEmpty) {
                   call = 'api.${func.name}()';
                 } else {
                   indent.writeln('assert(message != null,');
@@ -387,7 +387,7 @@ $resultAt != null
                       'final List<Object?> $argsArray = (message as List<Object?>?)!;');
                   String argNameFunc(int index, NamedType type) =>
                       _getSafeArgumentName(index, type);
-                  enumerate(func.arguments, (int count, NamedType arg) {
+                  enumerate(func.parameters, (int count, NamedType arg) {
                     final String argType = _addGenericTypes(arg.type);
                     final String argName = argNameFunc(count, arg);
                     final String genericArgType =
@@ -409,7 +409,7 @@ $resultAt != null
                     }
                   });
                   final Iterable<String> argNames =
-                      indexMap(func.arguments, (int index, NamedType field) {
+                      indexMap(func.parameters, (int index, NamedType field) {
                     final String name = _getSafeArgumentName(index, field);
                     return '$name${field.type.isNullable ? '' : '!'}';
                   });
@@ -516,10 +516,10 @@ final BinaryMessenger? _binaryMessenger;
             indent, func.documentationComments, _docCommentSpec);
         String argSignature = '';
         String sendArgument = 'null';
-        if (func.arguments.isNotEmpty) {
+        if (func.parameters.isNotEmpty) {
           final Iterable<String> argExpressions =
-              indexMap(func.arguments, (int index, NamedType type) {
-            final String name = _getArgumentName(index, type);
+              indexMap(func.parameters, (int index, NamedType type) {
+            final String name = _getParameterName(index, type);
             if (type.type.isEnum) {
               return '$name${type.type.isNullable ? '?' : ''}.index';
             } else {
@@ -527,7 +527,7 @@ final BinaryMessenger? _binaryMessenger;
             }
           });
           sendArgument = '<Object?>[${argExpressions.join(', ')}]';
-          argSignature = _getMethodArgumentsSignature(func);
+          argSignature = _getMethodParameterSignature(func);
         }
         indent.write(
           'Future<${_addGenericTypesNullable(func.returnType)}> ${func.name}($argSignature) async ',
@@ -808,26 +808,26 @@ String _makeGenericCastCall(TypeDeclaration type) {
 String _getSafeArgumentName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : 'arg_${field.name}';
 
-/// Generates an argument name if one isn't defined.
-String _getArgumentName(int count, NamedType field) =>
+/// Generates a parameter name if one isn't defined.
+String _getParameterName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : field.name;
 
 /// Generates the arguments code for [func]
 /// Example: (func, getArgumentName) -> 'String? foo, int bar'
-String _getMethodArgumentsSignature(Method func) {
-  if (func.arguments.isEmpty) {
+String _getMethodParameterSignature(Method func) {
+  if (func.parameters.isEmpty) {
     return '';
   }
-  bool firstNonPositionalArgument = true;
+  bool firstNonPositionalParameter = true;
   bool firstOptionalPositional = true;
 
   final List<String> stringArgs = <String>[];
 
   int index = 0;
-  for (final Parameter arg in func.arguments) {
+  for (final Parameter arg in func.parameters) {
     String preArgSymbol = '';
-    if (!arg.isPositional && firstNonPositionalArgument) {
-      firstNonPositionalArgument = false;
+    if (!arg.isPositional && firstNonPositionalParameter) {
+      firstNonPositionalParameter = false;
       preArgSymbol = '{';
     } else if (arg.isPositional && arg.isOptional && firstOptionalPositional) {
       firstOptionalPositional = false;
@@ -839,21 +839,21 @@ String _getMethodArgumentsSignature(Method func) {
 
     final String type = _addGenericTypesNullable(arg.type);
 
-    final String argName = _getArgumentName(index, arg);
+    final String argName = _getParameterName(index, arg);
 
     final String defaultValue =
         arg.defaultValue == null ? '' : ' = ${arg.defaultValue}';
 
     String postArgSymbol = '';
     if (!arg.isPositional &&
-        !firstNonPositionalArgument &&
-        func.arguments.length - 1 == index) {
+        !firstNonPositionalParameter &&
+        func.parameters.length - 1 == index) {
       postArgSymbol = '}';
     } else if (arg.isPositional &&
         !firstOptionalPositional &&
-        (func.arguments.length - 1 == index ||
-            func.arguments[index + 1].defaultValue == null ||
-            !func.arguments[index + 1].isPositional)) {
+        (func.parameters.length - 1 == index ||
+            func.parameters[index + 1].defaultValue == null ||
+            !func.parameters[index + 1].isPositional)) {
       postArgSymbol = ']';
     }
     stringArgs

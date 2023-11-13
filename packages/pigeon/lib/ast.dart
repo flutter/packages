@@ -30,7 +30,7 @@ class Method extends Node {
   Method({
     required this.name,
     required this.returnType,
-    required this.arguments,
+    required this.parameters,
     this.isAsynchronous = false,
     this.offset,
     this.objcSelector = '',
@@ -45,8 +45,8 @@ class Method extends Node {
   /// The data-type of the return value.
   TypeDeclaration returnType;
 
-  /// The arguments passed into the [Method].
-  List<Parameter> arguments;
+  /// The parameters passed into the [Method].
+  List<Parameter> parameters;
 
   /// Whether the receiver of this method is expected to return synchronously or not.
   bool isAsynchronous;
@@ -76,7 +76,7 @@ class Method extends Node {
         objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
     final String swiftFunctionStr =
         swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
-    return '(Method name:$name returnType:$returnType arguments:$arguments isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
+    return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
 
@@ -139,13 +139,13 @@ class TypeDeclaration {
   /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
   final String baseName;
 
-  /// Returns true if the declaration represents 'void'.
+  /// Whether the declaration represents 'void'.
   bool get isVoid => baseName == 'void';
 
-  /// The type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
+  /// Whether the type arguments to the entity (ex 'Bar' to 'Foo<Bar>?').
   final List<TypeDeclaration> typeArguments;
 
-  /// True if the type is nullable.
+  /// Whether the type is nullable.
   final bool isNullable;
 
   /// Whether the [TypeDeclaration] has an [associatedEnum].
@@ -190,7 +190,7 @@ class TypeDeclaration {
   }
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedEnum` value.
-  TypeDeclaration duplicateWithEnum(Enum enumDefinition) {
+  TypeDeclaration copyWithEnum(Enum enumDefinition) {
     return TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
@@ -200,7 +200,7 @@ class TypeDeclaration {
   }
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
-  TypeDeclaration duplicateWithClass(Class classDefinition) {
+  TypeDeclaration copyWithClass(Class classDefinition) {
     return TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
@@ -218,6 +218,7 @@ class TypeDeclaration {
 }
 
 /// Represents a named entity that has a type.
+@immutable
 class NamedType extends Node {
   /// Parametric constructor for [NamedType].
   NamedType({
@@ -229,23 +230,34 @@ class NamedType extends Node {
   });
 
   /// The name of the entity.
-  String name;
+  final String name;
 
   /// The type.
-  TypeDeclaration type;
+  final TypeDeclaration type;
 
   /// The offset in the source file where the [NamedType] appears.
-  int? offset;
+  final int? offset;
 
   /// Stringified version of the default value of types that have default values.
-  String? defaultValue;
+  final String? defaultValue;
 
   /// List of documentation comments, separated by line.
   ///
   /// Lines should not include the comment marker itself, but should include any
   /// leading whitespace, so that any indentation in the original comment is preserved.
   /// For example: [" List of documentation comments, separated by line.", ...]
-  List<String> documentationComments;
+  final List<String> documentationComments;
+
+  /// Returns a copy of [NamedType] instance with new attached [TypeDeclaration].
+  NamedType copyWithType(TypeDeclaration type) {
+    return NamedType(
+      name: name,
+      type: type,
+      offset: offset,
+      defaultValue: defaultValue,
+      documentationComments: documentationComments,
+    );
+  }
 
   @override
   String toString() {
@@ -254,6 +266,7 @@ class NamedType extends Node {
 }
 
 /// Represents a [Method]'s parameter that has a type and a name.
+@immutable
 class Parameter extends NamedType {
   /// Parametric constructor for [Parameter].
   Parameter({
@@ -271,22 +284,38 @@ class Parameter extends NamedType {
   /// Return `true` if this parameter is a named parameter.
   ///
   /// Defaults to `true`.
-  bool isNamed;
+  final bool isNamed;
 
   /// Return `true` if this parameter is an optional parameter.
   ///
   /// Defaults to `false`.
-  bool isOptional;
+  final bool isOptional;
 
   /// Return `true` if this parameter is a positional parameter.
   ///
   /// Defaults to `true`.
-  bool isPositional;
+  final bool isPositional;
 
   /// Return `true` if this parameter is a required parameter.
   ///
   /// Defaults to `true`.
-  bool isRequired;
+  final bool isRequired;
+
+  /// Returns a copy of [Parameter] instance with new attached [TypeDeclaration].
+  @override
+  Parameter copyWithType(TypeDeclaration type) {
+    return Parameter(
+      name: name,
+      type: type,
+      offset: offset,
+      defaultValue: defaultValue,
+      isNamed: isNamed,
+      isOptional: isOptional,
+      isPositional: isPositional,
+      isRequired: isRequired,
+      documentationComments: documentationComments,
+    );
+  }
 
   @override
   String toString() {

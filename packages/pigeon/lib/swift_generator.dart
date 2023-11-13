@@ -311,12 +311,12 @@ import FlutterMacOS
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
         indent.writeScoped('${_getMethodSignature(func)} {', '}', () {
-          final Iterable<String> enumSafeArgNames = func.arguments
+          final Iterable<String> enumSafeArgNames = func.parameters
               .asMap()
               .entries
               .map((MapEntry<int, NamedType> e) =>
                   getEnumSafeArgumentExpression(root, e.key, e.value));
-          final String sendArgument = func.arguments.isEmpty
+          final String sendArgument = func.parameters.isEmpty
               ? 'nil'
               : '[${enumSafeArgNames.join(', ')}] as [Any?]';
           const String channel = 'channel';
@@ -468,7 +468,7 @@ import FlutterMacOS
           indent.addScoped('{', '}', () {
             indent.write('$varChannelName.setMessageHandler ');
             final String messageVarName =
-                method.arguments.isNotEmpty ? 'message' : '_';
+                method.parameters.isNotEmpty ? 'message' : '_';
             indent.addScoped('{ $messageVarName, reply in', '}', () {
               final List<String> methodArgument = <String>[];
               if (components.arguments.isNotEmpty) {
@@ -901,17 +901,17 @@ String _getMethodSignature(Method func) {
       ? 'Void'
       : _nullsafeSwiftTypeForDartType(func.returnType);
 
-  if (func.arguments.isEmpty) {
+  if (func.parameters.isEmpty) {
     return 'func ${func.name}(completion: @escaping (Result<$returnType, FlutterError>) -> Void)';
   } else {
-    final Iterable<String> argTypes = func.arguments
+    final Iterable<String> argTypes = func.parameters
         .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
     final Iterable<String> argLabels = indexMap(components.arguments,
         (int index, _SwiftFunctionArgument argument) {
       return argument.label ?? _getArgumentName(index, argument.namedType);
     });
     final Iterable<String> argNames =
-        indexMap(func.arguments, _getSafeArgumentName);
+        indexMap(func.parameters, _getSafeArgumentName);
     final String argsSignature = map3(argTypes, argLabels, argNames,
             (String type, String label, String name) => '$label $name: $type')
         .join(', ');
@@ -959,7 +959,7 @@ class _SwiftFunctionComponents {
       return _SwiftFunctionComponents._(
         name: method.name,
         returnType: method.returnType,
-        arguments: method.arguments
+        arguments: method.parameters
             .map((NamedType field) => _SwiftFunctionArgument(
                   name: field.name,
                   type: field.type,
@@ -971,20 +971,20 @@ class _SwiftFunctionComponents {
     }
 
     final String argsExtractor =
-        repeat(r'(\w+):', method.arguments.length).join();
+        repeat(r'(\w+):', method.parameters.length).join();
     final RegExp signatureRegex = RegExp(r'(\w+) *\(' + argsExtractor + r'\)');
     final RegExpMatch match = signatureRegex.firstMatch(method.swiftFunction)!;
 
     final Iterable<String> labels = match
         .groups(List<int>.generate(
-            method.arguments.length, (int index) => index + 2))
+            method.parameters.length, (int index) => index + 2))
         .whereType();
 
     return _SwiftFunctionComponents._(
       name: match.group(1)!,
       returnType: method.returnType,
       arguments: map2(
-        method.arguments,
+        method.parameters,
         labels,
         (NamedType field, String label) => _SwiftFunctionArgument(
           name: field.name,

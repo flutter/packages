@@ -144,7 +144,7 @@ void main() {
         Method(
             name: 'bar',
             returnType: const TypeDeclaration.voidDeclaration(),
-            arguments: <Parameter>[
+            parameters: <Parameter>[
               Parameter(
                   name: 'foo',
                   type: TypeDeclaration(
@@ -179,7 +179,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
                 baseName: 'Input',
@@ -408,7 +408,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
                 baseName: 'Input',
@@ -465,7 +465,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
                 baseName: 'Input',
@@ -508,7 +508,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
                 baseName: 'Input',
@@ -551,7 +551,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'Output',
             associatedClass: emptyClass,
@@ -591,7 +591,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'Output',
             associatedClass: emptyClass,
@@ -733,7 +733,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
                 baseName: 'Input',
@@ -791,7 +791,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
                 baseName: 'Input',
@@ -981,7 +981,7 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   type: const TypeDeclaration(
                       baseName: 'List',
@@ -1017,7 +1017,7 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   type: const TypeDeclaration(
                       baseName: 'List',
@@ -1058,7 +1058,7 @@ void main() {
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'int', isNullable: true)
                   ]),
-              arguments: <Parameter>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1091,7 +1091,7 @@ void main() {
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'int', isNullable: true)
                   ]),
-              arguments: <Parameter>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1117,7 +1117,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'add',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'x',
                 type:
@@ -1160,7 +1160,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'add',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'x',
                 type:
@@ -1208,7 +1208,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <Parameter>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1238,7 +1238,7 @@ void main() {
                 isNullable: true,
               ),
               isAsynchronous: true,
-              arguments: <Parameter>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1264,7 +1264,7 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                     name: 'foo',
                     type: const TypeDeclaration(
@@ -1300,7 +1300,7 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                     name: 'foo',
                     type: const TypeDeclaration(
@@ -1334,7 +1334,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
                 baseName: 'Input',
@@ -1396,7 +1396,7 @@ void main() {
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
@@ -1475,7 +1475,7 @@ void main() {
             Method(
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
@@ -1510,7 +1510,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
                   baseName: 'Input',
@@ -1562,7 +1562,7 @@ void main() {
     final Method method = Method(
         name: 'doSomething',
         returnType: const TypeDeclaration.voidDeclaration(),
-        arguments: <Parameter>[]);
+        parameters: <Parameter>[]);
     final Api api = Api(
         name: 'SomeApi', location: ApiLocation.host, methods: <Method>[method]);
     final Root root = Root(
@@ -1598,7 +1598,7 @@ void main() {
             Method(
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   name: 'field',
                   type: const TypeDeclaration(

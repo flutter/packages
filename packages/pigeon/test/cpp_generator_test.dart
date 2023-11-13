@@ -28,7 +28,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
                   baseName: 'Input',
@@ -104,7 +104,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
                   baseName: 'Input',
@@ -182,7 +182,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
                   baseName: 'int',
@@ -233,7 +233,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
                   baseName: 'int',
@@ -276,7 +276,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
                   baseName: 'Input',
@@ -353,7 +353,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
@@ -426,7 +426,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
@@ -481,7 +481,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
                   baseName: 'Input',
@@ -664,7 +664,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
                   baseName: 'Input',
@@ -807,7 +807,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'returnNullableBool',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: true,
@@ -815,7 +815,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableInt',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'int',
             isNullable: true,
@@ -823,7 +823,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableString',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'String',
             isNullable: true,
@@ -831,7 +831,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableList',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
@@ -845,7 +845,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableMap',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
@@ -863,7 +863,7 @@ void main() {
         ),
         Method(
           name: 'returnNullableDataClass',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: true,
@@ -924,7 +924,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'returnBool',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: false,
@@ -932,7 +932,7 @@ void main() {
         ),
         Method(
           name: 'returnInt',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'int',
             isNullable: false,
@@ -940,7 +940,7 @@ void main() {
         ),
         Method(
           name: 'returnString',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'String',
             isNullable: false,
@@ -948,7 +948,7 @@ void main() {
         ),
         Method(
           name: 'returnList',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
@@ -962,7 +962,7 @@ void main() {
         ),
         Method(
           name: 'returnMap',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
@@ -980,7 +980,7 @@ void main() {
         ),
         Method(
           name: 'returnDataClass',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: false,
@@ -1027,7 +1027,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
@@ -1182,7 +1182,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
@@ -1332,7 +1332,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
@@ -1491,7 +1491,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
@@ -1624,7 +1624,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'anArg',
                 type: const TypeDeclaration(
@@ -1665,7 +1665,7 @@ void main() {
           Method(
               name: 'bar',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   name: 'foo',
                   type: TypeDeclaration(
@@ -1714,7 +1714,7 @@ void main() {
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
@@ -1792,7 +1792,7 @@ void main() {
             Method(
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
@@ -1830,7 +1830,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
                   baseName: 'Input',
@@ -1887,7 +1887,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
@@ -1969,13 +1969,13 @@ void main() {
       Api(name: 'HostApi', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'noop',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
                   baseName: 'int',
@@ -1991,13 +1991,13 @@ void main() {
       Api(name: 'FlutterApi', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'noop',
-          arguments: <Parameter>[],
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
-          arguments: <Parameter>[
+          parameters: <Parameter>[
             Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
@@ -2045,7 +2045,7 @@ void main() {
             Method(
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <Parameter>[
+              parameters: <Parameter>[
                 Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
