@@ -1991,4 +1991,51 @@ void main() {
     // changes to lambda capture.
     expect(code, contains('[reply]('));
   });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.source,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            '"Unable to establish connection on channel: \'" + channel_name + "\'."'));
+    expect(code, contains('on_error(CreateConnectionError(channel_name));'));
+  });
 }
