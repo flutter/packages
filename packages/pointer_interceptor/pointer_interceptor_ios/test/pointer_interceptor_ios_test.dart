@@ -21,7 +21,7 @@ class TestAppState extends State<TestApp> {
       body: const Text('Body'),
       floatingActionButton: FloatingActionButton(
           onPressed: () {},
-          child: PointerInterceptorIOSPlugin().buildWidget(
+          child: PointerInterceptorIOS().buildWidget(
               child: TextButton(
             onPressed: () => setState(() {
               _buttonText = 'Clicked';

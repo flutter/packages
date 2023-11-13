@@ -7,10 +7,10 @@ import 'package:flutter/widgets.dart';
 import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
 
 /// The iOS implementation of the [PointerInterceptorPlatform].
-class PointerInterceptorIOSPlugin extends PointerInterceptorPlatform {
+class PointerInterceptorIOS extends PointerInterceptorPlatform {
   /// Register plugin as iOS version.
   static void registerWith() {
-    PointerInterceptorPlatform.instance = PointerInterceptorIOSPlugin();
+    PointerInterceptorPlatform.instance = PointerInterceptorIOS();
   }
 
   @override

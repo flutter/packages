@@ -5,7 +5,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'no_op_pointer_interceptor.dart';
+import 'default_pointer_interceptor.dart';
 
 /// Platform-specific implementations should set this with their own
 /// platform-specific class that extends [PointerInterceptorPlatform] when
@@ -16,7 +16,7 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static PointerInterceptorPlatform _instance = NoOpPointerInterceptor();
+  static PointerInterceptorPlatform _instance = DefaultPointerInterceptor();
 
   static set instance(PointerInterceptorPlatform? instance) {
     if (instance == null) {
@@ -30,7 +30,7 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
 
   /// The default instance of [PointerInterceptorPlatform] to use.
   ///
-  /// Defaults to [NoOpPointerInterceptor], which does not do anything
+  /// Defaults to [DefaultPointerInterceptor], which does not do anything
   static PointerInterceptorPlatform get instance => _instance;
 
   /// Platform-specific implementations should override this function their own
@@ -40,6 +40,7 @@ abstract class PointerInterceptorPlatform extends PlatformInterface {
     bool debug = false,
     Key? key,
   }) {
+    print(instance);
     throw UnimplementedError('buildWidget() has not been implemented.');
   }
 }

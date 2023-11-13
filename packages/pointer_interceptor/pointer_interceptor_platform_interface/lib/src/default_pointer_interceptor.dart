@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'pointer_interceptor_platform.dart';
 
 /// A default implementation of [PointerInterceptorPlatform].
-class NoOpPointerInterceptor extends PointerInterceptorPlatform {
+class DefaultPointerInterceptor extends PointerInterceptorPlatform {
   @override
   Widget buildWidget({
     required Widget child,
@@ -17,11 +17,6 @@ class NoOpPointerInterceptor extends PointerInterceptorPlatform {
     bool debug = false,
     Key? key,
   }) {
-    print('Please note this no-op behavior is being deprecated soon, '
-        'so developers should remove the widget from mobile. '
-        'If you wish to instead opt-in to the new iOS implementation, '
-        'please include both pointer_interceptor_ios '
-        'and pointer_interceptor in your pubspec.yaml');
     return child;
   }
 }

@@ -17,18 +17,17 @@ flutter:
         pluginClass: PointerInterceptorWeb
         fileName: ./src/pointer_interceptor_web.dart
       ios:
-        default_package: ./src/dummy_pointer_interceptor_ios.dart
+        default_package: pointer_interceptor_ios
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
+  pointer_interceptor_ios:
+    path: ../pointer_interceptor_ios
   pointer_interceptor_platform_interface:
     path: ../pointer_interceptor_platform_interface
-
-  # flutter_web_plugins:
-  #   sdk: flutter
 
 dev_dependencies:
   flutter_test:
