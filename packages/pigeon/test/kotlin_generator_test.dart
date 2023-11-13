@@ -518,6 +518,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('callback: (Result<Unit>) -> Unit'));
     expect(code, contains('callback(Result.success(Unit))'));
+    // Lines should not end in semicolons.
+    expect(code, isNot(contains(RegExp(r';\n'))));
   });
 
   test('gen host void argument api', () {
@@ -1584,6 +1586,6 @@ void main() {
     expect(
         code,
         contains(
-            'callback(Result.failure(createConnectionError(channelName)));'));
+            'callback(Result.failure(createConnectionError(channelName)))'));
   });
 }
