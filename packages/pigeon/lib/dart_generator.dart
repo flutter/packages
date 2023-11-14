@@ -951,7 +951,7 @@ class $InstanceManager {
     required String dartPackageName,
   }) {
     indent.writeln(
-      '/// API for managing the Dart and native `InstanceManager`s.',
+      '/// Generated API for managing the Dart and native `InstanceManager`s.',
     );
     indent.writeScoped(r'class $InstanceManagerApi {', '}', () {
       indent.format(

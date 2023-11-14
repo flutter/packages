@@ -896,13 +896,153 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
 
   @override
   void writeInstanceManagerApi(
-      KotlinOptions generatorOptions, Root root, Indent indent,
-      {required String dartPackageName}) {}
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.format(
+      '/**\n'
+      '* Generated API for managing the Dart and native `InstanceManager`s.\n'
+      '*/',
+    );
+    indent.writeln('@Suppress("ClassName")');
+    indent.writeScoped(
+      'class _InstanceManagerApi(private val binaryMessenger: BinaryMessenger) {',
+      '}',
+      () {
+        indent.writeScoped('companion object {', '}', () {
+          indent.writeln('/** The codec used by _InstanceManagerApi. */');
+          indent.writeScoped(
+            'private val codec: MessageCodec<Any?> by lazy {',
+            '}',
+            () {
+              indent.writeln('StandardMessageCodec()');
+            },
+          );
+          indent.newln();
+
+          indent.format(
+            '/**\n'
+            '* Sets up an instance of `_InstanceManagerApi` to handle messages from the\n'
+            '* `binaryMessenger`.\n'
+            '*/',
+          );
+
+          indent.writeScoped(
+            'fun setUpJavaMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: _InstanceManager) {',
+            '}',
+            () {
+              indent.writeScoped('run {', '}', () {
+                final String channelName = makeChannelNameWithStrings(
+                  apiName: r'\$InstanceManagerApi',
+                  methodName: 'removeStrongReference',
+                  dartPackageName: dartPackageName,
+                );
+                _writeBasicMessageChannel(indent, channelName: channelName);
+                indent.writeScoped(
+                  'channel.setMessageHandler { message, reply ->',
+                  '}',
+                  () {
+                    indent.writeln('val identifier = message as Number');
+                    indent.writeScoped(
+                      'val wrapped: List<Any?> = try {',
+                      '}',
+                      () {
+                        indent.writeln(
+                            'instanceManager.remove<Any?>(identifier.toLong())');
+                        indent.writeln('listOf<Any?>(null)');
+                      },
+                      addTrailingNewline: false,
+                    );
+                    indent.writeScoped(
+                      'catch (exception: Throwable) {',
+                      '}',
+                      () {
+                        indent.writeln('wrapError(exception)');
+                      },
+                    );
+                    indent.writeln('reply.reply(wrapped)');
+                  },
+                );
+              });
+              indent.writeScoped('run {', '}', () {
+                final String channelName = makeChannelNameWithStrings(
+                  apiName: r'\$InstanceManagerApi',
+                  methodName: 'clear',
+                  dartPackageName: dartPackageName,
+                );
+                _writeBasicMessageChannel(indent, channelName: channelName);
+                indent.writeScoped(
+                  'channel.setMessageHandler { _, reply ->',
+                  '}',
+                  () {
+                    indent.writeScoped(
+                      'val wrapped: List<Any?> = try {',
+                      '}',
+                      () {
+                        indent.writeln('instanceManager.clear()');
+                        indent.writeln('listOf<Any?>(null)');
+                      },
+                      addTrailingNewline: false,
+                    );
+                    indent.writeScoped(
+                      'catch (exception: Throwable) {',
+                      '}',
+                      () {
+                        indent.writeln('wrapError(exception)');
+                      },
+                    );
+                    indent.writeln('reply.reply(wrapped)');
+                  },
+                );
+              });
+            },
+          );
+        });
+        indent.newln();
+
+        indent.writeScoped(
+          'fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit) {',
+          '}',
+          () {
+            final String channelName = makeChannelNameWithStrings(
+              apiName: r'\$InstanceManagerApi',
+              methodName: 'removeStrongReference',
+              dartPackageName: dartPackageName,
+            );
+            _writeBasicMessageChannel(indent, channelName: channelName);
+            indent.writeScoped('channel.send(identifierArg) {', '}', () {
+              indent.writeScoped('if (it is List<*>) {', '}', () {
+                indent.writeScoped('if (it.size > 1) {', '}', () {
+                  indent.writeln(
+                    'callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))',
+                  );
+                }, addTrailingNewline: false);
+                indent.writeScoped('else {', '}', () {
+                  indent.writeln('callback(Result.success(Unit))');
+                });
+              }, addTrailingNewline: false);
+              indent.writeScoped('else {', '}', () {
+                indent.writeln(
+                  'callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")))',
+                );
+              });
+            });
+          },
+        );
+      },
+    );
+  }
 
   @override
-  void writeProxyApi(KotlinOptions generatorOptions, Root root, Indent indent,
-      ProxyApiNode api,
-      {required String dartPackageName}) {}
+  void writeProxyApi(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    ProxyApiNode api, {
+    required String dartPackageName,
+  }) {}
 
   /// Writes the codec class that will be used by [api].
   /// Example:
@@ -1141,4 +1281,29 @@ String _cast(Root root, Indent indent, String variable,
 String _castInt(bool isNullable) {
   final String nullability = isNullable ? '?' : '';
   return '.let { if (it is Int) it.toLong() else it as Long$nullability }';
+}
+
+void _writeBasicMessageChannel(
+  Indent indent, {
+  required String channelName,
+  TaskQueueType taskQueueType = TaskQueueType.serial,
+  String codecVariableName = 'codec',
+  String binaryMessengerVariableName = 'binaryMessenger',
+}) {
+  String? taskQueue;
+  if (taskQueueType != TaskQueueType.serial) {
+    taskQueue = 'taskQueue';
+    indent
+        .writeln('val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
+  }
+
+  indent.write(
+    'val channel = BasicMessageChannel<Any?>($binaryMessengerVariableName, "$channelName", $codecVariableName',
+  );
+
+  if (taskQueue != null) {
+    indent.addln(', $taskQueue)');
+  } else {
+    indent.addln(')');
+  }
 }
