@@ -146,14 +146,14 @@ private class PigeonApiImplementation: ExampleHostApi {
 ### Kotlin
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class)"?>
 ```kotlin
-private class PigeonApiImplementation: ExampleHostApi {
+private class PigeonApiImplementation : ExampleHostApi {
   override fun getHostLanguage(): String {
     return "Kotlin"
   }
 
   override fun add(a: Long, b: Long): Long {
     if (a < 0L || b < 0L) {
-      throw FlutterError("code", "message", "details");
+      throw FlutterError("code", "message", "details")
     }
     return a + b
   }
@@ -258,9 +258,7 @@ private class PigeonFlutterApi {
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) {
-      echo -> callback(Result.success(echo))
-    }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
   }
 }
 ```

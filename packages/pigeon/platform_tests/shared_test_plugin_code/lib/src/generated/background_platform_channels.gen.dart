@@ -12,15 +12,11 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
-  if (empty) {
-    return <Object?>[];
-  }
-  if (error == null) {
-    return <Object?>[result];
-  }
-  return <Object?>[error.code, error.message, error.details];
+PlatformException _createConnectionError(String channelName) {
+  return PlatformException(
+    code: 'channel-error',
+    message: 'Unable to establish connection on channel: "$channelName".',
+  );
 }
 
 class BackgroundApi2Host {
@@ -34,17 +30,17 @@ class BackgroundApi2Host {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<int> add(int arg_x, int arg_y) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_x, arg_y]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,

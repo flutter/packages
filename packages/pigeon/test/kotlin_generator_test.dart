@@ -1540,4 +1540,50 @@ void main() {
     expect(code, contains('exception.message,'));
     expect(code, contains('exception.details'));
   });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'return FlutterError("channel-error",  "Unable to establish connection on channel: \'\$channelName\'.", "")'));
+    expect(
+        code,
+        contains(
+            'callback(Result.failure(createConnectionError(channelName)));'));
+  });
 }
