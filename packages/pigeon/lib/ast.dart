@@ -274,12 +274,15 @@ class Parameter extends NamedType {
     required super.type,
     super.offset,
     super.defaultValue,
-    this.isNamed = true,
-    this.isOptional = false,
-    this.isPositional = true,
-    this.isRequired = true,
+    bool? isNamed,
+    bool? isOptional,
+    bool? isPositional,
+    bool? isRequired,
     super.documentationComments,
-  });
+  })  : isNamed = isNamed ?? true,
+        isOptional = isOptional ?? false,
+        isPositional = isPositional ?? true,
+        isRequired = isRequired ?? true;
 
   /// Return `true` if this parameter is a named parameter.
   ///
