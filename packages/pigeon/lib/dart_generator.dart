@@ -1115,9 +1115,8 @@ class $InstanceManager {
     ProxyApiNode api, {
     required String dartPackageName,
   }) {
-    // TODO: auto $detached can't exist if there are required callback methods that require a value? including inherited ones.
-
     final String codecName = _getCodecName(api.name);
+    // TODO: fix args index when passing back instances
 
     // Write Codec
     indent.writeln('''
@@ -1173,6 +1172,11 @@ class $codecName extends StandardMessageCodec {
       root.apis.whereType<ProxyApiNode>(),
     );
 
+    final List<Method> interfacesMethods = <Method>[];
+    for (final ProxyApiNode proxyApi in interfacesApis) {
+      interfacesMethods.addAll(proxyApi.methods);
+    }
+
     final List<ProxyApiNode> superClassApisChain =
         _recursiveGetSuperClassApisChain(
       api,
@@ -1184,6 +1188,8 @@ class $codecName extends StandardMessageCodec {
       superClassApi = superClassApisChain.first;
     }
 
+    // A list of inherited methods from super classes that constructors set with
+    // `super.<methodName`.
     final List<Method> superClassFlutterMethods = <Method>[];
     if (superClassApi != null) {
       for (final ProxyApiNode proxyApi in superClassApisChain) {
@@ -1197,12 +1203,17 @@ class $codecName extends StandardMessageCodec {
       final Set<ProxyApiNode> superClassInterfacesApis =
           _recursiveFindAllInterfacesApis(
         superClassApi.interfacesNames,
-        root.apis.whereType<ProxyApiNode>(),
+        allProxyApis,
       );
       for (final ProxyApiNode proxyApi in superClassInterfacesApis) {
         superClassFlutterMethods.addAll(proxyApi.methods);
       }
     }
+
+    final bool hasARequiredFlutterMethod = api.methods
+        .followedBy(superClassFlutterMethods)
+        .followedBy(interfacesMethods)
+        .any((Method method) => method.mustBeImplemented);
 
     // api class
     addDocumentationComments(
@@ -1232,6 +1243,7 @@ class $codecName extends StandardMessageCodec {
         );
 
         // TODO: rename binarymessenger and instancemanager fields with $
+        // TODO: and $copy
 
         // Adds prefixes a constructor name with a '.' if it is not empty.
         final String constructorNameWithDot =
@@ -1256,12 +1268,10 @@ class $codecName extends StandardMessageCodec {
             );
           }
 
-          for (final ProxyApiNode proxyApi in interfacesApis) {
-            for (final Method method in proxyApi.methods) {
-              indent.writeln(
-                '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
-              );
-            }
+          for (final Method method in interfacesMethods) {
+            indent.writeln(
+              '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
+            );
           }
 
           for (final Method method in flutterMethods) {
@@ -1363,12 +1373,10 @@ class $codecName extends StandardMessageCodec {
             '${method.mustBeImplemented ? 'required ' : ''}super.${method.name},',
           );
         }
-        for (final ProxyApiNode proxyApi in interfacesApis) {
-          for (final Method method in proxyApi.methods) {
-            indent.writeln(
-              '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
-            );
-          }
+        for (final Method method in interfacesMethods) {
+          indent.writeln(
+            '${method.mustBeImplemented ? 'required ' : ''}this.${method.name},',
+          );
         }
         for (final Method method in flutterMethods) {
           indent.writeln(
@@ -1388,13 +1396,15 @@ class $codecName extends StandardMessageCodec {
         indent.writeln('BinaryMessenger? binaryMessenger,');
         indent.writeln(r'$InstanceManager? instanceManager,');
 
-        final String nonAttachedFieldsSignature = _getParametersSignature(
-          nonAttachedFields.toList(),
-          _getArgumentName,
-        );
-        indent.writeln(
-          '${api.name} Function($nonAttachedFieldsSignature)? \$detached,',
-        );
+        if (!hasARequiredFlutterMethod) {
+          final String nonAttachedFieldsSignature = _getParametersSignature(
+            nonAttachedFields.toList(),
+            _getArgumentName,
+          );
+          indent.writeln(
+            '${api.name} Function($nonAttachedFieldsSignature)? \$detached,',
+          );
+        }
 
         for (final Method method in flutterMethods) {
           final bool isAsync = method.isAsynchronous;
@@ -1414,86 +1424,92 @@ class $codecName extends StandardMessageCodec {
       final List<String> customEnumNames =
           root.enums.map((Enum x) => x.name).toList();
       indent.writeScoped('{', '}', () {
-        indent.writeScoped('{', '}', () {
-          final String channelName = makeChannelNameWithStrings(
-            apiName: api.name,
-            methodName: r'$detached',
-            dartPackageName: dartPackageName,
-          );
-          _writeBasicMessageChannel(
-            indent,
-            channelName: channelName,
-            codecVariableName:
-                '$codecName(instanceManager ?? \$InstanceManager.instance)',
-          );
-
-          indent.writeScoped(
-              'channel.setMessageHandler((Object? message) async {', '});', () {
-            const String argsArray = 'args';
-
-            _writeAssert(
+        if (!hasARequiredFlutterMethod) {
+          indent.writeScoped('{', '}', () {
+            final String channelName = makeChannelNameWithStrings(
+              apiName: api.name,
+              methodName: r'$detached',
+              dartPackageName: dartPackageName,
+            );
+            _writeBasicMessageChannel(
               indent,
-              assertion: 'message != null',
-              errorMessage: 'Argument for $channelName was null.',
-              rawErrorMessageString: true,
+              channelName: channelName,
+              codecVariableName:
+                  '$codecName(instanceManager ?? \$InstanceManager.instance)',
             );
-            indent.writeln(
-              'final List<Object?> $argsArray = (message as List<Object?>?)!;',
-            );
-            indent.writeln(
-              'final int? instanceIdentifier = (args[0] as int?);',
-            );
-            _writeAssert(
-              indent,
-              assertion: 'instanceIdentifier != null',
-              errorMessage:
-                  'Argument for $channelName was null, expected non-null int.',
-              rawErrorMessageString: true,
-            );
-
-            late Iterable<String> argsNames;
-            if (nonAttachedFields.isEmpty) {
-              argsNames = <String>[];
-            } else {
-              enumerate(nonAttachedFields, (int index, NamedType field) {
-                _writeMessageArgumentVariable(
-                  indent,
-                  index,
-                  field,
-                  channelName: channelName,
-                  customEnumNames: customEnumNames,
-                );
-              });
-              argsNames =
-                  indexMap(nonAttachedFields, (int index, NamedType field) {
-                final String name = _getSafeArgumentName(index, field);
-                return '$name${field.type.isNullable ? '' : '!'}';
-              });
-            }
 
             indent.writeScoped(
-              r'(instanceManager ?? $InstanceManager.instance).addHostCreatedInstance(',
-              ');',
+              'channel.setMessageHandler((Object? message) async {',
+              '});',
               () {
+                const String argsArray = 'args';
+
+                _writeAssert(
+                  indent,
+                  assertion: 'message != null',
+                  errorMessage: 'Argument for $channelName was null.',
+                  rawErrorMessageString: true,
+                );
+                indent.writeln(
+                  'final List<Object?> $argsArray = (message as List<Object?>?)!;',
+                );
+                indent.writeln(
+                  'final int? instanceIdentifier = (args[0] as int?);',
+                );
+                _writeAssert(
+                  indent,
+                  assertion: 'instanceIdentifier != null',
+                  errorMessage:
+                      'Argument for $channelName was null, expected non-null int.',
+                  rawErrorMessageString: true,
+                );
+
+                late Iterable<String> argsNames;
+                if (nonAttachedFields.isEmpty) {
+                  argsNames = <String>[];
+                } else {
+                  enumerate(nonAttachedFields, (int index, NamedType field) {
+                    _writeMessageArgumentVariable(
+                      indent,
+                      index,
+                      field,
+                      channelName: channelName,
+                      customEnumNames: customEnumNames,
+                    );
+                  });
+                  argsNames =
+                      indexMap(nonAttachedFields, (int index, NamedType field) {
+                    final String name = _getSafeArgumentName(index, field);
+                    return '$name${field.type.isNullable ? '' : '!'}';
+                  });
+                }
+
                 indent.writeScoped(
-                  '\$detached?.call(${argsNames.join(', ')}) ?? ${api.name}.\$detached(',
-                  '),',
+                  r'(instanceManager ?? $InstanceManager.instance).addHostCreatedInstance(',
+                  ');',
                   () {
-                    indent.writeln('binaryMessenger: binaryMessenger,');
-                    indent.writeln('instanceManager: instanceManager,');
-                    enumerate(nonAttachedFields, (int index, NamedType field) {
-                      indent.writeln(
-                        '${field.name}: ${_getSafeArgumentName(index, field)}${field.type.isNullable ? '' : '!'},',
-                      );
-                    });
+                    indent.writeScoped(
+                      '\$detached?.call(${argsNames.join(', ')}) ?? ${api.name}.\$detached(',
+                      '),',
+                      () {
+                        indent.writeln('binaryMessenger: binaryMessenger,');
+                        indent.writeln('instanceManager: instanceManager,');
+                        enumerate(nonAttachedFields,
+                            (int index, NamedType field) {
+                          indent.writeln(
+                            '${field.name}: ${_getSafeArgumentName(index, field)}${field.type.isNullable ? '' : '!'},',
+                          );
+                        });
+                      },
+                    );
+                    indent.writeln('instanceIdentifier!,');
                   },
                 );
-                indent.writeln('instanceIdentifier!,');
+                indent.writeln('return;');
               },
             );
-            indent.writeln('return;');
           });
-        });
+        }
 
         for (final Method method in flutterMethods) {
           indent.writeScoped('{', '}', () {
