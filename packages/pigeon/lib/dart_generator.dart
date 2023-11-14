@@ -749,7 +749,7 @@ mixin $Copyable {
   /// Subclasses should always override their parent's implementation of this
   /// method.
   @protected
-  $Copyable copy();
+  $Copyable $copy();
 }
 
 /// Maintains instances used to communicate with the native objects they
@@ -880,7 +880,7 @@ class $InstanceManager {
     if (weakInstance == null) {
       final $Copyable? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final $Copyable copy = strongInstance.copy();
+        final $Copyable copy = strongInstance.$copy();
         _identifiers[copy] = identifier;
         _weakInstances[identifier] = WeakReference<$Copyable>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
@@ -919,7 +919,7 @@ class $InstanceManager {
     _weakInstances[identifier] = WeakReference<$Copyable>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
-    final $Copyable copy = instance.copy();
+    final $Copyable copy = instance.$copy();
     _identifiers[copy] = identifier;
     _strongInstances[identifier] = copy;
   }
@@ -1243,18 +1243,15 @@ class $codecName extends StandardMessageCodec {
           _docCommentSpec,
         );
 
-        // TODO: rename binarymessenger and instancemanager fields with $
-        // TODO: and $copy
-
-        // Adds prefixes a constructor name with a '.' if it is not empty.
+        // Prefixes a constructor name with a '.' if the name is not empty.
         final String constructorNameWithDot =
             constructor.name.isEmpty ? '' : '.${constructor.name}';
         indent.writeScoped('${api.name}$constructorNameWithDot({', '}) ', () {
           indent.writeln(
-            '${superClassApi != null ? 'super' : 'this'}.binaryMessenger,',
+            '${superClassApi != null ? 'super' : 'this'}.\$binaryMessenger,',
           );
           indent.writeln(
-            '${superClassApi != null ? 'super.' : r'$InstanceManager? '}instanceManager,',
+            '${superClassApi != null ? 'super.' : r'$InstanceManager? '}\$instanceManager,',
           );
 
           for (final Field field in nonAttachedFields) {
@@ -1290,7 +1287,7 @@ class $codecName extends StandardMessageCodec {
 
         final String initializerStatement = superClassApi != null
             ? r'super.$detached()'
-            : r'instanceManager = instanceManager ?? $InstanceManager.instance';
+            : r'$instanceManager = $instanceManager ?? $InstanceManager.instance';
         indent.addScoped(': $initializerStatement {', '}', () {
           final String channelName = makeChannelNameForConstructor(
             api,
@@ -1301,10 +1298,11 @@ class $codecName extends StandardMessageCodec {
             indent,
             channelName: channelName,
             codecVariableName:
-                '$codecName(${superClassApi != null ? '' : 'this.'}instanceManager)',
+                '$codecName(${superClassApi != null ? '' : 'this.'}\$instanceManager)',
+            binaryMessengerVariableName: r'$binaryMessenger',
           );
           indent.writeln(
-            'final int instanceIdentifier = ${superClassApi != null ? '' : 'this.'}instanceManager.addDartCreatedInstance(this);',
+            'final int instanceIdentifier = ${superClassApi != null ? '' : 'this.'}\$instanceManager.addDartCreatedInstance(this);',
           );
 
           final List<String> unAttachedFieldNames = _asParameterNamesList(
@@ -1359,10 +1357,10 @@ class $codecName extends StandardMessageCodec {
       );
       indent.writeScoped('${api.name}.\$detached({', '}) ', () {
         indent.writeln(
-          '${superClassApi != null ? 'super' : 'this'}.binaryMessenger,',
+          '${superClassApi != null ? 'super' : 'this'}.\$binaryMessenger,',
         );
         indent.writeln(
-          '${superClassApi != null ? 'super.' : r'$InstanceManager? '}instanceManager,',
+          '${superClassApi != null ? 'super.' : r'$InstanceManager? '}\$instanceManager,',
         );
         for (final Field field in nonAttachedFields) {
           indent.writeln(
@@ -1388,14 +1386,14 @@ class $codecName extends StandardMessageCodec {
 
       final String initializerStatement = superClassApi != null
           ? r'super.$detached()'
-          : r'instanceManager = instanceManager ?? $InstanceManager.instance';
+          : r'$instanceManager = $instanceManager ?? $InstanceManager.instance';
       indent.writeln(': $initializerStatement;');
       indent.newln();
 
       // callback methods
       indent.writeScoped('static void setUpDartMessageHandlers ({', '})', () {
-        indent.writeln('BinaryMessenger? binaryMessenger,');
-        indent.writeln(r'$InstanceManager? instanceManager,');
+        indent.writeln(r'BinaryMessenger? $binaryMessenger,');
+        indent.writeln(r'$InstanceManager? $instanceManager,');
 
         if (!hasARequiredFlutterMethod) {
           final String nonAttachedFieldsSignature = _getParametersSignature(
@@ -1436,7 +1434,8 @@ class $codecName extends StandardMessageCodec {
               indent,
               channelName: channelName,
               codecVariableName:
-                  '$codecName(instanceManager ?? \$InstanceManager.instance)',
+                  '$codecName(\$instanceManager ?? \$InstanceManager.instance)',
+              binaryMessengerVariableName: r'$binaryMessenger',
             );
 
             indent.writeScoped(
@@ -1488,15 +1487,15 @@ class $codecName extends StandardMessageCodec {
                 }
 
                 indent.writeScoped(
-                  r'(instanceManager ?? $InstanceManager.instance).addHostCreatedInstance(',
+                  r'($instanceManager ?? $InstanceManager.instance).addHostCreatedInstance(',
                   ');',
                   () {
                     indent.writeScoped(
                       '\$detached?.call(${argsNames.join(', ')}) ?? ${api.name}.\$detached(',
                       '),',
                       () {
-                        indent.writeln('binaryMessenger: binaryMessenger,');
-                        indent.writeln('instanceManager: instanceManager,');
+                        indent.writeln(r'$binaryMessenger: $binaryMessenger,');
+                        indent.writeln(r'$instanceManager: $instanceManager,');
                         enumerate(
                           nonAttachedFields,
                           (int index, NamedType field) {
@@ -1524,7 +1523,8 @@ class $codecName extends StandardMessageCodec {
               indent,
               channelName: channelName,
               codecVariableName:
-                  '$codecName(instanceManager ?? \$InstanceManager.instance)',
+                  '$codecName(\$instanceManager ?? \$InstanceManager.instance)',
+              binaryMessengerVariableName: r'$binaryMessenger',
             );
             indent.writeScoped(
               'channel.setMessageHandler((Object? message) async {',
@@ -1631,12 +1631,12 @@ class $codecName extends StandardMessageCodec {
         if (superClassApi == null && interfacesApis.isNotEmpty) {
           indent.writeln('@override');
         }
-        indent.writeln('final BinaryMessenger? binaryMessenger;');
+        indent.writeln(r'final BinaryMessenger? $binaryMessenger;');
 
         if (superClassApi == null && interfacesApis.isNotEmpty) {
           indent.writeln('@override');
         }
-        indent.writeln(r'final $InstanceManager instanceManager;');
+        indent.writeln(r'final $InstanceManager $instanceManager;');
       }
       for (final Field field in nonAttachedFields) {
         addDocumentationComments(
@@ -1650,7 +1650,6 @@ class $codecName extends StandardMessageCodec {
       }
       for (final ProxyApiNode proxyApi in interfacesApis) {
         for (final Method method in proxyApi.methods) {
-          // TODO: dupe?
           final String returnType = method.isAsynchronous
               ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
               : _addGenericTypesNullable(method.returnType);
@@ -1670,7 +1669,6 @@ class $codecName extends StandardMessageCodec {
         }
       }
       for (final Method method in flutterMethods) {
-        // TODO: dupe?
         final String returnType = method.isAsynchronous
             ? 'Future<${_addGenericTypesNullable(method.returnType)}>'
             : _addGenericTypesNullable(method.returnType);
@@ -1709,8 +1707,8 @@ class $codecName extends StandardMessageCodec {
               ');',
               () {
                 if (!field.isStatic) {
-                  indent.writeln('binaryMessenger: binaryMessenger,');
-                  indent.writeln('instanceManager: instanceManager,');
+                  indent.writeln(r'binaryMessenger: $binaryMessenger,');
+                  indent.writeln(r'instanceManager: $instanceManager,');
                 }
               },
             );
@@ -1726,17 +1724,17 @@ class $codecName extends StandardMessageCodec {
               () {
                 indent.writeln("r'$channelName',");
                 indent.writeln(
-                    '$codecName(${field.isStatic ? r'$InstanceManager.instance' : 'instanceManager'}),');
+                    '$codecName(${field.isStatic ? r'$InstanceManager.instance' : r'$instanceManager'}),');
                 if (!field.isStatic) {
                   indent.writeln(
-                    'binaryMessenger: binaryMessenger,',
+                    r'binaryMessenger: $binaryMessenger,',
                   );
                 }
               },
             );
 
             indent.writeln(
-              'final int instanceIdentifier = ${field.isStatic ? r'$InstanceManager.instance' : 'instanceManager'}.addDartCreatedInstance(instance);',
+              'final int instanceIdentifier = ${field.isStatic ? r'$InstanceManager.instance' : r'$instanceManager'}.addDartCreatedInstance(instance);',
             );
             indent.writeScoped(
               'channel.send(<Object?>[${field.isStatic ? '' : 'this, '}instanceIdentifier]).then<void>((Object? value) {',
@@ -1783,7 +1781,7 @@ class $codecName extends StandardMessageCodec {
           _getSafeArgumentName,
         );
         final String messengerAndManager = method.isStatic
-            ? '${method.arguments.isEmpty ? '' : ', '}{BinaryMessenger? binaryMessenger, \$InstanceManager? instanceManager,}'
+            ? '${method.arguments.isEmpty ? '' : ', '}{BinaryMessenger? \$binaryMessenger, \$InstanceManager? \$instanceManager,}'
             : '';
         indent.writeScoped(
           '${staticKeyword}Future<$returnType> ${method.name}($methodParamsSignature$messengerAndManager) async {',
@@ -1798,7 +1796,8 @@ class $codecName extends StandardMessageCodec {
               indent,
               channelName: channelName,
               codecVariableName:
-                  '$codecName(instanceManager${method.isStatic ? r' ?? $InstanceManager.instance' : ''})',
+                  '$codecName(\$instanceManager${method.isStatic ? r' ?? $InstanceManager.instance' : ''})',
+              binaryMessengerVariableName: r'$binaryMessenger',
             );
 
             final String sendMessageArgsNames =
@@ -1850,10 +1849,10 @@ class $codecName extends StandardMessageCodec {
 
       // copy method
       indent.writeln('@override');
-      indent.writeScoped('${api.name} copy() {', '}', () {
+      indent.writeScoped('${api.name} \$copy() {', '}', () {
         indent.writeScoped('return ${api.name}.\$detached(', ');', () {
-          indent.writeln('binaryMessenger: binaryMessenger,');
-          indent.writeln('instanceManager: instanceManager,');
+          indent.writeln(r'$binaryMessenger: $binaryMessenger,');
+          indent.writeln(r'$instanceManager: $instanceManager,');
           for (final Field field in nonAttachedFields) {
             indent.writeln('${field.name}: ${field.name},');
           }
