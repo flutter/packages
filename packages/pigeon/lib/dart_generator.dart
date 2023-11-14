@@ -1116,7 +1116,6 @@ class $InstanceManager {
     required String dartPackageName,
   }) {
     final String codecName = _getCodecName(api.name);
-    // TODO: fix args index when passing back instances
 
     // Write Codec
     indent.writeln('''
@@ -1213,7 +1212,9 @@ class $codecName extends StandardMessageCodec {
     final bool hasARequiredFlutterMethod = api.methods
         .followedBy(superClassFlutterMethods)
         .followedBy(interfacesMethods)
-        .any((Method method) => method.mustBeImplemented);
+        .any((Method method) {
+      return method.location == ApiLocation.flutter && method.mustBeImplemented;
+    });
 
     // api class
     addDocumentationComments(
@@ -1471,7 +1472,8 @@ class $codecName extends StandardMessageCodec {
                   enumerate(nonAttachedFields, (int index, NamedType field) {
                     _writeMessageArgumentVariable(
                       indent,
-                      index,
+                      // The calling instance is the first arg.
+                      index + 1,
                       field,
                       channelName: channelName,
                       customEnumNames: customEnumNames,
@@ -1479,7 +1481,8 @@ class $codecName extends StandardMessageCodec {
                   });
                   argsNames =
                       indexMap(nonAttachedFields, (int index, NamedType field) {
-                    final String name = _getSafeArgumentName(index, field);
+                    // The calling instance is the first arg.
+                    final String name = _getSafeArgumentName(index + 1, field);
                     return '$name${field.type.isNullable ? '' : '!'}';
                   });
                 }
@@ -1494,12 +1497,14 @@ class $codecName extends StandardMessageCodec {
                       () {
                         indent.writeln('binaryMessenger: binaryMessenger,');
                         indent.writeln('instanceManager: instanceManager,');
-                        enumerate(nonAttachedFields,
-                            (int index, NamedType field) {
-                          indent.writeln(
-                            '${field.name}: ${_getSafeArgumentName(index, field)}${field.type.isNullable ? '' : '!'},',
-                          );
-                        });
+                        enumerate(
+                          nonAttachedFields,
+                          (int index, NamedType field) {
+                            indent.writeln(
+                              '${field.name}: ${_getSafeArgumentName(index + 1, field)}${field.type.isNullable ? '' : '!'},',
+                            );
+                          },
+                        );
                       },
                     );
                     indent.writeln('instanceIdentifier!,');
@@ -1558,7 +1563,8 @@ class $codecName extends StandardMessageCodec {
                   enumerate(method.arguments, (int index, NamedType parameter) {
                     _writeMessageArgumentVariable(
                       indent,
-                      index,
+                      // The calling instance is the first arg.
+                      index + 1,
                       parameter,
                       customEnumNames: customEnumNames,
                       channelName: channelName,
@@ -1567,7 +1573,11 @@ class $codecName extends StandardMessageCodec {
                   argsNames = indexMap(
                     method.arguments,
                     (int index, NamedType field) {
-                      final String name = _getSafeArgumentName(index, field);
+                      // The calling instance is the first arg.
+                      final String name = _getSafeArgumentName(
+                        index + 1,
+                        field,
+                      );
                       return '$name${field.type.isNullable ? '' : '!'}';
                     },
                   );
