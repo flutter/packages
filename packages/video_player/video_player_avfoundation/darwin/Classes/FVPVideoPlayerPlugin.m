@@ -27,7 +27,8 @@
 // callback is fired, regardless of the videoOutput state.
 //
 // TODO(stuartmorgan): Investigate removing this; it exists only to preserve existing iOS behavior
-// while implementing macOS, but iOS should very likely be doing the check as well.
+// while implementing macOS, but iOS should very likely be doing the check as well. See
+// https://github.com/flutter/flutter/issues/138427.
 @property(nonatomic, assign) BOOL skipBufferAvailabilityCheck;
 @end
 
