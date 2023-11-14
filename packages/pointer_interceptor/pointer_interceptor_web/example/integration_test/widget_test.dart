@@ -11,7 +11,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:pointer_interceptor_example/main.dart' as app;
+import 'package:pointer_interceptor_web_example/main.dart' as app;
 
 final Finder nonClickableButtonFinder =
     find.byKey(const Key('transparent-button'));

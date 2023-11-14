@@ -14,8 +14,7 @@ flutter:
     implements: pointer_interceptor_platform_interface
     platforms:
       web:
-        pluginClass: PointerInterceptorWeb
-        fileName: ./src/pointer_interceptor_web.dart
+        default_package: pointer_interceptor_web
       ios:
         default_package: pointer_interceptor_ios
 
@@ -28,6 +27,8 @@ dependencies:
     path: ../pointer_interceptor_ios
   pointer_interceptor_platform_interface:
     path: ../pointer_interceptor_platform_interface
+  pointer_interceptor_web:
+    path: ../pointer_interceptor_web
 
 dev_dependencies:
   flutter_test:

@@ -9,7 +9,7 @@ import 'dart:ui_web' as ui_web;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
-import '../pointer_interceptor.dart';
+import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
 
 const String _viewType = '__webPointerInterceptorViewType__';
 const String _debug = 'debug__';
