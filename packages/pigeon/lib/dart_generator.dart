@@ -106,6 +106,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;",
     );
     indent.writeln("import 'package:flutter/services.dart';");
+    // TODO: should be conditional
     indent.writeln(
       "import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;",
     );

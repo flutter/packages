@@ -102,13 +102,26 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       indent.writeln('package ${generatorOptions.package}');
     }
     indent.newln();
+
+    final bool hasProxyApis = root.apis.any((Api api) => api is ProxyApiNode);
+    if (hasProxyApis) {
+      indent.writeln('import android.os.Handler');
+      indent.writeln('import android.os.Looper');
+    }
     indent.writeln('import android.util.Log');
     indent.writeln('import io.flutter.plugin.common.BasicMessageChannel');
     indent.writeln('import io.flutter.plugin.common.BinaryMessenger');
     indent.writeln('import io.flutter.plugin.common.MessageCodec');
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
     indent.writeln('import java.io.ByteArrayOutputStream');
+    if (hasProxyApis) {
+      indent.writeln('import java.lang.ref.ReferenceQueue');
+      indent.writeln('import java.lang.ref.WeakReference');
+    }
     indent.writeln('import java.nio.ByteBuffer');
+    if (hasProxyApis) {
+      indent.writeln('import java.util.WeakHashMap');
+    }
   }
 
   @override
@@ -645,16 +658,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.writeln('''
-package ${generatorOptions.package}
-
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import java.lang.ref.ReferenceQueue
-import java.lang.ref.WeakReference
-import java.util.WeakHashMap
-
+    indent.writeln(r'''
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
  *
@@ -779,7 +783,7 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
    */
   fun addHostCreatedInstance(instance: Any): Long {
     logWarningIfFinalizationListenerHasStopped()
-    require(!containsInstance(instance)) { "Instance of \${instance.javaClass} has already been added." }
+    require(!containsInstance(instance)) { "Instance of ${instance.javaClass} has already been added." }
     val identifier = nextIdentifier++
     addInstance(instance, identifier)
     return identifier
@@ -867,9 +871,9 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
   }
 
   private fun addInstance(instance: Any, identifier: Long) {
-    require(identifier >= 0) { "Identifier must be >= 0: \$identifier" }
+    require(identifier >= 0) { "Identifier must be >= 0: $identifier" }
     require(!weakInstances.containsKey(identifier)) {
-      "Identifier has already been added: \$identifier"
+      "Identifier has already been added: $identifier"
     }
     val weakReference = WeakReference(instance, referenceQueue)
     identifiers[instance] = identifier
@@ -889,6 +893,16 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
 }    
 ''');
   }
+
+  @override
+  void writeInstanceManagerApi(
+      KotlinOptions generatorOptions, Root root, Indent indent,
+      {required String dartPackageName}) {}
+
+  @override
+  void writeProxyApi(KotlinOptions generatorOptions, Root root, Indent indent,
+      ProxyApiNode api,
+      {required String dartPackageName}) {}
 
   /// Writes the codec class that will be used by [api].
   /// Example:
