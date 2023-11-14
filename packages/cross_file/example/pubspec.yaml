@@ -4,7 +4,6 @@ publish_to: none
 
 environment:
   sdk: ">=2.19.0 <4.0.0"
-  flutter: ">=3.7.0"
 
 dependencies:
   cross_file:
@@ -17,7 +16,4 @@ dependencies:
 
 dev_dependencies:
   async: ^2.5.0
-  flutter:
-    sdk: flutter
-  flutter_test:
-    sdk: flutter
+  test: ^1.24.0
