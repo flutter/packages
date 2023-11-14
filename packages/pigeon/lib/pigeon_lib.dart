@@ -1094,7 +1094,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 
   Parameter formalParameterToPigeonParameter(
-      dart_ast.FormalParameter formalParameter) {
+    dart_ast.FormalParameter formalParameter, {
+    bool? isNamed,
+    bool? isOptional,
+    bool? isPositional,
+    bool? isRequired,
+    String? defaultValue,
+  }) {
     final dart_ast.NamedType? parameter =
         getFirstChildOfType<dart_ast.NamedType>(formalParameter);
     final dart_ast.SimpleFormalParameter? simpleFormalParameter =
@@ -1105,16 +1111,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final List<TypeDeclaration> argTypeArguments =
           typeAnnotationsToTypeArguments(parameter.typeArguments);
       return Parameter(
-          type: TypeDeclaration(
-            baseName: argTypeBaseName,
-            isNullable: isNullable,
-            typeArguments: argTypeArguments,
-          ),
-          name: formalParameter.name?.lexeme ?? '',
-          offset: formalParameter.offset);
+        type: TypeDeclaration(
+          baseName: argTypeBaseName,
+          isNullable: isNullable,
+          typeArguments: argTypeArguments,
+        ),
+        name: formalParameter.name?.lexeme ?? '',
+        offset: formalParameter.offset,
+        isNamed: isNamed ?? true,
+        isOptional: isOptional ?? false,
+        isPositional: isPositional ?? true,
+        isRequired: isRequired ?? true,
+        defaultValue: defaultValue,
+      );
     } else if (simpleFormalParameter != null) {
-      final Parameter parameter =
-          formalParameterToPigeonParameter(simpleFormalParameter);
       String? defaultValue;
       if (formalParameter is dart_ast.DefaultFormalParameter) {
         defaultValue = formalParameter.defaultValue?.toString();
@@ -1123,11 +1133,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final bool isOptional = simpleFormalParameter.isOptional;
       final bool isPositional = simpleFormalParameter.isPositional;
       final bool isRequired = simpleFormalParameter.isRequired;
-      return Parameter(
-        name: parameter.name,
-        type: parameter.type,
-        offset: parameter.offset,
-        documentationComments: parameter.documentationComments,
+
+      return formalParameterToPigeonParameter(
+        simpleFormalParameter,
         isNamed: isNamed,
         isOptional: isOptional,
         isPositional: isPositional,
