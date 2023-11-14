@@ -17,6 +17,29 @@
 #error File requires ARC to be enabled.
 #endif
 
+static NSArray *wrapResult(id result, FlutterError *error) {
+  if (error) {
+    return @[
+      error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
+    ];
+  }
+  return @[ result ?: [NSNull null] ];
+}
+
+static FlutterError *createConnectionError(NSString *channelName) {
+  return [FlutterError
+      errorWithCode:@"channel-error"
+            message:[NSString stringWithFormat:@"%@/%@/%@",
+                                               @"Unable to establish connection on channel: '",
+                                               channelName, @"'."]
+            details:@""];
+}
+
+static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
+  id result = array[key];
+  return (result == [NSNull null]) ? nil : result;
+}
+
 @implementation AnEnumBox
 - (instancetype)initWithValue:(AnEnum)value {
   self = [super init];
@@ -26,19 +49,6 @@
   return self;
 }
 @end
-
-static NSArray *wrapResult(id result, FlutterError *error) {
-  if (error) {
-    return @[
-      error.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
-    ];
-  }
-  return @[ result ?: [NSNull null] ];
-}
-static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
-  id result = array[key];
-  return (result == [NSNull null]) ? nil : result;
-}
 
 @interface AllTypes ()
 + (AllTypes *)fromList:(NSArray *)list;
@@ -2157,35 +2167,34 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
   return self;
 }
 - (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:nil
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:nil
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
 - (void)throwErrorWithCompletion:(void (^)(id _Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2198,44 +2207,40 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)throwErrorFromVoidWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
-                             @"FlutterIntegrationCoreApi.throwErrorFromVoid"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:nil
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:nil
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
 - (void)echoAllTypes:(AllTypes *)arg_everything
           completion:(void (^)(AllTypes *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2248,21 +2253,19 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoAllNullableTypes:(nullable AllNullableTypes *)arg_everything
                   completion:
                       (void (^)(AllNullableTypes *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
-                             @"FlutterIntegrationCoreApi.echoAllNullableTypes"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2275,10 +2278,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
@@ -2287,11 +2287,12 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                                aString:(nullable NSString *)arg_aNullableString
                             completion:(void (^)(AllNullableTypes *_Nullable,
                                                  FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
-                             @"FlutterIntegrationCoreApi.sendMultipleNullableTypes"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName = @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+                          @"sendMultipleNullableTypes";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[
     arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
     arg_aNullableString ?: [NSNull null]
@@ -2307,20 +2308,18 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoBool:(BOOL)arg_aBool
       completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ @(arg_aBool) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2333,20 +2332,18 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoInt:(NSInteger)arg_anInt
      completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ @(arg_anInt) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2359,20 +2356,18 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoDouble:(double)arg_aDouble
         completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ @(arg_aDouble) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2385,20 +2380,18 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoString:(NSString *)arg_aString
         completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2411,48 +2404,44 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoUint8List:(FlutterStandardTypedData *)arg_aList
            completion:
                (void (^)(FlutterStandardTypedData *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aList ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else {
-                  FlutterStandardTypedData *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       FlutterStandardTypedData *output =
+                           reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
 }
 - (void)echoList:(NSArray<id> *)arg_aList
       completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2465,48 +2454,44 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoMap:(NSDictionary<NSString *, id> *)arg_aMap
      completion:
          (void (^)(NSDictionary<NSString *, id> *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aMap ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else {
-                  NSDictionary<NSString *, id> *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSDictionary<NSString *, id> *output =
+                           reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
 }
 - (void)echoEnum:(AnEnum)arg_anEnum
       completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ [NSNumber numberWithInteger:arg_anEnum] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2523,20 +2508,18 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoNullableBool:(nullable NSNumber *)arg_aBool
               completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2549,20 +2532,18 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoNullableInt:(nullable NSNumber *)arg_anInt
              completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2575,20 +2556,18 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoNullableDouble:(nullable NSNumber *)arg_aDouble
                 completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
-                             @"FlutterIntegrationCoreApi.echoNullableDouble"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2601,20 +2580,18 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoNullableString:(nullable NSString *)arg_aString
                 completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
-                             @"FlutterIntegrationCoreApi.echoNullableString"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2627,48 +2604,44 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoNullableUint8List:(nullable FlutterStandardTypedData *)arg_aList
                    completion:(void (^)(FlutterStandardTypedData *_Nullable,
                                         FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:@"dev.flutter.pigeon.pigeon_integration_tests."
-                             @"FlutterIntegrationCoreApi.echoNullableUint8List"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aList ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else {
-                  FlutterStandardTypedData *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+  NSString *channelName = @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+                          @"echoNullableUint8List";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       FlutterStandardTypedData *output =
+                           reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
 }
 - (void)echoNullableList:(nullable NSArray<id> *)arg_aList
               completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aList ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2681,48 +2654,44 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoNullableMap:(nullable NSDictionary<NSString *, id> *)arg_aMap
              completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
                                   FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:@[ arg_aMap ?: [NSNull null] ]
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion(nil, [FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                } else {
-                  NSDictionary<NSString *, id> *output = reply[0] == [NSNull null] ? nil : reply[0];
-                  completion(output, nil);
-                }
-              } else {
-                completion(nil,
-                           [FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion(nil, [FlutterError errorWithCode:reply[0]
+                                                           message:reply[1]
+                                                           details:reply[2]]);
+                     } else {
+                       NSDictionary<NSString *, id> *output =
+                           reply[0] == [NSNull null] ? nil : reply[0];
+                       completion(output, nil);
+                     }
+                   } else {
+                     completion(nil, createConnectionError(channelName));
+                   }
+                 }];
 }
 - (void)echoNullableEnum:(nullable AnEnumBox *)arg_anEnum
               completion:(void (^)(AnEnumBox *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_anEnum == nil ? [NSNull null]
                                             : [NSNumber numberWithInteger:arg_anEnum.value] ]
                  reply:^(NSArray<id> *reply) {
@@ -2740,44 +2709,40 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)noopAsyncWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
-  [channel
-      sendMessage:nil
-            reply:^(NSArray<id> *reply) {
-              if (reply != nil) {
-                if (reply.count > 1) {
-                  completion([FlutterError errorWithCode:reply[0]
-                                                 message:reply[1]
-                                                 details:reply[2]]);
-                } else {
-                  completion(nil);
-                }
-              } else {
-                completion([FlutterError errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
-              }
-            }];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
+  [channel sendMessage:nil
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
 }
 - (void)echoAsyncString:(NSString *)arg_aString
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterIntegrationCoreApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterIntegrationCoreApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2790,10 +2755,7 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
@@ -2934,11 +2896,12 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void) {
 }
 - (void)echoWrappedList:(TestMessage *)arg_msg
              completion:(void (^)(TestMessage *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterSmallApiGetCodec()];
+  NSString *channelName =
+      @"dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterSmallApiGetCodec()];
   [channel sendMessage:@[ arg_msg ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2951,20 +2914,17 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }
 - (void)echoString:(NSString *)arg_aString
         completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
-  FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
-      messageChannelWithName:
-          @"dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString"
-             binaryMessenger:self.binaryMessenger
-                       codec:FlutterSmallApiGetCodec()];
+  NSString *channelName = @"dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString";
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FlutterSmallApiGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2977,10 +2937,7 @@ NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void) {
                        completion(output, nil);
                      }
                    } else {
-                     completion(nil, [FlutterError
-                                         errorWithCode:@"channel-error"
-                                               message:@"Unable to establish connection on channel."
-                                               details:@""]);
+                     completion(nil, createConnectionError(channelName));
                    }
                  }];
 }

@@ -55,6 +55,12 @@ public class Messages {
     return errorList;
   }
 
+  @NonNull
+  protected static FlutterError createConnectionError(@NonNull String channelName) {
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
+  }
+
   public enum Code {
     ONE(0),
     TWO(1);
@@ -341,11 +347,10 @@ public class Messages {
     }
 
     public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> result) {
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod";
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger,
-              "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod",
-              getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {
@@ -369,9 +374,7 @@ public class Messages {
                 result.success(output);
               }
             } else {
-              result.error(
-                  new FlutterError(
-                      "channel-error", "Unable to establish connection on channel.", ""));
+              result.error(createConnectionError(channelName));
             }
           });
     }
