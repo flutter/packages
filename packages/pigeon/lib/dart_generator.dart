@@ -12,6 +12,8 @@ import 'generator_tools.dart';
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
 
+const String _varNamePrefix = r'$_';
+
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
@@ -324,8 +326,8 @@ $resultAt != null
         indent.writeln(
             'static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;');
       }
-      indent
-          .writeln('static const MessageCodec<Object?> codec = $codecName();');
+      indent.writeln(
+          'static const MessageCodec<Object?> ${_varNamePrefix}codec = $codecName();');
       indent.newln();
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -346,20 +348,20 @@ $resultAt != null
           indent.write('');
           indent.addScoped('{', '}', () {
             indent.writeln(
-              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+              'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
             );
             final String channelName = channelNameFunc == null
                 ? makeChannelName(api, func, dartPackageName)
                 : channelNameFunc(func);
             indent.nest(2, () {
-              indent.writeln("'$channelName', codec,");
+              indent.writeln("'$channelName', ${_varNamePrefix}codec,");
               indent.writeln(
                 'binaryMessenger: binaryMessenger);',
               );
             });
             final String messageHandlerSetterWithOpeningParentheses = isMockHandler
-                ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, '
-                : 'channel.setMessageHandler(';
+                ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(${_varNamePrefix}channel, '
+                : '${_varNamePrefix}channel.setMessageHandler(';
             indent.write('if (api == null) ');
             indent.addScoped('{', '}', () {
               indent.writeln(
@@ -499,12 +501,12 @@ $resultAt != null
 /// available for dependency injection.  If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
 ${api.name}({BinaryMessenger? binaryMessenger})
-\t\t: _binaryMessenger = binaryMessenger;
-final BinaryMessenger? _binaryMessenger;
+\t\t: ${_varNamePrefix}binaryMessenger = binaryMessenger;
+final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 ''');
 
-      indent
-          .writeln('static const MessageCodec<Object?> codec = $codecName();');
+      indent.writeln(
+          'static const MessageCodec<Object?> ${_varNamePrefix}codec = $codecName();');
       indent.newln();
       for (final Method func in api.methods) {
         if (!first) {
@@ -534,17 +536,18 @@ final BinaryMessenger? _binaryMessenger;
         );
         indent.addScoped('{', '}', () {
           indent.writeln(
-              "const String channelName = '${makeChannelName(api, func, dartPackageName)}';");
+              "const String ${_varNamePrefix}channelName = '${makeChannelName(api, func, dartPackageName)}';");
           indent.writeScoped(
-              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+              'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
               ');', () {
-            indent.writeln('channelName,');
-            indent.writeln('codec,');
-            indent.writeln('binaryMessenger: _binaryMessenger,');
+            indent.writeln('${_varNamePrefix}channelName,');
+            indent.writeln('${_varNamePrefix}codec,');
+            indent
+                .writeln('binaryMessenger: ${_varNamePrefix}binaryMessenger,');
           });
           final String returnType = _makeGenericTypeArguments(func.returnType);
           final String genericCastCall = _makeGenericCastCall(func.returnType);
-          const String accessor = 'replyList[0]';
+          const String accessor = '${_varNamePrefix}replyList[0]';
           // Avoid warnings from pointlessly casting to `Object?`.
           final String nullablyTypedAccessor =
               returnType == 'Object' ? accessor : '($accessor as $returnType?)';
@@ -567,22 +570,22 @@ final BinaryMessenger? _binaryMessenger;
           returnStatement = '$returnStatement;';
 
           indent.format('''
-final List<Object?>? replyList =
-\t\tawait channel.send($sendArgument) as List<Object?>?;
-if (replyList == null) {
-\tthrow _createConnectionError(channelName);
-} else if (replyList.length > 1) {
+final List<Object?>? ${_varNamePrefix}replyList =
+\t\tawait ${_varNamePrefix}channel.send($sendArgument) as List<Object?>?;
+if (${_varNamePrefix}replyList == null) {
+\tthrow _createConnectionError(${_varNamePrefix}channelName);
+} else if (${_varNamePrefix}replyList.length > 1) {
 \tthrow PlatformException(
-\t\tcode: replyList[0]! as String,
-\t\tmessage: replyList[1] as String?,
-\t\tdetails: replyList[2],
+\t\tcode: ${_varNamePrefix}replyList[0]! as String,
+\t\tmessage: ${_varNamePrefix}replyList[1] as String?,
+\t\tdetails: ${_varNamePrefix}replyList[2],
 \t);''');
           // On iOS we can return nil from functions to accommodate error
           // handling.  Returning a nil value and not returning an error is an
           // exception.
           if (!func.returnType.isNullable && !func.returnType.isVoid) {
             indent.format('''
-} else if (replyList[0] == null) {
+} else if (${_varNamePrefix}replyList[0] == null) {
 \tthrow PlatformException(
 \t\tcode: 'null-error',
 \t\tmessage: 'Host platform returned null value for non-null return value.',

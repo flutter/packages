@@ -139,36 +139,36 @@ class NullFieldsHostApi {
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   NullFieldsHostApi({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
-  final BinaryMessenger? _binaryMessenger;
+      : $_binaryMessenger = binaryMessenger;
+  final BinaryMessenger? $_binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _NullFieldsHostApiCodec();
+  static const MessageCodec<Object?> $_codec = _NullFieldsHostApiCodec();
 
   Future<NullFieldsSearchReply> search(NullFieldsSearchRequest nested) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[nested]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[nested]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as NullFieldsSearchReply?)!;
+      return ($_replyList[0] as NullFieldsSearchReply?)!;
     }
   }
 }
@@ -202,21 +202,22 @@ class _NullFieldsFlutterApiCodec extends StandardMessageCodec {
 }
 
 abstract class NullFieldsFlutterApi {
-  static const MessageCodec<Object?> codec = _NullFieldsFlutterApiCodec();
+  static const MessageCodec<Object?> $_codec = _NullFieldsFlutterApiCodec();
 
   NullFieldsSearchReply search(NullFieldsSearchRequest request);
 
   static void setup(NullFieldsFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null.');
           final List<Object?> args = (message as List<Object?>?)!;

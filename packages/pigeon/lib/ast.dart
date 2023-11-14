@@ -284,22 +284,22 @@ class Parameter extends NamedType {
         isPositional = isPositional ?? true,
         isRequired = isRequired ?? true;
 
-  /// Return `true` if this parameter is a named parameter.
+  /// Whether this parameter is a named parameter.
   ///
   /// Defaults to `true`.
   final bool isNamed;
 
-  /// Return `true` if this parameter is an optional parameter.
+  /// Whether this parameter is an optional parameter.
   ///
   /// Defaults to `false`.
   final bool isOptional;
 
-  /// Return `true` if this parameter is a positional parameter.
+  /// Whether this parameter is a positional parameter.
   ///
   /// Defaults to `true`.
   final bool isPositional;
 
-  /// Return `true` if this parameter is a required parameter.
+  /// Whether this parameter is a required parameter.
   ///
   /// Defaults to `true`.
   final bool isRequired;

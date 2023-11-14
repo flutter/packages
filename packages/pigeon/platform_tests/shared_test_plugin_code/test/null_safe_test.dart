@@ -50,7 +50,7 @@ void main() {
     final FlutterSearchReply reply = FlutterSearchReply()..result = 'ho';
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
     final Completer<ByteData?> completer = Completer<ByteData?>();
-    completer.complete(Api.codec.encodeMessage(<Object>[reply]));
+    completer.complete(Api.$_codec.encodeMessage(<Object>[reply]));
     final Future<ByteData?> sendResult = completer.future;
     when(mockMessenger.send(
             'dev.flutter.pigeon.pigeon_integration_tests.Api.search', any))
@@ -69,7 +69,7 @@ void main() {
     echoOneArgument(
       mockMessenger,
       'dev.flutter.pigeon.pigeon_integration_tests.Api.echo',
-      Api.codec,
+      Api.$_codec,
     );
     final Api api = Api(binaryMessenger: mockMessenger);
     final FlutterSearchRequests echo = await api.echo(requests);
@@ -82,7 +82,7 @@ void main() {
     echoOneArgument(
       mockMessenger,
       'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt',
-      Api.codec,
+      Api.$_codec,
     );
     final Api api = Api(binaryMessenger: mockMessenger);
     final int result = await api.anInt(1);
@@ -95,7 +95,7 @@ void main() {
         'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return Api.codec.encodeMessage(<Object?>[null]);
+      return Api.$_codec.encodeMessage(<Object?>[null]);
     });
     final Api api = Api(binaryMessenger: mockMessenger);
     expect(() async => api.anInt(1),
@@ -108,7 +108,7 @@ void main() {
         'dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return Api.codec.encodeMessage(<Object?>[123]);
+      return Api.$_codec.encodeMessage(<Object?>[123]);
     });
     final NullableArgHostApi api =
         NullableArgHostApi(binaryMessenger: mockMessenger);
@@ -121,7 +121,7 @@ void main() {
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return Api.codec.encodeMessage(<Object?>[
+      return Api.$_codec.encodeMessage(<Object?>[
         <String?>['123']
       ]);
     });
@@ -140,10 +140,10 @@ void main() {
     final Completer<int> resultCompleter = Completer<int>();
     binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit',
-      NullableArgFlutterApi.codec.encodeMessage(<Object?>[null]),
+      NullableArgFlutterApi.$_codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
         resultCompleter.complete(
-          (NullableArgFlutterApi.codec.decodeMessage(data)! as List<Object?>)
+          (NullableArgFlutterApi.$_codec.decodeMessage(data)! as List<Object?>)
               .first! as int,
         );
       },
@@ -165,10 +165,10 @@ void main() {
     final Completer<List<String?>> resultCompleter = Completer<List<String?>>();
     binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit',
-      NullableCollectionArgFlutterApi.codec.encodeMessage(<Object?>[null]),
+      NullableCollectionArgFlutterApi.$_codec.encodeMessage(<Object?>[null]),
       (ByteData? data) {
         resultCompleter.complete(
-          ((NullableCollectionArgFlutterApi.codec.decodeMessage(data)!
+          ((NullableCollectionArgFlutterApi.$_codec.decodeMessage(data)!
                       as List<Object?>)
                   .first! as List<Object?>)
               .cast<String>(),
@@ -188,7 +188,7 @@ void main() {
         'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return NullableReturnHostApi.codec.encodeMessage(<Object?>[null]);
+      return NullableReturnHostApi.$_codec.encodeMessage(<Object?>[null]);
     });
     final NullableReturnHostApi api =
         NullableReturnHostApi(binaryMessenger: mockMessenger);
@@ -201,7 +201,7 @@ void main() {
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnHostApi.doit';
     when(mockMessenger.send(channel, any))
         .thenAnswer((Invocation realInvocation) async {
-      return NullableCollectionReturnHostApi.codec
+      return NullableCollectionReturnHostApi.$_codec
           .encodeMessage(<Object?>[null]);
     });
     final NullableCollectionReturnHostApi api =
@@ -219,7 +219,7 @@ void main() {
     final Completer<int?> resultCompleter = Completer<int?>();
     unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnFlutterApi.doit',
-      NullableReturnFlutterApi.codec.encodeMessage(<Object?>[]),
+      NullableReturnFlutterApi.$_codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
         resultCompleter.complete(null);
       },
@@ -242,7 +242,7 @@ void main() {
         Completer<List<String?>?>();
     unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
       'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnFlutterApi.doit',
-      NullableCollectionReturnFlutterApi.codec.encodeMessage(<Object?>[]),
+      NullableCollectionReturnFlutterApi.$_codec.encodeMessage(<Object?>[]),
       (ByteData? data) {
         resultCompleter.complete(null);
       },

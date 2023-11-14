@@ -926,6 +926,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         for (final Parameter param in func.parameters) {
           paramList.add(param.copyWithType(_attachClassesAndEnums(param.type)));
         }
+        func.parameters = paramList;
         func.returnType = _attachClassesAndEnums(func.returnType);
       }
     }
@@ -1129,17 +1130,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       if (formalParameter is dart_ast.DefaultFormalParameter) {
         defaultValue = formalParameter.defaultValue?.toString();
       }
-      final bool isNamed = simpleFormalParameter.isNamed;
-      final bool isOptional = simpleFormalParameter.isOptional;
-      final bool isPositional = simpleFormalParameter.isPositional;
-      final bool isRequired = simpleFormalParameter.isRequired;
 
       return formalParameterToPigeonParameter(
         simpleFormalParameter,
-        isNamed: isNamed,
-        isOptional: isOptional,
-        isPositional: isPositional,
-        isRequired: isRequired,
+        isNamed: simpleFormalParameter.isNamed,
+        isOptional: simpleFormalParameter.isOptional,
+        isPositional: simpleFormalParameter.isPositional,
+        isRequired: simpleFormalParameter.isRequired,
         defaultValue: defaultValue,
       );
     } else {

@@ -35,266 +35,266 @@ class PrimitiveHostApi {
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   PrimitiveHostApi({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
-  final BinaryMessenger? _binaryMessenger;
+      : $_binaryMessenger = binaryMessenger;
+  final BinaryMessenger? $_binaryMessenger;
 
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> $_codec = StandardMessageCodec();
 
   Future<int> anInt(int value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as int?)!;
+      return ($_replyList[0] as int?)!;
     }
   }
 
   Future<bool> aBool(bool value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as bool?)!;
+      return ($_replyList[0] as bool?)!;
     }
   }
 
   Future<String> aString(String value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as String?)!;
+      return ($_replyList[0] as String?)!;
     }
   }
 
   Future<double> aDouble(double value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as double?)!;
+      return ($_replyList[0] as double?)!;
     }
   }
 
   Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as Map<Object?, Object?>?)!;
+      return ($_replyList[0] as Map<Object?, Object?>?)!;
     }
   }
 
   Future<List<Object?>> aList(List<Object?> value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!;
+      return ($_replyList[0] as List<Object?>?)!;
     }
   }
 
   Future<Int32List> anInt32List(Int32List value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt32List';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as Int32List?)!;
+      return ($_replyList[0] as Int32List?)!;
     }
   }
 
   Future<List<bool?>> aBoolList(List<bool?> value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBoolList';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<bool?>();
+      return ($_replyList[0] as List<Object?>?)!.cast<bool?>();
     }
   }
 
   Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> value) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aStringIntMap';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[value]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[value]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as Map<Object?, Object?>?)!.cast<String?, int?>();
+      return ($_replyList[0] as Map<Object?, Object?>?)!.cast<String?, int?>();
     }
   }
 }
 
 abstract class PrimitiveFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> $_codec = StandardMessageCodec();
 
   int anInt(int value);
 
@@ -317,14 +317,15 @@ abstract class PrimitiveFlutterApi {
   static void setup(PrimitiveFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -344,14 +345,15 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -371,14 +373,15 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -398,14 +401,15 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -425,14 +429,15 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -453,14 +458,15 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -480,14 +486,15 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -507,14 +514,15 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList was null.');
           final List<Object?> args = (message as List<Object?>?)!;
@@ -535,14 +543,15 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap',
-          codec,
+          $_codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
-        channel.setMessageHandler(null);
+        $_channel.setMessageHandler(null);
       } else {
-        channel.setMessageHandler((Object? message) async {
+        $_channel.setMessageHandler((Object? message) async {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap was null.');
           final List<Object?> args = (message as List<Object?>?)!;

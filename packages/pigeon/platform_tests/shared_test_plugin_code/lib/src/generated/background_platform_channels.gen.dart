@@ -24,36 +24,36 @@ class BackgroundApi2Host {
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   BackgroundApi2Host({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
-  final BinaryMessenger? _binaryMessenger;
+      : $_binaryMessenger = binaryMessenger;
+  final BinaryMessenger? $_binaryMessenger;
 
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> $_codec = StandardMessageCodec();
 
   Future<int> add(int x, int y) async {
-    const String channelName =
+    const String $_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      codec,
-      binaryMessenger: _binaryMessenger,
+    final BasicMessageChannel<Object?> $_channel = BasicMessageChannel<Object?>(
+      $_channelName,
+      $_codec,
+      binaryMessenger: $_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[x, y]) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? $_replyList =
+        await $_channel.send(<Object?>[x, y]) as List<Object?>?;
+    if ($_replyList == null) {
+      throw _createConnectionError($_channelName);
+    } else if ($_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: $_replyList[0]! as String,
+        message: $_replyList[1] as String?,
+        details: $_replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else if ($_replyList[0] == null) {
       throw PlatformException(
         code: 'null-error',
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as int?)!;
+      return ($_replyList[0] as int?)!;
     }
   }
 }
