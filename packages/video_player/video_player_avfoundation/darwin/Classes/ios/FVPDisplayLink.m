@@ -7,7 +7,10 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-/** A proxy object to act as a CADisplayLink target, to avoid retain loops. */
+/**
+ * A proxy object to act as a CADisplayLink target, to avoid retain loops, since FVPDisplayLink
+ * owns its CADisplayLink, but CADisplayLink retains its target.
+ */
 @interface FVPDisplayLinkTarget : NSObject
 @property(nonatomic) void (^callback)(void);
 
