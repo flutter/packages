@@ -58,6 +58,10 @@
   [_displayLink invalidate];
 }
 
+- (BOOL)running {
+  return !self.displayLink.paused;
+}
+
 - (void)setRunning:(BOOL)running {
   self.displayLink.paused = !running;
 }

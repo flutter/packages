@@ -57,8 +57,12 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
   dispatch_source_cancel(_displayLinkSource);
 }
 
+- (BOOL)running {
+  return CVDisplayLinkIsRunning(self.displayLink);
+}
+
 - (void)setRunning:(BOOL)running {
-  if (CVDisplayLinkIsRunning(self.displayLink) == running) {
+  if (self.running == running) {
     return;
   }
   if (running) {
