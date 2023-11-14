@@ -1628,15 +1628,26 @@ class $codecName extends StandardMessageCodec {
 
       // fields
       if (superClassApi == null) {
+        indent.format(
+          '/// Sends and receives binary data across the Flutter platform barrier.\n'
+          '///\n'
+          '/// If it is null, the default BinaryMessenger will be used, which routes to\n'
+          '/// the host platform.',
+        );
         if (superClassApi == null && interfacesApis.isNotEmpty) {
           indent.writeln('@override');
         }
         indent.writeln(r'final BinaryMessenger? $binaryMessenger;');
+        indent.newln();
 
+        indent.format(
+          '/// Maintains instances stored to communicate with native language objects.',
+        );
         if (superClassApi == null && interfacesApis.isNotEmpty) {
           indent.writeln('@override');
         }
         indent.writeln(r'final $InstanceManager $instanceManager;');
+        indent.newln();
       }
       for (final Field field in nonAttachedFields) {
         addDocumentationComments(
