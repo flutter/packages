@@ -2,4 +2,5 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-export 'platforms/native_widget_ios.dart' if (dart.library.html) 'platforms/native_widget_web.dart';
+export 'platforms/native_widget_ios.dart'
+    if (dart.library.html) 'platforms/native_widget_web.dart';

@@ -46,11 +46,6 @@ void main() {
     _htmlElementViewType,
     (int viewId) => htmlElement,
   );
-
-  if(!kIsWeb) {
-    return;
-  }
-
   runApp(const MyApp());
 }
 

@@ -4,12 +4,10 @@
 
 // ignore: avoid_web_libraries_in_flutter
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'native_widget.dart';
 
-const String _htmlElementViewType = '_htmlElementViewType';
 const double _videoWidth = 640;
 const double _videoHeight = 480;
 
@@ -165,4 +163,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-

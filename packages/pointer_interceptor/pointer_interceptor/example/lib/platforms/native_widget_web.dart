@@ -1,7 +1,10 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// The html.Element that will be rendered underneath the flutter UI.
@@ -33,8 +36,8 @@ html.Element htmlElement = html.DivElement()
 
 const String _htmlElementViewType = '_htmlElementViewType';
 
+/// A widget representing an underlying html view
 class NativeWidget extends StatelessWidget {
-
   /// Constructor
   const NativeWidget({super.key, required this.onClick});
 
@@ -49,7 +52,7 @@ class NativeWidget extends StatelessWidget {
 
     ui_web.platformViewRegistry.registerViewFactory(
       _htmlElementViewType,
-          (int viewId) => htmlElement,
+      (int viewId) => htmlElement,
     );
 
     return const HtmlElementView(
