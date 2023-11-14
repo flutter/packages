@@ -142,7 +142,7 @@
 }
 
 - (void)getStorefront:(FlutterResult)result {
-  if (@available(iOS 13.0, *)) {
+  if (@available(iOS 13.0, macOS 10.15, *)) {
     SKStorefront *storefront = self.paymentQueueHandler.storefront;
     if (!storefront) {
       result(nil);
@@ -150,11 +150,11 @@
     }
     result([FIAObjectTranslator getMapFromSKStorefront:storefront]);
     return;
-  } else {
-    NSLog(@"storefront is not avaialbe in iOS below 13.0.");
-    result(nil);
-    return;
   }
+
+  NSLog(@"storefront is not avaialbe in iOS below 13.0 or macOS below 10.15.");
+  result(nil);
+  return;
 }
 
 - (void)handleProductRequestMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {

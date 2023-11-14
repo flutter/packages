@@ -420,7 +420,7 @@
 }
 
 - (void)testPaymentQueueStorefront {
-  if (@available(iOS 13, *)) {
+  if (@available(iOS 13, macOS 10.15, *)) {
     {
       // storefront is not nil
       XCTestExpectation *expectation = [self expectationWithDescription:@"expect success"];

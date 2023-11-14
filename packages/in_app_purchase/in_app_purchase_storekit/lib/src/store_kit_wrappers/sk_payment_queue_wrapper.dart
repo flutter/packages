@@ -42,6 +42,7 @@ class SKPaymentQueueWrapper {
   SKTransactionObserverWrapper? _observer;
 
   /// Calls [`[SKPaymentQueue storefront]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3182430-storefront?language=objc)
+  /// Returns `null` if the user's device is below iOS 13.0 or macOS 10.15.
   Future<SKStorefrontWrapper?> storefront() async {
     final Map<String, dynamic>? storefrontMap = await channel
         .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
