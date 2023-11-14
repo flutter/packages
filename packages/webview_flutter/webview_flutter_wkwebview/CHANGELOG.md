@@ -1,7 +1,3 @@
-## 3.10.0
-
-* Adds support for `PlatformNavigationDelegate.setOnReceiveHttpAuthRequest`.
-
 ## 3.9.4
 
 * Updates to Pigeon 13.

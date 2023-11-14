@@ -134,12 +134,6 @@ void main() {
                 )? onReceivedError,
                 void Function(
                   android_webview.WebView webView,
-                  android_webview.HttpAuthHandler hander,
-                  String host,
-                  String realm,
-                )? onReceivedHttpAuthRequest,
-                void Function(
-                  android_webview.WebView webView,
                   android_webview.WebResourceRequest request,
                   android_webview.WebResourceError error,
                 )? onReceivedRequestError,

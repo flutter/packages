@@ -4,13 +4,9 @@
 
 #import "FWFNavigationDelegateHostApi.h"
 #import "FWFDataConverters.h"
-#import "FWFURLAuthenticationChallengeHostApi.h"
 #import "FWFWebViewConfigurationHostApi.h"
 
 @interface FWFNavigationDelegateFlutterApiImpl ()
-// BinaryMessenger must be weak to prevent a circular reference with the host API it
-// references.
-@property(nonatomic, weak) id<FlutterBinaryMessenger> binaryMessenger;
 // InstanceManager must be weak to prevent a circular reference with the object it stores.
 @property(nonatomic, weak) FWFInstanceManager *instanceManager;
 @end
@@ -20,7 +16,6 @@
                         instanceManager:(FWFInstanceManager *)instanceManager {
   self = [self initWithBinaryMessenger:binaryMessenger];
   if (self) {
-    _binaryMessenger = binaryMessenger;
     _instanceManager = instanceManager;
   }
   return self;
@@ -107,37 +102,6 @@
                                                     webViewIdentifier:webViewIdentifier
                                                            completion:completion];
 }
-
-- (void)
-    didReceiveAuthenticationChallengeForDelegate:(FWFNavigationDelegate *)instance
-                                         webView:(WKWebView *)webView
-                                       challenge:(NSURLAuthenticationChallenge *)challenge
-                                      completion:
-                                          (void (^)(FWFAuthenticationChallengeResponse *_Nullable,
-                                                    FlutterError *_Nullable))completion {
-  NSInteger webViewIdentifier =
-      [self.instanceManager identifierWithStrongReferenceForInstance:webView];
-
-  FWFURLAuthenticationChallengeFlutterApiImpl *challengeApi =
-      [[FWFURLAuthenticationChallengeFlutterApiImpl alloc]
-          initWithBinaryMessenger:self.binaryMessenger
-                  instanceManager:self.instanceManager];
-  [challengeApi createWithInstance:challenge
-                   protectionSpace:challenge.protectionSpace
-                        completion:^(FlutterError *error) {
-                          NSAssert(!error, @"%@", error);
-                        }];
-
-  [self
-      didReceiveAuthenticationChallengeForDelegateWithIdentifier:[self
-                                                                     identifierForDelegate:instance]
-                                               webViewIdentifier:webViewIdentifier
-                                             challengeIdentifier:
-                                                 [self.instanceManager
-                                                     identifierWithStrongReferenceForInstance:
-                                                         challenge]
-                                                      completion:completion];
-}
 @end
 
 @implementation FWFNavigationDelegate
@@ -180,13 +144,8 @@
                                       completion:^(FWFWKNavigationActionPolicyEnumData *policy,
                                                    FlutterError *error) {
                                         NSAssert(!error, @"%@", error);
-                                        if (!error) {
-                                          decisionHandler(
-                                              FWFNativeWKNavigationActionPolicyFromEnumData(
-                                                  policy));
-                                        } else {
-                                          decisionHandler(WKNavigationActionPolicyCancel);
-                                        }
+                                        decisionHandler(
+                                            FWFNativeWKNavigationActionPolicyFromEnumData(policy));
                                       }];
 }
 
@@ -219,40 +178,6 @@
                                            completion:^(FlutterError *error) {
                                              NSAssert(!error, @"%@", error);
                                            }];
-}
-
-- (void)webView:(WKWebView *)webView
-    didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
-                    completionHandler:(void (^)(NSURLSessionAuthChallengeDisposition,
-                                                NSURLCredential *_Nullable))completionHandler {
-  [self.navigationDelegateAPI
-      didReceiveAuthenticationChallengeForDelegate:self
-                                           webView:webView
-                                         challenge:challenge
-                                        completion:^(FWFAuthenticationChallengeResponse *response,
-                                                     FlutterError *error) {
-                                          NSAssert(!error, @"%@", error);
-                                          if (!error) {
-                                            NSURLSessionAuthChallengeDisposition disposition =
-                                                FWFNativeNSURLSessionAuthChallengeDispositionFromFWFNSUrlSessionAuthChallengeDisposition(
-                                                    response.disposition);
-
-                                            NSURLCredential *credential =
-                                                response.credentialIdentifier
-                                                    ? (NSURLCredential *)[self.navigationDelegateAPI
-                                                                              .instanceManager
-                                                          instanceForIdentifier:
-                                                              response.credentialIdentifier
-                                                                  .longValue]
-                                                    : nil;
-
-                                            completionHandler(disposition, credential);
-                                          } else {
-                                            completionHandler(
-                                                NSURLSessionAuthChallengeCancelAuthenticationChallenge,
-                                                nil);
-                                          }
-                                        }];
 }
 @end
 

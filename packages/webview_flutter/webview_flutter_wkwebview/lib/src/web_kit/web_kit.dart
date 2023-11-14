@@ -830,7 +830,6 @@ class WKNavigationDelegate extends NSObject {
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
-    this.didReceiveAuthenticationChallenge,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -856,7 +855,6 @@ class WKNavigationDelegate extends NSObject {
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
-    this.didReceiveAuthenticationChallenge,
     super.observeValue,
     super.binaryMessenger,
     super.instanceManager,
@@ -903,16 +901,6 @@ class WKNavigationDelegate extends NSObject {
   /// {@macro webview_flutter_wkwebview.foundation.callbacks}
   final void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
-  /// Called when the delegate needs a response to an authentication challenge.
-  final void Function(
-    WKWebView webView,
-    NSUrlAuthenticationChallenge challenge,
-    void Function(
-      NSUrlSessionAuthChallengeDisposition disposition,
-      NSUrlCredential? credential,
-    ) completionHandler,
-  )? didReceiveAuthenticationChallenge;
-
   @override
   WKNavigationDelegate copy() {
     return WKNavigationDelegate.detached(
@@ -923,7 +911,6 @@ class WKNavigationDelegate extends NSObject {
       didFailProvisionalNavigation: didFailProvisionalNavigation,
       webViewWebContentProcessDidTerminate:
           webViewWebContentProcessDidTerminate,
-      didReceiveAuthenticationChallenge: didReceiveAuthenticationChallenge,
       observeValue: observeValue,
       binaryMessenger: _navigationDelegateApi.binaryMessenger,
       instanceManager: _navigationDelegateApi.instanceManager,

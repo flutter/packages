@@ -1,7 +1,3 @@
-## 4.5.0
-
-* Adds support for HTTP basic authentication. See `NavigationDelegate(onReceivedHttpAuthRequest)`.
-
 ## 4.4.2
 
 * Fixes `use_build_context_synchronously` lint violations in the example app.
