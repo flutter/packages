@@ -147,15 +147,15 @@ class Constructor extends Node {
 /// Represents an API that wraps a native type.
 class ProxyApiNode extends Api {
   /// Parametric constructor for [ProxyApiNode].
-  ProxyApiNode({
-    required super.name,
-    required super.methods,
-    required super.documentationComments,
-    required this.constructors,
-    required this.fields,
-    this.superClassName,
-    this.interfacesNames = const <String>{}
-  }) : super(location: ApiLocation.hostAndFlutter);
+  ProxyApiNode(
+      {required super.name,
+      required super.methods,
+      required super.documentationComments,
+      required this.constructors,
+      required this.fields,
+      this.superClassName,
+      this.interfacesNames = const <String>{}})
+      : super(location: ApiLocation.hostAndFlutter);
 
   /// List of constructors inside the API.
   List<Constructor> constructors;
