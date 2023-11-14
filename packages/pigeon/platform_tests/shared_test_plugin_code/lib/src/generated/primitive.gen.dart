@@ -12,6 +12,13 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+PlatformException _createConnectionError(String channelName) {
+  return PlatformException(
+    code: 'channel-error',
+    message: 'Unable to establish connection on channel: "$channelName".',
+  );
+}
+
 List<Object?> wrapResponse(
     {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
@@ -34,17 +41,17 @@ class PrimitiveHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<int> anInt(int arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -62,17 +69,17 @@ class PrimitiveHostApi {
   }
 
   Future<bool> aBool(bool arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -90,17 +97,17 @@ class PrimitiveHostApi {
   }
 
   Future<String> aString(String arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -118,17 +125,17 @@ class PrimitiveHostApi {
   }
 
   Future<double> aDouble(double arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -146,17 +153,17 @@ class PrimitiveHostApi {
   }
 
   Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -174,17 +181,17 @@ class PrimitiveHostApi {
   }
 
   Future<List<Object?>> aList(List<Object?> arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -202,17 +209,17 @@ class PrimitiveHostApi {
   }
 
   Future<Int32List> anInt32List(Int32List arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt32List';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt32List',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -230,17 +237,17 @@ class PrimitiveHostApi {
   }
 
   Future<List<bool?>> aBoolList(List<bool?> arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBoolList';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBoolList',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -258,17 +265,17 @@ class PrimitiveHostApi {
   }
 
   Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> arg_value) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aStringIntMap';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aStringIntMap',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_value]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
