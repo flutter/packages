@@ -7,11 +7,14 @@
 * Adds default values for class constructors and host API methods.
 * Adds `isEnum` and `isClass` to `TypeDeclaration`s.
 
+## 13.1.1
+
+* [kotlin] Removes unnecessary `;`s in generated code.
 
 ## 13.1.0
 
 * [swift] Fixes Flutter Api void return error handling.
-  * This shouldn't be breaking for anyone, but if you were incorrectly getting 
+  * This shouldn't be breaking for anyone, but if you were incorrectly getting
     success responses, you may now be failing (correctly).
 * Adds method channel name to error response when channel fails to connect.
 * Reduces code generation duplication.
