@@ -5,11 +5,15 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
 
 void main() {
-  test('Tell the user where to find the real tests', () {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('Tell the user where to find the real tests',
+      (WidgetTester tester) async {
     print('---');
-    print('Please find integration tests in the their respective platform packages');
+    print('Please find platform tests in their respective packages.');
     print('---');
   });
 }
