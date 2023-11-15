@@ -689,6 +689,13 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
   private val handler = Handler(Looper.getMainLooper())
   private var nextIdentifier: Long = minHostCreatedIdentifier
   private var hasFinalizationListenerStopped = false
+  
+  init {
+    handler.postDelayed(
+      { releaseAllFinalizedInstances() },
+      clearFinalizedWeakReferencesInterval
+    )
+  }
 
   companion object {
     // Identifiers are locked to a specific range to avoid collisions with objects
@@ -709,12 +716,25 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
      * @return a new `InstanceManager`.
      */
     fun create(finalizationListener: FinalizationListener): _InstanceManager {
-      val instanceManager = _InstanceManager(finalizationListener)
-      instanceManager.handler.postDelayed(
-        { instanceManager.releaseAllFinalizedInstances() },
-        clearFinalizedWeakReferencesInterval
-      )
-      return instanceManager
+      return _InstanceManager(finalizationListener)
+    }
+    
+    /**
+     * Instantiate a new manager with an `_InstanceManagerApi`.
+     *
+     * @param api handles removing garbage collected weak references.
+     * @return a new `_InstanceManager`.
+     */
+    fun create(api: _InstanceManagerApi): _InstanceManager {
+      return create(object : FinalizationListener {
+        override fun onFinalize(identifier: Long) {
+          api.removeStrongReference(identifier) {
+            if(it.isFailure) {
+              Log.e(tag, "Failed to remove Dart strong reference with identifier: $identifier")
+            }
+          }
+        }
+      })
     }
   }
 

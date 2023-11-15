@@ -106,7 +106,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;",
     );
     indent.writeln("import 'package:flutter/services.dart';");
-    // TODO: should be conditional
+    // TODO: should be conditional?
     indent.writeln(
       "import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;",
     );
@@ -1116,6 +1116,7 @@ class $InstanceManager {
     ProxyApiNode api, {
     required String dartPackageName,
   }) {
+    // TODO: change $detaced host -> flutter call to $newDartInstance
     final String codecName = _getCodecName(api.name);
 
     // Write Codec
