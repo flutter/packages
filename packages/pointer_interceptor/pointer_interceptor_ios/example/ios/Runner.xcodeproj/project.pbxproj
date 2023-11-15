@@ -17,7 +17,7 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		E168ED82D399C1A9329D0876 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1F367B2EDD332D4B9230AF1 /* Pods_Runner.framework */; };
 		F21CDFA32B056EBD0017C279 /* RunnerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21CDFA22B056EBD0017C279 /* RunnerUITests.swift */; };
-		F2D8AF672B0567630069EAC7 /* DummyPlatformViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D8AF662B0567630069EAC7 /* DummyPlatformViewFactory.swift */; };
+		F21CDFAD2B0591E30017C279 /* DummyPlatformViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21CDFAC2B0591E30017C279 /* DummyPlatformViewFactory.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -76,7 +76,7 @@
 		F21CDF922B056DB70017C279 /* RunnerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerUITests.swift; sourceTree = "<group>"; };
 		F21CDFA02B056EBD0017C279 /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F21CDFA22B056EBD0017C279 /* RunnerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerUITests.swift; sourceTree = "<group>"; };
-		F2D8AF662B0567630069EAC7 /* DummyPlatformViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DummyPlatformViewFactory.swift; path = ../../../../../../../../Desktop/example/ios/Runner/DummyPlatformViewFactory.swift; sourceTree = "<group>"; };
+		F21CDFAC2B0591E30017C279 /* DummyPlatformViewFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DummyPlatformViewFactory.swift; sourceTree = "<group>"; };
 		F7324BF52939888500E1D0F3 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -153,12 +153,12 @@
 		97C146F01CF9000F007C117D /* Runner */ = {
 			isa = PBXGroup;
 			children = (
+				F21CDFAC2B0591E30017C279 /* DummyPlatformViewFactory.swift */,
 				97C146FA1CF9000F007C117D /* Main.storyboard */,
 				97C146FD1CF9000F007C117D /* Assets.xcassets */,
 				97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */,
 				97C147021CF9000F007C117D /* Info.plist */,
 				1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */,
-				F2D8AF662B0567630069EAC7 /* DummyPlatformViewFactory.swift */,
 				1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */,
 				74858FAE1ED2DC5600515810 /* AppDelegate.swift */,
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
@@ -447,7 +447,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F2D8AF672B0567630069EAC7 /* DummyPlatformViewFactory.swift in Sources */,
+				F21CDFAD2B0591E30017C279 /* DummyPlatformViewFactory.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
