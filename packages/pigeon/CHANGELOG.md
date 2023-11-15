@@ -1,10 +1,10 @@
 ## 14.0.0
 
 * **Breaking change** [dart] Renames locally defined host API variables.
-  * Host api static field `codec ` changed to `pigeonChannelCodec`.
-* Adds named parameters to host API methods.
-* Adds optional parameters to host API methods.
-* Adds default values for class constructors and host API methods.
+  * [dart] Host api static field `codec ` changed to `pigeonChannelCodec`.
+* [dart] Adds named parameters to host API methods.
+* [dart] Adds optional parameters to host API methods.
+* [dart] Adds default values for class constructors and host API methods.
 * Adds `isEnum` and `isClass` to `TypeDeclaration`s.
 
 ## 13.1.1
