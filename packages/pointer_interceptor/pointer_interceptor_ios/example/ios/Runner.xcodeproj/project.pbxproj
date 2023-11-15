@@ -15,6 +15,7 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		F2D8AF642B0552FB0069EAC7 /* RunnerTests.xctest in Resources */ = {isa = PBXBuildFile; fileRef = F243D60E2AE053F700F4A2FC /* RunnerTests.xctest */; };
 		F2FC28712AE9D8C7000AB127 /* DummyPlatformViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2FC28702AE9D8C7000AB127 /* DummyPlatformViewFactory.swift */; };
 /* End PBXBuildFile section */
 
@@ -266,6 +267,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2D8AF642B0552FB0069EAC7 /* RunnerTests.xctest in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
