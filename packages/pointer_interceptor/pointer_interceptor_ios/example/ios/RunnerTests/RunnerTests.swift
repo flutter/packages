@@ -2,39 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
+import UIKit
 import XCTest
 
-final class RunnerTests: XCTestCase {
+@testable import pointer_interceptor_ios
 
-    override func setUp() {
-      continueAfterFailure = false
-    }
+class RunnerTests: XCTestCase {
+  func testDebugMode() {
+    let view = PointerInterceptorView(frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: true);
 
-    func testPointerInterceptorBlocksGesturesFromFlutter() {
-      let app = XCUIApplication()
-      app.launch()
-
-      let fabInitial = app.buttons["Initial"]
-      if (!(fabInitial.waitForExistence(timeout: 30))){
-        print(app.debugDescription);
-        XCTFail("Could not find Flutter button to click on")
-        return
-      }
-
-      fabInitial.tap();
-
-      let fabAfter = app.buttons["Tapped"]
-      if (!(fabAfter.waitForExistence(timeout: 30))){
-        print(app.debugDescription);
-        XCTFail("Flutter button did not change on tap")
-        return
-      }
-
-      let dummyButton = app.staticTexts["Not Clicked"]
-      if (!(dummyButton.waitForExistence(timeout: 30))){
-        print(app.debugDescription);
-        XCTFail("Pointer interceptor did not block gesture from hitting platform view")
-        return
-    }
+    let debugView = view.view();
+    XCTAssertTrue(debugView.backgroundColor == UIColor(red: 1, green: 0, blue: 0, alpha: 0.5))
   }
 }
