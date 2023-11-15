@@ -12,7 +12,7 @@ import 'generator_tools.dart';
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
 
-const String _varNamePrefix = r'$_';
+const String _varNamePrefix = '__pigeon_';
 
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
@@ -87,7 +87,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
     );
     indent.newln();
   }
@@ -327,7 +327,7 @@ $resultAt != null
             'static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;');
       }
       indent.writeln(
-          'static const MessageCodec<Object?> ${_varNamePrefix}codec = $codecName();');
+          'static const MessageCodec<Object?> pigeonChannelCodec = $codecName();');
       indent.newln();
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -354,7 +354,7 @@ $resultAt != null
                 ? makeChannelName(api, func, dartPackageName)
                 : channelNameFunc(func);
             indent.nest(2, () {
-              indent.writeln("'$channelName', ${_varNamePrefix}codec,");
+              indent.writeln("'$channelName', pigeonChannelCodec,");
               indent.writeln(
                 'binaryMessenger: binaryMessenger);',
               );
@@ -506,7 +506,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 ''');
 
       indent.writeln(
-          'static const MessageCodec<Object?> ${_varNamePrefix}codec = $codecName();');
+          'static const MessageCodec<Object?> pigeonChannelCodec = $codecName();');
       indent.newln();
       for (final Method func in api.methods) {
         if (!first) {
@@ -541,7 +541,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
               'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
               ');', () {
             indent.writeln('${_varNamePrefix}channelName,');
-            indent.writeln('${_varNamePrefix}codec,');
+            indent.writeln('pigeonChannelCodec,');
             indent
                 .writeln('binaryMessenger: ${_varNamePrefix}binaryMessenger,');
           });
@@ -664,7 +664,7 @@ if (${_varNamePrefix}replyList == null) {
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import, no_leading_underscores_for_local_identifiers',
     );
     indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
   }
@@ -818,53 +818,56 @@ String _getParameterName(int count, NamedType field) =>
 /// Generates the arguments code for [func]
 /// Example: (func, getArgumentName) -> 'String? foo, int bar'
 String _getMethodParameterSignature(Method func) {
+  String signature = '';
   if (func.parameters.isEmpty) {
-    return '';
+    return signature;
   }
-  bool firstNonPositionalParameter = true;
-  bool firstOptionalPositional = true;
 
-  final List<String> stringArgs = <String>[];
+  final List<Parameter> requiredPositionalParams = func.parameters
+      .where((Parameter p) => p.isPositional && !p.isOptional)
+      .toList();
+  final List<Parameter> optionalPositionalParams = func.parameters
+      .where((Parameter p) => p.isPositional && p.isOptional)
+      .toList();
+  final List<Parameter> namedParams =
+      func.parameters.where((Parameter p) => !p.isPositional).toList();
 
-  int index = 0;
-  for (final Parameter arg in func.parameters) {
-    String preArgSymbol = '';
-    if (!arg.isPositional && firstNonPositionalParameter) {
-      firstNonPositionalParameter = false;
-      preArgSymbol = '{';
-    } else if (arg.isPositional && arg.isOptional && firstOptionalPositional) {
-      firstOptionalPositional = false;
-      preArgSymbol = '[';
-    }
+  String getParameterString(Parameter p) {
+    final String required = p.isRequired && !p.isPositional ? 'required ' : '';
 
-    final String required =
-        arg.isRequired && !arg.isPositional ? 'required ' : '';
-
-    final String type = _addGenericTypesNullable(arg.type);
-
-    final String argName = _getParameterName(index, arg);
+    final String type = _addGenericTypesNullable(p.type);
 
     final String defaultValue =
-        arg.defaultValue == null ? '' : ' = ${arg.defaultValue}';
-
-    String postArgSymbol = '';
-    if (!arg.isPositional &&
-        !firstNonPositionalParameter &&
-        func.parameters.length - 1 == index) {
-      postArgSymbol = '}';
-    } else if (arg.isPositional &&
-        !firstOptionalPositional &&
-        (func.parameters.length - 1 == index ||
-            func.parameters[index + 1].defaultValue == null ||
-            !func.parameters[index + 1].isPositional)) {
-      postArgSymbol = ']';
-    }
-    stringArgs
-        .add('$preArgSymbol$required$type $argName$defaultValue$postArgSymbol');
-    index++;
+        p.defaultValue == null ? '' : ' = ${p.defaultValue}';
+    return '$required$type ${p.name}$defaultValue';
   }
 
-  return stringArgs.join(', ');
+  final String baseParameterString = requiredPositionalParams
+      .map((Parameter p) => getParameterString(p))
+      .join(', ');
+  final String optionalParameterString = optionalPositionalParams
+      .map((Parameter p) => getParameterString(p))
+      .join(', ');
+  final String namedParameterString =
+      namedParams.map((Parameter p) => getParameterString(p)).join(', ');
+// Parameter lists can end with either named or optional positional parameters, but not both.
+  if (baseParameterString.isNotEmpty) {
+    final String trailingComma = getTrailingComma(baseParameterString,
+        <String>[namedParameterString, optionalParameterString]);
+    signature = '$baseParameterString$trailingComma';
+  }
+  final String baseParams = signature.isNotEmpty ? '$signature ' : '';
+  if (namedParameterString.isNotEmpty) {
+    final String trailingComma =
+        getTrailingComma(baseParams, <String>[namedParameterString]);
+    return '$baseParams{$namedParameterString$trailingComma}';
+  }
+  if (optionalParameterString.isNotEmpty) {
+    final String trailingComma =
+        getTrailingComma(baseParams, <String>[optionalParameterString]);
+    return '$baseParams[$optionalParameterString$trailingComma]';
+  }
+  return signature;
 }
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be

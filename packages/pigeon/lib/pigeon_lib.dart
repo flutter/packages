@@ -764,7 +764,7 @@ List<Error> _validateAst(Root root, String source) {
         if (!typeArgument.isNullable) {
           result.add(Error(
             message:
-                'Generic type arguments must be nullable in field "${field.name}" in class "${classDefinition.name}".',
+                'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
@@ -789,20 +789,33 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      for (final NamedType unnamedType in method.parameters
-          .where((NamedType element) => element.type.baseName.isEmpty)) {
-        result.add(Error(
-          message:
-              'Arguments must specify their type in method "${method.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, unnamedType.offset),
-        ));
+      for (final Parameter param in method.parameters) {
+        if (param.type.baseName.isEmpty) {
+          result.add(Error(
+            message:
+                'Parameters must specify their type in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        } else if (param.name.startsWith('__pigeon_')) {
+          result.add(Error(
+            message:
+                'Parameter name must not begin with "__pigeon_" in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        } else if (param.name == 'pigeonChannelCodec') {
+          result.add(Error(
+            message:
+                'Parameter name must not be "pigeonChannelCodec" in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        }
       }
       if (method.objcSelector.isNotEmpty) {
         if (':'.allMatches(method.objcSelector).length !=
             method.parameters.length) {
           result.add(Error(
             message:
-                'Invalid selector, expected ${method.parameters.length} arguments.',
+                'Invalid selector, expected ${method.parameters.length} parameters.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
@@ -813,7 +826,7 @@ List<Error> _validateAst(Root root, String source) {
         if (!signatureRegex.hasMatch(method.swiftFunction)) {
           result.add(Error(
             message:
-                'Invalid function signature, expected ${method.parameters.length} arguments.',
+                'Invalid function signature, expected ${method.parameters.length} parameters.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }

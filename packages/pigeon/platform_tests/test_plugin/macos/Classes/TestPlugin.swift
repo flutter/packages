@@ -89,6 +89,18 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anEnum
   }
 
+  func echoNamedDefault(_ aString: String) throws -> String {
+    return aString
+  }
+
+  func echoOptionalDefault(_ aDouble: Double) throws -> Double {
+    return aDouble
+  }
+
+  func echoRequired(_ anInt: Int64) throws -> Int64 {
+    return anInt
+  }
+
   func extractNestedNullableString(from wrapper: AllClassesWrapper) -> String? {
     return wrapper.allNullableTypes.aNullableString;
   }
@@ -136,6 +148,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
   func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum? {
     return anEnum
+  }
+
+  func echoOptional(_ aNullableInt: Int64?) throws -> Int64? {
+    return aNullableInt
+  }
+
+  func echoNamed(_ aNullableString: String?) throws -> String? {
+    return aNullableString
   }
 
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void) {

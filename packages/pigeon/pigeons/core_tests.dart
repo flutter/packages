@@ -55,7 +55,7 @@ class AllNullableTypes {
     this.aNullableByteArray,
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
-    this.aNullableFloatArray, {
+    this.aNullableFloatArray,
     this.aNullableList,
     this.aNullableMap,
     this.nullableNestedList,
@@ -64,7 +64,7 @@ class AllNullableTypes {
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
-  });
+  );
 
   bool? aNullableBool;
   int? aNullableInt;
@@ -124,12 +124,12 @@ abstract class HostIntegrationCoreApi {
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
   @SwiftFunction('echo(_:)')
-  int echoInt({int anInt = 42});
+  int echoInt(int anInt);
 
   /// Returns passed in double.
   @ObjCSelector('echoDouble:')
   @SwiftFunction('echo(_:)')
-  double echoDouble({required double aDouble});
+  double echoDouble(double aDouble);
 
   /// Returns the passed in boolean.
   @ObjCSelector('echoBool:')
@@ -139,7 +139,7 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed in string.
   @ObjCSelector('echoString:')
   @SwiftFunction('echo(_:)')
-  String echoString([String aString = 'default']);
+  String echoString(String aString);
 
   /// Returns the passed in Uint8List.
   @ObjCSelector('echoUint8List:')
@@ -170,6 +170,21 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoEnum:')
   @SwiftFunction('echo(_:)')
   AnEnum echoEnum(AnEnum anEnum);
+
+  /// Returns the default string.
+  @ObjCSelector('echoNamedDefaultString:')
+  @SwiftFunction('echoNamedDefault(_:)')
+  String echoNamedDefaultString({String aString = 'default'});
+
+  /// Returns passed in double.
+  @ObjCSelector('echoOptionalDefaultDouble:')
+  @SwiftFunction('echoOptionalDefault(_:)')
+  double echoOptionalDefaultDouble([double aDouble = 3.14]);
+
+  /// Returns passed in int.
+  @ObjCSelector('echoRequiredInt:')
+  @SwiftFunction('echoRequired(_:)')
+  int echoRequiredInt({required int anInt});
 
   // ========== Synchronous nullable method tests ==========
 
@@ -209,12 +224,12 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed in boolean.
   @ObjCSelector('echoNullableBool:')
   @SwiftFunction('echo(_:)')
-  bool? echoNullableBool({bool? aNullableBool});
+  bool? echoNullableBool(bool? aNullableBool);
 
   /// Returns the passed in string.
   @ObjCSelector('echoNullableString:')
   @SwiftFunction('echo(_:)')
-  String? echoNullableString([String? aNullableString]);
+  String? echoNullableString(String? aNullableString);
 
   /// Returns the passed in Uint8List.
   @ObjCSelector('echoNullableUint8List:')
@@ -239,6 +254,16 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
   AnEnum? echoNullableEnum(AnEnum? anEnum);
+
+  /// Returns passed in int.
+  @ObjCSelector('echoOptionalNullableInt:')
+  @SwiftFunction('echoOptional(_:)')
+  int? echoOptionalNullableInt([int? aNullableInt]);
+
+  /// Returns the passed in string.
+  @ObjCSelector('echoNamedNullableString:')
+  @SwiftFunction('echoNamed(_:)')
+  String? echoNamedNullableString({String? aNullableString});
 
   // ========== Asynchronous method tests ==========
 

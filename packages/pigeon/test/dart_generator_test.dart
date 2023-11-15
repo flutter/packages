@@ -165,7 +165,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<int> add(int x, int y)'));
-    expect(code, contains('await channel.send(<Object?>[x, y])'));
+    expect(code, contains('await __pigeon_channel.send(<Object?>[x, y])'));
   });
 
   test('flutter multiple args', () {
@@ -487,7 +487,7 @@ void main() {
                   isNullable: false,
                   associatedClass: emptyClass,
                 ),
-                name: '')
+                name: 'enumClass')
           ],
           returnType: TypeDeclaration(
             baseName: 'EnumClass',
@@ -526,7 +526,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum1?.index,'));
     expect(code, contains('? Enum.values[result[0]! as int]'));
-    expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
+    expect(code, contains('EnumClass doSomething(EnumClass enumClass);'));
   });
 
   test('primitive enum host', () {
@@ -562,7 +562,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum Foo {'));
     expect(code, contains('Future<void> bar(Foo? foo) async'));
-    expect(code, contains('channel.send(<Object?>[foo?.index])'));
+    expect(code, contains('__pigeon_channel.send(<Object?>[foo?.index])'));
   });
 
   test('flutter non-nullable enum argument with enum class', () {
@@ -650,7 +650,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, matches('channel.send[(]null[)]'));
+    expect(code, matches('__pigeon_channel.send[(]null[)]'));
   });
 
   test('mock dart handler', () {
@@ -758,7 +758,7 @@ void main() {
                   isNullable: false,
                   associatedClass: emptyClass,
                 ),
-                name: '')
+                name: 'input')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
@@ -796,9 +796,9 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
-    expect(code, contains('Future<Output> doSomething(Input arg0);'));
-    expect(
-        code, contains('final Output output = await api.doSomething(arg0!);'));
+    expect(code, contains('Future<Output> doSomething(Input input);'));
+    expect(code,
+        contains('final Output output = await api.doSomething(arg_input!);'));
   });
 
   test('gen one async Flutter Api with void return', () {
@@ -937,7 +937,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, matches('channel.send[(]null[)]'));
+    expect(code, matches('__pigeon_channel.send[(]null[)]'));
   });
 
   Iterable<String> makeIterable(String string) sync* {
@@ -1120,8 +1120,10 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
-    expect(code,
-        contains('return (replyList[0] as List<Object?>?)!.cast<int?>();'));
+    expect(
+        code,
+        contains(
+            'return (__pigeon_replyList[0] as List<Object?>?)!.cast<int?>();'));
   });
 
   test('flutter generics argument non void return', () {
@@ -1194,7 +1196,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (replyList[0] as int?);'));
+    expect(code, contains('return (__pigeon_replyList[0] as int?);'));
   });
 
   test('return nullable collection host', () {
@@ -1225,8 +1227,10 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>?> doit()'));
-    expect(code,
-        contains('return (replyList[0] as List<Object?>?)?.cast<int?>();'));
+    expect(
+        code,
+        contains(
+            'return (__pigeon_replyList[0] as List<Object?>?)?.cast<int?>();'));
   });
 
   test('return nullable async host', () {
@@ -1256,7 +1260,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (replyList[0] as int?);'));
+    expect(code, contains('return (__pigeon_replyList[0] as int?);'));
   });
 
   test('return nullable flutter', () {
@@ -1700,7 +1704,8 @@ name: foobar
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('throw _createConnectionError(channelName);'));
+    expect(
+        code, contains('throw _createConnectionError(__pigeon_channelName);'));
     expect(
         code,
         contains(

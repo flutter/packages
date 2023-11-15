@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '13.2.0';
+const String pigeonVersion = '14.0.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -621,4 +621,10 @@ class OutputFileOptions<T> {
 
   /// Options for specified language across all file types.
   T languageOptions;
+}
+
+/// Provides a trailing comma for strings that are greater than 75 len
+String getTrailingComma(String string,
+    [List<String> moreStrings = const <String>[]]) {
+  return '$string${moreStrings.join()}'.length > 75 ? ',' : '';
 }

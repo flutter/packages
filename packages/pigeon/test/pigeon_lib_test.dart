@@ -923,7 +923,7 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message,
-        contains('Arguments must specify their type'));
+        contains('Parameters must specify their type'));
   });
 
   test('custom objc selector', () {

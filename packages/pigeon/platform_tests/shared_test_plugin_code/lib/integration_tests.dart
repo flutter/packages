@@ -337,9 +337,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('Int serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-      // This number corresponds with the default value of this method
       const int sentInt = _regularInt;
-      final int receivedInt = await api.echoInt();
+      final int receivedInt = await api.echoInt(sentInt);
       expect(receivedInt, sentInt);
     });
 
@@ -348,7 +347,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const int sentInt = _biggerThanBigInt;
-      final int receivedInt = await api.echoInt(anInt: sentInt);
+      final int receivedInt = await api.echoInt(sentInt);
       expect(receivedInt, sentInt);
     });
 
@@ -357,7 +356,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const double sentDouble = 2.0694;
-      final double receivedDouble = await api.echoDouble(aDouble: sentDouble);
+      final double receivedDouble = await api.echoDouble(sentDouble);
       expect(receivedDouble, sentDouble);
     });
 
@@ -375,7 +374,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
       const String sentString = 'default';
-      final String receivedString = await api.echoString();
+      final String receivedString = await api.echoString(sentString);
       expect(receivedString, sentString);
     });
 
@@ -444,6 +443,49 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedEnum, sentEnum);
     });
 
+    testWidgets('required named parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This number corresponds with the default value of this method.
+      const int sentInt = _regularInt;
+      final int receivedInt = await api.echoRequiredInt(anInt: sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('optional default parameter no arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      // This number corresponds with the default value of this method.
+      const double sentDouble = 3.14;
+      final double receivedDouble = await api.echoOptionalDefaultDouble();
+      expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('optional default parameter with arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentDouble = 3.15;
+      final double receivedDouble =
+          await api.echoOptionalDefaultDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('named default parameter no arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This string corresponds with the default value of this method.
+      const String sentString = 'default';
+      final String receivedString = await api.echoNamedDefaultString();
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('named default parameter with arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This string corresponds with the default value of this method.
+      const String sentString = 'notDefault';
+      final String receivedString =
+          await api.echoNamedDefaultString(aString: sentString);
+      expect(receivedString, sentString);
+    });
+
     testWidgets('Nullable Int serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -492,8 +534,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       for (final bool? sentBool in <bool?>[true, false]) {
-        final bool? receivedBool =
-            await api.echoNullableBool(aNullableBool: sentBool);
+        final bool? receivedBool = await api.echoNullableBool(sentBool);
         expect(receivedBool, sentBool);
       }
     });
@@ -503,8 +544,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       const bool? sentBool = null;
-      // Optional parameter is null by default.
-      final bool? receivedBool = await api.echoNullableBool();
+      final bool? receivedBool = await api.echoNullableBool(sentBool);
       expect(receivedBool, sentBool);
     });
 
@@ -520,8 +560,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      // Optional parameter is null by default.
-      final String? receivedNullString = await api.echoNullableString();
+      final String? receivedNullString = await api.echoNullableString(null);
       expect(receivedNullString, null);
     });
 
@@ -632,6 +671,36 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const AnEnum? sentEnum = null;
       final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
       expect(echoEnum, sentEnum);
+    });
+
+    testWidgets('optional nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = _regularInt;
+      final int? receivedInt = await api.echoOptionalNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Null optional nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final int? receivedNullInt = await api.echoOptionalNullableInt();
+      expect(receivedNullInt, null);
+    });
+
+    testWidgets('named nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentString = "I'm a computer";
+      final String? receivedString =
+          await api.echoNamedNullableString(aNullableString: sentString);
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('Null named nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final String? receivedNullString = await api.echoNamedNullableString();
+      expect(receivedNullString, null);
     });
   });
 
