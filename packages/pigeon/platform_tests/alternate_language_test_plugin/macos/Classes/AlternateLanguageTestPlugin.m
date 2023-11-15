@@ -96,7 +96,7 @@
 }
 - (nullable NSString *)echoNamedDefaultString:(NSString *)aString
                                         error:(FlutterError *_Nullable *_Nonnull)error {
-  return @(aString);
+  return aString;
 }
 
 - (nullable NSNumber *)echoOptionalDefaultDouble:(double)aDouble

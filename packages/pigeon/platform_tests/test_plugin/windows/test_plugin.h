@@ -63,6 +63,12 @@ class TestPlugin : public flutter::Plugin,
       const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
   core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AnEnum> EchoEnum(
       const core_tests_pigeontest::AnEnum& an_enum) override;
+  core_tests_pigeontest::ErrorOr<std::string> EchoNamedDefaultString(
+      const std::string& a_string) override;
+  core_tests_pigeontest::ErrorOr<double> EchoOptionalDefaultDouble(
+      double a_double) override;
+  core_tests_pigeontest::ErrorOr<int64_t> EchoRequiredInt(
+      int64_t an_int) override;
   core_tests_pigeontest::ErrorOr<std::optional<std::string>>
   ExtractNestedNullableString(
       const core_tests_pigeontest::AllClassesWrapper& wrapper) override;
