@@ -245,7 +245,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     preview = proxy.createPreview(
         targetRotation: targetRotation,
         resolutionSelector: presetResolutionSelector);
-    final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
+    final int flutterSurfaceTextureId =
+        await proxy.setPreviewSurfaceProvider(preview!);
 
     // Configure ImageCapture instance.
     imageCapture = proxy.createImageCapture(presetResolutionSelector);
@@ -680,9 +681,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _updateCameraInfoAndLiveCameraState(cameraId);
   }
 
-  /// Configures the [imageAnalysis] instance for image streaming and binds it
-  /// to camera lifecycle controlled by the [processCameraProvider].
-  Future<void> _configureAndBindImageAnalysisToLifecycle(int cameraId) async {
+  /// Configures the [imageAnalysis] instance for image streaming.
+  Future<void> _configureImageAnalysis(int cameraId) async {
     // Create Analyzer that can read image data for image streaming.
     final WeakReference<AndroidCameraCameraX> weakThis =
         WeakReference<AndroidCameraCameraX>(this);
@@ -731,7 +731,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The [onListen] callback for the stream controller used for image
   /// streaming.
   Future<void> _onFrameStreamListen(int cameraId) async {
-    await _configureAndBindImageAnalysisToLifecycle(cameraId);
+    await _configureImageAnalysis(cameraId);
   }
 
   /// The [onCancel] callback for the stream controller used for image

@@ -46,6 +46,7 @@ class CameraXProxy {
     this.requestCameraPermissions = _requestCameraPermissions,
     this.startListeningForDeviceOrientationChange =
         _startListeningForDeviceOrientationChange,
+    this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -106,6 +107,8 @@ class CameraXProxy {
   /// Subscribes the plugin as a listener to changes in device orientation.
   void Function(bool cameraIsFrontFacing, int sensorOrientation)
       startListeningForDeviceOrientationChange;
+
+  Future<int> Function(Preview preview) setPreviewSurfaceProvider;
 
   // Object creation:
 
@@ -199,5 +202,9 @@ class CameraXProxy {
       bool cameraIsFrontFacing, int sensorOrientation) {
     SystemServices.startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, sensorOrientation);
+  }
+
+  static Future<int> _setPreviewSurfaceProvider(Preview preview) async {
+    return preview.setSurfaceProvider();
   }
 }
