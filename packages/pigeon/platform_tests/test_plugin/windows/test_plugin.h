@@ -97,6 +97,10 @@ class TestPlugin : public flutter::Plugin,
   EchoNullableMap(const flutter::EncodableMap* a_nullable_map) override;
   core_tests_pigeontest::ErrorOr<std::optional<core_tests_pigeontest::AnEnum>>
   EchoNullableEnum(const core_tests_pigeontest::AnEnum* an_enum) override;
+  core_tests_pigeontest::ErrorOr<std::optional<int64_t>>
+  EchoOptionalNullableInt(const int64_t* a_nullable_int) override;
+  core_tests_pigeontest::ErrorOr<std::optional<std::string>>
+  EchoNamedNullableString(const std::string* a_nullable_string) override;
   void NoopAsync(std::function<
                  void(std::optional<core_tests_pigeontest::FlutterError> reply)>
                      result) override;
