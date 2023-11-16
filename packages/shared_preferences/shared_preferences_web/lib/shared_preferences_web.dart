@@ -4,11 +4,11 @@
 
 import 'dart:async';
 import 'dart:convert' show json;
-import 'dart:html' as html;
 
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
+import 'package:web/web.dart' as html;
 
 /// The web implementation of [SharedPreferencesStorePlatform].
 ///
@@ -69,20 +69,20 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     final Map<String, Object> allData = <String, Object>{};
     for (final String key
         in _getFilteredKeys(filter.prefix, allowList: filter.allowList)) {
-      allData[key] = _decodeValue(html.window.localStorage[key]!);
+      allData[key] = _decodeValue(html.window.localStorage.getItem(key)!);
     }
     return allData;
   }
 
   @override
   Future<bool> remove(String key) async {
-    html.window.localStorage.remove(key);
+    html.window.localStorage.removeItem(key);
     return true;
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object? value) async {
-    html.window.localStorage[key] = _encodeValue(value);
+    html.window.localStorage.setItem(key, _encodeValue(value));
     return true;
   }
 
@@ -109,5 +109,14 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     }
 
     return decodedValue!;
+  }
+}
+
+extension on html.Storage {
+  void remove(String item) => removeItem(item);
+  Iterable<String> get keys sync* {
+    for (int i = 0; i < html.window.localStorage.length; i++) {
+      yield html.window.localStorage.key(i)!;
+    }
   }
 }
