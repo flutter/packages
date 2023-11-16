@@ -1190,7 +1190,7 @@ class $codecName extends StandardMessageCodec {
     }
 
     // A list of inherited methods from super classes that constructors set with
-    // `super.<methodName`.
+    // `super.<methodName>`.
     final List<Method> superClassFlutterMethods = <Method>[];
     if (superClassApi != null) {
       for (final ProxyApiNode proxyApi in superClassApisChain) {

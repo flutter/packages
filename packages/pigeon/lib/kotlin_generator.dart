@@ -1069,8 +1069,46 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
     ProxyApiNode api, {
     required String dartPackageName,
   }) {
+    final String codecName = _getCodecName(api);
+
+    indent.writeln('''
+@Suppress("UNCHECKED_CAST")
+private class $codecName(val instanceManager: _InstanceManager) : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return instanceManager.getInstance(readValue(buffer) as Long)
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    when (value) {
+      instanceManager.containsInstance(value) -> {
+        stream.write(128)
+        writeValue(stream, instanceManager.getIdentifierForStrongReference(value))
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+''');
+
     final String fullKotlinClassName =
         api.kotlinOptions?.fullClassName ?? api.name;
+    final String apiName = '${api.name}Api';
+
+    addDocumentationComments(
+      indent,
+      api.documentationComments,
+      _docCommentSpec,
+    );
+    indent.writeln('@Suppress("UNCHECKED_CAST")');
+    indent.writeScoped(
+      'abstract class $apiName(val binaryMessenger: BinaryMessenger, val instanceManager: _InstanceManager) {',
+      '}',
+      () {},
+    );
   }
 
   /// Writes the codec class that will be used by [api].
