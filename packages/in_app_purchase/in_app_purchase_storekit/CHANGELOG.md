@@ -1,3 +1,7 @@
+## 0.3.7
+
+* Adds `Future<SKStorefrontWrapper?> storefront()` in SKPaymentQueueWrapper class. 
+
 ## 0.3.6+7
 
 * Updates example code for current versions of Flutter.

@@ -12,6 +12,13 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+PlatformException _createConnectionError(String channelName) {
+  return PlatformException(
+    code: 'channel-error',
+    message: 'Unable to establish connection on channel: "$channelName".',
+  );
+}
+
 List<Object?> wrapResponse(
     {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
@@ -34,17 +41,17 @@ class MultipleArityHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<int> subtract(int arg_x, int arg_y) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_x, arg_y]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,

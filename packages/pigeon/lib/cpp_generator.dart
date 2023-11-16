@@ -191,7 +191,17 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
+    final bool hasHostApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.host);
+    final bool hasFlutterApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+
+    if (hasHostApi) {
+      _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
+    }
+    if (hasFlutterApi) {
+      // Nothing yet.
+    }
   }
 
   @override
@@ -638,6 +648,15 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       indent.writeln('using $using;');
     }
     indent.newln();
+    _writeFunctionDefinition(indent, 'CreateConnectionError',
+        returnType: 'FlutterError',
+        parameters: <String>['const std::string channel_name'], body: () {
+      indent.format('''
+  return FlutterError(
+      "channel-error",
+      "Unable to establish connection on channel: '" + channel_name + "'.",
+      EncodableValue(""));''');
+    });
   }
 
   @override
@@ -831,7 +850,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           'return flutter::StandardMessageCodec::GetInstance(&$codeSerializerName::GetInstance());');
     });
     for (final Method func in api.methods) {
-      final String channelName = makeChannelName(api, func, dartPackageName);
       final HostDatatype returnType = getHostDatatype(func.returnType,
           root.classes, root.enums, _shortBaseCppTypeForBuiltinDartType);
 
@@ -854,8 +872,10 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           parameters: parameters, body: () {
         const String channel = 'channel';
         indent.writeln(
+            'const std::string channel_name = "${makeChannelName(api, func, dartPackageName)}";');
+        indent.writeln(
             'auto channel = std::make_unique<BasicMessageChannel<>>(binary_messenger_, '
-            '"$channelName", &GetCodec());');
+            'channel_name, &GetCodec());');
 
         // Convert arguments to EncodableValue versions.
         const String argumentListVariableName = 'encoded_api_arguments';
@@ -875,7 +895,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
         indent.write('$channel->Send($argumentListVariableName, '
             // ignore: missing_whitespace_between_adjacent_strings
-            '[on_success = std::move(on_success), on_error = std::move(on_error)]'
+            '[channel_name, on_success = std::move(on_success), on_error = std::move(on_error)]'
             '(const uint8_t* reply, size_t reply_size) ');
         indent.addScoped('{', '});', () {
           String successCallbackArgument;
@@ -890,7 +910,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           indent.writeScoped('if ($listReplyName) {', '} ', () {
             indent.writeScoped('if ($listReplyName->size() > 1) {', '} ', () {
               indent.writeln(
-                  'on_error(FlutterError( std::get<std::string>($listReplyName->at(0)),  std::get<std::string>($listReplyName->at(1)), $listReplyName->at(2)));');
+                  'on_error(FlutterError(std::get<std::string>($listReplyName->at(0)), std::get<std::string>($listReplyName->at(1)), $listReplyName->at(2)));');
             }, addTrailingNewline: false);
             indent.addScoped('else {', '}', () {
               if (func.returnType.isVoid) {
@@ -909,8 +929,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
             });
           }, addTrailingNewline: false);
           indent.addScoped('else {', '} ', () {
-            indent.writeln(
-                'on_error(FlutterError("channel-error",  "Unable to establish connection on channel.", EncodableValue("")));');
+            indent.writeln('on_error(CreateConnectionError(channel_name));');
           });
         });
       });

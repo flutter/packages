@@ -1613,4 +1613,31 @@ name: foobar
         contains(
             'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0]! as int]'));
   });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(apis: <Api>[
+      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        Method(
+          name: 'method',
+          arguments: <NamedType>[],
+          returnType:
+              const TypeDeclaration(baseName: 'Output', isNullable: false),
+        )
+      ])
+    ], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const DartGenerator generator = DartGenerator();
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('throw _createConnectionError(channelName);'));
+    expect(
+        code,
+        contains(
+            '\'Unable to establish connection on channel: "\$channelName".\''));
+  });
 }

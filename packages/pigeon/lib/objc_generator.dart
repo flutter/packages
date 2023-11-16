@@ -476,6 +476,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   }) {
     final String enumName =
         _enumName(anEnum.name, prefix: generatorOptions.prefix);
+    indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.writeln(
@@ -490,7 +491,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       indent.writeln('return self;');
     });
     indent.writeln('@end');
-    indent.newln();
   }
 
   @override
@@ -500,10 +500,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    _writeObjcSourceHelperFunctions(indent,
-        hasHostApiMethods: root.apis.any((Api api) =>
-            api.location == ApiLocation.host && api.methods.isNotEmpty));
-
     for (final Class klass in root.classes) {
       _writeObjcSourceDataClassExtension(generatorOptions, indent, klass);
     }
@@ -715,6 +711,56 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     });
   }
 
+  @override
+  void writeGeneralUtilities(
+    ObjcOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    final bool hasHostApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.host);
+    final bool hasFlutterApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+
+    if (hasHostApi) {
+      _writeWrapError(indent);
+      indent.newln();
+    }
+    if (hasFlutterApi) {
+      _writeCreateConnectionError(indent);
+      indent.newln();
+    }
+    _writeGetNullableObjectAtIndex(indent);
+  }
+
+  void _writeWrapError(Indent indent) {
+    indent.format('''
+static NSArray *wrapResult(id result, FlutterError *error) {
+\tif (error) {
+\t\treturn @[
+\t\t\terror.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
+\t\t];
+\t}
+\treturn @[ result ?: [NSNull null] ];
+}''');
+  }
+
+  void _writeGetNullableObjectAtIndex(Indent indent) {
+    indent.format('''
+static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
+\tid result = array[key];
+\treturn (result == [NSNull null]) ? nil : result;
+}''');
+  }
+
+  void _writeCreateConnectionError(Indent indent) {
+    indent.format('''
+static FlutterError *createConnectionError(NSString *channelName) {
+\treturn [FlutterError errorWithCode:@"channel-error" message:[NSString stringWithFormat:@"%@/%@/%@", @"Unable to establish connection on channel: '", channelName, @"'."] details:@""];
+}''');
+  }
+
   void _writeChannelApiBinding(ObjcOptions generatorOptions, Root root,
       Indent indent, String apiName, Method func, String channel) {
     void unpackArgs(String variable) {
@@ -876,26 +922,6 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
         }
       });
     });
-  }
-
-  void _writeObjcSourceHelperFunctions(Indent indent,
-      {required bool hasHostApiMethods}) {
-    if (hasHostApiMethods) {
-      indent.format('''
-static NSArray *wrapResult(id result, FlutterError *error) {
-\tif (error) {
-\t\treturn @[
-\t\t\terror.code ?: [NSNull null], error.message ?: [NSNull null], error.details ?: [NSNull null]
-\t\t];
-\t}
-\treturn @[ result ?: [NSNull null] ];
-}''');
-    }
-    indent.format('''
-static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
-\tid result = array[key];
-\treturn (result == [NSNull null]) ? nil : result;
-}''');
   }
 
   void _writeObjcSourceDataClassExtension(
@@ -1095,12 +1121,13 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
       root: root,
     ));
     indent.addScoped(' {', '}', () {
+      indent.writeln(
+          'NSString *channelName = @"${makeChannelName(api, func, dartPackageName)}";');
       indent.writeln('FlutterBasicMessageChannel *channel =');
       indent.nest(1, () {
         indent.writeln('[FlutterBasicMessageChannel');
         indent.nest(1, () {
-          indent.writeln(
-              'messageChannelWithName:@"${makeChannelName(api, func, dartPackageName)}"');
+          indent.writeln('messageChannelWithName:channelName');
           indent.writeln('binaryMessenger:self.binaryMessenger');
           indent.write(
               'codec:${_getCodecGetterName(languageOptions.prefix, api.name)}()');
@@ -1138,7 +1165,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
         }, addTrailingNewline: false);
         indent.addScoped('else {', '} ', () {
           indent.writeln(
-              'completion($valueOnErrorResponse[FlutterError errorWithCode:@"channel-error" message:@"Unable to establish connection on channel." details:@""]);');
+              'completion(${valueOnErrorResponse}createConnectionError(channelName));');
         });
       });
     });
