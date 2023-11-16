@@ -1422,6 +1422,8 @@ class $codecName extends StandardMessageCodec {
         }
       }, addTrailingNewline: false);
 
+      // TODO: create a single codec instance
+
       final List<String> customEnumNames =
           root.enums.map((Enum x) => x.name).toList();
       indent.writeScoped('{', '}', () {

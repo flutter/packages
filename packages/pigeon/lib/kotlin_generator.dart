@@ -1107,7 +1107,166 @@ private class $codecName(val instanceManager: _InstanceManager) : StandardMessag
     indent.writeScoped(
       'abstract class $apiName(val binaryMessenger: BinaryMessenger, val instanceManager: _InstanceManager) {',
       '}',
-      () {},
+      () {
+        // Methods implemented on the host side.
+        final Iterable<Method> hostMethods = api.methods.where(
+          (Method method) => method.location == ApiLocation.host,
+        );
+
+        for (final Method method in hostMethods) {
+          // TODO: copied from writehostapi
+          final List<String> argSignature = <String>[];
+          if (method.arguments.isNotEmpty) {
+            final Iterable<String> argTypes = method.arguments
+                .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
+            final List<String> argNames = <String>[];
+            enumerate(method.arguments, (int index, NamedType type) {
+              argNames.add(_getSafeArgumentName(
+                method.isStatic ? index : index + 1,
+                type,
+              ));
+            });
+            argSignature.addAll(
+              map2(argTypes, argNames, (String argType, String argName) {
+                return '$argName: $argType';
+              }),
+            );
+          }
+
+          final String returnType = method.returnType.isVoid
+              ? ''
+              : _nullsafeKotlinTypeForDartType(method.returnType);
+
+          final String resultType =
+              method.returnType.isVoid ? 'Unit' : returnType;
+          addDocumentationComments(
+              indent, method.documentationComments, _docCommentSpec);
+
+          if (method.isAsynchronous) {
+            argSignature.add('callback: (Result<$resultType>) -> Unit');
+            indent.writeln(
+              'abstract fun ${method.name}(${method.isStatic ? '' : 'instance: $fullKotlinClassName, '}${argSignature.join(', ')})',
+            );
+          } else if (method.returnType.isVoid) {
+            indent.writeln(
+              'abstract fun ${method.name}(${method.isStatic ? '' : 'instance: $fullKotlinClassName, '}${argSignature.join(', ')})',
+            );
+          } else {
+            indent.writeln(
+              'abstract fun ${method.name}(${method.isStatic ? '' : 'instance: $fullKotlinClassName, '}${argSignature.join(', ')}): $returnType',
+            );
+          }
+        }
+
+        indent.writeScoped('companion object {', '}', () {
+          indent.writeScoped(
+            'fun setUpKotlinMessageHandlers(api: $apiName) {',
+            '}',
+            () {
+              indent.writeln('val codec = $codecName(api.instanceManager)');
+              for (final Method method in hostMethods) {
+                indent.writeScoped('run {', '}', () {
+                  final String channelName = makeChannelName(
+                    api,
+                    method,
+                    dartPackageName,
+                  );
+                  _writeBasicMessageChannel(
+                    indent,
+                    channelName: channelName,
+                    binaryMessengerVariableName: 'api.binaryMessenger',
+                  );
+                  indent.writeScoped(
+                    'channel.setMessageHandler { message, reply ->',
+                    '}',
+                    () {
+                      final List<String> methodArguments = <String>[];
+                      if (method.arguments.isNotEmpty || !method.isStatic) {
+                        indent.writeln('val args = message as List<Any?>');
+                        if (!method.isStatic) {
+                          indent.writeln(
+                            'val instance = args[0] as $fullKotlinClassName',
+                          );
+                        }
+                        enumerate(method.arguments, (int index, NamedType arg) {
+                          final int trueIndex =
+                              method.isStatic ? index : index + 1;
+                          final String argName =
+                              _getSafeArgumentName(trueIndex, arg);
+                          final String argIndex = 'args[$trueIndex]';
+                          indent.writeln(
+                              'val $argName = ${_castForceUnwrap(argIndex, arg.type, root, indent)}');
+                          methodArguments.add(argName);
+                        });
+                      }
+                      final String call =
+                          'api.${method.name}(${method.isStatic ? '' : 'instance, '}${methodArguments.join(', ')})';
+
+                      if (method.isAsynchronous) {
+                        indent.write('$call ');
+                        final String resultType = method.returnType.isVoid
+                            ? 'Unit'
+                            : _nullsafeKotlinTypeForDartType(method.returnType);
+                        indent.addScoped(
+                            '{ result: Result<$resultType> ->', '}', () {
+                          indent
+                              .writeln('val error = result.exceptionOrNull()');
+                          indent.writeScoped('if (error != null) {', '}', () {
+                            indent.writeln('reply.reply(wrapError(error))');
+                          }, addTrailingNewline: false);
+                          indent.addScoped(' else {', '}', () {
+                            final String enumTagNullablePrefix =
+                                method.returnType.isNullable ? '?' : '!!';
+                            final String enumTag =
+                                isEnum(root, method.returnType)
+                                    ? '$enumTagNullablePrefix.raw'
+                                    : '';
+                            if (method.returnType.isVoid) {
+                              indent.writeln('reply.reply(wrapResult(null))');
+                            } else {
+                              indent.writeln('val data = result.getOrNull()');
+                              indent.writeln(
+                                  'reply.reply(wrapResult(data$enumTag))');
+                            }
+                          });
+                        });
+                      } else {
+                        indent.writeScoped(
+                          'val wrapped: List<Any?> = try {',
+                          '}',
+                          () {
+                            if (method.returnType.isVoid) {
+                              indent.writeln(call);
+                              indent.writeln('listOf<Any?>(null)');
+                            } else {
+                              String enumTag = '';
+                              if (isEnum(root, method.returnType)) {
+                                final String safeUnwrap =
+                                    method.returnType.isNullable ? '?' : '';
+                                enumTag = '$safeUnwrap.raw';
+                              }
+                              indent.writeln('listOf<Any?>($call$enumTag)');
+                            }
+                          },
+                          addTrailingNewline: false,
+                        );
+                        indent.writeScoped(
+                          'catch (exception: Throwable) {',
+                          '}',
+                          () {
+                            indent.writeln('wrapError(exception)');
+                          },
+                        );
+                        indent.writeln('reply.reply(wrapped)');
+                      }
+                    },
+                  );
+                });
+              }
+            },
+          );
+        });
+      },
     );
   }
 
