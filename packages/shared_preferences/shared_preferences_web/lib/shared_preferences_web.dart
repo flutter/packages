@@ -42,11 +42,8 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     // IMPORTANT: Do not use html.window.localStorage.clear() as that will
     //            remove _all_ local data, not just the keys prefixed with
     //            _prefix
-    // ignore: prefer_foreach
-    for (final String item
-        in _getFilteredKeys(filter.prefix, allowList: filter.allowList)) {
-      html.window.localStorage.removeItem(item);
-    }
+    _getFilteredKeys(filter.prefix, allowList: filter.allowList)
+        .forEach((String i) => html.window.localStorage.removeItem(i));
     return true;
   }
 
@@ -92,13 +89,9 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
   Iterable<String> _getFilteredKeys(
     String prefix, {
     Set<String>? allowList,
-  }) sync* {
-    for (int i = 0; i < html.window.localStorage.length; i++) {
-      final String key = html.window.localStorage.key(i)!;
-      if (key.startsWith(prefix) && (allowList?.contains(key) ?? true)) {
-        yield key;
-      }
-    }
+  }) {
+    return html.window.localStorage.keys.where((String key) =>
+        key.startsWith(prefix) && (allowList?.contains(key) ?? true));
   }
 
   String _encodeValue(Object? value) {
@@ -116,5 +109,13 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     }
 
     return decodedValue!;
+  }
+}
+
+extension on html.Storage {
+  Iterable<String> get keys sync* {
+    for (int i = 0; i < html.window.localStorage.length; i++) {
+      yield html.window.localStorage.key(i)!;
+    }
   }
 }
