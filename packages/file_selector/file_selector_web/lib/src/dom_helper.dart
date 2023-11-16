@@ -72,7 +72,10 @@ class DomHelper {
   }
 
   XFile _convertFileToXFile(File file) => XFile(
-        URL.createObjectURL(file),
+        // TODO(srujzs): This is necessary in order to support package:web 0.4.0.
+        // This was not needed with 0.3.0, hence the lint.
+        // ignore: avoid-unnecessary-type-casts
+        URL.createObjectURL(file as JSObject),
         name: file.name,
         length: file.size,
         lastModified: DateTime.fromMillisecondsSinceEpoch(file.lastModified),
