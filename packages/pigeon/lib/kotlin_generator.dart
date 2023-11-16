@@ -71,6 +71,12 @@ class KotlinOptions {
   }
 }
 
+class KotlinProxyApiOptions {
+  const KotlinProxyApiOptions({required this.fullClassName});
+
+  final String fullClassName;
+}
+
 /// Class that manages all Kotlin code generation.
 class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   /// Instantiates a Kotlin Generator.
@@ -1062,7 +1068,10 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
     Indent indent,
     ProxyApiNode api, {
     required String dartPackageName,
-  }) {}
+  }) {
+    final String fullKotlinClassName =
+        api.kotlinOptions?.fullClassName ?? api.name;
+  }
 
   /// Writes the codec class that will be used by [api].
   /// Example:

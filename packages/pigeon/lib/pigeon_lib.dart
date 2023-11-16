@@ -109,11 +109,13 @@ class FlutterApi {
 /// automatically with an `InstanceManager`.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass, this.interfaces});
+  const ProxyApi({this.superClass, this.interfaces, this.kotlinOptions});
 
   final Type? superClass;
 
   final Set<Type>? interfaces;
+
+  final KotlinProxyApiOptions? kotlinOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1079,6 +1081,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         );
         String? superClass;
         final Set<String> interfaces = <String>{};
+        KotlinProxyApiOptions? kotlinOptions;
         if (proxyApiAnnotation.arguments != null) {
           for (final dart_ast.Expression expression
               in proxyApiAnnotation.arguments!.arguments) {
@@ -1106,6 +1109,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                     }
                   }
                 }
+              } else if (expression.name.label.name == 'kotlinOptions') {
+                final Map<String, Object> map =
+                    _expressionToMap(expression.expression)
+                        as Map<String, Object>;
+                kotlinOptions = KotlinProxyApiOptions(
+                  fullClassName: (map['fullClassName'] as String?)!,
+                );
               }
             }
           }
@@ -1117,6 +1127,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           fields: <Field>[],
           superClassName: superClass,
           interfacesNames: interfaces,
+          kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );

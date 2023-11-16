@@ -4,6 +4,7 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+import 'kotlin_generator.dart';
 import 'pigeon_lib.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
@@ -147,15 +148,16 @@ class Constructor extends Node {
 /// Represents an API that wraps a native type.
 class ProxyApiNode extends Api {
   /// Parametric constructor for [ProxyApiNode].
-  ProxyApiNode(
-      {required super.name,
-      required super.methods,
-      required super.documentationComments,
-      required this.constructors,
-      required this.fields,
-      this.superClassName,
-      this.interfacesNames = const <String>{}})
-      : super(location: ApiLocation.hostAndFlutter);
+  ProxyApiNode({
+    required super.name,
+    required super.methods,
+    required super.documentationComments,
+    required this.constructors,
+    required this.fields,
+    this.superClassName,
+    this.interfacesNames = const <String>{},
+    this.kotlinOptions,
+  }) : super(location: ApiLocation.hostAndFlutter);
 
   /// List of constructors inside the API.
   List<Constructor> constructors;
@@ -166,6 +168,8 @@ class ProxyApiNode extends Api {
   final String? superClassName;
 
   final Set<String> interfacesNames;
+
+  final KotlinProxyApiOptions? kotlinOptions;
 
   @override
   String toString() {
