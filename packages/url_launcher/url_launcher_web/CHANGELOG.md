@@ -1,7 +1,3 @@
-## 2.2.1
-
-* Updates minimum supported SDK version to Dart 3.2.
-
 ## 2.2.0
 
 * Implements `supportsMode` and `supportsCloseForMode`.
