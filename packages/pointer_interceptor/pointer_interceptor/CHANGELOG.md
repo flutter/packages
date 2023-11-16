@@ -1,5 +1,6 @@
-## 0.9.4
-* Adds iOS implementation
+## 0.10.0
+
+* Adds iOS implementation.
 
 ## 0.9.3+7
 

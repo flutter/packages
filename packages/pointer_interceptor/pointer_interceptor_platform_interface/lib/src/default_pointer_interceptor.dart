@@ -13,7 +13,6 @@ class DefaultPointerInterceptor extends PointerInterceptorPlatform {
   @override
   Widget buildWidget({
     required Widget child,
-    bool intercepting = true,
     bool debug = false,
     Key? key,
   }) {

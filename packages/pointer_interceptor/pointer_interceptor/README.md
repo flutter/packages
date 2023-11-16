@@ -19,7 +19,7 @@ The result is that Flutter widget's `onTap` (and other) handlers won't fire as e
 
 ## How does this work?
 
-In web, `PointerInterceptor` creates a platform view consisting of an empty HTML element, while on iOS it creates an empty `CGRect` instead. The element has the size of its `child` widget, and is inserted in the layer tree _behind_ its child in paint order.
+In web, `PointerInterceptor` creates a platform view consisting of an empty HTML element, while on iOS it creates an empty `UIView` instead. The element has the size of its `child` widget, and is inserted in the layer tree _behind_ its child in paint order.
 
 This empty platform view doesn't do anything with mouse events, other than preventing them from reaching other platform views underneath it.
 

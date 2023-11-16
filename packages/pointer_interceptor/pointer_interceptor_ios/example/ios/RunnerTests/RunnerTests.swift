@@ -9,6 +9,13 @@ import XCTest
 @testable import pointer_interceptor_ios
 
 class RunnerTests: XCTestCase {
+  func testNonDebugMode() {
+    let view = PointerInterceptorView(frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: true);
+
+    let debugView = view.view();
+    XCTAssertTrue(debugView.backgroundColor == UIColor.clear)
+  }
+
   func testDebugMode() {
     let view = PointerInterceptorView(frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: true);
 

@@ -10,7 +10,8 @@ class NativeWidget extends StatelessWidget {
   /// Constructor
   const NativeWidget({super.key, required this.onClick});
 
-  /// A function to run when the element is clicked
+  /// Placeholder param to allow web example to work -
+  /// onClick functionality for iOS is in the PlatformView
   final VoidCallback onClick;
 
   @override
