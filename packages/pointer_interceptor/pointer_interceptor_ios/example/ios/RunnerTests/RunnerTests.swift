@@ -10,7 +10,7 @@ import XCTest
 
 class RunnerTests: XCTestCase {
   func testNonDebugMode() {
-    let view = PointerInterceptorView(frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: true);
+    let view = PointerInterceptorView(frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: false);
 
     let debugView = view.view();
     XCTAssertTrue(debugView.backgroundColor == UIColor.clear)
