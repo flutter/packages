@@ -43,7 +43,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     //            remove _all_ local data, not just the keys prefixed with
     //            _prefix
     _getFilteredKeys(filter.prefix, allowList: filter.allowList)
-        .forEach((String i) => html.window.localStorage.removeItem(i));
+        .forEach(html.window.localStorage.remove);
     return true;
   }
 
@@ -113,6 +113,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
 }
 
 extension on html.Storage {
+  void remove(String item) => removeItem(item);
   Iterable<String> get keys sync* {
     for (int i = 0; i < html.window.localStorage.length; i++) {
       yield html.window.localStorage.key(i)!;
