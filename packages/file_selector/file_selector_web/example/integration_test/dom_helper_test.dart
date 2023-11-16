@@ -21,7 +21,7 @@ void main() {
       for (final File e in files) {
         // TODO(srujzs): This is necessary in order to support package:web 0.4.0.
         // This was not needed with 0.3.0, hence the lint.
-        // ignore: avoid-unnecessary-type-casts
+        // ignore: unnecessary_cast
         dataTransfer.items.add(e as JSAny);
       }
       return dataTransfer.files;
