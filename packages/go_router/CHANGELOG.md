@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 12.1.1
 
 - Retains query parameters during refresh and first redirect.

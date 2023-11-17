@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 2.5.0
 
 * Adds implementation for `cloudMapId` parameter to support cloud-based maps styling.
