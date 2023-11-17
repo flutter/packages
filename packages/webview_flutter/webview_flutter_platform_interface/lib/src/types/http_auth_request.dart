@@ -45,7 +45,6 @@ import 'webview_credential.dart';
 ///   final String? extraData;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class HttpAuthRequest {
   /// Creates a [HttpAuthRequest].
