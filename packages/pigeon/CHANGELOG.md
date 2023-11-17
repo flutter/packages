@@ -1,3 +1,8 @@
+## 13.1.2
+
+* [cpp] Fix C++ generator skipping FlutterError if no FlutterAPI is defined.
+
+
 ## 13.1.1
 
 * [kotlin] Removes unnecessary `;`s in generated code.
