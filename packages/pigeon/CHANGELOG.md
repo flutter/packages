@@ -7,6 +7,10 @@
 * [dart] Adds default values for class constructors and host API methods.
 * Adds `isEnum` and `isClass` to `TypeDeclaration`s.
 
+## 13.1.2
+
+* Adds compatibility with `analyzer` 6.x.
+
 ## 13.1.1
 
 * [kotlin] Removes unnecessary `;`s in generated code.
