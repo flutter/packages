@@ -736,6 +736,7 @@ if (replyList == null) {
     Indent indent, {
     required String dartPackageName,
   }) {
+    // TODO: setup all message handlers with InstanceManager.instance?
     indent.writeln(r'''
 /// An immutable object that can provide functional copies of itself.
 ///
@@ -810,9 +811,13 @@ class $InstanceManager {
     final $InstanceManagerApi api = $InstanceManagerApi();
     // Clears the native `InstanceManager` on the initial use of the Dart one.
     api.clear();
-    return $InstanceManager(onWeakReferenceRemoved: (int identifier) {
-      api.removeStrongReference(identifier);
-    });
+    final $InstanceManager instanceManager = $InstanceManager(
+      onWeakReferenceRemoved: (int identifier) {
+        api.removeStrongReference(identifier);
+      },
+    );
+    $InstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    return instanceManager;
   }
 
   /// Adds a new instance that was instantiated by Dart.
@@ -967,15 +972,10 @@ class $InstanceManager {
       );
       indent.newln();
 
-      indent.writeScoped(
-        'static void setUpDartMessageHandlers({',
-        '}) ',
-        () {
-          indent.writeln('BinaryMessenger? binaryMessenger,');
-          indent.writeln(r'$InstanceManager? instanceManager,');
-        },
-        addTrailingNewline: false,
-      );
+      indent.writeScoped('static void setUpMessageHandlers({', '}) ', () {
+        indent.writeln('BinaryMessenger? binaryMessenger,');
+        indent.writeln(r'$InstanceManager? instanceManager,');
+      }, addTrailingNewline: false);
       indent.writeScoped('{', '}', () {
         indent.writeScoped('{', '}', () {
           final String channelName = makeChannelNameWithStrings(
@@ -1393,7 +1393,7 @@ class $codecName extends StandardMessageCodec {
       indent.newln();
 
       // callback methods
-      indent.writeScoped('static void setUpDartMessageHandlers ({', '})', () {
+      indent.writeScoped('static void setUpMessageHandlers ({', '})', () {
         indent.writeln(r'BinaryMessenger? $binaryMessenger,');
         indent.writeln(r'$InstanceManager? $instanceManager,');
 

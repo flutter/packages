@@ -956,7 +956,7 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
           );
 
           indent.writeScoped(
-            'fun setUpJavaMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: _InstanceManager) {',
+            'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: _InstanceManager) {',
             '}',
             () {
               indent.writeScoped('run {', '}', () {
@@ -1160,7 +1160,7 @@ private class $codecName(val instanceManager: _InstanceManager) : StandardMessag
 
         indent.writeScoped('companion object {', '}', () {
           indent.writeScoped(
-            'fun setUpKotlinMessageHandlers(api: $apiName) {',
+            'fun setUpMessageHandlers(api: $apiName) {',
             '}',
             () {
               indent.writeln('val codec = $codecName(api.instanceManager)');
