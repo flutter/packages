@@ -196,8 +196,13 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     final bool hasFlutterApi = root.apis.any((Api api) =>
         api.methods.isNotEmpty && api.location == ApiLocation.flutter);
 
-    if (hasHostApi) {
+    // Always write?
+    if (hasFlutterApi || hasHostApi) {
       _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
+    }
+
+    if (hasHostApi) {
+      // Nothing yet
     }
     if (hasFlutterApi) {
       // Nothing yet.
