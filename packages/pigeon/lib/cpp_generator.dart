@@ -196,6 +196,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     final bool hasFlutterApi = root.apis.any((Api api) =>
         api.methods.isNotEmpty && api.location == ApiLocation.flutter);
 
+    _writeFlutterError(indent);
     if (hasHostApi) {
       _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
     }
@@ -510,11 +511,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     indent.newln();
   }
 
-  void _writeErrorOr(Indent indent,
-      {Iterable<String> friends = const <String>[]}) {
-    final String friendLines = friends
-        .map((String className) => '\tfriend class $className;')
-        .join('\n');
+  void _writeFlutterError(Indent indent) {
     indent.format('''
 
 class FlutterError {
@@ -534,7 +531,15 @@ class FlutterError {
 \tstd::string code_;
 \tstd::string message_;
 \tflutter::EncodableValue details_;
-};
+};''');
+  }
+
+  void _writeErrorOr(Indent indent,
+      {Iterable<String> friends = const <String>[]}) {
+    final String friendLines = friends
+        .map((String className) => '\tfriend class $className;')
+        .join('\n');
+    indent.format('''
 
 template<class T> class ErrorOr {
  public:
