@@ -1117,49 +1117,48 @@ private class $codecName(val instanceManager: _InstanceManager) : StandardMessag
         );
 
         for (final Method method in hostMethods) {
-          // TODO: copied from writehostapi
-          final List<String> argSignature = <String>[];
-          if (method.arguments.isNotEmpty) {
-            final Iterable<String> argTypes = method.arguments
-                .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
-            final List<String> argNames = <String>[];
-            enumerate(method.arguments, (int index, NamedType type) {
-              argNames.add(_getSafeArgumentName(
+          final List<String> argSignature = indexMap(
+            method.arguments,
+            (int index, NamedType type) {
+              final String name = _getSafeArgumentName(
                 method.isStatic ? index : index + 1,
                 type,
-              ));
-            });
-            argSignature.addAll(
-              map2(argTypes, argNames, (String argType, String argName) {
-                return '$argName: $argType';
-              }),
-            );
+              );
+              return '$name: ${_nullsafeKotlinTypeForDartType(type.type)}';
+            },
+          ).toList();
+          if (!method.isStatic) {
+            argSignature.insert(0, 'instance: $fullKotlinClassName');
           }
+
+          addDocumentationComments(
+            indent,
+            method.documentationComments,
+            _docCommentSpec,
+          );
 
           final String returnType = method.returnType.isVoid
               ? ''
               : _nullsafeKotlinTypeForDartType(method.returnType);
 
-          final String resultType =
-              method.returnType.isVoid ? 'Unit' : returnType;
-          addDocumentationComments(
-              indent, method.documentationComments, _docCommentSpec);
-
           if (method.isAsynchronous) {
+            final String resultType =
+                method.returnType.isVoid ? 'Unit' : returnType;
             argSignature.add('callback: (Result<$resultType>) -> Unit');
             indent.writeln(
-              'abstract fun ${method.name}(${method.isStatic ? '' : 'instance: $fullKotlinClassName, '}${argSignature.join(', ')})',
+              'abstract fun ${method.name}(${argSignature.join(', ')})',
             );
           } else if (method.returnType.isVoid) {
             indent.writeln(
-              'abstract fun ${method.name}(${method.isStatic ? '' : 'instance: $fullKotlinClassName, '}${argSignature.join(', ')})',
+              'abstract fun ${method.name}(${argSignature.join(', ')})',
             );
           } else {
             indent.writeln(
-              'abstract fun ${method.name}(${method.isStatic ? '' : 'instance: $fullKotlinClassName, '}${argSignature.join(', ')}): $returnType',
+              'abstract fun ${method.name}(${argSignature.join(', ')}): $returnType',
             );
           }
         }
+        indent.newln();
 
         indent.writeScoped('companion object {', '}', () {
           indent.writeScoped(
@@ -1184,6 +1183,10 @@ private class $codecName(val instanceManager: _InstanceManager) : StandardMessag
                     '}',
                     () {
                       final List<String> methodArguments = <String>[];
+                      if (!method.isStatic) {
+                        methodArguments.add('instance');
+                      }
+
                       if (method.arguments.isNotEmpty || !method.isStatic) {
                         indent.writeln('val args = message as List<Any?>');
                         if (!method.isStatic) {
@@ -1191,48 +1194,58 @@ private class $codecName(val instanceManager: _InstanceManager) : StandardMessag
                             'val instance = args[0] as $fullKotlinClassName',
                           );
                         }
-                        enumerate(method.arguments, (int index, NamedType arg) {
-                          final int trueIndex =
-                              method.isStatic ? index : index + 1;
-                          final String argName =
-                              _getSafeArgumentName(trueIndex, arg);
-                          final String argIndex = 'args[$trueIndex]';
-                          indent.writeln(
-                              'val $argName = ${_castForceUnwrap(argIndex, arg.type, root, indent)}');
-                          methodArguments.add(argName);
-                        });
+                        enumerate(
+                          method.arguments,
+                          (int index, NamedType type) {
+                            _writeMessageArg(
+                              indent,
+                              method.isStatic ? index : index + 1,
+                              type,
+                              root,
+                            );
+                            methodArguments.add(_getSafeArgumentName(
+                              method.isStatic ? index : index + 1,
+                              type,
+                            ));
+                          },
+                        );
                       }
+
                       final String call =
-                          'api.${method.name}(${method.isStatic ? '' : 'instance, '}${methodArguments.join(', ')})';
+                          'api.${method.name}(${methodArguments.join(', ')})';
 
                       if (method.isAsynchronous) {
-                        indent.write('$call ');
                         final String resultType = method.returnType.isVoid
                             ? 'Unit'
                             : _nullsafeKotlinTypeForDartType(method.returnType);
-                        indent.addScoped(
-                            '{ result: Result<$resultType> ->', '}', () {
-                          indent
-                              .writeln('val error = result.exceptionOrNull()');
-                          indent.writeScoped('if (error != null) {', '}', () {
-                            indent.writeln('reply.reply(wrapError(error))');
-                          }, addTrailingNewline: false);
-                          indent.addScoped(' else {', '}', () {
-                            final String enumTagNullablePrefix =
-                                method.returnType.isNullable ? '?' : '!!';
-                            final String enumTag =
-                                isEnum(root, method.returnType)
-                                    ? '$enumTagNullablePrefix.raw'
-                                    : '';
-                            if (method.returnType.isVoid) {
-                              indent.writeln('reply.reply(wrapResult(null))');
-                            } else {
-                              indent.writeln('val data = result.getOrNull()');
-                              indent.writeln(
-                                  'reply.reply(wrapResult(data$enumTag))');
-                            }
-                          });
-                        });
+                        indent.writeScoped(
+                          '$call { result: Result<$resultType> ->',
+                          '}',
+                          () {
+                            indent.writeln(
+                              'val error = result.exceptionOrNull()',
+                            );
+                            indent.writeScoped('if (error != null) {', '}', () {
+                              indent.writeln('reply.reply(wrapError(error))');
+                            }, addTrailingNewline: false);
+                            indent.writeScoped('else {', '}', () {
+                              if (method.returnType.isVoid) {
+                                indent.writeln('reply.reply(wrapResult(null))');
+                              } else {
+                                indent.writeln('val data = result.getOrNull()');
+                                final String enumTagNullablePrefix =
+                                    method.returnType.isNullable ? '?' : '!!';
+                                final String enumTag =
+                                    isEnum(root, method.returnType)
+                                        ? '$enumTagNullablePrefix.raw'
+                                        : '';
+                                indent.writeln(
+                                  'reply.reply(wrapResult(data$enumTag))',
+                                );
+                              }
+                            });
+                          },
+                        );
                       } else {
                         indent.writeScoped(
                           'val wrapped: List<Any?> = try {',
@@ -1535,4 +1548,11 @@ void _writeBasicMessageChannel(
   } else {
     indent.addln(')');
   }
+}
+
+void _writeMessageArg(Indent indent, int index, NamedType type, Root root) {
+  final String argName = _getSafeArgumentName(index, type);
+  indent.writeln(
+    'val $argName = ${_castForceUnwrap('args[$index]', type.type, root, indent)}',
+  );
 }
