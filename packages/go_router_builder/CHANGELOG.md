@@ -1,3 +1,7 @@
+## 2.3.4
+
+* Fixes a bug of typeArguments losing NullabilitySuffix
+
 ## 2.3.3
 
 * Adds `initialLocation` for `StatefulShellBranchConfig`

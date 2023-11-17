@@ -342,7 +342,7 @@ void main() {
       // resolution.
       expectedResolutionStrategy ??= ResolutionStrategy.detached(
           boundSize: expectedBoundSize,
-          fallbackRule: ResolutionStrategy.fallbackRuleClosestLower);
+          fallbackRule: ResolutionStrategy.fallbackRuleClosestLowerThenHigher);
 
       expect(camera.preview!.resolutionSelector!.resolutionStrategy!.boundSize,
           equals(expectedResolutionStrategy.boundSize));
@@ -431,7 +431,7 @@ void main() {
       }
 
       const VideoResolutionFallbackRule expectedFallbackRule =
-          VideoResolutionFallbackRule.lowerQualityThan;
+          VideoResolutionFallbackRule.lowerQualityOrHigherThan;
       final FallbackStrategy expectedFallbackStrategy =
           FallbackStrategy.detached(
               quality: expectedVideoQuality,
@@ -1217,6 +1217,22 @@ void main() {
     when(mockLiveZoomState.getValue()).thenAnswer((_) async => zoomState);
 
     expect(await camera.getMinZoomLevel(55), minZoomRatio);
+  });
+
+  test('setZoomLevel sets zoom ratio as expected', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 44;
+    const double zoomRatio = 0.3;
+    final MockCameraControl mockCameraControl = MockCameraControl();
+
+    camera.camera = MockCamera();
+
+    when(camera.camera!.getCameraControl())
+        .thenAnswer((_) async => mockCameraControl);
+
+    await camera.setZoomLevel(cameraId, zoomRatio);
+
+    verify(mockCameraControl.setZoomRatio(zoomRatio));
   });
 
   test(
