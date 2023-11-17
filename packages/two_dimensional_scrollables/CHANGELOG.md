@@ -1,6 +1,5 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 * Fixes bug where having one reversed axis caused incorrect painting of a pinned row.
 * Adds support for BorderRadius in TableSpanDecorations.
 

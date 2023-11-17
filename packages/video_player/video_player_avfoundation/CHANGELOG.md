@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-
 ## 2.5.2
 
 * Fixes flickering and seek-while-paused on macOS.
