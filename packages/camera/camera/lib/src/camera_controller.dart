@@ -264,7 +264,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// When null the fileFormat will fallback [FileFormat.jpeg]
   ///
   /// Only supported on iOS for now.
-  final FileFormat? fileFormat;
+  final ImageFileFormat? fileFormat;
 
   /// The id of a camera that hasn't been initialized.
   @visibleForTesting
@@ -855,7 +855,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Sets the output format for the camera.
   ///
   /// If [format] is omitted, the default output format is used.
-  Future<void> setFileFormat(FileFormat format) async {
+  Future<void> setFileFormat(ImageFileFormat format) async {
     try {
       await CameraPlatform.instance.setFileFormat(_cameraId, format);
     } on PlatformException catch (e) {

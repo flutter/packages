@@ -438,7 +438,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   }
 
   /// Sets the output format for taking pictures.
-  Future<void> setFileFormat(FileFormat format) async {
+  Future<void> setFileFormat(ImageFileFormat format) async {
     await CameraPlatform.instance.setFileFormat(_cameraId, format);
   }
 

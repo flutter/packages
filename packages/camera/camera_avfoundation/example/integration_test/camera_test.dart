@@ -329,14 +329,14 @@ void main() {
       return;
     }
     for (final CameraDescription cameraDescription in cameras) {
-      for (final FileFormat fileFormat in FileFormat.values) {
+      for (final ImageFileFormat fileFormat in ImageFileFormat.values) {
         final CameraController controller =
             CameraController(cameraDescription, ResolutionPreset.low);
         await controller.initialize();
         await controller.setFileFormat(fileFormat);
         final XFile file = await controller.takePicture();
         await controller.dispose();
-        expect(file.path.endsWith(fileFormat.name()), true);
+        expect(file.path.endsWith(fileFormat.name), true);
       }
     }
   });

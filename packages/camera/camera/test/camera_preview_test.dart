@@ -124,10 +124,10 @@ class FakeController extends ValueNotifier<CameraValue>
   CameraDescription get description => value.description;
 
   @override
-  FileFormat? get fileFormat => null;
+  ImageFileFormat? get fileFormat => null;
 
   @override
-  Future<void> setFileFormat(FileFormat format) async {}
+  Future<void> setFileFormat(ImageFileFormat format) async {}
 }
 
 void main() {

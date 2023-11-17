@@ -341,7 +341,7 @@ void main() {
         final CameraController controller =
             CameraController(cameraDescription, ResolutionPreset.low);
 
-        await controller.setFileFormat(FileFormat.heif);
+        await controller.setFileFormat(ImageFileFormat.heif);
         await controller.initialize();
 
         final XFile file = await controller.takePicture();

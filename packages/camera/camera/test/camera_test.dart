@@ -1411,10 +1411,10 @@ void main() {
           ResolutionPreset.max);
       await cameraController.initialize();
 
-      await cameraController.setFileFormat(FileFormat.jpeg);
+      await cameraController.setFileFormat(ImageFileFormat.jpeg);
 
       verify(CameraPlatform.instance
-              .setFileFormat(cameraController.cameraId, FileFormat.jpeg))
+              .setFileFormat(cameraController.cameraId, ImageFileFormat.jpeg))
           .called(1);
     });
 
@@ -1429,7 +1429,7 @@ void main() {
       await cameraController.initialize();
 
       when(CameraPlatform.instance
-              .setFileFormat(cameraController.cameraId, FileFormat.jpeg))
+              .setFileFormat(cameraController.cameraId, ImageFileFormat.jpeg))
           .thenThrow(
         PlatformException(
           code: 'TEST_ERROR',
@@ -1438,7 +1438,7 @@ void main() {
       );
 
       expect(
-          cameraController.setFileFormat(FileFormat.jpeg),
+          cameraController.setFileFormat(ImageFileFormat.jpeg),
           throwsA(isA<CameraException>().having(
             (CameraException error) => error.description,
             'TEST_ERROR',
@@ -1600,7 +1600,7 @@ class MockCameraPlatform extends Mock
       ) as Future<double>;
 
   @override
-  Future<void> setFileFormat(int cameraId, FileFormat format) async =>
+  Future<void> setFileFormat(int cameraId, ImageFileFormat format) async =>
       super.noSuchMethod(
           Invocation.method(#setFileFormat, <Object?>[cameraId, format]));
 }
