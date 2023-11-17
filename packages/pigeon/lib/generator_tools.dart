@@ -622,9 +622,3 @@ class OutputFileOptions<T> {
   /// Options for specified language across all file types.
   T languageOptions;
 }
-
-/// Provides a trailing comma for strings that are greater than 75 len
-String getTrailingComma(String string,
-    [List<String> moreStrings = const <String>[]]) {
-  return '$string${moreStrings.join()}'.length > 75 ? ',' : '';
-}

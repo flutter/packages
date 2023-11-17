@@ -12,7 +12,14 @@ import 'generator_tools.dart';
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
 
+/// Prefix for all local variables in host API methods.
+///
+/// This lowers the chances of variable name collisions with
+/// user defined parameters.
 const String _varNamePrefix = '__pigeon_';
+
+/// Name of field used for host API codec.
+const String _pigeonChannelCodec = 'pigeonChannelCodec';
 
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
@@ -327,7 +334,7 @@ $resultAt != null
             'static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;');
       }
       indent.writeln(
-          'static const MessageCodec<Object?> pigeonChannelCodec = $codecName();');
+          'static const MessageCodec<Object?> $_pigeonChannelCodec = $codecName();');
       indent.newln();
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -354,7 +361,7 @@ $resultAt != null
                 ? makeChannelName(api, func, dartPackageName)
                 : channelNameFunc(func);
             indent.nest(2, () {
-              indent.writeln("'$channelName', pigeonChannelCodec,");
+              indent.writeln("'$channelName', $_pigeonChannelCodec,");
               indent.writeln(
                 'binaryMessenger: binaryMessenger);',
               );
@@ -506,7 +513,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 ''');
 
       indent.writeln(
-          'static const MessageCodec<Object?> pigeonChannelCodec = $codecName();');
+          'static const MessageCodec<Object?> $_pigeonChannelCodec = $codecName();');
       indent.newln();
       for (final Method func in api.methods) {
         if (!first) {
@@ -541,7 +548,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
               'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
               ');', () {
             indent.writeln('${_varNamePrefix}channelName,');
-            indent.writeln('pigeonChannelCodec,');
+            indent.writeln('$_pigeonChannelCodec,');
             indent
                 .writeln('binaryMessenger: ${_varNamePrefix}binaryMessenger,');
           });
@@ -815,8 +822,8 @@ String _getSafeArgumentName(int count, NamedType field) =>
 String _getParameterName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : field.name;
 
-/// Generates the arguments code for [func]
-/// Example: (func, getArgumentName) -> 'String? foo, int bar'
+/// Generates the parameters code for [func]
+/// Example: (func, _getParameterName) -> 'String? foo, int bar'
 String _getMethodParameterSignature(Method func) {
   String signature = '';
   if (func.parameters.isEmpty) {
@@ -850,22 +857,26 @@ String _getMethodParameterSignature(Method func) {
       .join(', ');
   final String namedParameterString =
       namedParams.map((Parameter p) => getParameterString(p)).join(', ');
-// Parameter lists can end with either named or optional positional parameters, but not both.
-  if (baseParameterString.isNotEmpty) {
-    final String trailingComma = getTrailingComma(baseParameterString,
-        <String>[namedParameterString, optionalParameterString]);
-    signature = '$baseParameterString$trailingComma';
+
+  // Parameter lists can end with either named or optional positional parameters, but not both.
+  if (requiredPositionalParams.isNotEmpty) {
+    signature = baseParameterString;
   }
-  final String baseParams = signature.isNotEmpty ? '$signature ' : '';
-  if (namedParameterString.isNotEmpty) {
+  final String trailingComma =
+      optionalPositionalParams.isNotEmpty || namedParams.isNotEmpty ? ',' : '';
+  final String baseParams =
+      signature.isNotEmpty ? '$signature$trailingComma ' : '';
+  if (optionalPositionalParams.isNotEmpty) {
     final String trailingComma =
-        getTrailingComma(baseParams, <String>[namedParameterString]);
-    return '$baseParams{$namedParameterString$trailingComma}';
-  }
-  if (optionalParameterString.isNotEmpty) {
-    final String trailingComma =
-        getTrailingComma(baseParams, <String>[optionalParameterString]);
+        requiredPositionalParams.length + optionalPositionalParams.length > 2
+            ? ','
+            : '';
     return '$baseParams[$optionalParameterString$trailingComma]';
+  }
+  if (namedParams.isNotEmpty) {
+    final String trailingComma =
+        requiredPositionalParams.length + namedParams.length > 2 ? ',' : '';
+    return '$baseParams{$namedParameterString$trailingComma}';
   }
   return signature;
 }
