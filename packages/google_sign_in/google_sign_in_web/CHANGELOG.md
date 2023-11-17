@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-
 ## 0.12.1
 
 * Enables FedCM on browsers that support this authentication mechanism.
