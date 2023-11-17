@@ -22,11 +22,11 @@ import 'resolution_strategy.dart';
 import 'system_services.dart';
 import 'video_capture.dart';
 
-/// Handles constructing objects and calling static methods for the CameraX
-/// implementation of the camera plugin on Android.
+/// Handles constructing objects and making method calls for the plugin that
+/// need testing.
 ///
 /// By default, each function will create objects attached to an
-/// `InstanceManager` and call through to the appropriate static methods.
+/// `InstanceManager` and call through to the appropriate method.
 class CameraXProxy {
   /// Constructs a [CameraXProxy].
   CameraXProxy({
@@ -78,25 +78,41 @@ class CameraXProxy {
   ImageAnalysis Function(ResolutionSelector? resolutionSelector)
       createImageAnalysis;
 
+  /// Returns an [Analyzer] configured with the specified callback for
+  /// analyzing [ImageProxy]s.
   Analyzer Function(Future<void> Function(ImageProxy imageProxy) analyze)
       createAnalyzer;
 
+  /// Returns an [Observer] of the [CameraState] with the specified callback
+  /// for handling changes in that state.
   Observer<CameraState> Function(void Function(Object stateAsObject) onChanged)
       createCameraStateObserver;
 
+  /// Returns a [ResolutionStrategy] configured with the specified bounds for
+  /// choosing a resolution and a fallback rule if achieving a resolution within
+  /// those bounds is not possible.
+  ///
+  /// [highestAvailable] is used to specify whether or not the highest available
+  /// [ResolutionStrategy] should attempt to be chosen.
   ResolutionStrategy Function(
       {bool highestAvailable,
       Size? boundSize,
       int? fallbackRule}) createResolutionStrategy;
 
+  /// Returns a [ResolutionSelector] configured with the specified
+  /// [ResolutionStrategy].
   ResolutionSelector Function(ResolutionStrategy resolutionStrategy)
       createResolutionSelector;
 
+  /// Returns a [FallbackStrategy] configured with the specified [VideoQuality]
+  /// and [VideoResolutionFallbackRule].
   FallbackStrategy Function(
           {required VideoQuality quality,
           required VideoResolutionFallbackRule fallbackRule})
       createFallbackStrategy;
 
+  /// Returns a [QualitySelector] configured with the specified [VideoQuality]
+  /// and [FallbackStrategy].
   QualitySelector Function(
       {required VideoQuality videoQuality,
       required FallbackStrategy fallbackStrategy}) createQualitySelector;
@@ -108,9 +124,9 @@ class CameraXProxy {
   void Function(bool cameraIsFrontFacing, int sensorOrientation)
       startListeningForDeviceOrientationChange;
 
+  /// Sets the surface provider of the specified [Preview] instance and returns
+  /// the ID corresponding to the surface it will provide.
   Future<int> Function(Preview preview) setPreviewSurfaceProvider;
-
-  // Object creation:
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -191,8 +207,6 @@ class CameraXProxy {
         quality: VideoQualityData(quality: videoQuality),
         fallbackStrategy: fallbackStrategy);
   }
-
-  // Static methods:
 
   static Future<void> _requestCameraPermissions(bool enableAudio) async {
     await SystemServices.requestCameraPermissions(enableAudio);
