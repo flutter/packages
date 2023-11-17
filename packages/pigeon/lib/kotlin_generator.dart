@@ -1069,6 +1069,9 @@ class _InstanceManager(private val finalizationListener: FinalizationListener) {
     ProxyApiNode api, {
     required String dartPackageName,
   }) {
+    // TODO: would it be possible to have all possible getApi for creating new objects for Flutter apis?
+    // TODO: Above answer is no because u would need to know how to get fields
+    // TODO: maybe a method for addNew__Class__Instance to implement? for classes with fields?
     final String codecName = _getCodecName(api);
 
     indent.writeln('''
