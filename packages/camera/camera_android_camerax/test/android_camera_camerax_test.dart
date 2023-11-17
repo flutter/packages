@@ -83,60 +83,6 @@ void main() {
   // Mocks the call to clear the native InstanceManager.
   TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
-  // bool cameraPermissionsRequested = false;
-  // bool startedListeningForDeviceOrientationChanges = false;
-  // final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
-  // final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-
-  CameraXProxy createProxyForCreateCamera(
-    ProcessCameraProvider processCameraProvider,
-    CameraSelector frontCameraSelector,
-    CameraSelector backCameraSelector,
-    Preview preview,
-    ImageCapture imageCapture,
-    Recorder recorder,
-    VideoCapture videoCapture,
-    ImageAnalysis imageAnalysis,
-  ) =>
-      CameraXProxy(
-        getProcessCameraProvider: () =>
-            Future<ProcessCameraProvider>.value(processCameraProvider),
-        createCameraSelector: (int cameraSelectorLensDirection) {
-          switch (cameraSelectorLensDirection) {
-            case CameraSelector.lensFacingFront:
-              return frontCameraSelector;
-            case CameraSelector.lensFacingBack:
-            default:
-              return backCameraSelector;
-          }
-        },
-        createPreview: (
-                {required int targetRotation,
-                ResolutionSelector? resolutionSelector}) =>
-            preview,
-        createImageCapture: (_) => imageCapture,
-        createRecorder: (_) => recorder,
-        createVideoCapture: (_) => Future<VideoCapture>.value(videoCapture),
-        createImageAnalysis: (_) => imageAnalysis,
-        createResolutionStrategy: (
-                {bool highestAvailable = false,
-                Size? boundSize,
-                int? fallbackRule}) =>
-            MockResolutionStrategy(),
-        createResolutionSelector: (_) => MockResolutionSelector(),
-        createFallbackStrategy: (
-                {required VideoQuality quality,
-                required VideoResolutionFallbackRule fallbackRule}) =>
-            MockFallbackStrategy(),
-        createQualitySelector: (
-                {required VideoQuality videoQuality,
-                required FallbackStrategy fallbackStrategy}) =>
-            MockQualitySelector(),
-        createCameraStateObserver: (_) => MockObserver(),
-        requestCameraPermissions: (_) => Future<void>.value(),
-        startListeningForDeviceOrientationChange: (_, __) {},
-      );
-
   /// Helper method for testing sending/receiving CameraErrorEvents.
   Future<bool> testCameraClosingObserver(AndroidCameraCameraX camera,
       int cameraId, Observer<dynamic> observer) async {
