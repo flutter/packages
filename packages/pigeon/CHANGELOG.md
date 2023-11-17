@@ -1,7 +1,7 @@
 ## 13.1.2
 
+* Adds compatibilty with `analyzer` 6.x.
 * [cpp] Fix C++ generator skipping FlutterError if no FlutterAPI is defined.
-
 
 ## 13.1.1
 
