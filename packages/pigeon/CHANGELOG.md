@@ -6,6 +6,7 @@
 * [dart] Adds optional parameters to host API methods.
 * [dart] Adds default values for class constructors and host API methods.
 * Adds `isEnum` and `isClass` to `TypeDeclaration`s.
+* [cpp] Fixes `FlutterError` generation being tied to ErrorOr.
 
 ## 13.1.2
 
