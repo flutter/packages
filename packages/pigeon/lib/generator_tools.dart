@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '13.1.2';
+const String pigeonVersion = '14.0.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -169,6 +169,8 @@ String makeChannelName(Api api, Method func, String dartPackageName) {
   return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
 }
 
+// TODO(tarrinneal): Determine whether HostDataType is needed.
+
 /// Represents the mapping of a Dart datatype to a Host datatype.
 class HostDatatype {
   /// Parametric constructor for HostDatatype.
@@ -199,10 +201,10 @@ class HostDatatype {
 /// datatype for the Dart datatype for builtin types.
 ///
 /// [customResolver] can modify the datatype of custom types.
-HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype getFieldHostDatatype(
+    NamedType field, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  return _getHostDatatype(field.type, classes, enums, builtinResolver,
+  return _getHostDatatype(field.type, builtinResolver,
       customResolver: customResolver, fieldName: field.name);
 }
 
@@ -213,19 +215,19 @@ HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
 /// datatype for the Dart datatype for builtin types.
 ///
 /// [customResolver] can modify the datatype of custom types.
-HostDatatype getHostDatatype(TypeDeclaration type, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype getHostDatatype(
+    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  return _getHostDatatype(type, classes, enums, builtinResolver,
+  return _getHostDatatype(type, builtinResolver,
       customResolver: customResolver);
 }
 
-HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype _getHostDatatype(
+    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver, String? fieldName}) {
   final String? datatype = builtinResolver(type);
   if (datatype == null) {
-    if (classes.map((Class x) => x.name).contains(type.baseName)) {
+    if (type.isClass) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
@@ -235,7 +237,7 @@ HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
         isNullable: type.isNullable,
         isEnum: false,
       );
-    } else if (enums.map((Enum x) => x.name).contains(type.baseName)) {
+    } else if (type.isEnum) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
@@ -412,7 +414,7 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   final _Bag<TypeDeclaration, int> references = _Bag<TypeDeclaration, int>();
   for (final Api api in apis) {
     for (final Method method in api.methods) {
-      for (final NamedType field in method.arguments) {
+      for (final NamedType field in method.parameters) {
         references.addMany(_getTypeArguments(field.type), field.offset);
       }
       references.addMany(_getTypeArguments(method.returnType), method.offset);
@@ -478,10 +480,6 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   }
 }
 
-/// Returns true if the [TypeDeclaration] represents an enum.
-bool isEnum(Root root, TypeDeclaration type) =>
-    root.enums.map((Enum e) => e.name).contains(type.baseName);
-
 /// Describes how to format a document comment.
 class DocumentCommentSpecification {
   /// Constructor for [DocumentationCommentSpecification]
@@ -542,9 +540,9 @@ void addDocumentationComments(
 }
 
 /// Returns an ordered list of fields to provide consistent serialization order.
-Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+Iterable<NamedType> getFieldsInSerializationOrder(Class classDefinition) {
   // This returns the fields in the order they are declared in the pigeon file.
-  return klass.fields;
+  return classDefinition.fields;
 }
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a

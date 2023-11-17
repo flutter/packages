@@ -1,6 +1,16 @@
+## 14.0.0
+
+* **Breaking change** [dart] Renames locally defined host API variables.
+  * [dart] Host api static field `codec` changed to `pigeonChannelCodec`.
+* [dart] Adds named parameters to host API methods.
+* [dart] Adds optional parameters to host API methods.
+* [dart] Adds default values for class constructors and host API methods.
+* Adds `isEnum` and `isClass` to `TypeDeclaration`s.
+* [cpp] Fixes `FlutterError` generation being tied to ErrorOr.
+
 ## 13.1.2
 
-* Adds compatibilty with `analyzer` 6.x.
+* Adds compatibility with `analyzer` 6.x.
 
 ## 13.1.1
 
@@ -159,7 +169,7 @@
 * [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
 * [kotlin] Adds a `FlutterError` exception for passing custom error details (code, message, details).
 * [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
-* [java] Removes legacy try catch from async apis.
+* [java] Removes legacy try catch from async APIs.
 * [java] Removes legacy null check on non-nullable method arguments.
 * [cpp] Fixes wrong order of items in `FlutterError`.
 * Adds `FlutterError` handling integration tests for all platforms.
@@ -212,7 +222,7 @@
 
 ## 7.2.1
 
-* [kotlin] Fixes Flutter api int errors with updated casting.
+* [kotlin] Fixes Flutter API int errors with updated casting.
 
 ## 7.2.0
 
@@ -238,7 +248,7 @@
 
 ## 7.1.2
 
-* [swift] Adds error handling to sync host api methods.
+* [swift] Adds error handling to sync host API methods.
 
 ## 7.1.1
 
@@ -352,7 +362,7 @@
 
 ## 4.2.4
 
-* [kotlin] Fixes Kotlin generated sync host api error.
+* [kotlin] Fixes Kotlin generated sync host API error.
 
 ## 4.2.3
 
@@ -831,7 +841,7 @@ class Foo {
 
 ## 0.1.0-experimental.11
 
-* Fixed setting an api to null in Java.
+* Fixed setting an API to null in Java.
 
 ## 0.1.0-experimental.10
 

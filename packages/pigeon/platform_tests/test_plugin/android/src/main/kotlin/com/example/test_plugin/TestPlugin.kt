@@ -82,6 +82,18 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return anEnum
   }
 
+  override fun echoNamedDefaultString(aString: String): String {
+    return aString
+  }
+
+  override fun echoOptionalDefaultDouble(aDouble: Double): Double {
+    return aDouble
+  }
+
+  override fun echoRequiredInt(anInt: Long): Long {
+    return anInt
+  }
+
   override fun extractNestedNullableString(wrapper: AllClassesWrapper): String? {
     return wrapper.allNullableTypes.aNullableString
   }
@@ -135,6 +147,14 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun echoNullableEnum(anEnum: AnEnum?): AnEnum? {
     return anEnum
+  }
+
+  override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
+    return aNullableInt
+  }
+
+  override fun echoNamedNullableString(aNullableString: String?): String? {
+    return aNullableString
   }
 
   override fun noopAsync(callback: (Result<Unit>) -> Unit) {
