@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
+## 13.1.2
+
+* Adds compatibilty with `analyzer` 6.x.
+
 ## 13.1.1
 
 * [kotlin] Removes unnecessary `;`s in generated code.

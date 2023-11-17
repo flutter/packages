@@ -1,5 +1,6 @@
-## NEXT
+## 12.1.2
 
+* Fixes an incorrect use of `extends` for Dart 3 compatibility.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 12.1.1
@@ -79,7 +80,7 @@
 
 ## 10.1.1
 
-- Fixes mapping from `Page` to `RouteMatch`s. 
+- Fixes mapping from `Page` to `RouteMatch`s.
 - Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 10.1.0

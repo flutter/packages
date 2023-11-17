@@ -1,6 +1,8 @@
-## NEXT
+## 2.1.7
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Changes `MockPlatformInterfaceMixin` to a `mixin class` for better
+  compatibility with projects that have a minumum Dart SDK version of 3.0.
+* Updates minimum supported SDK version to Dart 3.0.
 
 ## 2.1.6
 
