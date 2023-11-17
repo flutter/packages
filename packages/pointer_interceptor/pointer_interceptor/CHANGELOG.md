@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-
 ## 0.9.3+7
 
 * Updates metadata to point to new source folder
