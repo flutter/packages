@@ -550,13 +550,14 @@ final BinaryMessenger? _binaryMessenger;
           'Future<${_addGenericTypesNullable(func.returnType)}> ${func.name}($argSignature) async ',
         );
         indent.addScoped('{', '}', () {
-          final String channelName =
-              makeChannelName(api, func, dartPackageName);
           indent.writeln(
-              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(');
-          indent.nest(2, () {
-            indent.writeln("'$channelName', codec,");
-            indent.writeln('binaryMessenger: _binaryMessenger);');
+              "const String channelName = '${makeChannelName(api, func, dartPackageName)}';");
+          indent.writeScoped(
+              'final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(',
+              ');', () {
+            indent.writeln('channelName,');
+            indent.writeln('codec,');
+            indent.writeln('binaryMessenger: _binaryMessenger,');
           });
           final String returnType = _makeGenericTypeArguments(func.returnType);
           final String genericCastCall = _makeGenericCastCall(func.returnType);
@@ -586,10 +587,7 @@ final BinaryMessenger? _binaryMessenger;
 final List<Object?>? replyList =
 \t\tawait channel.send($sendArgument) as List<Object?>?;
 if (replyList == null) {
-\tthrow PlatformException(
-\t\tcode: 'channel-error',
-\t\tmessage: 'Unable to establish connection on channel.',
-\t);
+\tthrow _createConnectionError(channelName);
 } else if (replyList.length > 1) {
 \tthrow PlatformException(
 \t\tcode: replyList[0]! as String,
@@ -705,11 +703,22 @@ if (replyList == null) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    _writeWrapResponse(generatorOptions, root, indent);
+    final bool hasHostApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.host);
+    final bool hasFlutterApi = root.apis.any((Api api) =>
+        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+
+    if (hasHostApi) {
+      _writeCreateConnectionError(indent);
+    }
+    if (hasFlutterApi) {
+      _writeWrapResponse(generatorOptions, root, indent);
+    }
   }
 
   /// Writes [wrapResponse] method.
   void _writeWrapResponse(DartOptions opt, Root root, Indent indent) {
+    indent.newln();
     indent.writeScoped(
         'List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {',
         '}', () {
@@ -722,6 +731,17 @@ if (replyList == null) {
       indent.writeln(
           'return <Object?>[error.code, error.message, error.details];');
     });
+  }
+
+  void _writeCreateConnectionError(Indent indent) {
+    indent.newln();
+    indent.format('''
+PlatformException _createConnectionError(String channelName) {
+\treturn PlatformException(
+\t\tcode: 'channel-error',
+\t\tmessage: 'Unable to establish connection on channel: "\$channelName".',
+\t);
+}''');
   }
 }
 

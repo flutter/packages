@@ -558,11 +558,12 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       } else {
         printError(
             'No version change found, but the change to this package could '
-            'not be verified to be exempt from version changes according to '
-            'repository policy. If this is a false positive, please comment in '
-            'the PR to explain why the PR is exempt, and add (or ask your '
-            'reviewer to add) the "$_missingVersionChangeOverrideLabel" '
-            'label.');
+            'not be verified to be exempt\n'
+            'from version changes according to repository policy.\n'
+            'If this is a false positive, please comment in '
+            'the PR to explain why the PR\n'
+            'is exempt, and add (or ask your reviewer to add) the '
+            '"$_missingVersionChangeOverrideLabel" label.');
         return 'Missing version change';
       }
     }
@@ -572,13 +573,13 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         logWarning('Ignoring lack of CHANGELOG update due to the '
             '"$_missingChangelogChangeOverrideLabel" label.');
       } else {
-        printError(
-            'No CHANGELOG change found. If this PR needs an exemption from '
-            'the standard policy of listing all changes in the CHANGELOG, '
+        printError('No CHANGELOG change found.\n'
+            'If this PR needs an exemption from the standard policy of listing '
+            'all changes in the CHANGELOG,\n'
             'comment in the PR to explain why the PR is exempt, and add (or '
-            'ask your reviewer to add) the '
-            '"$_missingChangelogChangeOverrideLabel" label. Otherwise, '
-            'please add a NEXT entry in the CHANGELOG as described in '
+            'ask your reviewer to add) the\n'
+            '"$_missingChangelogChangeOverrideLabel" label.\n'
+            'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
             'the contributing guide.');
         return 'Missing CHANGELOG change';
       }

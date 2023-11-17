@@ -1,3 +1,7 @@
+## 0.5.0+22
+
+* Fixes `_getResolutionSelectorFromPreset` null pointer error.
+
 ## 0.5.0+21
 
 * Changes fallback resolution strategies for camera use cases to look for a higher resolution if neither the desired

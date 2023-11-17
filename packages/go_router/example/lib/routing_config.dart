@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
             return Scaffold(
               appBar: AppBar(title: const Text('Home')),
               body: Center(
-                child: Row(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     ElevatedButton(

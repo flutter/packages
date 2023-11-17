@@ -296,11 +296,18 @@ class TableSpanDecoration {
   const TableSpanDecoration({
     this.border,
     this.color,
+    this.borderRadius,
     this.consumeSpanPadding = true,
   });
 
   /// The border drawn around the span.
   final TableSpanBorder? border;
+
+  /// The radius by which the leading and trailing ends of a row or
+  /// column will be rounded.
+  ///
+  /// Applies to the [border] and [color] of the given [TableSpan].
+  final BorderRadius? borderRadius;
 
   /// The color to fill the bounds of the span with.
   final Color? color;
@@ -364,15 +371,20 @@ class TableSpanDecoration {
   /// cells.
   void paint(TableSpanDecorationPaintDetails details) {
     if (color != null) {
-      details.canvas.drawRect(
-        details.rect,
-        Paint()
-          ..color = color!
-          ..isAntiAlias = false,
-      );
+      final Paint paint = Paint()
+        ..color = color!
+        ..isAntiAlias = borderRadius != null;
+      if (borderRadius == null || borderRadius == BorderRadius.zero) {
+        details.canvas.drawRect(details.rect, paint);
+      } else {
+        details.canvas.drawRRect(
+          borderRadius!.toRRect(details.rect),
+          paint,
+        );
+      }
     }
     if (border != null) {
-      border!.paint(details);
+      border!.paint(details, borderRadius);
     }
   }
 }
@@ -416,23 +428,32 @@ class TableSpanBorder {
   /// cell representing the pinned column and separately with another
   /// [TableSpanDecorationPaintDetails.rect] containing all the other unpinned
   /// cells.
-  void paint(TableSpanDecorationPaintDetails details) {
+  void paint(
+    TableSpanDecorationPaintDetails details,
+    BorderRadius? borderRadius,
+  ) {
     final AxisDirection axisDirection = details.axisDirection;
     switch (axisDirectionToAxis(axisDirection)) {
       case Axis.horizontal:
-        paintBorder(
-          details.canvas,
-          details.rect,
+        final Border border = Border(
           top: axisDirection == AxisDirection.right ? leading : trailing,
           bottom: axisDirection == AxisDirection.right ? trailing : leading,
         );
-        break;
-      case Axis.vertical:
-        paintBorder(
+        border.paint(
           details.canvas,
           details.rect,
+          borderRadius: borderRadius,
+        );
+        break;
+      case Axis.vertical:
+        final Border border = Border(
           left: axisDirection == AxisDirection.down ? leading : trailing,
           right: axisDirection == AxisDirection.down ? trailing : leading,
+        );
+        border.paint(
+          details.canvas,
+          details.rect,
+          borderRadius: borderRadius,
         );
         break;
     }

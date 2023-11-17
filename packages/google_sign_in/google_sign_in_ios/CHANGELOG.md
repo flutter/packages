@@ -1,3 +1,7 @@
+## 5.6.5
+
+* Upgrades GoogleSignIn iOS SDK to 7.0.
+
 ## 5.6.4
 
 * Converts platform communication to Pigeon.
