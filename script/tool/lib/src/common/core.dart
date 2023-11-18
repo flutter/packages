@@ -68,6 +68,7 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 10, 0): Version(3, 0, 0),
   Version(3, 10, 6): Version(3, 0, 6),
   Version(3, 13, 0): Version(3, 1, 0),
+  Version(3, 13, 9): Version(3, 1, 5),
   Version(3, 16, 0): Version(3, 2, 0),
 };
 
