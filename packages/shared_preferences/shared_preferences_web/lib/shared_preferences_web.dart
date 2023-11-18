@@ -10,6 +10,8 @@ import 'package:shared_preferences_platform_interface/shared_preferences_platfor
 import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:web/web.dart' as html;
 
+import 'src/keys_extension.dart';
+
 /// The web implementation of [SharedPreferencesStorePlatform].
 ///
 /// This class implements the `package:shared_preferences` functionality for the web.
@@ -109,11 +111,5 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     }
 
     return decodedValue!;
-  }
-}
-
-extension on html.Storage {
-  List<String> get keys {
-    return <String>[for (int i = 0; i < length; i++) key(i)!];
   }
 }
