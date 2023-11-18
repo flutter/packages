@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 14.0.0
 
 * **Breaking change** [dart] Renames locally defined host API variables.
