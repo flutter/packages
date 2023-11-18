@@ -93,6 +93,21 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
+  /// Gets the video [TrackSelection]s. For convenience if the video file has at
+  /// least one [TrackSelection] for a specific type, the auto track selection will
+  /// be added to this list with that type.
+  Future<List<TrackSelection>> getTrackSelections(
+    int textureId, {
+    TrackSelectionNameResource? trackSelectionNameResource,
+  }) {
+    throw UnimplementedError('getTrackSelection() has not been implemented.');
+  }
+
+  /// Sets the selected video track selection.
+  Future<void> setTrackSelection(int textureId, TrackSelection trackSelection) {
+    throw UnimplementedError('setTrackSelection() has not been implemented.');
+  }
+
   /// Returns a widget displaying the video with a given textureID.
   Widget buildView(int textureId) {
     throw UnimplementedError('buildView() has not been implemented.');
@@ -119,7 +134,7 @@ class DataSource {
   /// The [sourceType] is always required.
   ///
   /// The [uri] argument takes the form of `'https://example.com/video.mp4'` or
-  /// `'file:///absolute/path/to/local/video.mp4`.
+  /// `'file://${file.path}'`.
   ///
   /// The [formatHint] argument can be null.
   ///
@@ -207,7 +222,7 @@ class VideoEvent {
   ///
   /// Depending on the [eventType], the [duration], [size],
   /// [rotationCorrection], and [buffered] arguments can be null.
-  // TODO(stuartmorgan): Temporarily suppress warnings about not using const
+// TODO(stuartmorgan): Temporarily suppress warnings about not using const
   // in all of the other video player packages, fix this, and then update
   // the other packages to use const.
   // ignore: prefer_const_constructors_in_immutables
@@ -308,7 +323,7 @@ enum VideoEventType {
 class DurationRange {
   /// Trusts that the given [start] and [end] are actually in order. They should
   /// both be non-null.
-  // TODO(stuartmorgan): Temporarily suppress warnings about not using const
+// TODO(stuartmorgan): Temporarily suppress warnings about not using const
   // in all of the other video player packages, fix this, and then update
   // the other packages to use const.
   // ignore: prefer_const_constructors_in_immutables

@@ -133,11 +133,22 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
     return _player(textureId).events;
   }
 
+  Future<List<TrackSelection>> getTrackSelections(
+    int textureId, {
+    TrackSelectionNameResource? trackSelectionNameResource,
+  }) async {
+    return _videoPlayers[textureId]!.getTrackSelections(
+        trackSelectionNameResource: trackSelectionNameResource);
+  }
+
   @override
   Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {
     return _player(textureId).setOptions(options);
   }
 
+  Future<void> setTrackSelection(
+          int textureId, TrackSelection trackSelection) async =>
+      Future<void>.value();
   // Retrieves a [VideoPlayer] by its internal `id`.
   // It must have been created earlier from the [create] method.
   VideoPlayer _player(int id) {
