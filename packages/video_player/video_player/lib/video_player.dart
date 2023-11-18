@@ -5,16 +5,25 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'src/closed_caption_file.dart';
 
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
-    show DurationRange, DataSourceType, VideoFormat, VideoPlayerOptions;
+    show
+        DurationRange,
+        DataSourceType,
+        VideoFormat,
+        VideoPlayerOptions,
+        TrackSelection,
+        TrackSelectionType,
+        TrackSelectionRoleType,
+        TrackSelectionChannelType,
+        TrackSelectionNameResource;
 
 export 'src/closed_caption_file.dart';
 
@@ -41,6 +50,7 @@ class VideoPlayerValue {
     required this.duration,
     this.size = Size.zero,
     this.position = Duration.zero,
+    this.trackSelections = const <TrackSelection>[],
     this.caption = Caption.none,
     this.captionOffset = Duration.zero,
     this.buffered = const <DurationRange>[],
@@ -77,6 +87,9 @@ class VideoPlayerValue {
 
   /// The current playback position.
   final Duration position;
+
+  /// The current playback track selections.
+  final List<TrackSelection> trackSelections;
 
   /// The [Caption] that should be displayed based on the current [position].
   ///
@@ -149,11 +162,12 @@ class VideoPlayerValue {
   }
 
   /// Returns a new instance that has the same values as this current instance,
-  /// except for any overrides passed in as arguments to [copyWith].
+  /// except for any overrides passed in as arguments to [copyWidth].
   VideoPlayerValue copyWith({
     Duration? duration,
     Size? size,
     Duration? position,
+    List<TrackSelection>? trackSelections,
     Caption? caption,
     Duration? captionOffset,
     List<DurationRange>? buffered,
@@ -166,11 +180,13 @@ class VideoPlayerValue {
     int? rotationCorrection,
     String? errorDescription = _defaultErrorDescription,
     bool? isCompleted,
+    String? errorDescription,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
       size: size ?? this.size,
       position: position ?? this.position,
+      trackSelections: trackSelections ?? this.trackSelections,
       caption: caption ?? this.caption,
       captionOffset: captionOffset ?? this.captionOffset,
       buffered: buffered ?? this.buffered,
@@ -185,6 +201,7 @@ class VideoPlayerValue {
           ? errorDescription
           : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
+      errorDescription: errorDescription ?? this.errorDescription,
     );
   }
 
@@ -194,6 +211,7 @@ class VideoPlayerValue {
         'duration: $duration, '
         'size: $size, '
         'position: $position, '
+        'trackSelections: $trackSelections, '
         'caption: $caption, '
         'captionOffset: $captionOffset, '
         'buffered: [${buffered.join(', ')}], '
@@ -204,7 +222,8 @@ class VideoPlayerValue {
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
         'errorDescription: $errorDescription, '
-        'isCompleted: $isCompleted),';
+        'isCompleted: $isCompleted, '
+        'errorDescription: $errorDescription)';
   }
 
   @override
@@ -274,13 +293,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         httpHeaders = const <String, String>{},
         super(const VideoPlayerValue(duration: Duration.zero));
 
-  /// Constructs a [VideoPlayerController] playing a network video.
+  /// Constructs a [VideoPlayerController] playing a video from obtained from
+  /// the network.
   ///
-  /// The URI for the video is given by the [dataSource] argument.
-  ///
+  /// The URI for the video is given by the [dataSource] argument and must not be
+  /// null.
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
-  ///
   /// [httpHeaders] option allows to specify HTTP headers
   /// for the request to the [dataSource].
   @Deprecated('Use VideoPlayerController.networkUrl instead')
@@ -318,8 +337,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
-  /// This will load the file from a file:// URI constructed from [file]'s path.
-  /// [httpHeaders] option allows to specify HTTP headers, mainly used for hls files like (m3u8).
+  /// This will load the file from the file-URI given by:
+  /// `'file://${file.path}'`.
   VideoPlayerController.file(File file,
       {Future<ClosedCaptionFile>? closedCaptionFile,
       this.videoPlayerOptions,
@@ -371,6 +390,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final String? package;
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
+
   ClosedCaptionFile? _closedCaptionFile;
   Timer? _timer;
   bool _isDisposed = false;
@@ -514,7 +534,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposed) {
       return;
     }
-
     if (_creatingCompleter != null) {
       await _creatingCompleter!.future;
       if (!_isDisposed) {
@@ -530,8 +549,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   /// Starts playing the video.
-  ///
-  /// If the video is at the end, this method starts playing from the beginning.
   ///
   /// This method returns a future that completes as soon as the "play" command
   /// has been sent to the platform, not when playback itself is totally
@@ -612,9 +629,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     // Setting the playback speed on iOS will trigger the video to play. We
     // prevent this from happening by not applying the playback speed until
     // the video is manually played from Flutter.
-    if (!value.isPlaying) {
-      return;
-    }
+    if (!value.isPlaying) return;
 
     await _videoPlayerPlatform.setPlaybackSpeed(
       _textureId,
@@ -646,6 +661,22 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
     await _videoPlayerPlatform.seekTo(_textureId, position);
     _updatePosition(position);
+  }
+
+  /// The track selections in the current video.
+  Future<List<TrackSelection>?> get trackSelections async {
+    if (!value.isInitialized || _isDisposed) {
+      return null;
+    }
+    return await _videoPlayerPlatform.getTrackSelections(_textureId);
+  }
+
+  /// Sets the selected video track selection.
+  Future<void> setTrackSelection(TrackSelection trackSelection) async {
+    if (!value.isInitialized || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.setTrackSelection(_textureId, trackSelection);
   }
 
   /// Sets the audio volume of [this].
@@ -879,7 +910,7 @@ class _VideoPlayerWithRotation extends StatelessWidget {
 /// Used to configure the [VideoProgressIndicator] widget's colors for how it
 /// describes the video's status.
 ///
-/// The widget uses default colors that are customizable through this class.
+/// The widget uses default colors that are customizeable through this class.
 class VideoProgressColors {
   /// Any property can be set to any color. They each have defaults.
   ///
@@ -928,10 +959,7 @@ class VideoScrubber extends StatefulWidget {
     required this.controller,
   });
 
-  /// The widget that will be displayed inside the gesture detector.
   final Widget child;
-
-  /// The [VideoPlayerController] that will be controlled by this scrubber.
   final VideoPlayerController controller;
 
   @override
@@ -1135,12 +1163,11 @@ class ClosedCaption extends StatelessWidget {
   /// Creates a a new closed caption, designed to be used with
   /// [VideoPlayerValue.caption].
   ///
-  /// If [text] is null or empty, nothing will be displayed.
+  /// If [text] is null, nothing will be displayed.
   const ClosedCaption({super.key, this.text, this.textStyle});
 
   /// The text that will be shown in the closed caption, or null if no caption
   /// should be shown.
-  /// If the text is empty the caption will not be shown.
   final String? text;
 
   /// Specifies how the text in the closed caption should look.
@@ -1155,12 +1182,15 @@ class ClosedCaption extends StatelessWidget {
     if (text == null || text.isEmpty) {
       return const SizedBox.shrink();
     }
-
     final TextStyle effectiveTextStyle = textStyle ??
         DefaultTextStyle.of(context).style.copyWith(
               fontSize: 36.0,
               color: Colors.white,
             );
+
+    if (text == null) {
+      return SizedBox.shrink();
+    }
 
     return Align(
       alignment: Alignment.bottomCenter,
