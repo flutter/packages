@@ -114,9 +114,6 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
 
 extension on html.Storage {
   List<String> get keys {
-    return <String>[
-      for (int i = 0; i < length; i++)
-        key(i)!
-    ];
+    return <String>[for (int i = 0; i < length; i++) key(i)!];
   }
 }
