@@ -1,5 +1,6 @@
-## NEXT
+## 0.8.8+5
 
+* Add a View to observe PickerViewController dismiss
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.8.8+4
