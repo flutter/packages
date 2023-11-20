@@ -27,6 +27,40 @@
 }
 @end
 
+/**
+ * a callback function what the PickerViewController remove from window.
+ */
+typedef void (^FLTImagePickerRemoveCallback)(void);
+
+/**
+ * Add the view to the PickerViewController's view, observing its window to observe the window of PickerViewController.
+ * This is to prevent PickerViewController from being removed from the screen without receiving callback information under other circumstances,
+ * such as being interactively dismissed before PickerViewController has fully popped up.
+ */
+@interface FLTImagePickerRemoveObserverView : UIView
+
+@property(nonatomic, copy, nonnull) FLTImagePickerRemoveCallback removeCallback;
+
+-(instancetype)initWithRemoveCallback:(FLTImagePickerRemoveCallback)callback;
+
+@end
+
+@implementation FLTImagePickerRemoveObserverView
+
+- (instancetype)initWithRemoveCallback:(FLTImagePickerRemoveCallback)callback{
+  if (self = [super init]) {
+    self.removeCallback = callback;
+  }
+  return self;
+}
+- (void)didMoveToWindow {
+  if (!self.window) {
+    [self removeFromSuperview];
+    [[NSOperationQueue mainQueue]addOperationWithBlock:self.removeCallback];
+  }
+}
+@end
+
 #pragma mark -
 
 @interface FLTImagePickerPlugin ()
@@ -116,7 +150,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   pickerViewController.delegate = self;
   pickerViewController.presentationController.delegate = self;
   self.callContext = context;
-
+  [self bindRemoveObserver:pickerViewController context:context];
   if (context.requestFullMetadata) {
     [self checkPhotoAuthorizationWithPHPicker:pickerViewController];
   } else {
@@ -136,7 +170,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage ];
   }
   self.callContext = context;
-
+  [self bindRemoveObserver:imagePickerController context:context];
   switch (source.type) {
     case FLTSourceTypeCamera:
       [self checkCameraAuthorizationWithImagePicker:imagePickerController
@@ -155,6 +189,17 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                                                         details:nil]];
       break;
   }
+}
+
+- (void)bindRemoveObserver:(nonnull UIViewController *)controller
+                   context:(nonnull FLTImagePickerMethodCallContext *)context {
+  FLTImagePickerRemoveObserverView *removeObserverView =
+    [[FLTImagePickerRemoveObserverView alloc]initWithRemoveCallback:^{
+      if(self.callContext == context) {
+        [self sendCallResultWithSavedPathList:nil];
+      }
+    }];
+  [controller.view addSubview:removeObserverView];
 }
 
 #pragma mark - FLTImagePickerApi
