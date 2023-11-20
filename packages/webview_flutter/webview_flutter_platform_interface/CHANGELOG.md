@@ -1,3 +1,8 @@
+## 2.7.0
+
+* Adds support for handling HTTP basic authentication requests. See `PlatformNavigationDelegate.setOnHttpAuthRequest`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 2.6.0
 
 * Adds support to register a callback to intercept messages that are written to
