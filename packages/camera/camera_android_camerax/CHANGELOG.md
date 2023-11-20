@@ -1,6 +1,6 @@
 ## 0.5.0+23
 
-* Adds `CameraXProxy` class to test detached and mock objects as well as method calls in the plugin.
+* Adds `CameraXProxy` class to test `JavaObject` creation and their method calls in the plugin.
 
 ## 0.5.0+22
 

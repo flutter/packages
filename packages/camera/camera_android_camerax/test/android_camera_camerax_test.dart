@@ -136,6 +136,7 @@ void main() {
     final MockCameraInfo mockFrontCameraInfo = MockCameraInfo();
     final MockCameraInfo mockBackCameraInfo = MockCameraInfo();
 
+    // Tell plugin to create mock CameraSelectors for testing.
     camera.proxy = CameraXProxy(
       getProcessCameraProvider: () =>
           Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
@@ -198,6 +199,8 @@ void main() {
     const bool enableAudio = true;
     const int testSurfaceTextureId = 6;
 
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockPreview mockPreview = MockPreview();
@@ -212,8 +215,8 @@ void main() {
     bool cameraPermissionsRequested = false;
     bool startedListeningForDeviceOrientationChanges = false;
 
-    // Tell plugin to create mock/detached objects and stub static method
-    // calls for the testing of createCamera.
+    // Tell plugin to create mock/detached objects and stub method calls for the
+    // testing of createCamera.
     camera.proxy = CameraXProxy(
       getProcessCameraProvider: () =>
           Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
@@ -317,6 +320,8 @@ void main() {
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const bool enableAudio = true;
 
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockPreview mockPreview = MockPreview();
@@ -328,8 +333,8 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
 
-    // Tell plugin to create mock/detached objects and stub static method
-    // calls for the testing of createCamera.
+    // Tell plugin to create mock/detached objects and stub method calls for the
+    // testing of createCamera.
     camera.proxy = CameraXProxy(
       getProcessCameraProvider: () =>
           Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
@@ -402,7 +407,7 @@ void main() {
     const bool enableAudio = true;
     final MockCamera mockCamera = MockCamera();
 
-    // Mocks/Detached objects for (typically attached) objects created by
+    // Mock/Detached objects for (typically attached) objects created by
     // createCamera.
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
@@ -550,7 +555,7 @@ void main() {
     const bool enableAudio = true;
     final MockCamera mockCamera = MockCamera();
 
-    // Mocks/Detached objects for (typically attached) objects created by
+    // Mock/Detached objects for (typically attached) objects created by
     // createCamera.
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
@@ -697,7 +702,7 @@ void main() {
     final MockImageCapture mockImageCapture = MockImageCapture();
     final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
-// Tell plugin to create mock/detached objects for testing createCamera
+    // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
     camera.proxy = CameraXProxy(
       getProcessCameraProvider: () =>
@@ -1173,7 +1178,7 @@ void main() {
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
-      // Tell plugin to create detached Analyzer for proper testing.
+      // Tell plugin to create detached Analyzer for testing.
       camera.proxy = CameraXProxy(
           createAnalyzer:
               (Future<void> Function(ImageProxy imageProxy) analyze) =>
@@ -1212,8 +1217,10 @@ void main() {
     test('pauseVideoRecording pauses the recording', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
-      camera.recording =
-          recording; // Set directly for test versus calling startVideoCapturing.
+
+      // Set directly for test versus calling startVideoCapturing.
+      camera.recording = recording;
+
       await camera.pauseVideoRecording(0);
       verify(recording.pause());
       verifyNoMoreInteractions(recording);
@@ -1222,8 +1229,10 @@ void main() {
     test('resumeVideoRecording resumes the recording', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
-      camera.recording =
-          recording; // Set directly for test versus calling startVideoCapturing.
+
+      // Set directly for test versus calling startVideoCapturing.
+      camera.recording = recording;
+
       await camera.resumeVideoRecording(0);
       verify(recording.resume());
       verifyNoMoreInteractions(recording);
@@ -1548,7 +1557,7 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int cameraId = 22;
 
-    // Tell plugin to create detached Analyzer for proper testing.
+    // Tell plugin to create detached Analyzer for testing.
     camera.proxy = CameraXProxy(
         createAnalyzer:
             (Future<void> Function(ImageProxy imageProxy) analyze) =>
@@ -1588,7 +1597,7 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int cameraId = 22;
 
-    // Tell plugin to create detached Analyzer for proper testing.
+    // Tell plugin to create detached Analyzer for testing.
     camera.proxy = CameraXProxy(
         createAnalyzer:
             (Future<void> Function(ImageProxy imageProxy) analyze) =>
@@ -1649,7 +1658,7 @@ void main() {
     const int imageHeight = 100;
     const int imageWidth = 200;
 
-    // Tell plugin to create detached Analyzer for proper testing.
+    // Tell plugin to create detached Analyzer for testing.
     camera.proxy = CameraXProxy(
         createAnalyzer:
             (Future<void> Function(ImageProxy imageProxy) analyze) =>

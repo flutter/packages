@@ -22,10 +22,10 @@ import 'resolution_strategy.dart';
 import 'system_services.dart';
 import 'video_capture.dart';
 
-/// Handles constructing objects and making method calls for the plugin that
-/// need testing.
+/// Handles `JavaObject` creation and calling their methods that require
+/// testing.
 ///
-/// By default, each function will create objects attached to an
+/// By default, each function will create `JavaObject`s attached to an
 /// `InstanceManager` and call through to the appropriate method.
 class CameraXProxy {
   /// Constructs a [CameraXProxy].
@@ -93,7 +93,7 @@ class CameraXProxy {
   /// those bounds is not possible.
   ///
   /// [highestAvailable] is used to specify whether or not the highest available
-  /// [ResolutionStrategy] should attempt to be chosen.
+  /// [ResolutionStrategy] should be returned.
   ResolutionStrategy Function(
       {bool highestAvailable,
       Size? boundSize,

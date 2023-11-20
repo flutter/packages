@@ -49,8 +49,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraPlatform.instance = AndroidCameraCameraX();
   }
 
-  /// Proxy for creating objects that may be attached to an `InstanceManager`
-  /// and calling static methods through [SystemServices].
+  /// Proxy for creating `JavaObject`s and calling their methods that require
+  /// testing.
   @visibleForTesting
   CameraXProxy proxy = CameraXProxy();
 
@@ -438,7 +438,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Set the zoom level for the selected camera.
   ///
   /// The supplied [zoom] value should be between the minimum and the maximum
-  /// supported zoom level returned by `getMinZoomLevel` and `getMaxZoomLevel`.
+  /// supported zoom level returned by [getMinZoomLevel] and [getMaxZoomLevel].
   /// Throws a `CameraException` when an illegal zoom level is supplied.
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
