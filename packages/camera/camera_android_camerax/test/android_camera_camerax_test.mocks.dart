@@ -368,6 +368,15 @@ class MockCameraControl extends _i1.Mock implements _i3.CameraControl {
         returnValue: _i15.Future<void>.value(),
         returnValueForMissingStub: _i15.Future<void>.value(),
       ) as _i15.Future<void>);
+  @override
+  _i15.Future<void> setZoomRatio(double? ratio) => (super.noSuchMethod(
+        Invocation.method(
+          #setZoomRatio,
+          [ratio],
+        ),
+        returnValue: _i15.Future<void>.value(),
+        returnValueForMissingStub: _i15.Future<void>.value(),
+      ) as _i15.Future<void>);
 }
 
 /// A class which mocks [CameraImageData].

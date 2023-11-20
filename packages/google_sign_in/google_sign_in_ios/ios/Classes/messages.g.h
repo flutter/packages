@@ -43,12 +43,14 @@ NS_ASSUME_NONNULL_BEGIN
                               email:(NSString *)email
                              userId:(NSString *)userId
                            photoUrl:(nullable NSString *)photoUrl
-                     serverAuthCode:(nullable NSString *)serverAuthCode;
+                     serverAuthCode:(nullable NSString *)serverAuthCode
+                            idToken:(nullable NSString *)idToken;
 @property(nonatomic, copy, nullable) NSString *displayName;
 @property(nonatomic, copy) NSString *email;
 @property(nonatomic, copy) NSString *userId;
 @property(nonatomic, copy, nullable) NSString *photoUrl;
 @property(nonatomic, copy, nullable) NSString *serverAuthCode;
+@property(nonatomic, copy, nullable) NSString *idToken;
 @end
 
 /// Pigeon version of GoogleSignInTokenData.

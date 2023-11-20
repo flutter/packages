@@ -83,27 +83,33 @@ platform_properties:
     properties:
       dependencies: >-
         [
-          {"dependency": "gems", "version": "v3.3.14"}
+          {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: "Mac-12|Mac-13"
+      os: "Mac-12"
       device_type: none
       cpu: arm64
+      # TODO(vashworth): Remove specific toolchain_ver once https://github.com/flutter/flutter/issues/138109 is resolved.
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e300c"
+          "sdk_version": "14e300c",
+          "toolchain_ver_arm": "JiMOaZvCH66lnGWMJdLScE-7lkUnKaw3COdWwqXmjWEC",
+          "toolchain_ver_intel": "Zp2HmSx7_-pu-yHqYqzoEpo0JRwNZGGwSj5V1SnLFmoC"
         }
   mac_x64:
     properties:
       dependencies: >-
         [
-          {"dependency": "gems", "version": "v3.3.14"}
+          {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: "Mac-12|Mac-13"
+      os: "Mac-12"
       device_type: none
       cpu: x86
+      # TODO(vashworth): Remove specific toolchain_ver once https://github.com/flutter/flutter/issues/138109 is resolved.
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e300c"
+          "sdk_version": "14e300c",
+          "toolchain_ver_arm": "JiMOaZvCH66lnGWMJdLScE-7lkUnKaw3COdWwqXmjWEC",
+          "toolchain_ver_intel": "Zp2HmSx7_-pu-yHqYqzoEpo0JRwNZGGwSj5V1SnLFmoC"
         }
 
 targets:
@@ -125,10 +131,11 @@ targets:
       target_file: repo_checks.yaml
       channel: master
       version_file: flutter_master.version
-      # The format check requires clang-format.
+      # The format check requires clang-format, and the current version of ktfmt requires JDK 11+.
       dependencies: >-
         [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "open_jdk", "version": "version:17"}
         ]
 
   - name: Linux dart_unit_test_shard_1 master
@@ -248,14 +255,14 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.10.6"
+      channel: "3.13.9"
 
   - name: Linux analyze_legacy N-2
     recipe: packages/packages
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.7.12"
+      channel: "3.10.6"
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
@@ -551,7 +558,6 @@ targets:
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_1 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -561,7 +567,6 @@ targets:
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_2 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -571,7 +576,6 @@ targets:
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_3 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -581,7 +585,6 @@ targets:
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_4 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -591,7 +594,6 @@ targets:
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_5 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -601,7 +603,6 @@ targets:
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_6 master
     recipe: packages/packages
     timeout: 60
-    bringup: true # New target
     properties:
       target_file: android_legacy_emulator_tests.yaml
       channel: master
@@ -615,7 +616,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_1 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -624,7 +625,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_2 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -633,7 +634,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_3 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -642,7 +643,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_4 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -651,7 +652,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_5 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -660,7 +661,7 @@ targets:
 
   - name: Linux_android android_device_tests_shard_6 master
     recipe: packages/packages
-    timeout: 60
+    timeout: 90
     properties:
       target_file: android_device_tests.yaml
       channel: master
@@ -1097,20 +1098,6 @@ targets:
   - name: Windows_x64 windows-build_all_packages stable
     recipe: packages/packages
     timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: windows_build_all_packages.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      dependencies: >
-        [
-          {"dependency": "vs_build", "version": "version:vs2019"}
-        ]
-
-  - name: Windows_arm64 windows-build_all_packages stable
-    recipe: packages/packages
-    timeout: 30
-    bringup: true # https://github.com/flutter/flutter/issues/134083
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml

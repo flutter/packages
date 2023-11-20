@@ -51,6 +51,29 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
           },
           ContextCompat.getMainExecutor(context));
     }
+
+    /** Sets the zoom ratio of the specified {@link CameraControl} instance. */
+    @NonNull
+    public void setZoomRatio(
+        @NonNull CameraControl cameraControl,
+        @NonNull Double ratio,
+        @NonNull GeneratedCameraXLibrary.Result<Void> result) {
+      float ratioAsFloat = ratio.floatValue();
+      ListenableFuture<Void> setZoomRatioFuture = cameraControl.setZoomRatio(ratioAsFloat);
+
+      Futures.addCallback(
+          setZoomRatioFuture,
+          new FutureCallback<Void>() {
+            public void onSuccess(Void voidResult) {
+              result.success(null);
+            }
+
+            public void onFailure(Throwable t) {
+              result.error(t);
+            }
+          },
+          ContextCompat.getMainExecutor(context));
+    }
   }
 
   /**
@@ -81,7 +104,8 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
   }
 
   /**
-   * Sets the context that the {@code ProcessCameraProvider} will use to enable/disable torch mode.
+   * Sets the context that the {@code ProcessCameraProvider} will use to enable/disable torch mode
+   * and set the zoom ratio.
    *
    * <p>If using the camera plugin in an add-to-app context, ensure that a new instance of the
    * {@code CameraControl} is fetched via {@code #enableTorch} anytime the context changes.
@@ -97,5 +121,14 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
       @NonNull GeneratedCameraXLibrary.Result<Void> result) {
     proxy.enableTorch(
         Objects.requireNonNull(instanceManager.getInstance(identifier)), torch, result);
+  }
+
+  @Override
+  public void setZoomRatio(
+      @NonNull Long identifier,
+      @NonNull Double ratio,
+      @NonNull GeneratedCameraXLibrary.Result<Void> result) {
+    proxy.setZoomRatio(
+        Objects.requireNonNull(instanceManager.getInstance(identifier)), ratio, result);
   }
 }
