@@ -17,7 +17,7 @@ Future<XFile> instantiateXFile() async {
   print('- MIME type: ${file.mimeType}');
 
   final String fileContent = await file.readAsString();
-  print('Content of the file: $fileContent'); // e.g. "Moto G (4)"
+  print('Content of the file: $fileContent');
   // #enddocregion Instantiate
 
   return file;

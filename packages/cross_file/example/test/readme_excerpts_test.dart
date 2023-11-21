@@ -1,6 +1,7 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
 import 'package:cross_file/cross_file.dart';
 import 'package:cross_file_example/readme_excerpts.dart';
 import 'package:test/test.dart';
@@ -8,10 +9,10 @@ import 'package:test/test.dart';
 const bool kIsWeb = bool.fromEnvironment('dart.library.js_util');
 
 void main() {
-  test('readme_excerpts instantiateXFile', () async {
+  test('instantiateXFile loads asset file', () async {
     // Ensure that the snippet code runs successfully.
     final XFile xFile = await instantiateXFile();
-    // It should have a nonempty path and name
+    // It should have a nonempty path and name.
     expect(xFile.path, allOf(isNotNull, isNotEmpty));
     expect(xFile.name, allOf(isNotNull, isNotEmpty));
 

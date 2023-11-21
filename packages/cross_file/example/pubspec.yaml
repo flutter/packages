@@ -15,5 +15,4 @@ dependencies:
     path: ../
 
 dev_dependencies:
-  async: ^2.5.0
   test: ^1.24.0
