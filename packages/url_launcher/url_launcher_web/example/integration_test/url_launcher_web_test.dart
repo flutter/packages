@@ -14,8 +14,8 @@ import 'package:web/helpers.dart';
 
 @JSExport()
 class MyWindow {
-  MyWindow open(Object? a, Object? b, Object? c) => throw UnimplementedError();
-  MyNavigator get navigator => throw UnimplementedError();
+  Window? open(Object? a, Object? b, Object? c) => throw UnimplementedError();
+  Navigator? get navigator => throw UnimplementedError();
 }
 
 @JSExport()
@@ -23,7 +23,7 @@ class MockWindow extends Mock implements MyWindow {}
 
 @JSExport()
 class MyNavigator {
-  Object get userAgent => throw UnimplementedError();
+  String? get userAgent => throw UnimplementedError();
 }
 
 @JSExport()
@@ -41,10 +41,15 @@ void main() {
     setUp(() {
       mockWindow = MockWindow();
       mockNavigator = MockNavigator();
-      when(mockWindow.navigator).thenReturn(mockNavigator);
+
+      final Window jsMockWindow = createDartExport(mockWindow) as Window;
+      final Navigator jsMockNavigator =
+          createDartExport(mockNavigator) as Navigator;
+
+      when(mockWindow.navigator).thenReturn(jsMockNavigator);
 
       // Simulate that window.open does something.
-      when(mockWindow.open('any', 'any', 'any')).thenReturn(MockWindow());
+      when(mockWindow.open(any, any, any)).thenReturn(jsMockWindow);
 
       when(mockNavigator.userAgent).thenReturn(
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
