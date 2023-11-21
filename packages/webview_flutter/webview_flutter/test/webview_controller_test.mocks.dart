@@ -466,15 +466,4 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-  @override
-  _i5.Future<void> setOnHttpAuthRequest(
-          _i6.HttpAuthRequestCallback? onHttpAuthRequest) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setOnHttpAuthRequest,
-          [onHttpAuthRequest],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
 }
