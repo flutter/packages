@@ -171,6 +171,21 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AnEnum echoEnum(AnEnum anEnum);
 
+  /// Returns the default string.
+  @ObjCSelector('echoNamedDefaultString:')
+  @SwiftFunction('echoNamedDefault(_:)')
+  String echoNamedDefaultString({String aString = 'default'});
+
+  /// Returns passed in double.
+  @ObjCSelector('echoOptionalDefaultDouble:')
+  @SwiftFunction('echoOptionalDefault(_:)')
+  double echoOptionalDefaultDouble([double aDouble = 3.14]);
+
+  /// Returns passed in int.
+  @ObjCSelector('echoRequiredInt:')
+  @SwiftFunction('echoRequired(_:)')
+  int echoRequiredInt({required int anInt});
+
   // ========== Synchronous nullable method tests ==========
 
   /// Returns the passed object, to test serialization and deserialization.
@@ -239,6 +254,16 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
   AnEnum? echoNullableEnum(AnEnum? anEnum);
+
+  /// Returns passed in int.
+  @ObjCSelector('echoOptionalNullableInt:')
+  @SwiftFunction('echoOptional(_:)')
+  int? echoOptionalNullableInt([int? aNullableInt]);
+
+  /// Returns the passed in string.
+  @ObjCSelector('echoNamedNullableString:')
+  @SwiftFunction('echoNamed(_:)')
+  String? echoNamedNullableString({String? aNullableString});
 
   // ========== Asynchronous method tests ==========
 

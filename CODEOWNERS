@@ -72,18 +72,18 @@ packages/video_player/video_player_android/**            @camsim99
 # - iOS
 packages/camera/camera_avfoundation/**                   @hellohuanlin
 packages/file_selector/file_selector_ios/**              @stuartmorgan
-packages/google_maps_flutter/google_maps_flutter_ios/**  @cyanglaz
+packages/google_maps_flutter/google_maps_flutter_ios/**  @hellohuanlin
 packages/google_sign_in/google_sign_in_ios/**            @vashworth
 packages/image_picker/image_picker_ios/**                @vashworth
-packages/in_app_purchase/in_app_purchase_storekit/**     @cyanglaz
+packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu
 packages/ios_platform_images/ios/**                      @stuartmorgan
 packages/local_auth/local_auth_ios/**                    @louisehsu
 packages/path_provider/path_provider_foundation/**       @stuartmorgan
 packages/quick_actions/quick_actions_ios/**              @hellohuanlin
-packages/shared_preferences/shared_preferences_foundation/**  @cyanglaz
+packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
 packages/url_launcher/url_launcher_ios/**                @stuartmorgan
 packages/video_player/video_player_avfoundation/**       @hellohuanlin
-packages/webview_flutter/webview_flutter_wkwebview/**    @cyanglaz
+packages/webview_flutter/webview_flutter_wkwebview/**    @hellohuanlin
 
 # - Linux
 packages/file_selector/file_selector_linux/**            @cbracken

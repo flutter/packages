@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 0.10.5+5
 
 * Fixes bug where old camera resources were not disposed when switching between camera descriptions.

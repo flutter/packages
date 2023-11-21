@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 0.9.3+3
 
 * Fixes handling of unknown file extensions on macOS 11+.

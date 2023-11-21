@@ -1,4 +1,3 @@
 # Running the somes tests from these packages on an AVD with Android 34 causes failures.
 - quick_actions
 - webview_flutter
-- path_provider

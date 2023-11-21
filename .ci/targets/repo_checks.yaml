@@ -16,7 +16,7 @@ tasks:
     script: script/tool_runner.sh
     args:
       - "pubspec-check"
-      - "--min-min-flutter-version=3.7.0"
+      - "--min-min-flutter-version=3.10.0"
       - "--allow-dependencies=script/configs/allowed_unpinned_deps.yaml"
       - "--allow-pinned-dependencies=script/configs/allowed_pinned_deps.yaml"
     always: true

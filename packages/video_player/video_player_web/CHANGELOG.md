@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 2.1.2
 
 * Listens to `loadedmetadata` as an event that marks that initialization is

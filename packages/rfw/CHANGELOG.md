@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 1.0.15
 
 * Updates README.md to point to the CONTRIBUTING.md file.

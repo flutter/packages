@@ -255,14 +255,14 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.10.6"
+      channel: "3.13.9"
 
   - name: Linux analyze_legacy N-2
     recipe: packages/packages
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.7.12"
+      channel: "3.10.6"
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages

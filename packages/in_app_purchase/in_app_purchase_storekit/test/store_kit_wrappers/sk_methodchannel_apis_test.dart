@@ -108,6 +108,22 @@ void main() {
       expect(await SKPaymentQueueWrapper.canMakePayments(), false);
     });
 
+    test('storefront returns valid SKStoreFrontWrapper object', () async {
+      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
+      expect(
+          await queue.storefront(),
+          SKStorefrontWrapper.fromJson(const <String, dynamic>{
+            'countryCode': 'USA',
+            'identifier': 'unique_identifier',
+          }));
+    });
+
+    test('storefront returns null', () async {
+      fakeStoreKitPlatform.testReturnNull = true;
+      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
+      expect(await queue.storefront(), isNull);
+    });
+
     test('transactions should return a valid list of transactions', () async {
       expect(await SKPaymentQueueWrapper().transactions(), isNotEmpty);
     });
@@ -250,6 +266,14 @@ class FakeStoreKitPlatform {
       case '-[SKPaymentQueue transactions]':
         return Future<List<dynamic>>.value(
             <dynamic>[buildTransactionMap(dummyTransaction)]);
+      case '-[SKPaymentQueue storefront]':
+        if (testReturnNull) {
+          return Future<dynamic>.value();
+        }
+        return Future<Map<String, dynamic>>.value(const <String, dynamic>{
+          'countryCode': 'USA',
+          'identifier': 'unique_identifier',
+        });
       case '-[InAppPurchasePlugin addPayment:result:]':
         payments.add(SKPaymentWrapper.fromJson(Map<String, dynamic>.from(
             call.arguments as Map<dynamic, dynamic>)));

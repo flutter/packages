@@ -89,6 +89,8 @@
     [self canMakePayments:result];
   } else if ([@"-[SKPaymentQueue transactions]" isEqualToString:call.method]) {
     [self getPendingTransactions:result];
+  } else if ([@"-[SKPaymentQueue storefront]" isEqualToString:call.method]) {
+    [self getStorefront:result];
   } else if ([@"-[InAppPurchasePlugin startProductRequest:result:]" isEqualToString:call.method]) {
     [self handleProductRequestMethodCall:call result:result];
   } else if ([@"-[InAppPurchasePlugin addPayment:result:]" isEqualToString:call.method]) {
@@ -137,6 +139,22 @@
     [transactionMaps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:transaction]];
   }
   result(transactionMaps);
+}
+
+- (void)getStorefront:(FlutterResult)result {
+  if (@available(iOS 13.0, macOS 10.15, *)) {
+    SKStorefront *storefront = self.paymentQueueHandler.storefront;
+    if (!storefront) {
+      result(nil);
+      return;
+    }
+    result([FIAObjectTranslator getMapFromSKStorefront:storefront]);
+    return;
+  }
+
+  NSLog(@"storefront is not avaialbe in iOS below 13.0 or macOS below 10.15.");
+  result(nil);
+  return;
 }
 
 - (void)handleProductRequestMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
