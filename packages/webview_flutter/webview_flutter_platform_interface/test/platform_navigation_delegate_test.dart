@@ -144,7 +144,7 @@ void main() {
   });
 
   test(
-      'Default implementation of setOnReceiveHttpAuthRequest should throw unimplemented error',
+      'Default implementation of setOnHttpAuthRequest should throw unimplemented error',
       () {
     final PlatformNavigationDelegate callbackDelegate =
         ExtendsPlatformNavigationDelegate(

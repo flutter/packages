@@ -1,6 +1,7 @@
 ## 4.5.0
 
 * Adds support for HTTP basic authentication. See `NavigationDelegate(onReceivedHttpAuthRequest)`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 4.4.2
 

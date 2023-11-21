@@ -12,7 +12,6 @@ import 'webview_credential.dart';
 /// this class and providing a factory method that takes the [HttpAuthRequest]
 /// as a parameter.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [HttpAuthRequest] to provide
 /// additional platform specific parameters.
 ///
@@ -45,7 +44,6 @@ import 'webview_credential.dart';
 ///   final String? extraData;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class HttpAuthRequest {
   /// Creates a [HttpAuthRequest].
