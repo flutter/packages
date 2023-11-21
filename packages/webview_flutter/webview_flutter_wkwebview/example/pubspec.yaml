@@ -32,8 +32,3 @@ flutter:
     - assets/sample_video.mp4
     - assets/www/index.html
     - assets/www/styles/style.css
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {webview_flutter_platform_interface: {path: ../../../webview_flutter/webview_flutter_platform_interface}}
