@@ -6,7 +6,7 @@
 
 import 'package:cross_file/cross_file.dart';
 
-/// Demonstrate instantiating an XFile for the README
+/// Demonstrate instantiating an XFile for the README.
 Future<XFile> instantiateXFile() async {
   // #docregion Instantiate
   final XFile file = XFile('assets/hello.txt');
