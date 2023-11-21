@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:code_builder/code_builder.dart' as cb;
+import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
 
 import 'ast.dart';
@@ -1116,7 +1118,17 @@ class $InstanceManager {
     ProxyApiNode api, {
     required String dartPackageName,
   }) {
+    writeProxyApi2(
+      generatorOptions,
+      root,
+      indent,
+      api,
+      dartPackageName: dartPackageName,
+    );
+    return;
+
     // TODO: change $detaced host -> flutter call to $newDartInstance
+    // ignore: dead_code
     final String codecName = _getCodecName(api.name);
 
     // Write Codec
@@ -1423,6 +1435,7 @@ class $codecName extends StandardMessageCodec {
       }, addTrailingNewline: false);
 
       // TODO: create a single codec instance
+      // TODO: same for creating it for instance
 
       final List<String> customEnumNames =
           root.enums.map((Enum x) => x.name).toList();
@@ -1886,6 +1899,489 @@ class $codecName extends StandardMessageCodec {
       });
     });
   }
+
+  void writeProxyApi2(
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    ProxyApiNode api, {
+    required String dartPackageName,
+  }) {
+    final String codecName = _getCodecName(api.name);
+
+    // Write Codec
+    indent.writeln('''
+class $codecName extends StandardMessageCodec {
+ const $codecName(this.instanceManager);
+
+ final \$InstanceManager instanceManager;
+
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is \$Copyable) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
+}
+''');
+
+    // Methods implemented on the host side.
+    final Iterable<Method> hostMethods = api.methods.where(
+      (Method method) => method.location == ApiLocation.host,
+    );
+    // Methods implemented on the Flutter side.
+    final Iterable<Method> flutterMethods = api.methods.where(
+      (Method method) => method.location == ApiLocation.flutter,
+    );
+
+    final Iterable<Field> attachedFields = api.fields.where(
+      (Field field) => field.isAttached,
+    );
+    final Iterable<Field> nonAttachedFields = api.fields.where(
+      (Field field) => !field.isAttached,
+    );
+
+    final Iterable<ProxyApiNode> allProxyApis =
+        root.apis.whereType<ProxyApiNode>();
+
+    final List<ProxyApiNode> superClassApisChain =
+        _recursiveGetSuperClassApisChain(
+      api,
+      allProxyApis,
+    );
+
+    final ProxyApiNode? superClassApi =
+        superClassApisChain.isNotEmpty ? superClassApisChain.first : null;
+
+    final Set<ProxyApiNode> interfacesApis = _recursiveFindAllInterfacesApis(
+      api.interfacesNames,
+      allProxyApis,
+    );
+
+    final List<Method> interfacesMethods = <Method>[];
+    for (final ProxyApiNode proxyApi in interfacesApis) {
+      interfacesMethods.addAll(proxyApi.methods);
+    }
+
+    // A list of inherited methods from super classes that constructors set with
+    // `super.<methodName>`.
+    final List<Method> superClassFlutterMethods = <Method>[];
+    if (superClassApi != null) {
+      for (final ProxyApiNode proxyApi in superClassApisChain) {
+        for (final Method method in proxyApi.methods) {
+          if (method.location == ApiLocation.flutter) {
+            superClassFlutterMethods.add(method);
+          }
+        }
+      }
+
+      final Set<ProxyApiNode> superClassInterfacesApis =
+          _recursiveFindAllInterfacesApis(
+        superClassApi.interfacesNames,
+        allProxyApis,
+      );
+      for (final ProxyApiNode proxyApi in superClassInterfacesApis) {
+        superClassFlutterMethods.addAll(proxyApi.methods);
+      }
+    }
+
+    final bool hasARequiredFlutterMethod = api.methods
+        .followedBy(superClassFlutterMethods)
+        .followedBy(interfacesMethods)
+        .any((Method method) {
+      return method.location == ApiLocation.flutter && method.mustBeImplemented;
+    });
+
+    final cb.Class proxyApi = cb.Class(
+      (cb.ClassBuilder builder) => builder
+        ..name = api.name
+        ..extend = _referOrNull(superClassApi?.name)
+        ..implements.addAll(<cb.Reference>[
+          if (interfacesApis.isNotEmpty)
+            ...interfacesApis.map(
+              (ProxyApiNode proxyApi) => cb.refer(proxyApi.name),
+            )
+          else
+            cb.refer(r'$Copyable')
+        ])
+        ..constructors.addAll(
+          api.constructors.map(
+            (Constructor constructor) => cb.Constructor(
+              (cb.ConstructorBuilder builder) => builder
+                ..name = constructor.name.isNotEmpty ? constructor.name : null
+                ..optionalParameters.addAll(
+                  <cb.Parameter>[
+                    cb.Parameter(
+                      (cb.ParameterBuilder builder) => builder
+                        ..name = r'$binaryMessenger'
+                        ..named = true
+                        ..toSuper = superClassApi != null
+                        ..toThis = superClassApi == null,
+                    ),
+                    cb.Parameter(
+                      (cb.ParameterBuilder builder) => builder
+                        ..name = r'$instanceManager'
+                        ..named = true
+                        ..toSuper = superClassApi != null
+                        ..toThis = superClassApi == null,
+                    ),
+                    for (final Field field in nonAttachedFields)
+                      cb.Parameter(
+                        (cb.ParameterBuilder builder) => builder
+                          ..name = field.name
+                          ..named = true
+                          ..toThis = true
+                          ..required = !field.type.isNullable,
+                      ),
+                    for (final Method method in superClassFlutterMethods)
+                      cb.Parameter(
+                        (cb.ParameterBuilder builder) => builder
+                          ..name = method.name
+                          ..named = true
+                          ..toSuper = true
+                          ..required = method.mustBeImplemented,
+                      ),
+                    for (final Method method in interfacesMethods)
+                      cb.Parameter(
+                        (cb.ParameterBuilder builder) => builder
+                          ..name = method.name
+                          ..named = true
+                          ..toThis = true
+                          ..required = method.mustBeImplemented,
+                      ),
+                    for (final Method method in flutterMethods)
+                      cb.Parameter(
+                        (cb.ParameterBuilder builder) => builder
+                          ..name = method.name
+                          ..named = true
+                          ..toThis = true
+                          ..required = method.mustBeImplemented,
+                      ),
+                    ...indexMap(
+                      constructor.arguments,
+                      (int index, NamedType parameter) => cb.Parameter(
+                        (cb.ParameterBuilder builder) => builder
+                          ..name = _getSafeArgumentName(index, parameter)
+                          ..type = cb.refer(
+                            _addGenericTypesNullable(parameter.type),
+                          )
+                          ..named = true
+                          ..required = parameter.type.isNullable,
+                      ),
+                    ),
+                  ],
+                )
+                ..initializers.add(
+                  cb.Code(
+                    superClassApi != null
+                        ? r'super.$detached()'
+                        : r'$instanceManager = $instanceManager ?? $InstanceManager.instance',
+                  ),
+                )
+                ..body = cb.Block.of(<cb.Code>[
+                  _basicMessageChannel(
+                    channelName: makeChannelNameForConstructor(
+                      api,
+                      constructor,
+                      dartPackageName,
+                    ),
+                    codec: cb.refer(codecName).newInstance(<cb.Expression>[
+                      if (superClassApi != null)
+                        cb.refer(r'$instanceManager')
+                      else
+                        cb.refer(r'this').property(r'$instanceManager')
+                    ]),
+                    binaryMessenger: cb.refer(r'$binaryMessenger'),
+                  ),
+                  cb.Code(
+                    'final int instanceIdentifier = ${superClassApi != null ? '' : 'this.'}\$instanceManager.addDartCreatedInstance(this);',
+                  ),
+                  cb
+                      .refer('channel')
+                      .property('send')
+                      .call(<cb.Expression>[
+                        cb.literalList(
+                          <Object?>[
+                            cb.refer('instanceIdentifier'),
+                            ...indexMap(
+                              nonAttachedFields,
+                              (int index, Field field) => _parameterArgument(
+                                  index, field, root.enums,
+                                  getArgumentName: _getArgumentName),
+                            ),
+                            ...indexMap(
+                              constructor.arguments,
+                              (int index, NamedType type) => _parameterArgument(
+                                index,
+                                type,
+                                root.enums,
+                              ),
+                            ),
+                          ],
+                          cb.refer('Object?'),
+                        )
+                      ])
+                      .property('then')
+                      .call(
+                        <cb.Expression>[
+                          cb.Method(
+                            (cb.MethodBuilder builder) => builder
+                              ..requiredParameters.add(
+                                cb.Parameter(
+                                  (cb.ParameterBuilder builder) => builder
+                                    ..name = 'value'
+                                    ..type = cb.refer('Object?'),
+                                ),
+                              )
+                              ..body = cb.Block.of(<cb.Code>[
+                                const cb.Code(
+                                  'final List<Object?>? replyList = value as List<Object?>?;',
+                                ),
+                                const cb.Code('if (replyList == null) {'),
+                                cb.InvokeExpression.newOf(
+                                    cb.refer('PlatformException'),
+                                    <cb.Expression>[],
+                                    <String, cb.Expression>{
+                                      'code': cb.literalString('channel-error'),
+                                      'message': cb.literalString(
+                                        'Unable to establish connection on channel.',
+                                      )
+                                    }).thrown.statement,
+                                const cb.Code(
+                                  '} else if (replyList.length > 1) {',
+                                ),
+                                cb.InvokeExpression.newOf(
+                                    cb.refer('PlatformException'),
+                                    <cb.Expression>[],
+                                    <String, cb.Expression>{
+                                      'code': cb
+                                          .refer('replyList')
+                                          .index(cb.literal(0))
+                                          .nullChecked
+                                          .asA(cb.refer('String')),
+                                      'message': cb
+                                          .refer('replyList')
+                                          .index(cb.literal(1))
+                                          .asA(cb.refer('String?')),
+                                      'details': cb
+                                          .refer('replyList')
+                                          .index(cb.literal(2)),
+                                    }).thrown.statement,
+                                const cb.Code('}'),
+                              ]),
+                          ).genericClosure
+                        ],
+                        <String, cb.Expression>{},
+                        <cb.Reference>[cb.refer('void')],
+                      )
+                      .statement
+                ]),
+            ),
+          ),
+        )
+        ..constructors.add(
+          cb.Constructor(
+            (cb.ConstructorBuilder builder) => builder
+              ..name = r'$detached'
+              ..optionalParameters.addAll(<cb.Parameter>[
+                cb.Parameter(
+                  (cb.ParameterBuilder builder) => builder
+                    ..name = r'$binaryMessenger'
+                    ..named = true
+                    ..toSuper = superClassApi != null
+                    ..toThis = superClassApi == null,
+                ),
+                cb.Parameter(
+                  (cb.ParameterBuilder builder) => builder
+                    ..name = r'$instanceManager'
+                    ..type = _referOrNull(
+                      superClassApi == null ? r'$InstanceManager' : null,
+                    )
+                    ..named = true
+                    ..toSuper = superClassApi != null,
+                ),
+                for (final Field field in nonAttachedFields)
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = field.name
+                      ..named = true
+                      ..toThis = true
+                      ..required = !field.type.isNullable,
+                  ),
+                for (final Method method in superClassFlutterMethods)
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = method.name
+                      ..named = true
+                      ..toSuper = true
+                      ..required = method.mustBeImplemented,
+                  ),
+                for (final Method method in interfacesMethods)
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = method.name
+                      ..named = true
+                      ..toThis = true
+                      ..required = method.mustBeImplemented,
+                  ),
+                for (final Method method in flutterMethods)
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = method.name
+                      ..named = true
+                      ..toThis = true
+                      ..required = method.mustBeImplemented,
+                  ),
+              ])
+              ..initializers.add(
+                cb.Code(
+                  superClassApi != null
+                      ? r'super.$detached()'
+                      : r'$instanceManager = $instanceManager ?? $InstanceManager.instance',
+                ),
+              ),
+          ),
+        )
+        ..methods.add(
+          cb.Method.returnsVoid(
+            (cb.MethodBuilder builder) => builder
+              ..name = 'setUpMessageHandlers'
+              ..returns = cb.refer('void')
+              ..static = true
+              ..optionalParameters.addAll(<cb.Parameter>[
+                cb.Parameter(
+                  (cb.ParameterBuilder builder) => builder
+                    ..name = r'$binaryMessenger'
+                    ..named = true
+                    ..type = cb.refer('BinaryMessenger?'),
+                ),
+                cb.Parameter(
+                  (cb.ParameterBuilder builder) => builder
+                    ..name = r'$instanceManager'
+                    ..named = true
+                    ..type = cb.refer(r'$InstanceManager?'),
+                ),
+                if (!hasARequiredFlutterMethod)
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = r'$detached'
+                      ..named = true
+                      ..type = cb.FunctionType(
+                        (cb.FunctionTypeBuilder builder) => builder
+                          ..returnType = cb.refer(api.name)
+                          ..isNullable = true
+                          ..requiredParameters.addAll(indexMap(
+                            nonAttachedFields,
+                            (int index, Field field) {
+                              return cb.refer(
+                                '${_addGenericTypesNullable(field.type)} ${_getArgumentName(index, field)}',
+                              );
+                            },
+                          )),
+                      ),
+                  ),
+                for (final Method method in flutterMethods)
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = method.name
+                      ..type = cb.FunctionType(
+                        (cb.FunctionTypeBuilder builder) => builder
+                          ..returnType = _referOrNull(
+                            _addGenericTypesNullable(method.returnType),
+                            isFuture: method.isAsynchronous,
+                          )
+                          ..isNullable = true
+                          ..requiredParameters.addAll(<cb.Reference>[
+                            cb.refer('${api.name} instance'),
+                            ...indexMap(
+                              nonAttachedFields,
+                              (int index, Field field) {
+                                return cb.refer(
+                                  '${_addGenericTypesNullable(field.type)} ${_getArgumentName(index, field)}',
+                                );
+                              },
+                            )
+                          ]),
+                      ),
+                  ),
+              ])
+              ..body = const cb.Code("print('Yum!');"),
+          ),
+        ),
+    );
+
+    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+    indent.writeln(DartFormatter().format('${proxyApi.accept(emitter)}'));
+  }
+}
+
+/// Converts enums to use their index.
+///
+/// ```dart
+/// apple, banana, myEnum${type.isNullable : '?' : ''}.index
+/// ```
+cb.Expression _parameterArgument(
+  int index,
+  NamedType type,
+  List<Enum> enums, {
+  String Function(int index, NamedType arg) getArgumentName =
+      _getSafeArgumentName,
+}) {
+  final String name = getArgumentName(index, type);
+  if (enums.map((Enum e) => e.name).contains(type.type.baseName)) {
+    final cb.Reference nameRef = cb.refer(name);
+    if (type.type.isNullable) {
+      return nameRef.nullSafeProperty('index');
+    } else {
+      return nameRef.property('index');
+    }
+  } else {
+    return cb.refer(name);
+  }
+}
+
+cb.Code _basicMessageChannel({
+  required String channelName,
+  required cb.Expression codec,
+  required cb.Expression binaryMessenger,
+}) {
+  final cb.Reference basicMessageChannel = cb.refer(
+    'BasicMessageChannel<Object?>',
+  );
+  return cb
+      .declareFinal('channel', type: basicMessageChannel)
+      .assign(
+        basicMessageChannel.newInstance(
+          <cb.Expression>[
+            cb.literalString(channelName, raw: true),
+            codec,
+          ],
+          <String, cb.Expression>{
+            'binaryMessenger': binaryMessenger,
+          },
+        ),
+      )
+      .statement;
+}
+
+cb.Reference? _referOrNull(String? symbol, {bool isFuture = false}) {
+  return symbol != null
+      ? cb.refer(isFuture ? 'Future<$symbol>' : symbol)
+      : null;
 }
 
 String _escapeForDartSingleQuotedString(String raw) {

@@ -10,7 +10,9 @@ environment:
 dependencies:
   analyzer: "^5.13.0"
   args: ^2.1.0
+  code_builder: ^4.7.0
   collection: ^1.15.0
+  dart_style: 2.3.1
   meta: ^1.7.0
   path: ^1.8.0
   yaml: ^3.1.1
