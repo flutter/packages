@@ -7,23 +7,21 @@ import 'dart:js_util';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mockito/mockito.dart' show any, verify, when, Mock;
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:url_launcher_web/url_launcher_web.dart';
-import 'package:web/helpers.dart';
+import 'package:web/helpers.dart' as html;
 
-@JSExport()
-class MyWindow {
-  Window? open(Object? a, Object? b, Object? c) => throw UnimplementedError();
-  Navigator? get navigator => throw UnimplementedError();
+abstract class MyWindow {
+  html.Window? open(Object? a, Object? b, Object? c);
+  html.Navigator? get navigator;
 }
 
 @JSExport()
 class MockWindow extends Mock implements MyWindow {}
 
-@JSExport()
-class MyNavigator {
-  String? get userAgent => throw UnimplementedError();
+abstract class MyNavigator {
+  String? get userAgent;
 }
 
 @JSExport()
@@ -42,9 +40,10 @@ void main() {
       mockWindow = MockWindow();
       mockNavigator = MockNavigator();
 
-      final Window jsMockWindow = createDartExport(mockWindow) as Window;
-      final Navigator jsMockNavigator =
-          createDartExport(mockNavigator) as Navigator;
+      final html.Window jsMockWindow =
+          createDartExport(mockWindow) as html.Window;
+      final html.Navigator jsMockNavigator =
+          createDartExport(mockNavigator) as html.Navigator;
 
       when(mockWindow.navigator).thenReturn(jsMockNavigator);
 
@@ -54,8 +53,7 @@ void main() {
       when(mockNavigator.userAgent).thenReturn(
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36');
 
-      plugin = UrlLauncherPlugin(
-          debugWindow: createDartExport(mockWindow) as Window?);
+      plugin = UrlLauncherPlugin(debugWindow: mockWindow as html.Window);
     });
 
     group('canLaunch', () {
@@ -64,8 +62,7 @@ void main() {
       });
 
       testWidgets('"https" URLs -> true', (WidgetTester _) async {
-        expect(
-            plugin.canLaunch('https://go, (Widogle.com'), completion(isTrue));
+        expect(plugin.canLaunch('https://google.com'), completion(isTrue));
       });
 
       testWidgets('"mailto" URLs -> true', (WidgetTester _) async {
@@ -188,8 +185,7 @@ void main() {
           when(mockNavigator.userAgent).thenReturn(
               'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5.1 Safari/605.1.15');
           // Recreate the plugin, so it grabs the overrides from this group
-          plugin = UrlLauncherPlugin(
-              debugWindow: createDartExport(mockWindow) as Window);
+          plugin = UrlLauncherPlugin(debugWindow: mockWindow as html.Window);
         });
 
         testWidgets('http urls should be launched in a new window',
