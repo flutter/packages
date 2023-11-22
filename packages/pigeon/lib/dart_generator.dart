@@ -2006,6 +2006,9 @@ class $codecName extends StandardMessageCodec {
       return method.location == ApiLocation.flutter && method.mustBeImplemented;
     });
 
+    final List<String> customEnumNames =
+        root.enums.map((Enum x) => x.name).toList();
+
     final cb.Class proxyApi = cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = api.name
@@ -2319,7 +2322,144 @@ class $codecName extends StandardMessageCodec {
                       ),
                   ),
               ])
-              ..body = const cb.Code("print('Yum!');"),
+              ..body = cb.Block.of(<cb.Code>[
+                if (!hasARequiredFlutterMethod) ...<cb.Code>[
+                  const cb.Code('{'),
+                  _basicMessageChannel(
+                    channelName: makeChannelNameWithStrings(
+                      apiName: api.name,
+                      methodName: r'$detached',
+                      dartPackageName: dartPackageName,
+                    ),
+                    codec: cb.refer(
+                      '$codecName(\$instanceManager ?? \$InstanceManager.instance)',
+                    ),
+                    binaryMessenger: cb.refer(r'$binaryMessenger'),
+                  ),
+                  cb.refer('channel').property('setMessageHandler').call(
+                    <cb.Expression>[
+                      cb.Method(
+                        (cb.MethodBuilder builder) => builder
+                          ..modifier = cb.MethodModifier.async
+                          ..requiredParameters.add(
+                            cb.Parameter(
+                              (cb.ParameterBuilder builder) => builder
+                                ..name = 'message'
+                                ..type = cb.refer('Object?'),
+                            ),
+                          )
+                          ..body = cb.Block((cb.BlockBuilder builder) {
+                            final String channelName =
+                                makeChannelNameWithStrings(
+                              apiName: api.name,
+                              methodName: r'$detached',
+                              dartPackageName: dartPackageName,
+                            );
+                            builder.statements.addAll(<cb.Code>[
+                              _assert(
+                                condition: cb
+                                    .refer('message')
+                                    .notEqualTo(cb.literalNull),
+                                message: cb.literalString(
+                                  'Argument for $channelName was null.',
+                                  raw: true,
+                                ),
+                              ),
+                              const cb.Code(
+                                'final List<Object?> args = (message as List<Object?>?)!;',
+                              ),
+                              const cb.Code(
+                                'final int? instanceIdentifier = (args[0] as int?);',
+                              ),
+                              _assert(
+                                condition: cb
+                                    .refer('instanceIdentifier')
+                                    .notEqualTo(cb.literalNull),
+                                message: cb.literalString(
+                                  'Argument for $channelName was null, expected non-null int.',
+                                  raw: true,
+                                ),
+                              ),
+                              ...indexFold<List<cb.Code>, Field>(
+                                nonAttachedFields,
+                                <cb.Code>[],
+                                (List<cb.Code> list, int index, Field field) {
+                                  return list
+                                    ..addAll(_messageArg(
+                                      index + 1,
+                                      field,
+                                      customEnumNames: customEnumNames,
+                                      channelName: channelName,
+                                    ));
+                                },
+                              ),
+                              cb
+                                  .refer(
+                                    r'($instanceManager ?? $InstanceManager.instance)',
+                                  )
+                                  .property('addHostCreatedInstance')
+                                  .call(<cb.Expression>[
+                                cb
+                                    .refer(r'$detached?.call')
+                                    .call(
+                                      indexMap(
+                                        nonAttachedFields,
+                                        (int index, Field field) {
+                                          // The calling instance is the first arg.
+                                          final String name =
+                                              _getSafeArgumentName(
+                                            index + 1,
+                                            field,
+                                          );
+                                          return field.type.isNullable
+                                              ? cb.refer(name)
+                                              : cb.refer(name).nullChecked;
+                                        },
+                                      ),
+                                    )
+                                    .ifNullThen(
+                                      cb.refer('${api.name}.\$detached').call(
+                                        <cb.Expression>[],
+                                        <String, cb.Expression>{
+                                          r'$binaryMessenger':
+                                              cb.refer(r'$binaryMessenger'),
+                                          r'$instanceManager':
+                                              cb.refer(r'$instanceManager'),
+                                          ...nonAttachedFields
+                                              .toList()
+                                              .asMap()
+                                              .map(
+                                            (int index, Field field) {
+                                              final String argName =
+                                                  _getSafeArgumentName(
+                                                index + 1,
+                                                field,
+                                              );
+                                              return MapEntry<String,
+                                                  cb.Expression>(
+                                                field.name,
+                                                field.type.isNullable
+                                                    ? cb.refer(argName)
+                                                    : cb
+                                                        .refer(argName)
+                                                        .nullChecked,
+                                              );
+                                            },
+                                          )
+                                        },
+                                      ),
+                                    ),
+                                cb.refer('instanceIdentifier').nullChecked
+                              ]).statement,
+                              const cb.Code('return;'),
+                            ]);
+                          }),
+                      ).genericClosure
+                    ],
+                  ).statement,
+                  const cb.Code('}'),
+                ],
+              ]),
           ),
         ),
     );
@@ -2354,6 +2494,47 @@ cb.Expression _parameterArgument(
   }
 }
 
+/// final <type> <name> = (<argsVariableName>[<index>] as <type>);
+Iterable<cb.Code> _messageArg(
+  int index,
+  NamedType parameter, {
+  required List<String> customEnumNames,
+  required String channelName,
+  String argsVariableName = 'args',
+}) {
+  final String argType = '${_addGenericTypes(parameter.type)}?';
+  final String argName = _getSafeArgumentName(index, parameter);
+  final String genericArgType = _makeGenericTypeArguments(parameter.type);
+  final String castCall = _makeGenericCastCall(parameter.type);
+
+  late final cb.Expression assign;
+  if (customEnumNames.contains(parameter.type.baseName)) {
+    assign = cb
+        .refer(
+          '$argsVariableName[$index] == null ? null : $argType.values[$argsVariableName[$index]! as int]',
+        )
+        .expression;
+  } else {
+    assign = cb
+        .refer(
+          '($argsVariableName[$index] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'}',
+        )
+        .expression;
+  }
+
+  return <cb.Code>[
+    cb.declareFinal(argName, type: cb.refer(argType)).assign(assign).statement,
+    if (!parameter.type.isNullable)
+      _assert(
+        condition: cb.refer(argName).notEqualTo(cb.literalNull),
+        message: cb.literalString(
+          'Argument for $channelName was null, expected non-null $argType.',
+          raw: true,
+        ),
+      ),
+  ];
+}
+
 cb.Code _basicMessageChannel({
   required String channelName,
   required cb.Expression codec,
@@ -2376,6 +2557,13 @@ cb.Code _basicMessageChannel({
         ),
       )
       .statement;
+}
+
+cb.Code _assert({
+  required cb.Expression condition,
+  required cb.Expression message,
+}) {
+  return cb.refer('assert').call(<cb.Expression>[condition, message]).statement;
 }
 
 cb.Reference? _referOrNull(String? symbol, {bool isFuture = false}) {
