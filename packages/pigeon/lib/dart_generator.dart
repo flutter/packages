@@ -2323,6 +2323,9 @@ class $codecName extends StandardMessageCodec {
                   ),
               ])
               ..body = cb.Block.of(<cb.Code>[
+                cb.Code(
+                  'final $codecName codec = $codecName(\$instanceManager ?? \$InstanceManager.instance);',
+                ),
                 if (!hasARequiredFlutterMethod) ...<cb.Code>[
                   const cb.Code('{'),
                   _basicMessageChannel(
@@ -2330,9 +2333,6 @@ class $codecName extends StandardMessageCodec {
                       apiName: api.name,
                       methodName: r'$detached',
                       dartPackageName: dartPackageName,
-                    ),
-                    codec: cb.refer(
-                      '$codecName(\$instanceManager ?? \$InstanceManager.instance)',
                     ),
                     binaryMessenger: cb.refer(r'$binaryMessenger'),
                   ),
@@ -2459,6 +2459,147 @@ class $codecName extends StandardMessageCodec {
                   ).statement,
                   const cb.Code('}'),
                 ],
+                ...flutterMethods.fold<List<cb.Code>>(
+                  <cb.Code>[],
+                  (List<cb.Code> list, Method method) {
+                    final String channelName = makeChannelName(
+                      api,
+                      method,
+                      dartPackageName,
+                    );
+                    final cb.Expression call = cb
+                        .refer(
+                      '(${method.name} ?? instance!.${method.name})${method.mustBeImplemented ? '' : '?'}.call',
+                    )
+                        .call(
+                      <cb.Expression>[
+                        cb.refer('instance').nullChecked,
+                        ...indexMap(
+                          method.arguments,
+                          (int index, NamedType parameter) {
+                            final String name = _getSafeArgumentName(
+                              index + 1,
+                              parameter,
+                            );
+                            return cb
+                                .refer(name)
+                                .nullCheckedIf(!parameter.type.isNullable);
+                          },
+                        ),
+                      ],
+                    );
+                    return list
+                      ..addAll(<cb.Code>[
+                        const cb.Code('{'),
+                        _basicMessageChannel(
+                          channelName: channelName,
+                          binaryMessenger: cb.refer(r'$binaryMessenger'),
+                        ),
+                        cb.refer('channel').property('setMessageHandler').call(
+                          <cb.Expression>[
+                            cb.Method(
+                              (cb.MethodBuilder builder) => builder
+                                ..modifier = cb.MethodModifier.async
+                                ..requiredParameters.add(
+                                  cb.Parameter(
+                                    (cb.ParameterBuilder builder) => builder
+                                      ..name = 'message'
+                                      ..type = cb.refer('Object?'),
+                                  ),
+                                )
+                                ..body = cb.Block((cb.BlockBuilder builder) {
+                                  builder.statements.addAll(<cb.Code>[
+                                    _assert(
+                                      condition: cb
+                                          .refer('message')
+                                          .notEqualTo(cb.literalNull),
+                                      message: cb.literalString(
+                                        'Argument for $channelName was null.',
+                                        raw: true,
+                                      ),
+                                    ),
+                                    const cb.Code(
+                                      'final List<Object?> args = (message as List<Object?>?)!;',
+                                    ),
+                                    cb.Code(
+                                      'final ${api.name}? instance = (args[0] as ${api.name}?);',
+                                    ),
+                                    _assert(
+                                      condition: cb
+                                          .refer('instance')
+                                          .notEqualTo(cb.literalNull),
+                                      message: cb.literalString(
+                                        'Argument for $channelName was null, expected non-null ${api.name}.',
+                                        raw: true,
+                                      ),
+                                    ),
+                                    ...indexFold<List<cb.Code>, NamedType>(
+                                      method.arguments,
+                                      <cb.Code>[],
+                                      (
+                                        List<cb.Code> list,
+                                        int index,
+                                        NamedType type,
+                                      ) {
+                                        return list
+                                          ..addAll(_messageArg(
+                                            index + 1,
+                                            type,
+                                            customEnumNames: customEnumNames,
+                                            channelName: channelName,
+                                          ));
+                                      },
+                                    ),
+                                    const cb.Code('try {'),
+                                    if (method.returnType.isVoid) ...<cb.Code>[
+                                      if (method.isAsynchronous)
+                                        call.awaited.statement
+                                      else
+                                        call.statement,
+                                      const cb.Code(
+                                        'return wrapResponse(empty: true);',
+                                      ),
+                                    ] else ...<cb.Code>[
+                                      cb
+                                          .declareFinal(
+                                            'output',
+                                            type: cb.refer(
+                                              _addGenericTypesNullable(
+                                                method.returnType,
+                                              ),
+                                            ),
+                                          )
+                                          .assign(
+                                            call.awaitedIf(
+                                              method.isAsynchronous,
+                                            ),
+                                          )
+                                          .statement,
+                                      _wrapResultResponse(
+                                              root, method.returnType)
+                                          .returned
+                                          .statement,
+                                    ],
+                                    const cb.Code(
+                                      '} on PlatformException catch (e) {',
+                                    ),
+                                    const cb.Code(
+                                      'return wrapResponse(error: e);',
+                                    ),
+                                    const cb.Code('} catch (e) {'),
+                                    const cb.Code(
+                                      "return wrapResponse(error: PlatformException(code: 'error', message: e.toString()),);",
+                                    ),
+                                    const cb.Code('}')
+                                  ]);
+                                }),
+                            ).genericClosure
+                          ],
+                        ).statement,
+                        const cb.Code('}'),
+                      ]);
+                  },
+                ),
               ]),
           ),
         ),
@@ -2467,6 +2608,24 @@ class $codecName extends StandardMessageCodec {
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.writeln(DartFormatter().format('${proxyApi.accept(emitter)}'));
   }
+}
+
+extension on cb.Expression {
+  cb.Expression awaitedIf(bool condition) => condition ? awaited : this;
+  cb.Expression nullCheckedIf(bool condition) => condition ? nullChecked : this;
+  cb.Expression propertyIf(bool condition, String name) =>
+      condition ? property(name) : this;
+}
+
+cb.Expression _wrapResultResponse(Root root, TypeDeclaration type) {
+  return cb
+      .refer('wrapResponse')
+      .call(<cb.Expression>[], <String, cb.Expression>{
+    'result': _referOrNull('output', nullable: type.isNullable)!.propertyIf(
+      isEnum(root, type),
+      'index',
+    ),
+  });
 }
 
 /// Converts enums to use their index.
@@ -2502,7 +2661,7 @@ Iterable<cb.Code> _messageArg(
   required String channelName,
   String argsVariableName = 'args',
 }) {
-  final String argType = '${_addGenericTypes(parameter.type)}?';
+  final String argType = _addGenericTypes(parameter.type);
   final String argName = _getSafeArgumentName(index, parameter);
   final String genericArgType = _makeGenericTypeArguments(parameter.type);
   final String castCall = _makeGenericCastCall(parameter.type);
@@ -2523,7 +2682,10 @@ Iterable<cb.Code> _messageArg(
   }
 
   return <cb.Code>[
-    cb.declareFinal(argName, type: cb.refer(argType)).assign(assign).statement,
+    cb
+        .declareFinal(argName, type: cb.refer('$argType?'))
+        .assign(assign)
+        .statement,
     if (!parameter.type.isNullable)
       _assert(
         condition: cb.refer(argName).notEqualTo(cb.literalNull),
@@ -2537,8 +2699,8 @@ Iterable<cb.Code> _messageArg(
 
 cb.Code _basicMessageChannel({
   required String channelName,
-  required cb.Expression codec,
-  required cb.Expression binaryMessenger,
+  cb.Expression codec = const cb.Reference('codec'),
+  cb.Expression binaryMessenger = const cb.Reference('binaryMessenger'),
 }) {
   final cb.Reference basicMessageChannel = cb.refer(
     'BasicMessageChannel<Object?>',
@@ -2566,9 +2728,15 @@ cb.Code _assert({
   return cb.refer('assert').call(<cb.Expression>[condition, message]).statement;
 }
 
-cb.Reference? _referOrNull(String? symbol, {bool isFuture = false}) {
+cb.Reference? _referOrNull(
+  String? symbol, {
+  bool isFuture = false,
+  bool nullable = false,
+}) {
+  final String nullability = nullable ? '?' : '';
   return symbol != null
-      ? cb.refer(isFuture ? 'Future<$symbol>' : symbol)
+      ? cb.refer(
+          isFuture ? 'Future<$symbol$nullability>' : '$symbol$nullability')
       : null;
 }
 
