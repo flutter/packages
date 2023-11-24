@@ -738,7 +738,7 @@ if (replyList == null) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    // TODO: setup all message handlers with InstanceManager.instance?
+    // TODO: setup all message handlers in InstanceManager.instance?
     indent.writeln(r'''
 /// An immutable object that can provide functional copies of itself.
 ///
@@ -2939,7 +2939,35 @@ class $codecName extends StandardMessageCodec {
                   ).returned.statement,
                   const cb.Code('}'),
                 ]),
-            )
+            ),
+          cb.Method(
+            (cb.MethodBuilder builder) => builder
+              ..name = r'$copy'
+              ..returns = cb.refer(api.name)
+              ..annotations.add(cb.refer('override'))
+              ..body = cb.Block.of(<cb.Code>[
+                cb
+                    .refer('${api.name}.\$detached')
+                    .call(
+                      <cb.Expression>[],
+                      <String, cb.Expression>{
+                        r'$binaryMessenger': cb.refer(r'$binaryMessenger'),
+                        r'$instanceManager': cb.refer(r'$instanceManager'),
+                        for (final Field field in nonAttachedFields)
+                          field.name: cb.refer(field.name),
+                        for (final Method method in superClassFlutterMethods)
+                          method.name: cb.refer(method.name),
+                        for (final ProxyApiNode proxyApi in interfacesApis)
+                          for (final Method method in proxyApi.methods)
+                            method.name: cb.refer(method.name),
+                        for (final Method method in flutterMethods)
+                          method.name: cb.refer(method.name),
+                      },
+                    )
+                    .returned
+                    .statement,
+              ]),
+          ),
         ]),
     );
 
