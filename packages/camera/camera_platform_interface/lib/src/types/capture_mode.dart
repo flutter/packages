@@ -16,6 +16,7 @@ enum CaptureMode {
   /// Capture a video, however this allows the user to take photos while recording.
   video;
 
+  /// Deserializes the [captureMode] string argument to the corresponding CaptureMode enum.
   factory CaptureMode.deserialize(String captureMode) {
     switch (captureMode) {
       case 'photo':
