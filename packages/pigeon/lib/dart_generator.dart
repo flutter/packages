@@ -2021,11 +2021,15 @@ class $codecName extends StandardMessageCodec {
           else
             cb.refer(r'$Copyable')
         ])
+        ..docs.addAll(_asDartComments(api.documentationComments))
         ..constructors.addAll(
           api.constructors.map(
             (Constructor constructor) => cb.Constructor(
               (cb.ConstructorBuilder builder) => builder
                 ..name = constructor.name.isNotEmpty ? constructor.name : null
+                ..docs.addAll(_asDartComments(
+                  constructor.documentationComments,
+                ))
                 ..optionalParameters.addAll(
                   <cb.Parameter>[
                     cb.Parameter(
@@ -2201,6 +2205,12 @@ class $codecName extends StandardMessageCodec {
           cb.Constructor(
             (cb.ConstructorBuilder builder) => builder
               ..name = r'$detached'
+              ..docs.addAll(<String>[
+                '/// Constructs ${api.name} without creating the associated native object.',
+                '///',
+                '/// This should only be used by subclasses created by this library or to',
+                '/// create copies.',
+              ])
               ..optionalParameters.addAll(<cb.Parameter>[
                 cb.Parameter(
                   (cb.ParameterBuilder builder) => builder
@@ -2621,6 +2631,12 @@ class $codecName extends StandardMessageCodec {
                 ..name = r'$binaryMessenger'
                 ..type = cb.refer('BinaryMessenger?')
                 ..modifier = cb.FieldModifier.final$
+                ..docs.addAll(<String>[
+                  '/// Sends and receives binary data across the Flutter platform barrier.',
+                  '///',
+                  '/// If it is null, the default BinaryMessenger will be used, which routes to',
+                  '/// the host platform.',
+                ])
                 ..annotations.addAll(<cb.Expression>[
                   if (superClassApi == null && interfacesApis.isNotEmpty)
                     cb.refer('override'),
@@ -2631,6 +2647,9 @@ class $codecName extends StandardMessageCodec {
                 ..name = r'$instanceManager'
                 ..type = cb.refer(r'$InstanceManager')
                 ..modifier = cb.FieldModifier.final$
+                ..docs.add(
+                  '/// Maintains instances stored to communicate with native language objects.',
+                )
                 ..annotations.addAll(<cb.Expression>[
                   if (superClassApi == null && interfacesApis.isNotEmpty)
                     cb.refer('override'),
@@ -2642,13 +2661,15 @@ class $codecName extends StandardMessageCodec {
               (cb.FieldBuilder builder) => builder
                 ..name = field.name
                 ..type = cb.refer(_addGenericTypesNullable(field.type))
-                ..modifier = cb.FieldModifier.final$,
+                ..modifier = cb.FieldModifier.final$
+                ..docs.addAll(_asDartComments(field.documentationComments)),
             ),
           for (final Method method in flutterMethods)
             cb.Field(
               (cb.FieldBuilder builder) => builder
                 ..name = method.name
                 ..modifier = cb.FieldModifier.final$
+                ..docs.addAll(_asDartComments(method.documentationComments))
                 ..type = cb.FunctionType(
                   (cb.FunctionTypeBuilder builder) => builder
                     ..returnType = _referOrNull(
@@ -2676,6 +2697,7 @@ class $codecName extends StandardMessageCodec {
                   ..name = method.name
                   ..modifier = cb.FieldModifier.final$
                   ..annotations.add(cb.refer('override'))
+                  ..docs.addAll(_asDartComments(method.documentationComments))
                   ..type = cb.FunctionType(
                     (cb.FunctionTypeBuilder builder) => builder
                       ..returnType = _referOrNull(
@@ -2704,6 +2726,7 @@ class $codecName extends StandardMessageCodec {
                 ..modifier = cb.FieldModifier.final$
                 ..static = field.isStatic
                 ..late = !field.isStatic
+                ..docs.addAll(_asDartComments(field.documentationComments))
                 ..assignment = cb.Code('_${field.name}()'),
             ),
         ])
@@ -2820,6 +2843,7 @@ class $codecName extends StandardMessageCodec {
                 ..name = method.name
                 ..static = method.isStatic
                 ..modifier = cb.MethodModifier.async
+                ..docs.addAll(_asDartComments(method.documentationComments))
                 ..returns = _referOrNull(
                   _addGenericTypesNullable(method.returnType),
                   isFuture: true,
@@ -2981,6 +3005,12 @@ extension on cb.Expression {
   cb.Expression nullCheckedIf(bool condition) => condition ? nullChecked : this;
   cb.Expression propertyIf(bool condition, String name) =>
       condition ? property(name) : this;
+}
+
+Iterable<String> _asDartComments(Iterable<String> comments) sync* {
+  for (final String comment in comments) {
+    yield '///$comment';
+  }
 }
 
 cb.Expression _unwrapReturnValue(
