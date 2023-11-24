@@ -46,7 +46,7 @@ public final class CameraRegionUtils {
       } else {
         rect = cameraProperties.getSensorInfoActiveArraySize();
       }
-      
+
       return SizeFactory.create(rect.width(), rect.height());
     } else {
       // No distortion correction support.

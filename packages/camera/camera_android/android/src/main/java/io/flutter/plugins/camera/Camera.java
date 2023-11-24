@@ -12,7 +12,6 @@ import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
@@ -53,7 +52,6 @@ import io.flutter.plugins.camera.features.exposurepoint.ExposurePointFeature;
 import io.flutter.plugins.camera.features.flash.FlashFeature;
 import io.flutter.plugins.camera.features.flash.FlashMode;
 import io.flutter.plugins.camera.features.focuspoint.FocusPointFeature;
-import io.flutter.plugins.camera.features.fpsrange.FpsRangeFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionFeature;
 import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationManager;
@@ -61,8 +59,8 @@ import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
-import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
 import io.flutter.plugins.camera.types.CaptureMode;
+import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry;
 import java.io.File;
 import java.io.IOException;
@@ -211,7 +209,12 @@ class Camera
     this.resolutionPreset = resolutionPreset;
     this.cameraFeatures =
         CameraFeatures.init(
-            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset, CaptureMode.video);
+            cameraFeatureFactory,
+            cameraProperties,
+            activity,
+            dartMessenger,
+            resolutionPreset,
+            CaptureMode.video);
 
     // Create capture callback.
     captureTimeouts = new CaptureTimeoutsWrapper(3000, 3000);
@@ -978,7 +981,7 @@ class Camera
 
   /**
    * Sets new capture mode from dart
-   * 
+   *
    * @param result Flutter result.
    * @param newMode New mode.
    */
@@ -987,7 +990,12 @@ class Camera
     stopAndReleaseCamera();
     cameraFeatures =
         CameraFeatures.init(
-            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset, newMode);
+            cameraFeatureFactory,
+            cameraProperties,
+            activity,
+            dartMessenger,
+            resolutionPreset,
+            newMode);
     try {
       open(imageFormatGroup);
     } catch (CameraAccessException e) {
@@ -995,7 +1003,7 @@ class Camera
     }
 
     final ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
-    Map <String, Integer> previewSize = new HashMap<String, Integer>();
+    Map<String, Integer> previewSize = new HashMap<String, Integer>();
     previewSize.put("previewWidth", resolutionFeature.getPreviewSize().getWidth());
     previewSize.put("previewHeight", resolutionFeature.getPreviewSize().getHeight());
     result.success(previewSize);
@@ -1338,7 +1346,12 @@ class Camera
     cameraProperties = properties;
     cameraFeatures =
         CameraFeatures.init(
-            cameraFeatureFactory, cameraProperties, activity, dartMessenger, resolutionPreset, cameraFeatures.getResolution().getCaptureMode());
+            cameraFeatureFactory,
+            cameraProperties,
+            activity,
+            dartMessenger,
+            resolutionPreset,
+            cameraFeatures.getResolution().getCaptureMode());
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
     try {

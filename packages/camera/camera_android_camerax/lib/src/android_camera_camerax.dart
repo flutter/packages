@@ -317,15 +317,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     const CaptureMode captureMode = CaptureMode.video;
 
     cameraEventStreamController.add(CameraInitializedEvent(
-        cameraId,
-        previewResolutionInfo.width.toDouble(),
-        previewResolutionInfo.height.toDouble(),
-        exposureMode,
-        exposurePointSupported,
-        focusMode,
-        focusPointSupported,
-        captureMode,
-        ));
+      cameraId,
+      previewResolutionInfo.width.toDouble(),
+      previewResolutionInfo.height.toDouble(),
+      exposureMode,
+      exposurePointSupported,
+      focusMode,
+      focusPointSupported,
+      captureMode,
+    ));
   }
 
   /// Releases the resources of the accessed camera.

@@ -108,7 +108,8 @@ public interface CameraFeatureFactory {
    * @return newly created instance of the FpsRangeFeature class.
    */
   @NonNull
-  FpsRangeFeature createFpsRangeFeature(@NonNull CameraProperties cameraProperties, @NonNull CaptureMode captureMode);
+  FpsRangeFeature createFpsRangeFeature(
+      @NonNull CameraProperties cameraProperties, @NonNull CaptureMode captureMode);
 
   /**
    * Creates a new instance of the sensor orientation feature.

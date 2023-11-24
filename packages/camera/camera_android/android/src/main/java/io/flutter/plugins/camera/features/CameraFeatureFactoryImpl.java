@@ -74,8 +74,8 @@ public class CameraFeatureFactoryImpl implements CameraFeatureFactory {
 
   @NonNull
   @Override
-  public FpsRangeFeature createFpsRangeFeature(@NonNull CameraProperties cameraProperties,
-                                               @NonNull CaptureMode captureMode) {
+  public FpsRangeFeature createFpsRangeFeature(
+      @NonNull CameraProperties cameraProperties, @NonNull CaptureMode captureMode) {
     return new FpsRangeFeature(cameraProperties, captureMode);
   }
 

@@ -9,7 +9,6 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;

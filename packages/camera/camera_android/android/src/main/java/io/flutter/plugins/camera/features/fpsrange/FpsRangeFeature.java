@@ -6,7 +6,6 @@ package io.flutter.plugins.camera.features.fpsrange;
 
 import android.annotation.SuppressLint;
 import android.hardware.camera2.CaptureRequest;
-import android.util.Log;
 import android.util.Range;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,8 +27,8 @@ public class FpsRangeFeature extends CameraFeature<Range<Integer>> {
    *
    * @param cameraProperties Collection of characteristics for the current camera device.
    */
-  public FpsRangeFeature(@NonNull CameraProperties cameraProperties,
-                         @NonNull CaptureMode captureMode) {
+  public FpsRangeFeature(
+      @NonNull CameraProperties cameraProperties, @NonNull CaptureMode captureMode) {
     super(cameraProperties);
     this.captureMode = captureMode;
 

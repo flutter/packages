@@ -404,7 +404,7 @@ class MethodChannelCamera extends CameraPlatform {
         'setCaptureMode',
         <String, dynamic>{
           'cameraId': cameraId,
-          'mode': serializeCaptureMode(mode),
+          'mode': mode.name,
         },
       );
 
@@ -609,7 +609,7 @@ class MethodChannelCamera extends CameraPlatform {
           arguments['exposurePointSupported']! as bool,
           deserializeFocusMode(arguments['focusMode']! as String),
           arguments['focusPointSupported']! as bool,
-          deserializeCaptureMode(arguments['captureMode']! as String),
+          CaptureMode.deserialize(arguments['captureMode']! as String),
         ));
         break;
       case 'resolution_changed':

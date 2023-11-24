@@ -1402,6 +1402,52 @@ void main() {
             'This is a test error message',
           )));
     });
+
+    test('setCaptureMode() calls $CameraPlatform', () async {
+      final CameraController cameraController = CameraController(
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
+          ResolutionPreset.max);
+      await cameraController.initialize();
+      when(CameraPlatform.instance
+              .setCaptureMode(mockInitializeCamera, CaptureMode.photo))
+          .thenAnswer((_) => Future<Size?>.value(const Size(640, 480)));
+      await cameraController.setCaptureMode(CaptureMode.photo);
+
+      verify(CameraPlatform.instance
+              .setCaptureMode(cameraController.cameraId, CaptureMode.photo))
+          .called(1);
+    });
+
+    test('setCaptureMode throws $CameraException on $PlatformException',
+        () async {
+      final CameraController cameraController = CameraController(
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
+          ResolutionPreset.max);
+      await cameraController.initialize();
+
+      when(CameraPlatform.instance
+              .setCaptureMode(cameraController.cameraId, CaptureMode.photo))
+          .thenThrow(
+        PlatformException(
+          code: 'TEST_ERROR',
+          message: 'This is a test error message',
+        ),
+      );
+
+      expect(
+          cameraController.setCaptureMode(CaptureMode.photo),
+          throwsA(isA<CameraException>().having(
+            (CameraException error) => error.description,
+            'TEST_ERROR',
+            'This is a test error message',
+          )));
+    });
   });
 }
 
@@ -1555,6 +1601,13 @@ class MockCameraPlatform extends Mock
         Invocation.method(#setExposureOffset, <Object?>[cameraId, offset]),
         returnValue: Future<double>.value(1.0),
       ) as Future<double>;
+
+  @override
+  Future<Size?> setCaptureMode(int? cameraId, CaptureMode mode) async =>
+      super.noSuchMethod(
+        Invocation.method(#setCaptureMode, <Object?>[cameraId, mode]),
+        returnValue: Future<Size?>.value(const Size(680, 480)),
+      ) as Future<Size?>;
 }
 
 class MockCameraDescription extends CameraDescription {

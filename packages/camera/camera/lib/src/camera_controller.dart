@@ -705,7 +705,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     }
   }
 
-  /// Sets the capture mode for
+  /// Sets the capture mode for the camera.
   Future<void> setCaptureMode(CaptureMode mode) async {
     _throwIfNotInitialized('setCaptureMode');
     try {

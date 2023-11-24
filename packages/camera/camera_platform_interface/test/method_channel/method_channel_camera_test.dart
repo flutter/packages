@@ -813,11 +813,11 @@ void main() {
         ]);
       });
 
-      test('Should set the capture mode', () async{
+      test('Should set the capture mode', () async {
         // Arrange
         final MethodChannelMock channel = MethodChannelMock(
-            channelName: 'plugins.flutter.io/camera',
-            methods: <String, dynamic>{'setCaptureMode': null},
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{'setCaptureMode': null},
         );
 
         // Act

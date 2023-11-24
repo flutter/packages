@@ -5,8 +5,6 @@
 /// Affect the quality of video recording and image capture:
 ///
 /// If a preset is not available on the camera being used a preset of lower quality will be selected automatically.
-/// If the [CaptureMode] is [CaptureMode.photo] the selected resolution will be a 4:3 resolution.
-/// If the [CaptureMode] is [CaptureMode.video] the selected resolution will generally be a 16:9 resolution.
 enum ResolutionPreset {
   /// 352x288 on iOS, 240p (320x240) on Android and Web
   low,

@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 /// The mode the controller should operate in.
 ///
 /// This capture mode determines whether the capture session is optimized for
@@ -10,27 +14,16 @@ enum CaptureMode {
   photo,
 
   /// Capture a video, however this allows the user to take photos while recording.
-  video,
-}
+  video;
 
-/// Returns the capture mode as a string
-String serializeCaptureMode(CaptureMode captureMode) {
-  switch (captureMode) {
-    case CaptureMode.photo:
-      return 'photo';
-    case CaptureMode.video:
-      return 'video';
-  }
-}
+  factory CaptureMode.deserialize(String captureMode) {
+    switch (captureMode) {
+      case 'photo':
+        return CaptureMode.photo;
+      case 'video':
+        return CaptureMode.video;
+    }
 
-/// Returns the capture mode for a given string.
-CaptureMode deserializeCaptureMode(String captureMode) {
-  switch (captureMode) {
-    case 'photo':
-      return CaptureMode.photo;
-    case 'video':
-      return CaptureMode.video;
-    default:
-      throw ArgumentError('"$captureMode" is not a valid CaptureMode value');
+    throw ArgumentError('"$captureMode" is not a valid CaptureMode value');
   }
 }

@@ -269,7 +269,7 @@ void main() {
 
       expect(firstEvent == secondEvent, false);
     });
-    
+
     test('equals should return false if captureMode is different', () {
       const CameraInitializedEvent firstEvent = CameraInitializedEvent(
         1,

@@ -168,7 +168,8 @@ public class CameraPropertiesImpl implements CameraProperties {
   @NonNull
   @Override
   public Size[] getAvailableOutputSizes(int imageFormat) {
-    return cameraCharacteristics.get(
-        CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(imageFormat);
+    return cameraCharacteristics
+        .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+        .getOutputSizes(imageFormat);
   }
 }

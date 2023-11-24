@@ -69,7 +69,8 @@ public class CameraFeatures {
     cameraFeatures.setFlash(cameraFeatureFactory.createFlashFeature(cameraProperties));
     cameraFeatures.setFocusPoint(
         cameraFeatureFactory.createFocusPointFeature(cameraProperties, sensorOrientationFeature));
-    cameraFeatures.setFpsRange(cameraFeatureFactory.createFpsRangeFeature(cameraProperties, captureMode));
+    cameraFeatures.setFpsRange(
+        cameraFeatureFactory.createFpsRangeFeature(cameraProperties, captureMode));
     cameraFeatures.setNoiseReduction(
         cameraFeatureFactory.createNoiseReductionFeature(cameraProperties));
     cameraFeatures.setResolution(
