@@ -2696,6 +2696,124 @@ class $codecName extends StandardMessageCodec {
                       ]),
                   ),
               ),
+          for (final Field field in attachedFields)
+            cb.Field(
+              (cb.FieldBuilder builder) => builder
+                ..name = field.name
+                ..type = cb.refer(_addGenericTypesNullable(field.type))
+                ..modifier = cb.FieldModifier.final$
+                ..static = field.isStatic
+                ..late = !field.isStatic
+                ..assignment = cb.Code('_${field.name}()'),
+            ),
+        ])
+        ..methods.addAll(<cb.Method>[
+          for (final Field field in attachedFields)
+            cb.Method(
+              (cb.MethodBuilder builder) {
+                final String type = _addGenericTypesNullable(field.type);
+                final String channelName = makeChannelNameForField(
+                  api,
+                  field,
+                  dartPackageName,
+                );
+                builder
+                  ..name = '_${field.name}'
+                  ..static = field.isStatic
+                  ..returns = cb.refer(type)
+                  ..body = cb.Block.of(
+                    <cb.Code>[
+                      cb.Code('final $type instance = $type.\$detached('),
+                      if (!field.isStatic) ...<cb.Code>[
+                        const cb.Code(r'$binaryMessenger: $binaryMessenger,'),
+                        const cb.Code(r'$instanceManager: $instanceManager,'),
+                      ],
+                      const cb.Code(');'),
+                      _basicMessageChannel(
+                        channelName: channelName,
+                        codec: !field.isStatic
+                            ? cb.refer('_codec')
+                            : cb.refer(
+                                '$codecName(\$InstanceManager.instance)',
+                              ),
+                        binaryMessenger: !field.isStatic
+                            ? cb.refer(r'$binaryMessenger')
+                            : null,
+                      ),
+                      cb.Code(
+                        'final int instanceIdentifier = ${field.isStatic ? r'$InstanceManager.instance' : r'$instanceManager'}.addDartCreatedInstance(instance);',
+                      ),
+                      cb
+                          .refer('channel.send')
+                          .call(<cb.Expression>[
+                            cb.literalList(
+                              <Object?>[
+                                if (!field.isStatic) cb.refer('this'),
+                                cb.refer('instanceIdentifier')
+                              ],
+                              cb.refer('Object?'),
+                            )
+                          ])
+                          .property('then')
+                          .call(
+                            <cb.Expression>[
+                              cb.Method(
+                                (cb.MethodBuilder builder) => builder
+                                  ..requiredParameters.add(
+                                    cb.Parameter(
+                                      (cb.ParameterBuilder builder) => builder
+                                        ..name = 'value'
+                                        ..type = cb.refer('Object?'),
+                                    ),
+                                  )
+                                  ..body = cb.Block.of(<cb.Code>[
+                                    const cb.Code(
+                                      'final List<Object?>? replyList = value as List<Object?>?;',
+                                    ),
+                                    const cb.Code('if (replyList == null) {'),
+                                    cb.InvokeExpression.newOf(
+                                        cb.refer('PlatformException'),
+                                        <cb.Expression>[],
+                                        <String, cb.Expression>{
+                                          'code':
+                                              cb.literalString('channel-error'),
+                                          'message': cb.literalString(
+                                            'Unable to establish connection on channel.',
+                                          )
+                                        }).thrown.statement,
+                                    const cb.Code(
+                                      '} else if (replyList.length > 1) {',
+                                    ),
+                                    cb.InvokeExpression.newOf(
+                                        cb.refer('PlatformException'),
+                                        <cb.Expression>[],
+                                        <String, cb.Expression>{
+                                          'code': cb
+                                              .refer('replyList')
+                                              .index(cb.literal(0))
+                                              .nullChecked
+                                              .asA(cb.refer('String')),
+                                          'message': cb
+                                              .refer('replyList')
+                                              .index(cb.literal(1))
+                                              .asA(cb.refer('String?')),
+                                          'details': cb
+                                              .refer('replyList')
+                                              .index(cb.literal(2)),
+                                        }).thrown.statement,
+                                    const cb.Code('}'),
+                                  ]),
+                              ).genericClosure,
+                            ],
+                            <String, cb.Expression>{},
+                            <cb.Reference>[cb.refer('void')],
+                          )
+                          .statement,
+                      const cb.Code('return instance;'),
+                    ],
+                  );
+              },
+            )
         ]),
     );
 
@@ -2794,7 +2912,7 @@ Iterable<cb.Code> _messageArg(
 cb.Code _basicMessageChannel({
   required String channelName,
   cb.Expression codec = const cb.Reference('codec'),
-  cb.Expression binaryMessenger = const cb.Reference('binaryMessenger'),
+  cb.Expression? binaryMessenger = const cb.Reference('binaryMessenger'),
 }) {
   final cb.Reference basicMessageChannel = cb.refer(
     'BasicMessageChannel<Object?>',
@@ -2808,7 +2926,7 @@ cb.Code _basicMessageChannel({
             codec,
           ],
           <String, cb.Expression>{
-            'binaryMessenger': binaryMessenger,
+            if (binaryMessenger != null) 'binaryMessenger': binaryMessenger,
           },
         ),
       )
