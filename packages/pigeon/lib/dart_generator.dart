@@ -2014,9 +2014,9 @@ class $codecName extends StandardMessageCodec {
         ..name = api.name
         ..extend = _referOrNull(superClassApi?.name)
         ..implements.addAll(<cb.Reference>[
-          if (interfacesApis.isNotEmpty)
-            ...interfacesApis.map(
-              (ProxyApiNode proxyApi) => cb.refer(proxyApi.name),
+          if (api.interfacesNames.isNotEmpty)
+            ...api.interfacesNames.map(
+              (String name) => cb.refer(name),
             )
           else
             cb.refer(r'$Copyable')
@@ -2035,13 +2035,14 @@ class $codecName extends StandardMessageCodec {
                         ..toSuper = superClassApi != null
                         ..toThis = superClassApi == null,
                     ),
-                    cb.Parameter(
-                      (cb.ParameterBuilder builder) => builder
-                        ..name = r'$instanceManager'
-                        ..named = true
-                        ..toSuper = superClassApi != null
-                        ..toThis = superClassApi == null,
-                    ),
+                    cb.Parameter((cb.ParameterBuilder builder) => builder
+                      ..name = r'$instanceManager'
+                      ..type = _referOrNull(
+                        superClassApi == null ? r'$InstanceManager' : null,
+                        isNullable: true,
+                      )
+                      ..named = true
+                      ..toSuper = superClassApi != null),
                     for (final Field field in nonAttachedFields)
                       cb.Parameter(
                         (cb.ParameterBuilder builder) => builder
@@ -2083,7 +2084,7 @@ class $codecName extends StandardMessageCodec {
                             _addGenericTypesNullable(parameter.type),
                           )
                           ..named = true
-                          ..required = parameter.type.isNullable,
+                          ..required = !parameter.type.isNullable,
                       ),
                     ),
                   ],
@@ -2213,6 +2214,7 @@ class $codecName extends StandardMessageCodec {
                     ..name = r'$instanceManager'
                     ..type = _referOrNull(
                       superClassApi == null ? r'$InstanceManager' : null,
+                      isNullable: true,
                     )
                     ..named = true
                     ..toSuper = superClassApi != null,
@@ -2602,7 +2604,99 @@ class $codecName extends StandardMessageCodec {
                 ),
               ]),
           ),
-        ),
+        )
+        ..fields.addAll(<cb.Field>[
+          if (hostMethods.isNotEmpty)
+            cb.Field(
+              (cb.FieldBuilder builder) => builder
+                ..name = '_codec'
+                ..type = cb.refer(codecName)
+                ..late = true
+                ..modifier = cb.FieldModifier.final$
+                ..assignment = cb.Code('$codecName(\$instanceManager)'),
+            ),
+          if (superClassApi == null) ...<cb.Field>[
+            cb.Field(
+              (cb.FieldBuilder builder) => builder
+                ..name = r'$binaryMessenger'
+                ..type = cb.refer('BinaryMessenger?')
+                ..modifier = cb.FieldModifier.final$
+                ..annotations.addAll(<cb.Expression>[
+                  if (superClassApi == null && interfacesApis.isNotEmpty)
+                    cb.refer('override'),
+                ]),
+            ),
+            cb.Field(
+              (cb.FieldBuilder builder) => builder
+                ..name = r'$instanceManager'
+                ..type = cb.refer(r'$InstanceManager')
+                ..modifier = cb.FieldModifier.final$
+                ..annotations.addAll(<cb.Expression>[
+                  if (superClassApi == null && interfacesApis.isNotEmpty)
+                    cb.refer('override'),
+                ]),
+            ),
+          ],
+          for (final Field field in nonAttachedFields)
+            cb.Field(
+              (cb.FieldBuilder builder) => builder
+                ..name = field.name
+                ..type = cb.refer(_addGenericTypesNullable(field.type))
+                ..modifier = cb.FieldModifier.final$,
+            ),
+          for (final Method method in flutterMethods)
+            cb.Field(
+              (cb.FieldBuilder builder) => builder
+                ..name = method.name
+                ..modifier = cb.FieldModifier.final$
+                ..type = cb.FunctionType(
+                  (cb.FunctionTypeBuilder builder) => builder
+                    ..returnType = _referOrNull(
+                      _addGenericTypesNullable(method.returnType),
+                      isFuture: method.isAsynchronous,
+                    )
+                    ..isNullable = !method.mustBeImplemented
+                    ..requiredParameters.addAll(<cb.Reference>[
+                      cb.refer('${api.name} instance'),
+                      ...indexMap(
+                        method.arguments,
+                        (int index, NamedType parameter) {
+                          return cb.refer(
+                            '${_addGenericTypesNullable(parameter.type)} ${_getArgumentName(index, parameter)}',
+                          );
+                        },
+                      ),
+                    ]),
+                ),
+            ),
+          for (final ProxyApiNode proxyApi in interfacesApis)
+            for (final Method method in proxyApi.methods)
+              cb.Field(
+                (cb.FieldBuilder builder) => builder
+                  ..name = method.name
+                  ..modifier = cb.FieldModifier.final$
+                  ..annotations.add(cb.refer('override'))
+                  ..type = cb.FunctionType(
+                    (cb.FunctionTypeBuilder builder) => builder
+                      ..returnType = _referOrNull(
+                        _addGenericTypesNullable(method.returnType),
+                        isFuture: method.isAsynchronous,
+                      )
+                      ..isNullable = !method.mustBeImplemented
+                      ..requiredParameters.addAll(<cb.Reference>[
+                        cb.refer('${proxyApi.name} instance'),
+                        ...indexMap(
+                          method.arguments,
+                          (int index, NamedType parameter) {
+                            return cb.refer(
+                              '${_addGenericTypesNullable(parameter.type)} ${_getArgumentName(index, parameter)}',
+                            );
+                          },
+                        ),
+                      ]),
+                  ),
+              ),
+        ]),
     );
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
@@ -2621,7 +2715,7 @@ cb.Expression _wrapResultResponse(Root root, TypeDeclaration type) {
   return cb
       .refer('wrapResponse')
       .call(<cb.Expression>[], <String, cb.Expression>{
-    'result': _referOrNull('output', nullable: type.isNullable)!.propertyIf(
+    'result': _referOrNull('output', isNullable: type.isNullable)!.propertyIf(
       isEnum(root, type),
       'index',
     ),
@@ -2731,9 +2825,9 @@ cb.Code _assert({
 cb.Reference? _referOrNull(
   String? symbol, {
   bool isFuture = false,
-  bool nullable = false,
+  bool isNullable = false,
 }) {
-  final String nullability = nullable ? '?' : '';
+  final String nullability = isNullable ? '?' : '';
   return symbol != null
       ? cb.refer(
           isFuture ? 'Future<$symbol$nullability>' : '$symbol$nullability')
