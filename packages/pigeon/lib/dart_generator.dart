@@ -2107,12 +2107,7 @@ class $codecName extends StandardMessageCodec {
                       constructor,
                       dartPackageName,
                     ),
-                    codec: cb.refer(codecName).newInstance(<cb.Expression>[
-                      if (superClassApi != null)
-                        cb.refer(r'$instanceManager')
-                      else
-                        cb.refer(r'this').property(r'$instanceManager')
-                    ]),
+                    codec: cb.refer('_codec${api.name}'),
                     binaryMessenger: cb.refer(r'$binaryMessenger'),
                   ),
                   cb.Code(
@@ -2616,10 +2611,12 @@ class $codecName extends StandardMessageCodec {
           ),
         )
         ..fields.addAll(<cb.Field>[
-          if (hostMethods.isNotEmpty)
+          if (hostMethods.isNotEmpty ||
+              api.constructors.isNotEmpty ||
+              attachedFields.where((Field field) => !field.isStatic).isNotEmpty)
             cb.Field(
               (cb.FieldBuilder builder) => builder
-                ..name = '_codec'
+                ..name = '_codec${api.name}'
                 ..type = cb.refer(codecName)
                 ..late = true
                 ..modifier = cb.FieldModifier.final$
@@ -2755,7 +2752,7 @@ class $codecName extends StandardMessageCodec {
                       _basicMessageChannel(
                         channelName: channelName,
                         codec: !field.isStatic
-                            ? cb.refer('_codec')
+                            ? cb.refer('_codec${api.name}')
                             : cb.refer(
                                 '$codecName(\$InstanceManager.instance)',
                               ),
@@ -2877,7 +2874,7 @@ class $codecName extends StandardMessageCodec {
                   _basicMessageChannel(
                     channelName: makeChannelName(api, method, dartPackageName),
                     codec: !method.isStatic
-                        ? cb.refer('_codec')
+                        ? cb.refer('_codec${api.name}')
                         : cb.refer(
                             '$codecName(\$instanceManager ?? \$InstanceManager.instance)',
                           ),
