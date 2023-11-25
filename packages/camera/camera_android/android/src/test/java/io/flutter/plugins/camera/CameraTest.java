@@ -1166,7 +1166,7 @@ public class CameraTest {
   }
 
   @Test
-  public void close_doesNotThrowExceptionWhenPauseCalledOnClosedCamera()
+  public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed()
       throws CameraAccessException {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
