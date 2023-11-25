@@ -147,6 +147,7 @@ class VideoPlayerValue {
           listEquals(buffered, other.buffered) &&
           isPlaying == other.isPlaying &&
           isBuffering == other.isBuffering &&
+          isPictureInPictureActive == other.isPictureInPictureActive &&
           playbackSpeed == other.playbackSpeed &&
           errorDescription == other.errorDescription &&
           size == other.size &&
@@ -159,6 +160,7 @@ class VideoPlayerValue {
         buffered,
         isPlaying,
         isBuffering,
+        isPictureInPictureActive,
         playbackSpeed,
         errorDescription,
         size,
@@ -389,7 +391,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     return _platform.isPictureInPictureSupported();
   }
 
-  /// Enable/disable to start picture-in-picture automatically when the app goes to the background.
+  /// Enable/disable starting picture-in-picture automatically when the app goes to the background.
   Future<void> setAutomaticallyStartsPictureInPicture({
     required bool enableStartPictureInPictureAutomaticallyFromInline,
   }) {
@@ -400,7 +402,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
-  /// Set the location of the video player view. So picture-in-picture can use it for animating
+  /// Set the location of the video player view, so that picture-in-picture can use it for animating
   Future<void> setPictureInPictureOverlaySettings({
     required PictureInPictureOverlaySettings settings,
   }) {
@@ -410,12 +412,12 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
-  /// Start picture-in-picture mode.
+  /// Starts picture-in-picture mode.
   Future<void> startPictureInPicture() {
     return _platform.startPictureInPicture(textureId);
   }
 
-  /// Stop picture-in-picture mode.
+  /// Stops picture-in-picture mode.
   Future<void> stopPictureInPicture() {
     return _platform.stopPictureInPicture(textureId);
   }

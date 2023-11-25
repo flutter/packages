@@ -200,10 +200,10 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       SetPictureInPictureOverlaySettingsMessage(
         textureId: textureId,
         settings: PictureInPictureOverlaySettingsMessage(
-          top: settings.top,
-          left: settings.left,
-          width: settings.width,
-          height: settings.height,
+          top: settings.rect.top,
+          left: settings.rect.left,
+          width: settings.rect.width,
+          height: settings.rect.height,
         ),
       ),
     );

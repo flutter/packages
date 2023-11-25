@@ -323,7 +323,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // for issue #1, and restore the correct width and height for issue #2.
   // It is also used to start picture-in-picture
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-  // By default picture-in-picture shows a placeholder where the original video was playing.
+  // picture-in-picture shows a placeholder where the original video was playing.
   // This is a native overlay that does not scroll with the rest of the Flutter UI.
   // That is why we need to set the opacity of the overlay.
   // Setting it to 0 would result in the picture-in-picture not working.
