@@ -24,7 +24,7 @@
 
   FlutterError *error;
   NSArray<NSNumber *> *expectedValue = @[ @1.0, @2.0 ];
-  XCTAssertEqualObjects([hostAPI contentOffsetForScrollViewWithIdentifier:@0 error:&error],
+  XCTAssertEqualObjects([hostAPI contentOffsetForScrollViewWithIdentifier:0 error:&error],
                         expectedValue);
   XCTAssertNil(error);
 }
@@ -40,7 +40,7 @@
       [[FWFScrollViewHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI scrollByForScrollViewWithIdentifier:@0 x:@1 y:@2 error:&error];
+  [hostAPI scrollByForScrollViewWithIdentifier:0 x:1 y:2 error:&error];
   XCTAssertEqual(scrollView.contentOffset.x, 2);
   XCTAssertEqual(scrollView.contentOffset.y, 4);
   XCTAssertNil(error);
@@ -56,7 +56,7 @@
       [[FWFScrollViewHostApiImpl alloc] initWithInstanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setContentOffsetForScrollViewWithIdentifier:@0 toX:@1 y:@2 error:&error];
+  [hostAPI setContentOffsetForScrollViewWithIdentifier:0 toX:1 y:2 error:&error];
   XCTAssertEqual(scrollView.contentOffset.x, 1);
   XCTAssertEqual(scrollView.contentOffset.y, 2);
   XCTAssertNil(error);

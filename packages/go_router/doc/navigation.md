@@ -84,5 +84,25 @@ Returning a value:
 onTap: () => context.pop(true)
 ```
 
+## Using extra
+You can provide additional data along with navigation.
+
+```dart
+context.go('/123, extra: 'abc');
+```
+
+and retrieve the data from GoRouterState
+
+```dart
+final String extraString = GoRouterState.of(context).extra! as String;
+```
+
+The extra data will go through serialization when it is stored in the browser.
+If you plan to use complex data as extra, consider also providing a codec
+to GoRouter so that it won't get dropped during serialization.
+
+For an example on how to use complex data in extra with a codec, see
+[extra_codec.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart).
+
 
 [Named routes]: https://pub.dev/documentation/go_router/latest/topics/Named%20routes-topic.html

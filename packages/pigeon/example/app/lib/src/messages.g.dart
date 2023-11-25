@@ -11,6 +11,24 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+PlatformException _createConnectionError(String channelName) {
+  return PlatformException(
+    code: 'channel-error',
+    message: 'Unable to establish connection on channel: "$channelName".',
+  );
+}
+
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 enum Code {
   one,
   two,
@@ -86,16 +104,16 @@ class ExampleHostApi {
   static const MessageCodec<Object?> codec = _ExampleHostApiCodec();
 
   Future<String> getHostLanguage() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -113,16 +131,17 @@ class ExampleHostApi {
   }
 
   Future<int> add(int arg_a, int arg_b) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add', codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_a, arg_b]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -140,17 +159,17 @@ class ExampleHostApi {
   }
 
   Future<bool> sendMessage(MessageData arg_message) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_message]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -188,8 +207,15 @@ abstract class MessageFlutterApi {
               'Argument for dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_aString = (args[0] as String?);
-          final String output = api.flutterMethod(arg_aString);
-          return output;
+          try {
+            final String output = api.flutterMethod(arg_aString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }

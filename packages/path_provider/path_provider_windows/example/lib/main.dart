@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
   String? _downloadsDirectory = 'Unknown';
   String? _appSupportDirectory = 'Unknown';
   String? _documentsDirectory = 'Unknown';
+  String? _cacheDirectory = 'Unknown';
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _MyAppState extends State<MyApp> {
     String? downloadsDirectory;
     String? appSupportDirectory;
     String? documentsDirectory;
+    String? cacheDirectory;
     final PathProviderWindows provider = PathProviderWindows();
 
     try {
@@ -62,11 +64,18 @@ class _MyAppState extends State<MyApp> {
       appSupportDirectory = 'Failed to get app support directory: $exception';
     }
 
+    try {
+      cacheDirectory = await provider.getApplicationCachePath();
+    } catch (exception) {
+      cacheDirectory = 'Failed to get cache directory: $exception';
+    }
+
     setState(() {
       _tempDirectory = tempDirectory;
       _downloadsDirectory = downloadsDirectory;
       _appSupportDirectory = appSupportDirectory;
       _documentsDirectory = documentsDirectory;
+      _cacheDirectory = cacheDirectory;
     });
   }
 
@@ -84,6 +93,7 @@ class _MyAppState extends State<MyApp> {
               Text('Documents Directory: $_documentsDirectory\n'),
               Text('Downloads Directory: $_downloadsDirectory\n'),
               Text('Application Support Directory: $_appSupportDirectory\n'),
+              Text('Cache Directory: $_cacheDirectory\n'),
             ],
           ),
         ),

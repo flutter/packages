@@ -1,5 +1,11 @@
-## NEXT
+## 1.1.5
 
+* Updates to Pigeon 13.
+
+## 1.1.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 

@@ -1,3 +1,20 @@
+## 2.2.0
+
+* Adds a new `inAppBrowserView` launch mode, to distinguish in-app browser
+  views (such as Android Custom Tabs or SFSafariViewController) from simple
+  web views.
+* Adds `supportsMode` and `supportsCloseForMode` to query platform support for
+  launching and closing with various modes.
+
+## 2.1.5
+
+* Updates documentation to mention support for Android Custom Tabs.
+
+## 2.1.4
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.1.3
 
 * Updates minimum Flutter version to 3.3.

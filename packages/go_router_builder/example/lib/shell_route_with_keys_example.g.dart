@@ -26,8 +26,8 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: ':id',
-              factory: $UserRouteDataExtension._fromState,
               parentNavigatorKey: UserRouteData.$parentNavigatorKey,
+              factory: $UserRouteDataExtension._fromState,
             ),
           ],
         ),

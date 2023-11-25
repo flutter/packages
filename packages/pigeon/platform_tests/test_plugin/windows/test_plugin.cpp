@@ -19,6 +19,7 @@ namespace test_plugin {
 using core_tests_pigeontest::AllClassesWrapper;
 using core_tests_pigeontest::AllNullableTypes;
 using core_tests_pigeontest::AllTypes;
+using core_tests_pigeontest::AnEnum;
 using core_tests_pigeontest::ErrorOr;
 using core_tests_pigeontest::FlutterError;
 using core_tests_pigeontest::FlutterIntegrationCoreApi;
@@ -102,6 +103,8 @@ ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
     const AllClassesWrapper& wrapper) {
   return wrapper;
 }
+
+ErrorOr<AnEnum> TestPlugin::EchoEnum(const AnEnum& an_enum) { return an_enum; }
 
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
     const AllClassesWrapper& wrapper) {
@@ -207,6 +210,14 @@ ErrorOr<std::optional<EncodableMap>> TestPlugin::EchoNullableMap(
   return *a_nullable_map;
 };
 
+ErrorOr<std::optional<AnEnum>> TestPlugin::EchoNullableEnum(
+    const AnEnum* an_enum) {
+  if (!an_enum) {
+    return std::nullopt;
+  }
+  return *an_enum;
+}
+
 void TestPlugin::NoopAsync(
     std::function<void(std::optional<FlutterError> reply)> result) {
   result(std::nullopt);
@@ -277,6 +288,11 @@ void TestPlugin::EchoAsyncMap(
   result(a_map);
 }
 
+void TestPlugin::EchoAsyncEnum(
+    const AnEnum& an_enum, std::function<void(ErrorOr<AnEnum> reply)> result) {
+  result(an_enum);
+}
+
 void TestPlugin::EchoAsyncNullableAllNullableTypes(
     const AllNullableTypes* everything,
     std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
@@ -335,6 +351,12 @@ void TestPlugin::EchoAsyncNullableMap(
   result(a_map ? std::optional<EncodableMap>(*a_map) : std::nullopt);
 }
 
+void TestPlugin::EchoAsyncNullableEnum(
+    const AnEnum* an_enum,
+    std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) {
+  result(an_enum ? std::optional<AnEnum>(*an_enum) : std::nullopt);
+}
+
 void TestPlugin::CallFlutterNoop(
     std::function<void(std::optional<FlutterError> reply)> result) {
   flutter_api_->Noop([result]() { result(std::nullopt); },
@@ -363,6 +385,18 @@ void TestPlugin::CallFlutterEchoAllTypes(
     std::function<void(ErrorOr<AllTypes> reply)> result) {
   flutter_api_->EchoAllTypes(
       everything, [result](const AllTypes& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoAllNullableTypes(
+    const AllNullableTypes* everything,
+    std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
+        result) {
+  flutter_api_->EchoAllNullableTypes(
+      everything,
+      [result](const AllNullableTypes* echo) {
+        result(echo ? std::optional<AllNullableTypes>(*echo) : std::nullopt);
+      },
       [result](const FlutterError& error) { result(error); });
 }
 
@@ -426,6 +460,13 @@ void TestPlugin::CallFlutterEchoMap(
     std::function<void(ErrorOr<EncodableMap> reply)> result) {
   flutter_api_->EchoMap(
       a_map, [result](const EncodableMap& echo) { result(echo); },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoEnum(
+    const AnEnum& an_enum, std::function<void(ErrorOr<AnEnum> reply)> result) {
+  flutter_api_->EchoEnum(
+      an_enum, [result](const AnEnum& echo) { result(echo); },
       [result](const FlutterError& error) { result(error); });
 }
 
@@ -504,6 +545,17 @@ void TestPlugin::CallFlutterEchoNullableMap(
       a_map,
       [result](const EncodableMap* echo) {
         result(echo ? std::optional<EncodableMap>(*echo) : std::nullopt);
+      },
+      [result](const FlutterError& error) { result(error); });
+}
+
+void TestPlugin::CallFlutterEchoNullableEnum(
+    const AnEnum* an_enum,
+    std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) {
+  flutter_api_->EchoNullableEnum(
+      an_enum,
+      [result](const AnEnum* echo) {
+        result(echo ? std::optional<AnEnum>(*echo) : std::nullopt);
       },
       [result](const FlutterError& error) { result(error); });
 }

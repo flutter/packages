@@ -1,3 +1,12 @@
+## 1.0.8
+
+* Changes method channels to pigeon.
+
+## 1.0.7
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 1.0.6
 
 * Removes obsolete null checks on non-nullable values.

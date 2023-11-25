@@ -1,3 +1,9 @@
+## 1.0.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+* Migrates `styleFrom` usage in examples off of deprecated `primary` and `onPrimary` parameters.
+
 ## 1.0.0
 
 * Removes the deprecated `getSavePath` in favor of `getSaveLocation`.

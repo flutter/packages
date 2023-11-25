@@ -516,8 +516,10 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('callback: () -> Unit'));
-    expect(code, contains('callback()'));
+    expect(code, contains('callback: (Result<Unit>) -> Unit'));
+    expect(code, contains('callback(Result.success(Unit))'));
+    // Lines should not end in semicolons.
+    expect(code, isNot(contains(RegExp(r';\n'))));
   });
 
   test('gen host void argument api', () {
@@ -588,7 +590,8 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('fun doSomething(callback: (Output) -> Unit)'));
+    expect(
+        code, contains('fun doSomething(callback: (Result<Output>) -> Unit)'));
     expect(code, contains('channel.send(null)'));
   });
 
@@ -1064,9 +1067,9 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('fun doit(callback: (List<Long?>) -> Unit'));
-    expect(code, contains('val result = it as List<Long?>'));
-    expect(code, contains('callback(result)'));
+    expect(code, contains('fun doit(callback: (Result<List<Long?>>) -> Unit)'));
+    expect(code, contains('val output = it[0] as List<Long?>'));
+    expect(code, contains('callback(Result.success(output))'));
   });
 
   test('host multiple args', () {
@@ -1142,11 +1145,16 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('val channel = BasicMessageChannel'));
-    expect(code,
-        contains('val result = if (it is Int) it.toLong() else it as Long'));
-    expect(code, contains('callback(result)'));
-    expect(code,
-        contains('fun add(xArg: Long, yArg: Long, callback: (Long) -> Unit)'));
+    expect(
+      code,
+      contains(
+          'val output = it[0].let { if (it is Int) it.toLong() else it as Long }'),
+    );
+    expect(code, contains('callback(Result.success(output))'));
+    expect(
+        code,
+        contains(
+            'fun add(xArg: Long, yArg: Long, callback: (Result<Long>) -> Unit)'));
     expect(code, contains('channel.send(listOf(xArg, yArg)) {'));
   });
 
@@ -1275,7 +1283,10 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('fun doit(fooArg: Long?, callback: () -> Unit'));
+    expect(
+      code,
+      contains('fun doit(fooArg: Long?, callback: (Result<Unit>) -> Unit)'),
+    );
   });
 
   test('nonnull fields', () {
@@ -1530,5 +1541,51 @@ void main() {
     expect(code, contains('exception.code,'));
     expect(code, contains('exception.message,'));
     expect(code, contains('exception.details'));
+  });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              arguments: <NamedType>[
+                NamedType(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'return FlutterError("channel-error",  "Unable to establish connection on channel: \'\$channelName\'.", "")'));
+    expect(
+        code,
+        contains(
+            'callback(Result.failure(createConnectionError(channelName)))'));
   });
 }

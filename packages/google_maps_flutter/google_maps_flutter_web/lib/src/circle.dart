@@ -10,7 +10,7 @@ class CircleController {
   CircleController({
     required gmaps.Circle circle,
     bool consumeTapEvents = false,
-    ui.VoidCallback? onTap,
+    VoidCallback? onTap,
   })  : _circle = circle,
         _consumeTapEvents = consumeTapEvents {
     if (onTap != null) {

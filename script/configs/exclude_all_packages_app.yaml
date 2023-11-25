@@ -6,15 +6,8 @@
 # updating multiple packages for a breaking change in a common dependency in
 # cases where using a relaxed version constraint isn't possible.
 
-# An application cannot depend directly on multiple federated implementations
-# of the same plugin for the same platform, which means the app cannot
-# directly depend on both camera_android and camera_android_androidx.
-# Since camera_android is endorsed, it will be included transitively
-# already, so exclude it from the direct dependency list to allow including
-# camera_android_androidx to ensure that they don't conflict at build time
-# (if they did, it would be impossible to use camera_android_androidx while
-# camera_android is endorsed).
-- camera_android
+# NOTE: camera_android is semi-excluded via special casing in the repo tools.
+# See create_all_packages_app_command.dart.
 
 # This is a permament entry, as it should never be a direct app dependency.
 - plugin_platform_interface

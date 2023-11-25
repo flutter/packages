@@ -30,12 +30,15 @@ packages/multicast_dns/**                                @dnfield
 packages/palette_generator/**                            @gspencergoog
 packages/path_provider/**                                @stuartmorgan
 packages/pigeon/**                                       @tarrinneal
+packages/platform/**                                     @stuartmorgan
 packages/plugin_platform_interface/**                    @stuartmorgan
 packages/pointer_interceptor/**                          @ditman
+packages/process/**                                      @stuartmorgan
 packages/quick_actions/**                                @bparrishMines
 packages/rfw/**                                          @Hixie
 packages/shared_preferences/**                           @tarrinneal
 packages/standard_message_codec/**                       @jonahwilliams
+packages/two_dimensional_scrollables/**                  @Piinks
 packages/url_launcher/**                                 @stuartmorgan
 packages/video_player/**                                 @tarrinneal
 packages/web_benchmarks/**                               @yjbanov

@@ -1,6 +1,24 @@
-## 2.5.0
+## 2.6.0
 
 * Adds support for picture-in-picture.
+
+## 2.5.1
+
+* Updates to  Pigeon 13.
+
+## 2.5.0
+
+* Adds support for macOS.
+
+## 2.4.11
+
+* Updates Pigeon.
+* Changes Objective-C class prefixes to avoid future collisions.
+
+## 2.4.10
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 2.4.9
 

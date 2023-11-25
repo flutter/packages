@@ -1,3 +1,12 @@
+## 2.0.17
+
+* Updates annotations lib to 1.7.0.
+
+## 2.0.16
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 2.0.15
 
 * Fixes Java lints.

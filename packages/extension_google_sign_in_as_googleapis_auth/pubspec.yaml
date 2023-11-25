@@ -8,11 +8,11 @@ name: extension_google_sign_in_as_googleapis_auth
 description: A bridge package between google_sign_in and googleapis_auth, to create Authenticated Clients from google_sign_in user credentials.
 repository: https://github.com/flutter/packages/tree/main/packages/extension_google_sign_in_as_googleapis_auth
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+extension_google_sign_in_as_googleapis_auth%22
-version: 2.0.10
+version: 2.0.11
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-  flutter: ">=3.3.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
 
 dependencies:
   flutter:
@@ -25,6 +25,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+topics:
+  - authentication
+  - google-sign-in
 
 false_secrets:
  - example/android/app/google-services.json

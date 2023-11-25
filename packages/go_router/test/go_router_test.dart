@@ -309,6 +309,53 @@ void main() {
       expect(find.byKey(settings), findsOneWidget);
     });
 
+    testWidgets('can correctly pop stacks of repeated pages',
+        (WidgetTester tester) async {
+      // Regression test for https://github.com/flutter/flutter/issues/#132229.
+
+      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: HomeScreen()),
+        ),
+        GoRoute(
+          path: '/page1',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page1Screen()),
+        ),
+        GoRoute(
+          path: '/page2',
+          pageBuilder: (_, __) =>
+              const MaterialPage<Object>(child: Page2Screen()),
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, navigatorKey: navKey);
+      expect(find.byType(HomeScreen), findsOneWidget);
+
+      router.push('/page1');
+      router.push('/page2');
+      router.push('/page1');
+      router.push('/page2');
+      await tester.pumpAndSettle();
+
+      expect(find.byType(HomeScreen), findsNothing);
+      expect(find.byType(Page1Screen), findsNothing);
+      expect(find.byType(Page2Screen), findsOneWidget);
+
+      router.pop();
+      await tester.pumpAndSettle();
+
+      final List<RouteMatch> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches.length, 4);
+      expect(find.byType(HomeScreen), findsNothing);
+      expect(find.byType(Page1Screen), findsOneWidget);
+      expect(find.byType(Page2Screen), findsNothing);
+    });
+
     testWidgets('match sub-route', (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
@@ -999,11 +1046,10 @@ void main() {
       final RouteMatchListCodec codec =
           RouteMatchListCodec(router.configuration);
       await tester.pumpAndSettle();
-      final ImperativeRouteMatch match = router
-          .routerDelegate.currentConfiguration.last as ImperativeRouteMatch;
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
-        IsRouteUpdateCall('/settings', false, codec.encode(match.matches)),
+        IsRouteUpdateCall('/settings', false,
+            codec.encode(router.routerDelegate.currentConfiguration)),
       ]);
       GoRouter.optionURLReflectsImperativeAPIs = false;
     });
@@ -2399,8 +2445,8 @@ void main() {
       // https://github.com/flutter/flutter/issues/124045.
       // ignore: deprecated_member_use
       expect(router.routeInformationProvider.value.location, '/dummy');
-      TestWidgetsFlutterBinding
-          .instance.platformDispatcher.defaultRouteNameTestValue = '/';
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
     });
 
     test('throws assertion if initialExtra is set w/o initialLocation', () {
@@ -2417,6 +2463,60 @@ void main() {
           ),
         ),
       );
+    });
+  });
+
+  group('_effectiveInitialLocation()', () {
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
+      ),
+    ];
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path', (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
+    });
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path, but trailing slash',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com/';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.path, '/');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
+    });
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path, and query parameters',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com?param=1';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.toString(), '/?param=1');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
     });
   });
 
@@ -2795,6 +2895,52 @@ void main() {
       matches = router.routerDelegate.currentConfiguration;
       expect(matches.pathParameters['fid'], fid);
       expect(matches.pathParameters['pid'], pid);
+    });
+
+    testWidgets('StatefulShellRoute preserve extra when switching branch',
+        (WidgetTester tester) async {
+      StatefulNavigationShell? routeState;
+      Object? latestExtra;
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder: (BuildContext context, GoRouterState state,
+              StatefulNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/a',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const Text('Screen A'),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) {
+                      latestExtra = state.extra;
+                      return const DummyScreen();
+                    }),
+              ],
+            ),
+          ],
+        ),
+      ];
+      final Object expectedExtra = Object();
+
+      await createRouter(routes, tester,
+          initialLocation: '/b', initialExtra: expectedExtra);
+      expect(latestExtra, expectedExtra);
+      routeState!.goBranch(0);
+      await tester.pumpAndSettle();
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(latestExtra, expectedExtra);
     });
 
     testWidgets('goNames should allow dynamics values for queryParams',
@@ -4862,6 +5008,98 @@ void main() {
       expect(find.text('Screen B Detail'), findsOneWidget);
       expect(statefulWidgetKeyB.currentState?.counter, equals(1));
     });
+  });
+
+  ///Regression tests for https://github.com/flutter/flutter/issues/132557
+  group('overridePlatformDefaultLocation', () {
+    test('No initial location provided', () {
+      expect(
+          () => GoRouter(
+                overridePlatformDefaultLocation: true,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: '/a',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Placeholder(),
+                  ),
+                  GoRoute(
+                    path: '/b',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Placeholder(),
+                  ),
+                ],
+              ),
+          throwsA(const TypeMatcher<AssertionError>()));
+    });
+    testWidgets('Test override using routeInformationProvider',
+        (WidgetTester tester) async {
+      tester.binding.platformDispatcher.defaultRouteNameTestValue =
+          '/some-route';
+      final String platformRoute =
+          WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+      const String expectedInitialRoute = '/kyc';
+      expect(platformRoute != expectedInitialRoute, isTrue);
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/abc',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+        GoRoute(
+          path: '/bcd',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Placeholder(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        overridePlatformDefaultLocation: true,
+        initialLocation: expectedInitialRoute,
+      );
+      expect(router.routeInformationProvider.value.uri.toString(),
+          expectedInitialRoute);
+    });
+  });
+
+  testWidgets(
+      'test the pathParameters in redirect when the Router is recreated',
+      (WidgetTester tester) async {
+    final GoRouter router = GoRouter(
+      initialLocation: '/foo',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/foo',
+          builder: dummy,
+          routes: <GoRoute>[
+            GoRoute(
+              path: ':id',
+              redirect: (_, GoRouterState state) {
+                expect(state.pathParameters['id'], isNotNull);
+                return null;
+              },
+              builder: dummy,
+            ),
+          ],
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: UniqueKey(),
+        routerConfig: router,
+      ),
+    );
+    router.push('/foo/123');
+    await tester.pump(); // wait reportRouteInformation
+    await tester.pumpWidget(
+      MaterialApp.router(
+        key: UniqueKey(),
+        routerConfig: router,
+      ),
+    );
   });
 }
 

@@ -58,6 +58,7 @@ class VideoPlayerValue {
     this.playbackSpeed = 1.0,
     this.rotationCorrection = 0,
     this.errorDescription,
+    this.isCompleted = false,
   });
 
   /// Returns an instance for a video that hasn't been loaded.
@@ -120,6 +121,12 @@ class VideoPlayerValue {
   /// If [hasError] is false this is `null`.
   final String? errorDescription;
 
+  /// True if video has finished playing to end.
+  ///
+  /// Reverts to false if video position changes, or video begins playing.
+  /// Does not update if video is looping.
+  final bool isCompleted;
+
   /// The [size] of the currently loaded video.
   final Size size;
 
@@ -168,6 +175,7 @@ class VideoPlayerValue {
     double? playbackSpeed,
     int? rotationCorrection,
     String? errorDescription = _defaultErrorDescription,
+    bool? isCompleted,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -188,6 +196,7 @@ class VideoPlayerValue {
       errorDescription: errorDescription != _defaultErrorDescription
           ? errorDescription
           : this.errorDescription,
+      isCompleted: isCompleted ?? this.isCompleted,
     );
   }
 
@@ -207,7 +216,8 @@ class VideoPlayerValue {
         'isPictureInPictureActive: $isPictureInPictureActive, '
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
-        'errorDescription: $errorDescription)';
+        'errorDescription: $errorDescription, '
+        'isCompleted: $isCompleted),';
   }
 
   @override
@@ -229,7 +239,8 @@ class VideoPlayerValue {
           errorDescription == other.errorDescription &&
           size == other.size &&
           rotationCorrection == other.rotationCorrection &&
-          isInitialized == other.isInitialized;
+          isInitialized == other.isInitialized &&
+          isCompleted == other.isCompleted;
 
   @override
   int get hashCode => Object.hash(
@@ -247,6 +258,7 @@ class VideoPlayerValue {
         size,
         rotationCorrection,
         isInitialized,
+        isCompleted,
       );
 }
 
@@ -455,6 +467,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             rotationCorrection: event.rotationCorrection,
             isInitialized: event.duration != null,
             errorDescription: null,
+            isCompleted: false,
           );
           initializingCompleter.complete(null);
           _applyLooping();
@@ -467,6 +480,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           // we use pause() and seekTo() to ensure the platform stops playing
           // and seeks to the last frame of the video.
           pause().then((void pauseResult) => seekTo(value.duration));
+          value = value.copyWith(isCompleted: true);
           break;
         case VideoEventType.bufferingUpdate:
           value = value.copyWith(buffered: event.buffered);
@@ -484,7 +498,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isPictureInPictureActive: false);
           break;
         case VideoEventType.isPlayingStateUpdate:
-          value = value.copyWith(isPlaying: event.isPlaying);
+          if (event.isPlaying ?? false) {
+            value =
+                value.copyWith(isPlaying: event.isPlaying, isCompleted: false);
+          } else {
+            value = value.copyWith(isPlaying: event.isPlaying);
+          }
           break;
         case VideoEventType.unknown:
           break;
@@ -807,6 +826,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     value = value.copyWith(
       position: position,
       caption: _getCaptionAt(position),
+      isCompleted: position == value.duration,
     );
   }
 

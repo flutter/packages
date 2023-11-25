@@ -1,3 +1,72 @@
+## 13.1.1
+
+* [kotlin] Removes unnecessary `;`s in generated code.
+
+## 13.1.0
+
+* [swift] Fixes Flutter Api void return error handling.
+  * This shouldn't be breaking for anyone, but if you were incorrectly getting
+    success responses, you may now be failing (correctly).
+* Adds method channel name to error response when channel fails to connect.
+* Reduces code generation duplication.
+* Changes some methods to only be generated if needed.
+
+## 13.0.0
+
+* **Breaking Change** [objc] Eliminates boxing of non-nullable primitive types
+  (bool, int, double). Changes required:
+  * Implementations of host API methods that take non-nullable
+    primitives will need to be updated to match the new signatures.
+  * Calls to Flutter API methods that take non-nullable primitives will need to
+    be updated to pass unboxed values.
+  * Calls to non-nullable primitive property methods on generated data classes
+    will need to be updated.
+  * **WARNING**: Current versions of `Xcode` do not appear to warn about
+    implicit `NSNumber *` to `BOOL` conversions, so code that is no longer
+    correct after this breaking change may compile without warning. For example,
+    `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
+    `YES`. Any data class or Flutter API interactions involving `bool`s should
+    be carefully audited by hand when updating.
+
+
+
+## 12.0.1
+
+* [swift] Adds protocol for Flutter APIs.
+
+## 12.0.0
+
+* Adds error handling on Flutter API methods.
+* **Breaking Change** [kotlin] Flutter API methods now return `Result<return-type>`.
+* **Breaking Change** [swift] Flutter API methods now return `Result<return-type, FlutterError>`.
+* **Breaking Change** [java] Removes `Reply` class from all method returns and replaces it with `Result`.
+  * Changes required: Replace all `Reply` callbacks with `Result` classes that contain both `success` and `failure` methods.
+* **Breaking Change** [java] Adds `NullableResult` class for all nullable method returns.
+  * Changes required: Any method that returns a nullable type will need to be updated to return `NullableResult` rather than `Result`.
+* **Breaking Change** [java] Renames Host API `setup` method to `setUp`.
+* **Breaking Change** [objc] Boxes all enum returns to allow for `nil` response on error.
+* **Breaking Change** [objc] Renames `<api>Setup` to `SetUp<api>`.
+
+## 11.0.1
+
+* Adds pub topics to package metadata.
+
+## 11.0.0
+
+* Adds primitive enum support.
+* [objc] Fixes nullable enums.
+* **Breaking Change** [objc] Changes all nullable enums to be boxed in custom classes.
+* **Breaking Change** [objc] Changes all enums names to have class prefix.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 10.1.6
+
+* Fixes generation failures when an output file is in a directory that doesn't already exist.
+
+## 10.1.5
+
+* [dart] Fixes import in generated test output when overriding package name.
+
 ## 10.1.4
 
 * Adds package name to method channel strings to avoid potential collisions between plugins.
@@ -9,7 +78,7 @@
 
 ## 10.1.2
 
-* [swift] Fixes a crash when passing `null` for nested nullable classes. 
+* [swift] Fixes a crash when passing `null` for nested nullable classes.
 
 ## 10.1.1
 
@@ -25,11 +94,11 @@
 
 ## 10.0.0
 
-* [swift] Avoids using `Any` to represent `Optional` in Swift.
-* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be 
-  translated into `[Any?]` (rather than `[Any]`) in Swift.
-* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be 
-  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`) in Swift. 
+* [swift] Avoids using `Any` to represent `Optional`.
+* [swift] **Breaking Change** A raw `List` (without generic type argument) in Dart will be
+  translated into `[Any?]` (rather than `[Any]`).
+* [swift] **Breaking Change** A raw `Map` (without generic type argument) in Dart will be
+  translated into `[AnyHashable:Any?]` (rather than `[AnyHashable:Any]`).
 * Adds an example application that uses Pigeon directly, rather than in a plugin.
 
 ## 9.2.5
@@ -79,7 +148,7 @@
 ## 9.1.1
 
 * [swift] Removes experimental tags.
-* [kotin] Removes experimental tags.
+* [kotlin] Removes experimental tags.
 
 ## 9.1.0
 
@@ -255,7 +324,7 @@
 
 ## 4.2.10
 
-* Changes generated Java enum field to be final.
+* [java] Changes generated enum field to be final.
 
 ## 4.2.9
 
@@ -437,11 +506,11 @@
 
 ## 2.0.3
 
-* Makes the generated Java Builder class final.
+* [java] Makes the generated Builder class final.
 
 ## 2.0.2
 
-* Fixes Java crash for nullable nested type.
+* [java] Fixes crash for nullable nested type.
 
 ## 2.0.1
 
@@ -563,8 +632,8 @@
 * [generators] Moved Pigeon to using a custom codec which allows collection
   types to contain custom classes.
 * [java] Fixed NPE in Java generated code for nested types.
-* [objc] **BREAKING CHANGE:** logic for generating Objective-C selectors has
-  changed. `void add(Input value)` will now translate to
+* [objc] **BREAKING CHANGE:** logic for generating selectors has changed.
+  `void add(Input value)` will now translate to
   `-(void)addValue:(Input*)value`, methods with no arguments will translate to
   `...WithError:` or `...WithCompletion:`.
 * [objc] Added `@ObjCSelector` for specifying custom objc selectors.

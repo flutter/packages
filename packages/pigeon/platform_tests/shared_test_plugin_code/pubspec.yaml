@@ -4,10 +4,11 @@ version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: ">=2.18.0 <4.0.0"
-  flutter: ">=3.3.0"
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
 
 dependencies:
+  build_runner: ^2.1.10
   flutter:
     sdk: flutter
   # These are normal dependencies rather than dev_dependencies because the
@@ -17,3 +18,4 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  mockito: 5.4.1

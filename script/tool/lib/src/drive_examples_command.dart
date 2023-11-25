@@ -224,7 +224,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           chromedriver.kill();
         }
       } else {
-        if (!await _runTests(example, deviceFlags: deviceFlags)) {
+        if (!await _runTests(example,
+            deviceFlags: deviceFlags, testFiles: testTargets)) {
           errors.add('Integration tests failed.');
         }
       }
@@ -395,19 +396,34 @@ class DriveExamplesCommand extends PackageLoopingCommand {
   Future<bool> _runTests(
     RepositoryPackage example, {
     required List<String> deviceFlags,
+    required List<File> testFiles,
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
 
-    final int exitCode = await processRunner.runAndStream(
-        flutterCommand,
-        <String>[
-          'test',
-          ...deviceFlags,
-          if (enableExperiment.isNotEmpty)
-            '--enable-experiment=$enableExperiment',
-          'integration_test',
-        ],
-        workingDir: example.directory);
-    return exitCode == 0;
+    // Workaround for https://github.com/flutter/flutter/issues/135673
+    // Once that is fixed on stable, this logic can be removed and the command
+    // can always just be run with "integration_test".
+    final bool needsMultipleInvocations =
+        testFiles.length > 1 && getBoolArg(platformMacOS);
+    final Iterable<String> individualRunTargets = needsMultipleInvocations
+        ? testFiles
+            .map((File f) => getRelativePosixPath(f, from: example.directory))
+        : <String>['integration_test'];
+
+    bool passed = true;
+    for (final String target in individualRunTargets) {
+      final int exitCode = await processRunner.runAndStream(
+          flutterCommand,
+          <String>[
+            'test',
+            ...deviceFlags,
+            if (enableExperiment.isNotEmpty)
+              '--enable-experiment=$enableExperiment',
+            target,
+          ],
+          workingDir: example.directory);
+      passed = passed && (exitCode == 0);
+    }
+    return passed;
   }
 }

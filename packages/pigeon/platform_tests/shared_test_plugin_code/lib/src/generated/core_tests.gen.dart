@@ -12,6 +12,24 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+PlatformException _createConnectionError(String channelName) {
+  return PlatformException(
+    code: 'channel-error',
+    message: 'Unable to establish connection on channel: "$channelName".',
+  );
+}
+
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 enum AnEnum {
   one,
   two,
@@ -308,16 +326,16 @@ class HostIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   Future<void> noop() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -331,17 +349,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllTypes> echoAllTypes(AllTypes arg_everything) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_everything]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -360,16 +378,16 @@ class HostIntegrationCoreApi {
 
   /// Returns an error, to test error handling.
   Future<Object?> throwError() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -383,16 +401,16 @@ class HostIntegrationCoreApi {
 
   /// Returns an error from a void function, to test error handling.
   Future<void> throwErrorFromVoid() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -406,16 +424,16 @@ class HostIntegrationCoreApi {
 
   /// Returns a Flutter error, to test error handling.
   Future<Object?> throwFlutterError() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -429,17 +447,17 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int> echoInt(int arg_anInt) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -458,17 +476,17 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double.
   Future<double> echoDouble(double arg_aDouble) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aDouble]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -487,17 +505,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in boolean.
   Future<bool> echoBool(bool arg_aBool) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aBool]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -516,17 +534,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in string.
   Future<String> echoString(String arg_aString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -545,17 +563,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List.
   Future<Uint8List> echoUint8List(Uint8List arg_aUint8List) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aUint8List]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -574,17 +592,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in generic Object.
   Future<Object> echoObject(Object arg_anObject) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anObject]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -603,17 +621,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<Object?>> echoList(List<Object?> arg_aList) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -632,17 +650,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String?, Object?>> echoMap(Map<String?, Object?> arg_aMap) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -662,17 +680,17 @@ class HostIntegrationCoreApi {
   /// Returns the passed map to test nested class serialization and deserialization.
   Future<AllClassesWrapper> echoClassWrapper(
       AllClassesWrapper arg_wrapper) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_wrapper]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -689,20 +707,49 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed enum to test serialization and deserialization.
+  Future<AnEnum> echoEnum(AnEnum arg_anEnum) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllNullableTypes?> echoAllNullableTypes(
       AllNullableTypes? arg_everything) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_everything]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -718,17 +765,17 @@ class HostIntegrationCoreApi {
   /// sending of nested objects.
   Future<String?> extractNestedNullableString(
       AllClassesWrapper arg_wrapper) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_wrapper]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -744,17 +791,17 @@ class HostIntegrationCoreApi {
   /// sending of nested objects.
   Future<AllClassesWrapper> createNestedNullableString(
       String? arg_nullableString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_nullableString]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -774,18 +821,18 @@ class HostIntegrationCoreApi {
   /// Returns passed in arguments of multiple types.
   Future<AllNullableTypes> sendMultipleNullableTypes(bool? arg_aNullableBool,
       int? arg_aNullableInt, String? arg_aNullableString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(
             <Object?>[arg_aNullableBool, arg_aNullableInt, arg_aNullableString])
         as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -804,17 +851,17 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int?> echoNullableInt(int? arg_aNullableInt) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableInt]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -828,17 +875,17 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double.
   Future<double?> echoNullableDouble(double? arg_aNullableDouble) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableDouble]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -852,17 +899,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in boolean.
   Future<bool?> echoNullableBool(bool? arg_aNullableBool) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableBool]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -876,17 +923,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in string.
   Future<String?> echoNullableString(String? arg_aNullableString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableString]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -901,17 +948,17 @@ class HostIntegrationCoreApi {
   /// Returns the passed in Uint8List.
   Future<Uint8List?> echoNullableUint8List(
       Uint8List? arg_aNullableUint8List) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableUint8List]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -925,17 +972,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in generic Object.
   Future<Object?> echoNullableObject(Object? arg_aNullableObject) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableObject]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -950,17 +997,17 @@ class HostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<Object?>?> echoNullableList(
       List<Object?>? arg_aNullableList) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableList]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -975,17 +1022,17 @@ class HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String?, Object?>?> echoNullableMap(
       Map<String?, Object?>? arg_aNullableMap) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aNullableMap]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -997,19 +1044,44 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AnEnum?> echoNullableEnum(AnEnum? arg_anEnum) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   Future<void> noopAsync() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1023,17 +1095,17 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in int asynchronously.
   Future<int> echoAsyncInt(int arg_anInt) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1052,17 +1124,17 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double asynchronously.
   Future<double> echoAsyncDouble(double arg_aDouble) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aDouble]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1081,17 +1153,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in boolean asynchronously.
   Future<bool> echoAsyncBool(bool arg_aBool) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aBool]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1110,17 +1182,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed string asynchronously.
   Future<String> echoAsyncString(String arg_aString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1139,17 +1211,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List asynchronously.
   Future<Uint8List> echoAsyncUint8List(Uint8List arg_aUint8List) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aUint8List]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1168,17 +1240,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in generic Object asynchronously.
   Future<Object> echoAsyncObject(Object arg_anObject) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anObject]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1195,19 +1267,19 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>> echoAsyncList(List<Object?> arg_aList) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1224,20 +1296,20 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<String?, Object?>> echoAsyncMap(
       Map<String?, Object?> arg_aMap) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1254,18 +1326,47 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnEnum> echoAsyncEnum(AnEnum arg_anEnum) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[replyList[0]! as int];
+    }
+  }
+
   /// Responds with an error from an async function returning a value.
   Future<Object?> throwAsyncError() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1279,16 +1380,16 @@ class HostIntegrationCoreApi {
 
   /// Responds with an error from an async void function.
   Future<void> throwAsyncErrorFromVoid() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1302,16 +1403,16 @@ class HostIntegrationCoreApi {
 
   /// Responds with a Flutter error from an async function returning a value.
   Future<Object?> throwAsyncFlutterError() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1325,17 +1426,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed object, to test async serialization and deserialization.
   Future<AllTypes> echoAsyncAllTypes(AllTypes arg_everything) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_everything]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1355,17 +1456,17 @@ class HostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllNullableTypes?> echoAsyncNullableAllNullableTypes(
       AllNullableTypes? arg_everything) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_everything]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1379,17 +1480,17 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in int asynchronously.
   Future<int?> echoAsyncNullableInt(int? arg_anInt) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1403,17 +1504,17 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double asynchronously.
   Future<double?> echoAsyncNullableDouble(double? arg_aDouble) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aDouble]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1427,17 +1528,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in boolean asynchronously.
   Future<bool?> echoAsyncNullableBool(bool? arg_aBool) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aBool]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1451,17 +1552,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed string asynchronously.
   Future<String?> echoAsyncNullableString(String? arg_aString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1476,17 +1577,17 @@ class HostIntegrationCoreApi {
   /// Returns the passed in Uint8List asynchronously.
   Future<Uint8List?> echoAsyncNullableUint8List(
       Uint8List? arg_aUint8List) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aUint8List]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1500,17 +1601,17 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in generic Object asynchronously.
   Future<Object?> echoAsyncNullableObject(Object? arg_anObject) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anObject]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1522,19 +1623,19 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed list, to test serialization and deserialization asynchronously.
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>?> echoAsyncNullableList(List<Object?>? arg_aList) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1546,20 +1647,20 @@ class HostIntegrationCoreApi {
     }
   }
 
-  /// Returns the passed map, to test serialization and deserialization asynchronously.
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<String?, Object?>?> echoAsyncNullableMap(
       Map<String?, Object?>? arg_aMap) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1571,17 +1672,43 @@ class HostIntegrationCoreApi {
     }
   }
 
-  Future<void> callFlutterNoop() async {
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnEnum?> echoAsyncNullableEnum(AnEnum? arg_anEnum) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
+    }
+  }
+
+  Future<void> callFlutterNoop() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1594,16 +1721,16 @@ class HostIntegrationCoreApi {
   }
 
   Future<Object?> callFlutterThrowError() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1616,16 +1743,16 @@ class HostIntegrationCoreApi {
   }
 
   Future<void> callFlutterThrowErrorFromVoid() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1638,17 +1765,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<AllTypes> callFlutterEchoAllTypes(AllTypes arg_everything) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_everything]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1665,22 +1792,46 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AllNullableTypes?> callFlutterEchoAllNullableTypes(
+      AllNullableTypes? arg_everything) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_everything]) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as AllNullableTypes?);
+    }
+  }
+
   Future<AllNullableTypes> callFlutterSendMultipleNullableTypes(
       bool? arg_aNullableBool,
       int? arg_aNullableInt,
       String? arg_aNullableString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(
             <Object?>[arg_aNullableBool, arg_aNullableInt, arg_aNullableString])
         as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1698,17 +1849,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<bool> callFlutterEchoBool(bool arg_aBool) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aBool]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1726,17 +1877,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<int> callFlutterEchoInt(int arg_anInt) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1754,17 +1905,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<double> callFlutterEchoDouble(double arg_aDouble) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aDouble]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1782,17 +1933,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<String> callFlutterEchoString(String arg_aString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1810,17 +1961,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<Uint8List> callFlutterEchoUint8List(Uint8List arg_aList) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1838,17 +1989,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<List<Object?>> callFlutterEchoList(List<Object?> arg_aList) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1867,17 +2018,17 @@ class HostIntegrationCoreApi {
 
   Future<Map<String?, Object?>> callFlutterEchoMap(
       Map<String?, Object?> arg_aMap) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1894,18 +2045,46 @@ class HostIntegrationCoreApi {
     }
   }
 
-  Future<bool?> callFlutterEchoNullableBool(bool? arg_aBool) async {
+  Future<AnEnum> callFlutterEchoEnum(AnEnum arg_anEnum) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[replyList[0]! as int];
+    }
+  }
+
+  Future<bool?> callFlutterEchoNullableBool(bool? arg_aBool) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aBool]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1918,17 +2097,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<int?> callFlutterEchoNullableInt(int? arg_anInt) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_anInt]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1941,17 +2120,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<double?> callFlutterEchoNullableDouble(double? arg_aDouble) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aDouble]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1964,17 +2143,17 @@ class HostIntegrationCoreApi {
   }
 
   Future<String?> callFlutterEchoNullableString(String? arg_aString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -1988,17 +2167,17 @@ class HostIntegrationCoreApi {
 
   Future<Uint8List?> callFlutterEchoNullableUint8List(
       Uint8List? arg_aList) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -2012,17 +2191,17 @@ class HostIntegrationCoreApi {
 
   Future<List<Object?>?> callFlutterEchoNullableList(
       List<Object?>? arg_aList) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aList]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -2036,17 +2215,17 @@ class HostIntegrationCoreApi {
 
   Future<Map<String?, Object?>?> callFlutterEchoNullableMap(
       Map<String?, Object?>? arg_aMap) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aMap]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -2055,6 +2234,31 @@ class HostIntegrationCoreApi {
       );
     } else {
       return (replyList[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+    }
+  }
+
+  Future<AnEnum?> callFlutterEchoNullableEnum(AnEnum? arg_anEnum) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_anEnum?.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[replyList[0]! as int];
     }
   }
 }
@@ -2116,7 +2320,7 @@ abstract class FlutterIntegrationCoreApi {
   AllTypes echoAllTypes(AllTypes everything);
 
   /// Returns the passed object, to test serialization and deserialization.
-  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything);
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
 
   /// Returns passed in arguments of multiple types.
   ///
@@ -2145,6 +2349,9 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  AnEnum echoEnum(AnEnum anEnum);
+
   /// Returns the passed boolean, to test serialization and deserialization.
   bool? echoNullableBool(bool? aBool);
 
@@ -2166,6 +2373,9 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
 
+  /// Returns the passed enum to test serialization and deserialization.
+  AnEnum? echoNullableEnum(AnEnum? anEnum);
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   Future<void> noopAsync();
@@ -2184,9 +2394,15 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          api.noop();
-          return;
+          try {
+            api.noop();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2199,9 +2415,15 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          final Object? output = api.throwError();
-          return output;
+          try {
+            final Object? output = api.throwError();
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2214,9 +2436,15 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          api.throwErrorFromVoid();
-          return;
+          try {
+            api.throwErrorFromVoid();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2235,8 +2463,15 @@ abstract class FlutterIntegrationCoreApi {
           final AllTypes? arg_everything = (args[0] as AllTypes?);
           assert(arg_everything != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes was null, expected non-null AllTypes.');
-          final AllTypes output = api.echoAllTypes(arg_everything!);
-          return output;
+          try {
+            final AllTypes output = api.echoAllTypes(arg_everything!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2254,11 +2489,16 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final AllNullableTypes? arg_everything =
               (args[0] as AllNullableTypes?);
-          assert(arg_everything != null,
-              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes was null, expected non-null AllNullableTypes.');
-          final AllNullableTypes output =
-              api.echoAllNullableTypes(arg_everything!);
-          return output;
+          try {
+            final AllNullableTypes? output =
+                api.echoAllNullableTypes(arg_everything);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2277,9 +2517,16 @@ abstract class FlutterIntegrationCoreApi {
           final bool? arg_aNullableBool = (args[0] as bool?);
           final int? arg_aNullableInt = (args[1] as int?);
           final String? arg_aNullableString = (args[2] as String?);
-          final AllNullableTypes output = api.sendMultipleNullableTypes(
-              arg_aNullableBool, arg_aNullableInt, arg_aNullableString);
-          return output;
+          try {
+            final AllNullableTypes output = api.sendMultipleNullableTypes(
+                arg_aNullableBool, arg_aNullableInt, arg_aNullableString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2298,8 +2545,15 @@ abstract class FlutterIntegrationCoreApi {
           final bool? arg_aBool = (args[0] as bool?);
           assert(arg_aBool != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool was null, expected non-null bool.');
-          final bool output = api.echoBool(arg_aBool!);
-          return output;
+          try {
+            final bool output = api.echoBool(arg_aBool!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2318,8 +2572,15 @@ abstract class FlutterIntegrationCoreApi {
           final int? arg_anInt = (args[0] as int?);
           assert(arg_anInt != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt was null, expected non-null int.');
-          final int output = api.echoInt(arg_anInt!);
-          return output;
+          try {
+            final int output = api.echoInt(arg_anInt!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2338,8 +2599,15 @@ abstract class FlutterIntegrationCoreApi {
           final double? arg_aDouble = (args[0] as double?);
           assert(arg_aDouble != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble was null, expected non-null double.');
-          final double output = api.echoDouble(arg_aDouble!);
-          return output;
+          try {
+            final double output = api.echoDouble(arg_aDouble!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2358,8 +2626,15 @@ abstract class FlutterIntegrationCoreApi {
           final String? arg_aString = (args[0] as String?);
           assert(arg_aString != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString was null, expected non-null String.');
-          final String output = api.echoString(arg_aString!);
-          return output;
+          try {
+            final String output = api.echoString(arg_aString!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2378,8 +2653,15 @@ abstract class FlutterIntegrationCoreApi {
           final Uint8List? arg_aList = (args[0] as Uint8List?);
           assert(arg_aList != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List was null, expected non-null Uint8List.');
-          final Uint8List output = api.echoUint8List(arg_aList!);
-          return output;
+          try {
+            final Uint8List output = api.echoUint8List(arg_aList!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2399,8 +2681,15 @@ abstract class FlutterIntegrationCoreApi {
               (args[0] as List<Object?>?)?.cast<Object?>();
           assert(arg_aList != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null, expected non-null List<Object?>.');
-          final List<Object?> output = api.echoList(arg_aList!);
-          return output;
+          try {
+            final List<Object?> output = api.echoList(arg_aList!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2420,8 +2709,43 @@ abstract class FlutterIntegrationCoreApi {
               (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           assert(arg_aMap != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap was null, expected non-null Map<String?, Object?>.');
-          final Map<String?, Object?> output = api.echoMap(arg_aMap!);
-          return output;
+          try {
+            final Map<String?, Object?> output = api.echoMap(arg_aMap!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AnEnum? arg_anEnum =
+              args[0] == null ? null : AnEnum.values[args[0]! as int];
+          assert(arg_anEnum != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null, expected non-null AnEnum.');
+          try {
+            final AnEnum output = api.echoEnum(arg_anEnum!);
+            return wrapResponse(result: output.index);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2438,8 +2762,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final bool? arg_aBool = (args[0] as bool?);
-          final bool? output = api.echoNullableBool(arg_aBool);
-          return output;
+          try {
+            final bool? output = api.echoNullableBool(arg_aBool);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2456,8 +2787,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_anInt = (args[0] as int?);
-          final int? output = api.echoNullableInt(arg_anInt);
-          return output;
+          try {
+            final int? output = api.echoNullableInt(arg_anInt);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2474,8 +2812,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final double? arg_aDouble = (args[0] as double?);
-          final double? output = api.echoNullableDouble(arg_aDouble);
-          return output;
+          try {
+            final double? output = api.echoNullableDouble(arg_aDouble);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2492,8 +2837,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_aString = (args[0] as String?);
-          final String? output = api.echoNullableString(arg_aString);
-          return output;
+          try {
+            final String? output = api.echoNullableString(arg_aString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2510,8 +2862,15 @@ abstract class FlutterIntegrationCoreApi {
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final Uint8List? arg_aList = (args[0] as Uint8List?);
-          final Uint8List? output = api.echoNullableUint8List(arg_aList);
-          return output;
+          try {
+            final Uint8List? output = api.echoNullableUint8List(arg_aList);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2529,8 +2888,15 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final List<Object?>? arg_aList =
               (args[0] as List<Object?>?)?.cast<Object?>();
-          final List<Object?>? output = api.echoNullableList(arg_aList);
-          return output;
+          try {
+            final List<Object?>? output = api.echoNullableList(arg_aList);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2548,8 +2914,41 @@ abstract class FlutterIntegrationCoreApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final Map<String?, Object?>? arg_aMap =
               (args[0] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-          final Map<String?, Object?>? output = api.echoNullableMap(arg_aMap);
-          return output;
+          try {
+            final Map<String?, Object?>? output = api.echoNullableMap(arg_aMap);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AnEnum? arg_anEnum =
+              args[0] == null ? null : AnEnum.values[args[0]! as int];
+          try {
+            final AnEnum? output = api.echoNullableEnum(arg_anEnum);
+            return wrapResponse(result: output?.index);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2562,9 +2961,15 @@ abstract class FlutterIntegrationCoreApi {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
-          // ignore message
-          await api.noopAsync();
-          return;
+          try {
+            await api.noopAsync();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2583,8 +2988,15 @@ abstract class FlutterIntegrationCoreApi {
           final String? arg_aString = (args[0] as String?);
           assert(arg_aString != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString was null, expected non-null String.');
-          final String output = await api.echoAsyncString(arg_aString!);
-          return output;
+          try {
+            final String output = await api.echoAsyncString(arg_aString!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }
@@ -2603,16 +3015,16 @@ class HostTrivialApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<void> noop() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -2637,16 +3049,17 @@ class HostSmallApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<String> echo(String arg_aString) async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo', codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_aString]) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -2664,16 +3077,16 @@ class HostSmallApi {
   }
 
   Future<void> voidVoid() async {
+    const String channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid',
-        codec,
-        binaryMessenger: _binaryMessenger);
+      channelName,
+      codec,
+      binaryMessenger: _binaryMessenger,
+    );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
+      throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
       throw PlatformException(
         code: replyList[0]! as String,
@@ -2715,6 +3128,8 @@ abstract class FlutterSmallApi {
 
   TestMessage echoWrappedList(TestMessage msg);
 
+  String echoString(String aString);
+
   static void setup(FlutterSmallApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -2731,8 +3146,42 @@ abstract class FlutterSmallApi {
           final TestMessage? arg_msg = (args[0] as TestMessage?);
           assert(arg_msg != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList was null, expected non-null TestMessage.');
-          final TestMessage output = api.echoWrappedList(arg_msg!);
-          return output;
+          try {
+            final TestMessage output = api.echoWrappedList(arg_msg!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_aString = (args[0] as String?);
+          assert(arg_aString != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString was null, expected non-null String.');
+          try {
+            final String output = api.echoString(arg_aString!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
         });
       }
     }

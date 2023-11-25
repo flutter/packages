@@ -1,3 +1,12 @@
+## 2.2.1
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
+## 2.2.0
+
+* Adds getApplicationCachePath() for storing app-specific cache files.
+
 ## 2.1.7
 
 * Adds compatibility with `win32` 5.x.

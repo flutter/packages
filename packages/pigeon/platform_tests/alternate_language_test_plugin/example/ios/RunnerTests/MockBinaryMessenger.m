@@ -25,7 +25,7 @@
               message:(NSData *_Nullable)message
           binaryReply:(FlutterBinaryReply _Nullable)callback {
   if (self.result) {
-    callback([_codec encode:self.result]);
+    callback([_codec encode:@[ self.result ]]);
   }
 }
 

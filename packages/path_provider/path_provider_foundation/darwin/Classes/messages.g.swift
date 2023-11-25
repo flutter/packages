@@ -44,6 +44,7 @@ enum DirectoryType: Int {
   case downloads = 2
   case library = 3
   case temp = 4
+  case applicationCache = 5
 }
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol PathProviderApi {
