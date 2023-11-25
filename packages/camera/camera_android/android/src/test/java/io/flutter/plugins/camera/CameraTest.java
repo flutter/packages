@@ -1166,8 +1166,7 @@ public class CameraTest {
   }
 
   @Test
-  public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed()
-      throws CameraAccessException {
+  public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed() throws CameraAccessException {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
