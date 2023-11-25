@@ -233,4 +233,8 @@
   return self.queue.transactions;
 }
 
+- (SKStorefront *)storefront {
+  return self.queue.storefront;
+}
+
 @end
