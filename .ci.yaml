@@ -131,10 +131,11 @@ targets:
       target_file: repo_checks.yaml
       channel: master
       version_file: flutter_master.version
-      # The format check requires clang-format.
+      # The format check requires clang-format, and the current version of ktfmt requires JDK 11+.
       dependencies: >-
         [
-          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"}
+          {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "open_jdk", "version": "version:17"}
         ]
 
   - name: Linux dart_unit_test_shard_1 master
@@ -254,14 +255,14 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.10.6"
+      channel: "3.13.9"
 
   - name: Linux analyze_legacy N-2
     recipe: packages/packages
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.7.12"
+      channel: "3.10.6"
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
