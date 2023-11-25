@@ -585,8 +585,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertEqual(isPictureInPictureSupported.boolValue,
                  [AVPictureInPictureController isPictureInPictureSupported]);
   if (isPictureInPictureSupported.boolValue) {
-    FLTStartPictureInPictureMessage *startPictureInPicture =
-        [FLTStartPictureInPictureMessage makeWithTextureId:textureId];
+    FVPStartPictureInPictureMessage *startPictureInPicture =
+        [FVPStartPictureInPictureMessage makeWithTextureId:textureId];
     XCTestExpectation *startedPiPExpectation =
         [self expectationWithDescription:@"startedPictureInPicture"];
     [player onListenWithArguments:nil
