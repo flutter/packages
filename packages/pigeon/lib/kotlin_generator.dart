@@ -682,8 +682,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.newln();
     indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
-      indent.write(
-          'if (exception is ${_getErrorClassName(generatorOptions)}) ');
+      indent
+          .write('if (exception is ${_getErrorClassName(generatorOptions)}) ');
       indent.addScoped('{', '}', () {
         indent.write('return ');
         indent.addScoped('listOf(', ')', () {
@@ -723,7 +723,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.addln(' : Throwable()');
   }
 
-  void _writeCreateConnectionError(KotlinOptions generatorOptions, Indent indent) {
+  void _writeCreateConnectionError(
+      KotlinOptions generatorOptions, Indent indent) {
     final String errorClassName = _getErrorClassName(generatorOptions);
     indent.newln();
     indent.write(
@@ -765,7 +766,8 @@ HostDatatype _getHostDatatype(Root root, NamedType field) {
 /// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(Api api) => '${api.name}Codec';
 
-String _getErrorClassName(KotlinOptions generatorOptions) => generatorOptions.errorClassName ?? 'FlutterError';
+String _getErrorClassName(KotlinOptions generatorOptions) =>
+    generatorOptions.errorClassName ?? 'FlutterError';
 
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;

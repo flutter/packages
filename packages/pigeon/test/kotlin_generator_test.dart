@@ -1742,9 +1742,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const String errorClassName = 'FooError';
-    const KotlinOptions kotlinOptions = KotlinOptions(
-      errorClassName: errorClassName
-    );
+    const KotlinOptions kotlinOptions =
+        KotlinOptions(errorClassName: errorClassName);
     const KotlinGenerator generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1785,9 +1784,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const String errorClassName = 'FooError';
-    const KotlinOptions kotlinOptions = KotlinOptions(
-        errorClassName: errorClassName
-    );
+    const KotlinOptions kotlinOptions =
+        KotlinOptions(errorClassName: errorClassName);
     const KotlinGenerator generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
