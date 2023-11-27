@@ -1,3 +1,10 @@
+## 13.0.0
+
+- Refactored `RouteMatchList` and imperative APIs.
+- **BREAKING CHANGE**:
+  - RouteMatchList structure changed.
+  - Matching logic updated.
+
 ## 12.1.3
 
 * Fixes a typo in `navigation.md`.

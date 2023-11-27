@@ -493,18 +493,6 @@ abstract class ShellRouteBase extends RouteBase {
   /// Returns the key for the [Navigator] that is to be used for the specified
   /// immediate sub-route of this shell route.
   GlobalKey<NavigatorState> navigatorKeyForSubRoute(RouteBase subRoute);
-
-  /// Returns the keys for the [Navigator]s associated with this shell route.
-  Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
-      <GlobalKey<NavigatorState>>[];
-
-  /// Returns all the Navigator keys of this shell route as well as those of any
-  /// descendant shell routes.
-  Iterable<GlobalKey<NavigatorState>> _navigatorKeysRecursively() {
-    return RouteBase.routesRecursively(<ShellRouteBase>[this])
-        .whereType<ShellRouteBase>()
-        .expand((ShellRouteBase e) => e._navigatorKeys);
-  }
 }
 
 /// Context object used when building the shell and Navigator for a shell route.
@@ -709,10 +697,6 @@ class ShellRoute extends ShellRouteBase {
     assert(routes.contains(subRoute));
     return navigatorKey;
   }
-
-  @override
-  Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
-      <GlobalKey<NavigatorState>>[navigatorKey];
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
@@ -920,7 +904,6 @@ class StatefulShellRoute extends ShellRouteBase {
     return branch!.navigatorKey;
   }
 
-  @override
   Iterable<GlobalKey<NavigatorState>> get _navigatorKeys =>
       branches.map((StatefulShellBranch b) => b.navigatorKey);
 
@@ -1222,26 +1205,24 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   /// trailing imperative matches from the RouterMatchList that are targeted at
   /// any other (often top-level) Navigator.
   RouteMatchList _scopedMatchList(RouteMatchList matchList) {
-    final Iterable<GlobalKey<NavigatorState>> validKeys =
-        route._navigatorKeysRecursively();
-    final int index = matchList.matches.indexWhere((RouteMatch e) {
-      final RouteBase route = e.route;
-      if (e is ImperativeRouteMatch && route is GoRoute) {
-        return route.parentNavigatorKey != null &&
-            !validKeys.contains(route.parentNavigatorKey);
+    return matchList.copyWith(matches: _scopeMatches(matchList.matches));
+  }
+
+  List<RouteMatchBase> _scopeMatches(List<RouteMatchBase> matches) {
+    final List<RouteMatchBase> result = <RouteMatchBase>[];
+    for (final RouteMatchBase match in matches) {
+      if (match is ShellRouteMatch) {
+        if (match.route == route) {
+          result.add(match);
+          // Discard any other route match after current shell route.
+          break;
+        }
+        result.add(match.copyWith(matches: _scopeMatches(match.matches)));
+        continue;
       }
-      return false;
-    });
-    if (index > 0) {
-      final List<RouteMatch> matches = matchList.matches.sublist(0, index);
-      return RouteMatchList(
-        extra: matchList.extra,
-        matches: matches,
-        uri: Uri.parse(matches.last.matchedLocation),
-        pathParameters: matchList.pathParameters,
-      );
+      result.add(match);
     }
-    return matchList;
+    return result;
   }
 
   void _updateCurrentBranchStateFromWidget() {
