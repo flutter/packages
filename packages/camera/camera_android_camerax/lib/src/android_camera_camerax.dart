@@ -160,7 +160,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<List<CameraDescription>> availableCameras() async {
     final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
 
-    processCameraProvider = await proxy.getProcessCameraProvider();
+    processCameraProvider ??= await proxy.getProcessCameraProvider();
     final List<CameraInfo> cameraInfos =
         await processCameraProvider!.getAvailableCameraInfos();
 
