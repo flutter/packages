@@ -444,9 +444,52 @@ abstract class CameraControlHostApi {
 
   @async
   void setZoomRatio(int identifier, double ratio);
+
+  @async
+  int setExposureCompensationIndex(int identifier, int index);
+
+  @async
+  int startFocusAndMetering(int identifier, int focusMeteringActionId);
+
+  @async
+  void cancelFocusAndMetering(int identiier);
 }
 
 @FlutterApi()
 abstract class CameraControlFlutterApi {
   void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestFocusMeteringActionHostApi')
+abstract class FocusMeteringActionHostApi {
+  void create(int identifier, int meteringPointId, int meteringMode);
+}
+
+@HostApi()
+abstract class FocusMeteringResultHostApi {
+  bool isFocusSuccessful(int identifier);
+}
+
+@FlutterApi()
+abstract class FocusMeteringResultFlutterApi {
+  void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestMeteringPointHostApi')
+abstract class MeteringPointHostApi {
+  int getSize(int identifier);
+}
+
+@FlutterApi()
+abstract class MeteringPointFlutterApi {
+  void create(int identifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestDisplayOrientedMeteringPointFactoryHostApi')
+abstract class DisplayOrientedMeteringPointFactoryHostApi {
+  void create(int identifier, int cameraInfoId, int width, int height);
+
+  int createPoint(int x, int y, int? size);
+
+  int getDefaultPointSize();
 }
