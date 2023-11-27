@@ -8,6 +8,7 @@ import 'analyzer.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
+import 'device_orientation_manager.dart';
 import 'fallback_strategy.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
@@ -63,7 +64,8 @@ class CameraXProxy {
 
   /// Returns an [ImageCapture] configured with specified flash mode and
   /// the specified [ResolutionSelector].
-  ImageCapture Function(ResolutionSelector? resolutionSelector)
+  ImageCapture Function(
+          ResolutionSelector? resolutionSelector, int? targetRotation)
       createImageCapture;
 
   /// Returns a [Recorder] for use in video capture configured with the
@@ -75,7 +77,8 @@ class CameraXProxy {
 
   /// Returns an [ImageAnalysis] configured with the specified
   /// [ResolutionSelector].
-  ImageAnalysis Function(ResolutionSelector? resolutionSelector)
+  ImageAnalysis Function(
+          ResolutionSelector? resolutionSelector, int? targetRotation)
       createImageAnalysis;
 
   /// Returns an [Analyzer] configured with the specified callback for
@@ -151,8 +154,9 @@ class CameraXProxy {
   }
 
   static ImageCapture _createAttachedImageCapture(
-      ResolutionSelector? resolutionSelector) {
-    return ImageCapture(resolutionSelector: resolutionSelector);
+      ResolutionSelector? resolutionSelector, int? targetRotation) {
+    return ImageCapture(
+        resolutionSelector: resolutionSelector, targetRotation: targetRotation);
   }
 
   static Recorder _createAttachedRecorder(QualitySelector? qualitySelector) {
@@ -165,8 +169,9 @@ class CameraXProxy {
   }
 
   static ImageAnalysis _createAttachedImageAnalysis(
-      ResolutionSelector? resolutionSelector) {
-    return ImageAnalysis(resolutionSelector: resolutionSelector);
+      ResolutionSelector? resolutionSelector, int? targetRotation) {
+    return ImageAnalysis(
+        resolutionSelector: resolutionSelector, targetRotation: targetRotation);
   }
 
   static Analyzer _createAttachedAnalyzer(
@@ -214,7 +219,7 @@ class CameraXProxy {
 
   static void _startListeningForDeviceOrientationChange(
       bool cameraIsFrontFacing, int sensorOrientation) {
-    SystemServices.startListeningForDeviceOrientationChange(
+    DeviceOrientationManager.startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, sensorOrientation);
   }
 

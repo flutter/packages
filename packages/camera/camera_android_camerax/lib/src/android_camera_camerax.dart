@@ -243,7 +243,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve target rotation for UseCases.
     final int targetRotation =
-        _getTargetRotation(cameraDescription.sensorOrientation);
+        getTargetRotation(cameraDescription.sensorOrientation);
     preview = proxy.createPreview(
         targetRotation: targetRotation,
         resolutionSelector: presetResolutionSelector);
@@ -251,18 +251,18 @@ class AndroidCameraCameraX extends CameraPlatform {
         await proxy.setPreviewSurfaceProvider(preview!);
 
     // Configure ImageCapture instance.
-    imageCapture = proxy.createImageCapture(
-        presetResolutionSelector); // todo: add target rotation
+    imageCapture =
+        proxy.createImageCapture(presetResolutionSelector, targetRotation);
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = proxy.createImageAnalysis(
-        presetResolutionSelector); // todo: add target rotation
+    imageAnalysis =
+        proxy.createImageAnalysis(presetResolutionSelector, targetRotation);
 
     // Configure VideoCapture and Recorder instances.
     recorder = proxy.createRecorder(presetQualitySelector);
-    videoCapture =
-        await proxy.createVideoCapture(recorder!); // todo set target rotation
+    videoCapture = await proxy.createVideoCapture(recorder!);
+    await videoCapture!.setTargetRotation(targetRotation);
 
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
