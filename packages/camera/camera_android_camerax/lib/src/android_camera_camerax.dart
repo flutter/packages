@@ -243,7 +243,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve target rotation for UseCases.
     final int targetRotation =
-        getTargetRotation(cameraDescription.sensorOrientation);
+        _getTargetRotation(cameraDescription.sensorOrientation);
     preview = proxy.createPreview(
         targetRotation: targetRotation,
         resolutionSelector: presetResolutionSelector);
@@ -394,9 +394,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
     final int currentPhotoOrientation =
-        getTargetRotation(await DeviceOrientationManager.getPhotoOrientation());
+        _getTargetRotation(await proxy.getPhotoOrientation());
     final int currentVideoOrientation =
-        getTargetRotation(await DeviceOrientationManager.getVideoOrientation());
+        _getTargetRotation(await proxy.getVideoOrientation());
 
     /// Update UseCases to use current device orientation.
     await imageAnalysis!.setTargetRotation(currentPhotoOrientation);
@@ -853,8 +853,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Returns [Surface] target rotation constant that maps to specified sensor
   /// orientation.
-  @visibleForTesting
-  int getTargetRotation(int sensorOrientation) {
+  int _getTargetRotation(int sensorOrientation) {
     switch (sensorOrientation) {
       case 90:
         return Surface.ROTATION_90;

@@ -48,6 +48,8 @@ class CameraXProxy {
     this.startListeningForDeviceOrientationChange =
         _startListeningForDeviceOrientationChange,
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
+    this.getPhotoOrientation = _getPhotoOrientation,
+    this.getVideoOrientation = _getVideoOrientation,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -130,6 +132,12 @@ class CameraXProxy {
   /// Sets the surface provider of the specified [Preview] instance and returns
   /// the ID corresponding to the surface it will provide.
   Future<int> Function(Preview preview) setPreviewSurfaceProvider;
+
+  /// Retrieves current photo orientation.
+  Future<int> Function() getPhotoOrientation;
+
+  /// Retrieves current video orientation.
+  Future<int> Function() getVideoOrientation;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -225,5 +233,13 @@ class CameraXProxy {
 
   static Future<int> _setPreviewSurfaceProvider(Preview preview) async {
     return preview.setSurfaceProvider();
+  }
+
+  static Future<int> _getPhotoOrientation() async {
+    return DeviceOrientationManager.getPhotoOrientation();
+  }
+
+  static Future<int> _getVideoOrientation() async {
+    return DeviceOrientationManager.getVideoOrientation();
   }
 }
