@@ -72,6 +72,28 @@ void defineTests() {
         'two',
       ]);
     });
+
+    testWidgets(
+      'leading spaces are ignored (non-paragraph test case)',
+      (WidgetTester tester) async {
+        const String data = '- one\n-  two\n-   three';
+        await tester.pumpWidget(
+          boilerplate(
+            const MarkdownBody(data: data),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        expectTextStrings(widgets, <String>[
+          '•',
+          'one',
+          '•',
+          'two',
+          '•',
+          'three',
+        ]);
+      },
+    );
   });
 
   group('Ordered List', () {

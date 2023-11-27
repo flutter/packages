@@ -90,9 +90,9 @@ UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation) {
   if ([orientation isEqualToString:@"portraitDown"]) {
     return UIDeviceOrientationPortraitUpsideDown;
   } else if ([orientation isEqualToString:@"landscapeLeft"]) {
-    return UIDeviceOrientationLandscapeRight;
-  } else if ([orientation isEqualToString:@"landscapeRight"]) {
     return UIDeviceOrientationLandscapeLeft;
+  } else if ([orientation isEqualToString:@"landscapeRight"]) {
+    return UIDeviceOrientationLandscapeRight;
   } else if ([orientation isEqualToString:@"portraitUp"]) {
     return UIDeviceOrientationPortrait;
   } else {
@@ -104,9 +104,9 @@ NSString *FLTGetStringForUIDeviceOrientation(UIDeviceOrientation orientation) {
   switch (orientation) {
     case UIDeviceOrientationPortraitUpsideDown:
       return @"portraitDown";
-    case UIDeviceOrientationLandscapeRight:
-      return @"landscapeLeft";
     case UIDeviceOrientationLandscapeLeft:
+      return @"landscapeLeft";
+    case UIDeviceOrientationLandscapeRight:
       return @"landscapeRight";
     case UIDeviceOrientationPortrait:
     default:
