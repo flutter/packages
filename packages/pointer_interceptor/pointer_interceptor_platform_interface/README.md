@@ -22,5 +22,5 @@ over breaking changes for this package.
 See https://flutter.dev/go/platform-interface-breaking-changes for a discussion
 on why a less-clean interface is preferable to a breaking change.
 
-[1]: ../pointer_interceptor
-[2]: lib/pointer_interceptor_platform_interface.dart
+[1]: https://pub.dev/packages/pointer_interceptor
+[2]: lib/src/pointer_interceptor_platform.dart
