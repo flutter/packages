@@ -1,8 +1,7 @@
+<!DOCTYPE html>
 <!-- Copyright 2013 The Flutter Authors. All rights reserved.
 Use of this source code is governed by a BSD-style license that can be
 found in the LICENSE file. -->
-
-<!DOCTYPE html>
 <html>
 <head>
   <!--
@@ -38,13 +37,13 @@ found in the LICENSE file. -->
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
+    const serviceWorkerVersion = null;
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
 <body>
-<script>
+  <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
