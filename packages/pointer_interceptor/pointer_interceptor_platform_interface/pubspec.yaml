@@ -1,0 +1,18 @@
+name: pointer_interceptor_platform_interface
+description: "A common platform interface for the pointer_interceptor plugin."
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.1.0'
+  flutter: '>=3.13.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  plugin_platform_interface: ^2.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
