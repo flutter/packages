@@ -55,6 +55,7 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
   @override
   _i3.Future<bool> removeAllCookies() => (super.noSuchMethod(
         Invocation.method(
@@ -63,6 +64,7 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
   @override
   _i3.Future<void> setAcceptThirdPartyCookies(
     _i2.WebView? webView,
@@ -79,6 +81,7 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
+
   @override
   _i2.CookieManager copy() => (super.noSuchMethod(
         Invocation.method(

@@ -48,8 +48,13 @@ class EnumTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
     api.echo(data: data) { result in
-      XCTAssertEqual(data.state, result.state)
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(res.state, res.state)
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }

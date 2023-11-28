@@ -31,7 +31,7 @@ public class ListTest {
               @SuppressWarnings("unchecked")
               ArrayList<Object> args =
                   (ArrayList<Object>) FlutterSmallApi.getCodec().decodeMessage(message);
-              ByteBuffer replyData = FlutterSmallApi.getCodec().encodeMessage(args.get(0));
+              ByteBuffer replyData = FlutterSmallApi.getCodec().encodeMessage(args);
               replyData.position(0);
               reply.reply(replyData);
               return null;
@@ -42,12 +42,18 @@ public class ListTest {
     boolean[] didCall = {false};
     api.echoWrappedList(
         top,
-        (result) -> {
-          didCall[0] = true;
-          assertEquals(result.getTestList().size(), 1);
-          assertTrue(result.getTestList().get(0) instanceof TestMessage);
-          TestMessage readInside = (TestMessage) result.getTestList().get(0);
-          assertEquals(readInside.getTestList().size(), 3);
+        new CoreTests.Result<TestMessage>() {
+          public void success(TestMessage result) {
+            didCall[0] = true;
+            assertEquals(result.getTestList().size(), 1);
+            assertTrue(result.getTestList().get(0) instanceof TestMessage);
+            TestMessage readInside = (TestMessage) result.getTestList().get(0);
+            assertEquals(readInside.getTestList().size(), 3);
+          }
+
+          public void error(Throwable error) {
+            assertEquals(error, null);
+          }
         });
     assertTrue(didCall[0]);
   }

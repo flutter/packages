@@ -1,5 +1,6 @@
 ## 1.0.16
-* Add a wasm web example
+* Adds a wasm web example
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 1.0.15
 

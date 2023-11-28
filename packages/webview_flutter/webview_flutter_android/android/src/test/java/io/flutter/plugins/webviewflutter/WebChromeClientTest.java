@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import android.net.Uri;
 import android.os.Message;
 import android.view.View;
+import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
@@ -161,5 +162,18 @@ public class WebChromeClientTest {
   public void onGeolocationPermissionsHidePrompt() {
     webChromeClient.onGeolocationPermissionsHidePrompt();
     verify(mockFlutterApi).onGeolocationPermissionsHidePrompt(eq(webChromeClient), any());
+  }
+
+  @Test
+  public void onConsoleMessage() {
+    webChromeClient.onConsoleMessage(
+        new ConsoleMessage("message", "sourceId", 23, ConsoleMessage.MessageLevel.ERROR));
+    verify(mockFlutterApi).onConsoleMessage(eq(webChromeClient), any(), any());
+  }
+
+  @Test
+  public void setReturnValueForOnConsoleMessage() {
+    webChromeClient.setReturnValueForOnConsoleMessage(true);
+    assertTrue(webChromeClient.onConsoleMessage(null));
   }
 }

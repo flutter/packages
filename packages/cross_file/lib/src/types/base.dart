@@ -38,6 +38,8 @@ abstract class XFileBase {
 
   /// The name of the file as it was selected by the user in their device.
   ///
+  /// For non-web implementation, this represents the last part of the filesystem path.
+  ///
   /// Use only for cosmetic reasons, do not try to use this as a path.
   String get name {
     throw UnimplementedError('.name has not been implemented.');
