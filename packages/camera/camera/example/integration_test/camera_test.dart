@@ -329,29 +329,4 @@ void main() {
     },
     skip: !Platform.isIOS,
   );
-
-  testWidgets(
-    'Capture image with fileFormat',
-    (WidgetTester tester) async {
-      final List<CameraDescription> cameras = await availableCameras();
-      if (cameras.isEmpty) {
-        return;
-      }
-      for (final CameraDescription cameraDescription in cameras) {
-        final CameraController controller =
-            CameraController(cameraDescription, ResolutionPreset.low);
-
-        await controller.setFileFormat(ImageFileFormat.heif);
-        await controller.initialize();
-
-        final XFile file = await controller.takePicture();
-        final File fileImage = File(file.path);
-        final Image image =
-            await decodeImageFromList(fileImage.readAsBytesSync());
-
-        expect(image, isNotNull);
-      }
-    },
-    skip: !Platform.isIOS,
-  );
 }

@@ -1401,50 +1401,6 @@ void main() {
             'This is a test error message',
           )));
     });
-
-    test('setFileFormat() calls $CameraPlatform', () async {
-      final CameraController cameraController = CameraController(
-          const CameraDescription(
-              name: 'cam',
-              lensDirection: CameraLensDirection.front,
-              sensorOrientation: 90),
-          ResolutionPreset.max);
-      await cameraController.initialize();
-
-      await cameraController.setFileFormat(ImageFileFormat.jpeg);
-
-      verify(CameraPlatform.instance
-              .setFileFormat(cameraController.cameraId, ImageFileFormat.jpeg))
-          .called(1);
-    });
-
-    test('setFileFormat() throws $CameraException on $PlatformException',
-        () async {
-      final CameraController cameraController = CameraController(
-          const CameraDescription(
-              name: 'cam',
-              lensDirection: CameraLensDirection.front,
-              sensorOrientation: 90),
-          ResolutionPreset.max);
-      await cameraController.initialize();
-
-      when(CameraPlatform.instance
-              .setFileFormat(cameraController.cameraId, ImageFileFormat.jpeg))
-          .thenThrow(
-        PlatformException(
-          code: 'TEST_ERROR',
-          message: 'This is a test error message',
-        ),
-      );
-
-      expect(
-          cameraController.setFileFormat(ImageFileFormat.jpeg),
-          throwsA(isA<CameraException>().having(
-            (CameraException error) => error.description,
-            'TEST_ERROR',
-            'This is a test error message',
-          )));
-    });
   });
 }
 
@@ -1598,11 +1554,6 @@ class MockCameraPlatform extends Mock
         Invocation.method(#setExposureOffset, <Object?>[cameraId, offset]),
         returnValue: Future<double>.value(1.0),
       ) as Future<double>;
-
-  @override
-  Future<void> setFileFormat(int cameraId, ImageFileFormat format) async =>
-      super.noSuchMethod(
-          Invocation.method(#setFileFormat, <Object?>[cameraId, format]));
 }
 
 class MockCameraDescription extends CameraDescription {
