@@ -348,6 +348,12 @@ interface HostIntegrationCoreApi {
   fun echoClassWrapper(wrapper: AllClassesWrapper): AllClassesWrapper
   /** Returns the passed enum to test serialization and deserialization. */
   fun echoEnum(anEnum: AnEnum): AnEnum
+  /** Returns the default string. */
+  fun echoNamedDefaultString(aString: String): String
+  /** Returns passed in double. */
+  fun echoOptionalDefaultDouble(aDouble: Double): Double
+  /** Returns passed in int. */
+  fun echoRequiredInt(anInt: Long): Long
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes?
   /**
@@ -382,6 +388,10 @@ interface HostIntegrationCoreApi {
   fun echoNullableMap(aNullableMap: Map<String?, Any?>?): Map<String?, Any?>?
 
   fun echoNullableEnum(anEnum: AnEnum?): AnEnum?
+  /** Returns passed in int. */
+  fun echoOptionalNullableInt(aNullableInt: Long?): Long?
+  /** Returns the passed in string. */
+  fun echoNamedNullableString(aNullableString: String?): String?
   /**
    * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
    * calling.
@@ -832,6 +842,72 @@ interface HostIntegrationCoreApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val aStringArg = args[0] as String
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNamedDefaultString(aStringArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val aDoubleArg = args[0] as Double
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoOptionalDefaultDouble(aDoubleArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val anIntArg = args[0].let { if (it is Int) it.toLong() else it as Long }
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoRequiredInt(anIntArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes",
                 codec)
         if (api != null) {
@@ -1110,6 +1186,50 @@ interface HostIntegrationCoreApi {
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.echoNullableEnum(anEnumArg)?.raw)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val aNullableIntArg = args[0].let { if (it is Int) it.toLong() else it as Long? }
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoOptionalNullableInt(aNullableIntArg))
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val aNullableStringArg = args[0] as String?
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoNamedNullableString(aNullableStringArg))
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }

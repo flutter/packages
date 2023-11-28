@@ -1,6 +1,6 @@
-## 0.10.6
+## NEXT
 
-* Adds support to HEIF format to iOS
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.
 
 ## 0.10.5+5
 
