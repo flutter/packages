@@ -5,6 +5,10 @@
 - Updates minimum Flutter version to 3.0.
 - Updates package description.
 
+## 1.1.2
+
+- Add example app.
+
 ## 1.1.1
 
 - Moved source to flutter/packages
