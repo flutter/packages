@@ -34,7 +34,7 @@ public class DummyPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
 }
 
 /**
- * A native view that will remove it's tag if clicked.
+ * A native view that will remove its tag if clicked.
  */
 public class CustomView: UIView {
 

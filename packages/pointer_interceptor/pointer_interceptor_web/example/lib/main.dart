@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Stopping Clicks with some DOM',
+      title: 'Stopping Clicks with PointerInterceptor',
       home: MyHomePage(),
     );
   }

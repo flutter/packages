@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// A widget representing an underlying platform view
+/// A widget representing an underlying platform view.
 class NativeWidget extends StatelessWidget {
   /// Constructor
   const NativeWidget({super.key, required this.onClick});

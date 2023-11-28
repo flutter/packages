@@ -1,4 +1,4 @@
 ## 0.10.0
 
-* Initial release.
+* Moved web implementation to own package.
 

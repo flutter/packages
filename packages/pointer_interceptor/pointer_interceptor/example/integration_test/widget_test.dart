@@ -9,11 +9,8 @@ import 'package:integration_test/integration_test.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
-
-  testWidgets('Tell the user where to find the real tests',
-      (WidgetTester tester) async {
-    print('---');
-    print('Please find platform tests in their respective packages.');
-    print('---');
-  });
+  // TODO(louisehsu): given the difficulty of making the same integration tests
+  // work for both web and ios implementations, please find tests in their respective
+  // platform implementation packages.
+  testWidgets('placeholder test', (WidgetTester tester) async {});
 }

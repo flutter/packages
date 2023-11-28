@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   NativeWidget(
                     key: const ValueKey<String>('background-widget'),
                     onClick: () {
-                      _clickedOn('html-element');
+                      _clickedOn('native-element');
                     },
                   ),
                   Column(
