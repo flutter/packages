@@ -74,7 +74,11 @@ public class ImageCaptureTest {
     when(mockCameraXProxy.createImageCaptureBuilder()).thenReturn(mockImageCaptureBuilder);
     when(mockImageCaptureBuilder.build()).thenReturn(mockImageCapture);
 
-    imageCaptureHostApiImpl.create(imageCaptureIdentifier, Long.valueOf(targetRotation), Long.valueOf(flashMode), mockResolutionSelectorId);
+    imageCaptureHostApiImpl.create(
+        imageCaptureIdentifier,
+        Long.valueOf(targetRotation),
+        Long.valueOf(flashMode),
+        mockResolutionSelectorId);
 
     verify(mockImageCaptureBuilder).setTargetRotation(targetRotation);
     verify(mockImageCaptureBuilder).setFlashMode(flashMode);

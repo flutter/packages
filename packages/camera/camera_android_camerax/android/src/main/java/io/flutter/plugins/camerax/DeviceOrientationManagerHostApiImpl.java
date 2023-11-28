@@ -5,19 +5,13 @@
 package io.flutter.plugins.camerax;
 
 import android.app.Activity;
-import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraPermissionsErrorData;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Result;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerFlutterApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerHostApi;
-import java.io.File;
-import java.io.IOException;
 
 public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationManagerHostApi {
   private final BinaryMessenger binaryMessenger;
@@ -25,17 +19,19 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
 
   @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
   @VisibleForTesting public @Nullable DeviceOrientationManager deviceOrientationManager;
-  @VisibleForTesting public @NonNull DeviceOrientationManagerFlutterApiImpl deviceOrientationManagerFlutterApiImpl;
+
+  @VisibleForTesting
+  public @NonNull DeviceOrientationManagerFlutterApiImpl deviceOrientationManagerFlutterApiImpl;
 
   private Activity activity;
   private PermissionsRegistry permissionsRegistry;
 
   public DeviceOrientationManagerHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger,
-      @NonNull InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    this.deviceOrientationManagerFlutterApiImpl = new DeviceOrientationManagerFlutterApiImpl(binaryMessenger);
+    this.deviceOrientationManagerFlutterApiImpl =
+        new DeviceOrientationManagerFlutterApiImpl(binaryMessenger);
   }
 
   public void setActivity(@NonNull Activity activity) {
@@ -82,21 +78,23 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
     }
   }
 
-/** todo */
-@Override
-public @NonNull Long getPhotoOrientation() {
+  /** todo */
+  @Override
+  public @NonNull Long getPhotoOrientation() {
     if (deviceOrientationManager == null) {
-      throw new NullPointerException("startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the photo orientation.");
+      throw new NullPointerException(
+          "startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the photo orientation.");
     }
     return Long.valueOf(deviceOrientationManager.getPhotoOrientation());
-}
+  }
 
-/** todo */
-@Override
-public @NonNull Long getVideoOrientation() {
+  /** todo */
+  @Override
+  public @NonNull Long getVideoOrientation() {
     if (deviceOrientationManager == null) {
-      throw new NullPointerException("startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the video orientation.");
+      throw new NullPointerException(
+          "startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the video orientation.");
     }
     return Long.valueOf(deviceOrientationManager.getVideoOrientation());
-}
+  }
 }

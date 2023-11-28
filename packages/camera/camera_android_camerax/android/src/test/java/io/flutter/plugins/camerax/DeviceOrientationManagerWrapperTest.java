@@ -5,33 +5,22 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.app.Activity;
-import android.content.Context;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
-import io.flutter.plugins.camerax.CameraPermissionsManager.ResultCallback;
 import io.flutter.plugins.camerax.DeviceOrientationManager.DeviceOrientationChangeCallback;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.CameraPermissionsErrorData;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Result;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerFlutterApi.Reply;
-import java.io.File;
-import java.io.IOException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 

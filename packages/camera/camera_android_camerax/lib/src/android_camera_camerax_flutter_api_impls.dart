@@ -179,7 +179,8 @@ class AndroidCameraXCameraFlutterApis {
           processCameraProviderFlutterApiImpl);
       CameraFlutterApi.setup(cameraFlutterApiImpl);
       SystemServicesFlutterApi.setup(systemServicesFlutterApiImpl);
-      DeviceOrientationManagerFlutterApi.setup(deviceOrientationManagerFlutterApiImpl);
+      DeviceOrientationManagerFlutterApi.setup(
+          deviceOrientationManagerFlutterApiImpl);
       CameraStateErrorFlutterApi.setup(cameraStateErrorFlutterApiImpl);
       CameraStateFlutterApi.setup(cameraStateFlutterApiImpl);
       PendingRecordingFlutterApi.setup(pendingRecordingFlutterApiImpl);
