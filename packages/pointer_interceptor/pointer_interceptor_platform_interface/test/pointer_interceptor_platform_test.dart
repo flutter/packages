@@ -9,11 +9,19 @@ import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platf
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('Default implementation of PointerInterceptor should return child', () {
-    final PointerInterceptorPlatform pointerInterceptorPlatform =
-        PointerInterceptorPlatform.instance;
+  test(
+      'Default implementation of PointerInterceptorPlatform should throw unimplemented error',
+      () {
+    final PointerInterceptorPlatform unimplementedPointerInterceptorPlatform =
+        UnimplementedPointerInterceptorPlatform();
 
     final Container testChild = Container();
-    expect(pointerInterceptorPlatform.buildWidget(child: testChild), testChild);
+    expect(
+        () => unimplementedPointerInterceptorPlatform.buildWidget(
+            child: testChild),
+        throwsUnimplementedError);
   });
 }
+
+class UnimplementedPointerInterceptorPlatform
+    extends PointerInterceptorPlatform {}
