@@ -2,13 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
-
 import 'package:flutter/widgets.dart';
 
 import 'pointer_interceptor_platform.dart';
 
-/// A default implementation of [PointerInterceptorPlatform].
+/// A default no-op implementation of [PointerInterceptorPlatform].
 class DefaultPointerInterceptor extends PointerInterceptorPlatform {
   @override
   Widget buildWidget({
