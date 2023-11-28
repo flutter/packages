@@ -834,3 +834,14 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+   - package-ecosystem: "gradle"
+    directory: "/packages/css_colors/example/android/app"
+    commit-message:
+      prefix: "[css_colors]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
