@@ -1,3 +1,7 @@
+## 0.5.0+24
+* Implements `lockCaptureOrientation` and `unlockCaptureOrientation`.
+* Sets the initial target rotation of `UseCase`s to that specified by the `CameraDescription` passed to `createCamera`.
+
 ## 0.5.0+23
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
