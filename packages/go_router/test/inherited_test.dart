@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'test_helpers.dart';
+
 void main() {
   group('updateShouldNotify', () {
     test('does not update when goRouter does not change', () {
@@ -124,7 +126,10 @@ class _MyWidget extends StatelessWidget {
 }
 
 class MockGoRouter extends GoRouter {
-  MockGoRouter() : super(routes: <GoRoute>[]);
+  MockGoRouter()
+      : super.routingConfig(
+            routingConfig: const ConstantRoutingConfig(
+                RoutingConfig(routes: <RouteBase>[])));
 
   late String latestPushedName;
 

@@ -41,7 +41,7 @@ class GoogleMapController {
       ..style.width = '100%'
       ..style.height = '100%';
 
-    ui.platformViewRegistry.registerViewFactory(
+    ui_web.platformViewRegistry.registerViewFactory(
       _getViewType(mapId),
       (int viewId) => _div,
     );

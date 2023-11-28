@@ -124,6 +124,7 @@ dependencies {
     required String pluginName,
     required bool warningsConfigured,
     String? kotlinVersion,
+    bool includeArtifactHub = true,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -143,6 +144,7 @@ gradle.projectsEvaluated {
 buildscript {
     ${kotlinVersion == null ? '' : "ext.kotlin_version = '$kotlinVersion'"}
     repositories {
+        ${includeArtifactHub ? GradleCheckCommand.exampleRootGradleArtifactHubString : ''}
         google()
         mavenCentral()
     }
@@ -172,6 +174,37 @@ task clean(type: Delete) {
 }
 
 ${warningsConfigured ? warningConfig : ''}
+''');
+  }
+
+  /// Writes a fake android/build.gradle file for an example [package] with the
+  /// given options.
+  void writeFakeExampleTopLevelSettingsGradle(
+    RepositoryPackage package, {
+    bool includeArtifactHub = true,
+  }) {
+    final File settingsGradle = package
+        .platformDirectory(FlutterPlatform.android)
+        .childFile('settings.gradle');
+    settingsGradle.createSync(recursive: true);
+
+    settingsGradle.writeAsStringSync('''
+include ':app'
+
+def flutterProjectRoot = rootProject.projectDir.parentFile.toPath()
+
+def plugins = new Properties()
+def pluginsFile = new File(flutterProjectRoot.toFile(), '.flutter-plugins')
+if (pluginsFile.exists()) {
+    pluginsFile.withInputStream { stream -> plugins.load(stream) }
+}
+
+plugins.each { name, path ->
+    def pluginDirectory = flutterProjectRoot.resolve(path).resolve('android').toFile()
+    include ":\$name"
+    project(":\$name").projectDir = pluginDirectory
+}
+${includeArtifactHub ? GradleCheckCommand.exampleRootSettingsArtifactHubString : ''}
 ''');
   }
 
@@ -231,13 +264,22 @@ dependencies {
     bool commentNamespace = false,
     bool warningsConfigured = true,
     String? kotlinVersion,
+    bool includeBuildArtifactHub = true,
+    bool includeSettingsArtifactHub = true,
   }) {
-    writeFakeExampleTopLevelBuildGradle(package,
-        pluginName: pluginName,
-        warningsConfigured: warningsConfigured,
-        kotlinVersion: kotlinVersion);
+    writeFakeExampleTopLevelBuildGradle(
+      package,
+      pluginName: pluginName,
+      warningsConfigured: warningsConfigured,
+      kotlinVersion: kotlinVersion,
+      includeArtifactHub: includeBuildArtifactHub,
+    );
     writeFakeExampleAppBuildGradle(package,
         includeNamespace: includeNamespace, commentNamespace: commentNamespace);
+    writeFakeExampleTopLevelSettingsGradle(
+      package,
+      includeArtifactHub: includeSettingsArtifactHub,
+    );
   }
 
   void writeFakeManifest(
@@ -648,6 +690,135 @@ dependencies {
             contains('Validating android/build.gradle'),
           ],
         ));
+  });
+
+  group('Artifact Hub check', () {
+    test('passes build.gradle artifact hub check when set', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(
+        example,
+        pluginName: packageName,
+        // ignore: avoid_redundant_argument_values
+        includeBuildArtifactHub: true,
+        // ignore: avoid_redundant_argument_values
+        includeSettingsArtifactHub: true,
+      );
+      writeFakeManifest(example, isApp: true);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['gradle-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle'),
+          contains('Validating android/settings.gradle'),
+        ]),
+      );
+    });
+    test('fails artifact hub check when build and settings sections missing',
+        () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(
+        example,
+        pluginName: packageName,
+        includeBuildArtifactHub: false,
+        includeSettingsArtifactHub: false,
+      );
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
+          contains(GradleCheckCommand.exampleRootSettingsArtifactHubString),
+        ]),
+      );
+    });
+
+    test('fails build.gradle artifact hub check when missing', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example,
+          pluginName: packageName,
+          includeBuildArtifactHub: false,
+          // ignore: avoid_redundant_argument_values
+          includeSettingsArtifactHub: true);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(GradleCheckCommand.exampleRootGradleArtifactHubString),
+        ]),
+      );
+      expect(
+        output,
+        isNot(
+            contains(GradleCheckCommand.exampleRootSettingsArtifactHubString)),
+      );
+    });
+
+    test('fails settings.gradle artifact hub check when missing', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      writeFakePluginBuildGradle(package, includeLanguageVersion: true);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example,
+          pluginName: packageName,
+          // ignore: avoid_redundant_argument_values
+          includeBuildArtifactHub: true,
+          includeSettingsArtifactHub: false);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(GradleCheckCommand.exampleRootSettingsArtifactHubString),
+        ]),
+      );
+      expect(
+        output,
+        isNot(contains(GradleCheckCommand.exampleRootGradleArtifactHubString)),
+      );
+    });
   });
 
   group('Kotlin version check', () {

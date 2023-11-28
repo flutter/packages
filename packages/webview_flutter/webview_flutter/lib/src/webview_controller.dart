@@ -266,8 +266,8 @@ class WebViewController {
   /// ```dart
   /// final WebViewController controller = WebViewController();
   /// controller.addJavaScriptChannel(
-  ///   name: 'Print',
-  ///   onMessageReceived: (JavascriptMessage message) {
+  ///   'Print',
+  ///   onMessageReceived: (JavaScriptMessage message) {
   ///     print(message.message);
   ///   },
   /// );
@@ -352,6 +352,27 @@ class WebViewController {
   /// Sets the value used for the HTTP `User-Agent:` request header.
   Future<void> setUserAgent(String? userAgent) {
     return platform.setUserAgent(userAgent);
+  }
+
+  /// Sets a callback that notifies the host application on any log messages
+  /// written to the JavaScript console.
+  ///
+  /// Platforms may not preserve all the log level information so clients should
+  /// not rely on a 1:1 mapping between the JavaScript calls.
+  ///
+  /// On iOS setting this callback will inject a custom [WKUserScript] which
+  /// overrides the default implementation of `console.debug`, `console.error`,
+  /// `console.info`, `console.log` and `console.warning` methods. The iOS
+  /// WebKit framework unfortunately doesn't provide a built-in method to
+  /// forward console messages.
+  Future<void> setOnConsoleMessage(
+      void Function(JavaScriptConsoleMessage message) onConsoleMessage) {
+    return platform.setOnConsoleMessage(onConsoleMessage);
+  }
+
+  /// Gets the value used for the HTTP `User-Agent:` request header.
+  Future<String?> getUserAgent() {
+    return platform.getUserAgent();
   }
 }
 

@@ -4,20 +4,15 @@
 
 // This file is hand-formatted.
 
-import 'dart:io' show Platform;
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw/rfw.dart';
 
-final bool masterChannel = 
-    !Platform.environment.containsKey('CHANNEL') ||
-        Platform.environment['CHANNEL'] == 'master';
-
-// See Contributing section of README.md file.
-final bool runGoldens = Platform.isLinux && masterChannel;
+import 'utils.dart';
 
 void main() {
   testWidgets('String example', (WidgetTester tester) async {
@@ -371,19 +366,23 @@ void main() {
       );
     '''));
     await tester.pump();
-    expect(eventLog, hasLength(1));
-    expect(eventLog.first, startsWith('image-error-event {exception: HTTP request failed, statusCode: 400, x-invalid:'));
-    eventLog.clear();
+    if (!kIsWeb) {
+      expect(eventLog, hasLength(1));
+      expect(eventLog.first, startsWith('image-error-event {exception: HTTP request failed, statusCode: 400, x-invalid:'));
+      eventLog.clear();
+    }
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.containers.png'),
       skip: !runGoldens,
     );
     expect(find.byType(DecoratedBox), findsNWidgets(6));
+    const String matrix = kIsWeb ? '1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1'
+                                 : '1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0';
     expect(
       (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[1].decoration as BoxDecoration).image.toString(),
       'DecorationImage(AssetImage(bundle: null, name: "asset"), ' // this just seemed like the easiest way to check all this...
-      'ColorFilter.matrix([1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), '
+      'ColorFilter.matrix([$matrix]), '
       'Alignment.center, centerSlice: Rect.fromLTRB(5.0, 8.0, 105.0, 78.0), scale 1.0, opacity 1.0, FilterQuality.low)',
     );
     expect(
@@ -543,5 +542,5 @@ void main() {
     );
 
     expect(eventLog, isEmpty);
-  }, skip: !masterChannel); // https://github.com/flutter/flutter/pull/129851
+  }, skip: kIsWeb || !isMainChannel); // https://github.com/flutter/flutter/pull/129851
 }

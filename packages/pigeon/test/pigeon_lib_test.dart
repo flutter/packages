@@ -174,18 +174,18 @@ abstract class Api1 {
     expect(root.apis[0].name, equals('Api1'));
     expect(root.apis[0].methods.length, equals(1));
     expect(root.apis[0].methods[0].name, equals('doit'));
-    expect(root.apis[0].methods[0].arguments[0].name, equals('input'));
+    expect(root.apis[0].methods[0].parameters[0].name, equals('input'));
     expect(
-        root.apis[0].methods[0].arguments[0].type.baseName, equals('Input1'));
+        root.apis[0].methods[0].parameters[0].type.baseName, equals('Input1'));
     expect(root.apis[0].methods[0].returnType.baseName, equals('Output1'));
 
     Class? input;
     Class? output;
-    for (final Class klass in root.classes) {
-      if (klass.name == 'Input1') {
-        input = klass;
-      } else if (klass.name == 'Output1') {
-        output = klass;
+    for (final Class classDefinition in root.classes) {
+      if (classDefinition.name == 'Input1') {
+        input = classDefinition;
+      } else if (classDefinition.name == 'Output1') {
+        output = classDefinition;
       }
     }
     expect(input, isNotNull);
@@ -353,7 +353,7 @@ abstract class VoidArgApi {
     expect(results.root.apis[0].name, equals('VoidArgApi'));
     expect(
         results.root.apis[0].methods[0].returnType.baseName, equals('Output1'));
-    expect(results.root.apis[0].methods[0].arguments.isEmpty, isTrue);
+    expect(results.root.apis[0].methods[0].parameters.isEmpty, isTrue);
   });
 
   test('mockDartClass', () {
@@ -743,7 +743,7 @@ abstract class Api {
     final ParseResults parseResult = parseSource(code);
     expect(parseResult.errors.length, equals(1));
     expect(parseResult.errors[0].message,
-        contains('Generic type arguments must be nullable'));
+        contains('Generic type parameters must be nullable'));
     expect(parseResult.errors[0].message, contains('"list"'));
     expect(parseResult.errors[0].lineNumber, 2);
   });
@@ -765,7 +765,6 @@ abstract class Api {
   });
 
   test('enums argument flutter', () {
-    // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
 
 enum Foo {
@@ -779,12 +778,10 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Enums'));
+    expect(parseResult.errors.length, equals(0));
   });
 
   test('enums list argument', () {
-    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
 enum Foo { one, two }
 
@@ -794,12 +791,10 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Enums'));
+    expect(parseResult.errors.length, equals(0));
   });
 
   test('enums map argument key', () {
-    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
 enum Foo { one, two }
 
@@ -809,12 +804,10 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Enums'));
+    expect(parseResult.errors.length, equals(0));
   });
 
   test('enums map argument value', () {
-    // TODO(tarrinneal): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
 enum Foo { one, two }
 
@@ -824,12 +817,10 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Enums'));
+    expect(parseResult.errors.length, equals(0));
   });
 
   test('enums return value', () {
-    // TODO(gaaclarke): Make this not an error: https://github.com/flutter/flutter/issues/87307
     const String code = '''
 
 enum Foo {
@@ -843,8 +834,7 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
-    expect(parseResult.errors.length, equals(1));
-    expect(parseResult.errors[0].message, contains('Enums'));
+    expect(parseResult.errors.length, equals(0));
   });
 
   test('return type generics', () {
@@ -874,14 +864,14 @@ abstract class Api {
 }
 ''';
     final ParseResults parseResult = parseSource(code);
+    expect(parseResult.root.apis[0].methods[0].parameters[1].type.baseName,
+        'List');
     expect(
-        parseResult.root.apis[0].methods[0].arguments[1].type.baseName, 'List');
-    expect(
-        parseResult.root.apis[0].methods[0].arguments[1].type.typeArguments[0]
+        parseResult.root.apis[0].methods[0].parameters[1].type.typeArguments[0]
             .baseName,
         'double');
     expect(
-        parseResult.root.apis[0].methods[0].arguments[1].type.typeArguments[0]
+        parseResult.root.apis[0].methods[0].parameters[1].type.typeArguments[0]
             .isNullable,
         isTrue);
   });
@@ -904,7 +894,7 @@ abstract class Api {
     expect(field.type.typeArguments[1].baseName, 'int');
   });
 
-  test('two arguments', () {
+  test('two parameters', () {
     const String code = '''
 class Input {
   String? input;
@@ -919,7 +909,7 @@ abstract class Api {
     expect(results.root.apis.length, 1);
     expect(results.root.apis[0].methods.length, equals(1));
     expect(results.root.apis[0].methods[0].name, equals('method'));
-    expect(results.root.apis[0].methods[0].arguments.length, 2);
+    expect(results.root.apis[0].methods[0].parameters.length, 2);
   });
 
   test('no type name argument', () {
@@ -933,7 +923,7 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message,
-        contains('Arguments must specify their type'));
+        contains('Parameters must specify their type'));
   });
 
   test('custom objc selector', () {
@@ -964,10 +954,10 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message,
-        contains('Invalid selector, expected 2 arguments'));
+        contains('Invalid selector, expected 2 parameters'));
   });
 
-  test('custom objc no arguments', () {
+  test('custom objc no parameters', () {
     const String code = '''
 @HostApi()
 abstract class Api {
@@ -1010,10 +1000,10 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].lineNumber, 3);
     expect(results.errors[0].message,
-        contains('Invalid function signature, expected 2 arguments'));
+        contains('Invalid function signature, expected 2 parameters'));
   });
 
-  test('custom swift function signature no arguments', () {
+  test('custom swift function signature no parameters', () {
     const String code = '''
 @HostApi()
 abstract class Api {
@@ -1076,7 +1066,7 @@ abstract class Api {
     expect(results.root.classes[0].name, 'Foo');
   });
 
-  test('recurse into type arguments', () {
+  test('recurse into type parameters', () {
     const String code = '''
 class Foo {
   int? foo;
@@ -1244,7 +1234,7 @@ abstract class Api {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, 0);
     expect(
-        results.root.apis[0].methods[0].arguments[0].type.isNullable, isTrue);
+        results.root.apis[0].methods[0].parameters[0].type.isNullable, isTrue);
   });
 
   test('task queue specified', () {

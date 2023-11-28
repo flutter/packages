@@ -3,16 +3,16 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 import 'dart:js_util';
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart' show urlStrategy;
 import 'package:url_launcher_platform_interface/link.dart';
+import 'package:web/helpers.dart' as html;
 
 /// The unique identifier for the view type to be used for link platform views.
 const String linkViewType = '__url_launcher::link';
@@ -104,7 +104,11 @@ class LinkViewController extends PlatformViewController {
     if (_instances.isEmpty) {
       // This is the first controller being created, attach the global click
       // listener.
-      _clickSubscription = html.window.onClick.listen(_onGlobalClick);
+
+      _clickSubscription =
+          const html.EventStreamProvider<html.MouseEvent>('click')
+              .forTarget(html.window)
+              .listen(_onGlobalClick);
     }
     _instances[viewId] = this;
   }
@@ -164,10 +168,10 @@ class LinkViewController extends PlatformViewController {
   @override
   final int viewId;
 
-  late html.Element _element;
+  late html.HTMLElement _element;
 
   Future<void> _initialize() async {
-    _element = html.Element.tag('a');
+    _element = html.document.createElement('a') as html.HTMLElement;
     setProperty(_element, linkViewIdProperty, viewId);
     _element.style
       ..opacity = '0'
@@ -225,7 +229,7 @@ class LinkViewController extends PlatformViewController {
       // in case an internal uri is given, the url mus be properly encoded
       // using the currently used [UrlStrategy]
       if (!uri.hasScheme) {
-        href = urlStrategy?.prepareExternalUrl(href) ?? href;
+        href = ui_web.urlStrategy?.prepareExternalUrl(href) ?? href;
       }
       _element.setAttribute('href', href);
     }

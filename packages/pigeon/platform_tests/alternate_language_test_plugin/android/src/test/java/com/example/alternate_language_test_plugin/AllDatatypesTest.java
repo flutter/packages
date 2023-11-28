@@ -83,8 +83,7 @@ public class AllDatatypesTest {
               @SuppressWarnings("unchecked")
               ArrayList<Object> args =
                   (ArrayList<Object>) FlutterIntegrationCoreApi.getCodec().decodeMessage(message);
-              ByteBuffer replyData =
-                  FlutterIntegrationCoreApi.getCodec().encodeMessage(args.get(0));
+              ByteBuffer replyData = FlutterIntegrationCoreApi.getCodec().encodeMessage(args);
               replyData.position(0);
               reply.reply(replyData);
               return null;
@@ -95,19 +94,25 @@ public class AllDatatypesTest {
     boolean[] didCall = {false};
     api.echoAllNullableTypes(
         everything,
-        (result) -> {
-          didCall[0] = true;
-          assertNull(everything.getANullableBool());
-          assertNull(everything.getANullableInt());
-          assertNull(everything.getANullableDouble());
-          assertNull(everything.getANullableString());
-          assertNull(everything.getANullableByteArray());
-          assertNull(everything.getANullable4ByteArray());
-          assertNull(everything.getANullable8ByteArray());
-          assertNull(everything.getANullableFloatArray());
-          assertNull(everything.getANullableList());
-          assertNull(everything.getANullableMap());
-          assertNull(everything.getNullableMapWithObject());
+        new CoreTests.NullableResult<AllNullableTypes>() {
+          public void success(AllNullableTypes result) {
+            didCall[0] = true;
+            assertNull(everything.getANullableBool());
+            assertNull(everything.getANullableInt());
+            assertNull(everything.getANullableDouble());
+            assertNull(everything.getANullableString());
+            assertNull(everything.getANullableByteArray());
+            assertNull(everything.getANullable4ByteArray());
+            assertNull(everything.getANullable8ByteArray());
+            assertNull(everything.getANullableFloatArray());
+            assertNull(everything.getANullableList());
+            assertNull(everything.getANullableMap());
+            assertNull(everything.getNullableMapWithObject());
+          }
+
+          public void error(Throwable error) {
+            assertEquals(error, null);
+          }
         });
     assertTrue(didCall[0]);
   }
@@ -180,8 +185,7 @@ public class AllDatatypesTest {
               @SuppressWarnings("unchecked")
               ArrayList<Object> args =
                   (ArrayList<Object>) FlutterIntegrationCoreApi.getCodec().decodeMessage(message);
-              ByteBuffer replyData =
-                  FlutterIntegrationCoreApi.getCodec().encodeMessage(args.get(0));
+              ByteBuffer replyData = FlutterIntegrationCoreApi.getCodec().encodeMessage(args);
               replyData.position(0);
               reply.reply(replyData);
               return null;
@@ -192,9 +196,15 @@ public class AllDatatypesTest {
     boolean[] didCall = {false};
     api.echoAllNullableTypes(
         everything,
-        (result) -> {
-          didCall[0] = true;
-          compareAllNullableTypes(everything, result);
+        new CoreTests.NullableResult<AllNullableTypes>() {
+          public void success(AllNullableTypes result) {
+            didCall[0] = true;
+            compareAllNullableTypes(everything, result);
+          }
+
+          public void error(Throwable error) {
+            assertEquals(error, null);
+          }
         });
     assertTrue(didCall[0]);
   }

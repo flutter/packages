@@ -256,9 +256,8 @@ class Camera
 
     // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is null
     // once this has largely been fixed on the Android side. https://github.com/flutter/flutter/issues/119668
-    EncoderProfiles recordingProfile = getRecordingProfile();
-    if (SdkCapabilityChecker.supportsEncoderProfiles() && recordingProfile != null) {
-      mediaRecorderBuilder = new MediaRecorderBuilder(recordingProfile, outputFilePath);
+    if (SdkCapabilityChecker.supportsEncoderProfiles() && getRecordingProfile() != null) {
+      mediaRecorderBuilder = new MediaRecorderBuilder(getRecordingProfile(), outputFilePath);
     } else {
       mediaRecorderBuilder = new MediaRecorderBuilder(getRecordingProfileLegacy(), outputFilePath);
     }
@@ -1077,8 +1076,13 @@ class Camera
 
   /** Pause the preview from dart. */
   public void pausePreview() throws CameraAccessException {
-    this.pausedPreview = true;
-    this.captureSession.stopRepeating();
+    if (!this.pausedPreview) {
+      this.pausedPreview = true;
+
+      if (this.captureSession != null) {
+        this.captureSession.stopRepeating();
+      }
+    }
   }
 
   /** Resume the preview from dart. */

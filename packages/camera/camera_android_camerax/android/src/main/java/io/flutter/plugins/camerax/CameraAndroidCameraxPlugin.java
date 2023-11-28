@@ -25,6 +25,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   private VideoCaptureHostApiImpl videoCaptureHostApiImpl;
   private ImageAnalysisHostApiImpl imageAnalysisHostApiImpl;
   private ImageCaptureHostApiImpl imageCaptureHostApiImpl;
+  private CameraControlHostApiImpl cameraControlHostApiImpl;
   public @Nullable SystemServicesHostApiImpl systemServicesHostApiImpl;
 
   @VisibleForTesting
@@ -81,7 +82,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     GeneratedCameraXLibrary.LiveDataHostApi.setup(binaryMessenger, liveDataHostApiImpl);
     GeneratedCameraXLibrary.ObserverHostApi.setup(
         binaryMessenger, new ObserverHostApiImpl(binaryMessenger, instanceManager));
-    imageAnalysisHostApiImpl = new ImageAnalysisHostApiImpl(binaryMessenger, instanceManager);
+    imageAnalysisHostApiImpl =
+        new ImageAnalysisHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ImageAnalysisHostApi.setup(binaryMessenger, imageAnalysisHostApiImpl);
     GeneratedCameraXLibrary.AnalyzerHostApi.setup(
         binaryMessenger, new AnalyzerHostApiImpl(binaryMessenger, instanceManager));
@@ -103,6 +105,12 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, new ResolutionStrategyHostApiImpl(instanceManager));
     GeneratedCameraXLibrary.AspectRatioStrategyHostApi.setup(
         binaryMessenger, new AspectRatioStrategyHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.FallbackStrategyHostApi.setup(
+        binaryMessenger, new FallbackStrategyHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.QualitySelectorHostApi.setup(
+        binaryMessenger, new QualitySelectorHostApiImpl(instanceManager));
+    cameraControlHostApiImpl = new CameraControlHostApiImpl(instanceManager, context);
+    GeneratedCameraXLibrary.CameraControlHostApi.setup(binaryMessenger, cameraControlHostApiImpl);
   }
 
   @Override
@@ -124,7 +132,6 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     Activity activity = activityPluginBinding.getActivity();
 
     setUp(pluginBinding.getBinaryMessenger(), activity, pluginBinding.getTextureRegistry());
-    updateContext(activity);
 
     if (activity instanceof LifecycleOwner) {
       processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
@@ -178,6 +185,9 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     }
     if (imageAnalysisHostApiImpl != null) {
       imageAnalysisHostApiImpl.setContext(context);
+    }
+    if (cameraControlHostApiImpl != null) {
+      cameraControlHostApiImpl.setContext(context);
     }
   }
 }

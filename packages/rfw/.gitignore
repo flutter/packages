@@ -1,3 +1,6 @@
+# Ignore golden test failure files
+test/failures/*.png
+
 # Miscellaneous
 *.class
 *.log

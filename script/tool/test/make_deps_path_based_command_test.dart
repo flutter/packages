@@ -17,12 +17,16 @@ import 'util.dart';
 void main() {
   FileSystem fileSystem;
   late Directory packagesDir;
+  late Directory thirdPartyPackagesDir;
   late CommandRunner<void> runner;
   late RecordingProcessRunner processRunner;
 
   setUp(() {
     fileSystem = MemoryFileSystem();
     packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    thirdPartyPackagesDir = packagesDir.parent
+        .childDirectory('third_party')
+        .childDirectory('packages');
 
     final MockGitDir gitDir = MockGitDir();
     when(gitDir.path).thenReturn(packagesDir.parent.path);
@@ -286,6 +290,31 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
         targetPackage.pubspecFile.readAsStringSync(),
         matches(RegExp(r'dependency_overrides:.*a:.*b:.*c:.*',
             multiLine: true, dotAll: true)));
+  });
+
+  test('finds third_party packages', () async {
+    createFakePackage('bar', thirdPartyPackagesDir, isFlutter: true);
+    final RepositoryPackage firstPartyPackge =
+        createFakePlugin('foo', packagesDir);
+
+    addDependencies(firstPartyPackge, <String>[
+      'bar',
+    ]);
+
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['make-deps-path-based', '--target-dependencies=bar']);
+
+    expect(
+        output,
+        containsAll(<String>[
+          'Rewriting references to: bar...',
+          '  Modified packages/foo/pubspec.yaml',
+        ]));
+
+    final Map<String, String?> simplePackageOverrides =
+        getDependencyOverrides(firstPartyPackge);
+    expect(simplePackageOverrides.length, 1);
+    expect(simplePackageOverrides['bar'], '../../third_party/packages/bar');
   });
 
   // This test case ensures that running CI using this command on an interim
