@@ -1,7 +1,7 @@
 ## 14.0.1
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Fixes Kotlin generator to use provided errorClassName
+* [kotlin] Updates Flutter API to use new errorClassName.
 
 ## 14.0.0
 
