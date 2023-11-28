@@ -20,6 +20,8 @@ flutter:
         default_package: video_player_avfoundation
       web:
         default_package: video_player_web
+      windows:
+        default_package: video_player_windows
 
 dependencies:
   flutter:
@@ -29,6 +31,8 @@ dependencies:
   video_player_avfoundation: ^2.5.0
   video_player_platform_interface: ">=6.1.0 <7.0.0"
   video_player_web: ^2.0.0
+  video_player_windows: # ^2.0.4 # uncomment when final
+    path: ../video_player_windows # remove when final
 
 dev_dependencies:
   flutter_test:
