@@ -1,6 +1,6 @@
 ## 0.9.14
 
-* Adds support to HEIF format
+* Adds support to HEIF format.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.
 
 ## 0.9.13+7
