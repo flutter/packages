@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result;
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)setFileFormat:(FCPFileFormat)fileFormat;
+- (void)setImageFileFormat:(FCPFileFormat)fileFormat;
 /**
  * Starts recording a video with an optional streaming messenger.
  * If the messenger is non-null then it will be called for each
