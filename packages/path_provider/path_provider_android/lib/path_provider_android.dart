@@ -63,6 +63,11 @@ class PathProviderAndroid extends PathProviderPlatform {
   }
 
   @override
+  Future<String?> getApplicationCachePath() {
+    return _api.getApplicationCachePath();
+  }
+
+  @override
   Future<String?> getExternalStoragePath() {
     return _api.getExternalStoragePath();
   }
@@ -76,12 +81,20 @@ class PathProviderAndroid extends PathProviderPlatform {
   Future<List<String>?> getExternalStoragePaths({
     StorageDirectory? type,
   }) async {
-    return (await _api.getExternalStoragePaths(_convertStorageDirectory(type)))
-        .cast<String>();
+    return _getExternalStoragePaths(type: type);
   }
 
   @override
-  Future<String?> getDownloadsPath() {
-    throw UnsupportedError('getDownloadsPath is not supported on Android');
+  Future<String?> getDownloadsPath() async {
+    final List<String> paths =
+        await _getExternalStoragePaths(type: StorageDirectory.downloads);
+    return paths.isEmpty ? null : paths.first;
+  }
+
+  Future<List<String>> _getExternalStoragePaths({
+    StorageDirectory? type,
+  }) async {
+    return (await _api.getExternalStoragePaths(_convertStorageDirectory(type)))
+        .cast<String>();
   }
 }

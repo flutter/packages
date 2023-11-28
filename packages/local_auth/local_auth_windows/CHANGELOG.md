@@ -1,3 +1,8 @@
+## 1.0.10
+
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
+
 ## 1.0.9
 
 * Updates to Pigeon 10.0.

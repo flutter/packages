@@ -13,6 +13,11 @@ import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'google_maps_controller_test.mocks.dart';
+
+// This value is used when comparing long~num, like
+// LatLng values.
+const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[
   MockSpec<CirclesController>(),
@@ -21,7 +26,6 @@ import 'package:mockito/mockito.dart';
   MockSpec<MarkersController>(),
   MockSpec<TileOverlaysController>(),
 ])
-import 'google_maps_controller_test.mocks.dart';
 
 /// Test Google Map Controller
 void main() {
@@ -361,6 +365,7 @@ void main() {
               mapConfiguration: const MapConfiguration(
             mapType: MapType.satellite,
             zoomControlsEnabled: true,
+            cloudMapId: _kCloudMapId,
             fortyFiveDegreeImageryEnabled: false,
           ));
           controller.debugSetOverrides(
@@ -374,6 +379,7 @@ void main() {
           expect(capturedOptions, isNotNull);
           expect(capturedOptions!.mapTypeId, gmaps.MapTypeId.SATELLITE);
           expect(capturedOptions!.zoomControl, true);
+          expect(capturedOptions!.mapId, _kCloudMapId);
           expect(capturedOptions!.gestureHandling, 'auto',
               reason:
                   'by default the map handles zoom/pan gestures internally');

@@ -10,6 +10,18 @@ import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
 
+final Class emptyClass = Class(name: 'className', fields: <NamedType>[
+  NamedType(
+    name: 'namedTypeName',
+    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+  )
+]);
+
+final Enum emptyEnum = Enum(
+  name: 'enumName',
+  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
+);
+
 void main() {
   test('gen one class header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[
@@ -133,8 +145,11 @@ void main() {
                     const TypeDeclaration(baseName: 'String', isNullable: true),
                 name: 'field1'),
             NamedType(
-                type:
-                    const TypeDeclaration(baseName: 'Enum1', isNullable: true),
+                type: TypeDeclaration(
+                  baseName: 'Enum1',
+                  associatedEnum: emptyEnum,
+                  isNullable: true,
+                ),
                 name: 'enum1'),
           ],
         ),
@@ -168,7 +183,7 @@ void main() {
     expect(
         code,
         contains(
-            'pigeonResult.enum1 = [GetNullableObjectAtIndex(list, 1) integerValue];'));
+            'Enum1Box *enum1 = enum1AsNumber == nil ? nil : [[Enum1Box alloc] initWithValue:[enum1AsNumber integerValue]];'));
   });
 
   test('primitive enum host', () {
@@ -177,11 +192,14 @@ void main() {
         Method(
             name: 'bar',
             returnType: const TypeDeclaration.voidDeclaration(),
-            arguments: <NamedType>[
-              NamedType(
+            parameters: <Parameter>[
+              Parameter(
                   name: 'foo',
-                  type:
-                      const TypeDeclaration(baseName: 'Foo', isNullable: false))
+                  type: TypeDeclaration(
+                    baseName: 'Foo',
+                    associatedEnum: emptyEnum,
+                    isNullable: false,
+                  ))
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
@@ -237,11 +255,14 @@ void main() {
         Method(
             name: 'bar',
             returnType: const TypeDeclaration.voidDeclaration(),
-            arguments: <NamedType>[
-              NamedType(
+            parameters: <Parameter>[
+              Parameter(
                   name: 'foo',
-                  type:
-                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+                  type: TypeDeclaration(
+                    baseName: 'Foo',
+                    associatedEnum: emptyEnum,
+                    isNullable: true,
+                  ))
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
@@ -268,8 +289,11 @@ void main() {
                     const TypeDeclaration(baseName: 'String', isNullable: true),
                 name: 'field1'),
             NamedType(
-                type:
-                    const TypeDeclaration(baseName: 'Enum1', isNullable: true),
+                type: TypeDeclaration(
+                  baseName: 'Enum1',
+                  associatedEnum: emptyEnum,
+                  isNullable: true,
+                ),
                 name: 'enum1'),
           ],
         ),
@@ -298,7 +322,8 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('@property(nonatomic, assign) Enum1 enum1'));
+    expect(code,
+        contains('@property(nonatomic, strong, nullable) Enum1Box * enum1;'));
   });
 
   test('gen one api header', () {
@@ -306,14 +331,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
-                      baseName: 'Input', isNullable: false),
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
                   name: '')
             ],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -346,7 +377,7 @@ void main() {
     expect(code, contains('@protocol Api'));
     expect(code, contains('/// @return `nil` only when `error != nil`.'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
-    expect(code, matches('ApiSetup.*<Api>.*_Nullable'));
+    expect(code, matches('SetUpApi.*<Api>.*_Nullable'));
     expect(code, contains('ApiGetCodec(void)'));
   });
 
@@ -355,16 +386,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
             ],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -395,7 +430,7 @@ void main() {
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
     expect(code, contains('@implementation Output'));
-    expect(code, contains('ApiSetup('));
+    expect(code, contains('SetUpApi('));
     expect(
         code,
         contains(
@@ -504,7 +539,11 @@ void main() {
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(baseName: 'Input', isNullable: true),
+            type: TypeDeclaration(
+              baseName: 'Input',
+              associatedClass: emptyClass,
+              isNullable: true,
+            ),
             name: 'nested')
       ])
     ], enums: <Enum>[]);
@@ -535,7 +574,11 @@ void main() {
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(baseName: 'Input', isNullable: true),
+            type: TypeDeclaration(
+              baseName: 'Input',
+              associatedClass: emptyClass,
+              isNullable: true,
+            ),
             name: 'nested')
       ])
     ], enums: <Enum>[]);
@@ -616,16 +659,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
             ],
-            returnType:
-                const TypeDeclaration(baseName: 'Nested', isNullable: false))
+            returnType: TypeDeclaration(
+              baseName: 'Nested',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -635,7 +682,11 @@ void main() {
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(baseName: 'Input', isNullable: true),
+            type: TypeDeclaration(
+              baseName: 'Input',
+              associatedClass: emptyClass,
+              isNullable: true,
+            ),
             name: 'nested')
       ])
     ], enums: <Enum>[]);
@@ -663,16 +714,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
             ],
-            returnType:
-                const TypeDeclaration(baseName: 'Nested', isNullable: false))
+            returnType: TypeDeclaration(
+              baseName: 'Nested',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -682,7 +737,11 @@ void main() {
       ]),
       Class(name: 'Nested', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(baseName: 'Input', isNullable: true),
+            type: TypeDeclaration(
+              baseName: 'Input',
+              associatedClass: emptyClass,
+              isNullable: true,
+            ),
             name: 'nested')
       ])
     ], enums: <Enum>[]);
@@ -702,7 +761,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
-    expect(code, contains('void ABCApiSetup('));
+    expect(code, contains('void SetUpABCApi('));
   });
 
   test('gen flutter api header', () {
@@ -710,16 +769,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
             ],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -761,16 +824,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
             ],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false))
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Input', fields: <NamedType>[
@@ -808,10 +875,11 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
@@ -848,10 +916,11 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
@@ -890,10 +959,11 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
@@ -930,10 +1000,11 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
@@ -971,9 +1042,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false))
+            parameters: <Parameter>[],
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
@@ -1005,9 +1079,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false))
+            parameters: <Parameter>[],
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
@@ -1039,9 +1116,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false))
+            parameters: <Parameter>[],
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
@@ -1076,9 +1156,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false))
+            parameters: <Parameter>[],
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ))
       ])
     ], classes: <Class>[
       Class(name: 'Output', fields: <NamedType>[
@@ -1193,7 +1276,7 @@ void main() {
     expect(
         code,
         contains(
-            '@property(nonatomic, strong, nullable) NSDictionary<NSString *, id> *'));
+            '@property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *'));
   });
 
   test('gen map argument with object', () {
@@ -1202,8 +1285,8 @@ void main() {
         Method(
             name: 'doit',
             returnType: const TypeDeclaration.voidDeclaration(),
-            arguments: <NamedType>[
-              NamedType(
+            parameters: <Parameter>[
+              Parameter(
                   name: 'foo',
                   type: const TypeDeclaration(
                       baseName: 'Map',
@@ -1237,10 +1320,11 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: 'input')
@@ -1286,16 +1370,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: 'input')
             ],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false),
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -1336,9 +1424,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false),
+            parameters: <Parameter>[],
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -1374,7 +1465,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[],
+            parameters: <Parameter>[],
             returnType: const TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
@@ -1405,16 +1496,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: '')
             ],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false),
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -1455,10 +1550,11 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[
-              NamedType(
-                  type: const TypeDeclaration(
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
                     baseName: 'Input',
+                    associatedClass: emptyClass,
                     isNullable: false,
                   ),
                   name: 'foo')
@@ -1504,7 +1600,7 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[],
+            parameters: <Parameter>[],
             returnType: const TypeDeclaration.voidDeclaration(),
             isAsynchronous: true)
       ])
@@ -1535,9 +1631,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
             name: 'doSomething',
-            arguments: <NamedType>[],
-            returnType:
-                const TypeDeclaration(baseName: 'Output', isNullable: false),
+            parameters: <Parameter>[],
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
+            ),
             isAsynchronous: true)
       ])
     ], classes: <Class>[
@@ -1617,7 +1716,7 @@ void main() {
   });
 
   test('field generics', () {
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
@@ -1632,7 +1731,7 @@ void main() {
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass],
+      classes: <Class>[classDefinition],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
@@ -1660,8 +1759,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
@@ -1723,8 +1822,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
@@ -1783,8 +1882,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
@@ -1836,7 +1935,7 @@ void main() {
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'int', isNullable: true)
                   ]),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1893,7 +1992,7 @@ void main() {
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'int', isNullable: true)
                   ]),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1944,12 +2043,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'add',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'x',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
-            NamedType(
+            Parameter(
                 name: 'y',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
@@ -1977,7 +2076,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (nullable NSNumber *)addX:(NSNumber *)x y:(NSNumber *)y error:(FlutterError *_Nullable *_Nonnull)error;'));
+              '- (nullable NSNumber *)addX:(NSInteger)x y:(NSInteger)y error:(FlutterError *_Nullable *_Nonnull)error;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -1996,10 +2095,14 @@ void main() {
       );
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code,
-          contains('NSNumber *arg_x = GetNullableObjectAtIndex(args, 0);'));
-      expect(code,
-          contains('NSNumber *arg_y = GetNullableObjectAtIndex(args, 1);'));
+      expect(
+          code,
+          contains(
+              'NSInteger arg_x = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+      expect(
+          code,
+          contains(
+              'NSInteger arg_y = [GetNullableObjectAtIndex(args, 1) integerValue];'));
       expect(code,
           contains('NSNumber *output = [api addX:arg_x y:arg_y error:&error]'));
     }
@@ -2010,12 +2113,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'add',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'x',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
-            NamedType(
+            Parameter(
                 name: 'y',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
@@ -2044,7 +2147,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+              '- (void)addX:(NSInteger)x y:(NSInteger)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -2063,10 +2166,14 @@ void main() {
       );
       final String code = sink.toString();
       expect(code, contains('NSArray *args = message;'));
-      expect(code,
-          contains('NSNumber *arg_x = GetNullableObjectAtIndex(args, 0);'));
-      expect(code,
-          contains('NSNumber *arg_y = GetNullableObjectAtIndex(args, 1);'));
+      expect(
+          code,
+          contains(
+              'NSInteger arg_x = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+      expect(
+          code,
+          contains(
+              'NSInteger arg_y = [GetNullableObjectAtIndex(args, 1) integerValue];'));
       expect(code, contains('[api addX:arg_x y:arg_y completion:'));
     }
   });
@@ -2076,12 +2183,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'add',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'x',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
-            NamedType(
+            Parameter(
                 name: 'y',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
@@ -2109,7 +2216,7 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)x y:(NSNumber *)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
+              '- (void)addX:(NSInteger)x y:(NSInteger)y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -2130,11 +2237,9 @@ void main() {
       expect(
           code,
           contains(
-              '- (void)addX:(NSNumber *)arg_x y:(NSNumber *)arg_y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {'));
+              '- (void)addX:(NSInteger)arg_x y:(NSInteger)arg_y completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {'));
       expect(
-          code,
-          contains(
-              '[channel sendMessage:@[arg_x ?: [NSNull null], arg_y ?: [NSNull null]] reply:'));
+          code, contains('[channel sendMessage:@[@(arg_x), @(arg_y)] reply:'));
     }
   });
 
@@ -2144,13 +2249,13 @@ void main() {
             Method(
                 name: 'divide',
                 objcSelector: 'divideValue:by:',
-                arguments: <NamedType>[
-                  NamedType(
+                parameters: <Parameter>[
+                  Parameter(
                     type: const TypeDeclaration(
                         baseName: 'int', isNullable: false),
                     name: 'x',
                   ),
-                  NamedType(
+                  Parameter(
                     type: const TypeDeclaration(
                         baseName: 'int', isNullable: false),
                     name: 'y',
@@ -2280,7 +2385,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -2316,7 +2421,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -2349,7 +2454,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -2379,8 +2484,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     name: 'foo',
                     type: const TypeDeclaration(
                       baseName: 'int',
@@ -2436,8 +2541,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     name: 'foo',
                     type: const TypeDeclaration(
                       baseName: 'int',
@@ -2495,7 +2600,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <NamedType>[],
+              parameters: <Parameter>[],
               taskQueueType: TaskQueueType.serialBackgroundThread)
         ])
       ],
@@ -2548,8 +2653,8 @@ void main() {
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
                     baseName: 'int',
@@ -2627,8 +2732,8 @@ void main() {
             Method(
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
                     baseName: 'int',
@@ -2665,16 +2770,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
+                  associatedClass: emptyClass,
                   isNullable: false,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            associatedClass: emptyClass,
+            isNullable: false,
+          ),
           isAsynchronous: true,
         )
       ])
@@ -2711,5 +2820,52 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains(' : FlutterStandardReader'));
+  });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(
+          name: 'Api',
+          location: ApiLocation.flutter,
+          methods: <Method>[
+            Method(
+              name: 'method',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const ObjcGenerator generator = ObjcGenerator();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'return [FlutterError errorWithCode:@"channel-error" message:[NSString stringWithFormat:@"%@/%@/%@", @"Unable to establish connection on channel: \'", channelName, @"\'."] details:@""]'));
+    expect(code, contains('completion(createConnectionError(channelName))'));
   });
 }

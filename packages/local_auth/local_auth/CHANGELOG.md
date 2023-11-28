@@ -1,5 +1,7 @@
-## NEXT
+## 2.1.7
 
+* Adds pub topics to package metadata.
+* Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 * Aligns Dart and Flutter SDK constraints.
 * Fixes stale ignore: prefer_const_constructors.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

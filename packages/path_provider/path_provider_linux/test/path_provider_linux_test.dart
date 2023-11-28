@@ -57,6 +57,13 @@ void main() {
     expect(await plugin.getApplicationDocumentsPath(), startsWith('/'));
   });
 
+  test('getApplicationCachePath', () async {
+    final PathProviderPlatform plugin = PathProviderLinux.private(
+        executableName: 'path_provider_linux_test_binary');
+    expect(await plugin.getApplicationCachePath(),
+        '${xdg.cacheHome.path}/path_provider_linux_test_binary');
+  });
+
   test('getDownloadsPath', () async {
     final PathProviderPlatform plugin = PathProviderPlatform.instance;
     expect(await plugin.getDownloadsPath(), startsWith('/'));

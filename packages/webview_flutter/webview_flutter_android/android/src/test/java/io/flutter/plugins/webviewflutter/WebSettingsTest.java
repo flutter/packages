@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -116,5 +117,12 @@ public class WebSettingsTest {
   public void setTextZoom() {
     testHostApiImpl.setTextZoom(0L, 100L);
     verify(mockWebSettings).setTextZoom(100);
+  }
+
+  @Test
+  public void getUserAgentString() {
+    final String userAgent = "str";
+    when(mockWebSettings.getUserAgentString()).thenReturn(userAgent);
+    assertEquals(testHostApiImpl.getUserAgentString(0L), userAgent);
   }
 }

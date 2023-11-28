@@ -17,6 +17,7 @@ enum DirectoryType {
   downloads,
   library,
   temp,
+  applicationCache,
 }
 
 class PathProviderApi {

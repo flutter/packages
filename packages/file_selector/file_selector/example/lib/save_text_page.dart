@@ -79,11 +79,8 @@ class SaveTextPage extends StatelessWidget {
             const SizedBox(height: 10),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-                // ignore: deprecated_member_use
-                primary: Colors.blue,
-                // ignore: deprecated_member_use
-                onPrimary: Colors.white,
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
               ),
               onPressed: _isIOS ? null : () => _saveFile(),
               child: const Text(

@@ -98,6 +98,32 @@ void main() {
       expect(path, applicationDocumentsPath);
     });
 
+    test('getApplicationCachePath', () async {
+      final PathProviderFoundation pathProvider = PathProviderFoundation();
+      final String applicationCachePath =
+          p.join(testRoot.path, 'application', 'cache', 'path');
+      when(mockApi.getDirectoryPath(DirectoryType.applicationCache))
+          .thenReturn(applicationCachePath);
+
+      final String? path = await pathProvider.getApplicationCachePath();
+
+      verify(mockApi.getDirectoryPath(DirectoryType.applicationCache));
+      expect(path, applicationCachePath);
+    });
+
+    test('getApplicationCachePath creates the directory if necessary',
+        () async {
+      final PathProviderFoundation pathProvider = PathProviderFoundation();
+      final String applicationCachePath =
+          p.join(testRoot.path, 'application', 'cache', 'path');
+      when(mockApi.getDirectoryPath(DirectoryType.applicationCache))
+          .thenReturn(applicationCachePath);
+
+      final String? path = await pathProvider.getApplicationCachePath();
+
+      expect(Directory(path!).existsSync(), isTrue);
+    });
+
     test('getDownloadsPath', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation();
       final String downloadsPath = p.join(testRoot.path, 'downloads', 'path');

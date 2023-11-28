@@ -104,12 +104,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(allNullableTypesOne.aNullableObject,
         allNullableTypesTwo.aNullableObject);
-    // TODO(stuartmorgan): Fix and re-enable.
-    // See https://github.com/flutter/flutter/issues/118733
-    if (targetGenerator != TargetGenerator.objc) {
-      expect(
-          allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
-    }
+    expect(
+        allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
   }
 
   void compareAllClassesWrapper(
@@ -143,7 +139,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       'e': null
     },
     anEnum: AnEnum.two,
-    anObject: 0,
+    anObject: 1,
   );
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
@@ -341,7 +337,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('Int serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-
       const int sentInt = _regularInt;
       final int receivedInt = await api.echoInt(sentInt);
       expect(receivedInt, sentInt);
@@ -378,7 +373,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('strings serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-      const String sentString = "I'm a computer";
+      const String sentString = 'default';
       final String receivedString = await api.echoString(sentString);
       expect(receivedString, sentString);
     });
@@ -437,6 +432,58 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       };
       final Map<String?, Object?> echoObject = await api.echoMap(sentObject);
       expect(mapEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.two;
+      final AnEnum receivedEnum = await api.echoEnum(sentEnum);
+      expect(receivedEnum, sentEnum);
+    });
+
+    testWidgets('required named parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This number corresponds with the default value of this method.
+      const int sentInt = _regularInt;
+      final int receivedInt = await api.echoRequiredInt(anInt: sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('optional default parameter no arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      // This number corresponds with the default value of this method.
+      const double sentDouble = 3.14;
+      final double receivedDouble = await api.echoOptionalDefaultDouble();
+      expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('optional default parameter with arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const double sentDouble = 3.15;
+      final double receivedDouble =
+          await api.echoOptionalDefaultDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
+    });
+
+    testWidgets('named default parameter no arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This string corresponds with the default value of this method.
+      const String sentString = 'default';
+      final String receivedString = await api.echoNamedDefaultString();
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('named default parameter with arg', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      // This string corresponds with the default value of this method.
+      const String sentString = 'notDefault';
+      final String receivedString =
+          await api.echoNamedDefaultString(aString: sentString);
+      expect(receivedString, sentString);
     });
 
     testWidgets('Nullable Int serialize and deserialize correctly',
@@ -592,6 +639,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
+    testWidgets('nullable enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
     testWidgets('null lists serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -606,6 +662,45 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final Map<String?, Object?>? echoObject = await api.echoNullableMap(null);
       expect(mapEquals(echoObject, null), true);
+    });
+
+    testWidgets('null enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum? sentEnum = null;
+      final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
+    testWidgets('optional nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const int sentInt = _regularInt;
+      final int? receivedInt = await api.echoOptionalNullableInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
+
+    testWidgets('Null optional nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final int? receivedNullInt = await api.echoOptionalNullableInt();
+      expect(receivedNullInt, null);
+    });
+
+    testWidgets('named nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentString = "I'm a computer";
+      final String? receivedString =
+          await api.echoNamedNullableString(aNullableString: sentString);
+      expect(receivedString, sentString);
+    });
+
+    testWidgets('Null named nullable parameter', (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final String? receivedNullString = await api.echoNamedNullableString();
+      expect(receivedNullString, null);
     });
   });
 
@@ -783,6 +878,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
+    testWidgets('enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum echoEnum = await api.echoAsyncEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
     testWidgets('nullable Int async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -891,6 +995,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
+    testWidgets('nullable enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum? echoEnum = await api.echoAsyncNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
     testWidgets('null Ints async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -956,6 +1069,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.echoAsyncNullableMap(null);
       expect(mapEquals(echoObject, null), true);
     });
+
+    testWidgets('null enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum? sentEnum = null;
+      final AnEnum? echoEnum = await api.echoAsyncNullableEnum(null);
+      expect(echoEnum, sentEnum);
+    });
   });
 
   // These tests rely on the async Dart->host calls to work correctly, since
@@ -980,10 +1102,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.callFlutterThrowError();
       }, throwsA(isA<PlatformException>()));
-    },
-        // TODO(tarrinneal): Once flutter api error handling is added, enable these tests.
-        // See: https://github.com/flutter/flutter/issues/118243
-        skip: true);
+    });
 
     testWidgets('errors are returned from void methods correctly',
         (WidgetTester _) async {
@@ -992,10 +1111,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.callFlutterThrowErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
-    },
-        // TODO(tarrinneal): Once flutter api error handling is added, enable these tests.
-        // See: https://github.com/flutter/flutter/issues/118243
-        skip: true);
+    });
 
     testWidgets('all datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1116,6 +1232,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Map<String?, Object?> echoObject =
           await api.callFlutterEchoMap(sentObject);
       expect(mapEquals(echoObject, sentObject), true);
+    });
+
+    testWidgets('enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum echoEnum = await api.callFlutterEchoEnum(sentEnum);
+      expect(echoEnum, sentEnum);
     });
 
     testWidgets('nullable booleans serialize and deserialize correctly',
@@ -1272,6 +1397,24 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.callFlutterEchoNullableMap(null);
       expect(mapEquals(echoObject, null), true);
     });
+
+    testWidgets('nullable enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum sentEnum = AnEnum.three;
+      final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
+
+    testWidgets('null enums serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      const AnEnum? sentEnum = null;
+      final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
+      expect(echoEnum, sentEnum);
+    });
   });
 }
 
@@ -1282,7 +1425,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   }
 
   @override
-  AllNullableTypes echoAllNullableTypes(AllNullableTypes everything) {
+  AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything) {
     return everything;
   }
 
@@ -1330,6 +1473,9 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap) => aMap;
 
   @override
+  AnEnum echoEnum(AnEnum anEnum) => anEnum;
+
+  @override
   bool? echoNullableBool(bool? aBool) => aBool;
 
   @override
@@ -1349,6 +1495,9 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
 
   @override
   Uint8List? echoNullableUint8List(Uint8List? aList) => aList;
+
+  @override
+  AnEnum? echoNullableEnum(AnEnum? anEnum) => anEnum;
 
   @override
   Future<void> noopAsync() async {}
