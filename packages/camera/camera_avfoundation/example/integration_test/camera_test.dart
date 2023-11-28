@@ -333,7 +333,7 @@ void main() {
         final CameraController controller =
             CameraController(cameraDescription, ResolutionPreset.low);
         await controller.initialize();
-        await controller.setFileFormat(fileFormat);
+        await controller.setImageFileFormat(fileFormat);
         final XFile file = await controller.takePicture();
         await controller.dispose();
         expect(file.path.endsWith(fileFormat.name), true);

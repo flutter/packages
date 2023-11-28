@@ -102,7 +102,7 @@
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-  [cam setFileFormat:FCPFileFormatHEIF];
+  [cam setImageFileFormat:FCPFileFormatHEIF];
 
   AVCapturePhotoSettings *settings =
       [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
@@ -148,7 +148,7 @@
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-  [cam setFileFormat:FCPFileFormatHEIF];
+  [cam setImageFileFormat:FCPFileFormatHEIF];
 
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
   id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);

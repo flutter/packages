@@ -219,7 +219,7 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
-- (void)setFileFormat:(FCPFileFormat)fileFormat {
+- (void)setImageFileFormat:(FCPFileFormat)fileFormat {
   _fileFormat = fileFormat;
 }
 

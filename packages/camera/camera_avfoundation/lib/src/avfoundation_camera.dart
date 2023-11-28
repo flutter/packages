@@ -523,9 +523,9 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setFileFormat(int cameraId, ImageFileFormat format) {
+  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) {
     return _channel.invokeMethod<void>(
-      'setFileFormat',
+      'setImageFileFormat',
       <String, dynamic>{
         'cameraId': cameraId,
         'fileFormat': format.name,
