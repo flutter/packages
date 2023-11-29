@@ -14,10 +14,6 @@ import FlutterMacOS
 #error("Unsupported platform.")
 #endif
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
-}
-
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
@@ -35,6 +31,14 @@ private func wrapError(_ error: Any) -> [Any?] {
     "\(type(of: error))",
     "Stacktrace: \(Thread.callStackSymbols)"
   ]
+}
+
+private func createConnectionError(withChannelName channelName: String) -> FlutterError {
+  return FlutterError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+}
+
+private func isNullish(_ value: Any?) -> Bool {
+  return value is NSNull || value == nil
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -338,6 +342,12 @@ protocol HostIntegrationCoreApi {
   func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper
   /// Returns the passed enum to test serialization and deserialization.
   func echo(_ anEnum: AnEnum) throws -> AnEnum
+  /// Returns the default string.
+  func echoNamedDefault(_ aString: String) throws -> String
+  /// Returns passed in double.
+  func echoOptionalDefault(_ aDouble: Double) throws -> Double
+  /// Returns passed in int.
+  func echoRequired(_ anInt: Int64) throws -> Int64
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns the inner `aString` value from the wrapped object, to test
@@ -365,6 +375,10 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(_ aNullableMap: [String?: Any?]?) throws -> [String?: Any?]?
   func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum?
+  /// Returns passed in int.
+  func echoOptional(_ aNullableInt: Int64?) throws -> Int64?
+  /// Returns the passed in string.
+  func echoNamed(_ aNullableString: String?) throws -> String?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void)
@@ -677,6 +691,54 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoEnumChannel.setMessageHandler(nil)
     }
+    /// Returns the default string.
+    let echoNamedDefaultStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNamedDefaultStringChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aStringArg = args[0] as! String
+        do {
+          let result = try api.echoNamedDefault(aStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNamedDefaultStringChannel.setMessageHandler(nil)
+    }
+    /// Returns passed in double.
+    let echoOptionalDefaultDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoOptionalDefaultDoubleChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aDoubleArg = args[0] as! Double
+        do {
+          let result = try api.echoOptionalDefault(aDoubleArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoOptionalDefaultDoubleChannel.setMessageHandler(nil)
+    }
+    /// Returns passed in int.
+    let echoRequiredIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoRequiredIntChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anIntArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        do {
+          let result = try api.echoRequired(anIntArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoRequiredIntChannel.setMessageHandler(nil)
+    }
     /// Returns the passed object, to test serialization and deserialization.
     let echoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -887,6 +949,38 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoNullableEnumChannel.setMessageHandler(nil)
+    }
+    /// Returns passed in int.
+    let echoOptionalNullableIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoOptionalNullableIntChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aNullableIntArg: Int64? = isNullish(args[0]) ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))
+        do {
+          let result = try api.echoOptional(aNullableIntArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoOptionalNullableIntChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed in string.
+    let echoNamedNullableStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNamedNullableStringChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aNullableStringArg: String? = nilOrValue(args[0])
+        do {
+          let result = try api.echoNamed(aNullableStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNamedNullableStringChannel.setMessageHandler(nil)
     }
     /// A no-op function taking no arguments and returning no value, to sanity
     /// test basic asynchronous calling.
@@ -1805,17 +1899,30 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   func noop(completion: @escaping (Result<Void, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion(.success(Void()))
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName:channelName)))
+        return
+      }
+      if (listResponse.count > 1) {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)));
+      } else {
+        completion(.success(Void()))
+      }
     }
   }
   /// Responds with an error from an async function returning a value.
   func throwError(completion: @escaping (Result<Any?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -1831,17 +1938,30 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Responds with an error from an async void function.
   func throwErrorFromVoid(completion: @escaping (Result<Void, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion(.success(Void()))
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName:channelName)))
+        return
+      }
+      if (listResponse.count > 1) {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)));
+      } else {
+        completion(.success(Void()))
+      }
     }
   }
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everythingArg: AllTypes, completion: @escaping (Result<AllTypes, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([everythingArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -1859,10 +1979,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed object, to test serialization and deserialization.
   func echoNullable(_ everythingArg: AllNullableTypes?, completion: @escaping (Result<AllNullableTypes?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([everythingArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -1880,10 +2001,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   ///
   /// Tests multiple-arity FlutterApi handling.
   func sendMultipleNullableTypes(aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?, aString aNullableStringArg: String?, completion: @escaping (Result<AllNullableTypes, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aNullableBoolArg, aNullableIntArg, aNullableStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -1901,10 +2023,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed boolean, to test serialization and deserialization.
   func echo(_ aBoolArg: Bool, completion: @escaping (Result<Bool, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aBoolArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -1922,10 +2045,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed int, to test serialization and deserialization.
   func echo(_ anIntArg: Int64, completion: @escaping (Result<Int64, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anIntArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -1943,10 +2067,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed double, to test serialization and deserialization.
   func echo(_ aDoubleArg: Double, completion: @escaping (Result<Double, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aDoubleArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -1964,10 +2089,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed string, to test serialization and deserialization.
   func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -1985,10 +2111,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed byte list, to test serialization and deserialization.
   func echo(_ aListArg: FlutterStandardTypedData, completion: @escaping (Result<FlutterStandardTypedData, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aListArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2006,10 +2133,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed list, to test serialization and deserialization.
   func echo(_ aListArg: [Any?], completion: @escaping (Result<[Any?], FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aListArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2027,10 +2155,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed map, to test serialization and deserialization.
   func echo(_ aMapArg: [String?: Any?], completion: @escaping (Result<[String?: Any?], FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aMapArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2048,10 +2177,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed enum to test serialization and deserialization.
   func echo(_ anEnumArg: AnEnum, completion: @escaping (Result<AnEnum, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anEnumArg.rawValue] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2069,10 +2199,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed boolean, to test serialization and deserialization.
   func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Result<Bool?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aBoolArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2088,10 +2219,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed int, to test serialization and deserialization.
   func echoNullable(_ anIntArg: Int64?, completion: @escaping (Result<Int64?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anIntArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2107,10 +2239,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed double, to test serialization and deserialization.
   func echoNullable(_ aDoubleArg: Double?, completion: @escaping (Result<Double?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aDoubleArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2126,10 +2259,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed string, to test serialization and deserialization.
   func echoNullable(_ aStringArg: String?, completion: @escaping (Result<String?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2145,10 +2279,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed byte list, to test serialization and deserialization.
   func echoNullable(_ aListArg: FlutterStandardTypedData?, completion: @escaping (Result<FlutterStandardTypedData?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aListArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2164,10 +2299,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullable(_ aListArg: [Any?]?, completion: @escaping (Result<[Any?]?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aListArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2183,10 +2319,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(_ aMapArg: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aMapArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2202,10 +2339,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed enum to test serialization and deserialization.
   func echoNullable(_ anEnumArg: AnEnum?, completion: @escaping (Result<AnEnum?, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([anEnumArg?.rawValue] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2222,17 +2360,30 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   func noopAsync(completion: @escaping (Result<Void, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion(.success(Void()))
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName:channelName)))
+        return
+      }
+      if (listResponse.count > 1) {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)));
+      } else {
+        completion(.success(Void()))
+      }
     }
   }
   /// Returns the passed in generic Object asynchronously.
   func echoAsync(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2375,10 +2526,11 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
     return FlutterSmallApiCodec.shared
   }
   func echo(_ msgArg: TestMessage, completion: @escaping (Result<TestMessage, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([msgArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {
@@ -2395,10 +2547,11 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
     }
   }
   func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString", binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {

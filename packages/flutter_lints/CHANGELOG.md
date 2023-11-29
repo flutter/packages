@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 3.0.1
 
 * Replaces `flutter pub add --dev` with `dev:` in README.md.

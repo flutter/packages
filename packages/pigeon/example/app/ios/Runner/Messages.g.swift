@@ -13,10 +13,6 @@ import FlutterMacOS
 #error("Unsupported platform.")
 #endif
 
-private func isNullish(_ value: Any?) -> Bool {
-  return value is NSNull || value == nil
-}
-
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
@@ -34,6 +30,14 @@ private func wrapError(_ error: Any) -> [Any?] {
     "\(type(of: error))",
     "Stacktrace: \(Thread.callStackSymbols)"
   ]
+}
+
+private func createConnectionError(withChannelName channelName: String) -> FlutterError {
+  return FlutterError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+}
+
+private func isNullish(_ value: Any?) -> Bool {
+  return value is NSNull || value == nil
 }
 
 private func nilOrValue<T>(_ value: Any?) -> T? {
@@ -183,10 +187,11 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
     self.binaryMessenger = binaryMessenger
   }
   func flutterMethod(aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod", binaryMessenger: binaryMessenger)
+    let channelName: String = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
-        completion(.failure(FlutterError(code: "channel-error", message: "Unable to establish connection on channel.", details: "")))
+        completion(.failure(createConnectionError(withChannelName:channelName)))
         return
       }
       if (listResponse.count > 1) {

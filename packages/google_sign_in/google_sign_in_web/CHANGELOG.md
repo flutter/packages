@@ -1,3 +1,12 @@
+## 0.12.1
+
+* Enables FedCM on browsers that support this authentication mechanism.
+* Uses the expiration timestamps of Credential and Token responses to improve
+  the accuracy of `isSignedIn` and `canAccessScopes` methods.
+* Deprecates `signIn()` method.
+  * Users should migrate to `renderButton` and `silentSignIn`, as described in
+    the README.
+
 ## 0.12.0+5
 
 * Migrates to `dart:ui_web` APIs.

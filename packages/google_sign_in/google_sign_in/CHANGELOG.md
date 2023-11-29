@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 6.1.6
+
+* Updates README to direct to google_sign_in_ios README for iOS integration instructions.
+
 ## 6.1.5
 
 * Adds pub topics to package metadata.

@@ -5,24 +5,23 @@
 package dev.flutter.pigeon_example_app
 
 import ExampleHostApi
+import FlutterError
 import MessageData
 import MessageFlutterApi
-import FlutterError
-
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 
 // #docregion kotlin-class
-private class PigeonApiImplementation: ExampleHostApi {
+private class PigeonApiImplementation : ExampleHostApi {
   override fun getHostLanguage(): String {
     return "Kotlin"
   }
 
   override fun add(a: Long, b: Long): Long {
     if (a < 0L || b < 0L) {
-      throw FlutterError("code", "message", "details");
+      throw FlutterError("code", "message", "details")
     }
     return a + b
   }
@@ -47,18 +46,16 @@ private class PigeonFlutterApi {
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) {
-      echo -> callback(Result.success(echo))
-    }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
   }
 }
 // #enddocregion kotlin-class-flutter
 
-class MainActivity: FlutterActivity() {
+class MainActivity : FlutterActivity() {
   override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
 
     val api = PigeonApiImplementation()
-    ExampleHostApi.setUp(flutterEngine.dartExecutor.binaryMessenger, api);
+    ExampleHostApi.setUp(flutterEngine.dartExecutor.binaryMessenger, api)
   }
 }

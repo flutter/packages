@@ -106,6 +106,17 @@ ErrorOr<AllClassesWrapper> TestPlugin::EchoClassWrapper(
 
 ErrorOr<AnEnum> TestPlugin::EchoEnum(const AnEnum& an_enum) { return an_enum; }
 
+ErrorOr<std::string> TestPlugin::EchoNamedDefaultString(
+    const std::string& a_string) {
+  return a_string;
+}
+
+ErrorOr<double> TestPlugin::EchoOptionalDefaultDouble(double a_double) {
+  return a_double;
+}
+
+ErrorOr<int64_t> TestPlugin::EchoRequiredInt(int64_t an_int) { return an_int; }
+
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
     const AllClassesWrapper& wrapper) {
   const std::string* inner_string =
@@ -216,6 +227,22 @@ ErrorOr<std::optional<AnEnum>> TestPlugin::EchoNullableEnum(
     return std::nullopt;
   }
   return *an_enum;
+}
+
+ErrorOr<std::optional<int64_t>> TestPlugin::EchoOptionalNullableInt(
+    const int64_t* a_nullable_int) {
+  if (!a_nullable_int) {
+    return std::nullopt;
+  }
+  return *a_nullable_int;
+}
+
+ErrorOr<std::optional<std::string>> TestPlugin::EchoNamedNullableString(
+    const std::string* a_nullable_string) {
+  if (!a_nullable_string) {
+    return std::nullopt;
+  }
+  return *a_nullable_string;
 }
 
 void TestPlugin::NoopAsync(

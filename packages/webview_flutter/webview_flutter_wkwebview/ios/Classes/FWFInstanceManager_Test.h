@@ -8,6 +8,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FWFInstanceManager ()
 /**
+ * The next identifier that will be used for a host-created instance.
+ */
+@property long nextIdentifier;
+
+/**
  * The number of instances stored as a strong reference.
  *
  * Added for debugging purposes.
