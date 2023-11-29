@@ -16,6 +16,7 @@ import 'camera_info.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
+import 'camerax_proxy.dart';
 import 'exposure_state.dart';
 import 'fallback_strategy.dart';
 import 'image_analysis.dart';
@@ -41,21 +42,17 @@ import 'zoom_state.dart';
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
   /// Constructs an [AndroidCameraCameraX].
-  AndroidCameraCameraX() : _shouldCreateDetachedObjectForTesting = false;
-
-  /// Constructs an [AndroidCameraCameraX] that is able to set
-  /// [_shouldCreateDetachedObjectForTesting] to create detached objects
-  /// for testing purposes only.
-  @visibleForTesting
-  AndroidCameraCameraX.forTesting(
-      {bool shouldCreateDetachedObjectForTesting = false})
-      : _shouldCreateDetachedObjectForTesting =
-            shouldCreateDetachedObjectForTesting;
+  AndroidCameraCameraX();
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AndroidCameraCameraX();
   }
+
+  /// Proxy for creating `JavaObject`s and calling their methods that require
+  /// testing.
+  @visibleForTesting
+  CameraXProxy proxy = CameraXProxy();
 
   /// The [ProcessCameraProvider] instance used to access camera functionality.
   @visibleForTesting
@@ -140,10 +137,6 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraEventStreamController.stream
           .where((CameraEvent event) => event.cameraId == cameraId);
 
-  /// Conditional used to create detached objects for testing their
-  /// callback methods.
-  final bool _shouldCreateDetachedObjectForTesting;
-
   /// The controller we need to stream image data.
   @visibleForTesting
   StreamController<CameraImageData>? cameraImageDataStreamController;
@@ -167,7 +160,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<List<CameraDescription>> availableCameras() async {
     final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
 
-    processCameraProvider ??= await ProcessCameraProvider.getInstance();
+    processCameraProvider ??= await proxy.getProcessCameraProvider();
     final List<CameraInfo> cameraInfos =
         await processCameraProvider!.getAvailableCameraInfos();
 
@@ -179,11 +172,13 @@ class AndroidCameraCameraX extends CameraPlatform {
     for (final CameraInfo cameraInfo in cameraInfos) {
       // Determine the lens direction by filtering the CameraInfo
       // TODO(gmackall): replace this with call to CameraInfo.getLensFacing when changes containing that method are available
-      if ((await createCameraSelector(CameraSelector.lensFacingBack)
+      if ((await proxy
+              .createCameraSelector(CameraSelector.lensFacingBack)
               .filter(<CameraInfo>[cameraInfo]))
           .isNotEmpty) {
         cameraLensDirection = CameraLensDirection.back;
-      } else if ((await createCameraSelector(CameraSelector.lensFacingFront)
+      } else if ((await proxy
+              .createCameraSelector(CameraSelector.lensFacingFront)
               .filter(<CameraInfo>[cameraInfo]))
           .isNotEmpty) {
         cameraLensDirection = CameraLensDirection.front;
@@ -222,16 +217,16 @@ class AndroidCameraCameraX extends CameraPlatform {
     bool enableAudio = false,
   }) async {
     // Must obtain proper permissions before attempting to access a camera.
-    await requestCameraPermissions(enableAudio);
+    await proxy.requestCameraPermissions(enableAudio);
 
     // Save CameraSelector that matches cameraDescription.
     final int cameraSelectorLensDirection =
         _getCameraSelectorLensDirection(cameraDescription.lensDirection);
     final bool cameraIsFrontFacing =
         cameraSelectorLensDirection == CameraSelector.lensFacingFront;
-    cameraSelector = createCameraSelector(cameraSelectorLensDirection);
+    cameraSelector = proxy.createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
-    startListeningForDeviceOrientationChange(
+    proxy.startListeningForDeviceOrientationChange(
         cameraIsFrontFacing, cameraDescription.sensorOrientation);
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
@@ -241,27 +236,28 @@ class AndroidCameraCameraX extends CameraPlatform {
         _getQualitySelectorFromPreset(resolutionPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
-    processCameraProvider ??= await ProcessCameraProvider.getInstance();
+    processCameraProvider ??= await proxy.getProcessCameraProvider();
     processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
     final int targetRotation =
         _getTargetRotation(cameraDescription.sensorOrientation);
-    preview = createPreview(
+    preview = proxy.createPreview(
         targetRotation: targetRotation,
         resolutionSelector: presetResolutionSelector);
-    final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
+    final int flutterSurfaceTextureId =
+        await proxy.setPreviewSurfaceProvider(preview!);
 
     // Configure ImageCapture instance.
-    imageCapture = createImageCapture(presetResolutionSelector);
+    imageCapture = proxy.createImageCapture(presetResolutionSelector);
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = createImageAnalysis(presetResolutionSelector);
+    imageAnalysis = proxy.createImageAnalysis(presetResolutionSelector);
 
     // Configure VideoCapture and Recorder instances.
-    recorder = createRecorder(presetQualitySelector);
-    videoCapture = await createVideoCapture(recorder!);
+    recorder = proxy.createRecorder(presetQualitySelector);
+    videoCapture = await proxy.createVideoCapture(recorder!);
 
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
@@ -442,7 +438,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Set the zoom level for the selected camera.
   ///
   /// The supplied [zoom] value should be between the minimum and the maximum
-  /// supported zoom level returned by `getMinZoomLevel` and `getMaxZoomLevel`.
+  /// supported zoom level returned by [getMinZoomLevel] and [getMaxZoomLevel].
   /// Throws a `CameraException` when an illegal zoom level is supplied.
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
@@ -685,9 +681,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _updateCameraInfoAndLiveCameraState(cameraId);
   }
 
-  /// Configures the [imageAnalysis] instance for image streaming and binds it
-  /// to camera lifecycle controlled by the [processCameraProvider].
-  Future<void> _configureAndBindImageAnalysisToLifecycle(int cameraId) async {
+  /// Configures the [imageAnalysis] instance for image streaming.
+  Future<void> _configureImageAnalysis(int cameraId) async {
     // Create Analyzer that can read image data for image streaming.
     final WeakReference<AndroidCameraCameraX> weakThis =
         WeakReference<AndroidCameraCameraX>(this);
@@ -716,13 +711,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       unawaited(imageProxy.close());
     }
 
-    // shouldCreateDetachedObjectForTesting is used to create an Analyzer
-    // detached from the native sideonly to test the logic of the Analyzer
-    // instance that will be used for image streaming.
-    final Analyzer analyzer = _shouldCreateDetachedObjectForTesting
-        ? Analyzer.detached(analyze: analyze)
-        : Analyzer(analyze: analyze);
-
+    final Analyzer analyzer = proxy.createAnalyzer(analyze);
     await imageAnalysis!.setAnalyzer(analyzer);
   }
 
@@ -742,7 +731,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The [onListen] callback for the stream controller used for image
   /// streaming.
   Future<void> _onFrameStreamListen(int cameraId) async {
-    await _configureAndBindImageAnalysisToLifecycle(cameraId);
+    await _configureImageAnalysis(cameraId);
   }
 
   /// The [onCancel] callback for the stream controller used for image
@@ -809,12 +798,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
     }
 
-    // shouldCreateDetachedObjectForTesting is used to create an Observer
-    // detached from the native side only to test the logic of the Analyzer
-    // instance that will be used for image streaming.
-    return _shouldCreateDetachedObjectForTesting
-        ? Observer<CameraState>.detached(onChanged: onChanged)
-        : Observer<CameraState>(onChanged: onChanged);
+    return proxy.createCameraStateObserver(onChanged);
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:
@@ -880,30 +864,18 @@ class AndroidCameraCameraX extends CameraPlatform {
         break;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
-        if (_shouldCreateDetachedObjectForTesting) {
-          resolutionStrategy =
-              ResolutionStrategy.detachedHighestAvailableStrategy();
-          return ResolutionSelector.detached(
-              resolutionStrategy: resolutionStrategy);
-        }
-        resolutionStrategy = ResolutionStrategy.highestAvailableStrategy();
-        return ResolutionSelector(resolutionStrategy: resolutionStrategy);
+        resolutionStrategy =
+            proxy.createResolutionStrategy(highestAvailable: true);
+        return proxy.createResolutionSelector(resolutionStrategy);
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
 
-    if (_shouldCreateDetachedObjectForTesting) {
-      resolutionStrategy = ResolutionStrategy.detached(
-          boundSize: boundSize, fallbackRule: fallbackRule);
-      return ResolutionSelector.detached(
-          resolutionStrategy: resolutionStrategy);
-    }
-
-    resolutionStrategy =
-        ResolutionStrategy(boundSize: boundSize, fallbackRule: fallbackRule);
-    return ResolutionSelector(resolutionStrategy: resolutionStrategy);
+    resolutionStrategy = proxy.createResolutionStrategy(
+        boundSize: boundSize, fallbackRule: fallbackRule);
+    return proxy.createResolutionSelector(resolutionStrategy);
   }
 
   /// Returns the [QualitySelector] that maps to the specified resolution
@@ -941,84 +913,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     // is unavailable.
     const VideoResolutionFallbackRule fallbackRule =
         VideoResolutionFallbackRule.lowerQualityOrHigherThan;
-    final FallbackStrategy fallbackStrategy =
-        _shouldCreateDetachedObjectForTesting
-            ? FallbackStrategy.detached(
-                quality: videoQuality, fallbackRule: fallbackRule)
-            : FallbackStrategy(
-                quality: videoQuality, fallbackRule: fallbackRule);
+    final FallbackStrategy fallbackStrategy = proxy.createFallbackStrategy(
+        quality: videoQuality, fallbackRule: fallbackRule);
 
-    return _shouldCreateDetachedObjectForTesting
-        ? QualitySelector.detached(qualityList: <VideoQualityData>[
-            VideoQualityData(quality: videoQuality)
-          ], fallbackStrategy: fallbackStrategy)
-        : QualitySelector.from(
-            quality: VideoQualityData(quality: videoQuality),
-            fallbackStrategy: fallbackStrategy);
-  }
-
-  // Methods for calls that need to be tested:
-
-  /// Requests camera permissions.
-  @visibleForTesting
-  Future<void> requestCameraPermissions(bool enableAudio) async {
-    await SystemServices.requestCameraPermissions(enableAudio);
-  }
-
-  /// Subscribes the plugin as a listener to changes in device orientation.
-  @visibleForTesting
-  void startListeningForDeviceOrientationChange(
-      bool cameraIsFrontFacing, int sensorOrientation) {
-    SystemServices.startListeningForDeviceOrientationChange(
-        cameraIsFrontFacing, sensorOrientation);
-  }
-
-  /// Returns a [CameraSelector] based on the specified camera lens direction.
-  @visibleForTesting
-  CameraSelector createCameraSelector(int cameraSelectorLensDirection) {
-    switch (cameraSelectorLensDirection) {
-      case CameraSelector.lensFacingFront:
-        return CameraSelector.getDefaultFrontCamera();
-      case CameraSelector.lensFacingBack:
-        return CameraSelector.getDefaultBackCamera();
-      default:
-        return CameraSelector(lensFacing: cameraSelectorLensDirection);
-    }
-  }
-
-  /// Returns a [Preview] configured with the specified target rotation and
-  /// specified [ResolutionSelector].
-  @visibleForTesting
-  Preview createPreview(
-      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
-    return Preview(
-        targetRotation: targetRotation, resolutionSelector: resolutionSelector);
-  }
-
-  /// Returns an [ImageCapture] configured with specified flash mode and
-  /// the specified [ResolutionSelector].
-  @visibleForTesting
-  ImageCapture createImageCapture(ResolutionSelector? resolutionSelector) {
-    return ImageCapture(resolutionSelector: resolutionSelector);
-  }
-
-  /// Returns a [Recorder] for use in video capture configured with the
-  /// specified [QualitySelector].
-  @visibleForTesting
-  Recorder createRecorder(QualitySelector? qualitySelector) {
-    return Recorder(qualitySelector: qualitySelector);
-  }
-
-  /// Returns a [VideoCapture] associated with the provided [Recorder].
-  @visibleForTesting
-  Future<VideoCapture> createVideoCapture(Recorder recorder) async {
-    return VideoCapture.withOutput(recorder);
-  }
-
-  /// Returns an [ImageAnalysis] configured with the specified
-  /// [ResolutionSelector].
-  @visibleForTesting
-  ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
-    return ImageAnalysis(resolutionSelector: resolutionSelector);
+    return proxy.createQualitySelector(
+        videoQuality: videoQuality, fallbackStrategy: fallbackStrategy);
   }
 }

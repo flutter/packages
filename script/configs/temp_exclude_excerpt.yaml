@@ -5,7 +5,6 @@
 
 # TODO(stuartmorgan): Remove everything from this list. See
 # https://github.com/flutter/flutter/issues/102679
-- cross_file
 - css_colors
 - espresso
 - extension_google_sign_in_as_googleapis_auth

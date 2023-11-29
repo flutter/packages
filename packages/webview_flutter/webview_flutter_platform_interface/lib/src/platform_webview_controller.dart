@@ -286,6 +286,14 @@ abstract class PlatformWebViewController extends PlatformInterface {
       'setOnConsoleMessage is not implemented on the current platform',
     );
   }
+
+  /// Sets the listener for content offset changes.
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) {
+    throw UnimplementedError(
+        'setOnScrollPositionChange is not implemented on the current platform');
+  }
 }
 
 /// Describes the parameters necessary for registering a JavaScript channel.
