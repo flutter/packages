@@ -142,7 +142,6 @@ this request **must be initiated from an user interaction**, like a button press
 ```dart
 Future<void> _handleAuthorizeScopes() async {
   final bool isAuthorized = await _googleSignIn.requestScopes(scopes);
-  // Do things that only authorized users can do!
   if (isAuthorized) {
     unawaited(_handleGetContact(_currentUser!));
   }
