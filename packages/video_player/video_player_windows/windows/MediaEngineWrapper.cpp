@@ -125,8 +125,10 @@ class MediaEngineCallbackHelper
 
 // Public methods
 
-void MediaEngineWrapper::Initialize(IMFMediaSource* mediaSource) {
+void MediaEngineWrapper::Initialize(winrt::com_ptr<IDXGIAdapter> adapter, HWND window, IMFMediaSource* mediaSource) {
   RunSyncInMTA([&]() {
+    m_adapter = adapter;
+    m_window = window;
     InitializeVideo();
     CreateMediaEngine(mediaSource);
   });
@@ -246,6 +248,14 @@ HANDLE MediaEngineWrapper::GetSurfaceHandle() {
   return surfaceHandle;
 }
 
+winrt::com_ptr<IDCompositionTarget> MediaEngineWrapper::GetCompositionTarget() {
+  return m_dcompTarget;
+}
+
+winrt::com_ptr<IDCompositionDevice2> MediaEngineWrapper::GetCompositionDevice() {
+  return m_dcompDevice;
+}
+
 void MediaEngineWrapper::OnWindowUpdate(uint32_t width, uint32_t height) {
   RunSyncInMTA([&]() {
     auto lock = m_lock.lock();
@@ -330,20 +340,27 @@ void MediaEngineWrapper::InitializeVideo() {
       MFLockDXGIDeviceManager(&m_deviceResetToken, m_dxgiDeviceManager.put()));
 
   winrt::com_ptr<ID3D11Device> d3d11Device;
-  UINT creationFlags =
-      (D3D11_CREATE_DEVICE_VIDEO_SUPPORT | D3D11_CREATE_DEVICE_BGRA_SUPPORT |
-       D3D11_CREATE_DEVICE_PREVENT_INTERNAL_THREADING_OPTIMIZATIONS);
+  UINT creationFlags = 0;
   constexpr D3D_FEATURE_LEVEL featureLevels[] = {
-      D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1,
-      D3D_FEATURE_LEVEL_10_0, D3D_FEATURE_LEVEL_9_3,  D3D_FEATURE_LEVEL_9_2,
-      D3D_FEATURE_LEVEL_9_1};
-  THROW_IF_FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0,
+      D3D_FEATURE_LEVEL_10_0};
+
+  THROW_IF_FAILED(D3D11CreateDevice(m_adapter.get(), D3D_DRIVER_TYPE_UNKNOWN, 0,
                                     creationFlags, featureLevels,
                                     ARRAYSIZE(featureLevels), D3D11_SDK_VERSION,
                                     d3d11Device.put(), nullptr, nullptr));
 
-  winrt::com_ptr<ID3D10Multithread> multithreadedDevice =
-      d3d11Device.as<ID3D10Multithread>();
+  winrt::com_ptr<IDXGIDevice> m_DXGIDevice = d3d11Device.as<IDXGIDevice>();
+
+  winrt::com_ptr<IDCompositionDevice> dcompDevice;
+  THROW_IF_FAILED(DCompositionCreateDevice2(m_DXGIDevice.get(), IID_PPV_ARGS(dcompDevice.put())));
+
+  m_dcompDevice = dcompDevice.as<IDCompositionDevice2>();
+
+  // Create target against HWND
+  winrt::com_ptr<IDCompositionDesktopDevice> desktopDevice = m_dcompDevice.as<IDCompositionDesktopDevice>();
+  THROW_IF_FAILED(desktopDevice->CreateTargetForHwnd(m_window, TRUE, m_dcompTarget.put()));
+
+  winrt::com_ptr<ID3D10Multithread> multithreadedDevice = d3d11Device.as<ID3D10Multithread>();
   multithreadedDevice->SetMultithreadProtected(TRUE);
 
   THROW_IF_FAILED(

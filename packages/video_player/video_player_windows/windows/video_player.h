@@ -78,8 +78,8 @@ using namespace Windows::UI::Composition;
 
 class VideoPlayer {
  public:
-  VideoPlayer(std::string asset);
-  VideoPlayer(std::string uri, flutter::EncodableMap httpHeaders);
+  VideoPlayer(flutter::FlutterView* view, std::string asset);
+  VideoPlayer(flutter::FlutterView* view, std::string uri, flutter::EncodableMap httpHeaders);
 
   void Dispose();
   void SetLooping(bool isLooping);
@@ -92,7 +92,7 @@ class VideoPlayer {
   void SeekTo(int64_t seek);
   int64_t GetTextureId();
 
-  FlutterDesktopPixelBuffer* CopyBufferCallback(size_t width, size_t height);
+  FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptorCallback(size_t width, size_t height);
 
   void Init(flutter::PluginRegistrarWindows* registrar, int64_t textureId);
 
@@ -108,13 +108,16 @@ class VideoPlayer {
   // Composition members
   wil::critical_section m_compositionLock;
   winrt::Windows::Foundation::Size m_windowSize{};
-  CompositionTarget m_target{nullptr};
-  Visual m_videoVisual{nullptr};
+  winrt::com_ptr<IDCompositionTarget> m_target;
+  winrt::com_ptr<IDCompositionVisual2> m_videoVisual{nullptr};
 
   int64_t _textureId;
 
-  FlutterDesktopPixelBuffer m_buffer;
+  FlutterDesktopGpuSurfaceDescriptor m_descriptor;
   std::mutex m_buffer_mutex;
+  HANDLE m_videoSurfaceHandle;
+  winrt::com_ptr<IDXGIAdapter> m_adapter;
+  HWND m_window;
 
   bool isInitialized = false;
 
@@ -133,5 +136,5 @@ class VideoPlayer {
 
   std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> _eventSink;
 
-  VideoPlayer();
+  VideoPlayer(flutter::FlutterView* view);
 };

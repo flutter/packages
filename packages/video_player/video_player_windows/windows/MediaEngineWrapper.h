@@ -8,6 +8,8 @@
 #include "MediaEngineExtension.h"
 #include "MediaFoundationHelpers.h"
 
+#include <Dcomp.h>
+
 namespace media {
 
 // This class handles creation and management of the MediaFoundation
@@ -42,7 +44,7 @@ class MediaEngineWrapper
   ~MediaEngineWrapper() {}
 
   // Create the media engine with the provided media source
-  void Initialize(IMFMediaSource* mediaSource);
+  void Initialize(winrt::com_ptr<IDXGIAdapter> adapter, HWND window, IMFMediaSource* mediaSource);
 
   // Stop playback and cleanup resources
   void Pause();
@@ -66,6 +68,8 @@ class MediaEngineWrapper
 
   // Get a handle to a DCOMP surface for integrating into a visual tree
   HANDLE GetSurfaceHandle();
+  winrt::com_ptr<IDCompositionTarget> GetCompositionTarget();
+  winrt::com_ptr<IDCompositionDevice2> GetCompositionDevice();
 
   // Inform media engine of output window position & size changes
   void OnWindowUpdate(uint32_t width, uint32_t height);
@@ -80,6 +84,10 @@ class MediaEngineWrapper
   MFPlatformRef m_platformRef;
   winrt::com_ptr<IMFMediaEngine> m_mediaEngine;
   UINT m_deviceResetToken = 0;
+  winrt::com_ptr<IDXGIAdapter> m_adapter;
+  winrt::com_ptr<IDCompositionDevice2> m_dcompDevice;
+  winrt::com_ptr<IDCompositionTarget> m_dcompTarget;
+  HWND m_window;
   winrt::com_ptr<IMFDXGIDeviceManager> m_dxgiDeviceManager;
   winrt::com_ptr<MediaEngineExtension> m_mediaEngineExtension;
   winrt::com_ptr<IMFMediaEngineNotify> m_callbackHelper;

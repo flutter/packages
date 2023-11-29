@@ -91,9 +91,9 @@ ErrorOr<TextureMessage> VideoPlayerPlugin::Create(
       assetPath = *input.asset();
     }
 
-    player = std::make_unique<VideoPlayer>(assetPath);
+    player = std::make_unique<VideoPlayer>(registrar_->GetView(), assetPath);
   } else if (input.uri() && !input.uri()->empty()) {
-    player = std::make_unique<VideoPlayer>(*input.uri(), input.http_headers());
+    player = std::make_unique<VideoPlayer>(registrar_->GetView(), *input.uri(), input.http_headers());
   } else {
     return FlutterError("not_implemented", "Set either an asset or a uri");
   }

@@ -10,11 +10,13 @@
 #include <wil/win32_helpers.h>
 #include <windows.h>
 
+#include "DirectCompositionLayer.h"
+
 #undef GetCurrentTime
 
 using namespace winrt;
 
-VideoPlayer::VideoPlayer(std::string asset) : VideoPlayer() {
+VideoPlayer::VideoPlayer(flutter::FlutterView* view, std::string asset) : VideoPlayer(view) {
   // Create a source resolver to create an IMFMediaSource for the content URL.
   // This will create an instance of an inbuilt OS media source for playback.
   // An application can skip this step and instantiate a custom IMFMediaSource
@@ -38,11 +40,11 @@ VideoPlayer::VideoPlayer(std::string asset) : VideoPlayer() {
       sourceResolutionFlags, nullptr, &objectType,
       reinterpret_cast<IUnknown**>(mediaSource.put_void())));
 
-  m_mediaEngineWrapper->Initialize(mediaSource.get());
+  m_mediaEngineWrapper->Initialize(m_adapter, m_window, mediaSource.get());
 }
 
-VideoPlayer::VideoPlayer(std::string uri, flutter::EncodableMap httpHeaders)
-    : VideoPlayer() {
+VideoPlayer::VideoPlayer(flutter::FlutterView* view, std::string uri, flutter::EncodableMap httpHeaders)
+    : VideoPlayer(view) {
   // Create a source resolver to create an IMFMediaSource for the content URL.
   // This will create an instance of an inbuilt OS media source for playback.
   // An application can skip this step and instantiate a custom IMFMediaSource
@@ -58,13 +60,18 @@ VideoPlayer::VideoPlayer(std::string uri, flutter::EncodableMap httpHeaders)
       winrt::to_hstring(uri).c_str(), sourceResolutionFlags, nullptr,
       &objectType, reinterpret_cast<IUnknown**>(mediaSource.put_void())));
 
-  m_mediaEngineWrapper->Initialize(mediaSource.get());
+  m_mediaEngineWrapper->Initialize(m_adapter, m_window, mediaSource.get());
 }
 
-VideoPlayer::VideoPlayer()
-    : texture(flutter::PixelBufferTexture(
-          std::bind(&VideoPlayer::CopyBufferCallback, this,
+VideoPlayer::VideoPlayer(flutter::FlutterView* view)
+    : texture(flutter::GpuSurfaceTexture(
+          FlutterDesktopGpuSurfaceType::kFlutterDesktopGpuSurfaceTypeDxgiSharedHandle,
+          std::bind(&VideoPlayer::ObtainDescriptorCallback, this,
                     std::placeholders::_1, std::placeholders::_2))) {
+
+  m_adapter.attach(view->GetGraphicsAdapter());
+  m_window = view->GetNativeWindow();
+
   m_mfPlatform.Startup();
 
   // Callbacks invoked by the media engine wrapper
@@ -113,42 +120,26 @@ void VideoPlayer::Init(flutter::PluginRegistrarWindows* registrar,
 
 VideoPlayer::~VideoPlayer() {}
 
-FlutterDesktopPixelBuffer* VideoPlayer::CopyBufferCallback(size_t width,
+FlutterDesktopGpuSurfaceDescriptor* VideoPlayer::ObtainDescriptorCallback(size_t width,
                                                            size_t height) {
+
   // Lock buffer mutex to protect texture processing
   std::unique_lock<std::mutex> buffer_lock(m_buffer_mutex);
 
-  m_windowSize.Width = (float)width;
-  m_windowSize.Height = (float)height;
-
-  const uint32_t bytes_per_pixel = 4;
-  // Draw anything, for now
-  m_buffer.width = width;
-  m_buffer.height = height;
-  auto buffer = new uint8_t[m_buffer.width * m_buffer.height * bytes_per_pixel];
-  m_buffer.buffer = buffer;
-  for (auto x = 0; x < m_buffer.width; x++) {
-    for (auto y = 0; y < m_buffer.height; y++) {
-      buffer[x * m_buffer.height + y + 0] =
-          (x * m_buffer.height + y) % 256 - 127;
-      buffer[x * m_buffer.height + y + 1] =
-          (x * m_buffer.height + y) % 256 - 127;
-      buffer[x * m_buffer.height + y + 2] =
-          (x * m_buffer.height + y) % 256 - 127;
-      buffer[x * m_buffer.height + y + 3] = 127;
-    }
-  }
-
-  UpdateVideoSize();
-
-  m_buffer.release_callback = [](void* release_context) {
+  m_descriptor = {};
+  m_descriptor.struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor);
+  m_descriptor.handle = m_videoSurfaceHandle;
+  m_descriptor.width = m_descriptor.visible_width = width;
+  m_descriptor.height = m_descriptor.visible_height = height;
+  m_descriptor.release_context = buffer_lock.release();
+  m_descriptor.release_callback = [](void* release_context) {
     auto mutex = reinterpret_cast<std::mutex*>(release_context);
     mutex->unlock();
   };
 
-  m_buffer.release_context = buffer_lock.release();
+  UpdateVideoSize();
 
-  return &m_buffer;
+  return &m_descriptor;
 }
 
 void VideoPlayer::OnMediaInitialized() {
@@ -160,46 +151,31 @@ void VideoPlayer::OnMediaInitialized() {
 }
 
 void VideoPlayer::SetupVideoVisual() {
-  auto lock = m_compositionLock.lock();
 
   // Complete setting up video visual if we have a surface from the media engine
   // and the visual tree has been initialized
-  HANDLE videoSurfaceHandle =
-      m_mediaEngineWrapper ? m_mediaEngineWrapper->GetSurfaceHandle() : NULL;
+  m_videoSurfaceHandle = m_mediaEngineWrapper->GetSurfaceHandle();
 
-  if (!m_videoVisual && videoSurfaceHandle != NULL && m_target) {
-    Compositor compositor = m_target.Compositor();
+  m_target = m_mediaEngineWrapper->GetCompositionTarget();
 
-    // Create sprite visual for video
-    SpriteVisual visual = compositor.CreateSpriteVisual();
+  if (!m_videoVisual && m_videoSurfaceHandle != NULL && m_target != nullptr) {
 
-    visual.Offset({
-        0.0f,
-        0.0f,
-        0.0f,
-    });
+    // Create root visual and set it on the target
+    THROW_IF_FAILED(m_mediaEngineWrapper->GetCompositionDevice()->CreateVisual(m_videoVisual.put()));
+    THROW_IF_FAILED(m_target->SetRoot(m_videoVisual.get()));
 
-    // Use the ABI ICompositorInterop interface to create an ABI composition
-    // surface using the video surface handle from the media engine
-    winrt::com_ptr<abi::ICompositorInterop> compositorInterop{
-        compositor.as<abi::ICompositorInterop>()};
-    winrt::com_ptr<abi::ICompositionSurface> abiCompositionSurface;
-    THROW_IF_FAILED(compositorInterop->CreateCompositionSurfaceForHandle(
-        videoSurfaceHandle, abiCompositionSurface.put()));
+    // Create video visual and add it to the DCOMP tree
+    winrt::com_ptr<IDCompositionDevice> dcompDevice;
+    THROW_IF_FAILED(m_mediaEngineWrapper->GetCompositionDevice()->QueryInterface(IID_PPV_ARGS(dcompDevice.put())));
+    std::shared_ptr<ui::DirectCompositionLayer> videoLayer =
+        ui::DirectCompositionLayer::CreateFromSurface(dcompDevice.get(), m_videoSurfaceHandle);
+    THROW_IF_FAILED(m_videoVisual->AddVisual(videoLayer->GetVisual(), TRUE, nullptr));
+    m_videoVisual->SetOffsetX(100);
+    m_videoVisual->SetOffsetY(100);
 
-    // Convert from ABI ICompositionSurface type to winrt CompositionSurface
-    CompositionVisualSurface compositionSurface{nullptr};
-    winrt::copy_from_abi(compositionSurface, abiCompositionSurface.get());
-
-    // Setup surface brush with surface from MediaEngineWrapper
-    CompositionSurfaceBrush surfaceBrush{compositor.CreateSurfaceBrush()};
-    surfaceBrush.Surface(compositionSurface);
-    visual.Brush(surfaceBrush);
-
-    // Insert video visual intro tree
-    m_videoVisual = visual;
     UpdateVideoSize();
-    m_target.Root(m_videoVisual);
+
+    dcompDevice->Commit();
   }
 }
 
@@ -213,7 +189,11 @@ void VideoPlayer::UpdateVideoSize() {
   float height = windowInitialized ? m_windowSize.Height : 480;
 
   if (m_videoVisual) {
-    m_videoVisual.Size({width, height});
+    // uint32_t width;
+    // uint32_t height;
+    // m_mediaEngineWrapper->GetNativeVideoSize(width, height);
+    //m_videoVisual->(Size({width, height});
+    // What to do here?
   }
 
   if (m_mediaEngineWrapper) {
