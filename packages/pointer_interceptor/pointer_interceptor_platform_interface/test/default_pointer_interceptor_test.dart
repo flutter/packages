@@ -9,9 +9,7 @@ import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platf
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test(
-      'Default implementation of PointerInterceptor does not do anything',
-      () {
+  test('Default implementation of PointerInterceptor does not do anything', () {
     final PointerInterceptorPlatform defaultPointerInterceptor =
         PointerInterceptorPlatform.instance;
 
