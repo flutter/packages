@@ -17,6 +17,7 @@ final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
 final html.File textFile =
     html.File(<js_util.JSAny>[bytes.toJS].toJS, 'hello.txt');
 final String textFileUrl =
+    // ignore: for pkg:web v0.3.0
     html.URL.createObjectURL(textFile as js_util.JSObject);
 
 void main() {
