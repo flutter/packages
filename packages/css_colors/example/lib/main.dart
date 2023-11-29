@@ -19,15 +19,15 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('CSS Color Example'),
+          title: const Text('CSS Color Example'),
           backgroundColor: CSSColors.orange,
         ),
         body: Center(
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15), color: CSSColors.blue),
-            padding: EdgeInsets.all(15),
-            child: Text(
+            padding: const EdgeInsets.all(15),
+            child: const Text(
               'Flutter is Great',
               style: TextStyle(color: CSSColors.white),
             ),
