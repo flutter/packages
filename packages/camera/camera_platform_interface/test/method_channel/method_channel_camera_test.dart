@@ -1154,6 +1154,46 @@ void main() {
           isMethodCall('stopImageStream', arguments: null),
         ]);
       });
+
+      test('Should set the ImageFileFormat to heif', () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{'setImageFileFormat': 'heif'},
+        );
+
+        // Act
+        await camera.setImageFileFormat(cameraId, ImageFileFormat.heif);
+
+        // Assert
+        expect(channel.log, <Matcher>[
+          isMethodCall('setImageFileFormat', arguments: <String, Object?>{
+            'cameraId': cameraId,
+            'fileFormat': 'heif',
+          }),
+        ]);
+      });
+
+      test('Should set the ImageFileFormat to jpeg', () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{
+            'setImageFileFormat': 'jpeg',
+          },
+        );
+
+        // Act
+        await camera.setImageFileFormat(cameraId, ImageFileFormat.jpeg);
+
+        // Assert
+        expect(channel.log, <Matcher>[
+          isMethodCall('setImageFileFormat', arguments: <String, Object?>{
+            'cameraId': cameraId,
+            'fileFormat': 'jpeg',
+          }),
+        ]);
+      });
     });
   });
 }

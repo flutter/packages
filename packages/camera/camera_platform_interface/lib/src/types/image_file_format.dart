@@ -4,11 +4,13 @@
 
 /// The format in which images should be returned from the camera.
 enum ImageFileFormat {
-  /// This is the default value. It will return the image in JPEG format.
+  /// It will return the image in JPEG format.
+  ///
   /// Is the widely used format for images.
   jpeg,
 
   /// It will return the image in HEIF format.
+  ///
   /// HEIF is a file format name that refers to High Efficiency Image Format (HEIF).
   /// Will works only iOS 11+.
   heif,
