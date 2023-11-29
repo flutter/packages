@@ -9,12 +9,15 @@ import 'dart:convert' show json;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+// #docregion Import
 import 'package:google_sign_in/google_sign_in.dart';
+// #enddocregion Import
 import 'package:http/http.dart' as http;
 
 import 'src/sign_in_button.dart';
 
 /// The scopes required by this application.
+// #docregion Initialize
 const List<String> scopes = <String>[
   'email',
   'https://www.googleapis.com/auth/contacts.readonly',
@@ -25,6 +28,7 @@ GoogleSignIn _googleSignIn = GoogleSignIn(
   // clientId: 'your-client_id.apps.googleusercontent.com',
   scopes: scopes,
 );
+// #enddocregion Initialize
 
 void main() {
   runApp(
@@ -59,7 +63,9 @@ class _SignInDemoState extends State<SignInDemo> {
       bool isAuthorized = account != null;
       // However, in the web...
       if (kIsWeb && account != null) {
+// #docregion CanAccessScopes
         isAuthorized = await _googleSignIn.canAccessScopes(scopes);
+// #enddocregion CanAccessScopes
       }
 
       setState(() {
@@ -136,6 +142,7 @@ class _SignInDemoState extends State<SignInDemo> {
   //
   // On the web, the on-click handler of the Sign In button is owned by the JS
   // SDK, so this method can be considered mobile only.
+  // #docregion SignIn
   Future<void> _handleSignIn() async {
     try {
       await _googleSignIn.signIn();
@@ -143,6 +150,7 @@ class _SignInDemoState extends State<SignInDemo> {
       print(error);
     }
   }
+  // #enddocregion SignIn
 
   // Prompts the user to authorize `scopes`.
   //
@@ -150,14 +158,18 @@ class _SignInDemoState extends State<SignInDemo> {
   // and Authorization at the same time (like the web).
   //
   // On the web, this must be called from an user interaction (button click).
+  // #docregion RequestScopes
   Future<void> _handleAuthorizeScopes() async {
     final bool isAuthorized = await _googleSignIn.requestScopes(scopes);
+    // #enddocregion RequestScopes
     setState(() {
       _isAuthorized = isAuthorized;
     });
+    // #docregion RequestScopes
     if (isAuthorized) {
       unawaited(_handleGetContact(_currentUser!));
     }
+    // #enddocregion RequestScopes
   }
 
   Future<void> _handleSignOut() => _googleSignIn.disconnect();
