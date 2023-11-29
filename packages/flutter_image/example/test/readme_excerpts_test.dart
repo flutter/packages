@@ -12,9 +12,9 @@ void main() {
     // Ensure that the snippet code runs successfully.
     final Image result = networkImageWithRetry();
 
-    // It should have a image property of the right type
+    // It should have a image property of the right type.
     expect(result.image, isInstanceOf<NetworkImageWithRetry>());
-    // And the NetworkImageWithRetry should have a url property
+    // And the NetworkImageWithRetry should have a url property.
     final NetworkImageWithRetry networkImage =
         result.image as NetworkImageWithRetry;
     expect(networkImage.url, equals('http://example.com/avatars/123.jpg'));
