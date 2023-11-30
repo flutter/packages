@@ -17,7 +17,7 @@ final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
 final html.File textFile =
     html.File(<js_util.JSAny>[bytes.toJS].toJS, 'hello.txt');
 final String textFileUrl =
-    // for pkg:web v0.3.0
+    // TODO(kevmoo): drop when ignore when pkg:web constraint excludes v0.3
     // ignore: unnecessary_cast
     html.URL.createObjectURL(textFile as js_util.JSObject);
 
@@ -69,10 +69,9 @@ void main() {
       // Read the blob from its path 'natively'
       final html.Response response =
           (await html.window.fetch(file.path.toJS).toDart)! as html.Response;
-      // Call '.arrayBuffer()' on the fetch response object to look at its bytes.
-      final ByteBuffer data =
-          ((await response.arrayBuffer().toDart)! as js_util.JSArrayBuffer)
-              .toDart;
+
+      final js_util.JSAny? arrayBuffer = await response.arrayBuffer().toDart;
+      final ByteBuffer data = (arrayBuffer! as js_util.JSArrayBuffer).toDart;
       expect(data.asUint8List(), equals(bytes));
     });
 
