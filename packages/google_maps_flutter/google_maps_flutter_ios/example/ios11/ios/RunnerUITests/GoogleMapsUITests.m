@@ -274,5 +274,4 @@ static const NSTimeInterval kWaitTime = 60;
   XCTAssertTrue(dragEnd.exists);
 }
 
-
 @end
