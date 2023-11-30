@@ -31,7 +31,7 @@ void main() {
     expect(find.byType(Image), findsOneWidget);
   });
 
-  testWidgets('getImageFromPath loads image from XFile bytes',
+  testWidgets('getImageFromBytes loads image from XFile bytes',
       (WidgetTester tester) async {
     // Encode a small Base64 image (1x1 pixel transparent PNG).
     const String base64Image =
