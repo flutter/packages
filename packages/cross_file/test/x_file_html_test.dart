@@ -5,17 +5,21 @@
 @TestOn('chrome') // Uses web-only Flutter SDK
 
 import 'dart:convert';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
-import 'package:js/js_util.dart' as js_util;
 import 'package:test/test.dart';
+import 'package:web/helpers.dart' as html;
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
-final html.File textFile = html.File(<Object>[bytes], 'hello.txt');
-final String textFileUrl = html.Url.createObjectUrl(textFile);
+final html.File textFile =
+    html.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
+final String textFileUrl =
+    // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
+    // ignore: unnecessary_cast
+    html.URL.createObjectURL(textFile as JSObject);
 
 void main() {
   group('Create with an objectUrl', () {
@@ -63,16 +67,16 @@ void main() {
 
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
-      final Object response = await html.window.fetch(file.path) as Object;
-      // Call '.arrayBuffer()' on the fetch response object to look at its bytes.
-      final ByteBuffer data = await js_util.promiseToFuture(
-        js_util.callMethod(response, 'arrayBuffer', <Object?>[]),
-      );
+      final html.Response response =
+          (await html.window.fetch(file.path.toJS).toDart)! as html.Response;
+
+      final JSAny? arrayBuffer = await response.arrayBuffer().toDart;
+      final ByteBuffer data = (arrayBuffer! as JSArrayBuffer).toDart;
       expect(data.asUint8List(), equals(bytes));
     });
 
     test('Data may be purged from the blob!', () async {
-      html.Url.revokeObjectUrl(file.path);
+      html.URL.revokeObjectURL(file.path);
 
       expect(() async {
         await file.readAsBytes();
@@ -102,9 +106,15 @@ void main() {
 
         final html.Element container =
             html.querySelector('#$crossFileDomElementId')!;
-        final html.AnchorElement element = container.children
-                .firstWhere((html.Element element) => element.tagName == 'A')
-            as html.AnchorElement;
+
+        late html.HTMLAnchorElement element;
+        for (int i = 0; i < container.childNodes.length; i++) {
+          final html.Element test = container.children.item(i)!;
+          if (test.tagName == 'A') {
+            element = test as html.HTMLAnchorElement;
+            break;
+          }
+        }
 
         // if element is not found, the `firstWhere` call will throw StateError.
         expect(element.href, file.path);
@@ -112,7 +122,8 @@ void main() {
       });
 
       test('anchor element is clicked', () async {
-        final html.AnchorElement mockAnchor = html.AnchorElement();
+        final html.HTMLAnchorElement mockAnchor =
+            html.document.createElement('a') as html.HTMLAnchorElement;
 
         final CrossFileTestOverrides overrides = CrossFileTestOverrides(
           createAnchorElement: (_, __) => mockAnchor,
