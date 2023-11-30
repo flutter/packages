@@ -831,8 +831,7 @@ List<Error> _validateAst(Root root, String source) {
           ));
         }
       }
-      if (method.taskQueueType != TaskQueueType.serial &&
-          api.location != ApiLocation.host) {
+      if (method.taskQueueType != TaskQueueType.serial && api is HostApi) {
         result.add(Error(
           message: 'Unsupported TaskQueue specification on ${method.name}',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
@@ -1066,18 +1065,17 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             }
           }
         }
-        _currentApi = Api(
+
+        _currentApi = AstHostApi(
           name: node.name.lexeme,
-          location: ApiLocation.host,
           methods: <Method>[],
           dartHostTestHandler: dartHostTestHandler,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
-        );
+        ) as Api;
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
-        _currentApi = Api(
+        _currentApi = AstFlutterApi(
           name: node.name.lexeme,
-          location: ApiLocation.flutter,
           methods: <Method>[],
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
@@ -1228,6 +1226,12 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                   typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
           parameters: arguments,
+          required: true,
+          location: switch (_currentApi!) {
+            AstHostApi() => ApiLocation.host,
+            AstProxyApi() => ApiLocation.host,
+            AstFlutterApi() => ApiLocation.flutter,
+          },
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,

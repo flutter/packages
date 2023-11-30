@@ -191,10 +191,11 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi =
+        root.apis.whereType<AstHostApi>().any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     _writeFlutterError(indent);
     if (hasHostApi) {
@@ -317,10 +318,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -370,10 +370,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -823,10 +822,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }
@@ -937,10 +935,9 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     CppOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(generatorOptions, root, indent, api);
     }

@@ -312,12 +312,11 @@ $resultAt != null
     DartOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     String Function(Method)? channelNameFunc,
     bool isMockHandler = false,
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.flutter);
     String codecName = _standardMessageCodec;
     if (getCodecClasses(api, root).isNotEmpty) {
       codecName = _getCodecName(api);
@@ -488,10 +487,9 @@ $resultAt != null
     DartOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     String codecName = _standardMessageCodec;
     if (getCodecClasses(api, root).isNotEmpty) {
       codecName = _getCodecName(api);
@@ -641,12 +639,10 @@ if (${_varNamePrefix}replyList == null) {
       indent.writeln("import 'package:$dartOutputPackageName/$path';");
     }
     for (final Api api in root.apis) {
-      if (api.location == ApiLocation.host && api.dartHostTestHandler != null) {
-        final Api mockApi = Api(
+      if (api is AstHostApi && api.dartHostTestHandler != null) {
+        final AstFlutterApi mockApi = AstFlutterApi(
           name: api.dartHostTestHandler!,
           methods: api.methods,
-          location: ApiLocation.flutter,
-          dartHostTestHandler: api.dartHostTestHandler,
           documentationComments: api.documentationComments,
         );
         writeFlutterApi(
@@ -696,10 +692,11 @@ if (${_varNamePrefix}replyList == null) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi =
+        root.apis.whereType<AstHostApi>().any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     if (hasHostApi) {
       _writeCreateConnectionError(indent);

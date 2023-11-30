@@ -29,7 +29,10 @@ class Method extends Node {
     required this.name,
     required this.returnType,
     required this.parameters,
+    required this.location,
+    required this.required,
     this.isAsynchronous = false,
+    this.isStatic = false,
     this.offset,
     this.objcSelector = '',
     this.swiftFunction = '',
@@ -68,6 +71,18 @@ class Method extends Node {
   /// For example: [" List of documentation comments, separated by line.", ...]
   List<String> documentationComments;
 
+  /// Where the implementation of this method is located, host or Flutter.
+  ApiLocation location;
+
+  /// Whether this method is required to be implemented.
+  ///
+  /// This flag is typically used to determine whether a callback method for
+  /// a `ProxyApi` is nullable or not.
+  bool required;
+
+  /// Whether this is a static method of a ProxyApi.
+  bool isStatic;
+
   @override
   String toString() {
     final String objcSelectorStr =
@@ -78,28 +93,94 @@ class Method extends Node {
   }
 }
 
-/// Represents a collection of [Method]s that are hosted on a given [location].
-class Api extends Node {
-  /// Parametric constructor for [Api].
-  Api({
-    required this.name,
-    required this.location,
-    required this.methods,
+/// Represents a collection of [Method]s that are implemented on the platform
+/// side.
+class AstHostApi extends Api {
+  /// Parametric constructor for [AstHostApi].
+  AstHostApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
     this.dartHostTestHandler,
-    this.documentationComments = const <String>[],
   });
-
-  /// The name of the API.
-  String name;
-
-  /// Where the API's implementation is located, host or Flutter.
-  ApiLocation location;
-
-  /// List of methods inside the API.
-  List<Method> methods;
 
   /// The name of the Dart test interface to generate to help with testing.
   String? dartHostTestHandler;
+
+  @override
+  String toString() {
+    return '(HostApi name:$name methods:$methods documentationComments:$documentationComments dartHostTestHandler:$dartHostTestHandler)';
+  }
+}
+
+/// Represents a collection of [Method]s that are hosted on the Flutter side.
+class AstFlutterApi extends Api {
+  /// Parametric constructor for [AstFlutterApi].
+  AstFlutterApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
+  });
+
+  @override
+  String toString() {
+    return '(FlutterApi name:$name methods:$methods documentationComments:$documentationComments)';
+  }
+}
+
+/// Represents an API that wraps a native class.
+class AstProxyApi extends Api {
+  /// Parametric constructor for [AstProxyApi].
+  AstProxyApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
+    required this.constructors,
+    required this.fields,
+    this.superClassName,
+    this.interfacesNames = const <String>{},
+  });
+
+  /// List of constructors inside the API.
+  final List<Constructor> constructors;
+
+  /// List of fields inside the API.
+  final List<Field> fields;
+
+  /// Name of the class this class considers the super class.
+  final String? superClassName;
+
+  /// Name of the classes this class considers to be implemented.
+  final Set<String> interfacesNames;
+
+  @override
+  String toString() {
+    return '(ProxyApi name:$name methods:$methods documentationComments:$documentationComments superClassName:$superClassName interfacesNames:$interfacesNames)';
+  }
+}
+
+/// Represents a constructor for an API.
+class Constructor extends Node {
+  /// Parametric constructor for [Constructor].
+  Constructor({
+    required this.name,
+    required this.parameters,
+    this.offset,
+    this.swiftFunction = '',
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the method.
+  String name;
+
+  /// The parameters passed into the [Constructor].
+  List<Parameter> parameters;
+
+  /// The offset in the source file where the field appears.
+  int? offset;
+
+  /// An override for the generated swift function signature (ex. "divideNumber(_:by:)").
+  String swiftFunction;
 
   /// List of documentation comments, separated by line.
   ///
@@ -110,7 +191,59 @@ class Api extends Node {
 
   @override
   String toString() {
-    return '(Api name:$name location:$location methods:$methods documentationComments:$documentationComments)';
+    final String swiftFunctionStr =
+        swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
+    return '(Constructor name:$name parameters:$parameters $swiftFunctionStr documentationComments:$documentationComments)';
+  }
+}
+
+/// Represents a field of an API.
+class Field extends NamedType {
+  /// Constructor for [Field].
+  Field({
+    required super.name,
+    required super.type,
+    super.offset,
+    super.documentationComments,
+    this.isAttached = false,
+    this.isStatic = false,
+  });
+
+  /// Whether this is an attached field for a [ProxyApiNode].
+  ///
+  /// Attached fields provide a synchronous [ProxyApiNode] instance as a field for
+  /// another [ProxyApiNode]
+  final bool isAttached;
+
+  /// Whether this is a static field of a ProxyApi.
+  final bool isStatic;
+}
+
+/// Represents a collection of [Method]s.
+sealed class Api extends Node {
+  /// Parametric constructor for [Api].
+  Api({
+    required this.name,
+    required this.methods,
+    this.documentationComments = const <String>[],
+  });
+
+  /// The name of the API.
+  String name;
+
+  /// List of methods inside the API.
+  List<Method> methods;
+
+  /// List of documentation comments, separated by line.
+  ///
+  /// Lines should not include the comment marker itself, but should include any
+  /// leading whitespace, so that any indentation in the original comment is preserved.
+  /// For example: [" List of documentation comments, separated by line.", ...]
+  List<String> documentationComments;
+
+  @override
+  String toString() {
+    return '(Api name:$name methods:$methods documentationComments:$documentationComments)';
   }
 }
 
