@@ -19,20 +19,17 @@ public:
     struct Point {
         unsigned int x;
         unsigned int y;
-
         Point(unsigned int x, unsigned int y) : x(x), y(y) {}
     };
 
     struct Size {
         unsigned int width;
         unsigned int height;
-
         Size(unsigned int width, unsigned int height)
                 : width(width), height(height) {}
     };
 
     Win32Window();
-
     virtual ~Win32Window();
 
     // Creates a win32 window with |title| that is positioned and sized using
@@ -41,7 +38,7 @@ public:
     // consistent size this function will scale the inputted width and height as
     // as appropriate for the default monitor. The window is invisible until
     // |Show| is called. Returns true if the window was created successfully.
-    bool Create(const std::wstring &title, const Point &origin, const Size &size);
+    bool Create(const std::wstring& title, const Point& origin, const Size& size);
 
     // Show the current window. Returns true if the window was successfully shown.
     bool Show();
@@ -66,12 +63,9 @@ protected:
     // Processes and route salient window messages for mouse handling,
     // size change and DPI. Delegates handling of these to member overloads that
     // inheriting classes can handle.
-    virtual LRESULT MessageHandler(HWND window,
-                                   UINT const message,
+    virtual LRESULT MessageHandler(HWND window, UINT const message,
                                    WPARAM const wparam,
-                                   LPARAM const lparam)
-
-    noexcept;
+                                   LPARAM const lparam) noexcept;
 
     // Called when CreateAndShow is called, allowing subclass window-related
     // setup. Subclasses should return false if setup fails.
@@ -88,20 +82,12 @@ private:
     // non-client DPI scaling so that the non-client area automatically
     // responds to changes in DPI. All other messages are handled by
     // MessageHandler.
-    static LRESULT CALLBACK
-    WndProc(HWND
-    const window,
-    UINT const message,
-            WPARAM
-    const wparam,
-    LPARAM const lparam
-    )
-    noexcept;
+    static LRESULT CALLBACK WndProc(HWND const window, UINT const message,
+            WPARAM const wparam,
+    LPARAM const lparam) noexcept;
 
     // Retrieves a class instance pointer for |window|
-    static Win32Window *GetThisFromHandle(HWND const window)
-
-    noexcept;
+    static Win32Window* GetThisFromHandle(HWND const window) noexcept;
 
     // Update the window frame's theme to match the system theme.
     static void UpdateTheme(HWND const window);
