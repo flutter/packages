@@ -20,5 +20,5 @@ dev_dependencies:
 
 topics:
   - widgets
-  - platform views
+  - platform-views
   - pointer-interceptor
