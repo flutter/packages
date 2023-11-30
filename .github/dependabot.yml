@@ -868,7 +868,7 @@ updates:
       - dependency-name: "*"
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
-   - package-ecosystem: "gradle"
+  - package-ecosystem: "gradle"
     directory: "/packages/css_colors/example/android/app"
     commit-message:
       prefix: "[css_colors]"
