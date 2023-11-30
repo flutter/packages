@@ -17,7 +17,7 @@ final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
 final html.File textFile =
     html.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
 final String textFileUrl =
-    // TODO(kevmoo): drop when ignore when pkg:web constraint excludes v0.3
+    // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
     // ignore: unnecessary_cast
     html.URL.createObjectURL(textFile as JSObject);
 

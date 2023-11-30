@@ -66,7 +66,7 @@ class XFile extends XFileBase {
         super(path) {
     if (path == null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
-      // TODO(kevmoo): drop when ignore when pkg:web constraint excludes v0.3
+      // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
       // ignore: unnecessary_cast
       _path = URL.createObjectURL(_browserBlob! as JSObject);
     } else {
