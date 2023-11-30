@@ -1,6 +1,10 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* 
+## 1.1.4
+
+- Add example app.
 
 ## 1.1.3
 
@@ -12,10 +16,6 @@
 - Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 - Aligns Dart and Flutter SDK constraints.
 - Updates package description.
-
-## 1.1.2
-
-- Add example app.
 
 ## 1.1.1
 
