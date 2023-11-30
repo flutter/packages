@@ -26,7 +26,7 @@ dependencies:
     sdk: flutter
   pointer_interceptor_ios:
     path: ../pointer_interceptor_ios
-  pointer_interceptor_platform_interface: 0.10.0
+  pointer_interceptor_platform_interface: ^0.10.0
   pointer_interceptor_web:
     path: ../pointer_interceptor_web
 

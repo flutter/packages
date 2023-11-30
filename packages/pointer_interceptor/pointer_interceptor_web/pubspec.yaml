@@ -22,7 +22,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   plugin_platform_interface: ^2.1.6
-  pointer_interceptor_platform_interface: 0.10.0
+  pointer_interceptor_platform_interface: ^0.10.0
 
 dev_dependencies:
   flutter_test:
