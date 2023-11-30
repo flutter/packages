@@ -1,6 +1,7 @@
-## NEXT
+## 3.0.2
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Improves README example and updates it to use code excerpts.
 
 ## 3.0.1
 
