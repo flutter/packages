@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:html';
+import 'dart:typed_data';
 
 /// Create anchor element with download attribute
 AnchorElement createAnchorElement(String href, String? suggestedName) {
@@ -41,4 +42,27 @@ Element ensureInitialized(String id) {
 /// (This is the same check used in flutter/engine)
 bool isSafari() {
   return window.navigator.vendor == 'Apple Computer, Inc.';
+}
+
+/// Converts an html [Blob] object to a [Uint8List], through a [FileReader].
+Future<Uint8List> blobToByteBuffer(Blob blob) async {
+  final FileReader reader = FileReader();
+  reader.readAsArrayBuffer(blob);
+
+  await reader.onLoadEnd.first;
+
+  final Uint8List? result = reader.result as Uint8List?;
+
+  if (result == null) {
+    throw Exception('Cannot read bytes from Blob. Is it still available?');
+  }
+
+  return result;
+}
+
+/// Creates a [Blob] from a bunch of [bytes] and an optional [mimeType].
+Blob bytesToBlob(Uint8List bytes, String? mimeType) {
+  return (mimeType == null)
+      ? Blob(<dynamic>[bytes])
+      : Blob(<dynamic>[bytes], mimeType);
 }
