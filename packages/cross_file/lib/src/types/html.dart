@@ -77,8 +77,9 @@ class XFile extends XFileBase {
   // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.
   Blob _createBlobFromBytes(Uint8List bytes, String? mimeType) {
     return (mimeType == null)
-        ? Blob(<JSAny?>[bytes.toJS].toJS)
-        : Blob(<JSAny?>[bytes.toJS].toJS, BlobPropertyBag(type: mimeType));
+        ? Blob(<JSUint8Array>[bytes.toJS].toJS)
+        : Blob(
+            <JSUint8Array>[bytes.toJS].toJS, BlobPropertyBag(type: mimeType));
   }
 
   // Overridable (meta) data that can be specified by the constructors.

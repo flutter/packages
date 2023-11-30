@@ -5,7 +5,7 @@
 @TestOn('chrome') // Uses web-only Flutter SDK
 
 import 'dart:convert';
-import 'dart:js_interop' as js_util;
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
@@ -15,11 +15,11 @@ import 'package:web/helpers.dart' as html;
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
 final html.File textFile =
-    html.File(<js_util.JSAny>[bytes.toJS].toJS, 'hello.txt');
+    html.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
 final String textFileUrl =
     // TODO(kevmoo): drop when ignore when pkg:web constraint excludes v0.3
     // ignore: unnecessary_cast
-    html.URL.createObjectURL(textFile as js_util.JSObject);
+    html.URL.createObjectURL(textFile as JSObject);
 
 void main() {
   group('Create with an objectUrl', () {
@@ -70,8 +70,8 @@ void main() {
       final html.Response response =
           (await html.window.fetch(file.path.toJS).toDart)! as html.Response;
 
-      final js_util.JSAny? arrayBuffer = await response.arrayBuffer().toDart;
-      final ByteBuffer data = (arrayBuffer! as js_util.JSArrayBuffer).toDart;
+      final JSAny? arrayBuffer = await response.arrayBuffer().toDart;
+      final ByteBuffer data = (arrayBuffer! as JSArrayBuffer).toDart;
       expect(data.asUint8List(), equals(bytes));
     });
 
@@ -107,7 +107,7 @@ void main() {
         final html.Element container =
             html.querySelector('#$crossFileDomElementId')!;
 
-        html.HTMLAnchorElement? element;
+        late html.HTMLAnchorElement element;
         for (int i = 0; i < container.childNodes.length; i++) {
           final html.Element test = container.children.item(i)!;
           if (test.tagName == 'A') {
@@ -117,7 +117,7 @@ void main() {
         }
 
         // if element is not found, the `firstWhere` call will throw StateError.
-        expect(element!.href, file.path);
+        expect(element.href, file.path);
         expect(element.download, file.name);
       });
 
