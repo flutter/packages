@@ -46,26 +46,26 @@
   bool shouldDownscale = shouldDownscaleWidth || shouldDownscaleHeight;
 
   if (shouldDownscale) {
-    double downscaledWidth = floor((height / originalHeight) * originalWidth);
-    double downscaledHeight = floor((width / originalWidth) * originalHeight);
+    double downScaledWidth = floor((height / originalHeight) * originalWidth);
+    double downScaledHeight = floor((width / originalWidth) * originalHeight);
 
     if (width < height) {
       if (!hasMaxWidth) {
-        width = downscaledWidth;
+        width = downScaledWidth;
       } else {
-        height = downscaledHeight;
+        height = downScaledHeight;
       }
     } else if (height < width) {
       if (!hasMaxHeight) {
-        height = downscaledHeight;
+        height = downScaledHeight;
       } else {
-        width = downscaledWidth;
+        width = downScaledWidth;
       }
     } else {
       if (originalWidth < originalHeight) {
-        width = downscaledWidth;
+        width = downScaledWidth;
       } else if (originalHeight < originalWidth) {
-        height = downscaledHeight;
+        height = downScaledHeight;
       }
     }
   }

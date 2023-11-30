@@ -18,6 +18,9 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+
+import androidx.core.util.SizeFCompat;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -40,6 +43,8 @@ public class ImageResizerTest {
   Context mockContext;
   File imageFile;
   File svgImageFile;
+  File tallJPG;
+  File wideJPG;
   File externalDirectory;
   Bitmap originalImageBitmap;
 
@@ -50,6 +55,8 @@ public class ImageResizerTest {
     mockCloseable = MockitoAnnotations.openMocks(this);
     imageFile = new File(getClass().getClassLoader().getResource("pngImage.png").getFile());
     svgImageFile = new File(getClass().getClassLoader().getResource("flutter_image.svg").getFile());
+    tallJPG = new File(getClass().getClassLoader().getResource("jpgImageTall.jpg").getFile());
+    wideJPG = new File(getClass().getClassLoader().getResource("jpgImageWide.jpg").getFile());
     originalImageBitmap = BitmapFactory.decodeFile(imageFile.getPath());
     TemporaryFolder temporaryFolder = new TemporaryFolder();
     temporaryFolder.create();
@@ -133,5 +140,16 @@ public class ImageResizerTest {
       assertTrue(capturedOptions.get(0).inJustDecodeBounds);
       assertFalse(capturedOptions.get(1).inJustDecodeBounds);
     }
+  }
+
+  @Test
+  public void onResizeImageIfNeeded_whenHeightAndWidthAreNotNull_shouldResizeCorrectly() {
+    String outputFile = resizer.resizeImageIfNeeded(tallJPG.getPath(), 6.0, 6.0, 100);
+    SizeFCompat originalSize = resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageTall.jpg");
+    
+    float width = originalSize.getWidth();
+    float height = originalSize.getHeight();
+    assertThat(width, equalTo(4));
+    assertThat(height, equalTo(6));
   }
 }

@@ -98,26 +98,26 @@ class ImageResizer {
     boolean shouldDownscale = shouldDownscaleWidth || shouldDownscaleHeight;
 
     if (shouldDownscale) {
-      double downscaledWidth = (height / originalHeight) * originalWidth;
-      double downscaledHeight = (width / originalWidth) * originalHeight;
+      double downScaledWidth = (height / originalHeight) * originalWidth;
+      double downScaledHeight = (width / originalWidth) * originalHeight;
 
       if (width < height) {
         if (!hasMaxWidth) {
-          width = downscaledWidth;
+          width = downScaledWidth;
         } else {
-          height = downscaledHeight;
+          height = downScaledHeight;
         }
       } else if (height < width) {
         if (!hasMaxHeight) {
-          height = downscaledHeight;
+          height = downScaledHeight;
         } else {
-          width = downscaledWidth;
+          width = downScaledWidth;
         }
       } else {
         if (originalWidth < originalHeight) {
-          width = downscaledWidth;
+          width = downScaledWidth;
         } else if (originalHeight < originalWidth) {
-          height = downscaledHeight;
+          height = downScaledHeight;
         }
       }
     }
@@ -145,7 +145,7 @@ class ImageResizer {
     }
   }
 
-  private SizeFCompat readFileDimensions(String path) {
+  SizeFCompat readFileDimensions(String path) {
     BitmapFactory.Options options = new BitmapFactory.Options();
     options.inJustDecodeBounds = true;
     decodeFile(path, options);
