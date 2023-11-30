@@ -145,7 +145,7 @@ class AstProxyApi extends Api {
   final List<Constructor> constructors;
 
   /// List of fields inside the API.
-  final List<Field> fields;
+  List<Field> fields;
 
   /// Name of the class this class considers the super class.
   final String? superClassName;
@@ -217,6 +217,17 @@ class Field extends NamedType {
 
   /// Whether this is a static field of a ProxyApi.
   final bool isStatic;
+
+  /// Returns a copy of [Parameter] instance with new attached [TypeDeclaration].
+  @override
+  Field copyWithType(TypeDeclaration type) {
+    return Field(
+      name: name,
+      type: type,
+      offset: offset,
+      documentationComments: documentationComments,
+    );
+  }
 }
 
 /// Represents a collection of [Method]s.
