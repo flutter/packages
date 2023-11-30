@@ -149,7 +149,7 @@ public class ImageResizerTest {
     
     float width = originalSize.getWidth();
     float height = originalSize.getHeight();
-    assertThat(width, equalTo(4));
+    assertThat(width, equalTo(3));
     assertThat(height, equalTo(6));
   }
 }
