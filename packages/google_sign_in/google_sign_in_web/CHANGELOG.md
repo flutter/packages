@@ -1,6 +1,6 @@
-## 0.12.3
+## 0.12.2+1
 
-* Re-publishes 0.12.2 with a small fix to the auth code initialization.
+* Re-publishes `0.12.2` with a small fix to the CodeClient initialization.
 
 ## 0.12.2 (withdrawn)
 
