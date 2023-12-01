@@ -8,7 +8,7 @@ from `dart:ui`, which means they're useful for Flutter apps.
 Import
 ------
 
-<?code-excerpt "example/lib/readme_excerpts.dart (Import)"?>
+<?code-excerpt "test/css_colors_test.dart (Import)"?>
 ```dart
 import 'package:css_colors/css_colors.dart';
 ```
@@ -16,7 +16,7 @@ import 'package:css_colors/css_colors.dart';
 Use
 ---
 
-<?code-excerpt "example/lib/readme_excerpts.dart (Usage)"?>
+<?code-excerpt "test/css_colors_test.dart (Usage)"?>
 ```dart
 final Container orange = Container(color: CSSColors.orange);
 ```

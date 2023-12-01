@@ -11,6 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_test:
+    sdk: flutter
 
 topics:
   - color
