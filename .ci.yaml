@@ -1099,7 +1099,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
       channel: stable
       version_file: flutter_stable.version
