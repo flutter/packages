@@ -1,1 +1,3 @@
+# Running the somes tests from these packages on an AVD with Android 34 causes failures.
+# TODO(camsim99): Remove shard as it no packages require running on AVDs with Android 33.
 []
