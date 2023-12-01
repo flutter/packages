@@ -61,7 +61,6 @@ class BenchmarkServer {
   /// The default initial page to load upon opening the benchmark app in Chrome.
   ///
   /// This value will be used by default if no value is passed to [initialPage].
-  /// See also, [initialPage] and [_benchmarkAppUrl].
   static const String defaultInitialPage = 'index.html';
 
   final ProcessManager _processManager = const LocalProcessManager();
@@ -99,7 +98,7 @@ class BenchmarkServer {
 
   /// The initial page to load upon opening the benchmark app in Chrome.
   ///
-  /// The default value is [defaultInitialPage]. See also, [_benchmarkAppUrl].
+  /// The default value is [defaultInitialPage].
   final String initialPage;
 
   String get _benchmarkAppUrl =>
