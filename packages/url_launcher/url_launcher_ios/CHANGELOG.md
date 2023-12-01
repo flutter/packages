@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 6.2.1
+
+* Migrates plugin from Objective-C to Swift.
+
 ## 6.2.0
 
 * Implements `supportsMode` and `supportsCloseForMode`.
