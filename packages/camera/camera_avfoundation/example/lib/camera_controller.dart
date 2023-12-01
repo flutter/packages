@@ -25,6 +25,7 @@ class CameraValue {
     required this.focusMode,
     required this.deviceOrientation,
     required this.description,
+    required this.captureMode,
     this.lockedCaptureOrientation,
     this.recordingOrientation,
     this.isPreviewPaused = false,
@@ -45,6 +46,7 @@ class CameraValue {
           deviceOrientation: DeviceOrientation.portraitUp,
           isPreviewPaused: false,
           description: description,
+          captureMode: CaptureMode.video,
         );
 
   /// True after [CameraController.initialize] has completed successfully.
@@ -97,6 +99,9 @@ class CameraValue {
   /// The properties of the camera device controlled by this controller.
   final CameraDescription description;
 
+  /// The capture mode of the camera device controlled by this controller.
+  final CaptureMode captureMode;
+
   /// Creates a modified copy of the object.
   ///
   /// Explicitly specified fields get the specified value, all other fields get
@@ -119,6 +124,7 @@ class CameraValue {
     bool? isPreviewPaused,
     CameraDescription? description,
     Optional<DeviceOrientation>? previewPauseOrientation,
+    CaptureMode? captureMode,
   }) {
     return CameraValue(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -142,6 +148,7 @@ class CameraValue {
       previewPauseOrientation: previewPauseOrientation == null
           ? this.previewPauseOrientation
           : previewPauseOrientation.orNull,
+      captureMode: captureMode ?? this.captureMode,
     );
   }
 
@@ -159,7 +166,8 @@ class CameraValue {
         'lockedCaptureOrientation: $lockedCaptureOrientation, '
         'recordingOrientation: $recordingOrientation, '
         'isPreviewPaused: $isPreviewPaused, '
-        'previewPausedOrientation: $previewPauseOrientation)';
+        'previewPausedOrientation: $previewPauseOrientation, '
+        'captureMode: $captureMode)';
   }
 }
 
@@ -435,6 +443,11 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<void> setFocusMode(FocusMode mode) async {
     await CameraPlatform.instance.setFocusMode(_cameraId, mode);
     value = value.copyWith(focusMode: mode);
+  }
+
+  Future<void> setCaptureMode(CaptureMode mode) async {
+    await CameraPlatform.instance.setCaptureMode(_cameraId, mode);
+    value = value.copyWith(captureMode: mode);
   }
 
   /// Releases the resources of this camera.

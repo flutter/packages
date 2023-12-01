@@ -104,4 +104,18 @@
   XCTAssertEqualObjects(@"portraitUp", FLTGetStringForUIDeviceOrientation(-1));
 }
 
+#pragma mark - capture mode tests
+
+- (void)testFLTGetCaptureModeForString {
+  XCTAssertEqual(FLTCaptureModeVideo, FLTGetFLTCaptureModeForString(@"video"));
+  XCTAssertEqual(FLTCaptureModePhoto, FLTGetFLTCaptureModeForString(@"photo"));
+  XCTAssertEqual(FLTCaptureModeInvalid, FLTGetFLTCaptureModeForString(@"unknown"));
+}
+
+- (void)testFLTGetStringForCaptureMode {
+  XCTAssertEqualObjects(@"video", FLTGetStringForFLTCaptureMode(FLTCaptureModeVideo));
+  XCTAssertEqualObjects(@"photo", FLTGetStringForFLTCaptureMode(FLTCaptureModePhoto));
+  XCTAssertNil(FLTGetStringForFLTCaptureMode(-1));
+}
+
 @end

@@ -962,24 +962,6 @@ NSString *const errorMethod = @"error";
   }];
 }
 
-// - (void)applyCaptureMode {
-//   [_captureDevice lockForConfiguration:nil];
-//   switch (_captureMode) {
-//     case FLTCaptureModePhoto:
-//       [_captureDevice setCaptureMode:AVCaptureCaptureModePhoto];
-//       break;
-//     case FLTCaptureModeVideo:
-//       [_captureDevice setCaptureMode:AVCaptureCaptureModeVideo];
-//       break;    
-//     case FLTCaptureModeInvalid:
-//       // This state is not intended to be reachable; it exists only for error handling during
-//       // message deserialization.
-//       NSAssert(false, @"");
-//       break;
-//   }
-//   [_captureDevice unlockForConfiguration];
-// }
-
 - (void)setFocusModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
   FLTFocusMode mode = FLTGetFLTFocusModeForString(modeStr);
   if (mode == FLTFocusModeInvalid) {

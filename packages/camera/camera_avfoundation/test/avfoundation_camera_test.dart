@@ -1150,6 +1150,27 @@ void main() {
         isMethodCall('stopImageStream', arguments: null),
       ]);
     });
+    
+    test('Should set the capture mode',() async {
+      // Arrange
+      final MethodChannelMock channel = MethodChannelMock(
+        channelName: _channelName,
+        methods: <String, dynamic>{
+          'setCaptureMode': null,
+        },
+      );
+
+      // Act
+      await camera.setCaptureMode(cameraId, CaptureMode.photo);
+
+      // Assert
+      expect(channel.log, <Matcher>[
+        isMethodCall('setCaptureMode', arguments: <String, Object?>{
+          'cameraId': cameraId,
+          'mode': CaptureMode.photo.name
+        }),
+      ]);
+    });
   });
 }
 
