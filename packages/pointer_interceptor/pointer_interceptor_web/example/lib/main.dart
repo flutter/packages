@@ -7,7 +7,7 @@ import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
-import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 const String _htmlElementViewType = '_htmlElementViewType';
 const double _videoWidth = 640;
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: const Text('PointerInterceptor demo'),
         actions: <Widget>[
-          PointerInterceptorPlatform.instance.buildWidget(
+          PointerInterceptor(
             // debug: true,
             child: IconButton(
               icon: const Icon(Icons.add_alert),
@@ -129,7 +129,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           _clickedOn('transparent-button');
                         },
                       ),
-                      PointerInterceptorPlatform.instance.buildWidget(
+                      PointerInterceptor(
+                        intercepting: false,
                         child: ElevatedButton(
                           key: const Key('wrapped-transparent-button'),
                           child:
@@ -139,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                         ),
                       ),
-                      PointerInterceptorPlatform.instance.buildWidget(
+                      PointerInterceptor(
                         child: ElevatedButton(
                           key: const Key('clickable-button'),
                           child: const Text('Works As Expected'),
@@ -159,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
-          PointerInterceptorPlatform.instance.buildWidget(
+          PointerInterceptor(
             // debug: true,
             child: FloatingActionButton(
               child: const Icon(Icons.navigation),
@@ -171,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       drawer: Drawer(
-        child: PointerInterceptorPlatform.instance.buildWidget(
+        child: PointerInterceptor(
           // debug: true, // Enable this to "see" the interceptor covering the column.
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
