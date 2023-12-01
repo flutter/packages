@@ -300,10 +300,6 @@ ${response.httpResponse.body}
               .childDirectory('wrapper')
               .childFile('gradle-wrapper.properties'));
         }
-        filesToUpdate.add(androidDirectory
-            .childDirectory('gradle')
-            .childDirectory('wrapper')
-            .childFile('gradle-wrapper.properties'));
         dependencyVersionPattern =
             RegExp(r'^\s*distributionUrl\s*=\s*.*\.zip', multiLine: true);
         // TODO(camsim99): Validate current AGP version against target Gradle
