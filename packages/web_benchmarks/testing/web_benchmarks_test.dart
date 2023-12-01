@@ -12,26 +12,35 @@ import 'package:web_benchmarks/src/runner.dart';
 
 Future<void> main() async {
   test('Can run a web benchmark', () async {
-    await _runBenchmark();
+    await _runBenchmarks(
+      benchmarkNames: <String>['scroll', 'page', 'tap'],
+      entryPoint: 'lib/benchmarks/runner.dart',
+    );
   }, timeout: Timeout.none);
 
   test('Can run a web benchmark with an alternate initial page', () async {
-    await _runBenchmark(initialPage: 'index.html#about');
+    await _runBenchmarks(
+      benchmarkNames: <String>['simple'],
+      entryPoint: 'lib/benchmarks/runner_simple.dart',
+      initialPage: 'index.html#about',
+    );
   }, timeout: Timeout.none);
 }
 
-Future<void> _runBenchmark({
+Future<void> _runBenchmarks({
+  required List<String> benchmarkNames,
+  required String entryPoint,
   String initialPage = BenchmarkServer.defaultInitialPage,
 }) async {
   final BenchmarkResults taskResult = await serveWebBenchmark(
     benchmarkAppDirectory: Directory('testing/test_app'),
-    entryPoint: 'lib/benchmarks/runner.dart',
+    entryPoint: entryPoint,
     useCanvasKit: false,
     treeShakeIcons: false,
     initialPage: initialPage,
   );
 
-  for (final String benchmarkName in <String>['scroll', 'page', 'tap']) {
+  for (final String benchmarkName in benchmarkNames) {
     for (final String metricName in <String>[
       'preroll_frame',
       'apply_frame',
