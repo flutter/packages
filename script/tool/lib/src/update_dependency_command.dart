@@ -280,13 +280,19 @@ ${response.httpResponse.body}
       final String newDependencyVersionEntry;
 
       if (_targetAndroidDependency == _AndroidDepdencyType.gradle) {
-        filesToUpdate.add(androidDirectory
+        if (androidDirectory
             .childDirectory('gradle')
             .childDirectory('wrapper')
-            .childFile('gradle-wrapper.properties'));
+            .existsSync()) {
+          filesToUpdate.add(androidDirectory
+              .childDirectory('gradle')
+              .childDirectory('wrapper')
+              .childFile('gradle-wrapper.properties'));
+        }
         if (androidDirectory
             .childDirectory('app')
             .childDirectory('gradle')
+            .childDirectory('wrapper')
             .existsSync()) {
           filesToUpdate.add(androidDirectory
               .childDirectory('app')
