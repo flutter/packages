@@ -4,7 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pointer_interceptor/pointer_interceptor.dart';
+import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
 
 void main() {
   runApp(const MaterialApp(home: PointerInterceptorIOSExample()));
@@ -50,7 +50,7 @@ class _PointerInterceptorIOSExampleState
         alignment: AlignmentDirectional.center,
         children: <Widget>[
           const _DummyPlatformView(),
-          PointerInterceptor(
+          PointerInterceptorPlatform.instance.buildWidget(
               child: TextButton(
                   style: TextButton.styleFrom(foregroundColor: Colors.red),
                   child: _buttonTapped

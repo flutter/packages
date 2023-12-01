@@ -6,6 +6,7 @@ import UIKit
 
 public class PointerInterceptorIosPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    registrar.register(PointerInterceptorFactory(), withId: "plugins.flutter.dev/pointer_interceptor_ios")
+    registrar.register(
+      PointerInterceptorFactory(), withId: "plugins.flutter.dev/pointer_interceptor_ios")
   }
 }

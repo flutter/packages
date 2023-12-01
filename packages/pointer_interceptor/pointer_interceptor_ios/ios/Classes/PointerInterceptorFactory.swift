@@ -4,12 +4,14 @@
 import Flutter
 
 class PointerInterceptorFactory: NSObject, FlutterPlatformViewFactory {
-  func create(withFrame frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?) -> FlutterPlatformView {
+  func create(withFrame frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?)
+    -> FlutterPlatformView
+  {
     let debug = (args as? [String: Any])?["debug"] as? Bool ?? false
     return PointerInterceptorView(frame: frame, debug: debug)
   }
 
   public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
-        return FlutterStandardMessageCodec.sharedInstance()
+    return FlutterStandardMessageCodec.sharedInstance()
   }
 }

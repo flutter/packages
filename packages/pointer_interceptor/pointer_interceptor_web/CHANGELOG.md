@@ -1,4 +1,4 @@
 ## 0.10.0
 
-* Moved web implementation to own package.
+* Moves web implementation to its own package.
 
