@@ -135,10 +135,10 @@ class MockFallbackStrategy extends _i1.Mock implements _i9.FallbackStrategy {
   }
 
   @override
-  _i4.VideoQualityConstraint get quality => (super.noSuchMethod(
+  _i4.VideoQuality get quality => (super.noSuchMethod(
         Invocation.getter(#quality),
-        returnValue: _i4.VideoQualityConstraint.SD,
-      ) as _i4.VideoQualityConstraint);
+        returnValue: _i4.VideoQuality.SD,
+      ) as _i4.VideoQuality);
   @override
   _i4.VideoResolutionFallbackRule get fallbackRule => (super.noSuchMethod(
         Invocation.getter(#fallbackRule),
@@ -158,7 +158,7 @@ class MockTestQualitySelectorHostApi extends _i1.Mock
   @override
   void create(
     int? identifier,
-    List<int?>? videoQualityConstraintIndexList,
+    List<_i4.VideoQualityData?>? videoQualityDataList,
     int? fallbackStrategyId,
   ) =>
       super.noSuchMethod(
@@ -166,7 +166,7 @@ class MockTestQualitySelectorHostApi extends _i1.Mock
           #create,
           [
             identifier,
-            videoQualityConstraintIndexList,
+            videoQualityDataList,
             fallbackStrategyId,
           ],
         ),
@@ -175,7 +175,7 @@ class MockTestQualitySelectorHostApi extends _i1.Mock
   @override
   _i4.ResolutionInfo getResolution(
     int? cameraInfoId,
-    _i4.VideoQualityConstraint? quality,
+    _i4.VideoQuality? quality,
   ) =>
       (super.noSuchMethod(
         Invocation.method(

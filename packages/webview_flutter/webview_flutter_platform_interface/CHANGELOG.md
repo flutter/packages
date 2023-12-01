@@ -1,3 +1,17 @@
+## 2.8.0
+
+* Adds support to track scroll position changes. See `PlatformWebViewController.setOnScrollPositionChange`.
+
+## 2.7.0
+
+* Adds support for handling HTTP basic authentication requests. See `PlatformNavigationDelegate.setOnHttpAuthRequest`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.6.0
+
+* Adds support to register a callback to intercept messages that are written to
+  the JavaScript console. See `PlatformWebViewController.setOnConsoleMessage`.
+
 ## 2.5.1
 
 * Adds pub topics to package metadata.

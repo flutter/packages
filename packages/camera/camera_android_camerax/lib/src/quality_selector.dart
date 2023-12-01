@@ -22,9 +22,9 @@ class QualitySelector extends JavaObject {
   QualitySelector.from(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      required VideoQualityConstraint quality,
+      required VideoQualityData quality,
       this.fallbackStrategy})
-      : qualityList = <VideoQualityConstraint>[quality],
+      : qualityList = <VideoQualityData>[quality],
         super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
@@ -65,7 +65,7 @@ class QualitySelector extends JavaObject {
   late final _QualitySelectorHostApiImpl _api;
 
   /// Desired qualities for this selector instance.
-  final List<VideoQualityConstraint> qualityList;
+  final List<VideoQualityData> qualityList;
 
   /// Desired fallback strategy for this selector instance.
   final FallbackStrategy? fallbackStrategy;
@@ -73,7 +73,7 @@ class QualitySelector extends JavaObject {
   /// Retrieves the corresponding resolution from the input [quality] for the
   /// camera represented by [cameraInfo].
   static Future<ResolutionInfo> getResolution(
-      CameraInfo cameraInfo, VideoQualityConstraint quality,
+      CameraInfo cameraInfo, VideoQuality quality,
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager}) {
     final _QualitySelectorHostApiImpl api = _QualitySelectorHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
@@ -107,10 +107,8 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
 
   /// Creates a [QualitySelector] instance with the desired qualities and
   /// fallback strategy specified.
-  void createFromInstance(
-      QualitySelector instance,
-      List<VideoQualityConstraint> qualityList,
-      FallbackStrategy? fallbackStrategy) {
+  void createFromInstance(QualitySelector instance,
+      List<VideoQualityData> qualityList, FallbackStrategy? fallbackStrategy) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (QualitySelector original) {
       return QualitySelector.detached(
@@ -120,13 +118,10 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
         fallbackStrategy: original.fallbackStrategy,
       );
     });
-    final List<int> qualityIndices = qualityList
-        .map<int>((VideoQualityConstraint quality) => quality.index)
-        .toList();
 
     create(
         identifier,
-        qualityIndices,
+        qualityList,
         fallbackStrategy == null
             ? null
             : instanceManager.getIdentifier(fallbackStrategy));
@@ -135,7 +130,7 @@ class _QualitySelectorHostApiImpl extends QualitySelectorHostApi {
   /// Retrieves the corresponding resolution from the input [quality] for the
   /// camera represented by [cameraInfo].
   Future<ResolutionInfo> getResolutionFromInstance(
-      CameraInfo cameraInfo, VideoQualityConstraint quality) async {
+      CameraInfo cameraInfo, VideoQuality quality) async {
     final int? cameraInfoIdentifier = instanceManager.getIdentifier(cameraInfo);
 
     if (cameraInfoIdentifier == null) {

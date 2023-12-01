@@ -20,19 +20,17 @@
 }
 
 #if TARGET_OS_IOS
-- (UIScrollView *)scrollViewForIdentifier:(NSNumber *)identifier {
-  return (UIScrollView *)[self.instanceManager instanceForIdentifier:identifier.longValue];
+- (UIScrollView *)scrollViewForIdentifier:(NSInteger)identifier {
+  return (UIScrollView *)[self.instanceManager instanceForIdentifier:identifier];
 }
 #endif
 
-- (void)createFromWebViewWithIdentifier:(nonnull NSNumber *)identifier
-                      webViewIdentifier:(nonnull NSNumber *)webViewIdentifier
+- (void)createFromWebViewWithIdentifier:(NSInteger)identifier
+                      webViewIdentifier:(NSInteger)webViewIdentifier
                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
 #if TARGET_OS_IOS
-  WKWebView *webView =
-      (WKWebView *)[self.instanceManager instanceForIdentifier:webViewIdentifier.longValue];
-  [self.instanceManager addDartCreatedInstance:webView.scrollView
-                                withIdentifier:identifier.longValue];
+  WKWebView *webView = (WKWebView *)[self.instanceManager instanceForIdentifier:webViewIdentifier];
+  [self.instanceManager addDartCreatedInstance:webView.scrollView withIdentifier:identifier];
 #else
   *error = [FlutterError errorWithCode:@"UnavailableApi"
                                message:@"scrollView is unavailable on macOS"
@@ -41,7 +39,7 @@
 }
 
 - (NSArray<NSNumber *> *)
-    contentOffsetForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
+    contentOffsetForScrollViewWithIdentifier:(NSInteger)identifier
                                        error:(FlutterError *_Nullable *_Nonnull)error {
 #if TARGET_OS_IOS
   CGPoint point = [[self scrollViewForIdentifier:identifier] contentOffset];
@@ -51,25 +49,23 @@
 #endif
 }
 
-- (void)scrollByForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
-                                          x:(nonnull NSNumber *)x
-                                          y:(nonnull NSNumber *)y
+- (void)scrollByForScrollViewWithIdentifier:(NSInteger)identifier
+                                          x:(double)x
+                                          y:(double)y
                                       error:(FlutterError *_Nullable *_Nonnull)error {
 #if TARGET_OS_IOS
   UIScrollView *scrollView = [self scrollViewForIdentifier:identifier];
   CGPoint contentOffset = scrollView.contentOffset;
-  [scrollView setContentOffset:CGPointMake(contentOffset.x + x.doubleValue,
-                                           contentOffset.y + y.doubleValue)];
+  [scrollView setContentOffset:CGPointMake(contentOffset.x + x, contentOffset.y + y)];
 #endif
 }
 
-- (void)setContentOffsetForScrollViewWithIdentifier:(nonnull NSNumber *)identifier
-                                                toX:(nonnull NSNumber *)x
-                                                  y:(nonnull NSNumber *)y
+- (void)setContentOffsetForScrollViewWithIdentifier:(NSInteger)identifier
+                                                toX:(double)x
+                                                  y:(double)y
                                               error:(FlutterError *_Nullable *_Nonnull)error {
 #if TARGET_OS_IOS
-  [[self scrollViewForIdentifier:identifier]
-      setContentOffset:CGPointMake(x.doubleValue, y.doubleValue)];
+  [[self scrollViewForIdentifier:identifier] setContentOffset:CGPointMake(x, y)];
 #endif
 }
 @end

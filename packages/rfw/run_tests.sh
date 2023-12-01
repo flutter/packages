@@ -9,4 +9,5 @@
 
 set -e
 pushd test_coverage; dart pub get; popd
-dart --enable-asserts test_coverage/bin/test_coverage.dart
+set -x
+dart --enable-asserts test_coverage/bin/test_coverage.dart "$@"

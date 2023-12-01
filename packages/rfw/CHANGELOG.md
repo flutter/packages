@@ -1,3 +1,13 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes lint warnings.
+
+## 1.0.15
+
+* Updates README.md to point to the CONTRIBUTING.md file.
+* Introduces CONTRIBUTING.md, and adds more information about golden testing.
+
 ## 1.0.14
 
 * Adds pub topics to package metadata.

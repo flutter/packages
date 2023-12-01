@@ -15,6 +15,7 @@ Future<void> main() async {
       benchmarkAppDirectory: Directory('testing/test_app'),
       entryPoint: 'lib/benchmarks/runner.dart',
       useCanvasKit: false,
+      treeShakeIcons: false,
     );
 
     for (final String benchmarkName in <String>['scroll', 'page', 'tap']) {

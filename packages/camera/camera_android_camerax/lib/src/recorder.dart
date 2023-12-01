@@ -59,13 +59,13 @@ class Recorder extends JavaObject {
     return QualitySelector.fromOrderedList(
       binaryMessenger: binaryMessenger,
       instanceManager: instanceManager,
-      qualityList: const <VideoQualityConstraint>[
-        VideoQualityConstraint.FHD,
-        VideoQualityConstraint.HD,
-        VideoQualityConstraint.SD
+      qualityList: <VideoQualityData>[
+        VideoQualityData(quality: VideoQuality.FHD),
+        VideoQualityData(quality: VideoQuality.HD),
+        VideoQualityData(quality: VideoQuality.SD),
       ],
       fallbackStrategy: FallbackStrategy(
-          quality: VideoQualityConstraint.FHD,
+          quality: VideoQuality.FHD,
           fallbackRule: VideoResolutionFallbackRule.higherQualityOrLowerThan),
     );
   }

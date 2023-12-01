@@ -24,7 +24,7 @@
 - (void)createWithConfiguration:(WKWebViewConfiguration *)configuration
                      completion:(void (^)(FlutterError *_Nullable))completion {
   long identifier = [self.instanceManager addHostCreatedInstance:configuration];
-  [self createWithIdentifier:@(identifier) completion:completion];
+  [self createWithIdentifier:identifier completion:completion];
 }
 @end
 
@@ -72,61 +72,53 @@
   return self;
 }
 
-- (WKWebViewConfiguration *)webViewConfigurationForIdentifier:(NSNumber *)identifier {
-  return (WKWebViewConfiguration *)[self.instanceManager
-      instanceForIdentifier:identifier.longValue];
+- (WKWebViewConfiguration *)webViewConfigurationForIdentifier:(NSInteger)identifier {
+  return (WKWebViewConfiguration *)[self.instanceManager instanceForIdentifier:identifier];
 }
 
-- (void)createWithIdentifier:(nonnull NSNumber *)identifier
-                       error:(FlutterError *_Nullable *_Nonnull)error {
+- (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error {
   FWFWebViewConfiguration *webViewConfiguration =
       [[FWFWebViewConfiguration alloc] initWithBinaryMessenger:self.binaryMessenger
                                                instanceManager:self.instanceManager];
-  [self.instanceManager addDartCreatedInstance:webViewConfiguration
-                                withIdentifier:identifier.longValue];
+  [self.instanceManager addDartCreatedInstance:webViewConfiguration withIdentifier:identifier];
 }
 
-- (void)createFromWebViewWithIdentifier:(nonnull NSNumber *)identifier
-                      webViewIdentifier:(nonnull NSNumber *)webViewIdentifier
+- (void)createFromWebViewWithIdentifier:(NSInteger)identifier
+                      webViewIdentifier:(NSInteger)webViewIdentifier
                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  WKWebView *webView =
-      (WKWebView *)[self.instanceManager instanceForIdentifier:webViewIdentifier.longValue];
-  [self.instanceManager addDartCreatedInstance:webView.configuration
-                                withIdentifier:identifier.longValue];
+  WKWebView *webView = (WKWebView *)[self.instanceManager instanceForIdentifier:webViewIdentifier];
+  [self.instanceManager addDartCreatedInstance:webView.configuration withIdentifier:identifier];
 }
 
-- (void)setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:(nonnull NSNumber *)identifier
-                                                         isAllowed:(nonnull NSNumber *)allow
+- (void)setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:(NSInteger)identifier
+                                                         isAllowed:(BOOL)allow
                                                              error:
                                                                  (FlutterError *_Nullable *_Nonnull)
                                                                      error {
 #if TARGET_OS_IOS
-  [[self webViewConfigurationForIdentifier:identifier]
-      setAllowsInlineMediaPlayback:allow.boolValue];
+  [[self webViewConfigurationForIdentifier:identifier] setAllowsInlineMediaPlayback:allow];
 #endif
   // No-op, rather than error out, on macOS, since it's not a meaningful option on macOS and it's
   // easier for clients if it's just ignored.
 }
 
-- (void)setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:
-            (nonnull NSNumber *)identifier
-                                                                  isLimited:
-                                                                      (nonnull NSNumber *)limit
+- (void)setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:(NSInteger)identifier
+                                                                  isLimited:(BOOL)limit
                                                                       error:(FlutterError *_Nullable
                                                                                  *_Nonnull)error {
-  if (@available(iOS 14, *)) {
+  if (@available(iOS 14, macOS 11, *)) {
     [[self webViewConfigurationForIdentifier:identifier]
-        setLimitsNavigationsToAppBoundDomains:limit.boolValue];
+        setLimitsNavigationsToAppBoundDomains:limit];
   } else {
-    *error = [FlutterError
-        errorWithCode:@"FWFUnsupportedVersionError"
-              message:@"setLimitsNavigationsToAppBoundDomains is only supported on versions 14+."
-              details:nil];
+    *error = [FlutterError errorWithCode:@"FWFUnsupportedVersionError"
+                                 message:@"setLimitsNavigationsToAppBoundDomains is only supported "
+                                         @"on iOS 14+ and macOS 11+."
+                                 details:nil];
   }
 }
 
 - (void)
-    setMediaTypesRequiresUserActionForConfigurationWithIdentifier:(nonnull NSNumber *)identifier
+    setMediaTypesRequiresUserActionForConfigurationWithIdentifier:(NSInteger)identifier
                                                          forTypes:
                                                              (nonnull NSArray<
                                                                  FWFWKAudiovisualMediaTypeEnumData

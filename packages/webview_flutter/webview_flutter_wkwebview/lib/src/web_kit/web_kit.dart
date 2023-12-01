@@ -1073,6 +1073,13 @@ abstract class WKWebView extends UIView {
     return _webViewApi.getTitleForInstances(this);
   }
 
+  /// The custom user agent string.
+  ///
+  /// Represents [WKWebView.customUserAgent](https://developer.apple.com/documentation/webkit/wkwebview/1414950-customuseragent?language=objc).
+  Future<String?> getCustomUserAgent() {
+    return _webViewApi.getCustomUserAgentForInstances(this);
+  }
+
   /// Indicates whether horizontal swipe gestures trigger page navigation.
   ///
   /// The default value is false.

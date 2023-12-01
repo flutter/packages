@@ -999,6 +999,8 @@ abstract class TestWebSettingsHostApi {
 
   void setTextZoom(int instanceId, int textZoom);
 
+  String getUserAgentString(int instanceId);
+
   static void setup(TestWebSettingsHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1365,6 +1367,29 @@ abstract class TestWebSettingsHostApi {
         });
       }
     }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.getUserAgentString',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.getUserAgentString was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebSettingsHostApi.getUserAgentString was null, expected non-null int.');
+          final String output = api.getUserAgentString(arg_instanceId!);
+          return <Object?>[output];
+        });
+      }
+    }
   }
 }
 
@@ -1516,6 +1541,8 @@ abstract class TestWebChromeClientHostApi {
   void setSynchronousReturnValueForOnShowFileChooser(
       int instanceId, bool value);
 
+  void setSynchronousReturnValueForOnConsoleMessage(int instanceId, bool value);
+
   static void setup(TestWebChromeClientHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1563,6 +1590,33 @@ abstract class TestWebChromeClientHostApi {
           assert(arg_value != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnShowFileChooser was null, expected non-null bool.');
           api.setSynchronousReturnValueForOnShowFileChooser(
+              arg_instanceId!, arg_value!);
+          return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_instanceId = (args[0] as int?);
+          assert(arg_instanceId != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage was null, expected non-null int.');
+          final bool? arg_value = (args[1] as bool?);
+          assert(arg_value != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClientHostApi.setSynchronousReturnValueForOnConsoleMessage was null, expected non-null bool.');
+          api.setSynchronousReturnValueForOnConsoleMessage(
               arg_instanceId!, arg_value!);
           return <Object?>[];
         });
@@ -1757,6 +1811,49 @@ abstract class TestPermissionRequestHostApi {
           assert(arg_instanceId != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.PermissionRequestHostApi.deny was null, expected non-null int.');
           api.deny(arg_instanceId!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+/// Host API for `CustomViewCallback`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/WebChromeClient.CustomViewCallback.
+abstract class TestCustomViewCallbackHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  /// Handles Dart method `CustomViewCallback.onCustomViewHidden`.
+  void onCustomViewHidden(int identifier);
+
+  static void setup(TestCustomViewCallbackHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.CustomViewCallbackHostApi.onCustomViewHidden',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.CustomViewCallbackHostApi.onCustomViewHidden was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.CustomViewCallbackHostApi.onCustomViewHidden was null, expected non-null int.');
+          api.onCustomViewHidden(arg_identifier!);
           return <Object?>[];
         });
       }

@@ -40,7 +40,7 @@ class FallbackStrategy extends JavaObject {
   late final _FallbackStrategyHostApiImpl _api;
 
   /// The input quality used to specify this fallback strategy relative to.
-  final VideoQualityConstraint quality;
+  final VideoQuality quality;
 
   /// The fallback rule that this strategy will follow.
   final VideoResolutionFallbackRule fallbackRule;
@@ -72,9 +72,7 @@ class _FallbackStrategyHostApiImpl extends FallbackStrategyHostApi {
 
   /// Creates a [FallbackStrategy] instance with the specified video [quality]
   /// and [fallbackRule].
-  void createFromInstance(
-      FallbackStrategy instance,
-      VideoQualityConstraint quality,
+  void createFromInstance(FallbackStrategy instance, VideoQuality quality,
       VideoResolutionFallbackRule fallbackRule) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (FallbackStrategy original) {

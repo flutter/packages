@@ -33,14 +33,14 @@ void main() {
       );
 
       FallbackStrategy.detached(
-        quality: VideoQualityConstraint.UHD,
+        quality: VideoQuality.UHD,
         fallbackRule: VideoResolutionFallbackRule.higherQualityThan,
         instanceManager: instanceManager,
       );
 
       verifyNever(mockApi.create(
         argThat(isA<int>()),
-        argThat(isA<VideoQualityConstraint>()),
+        argThat(isA<VideoQuality>()),
         argThat(isA<VideoResolutionFallbackRule>()),
       ));
     });
@@ -55,7 +55,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const VideoQualityConstraint quality = VideoQualityConstraint.HD;
+      const VideoQuality quality = VideoQuality.HD;
 
       const VideoResolutionFallbackRule fallbackRule =
           VideoResolutionFallbackRule.lowerQualityThan;

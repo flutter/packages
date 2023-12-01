@@ -15,10 +15,15 @@ class ListTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
     api.echo(top) { result in
-      XCTAssertEqual(1, result.testList?.count)
-      XCTAssertTrue(result.testList?[0] is TestMessage)
-      XCTAssert(equalsList(inside.testList, (result.testList?[0] as! TestMessage).testList))
-      expectation.fulfill()
+      switch result {
+        case .success(let res) :
+          XCTAssertEqual(1, res.testList?.count)
+          XCTAssertTrue(res.testList?[0] is TestMessage)
+          XCTAssert(equalsList(inside.testList, (res.testList?[0] as! TestMessage).testList))
+          expectation.fulfill()
+        case .failure(_) :
+          return
+      }
     }
     wait(for: [expectation], timeout: 1.0)
   }

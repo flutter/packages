@@ -107,7 +107,7 @@ extern WKUserScript *FWFNativeWKUserScriptFromScriptData(FWFWKUserScriptData *da
   return [[WKUserScript alloc]
         initWithSource:data.source
          injectionTime:FWFNativeWKUserScriptInjectionTimeFromEnumData(data.injectionTime)
-      forMainFrameOnly:data.isMainFrameOnly.boolValue];
+      forMainFrameOnly:data.isMainFrameOnly];
 }
 
 WKUserScriptInjectionTime FWFNativeWKUserScriptInjectionTimeFromEnumData(
@@ -180,7 +180,7 @@ FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *req
 }
 
 FWFWKFrameInfoData *FWFWKFrameInfoDataFromNativeWKFrameInfo(WKFrameInfo *info) {
-  return [FWFWKFrameInfoData makeWithIsMainFrame:@(info.isMainFrame)];
+  return [FWFWKFrameInfoData makeWithIsMainFrame:info.isMainFrame];
 }
 
 WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
@@ -208,7 +208,7 @@ FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error) {
       }
     }
   }
-  return [FWFNSErrorData makeWithCode:@(error.code) domain:error.domain userInfo:userInfo];
+  return [FWFNSErrorData makeWithCode:error.code domain:error.domain userInfo:userInfo];
 }
 
 FWFNSKeyValueChangeKeyEnumData *FWFNSKeyValueChangeKeyEnumDataFromNativeNSKeyValueChangeKey(
@@ -257,7 +257,7 @@ FWFWKNavigationType FWFWKNavigationTypeFromNativeWKNavigationType(WKNavigationTy
 FWFWKSecurityOriginData *FWFWKSecurityOriginDataFromNativeWKSecurityOrigin(
     WKSecurityOrigin *origin) {
   return [FWFWKSecurityOriginData makeWithHost:origin.host
-                                          port:@(origin.port)
+                                          port:origin.port
                                       protocol:origin.protocol];
 }
 
