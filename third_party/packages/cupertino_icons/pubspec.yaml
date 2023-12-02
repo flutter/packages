@@ -8,12 +8,6 @@ version: 1.0.7
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
-flutter:
-  fonts:
-    - family: CupertinoIcons
-      fonts:
-        - asset: assets/CupertinoIcons.ttf
-
 dependencies:
   flutter:
     sdk: flutter
@@ -21,6 +15,12 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter:
+  fonts:
+    - family: CupertinoIcons
+      fonts:
+        - asset: assets/CupertinoIcons.ttf
 
 topics:
   - assets
