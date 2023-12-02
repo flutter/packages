@@ -52,13 +52,15 @@ class GisSdkClient {
       onError: _onTokenError,
     );
 
-    _codeClient = _initializeCodeClient(
-      clientId,
-      hostedDomain: hostedDomain,
-      onResponse: _onCodeResponse,
-      onError: _onCodeError,
-      scopes: initialScopes,
-    );
+    if (initialScopes.isNotEmpty) {
+      _codeClient = _initializeCodeClient(
+        clientId,
+        hostedDomain: hostedDomain,
+        onResponse: _onCodeResponse,
+        onError: _onCodeError,
+        scopes: initialScopes,
+      );
+    }
   }
 
   void _logIfEnabled(String message, [List<Object?>? more]) {
@@ -291,7 +293,13 @@ class GisSdkClient {
   /// Requests a server auth code per:
   /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
   Future<String?> requestServerAuthCode() async {
-    _codeClient.requestCode();
+    // TODO(dit): Enable granular authorization, https://github.com/flutter/flutter/issues/139406
+    assert(_codeClient != null,
+        'CodeClient not initialized correctly. Ensure the `scopes` list passed to `init()` or `initWithParams()` is not empty!');
+    if (_codeClient == null) {
+      return null;
+    }
+    _codeClient!.requestCode();
     final CodeResponse response = await _codeResponses.stream.first;
     return response.code;
   }
@@ -461,7 +469,8 @@ class GisSdkClient {
 
   // The Google Identity Services client for oauth requests.
   late TokenClient _tokenClient;
-  late CodeClient _codeClient;
+  // CodeClient will not be created if `initialScopes` is empty.
+  CodeClient? _codeClient;
 
   // Streams of credential and token responses.
   late StreamController<CredentialResponse> _credentialResponses;

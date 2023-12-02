@@ -1,4 +1,8 @@
-## 0.12.2
+## 0.12.2+1
+
+* Re-publishes `0.12.2` with a small fix to the CodeClient initialization.
+
+## 0.12.2 (withdrawn)
 
 * Adds server auth code retrieval to google_sign_in_web.
 * Adds `web_only` library to access web-only methods more easily.
