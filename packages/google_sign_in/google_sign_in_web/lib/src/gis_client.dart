@@ -293,6 +293,7 @@ class GisSdkClient {
   /// Requests a server auth code per:
   /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
   Future<String?> requestServerAuthCode() async {
+    // TODO(dit): Enable granular authorization, https://github.com/flutter/flutter/issues/139406
     assert(_codeClient != null,
         'CodeClient not initialized correctly. Ensure the `scopes` list passed to `init()` or `initWithParams()` is not empty!');
     if (_codeClient == null) {
