@@ -14,6 +14,14 @@ flutter:
       fonts:
         - asset: assets/CupertinoIcons.ttf
 
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
 topics:
   - assets
   - icons
