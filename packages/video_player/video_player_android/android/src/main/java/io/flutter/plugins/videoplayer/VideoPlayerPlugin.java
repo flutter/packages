@@ -20,6 +20,7 @@ import io.flutter.plugins.videoplayer.Messages.MixWithOthersMessage;
 import io.flutter.plugins.videoplayer.Messages.PlaybackSpeedMessage;
 import io.flutter.plugins.videoplayer.Messages.PositionMessage;
 import io.flutter.plugins.videoplayer.Messages.TextureMessage;
+import io.flutter.plugins.videoplayer.Messages.TrackSelectionsMessage;
 import io.flutter.plugins.videoplayer.Messages.VolumeMessage;
 import io.flutter.view.TextureRegistry;
 import java.security.KeyManagementException;
@@ -201,7 +202,23 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     player.seekTo(arg.getPosition().intValue());
   }
+  public TrackSelectionsMessage trackSelections(TextureMessage arg) {
+    System.err.println("xxx : tracks 5 ...");
+    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    TrackSelectionsMessage result = new TrackSelectionsMessage();
+    result.setTextureId(arg.getTextureId());
+    result.setTrackSelections(player.getTrackSelections());
+    System.err.println("xxx : tracks 51 ...");
+    System.err.println(result.toString());
+    return result;
+  }
 
+  public void setTrackSelection(TrackSelectionsMessage arg) {
+    System.err.println("xxx : set tracks 51 ...");
+    System.err.println(arg.getTrackId().toString());
+    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    player.setTrackSelection(arg.getTrackId());
+  }
   public void pause(@NonNull TextureMessage arg) {
     VideoPlayer player = videoPlayers.get(arg.getTextureId());
     player.pause();

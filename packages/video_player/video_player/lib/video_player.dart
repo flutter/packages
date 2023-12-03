@@ -178,9 +178,8 @@ class VideoPlayerValue {
     double? volume,
     double? playbackSpeed,
     int? rotationCorrection,
-    String? errorDescription = _defaultErrorDescription,
     bool? isCompleted,
-    String? errorDescription,
+    String? errorDescription = _defaultErrorDescription,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -197,9 +196,6 @@ class VideoPlayerValue {
       volume: volume ?? this.volume,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       rotationCorrection: rotationCorrection ?? this.rotationCorrection,
-      errorDescription: errorDescription != _defaultErrorDescription
-          ? errorDescription
-          : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
       errorDescription: errorDescription ?? this.errorDescription,
     );
@@ -531,21 +527,23 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   @override
   Future<void> dispose() async {
-    if (_isDisposed) {
-      return;
-    }
-    if (_creatingCompleter != null) {
-      await _creatingCompleter!.future;
-      if (!_isDisposed) {
-        _isDisposed = true;
-        _timer?.cancel();
-        await _eventSubscription?.cancel();
-        await _videoPlayerPlatform.dispose(_textureId);
+    try {
+      if (_isDisposed) {
+        return;
       }
-      _lifeCycleObserver?.dispose();
-    }
-    _isDisposed = true;
-    super.dispose();
+      if (_creatingCompleter != null) {
+        await _creatingCompleter!.future;
+        if (!_isDisposed) {
+          _isDisposed = true;
+          _timer?.cancel();
+          await _eventSubscription?.cancel();
+          await _videoPlayerPlatform.dispose(_textureId);
+        }
+        _lifeCycleObserver?.dispose();
+      }
+      _isDisposed = true;
+      super.dispose();
+    } catch ($) {}
   }
 
   /// Starts playing the video.
@@ -833,7 +831,7 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
 /// Widget that displays the video controlled by [controller].
 class VideoPlayer extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {super.key});
+  const VideoPlayer(this.controller, {key});
 
   /// The [VideoPlayerController] responsible for the video being rendered in
   /// this widget.
@@ -954,7 +952,7 @@ class VideoScrubber extends StatefulWidget {
   /// [controller] is the [VideoPlayerController] that will be controlled by
   /// this scrubber.
   const VideoScrubber({
-    super.key,
+    key,
     required this.child,
     required this.controller,
   });
@@ -1031,7 +1029,7 @@ class VideoProgressIndicator extends StatefulWidget {
   /// to `top: 5.0`.
   const VideoProgressIndicator(
     this.controller, {
-    super.key,
+    key,
     this.colors = const VideoProgressColors(),
     required this.allowScrubbing,
     this.padding = const EdgeInsets.only(top: 5.0),
@@ -1164,7 +1162,7 @@ class ClosedCaption extends StatelessWidget {
   /// [VideoPlayerValue.caption].
   ///
   /// If [text] is null, nothing will be displayed.
-  const ClosedCaption({super.key, this.text, this.textStyle});
+  const ClosedCaption({key, this.text, this.textStyle});
 
   /// The text that will be shown in the closed caption, or null if no caption
   /// should be shown.
