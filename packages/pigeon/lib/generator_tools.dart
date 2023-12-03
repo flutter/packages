@@ -164,9 +164,22 @@ class Indent {
   }
 }
 
-/// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func, String dartPackageName) {
-  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
+/// Create the generated channel name for a [method] on an [api].
+String makeChannelName(Api api, Method method, String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: api.name,
+    methodName: method.name,
+    dartPackageName: dartPackageName,
+  );
+}
+
+/// Create the generated channel name for a method on an api.
+String makeChannelNameWithStrings({
+  required String apiName,
+  required String methodName,
+  required String dartPackageName,
+}) {
+  return 'dev.flutter.pigeon.$dartPackageName.$apiName.$methodName';
 }
 
 // TODO(tarrinneal): Determine whether HostDataType is needed.
