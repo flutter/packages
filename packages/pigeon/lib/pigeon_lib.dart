@@ -869,7 +869,8 @@ List<Error> _validateAst(Root root, String source) {
           ));
         }
       }
-      if (method.taskQueueType != TaskQueueType.serial && api is HostApi) {
+      if (method.taskQueueType != TaskQueueType.serial &&
+          api is AstFlutterApi) {
         result.add(Error(
           message: 'Unsupported TaskQueue specification on ${method.name}',
           lineNumber: _calculateLineNumberNullable(source, method.offset),

@@ -30,7 +30,7 @@ class Method extends Node {
     required this.returnType,
     required this.parameters,
     required this.location,
-    required this.required,
+    this.required = false,
     this.isAsynchronous = false,
     this.isStatic = false,
     this.offset,
