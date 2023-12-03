@@ -9,23 +9,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ShortcutManager;
 import android.os.Build;
+import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry.NewIntentListener;
+import io.flutter.plugins.quickactions.Messages.AndroidQuickActionsFlutterApi;
 
 /** QuickActionsPlugin */
 public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewIntentListener {
-  private static final String CHANNEL_ID = "plugins.flutter.io/quick_actions_android";
+  private static final String TAG = "QuickActionsAndroid";
 
-  private MethodChannel channel;
-  private MethodCallHandlerImpl handler;
-  private Activity activity;
+  private QuickActions quickActions;
+  private AndroidQuickActionsFlutterApi quickActionsFlutterApi;
   private final @NonNull AndroidSdkChecker sdkChecker;
 
   // Interface for an injectable SDK version checker.
@@ -52,31 +51,40 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
   @SuppressWarnings("deprecation")
   public static void registerWith(
       @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    final QuickActionsPlugin plugin = new QuickActionsPlugin();
-    plugin.setupChannel(registrar.messenger(), registrar.context(), registrar.activity());
+    QuickActions quickActions = new QuickActions(registrar.context());
+    quickActions.setActivity(registrar.activity());
+    Messages.AndroidQuickActionsApi.setup(registrar.messenger(), quickActions);
   }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    setupChannel(binding.getBinaryMessenger(), binding.getApplicationContext(), null);
+    this.quickActions = new QuickActions(binding.getApplicationContext());
+    Messages.AndroidQuickActionsApi.setup(binding.getBinaryMessenger(), quickActions);
+    this.quickActionsFlutterApi = new AndroidQuickActionsFlutterApi(binding.getBinaryMessenger());
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    teardownChannel();
+    Messages.AndroidQuickActionsApi.setup(binding.getBinaryMessenger(), null);
+    this.quickActions = null;
   }
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-    activity = binding.getActivity();
-    handler.setActivity(activity);
+    if (this.quickActions == null) {
+      Log.wtf(TAG, "quickActions was never set.");
+      return;
+    }
+
+    Activity activity = binding.getActivity();
+    this.quickActions.setActivity(activity);
     binding.addOnNewIntentListener(this);
     onNewIntent(activity.getIntent());
   }
 
   @Override
   public void onDetachedFromActivity() {
-    handler.setActivity(null);
+    quickActions.setActivity(null);
   }
 
   @Override
@@ -96,27 +104,20 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
     if (!sdkChecker.sdkIsAtLeast(Build.VERSION_CODES.N_MR1)) {
       return false;
     }
+    Activity activity = this.quickActions.getActivity();
     // Notify the Dart side if the launch intent has the intent extra relevant to quick actions.
-    if (intent.hasExtra(MethodCallHandlerImpl.EXTRA_ACTION) && channel != null) {
+    if (intent.hasExtra(QuickActions.EXTRA_ACTION) && activity != null) {
       Context context = activity.getApplicationContext();
       ShortcutManager shortcutManager =
           (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
-      String shortcutId = intent.getStringExtra(MethodCallHandlerImpl.EXTRA_ACTION);
-      channel.invokeMethod("launch", shortcutId);
+      String shortcutId = intent.getStringExtra(QuickActions.EXTRA_ACTION);
+      quickActionsFlutterApi.launchAction(
+          shortcutId,
+          value -> {
+            // noop
+          });
       shortcutManager.reportShortcutUsed(shortcutId);
     }
     return false;
-  }
-
-  private void setupChannel(BinaryMessenger messenger, Context context, Activity activity) {
-    channel = new MethodChannel(messenger, CHANNEL_ID);
-    handler = new MethodCallHandlerImpl(context, activity);
-    channel.setMethodCallHandler(handler);
-  }
-
-  private void teardownChannel() {
-    channel.setMethodCallHandler(null);
-    channel = null;
-    handler = null;
   }
 }

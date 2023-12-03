@@ -17,10 +17,10 @@ containing a rich text representation.
 the Markdown into an abstract syntax tree (AST). The nodes of the AST are an
 HTML representation of the Markdown data.
 
-## Flutter Isn't a HTML Renderer
+## Flutter Isn't an HTML Renderer
 
 While this approach to creating a rich text representation of Markdown source
-text in Flutter works well, Flutter isn't a HTML renderer like a web browser.
+text in Flutter works well, Flutter isn't an HTML renderer like a web browser.
 Markdown was developed by John Gruber in 2004 to allow users to turn readable,
 plain text content into rich text HTML. This close association with HTML allows
 for the injection of HTML into the Markdown source data. Markdown parsers

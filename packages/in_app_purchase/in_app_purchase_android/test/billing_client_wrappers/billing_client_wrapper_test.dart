@@ -54,6 +54,7 @@ void main() {
     converter.fromJson(6);
     converter.fromJson(7);
     converter.fromJson(8);
+    converter.fromJson(12);
   });
 
   group('startConnection', () {

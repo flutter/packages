@@ -62,6 +62,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         return true;
       }
     }
+    // This should be the only place where the last GoRoute exit the screen.
+    final GoRoute lastRoute =
+        currentConfiguration.matches.last.route as GoRoute;
+    if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
+      return !(await lastRoute.onExit!(navigatorKey.currentContext!));
+    }
     return false;
   }
 
@@ -241,7 +247,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 /// The iterator starts with the navigator that hosts the top-most route. This
 /// navigator may not be the inner-most navigator if the top-most route is a
 /// pageless route, such as a dialog or bottom sheet.
-class _NavigatorStateIterator extends Iterator<NavigatorState> {
+class _NavigatorStateIterator implements Iterator<NavigatorState> {
   _NavigatorStateIterator(this.matchList, this.root)
       : index = matchList.matches.length - 1;
 

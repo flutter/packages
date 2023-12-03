@@ -43,7 +43,7 @@ enum SourceType { camera, gallery }
 class SourceSpecification {
   SourceSpecification(this.type, this.camera);
   SourceType type;
-  SourceCamera? camera;
+  SourceCamera camera;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostImagePickerApi')

@@ -138,6 +138,7 @@ class MockFlutterAssetManager extends _i1.Mock
         ),
         returnValue: _i5.Future<List<String?>>.value(<String?>[]),
       ) as _i5.Future<List<String?>>);
+
   @override
   _i5.Future<String> getAssetFilePathByName(String? name) =>
       (super.noSuchMethod(
@@ -166,6 +167,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setJavaScriptCanOpenWindowsAutomatically(bool? flag) =>
       (super.noSuchMethod(
@@ -176,6 +178,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setSupportMultipleWindows(bool? support) =>
       (super.noSuchMethod(
@@ -186,6 +189,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setJavaScriptEnabled(bool? flag) => (super.noSuchMethod(
         Invocation.method(
@@ -195,6 +199,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setUserAgentString(String? userAgentString) =>
       (super.noSuchMethod(
@@ -205,6 +210,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
       (super.noSuchMethod(
@@ -215,6 +221,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setSupportZoom(bool? support) => (super.noSuchMethod(
         Invocation.method(
@@ -224,6 +231,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setLoadWithOverviewMode(bool? overview) =>
       (super.noSuchMethod(
@@ -234,6 +242,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setUseWideViewPort(bool? use) => (super.noSuchMethod(
         Invocation.method(
@@ -243,6 +252,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setDisplayZoomControls(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
@@ -252,6 +262,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setBuiltInZoomControls(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
@@ -261,6 +272,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setAllowFileAccess(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
@@ -270,6 +282,7 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
         Invocation.method(
@@ -279,6 +292,16 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<String> getUserAgentString() => (super.noSuchMethod(
+        Invocation.method(
+          #getUserAgentString,
+          [],
+        ),
+        returnValue: _i5.Future<String>.value(''),
+      ) as _i5.Future<String>);
+
   @override
   _i2.WebSettings copy() => (super.noSuchMethod(
         Invocation.method(
@@ -312,6 +335,7 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i2.WebStorage copy() => (super.noSuchMethod(
         Invocation.method(
@@ -344,6 +368,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           Invocation.getter(#settings),
         ),
       ) as _i2.WebSettings);
+
   @override
   _i5.Future<void> loadData({
     required String? data,
@@ -363,6 +388,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> loadDataWithBaseUrl({
     String? baseUrl,
@@ -386,6 +412,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> loadUrl(
     String? url,
@@ -402,6 +429,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> postUrl(
     String? url,
@@ -418,6 +446,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<String?> getUrl() => (super.noSuchMethod(
         Invocation.method(
@@ -426,6 +455,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
         returnValue: _i5.Future<String?>.value(),
       ) as _i5.Future<String?>);
+
   @override
   _i5.Future<bool> canGoBack() => (super.noSuchMethod(
         Invocation.method(
@@ -434,6 +464,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
         returnValue: _i5.Future<bool>.value(false),
       ) as _i5.Future<bool>);
+
   @override
   _i5.Future<bool> canGoForward() => (super.noSuchMethod(
         Invocation.method(
@@ -442,6 +473,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
         returnValue: _i5.Future<bool>.value(false),
       ) as _i5.Future<bool>);
+
   @override
   _i5.Future<void> goBack() => (super.noSuchMethod(
         Invocation.method(
@@ -451,6 +483,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> goForward() => (super.noSuchMethod(
         Invocation.method(
@@ -460,6 +493,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> reload() => (super.noSuchMethod(
         Invocation.method(
@@ -469,6 +503,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> clearCache(bool? includeDiskFiles) => (super.noSuchMethod(
         Invocation.method(
@@ -478,6 +513,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<String?> evaluateJavascript(String? javascriptString) =>
       (super.noSuchMethod(
@@ -487,6 +523,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
         returnValue: _i5.Future<String?>.value(),
       ) as _i5.Future<String?>);
+
   @override
   _i5.Future<String?> getTitle() => (super.noSuchMethod(
         Invocation.method(
@@ -495,6 +532,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
         returnValue: _i5.Future<String?>.value(),
       ) as _i5.Future<String?>);
+
   @override
   _i5.Future<void> scrollTo(
     int? x,
@@ -511,6 +549,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> scrollBy(
     int? x,
@@ -527,6 +566,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<int> getScrollX() => (super.noSuchMethod(
         Invocation.method(
@@ -535,6 +575,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
         returnValue: _i5.Future<int>.value(0),
       ) as _i5.Future<int>);
+
   @override
   _i5.Future<int> getScrollY() => (super.noSuchMethod(
         Invocation.method(
@@ -543,6 +584,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         ),
         returnValue: _i5.Future<int>.value(0),
       ) as _i5.Future<int>);
+
   @override
   _i5.Future<_i3.Offset> getScrollPosition() => (super.noSuchMethod(
         Invocation.method(
@@ -557,6 +599,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
           ),
         )),
       ) as _i5.Future<_i3.Offset>);
+
   @override
   _i5.Future<void> setWebViewClient(_i2.WebViewClient? webViewClient) =>
       (super.noSuchMethod(
@@ -567,6 +610,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> addJavaScriptChannel(
           _i2.JavaScriptChannel? javaScriptChannel) =>
@@ -578,6 +622,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> removeJavaScriptChannel(
           _i2.JavaScriptChannel? javaScriptChannel) =>
@@ -589,6 +634,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setDownloadListener(_i2.DownloadListener? listener) =>
       (super.noSuchMethod(
@@ -599,6 +645,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setWebChromeClient(_i2.WebChromeClient? client) =>
       (super.noSuchMethod(
@@ -609,6 +656,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> setBackgroundColor(_i3.Color? color) => (super.noSuchMethod(
         Invocation.method(
@@ -618,6 +666,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i2.WebView copy() => (super.noSuchMethod(
         Invocation.method(
@@ -648,21 +697,25 @@ class MockWebResourceRequest extends _i1.Mock
         Invocation.getter(#url),
         returnValue: '',
       ) as String);
+
   @override
   bool get isForMainFrame => (super.noSuchMethod(
         Invocation.getter(#isForMainFrame),
         returnValue: false,
       ) as bool);
+
   @override
   bool get hasGesture => (super.noSuchMethod(
         Invocation.getter(#hasGesture),
         returnValue: false,
       ) as bool);
+
   @override
   String get method => (super.noSuchMethod(
         Invocation.getter(#method),
         returnValue: '',
       ) as String);
+
   @override
   Map<String, String> get requestHeaders => (super.noSuchMethod(
         Invocation.getter(#requestHeaders),
@@ -701,6 +754,7 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
         String,
         int,
       ));
+
   @override
   _i2.DownloadListener copy() => (super.noSuchMethod(
         Invocation.method(
@@ -735,16 +789,19 @@ class MockWebViewAndroidJavaScriptChannel extends _i1.Mock
           Invocation.getter(#javascriptChannelRegistry),
         ),
       ) as _i4.JavascriptChannelRegistry);
+
   @override
   String get channelName => (super.noSuchMethod(
         Invocation.getter(#channelName),
         returnValue: '',
       ) as String);
+
   @override
   void Function(String) get postMessage => (super.noSuchMethod(
         Invocation.getter(#postMessage),
         returnValue: (String message) {},
       ) as void Function(String));
+
   @override
   _i2.JavaScriptChannel copy() => (super.noSuchMethod(
         Invocation.method(
@@ -779,6 +836,18 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setSynchronousReturnValueForOnConsoleMessage(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnConsoleMessage,
+          [value],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
   @override
   _i2.WebChromeClient copy() => (super.noSuchMethod(
         Invocation.method(
@@ -814,6 +883,7 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i2.WebViewClient copy() => (super.noSuchMethod(
         Invocation.method(
@@ -844,6 +914,7 @@ class MockJavascriptChannelRegistry extends _i1.Mock
         Invocation.getter(#channels),
         returnValue: <String, _i4.JavascriptChannel>{},
       ) as Map<String, _i4.JavascriptChannel>);
+
   @override
   void onJavascriptChannelMessage(
     String? channel,
@@ -859,6 +930,7 @@ class MockJavascriptChannelRegistry extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void updateJavascriptChannelsFromSet(Set<_i4.JavascriptChannel>? channels) =>
       super.noSuchMethod(
@@ -895,6 +967,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
         ),
         returnValue: _i5.Future<bool>.value(false),
       ) as _i5.FutureOr<bool>);
+
   @override
   void onPageStarted(String? url) => super.noSuchMethod(
         Invocation.method(
@@ -903,6 +976,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void onPageFinished(String? url) => super.noSuchMethod(
         Invocation.method(
@@ -911,6 +985,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void onProgress(int? progress) => super.noSuchMethod(
         Invocation.method(
@@ -919,6 +994,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void onWebResourceError(_i4.WebResourceError? error) => super.noSuchMethod(
         Invocation.method(
@@ -951,6 +1027,7 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
           ),
         ),
       ) as _i2.WebView);
+
   @override
   _i2.WebViewClient createWebViewClient({
     void Function(
@@ -1010,6 +1087,7 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
           ),
         ),
       ) as _i2.WebViewClient);
+
   @override
   _i5.Future<void> setWebContentsDebuggingEnabled(bool? enabled) =>
       (super.noSuchMethod(

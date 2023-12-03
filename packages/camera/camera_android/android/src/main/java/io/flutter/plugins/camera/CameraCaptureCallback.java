@@ -31,7 +31,7 @@ class CameraCaptureCallback extends CaptureCallback {
   CaptureResult.Key<Integer> aeStateKey = CaptureResult.CONTROL_AE_STATE;
 
   @VisibleForTesting @NonNull
-  CaptureResult.Key<Integer> afStateKey = CaptureResult.CONTROL_AE_STATE;
+  CaptureResult.Key<Integer> afStateKey = CaptureResult.CONTROL_AF_STATE;
 
   private CameraCaptureCallback(
       @NonNull CameraCaptureStateListener cameraStateListener,

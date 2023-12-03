@@ -30,8 +30,7 @@
               message:(NSData *_Nullable)message
           binaryReply:(FlutterBinaryReply _Nullable)callback {
   NSArray *args = [self.codec decode:message];
-  id firstArg = args[0];
-  callback([self.codec encode:firstArg]);
+  callback([self.codec encode:args]);
 }
 
 - (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel

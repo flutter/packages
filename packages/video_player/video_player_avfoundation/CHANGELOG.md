@@ -1,3 +1,20 @@
+## 2.5.2
+
+* Fixes flickering and seek-while-paused on macOS.
+
+## 2.5.1
+
+* Updates to  Pigeon 13.
+
+## 2.5.0
+
+* Adds support for macOS.
+
+## 2.4.11
+
+* Updates Pigeon.
+* Changes Objective-C class prefixes to avoid future collisions.
+
 ## 2.4.10
 
 * Adds pub topics to package metadata.

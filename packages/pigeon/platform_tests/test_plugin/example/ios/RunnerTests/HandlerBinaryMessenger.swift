@@ -35,7 +35,7 @@ class HandlerBinaryMessenger: NSObject, FlutterBinaryMessenger {
     }
     
     let result = self.handler(args)
-    callback(self.codec.encode(result))
+    callback(self.codec.encode([result]))
   }
   
   func setMessageHandlerOnChannel(
