@@ -1,3 +1,17 @@
+## 2.6.0
+
+* Fixes missing updates in TLHC mode.
+* Switched default display mode to TLHC mode.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.5.3
+
+* Updates `com.google.android.gms:play-services-maps` to 18.2.0.
+
+## 2.5.2
+
+* Updates annotations lib to 1.7.0.
+
 ## 2.5.1
 
 * Adds pub topics to package metadata.

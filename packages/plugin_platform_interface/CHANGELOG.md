@@ -1,3 +1,9 @@
+## 2.1.7
+
+* Changes `MockPlatformInterfaceMixin` to a `mixin class` for better
+  compatibility with projects that have a minumum Dart SDK version of 3.0.
+* Updates minimum supported SDK version to Dart 3.0.
+
 ## 2.1.6
 
 * Adds pub topics to package metadata.
