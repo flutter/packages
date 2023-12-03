@@ -1746,6 +1746,37 @@ void main() {
   });
 
   testWidgets(
+    'Verify that modal route is not opaque when "opaqueRoute: false"',
+    (WidgetTester tester) async {
+      final Widget openContainer = OpenContainer(
+        opaqueRoute: false,
+        closedBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Closed'),
+          );
+        },
+        openBuilder: (BuildContext context, VoidCallback action) {
+          return GestureDetector(
+            onTap: action,
+            child: const Text('Open'),
+          );
+        },
+      );
+
+      await tester.pumpWidget(_boilerplate(child: openContainer));
+
+      await tester.tap(find.text('Closed'));
+      await tester.pumpAndSettle();
+
+      final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+        tester.element(find.text('Open')),
+      )!;
+      expect(modalRoute.opaque, isFalse);
+    },
+  );
+
+  testWidgets(
     'Verify routeSettings passed to Navigator',
     (WidgetTester tester) async {
       const RouteSettings routeSettings = RouteSettings(
@@ -1781,6 +1812,7 @@ void main() {
         tester.element(find.text('Open')),
       )!;
       expect(modalRoute.settings, routeSettings);
+      expect(modalRoute.opaque, isTrue);
     },
   );
 }
