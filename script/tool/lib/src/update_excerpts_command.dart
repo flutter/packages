@@ -248,7 +248,6 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       case 'java':
       case 'groovy':
       case 'objectivec':
-      case 'gradle':
       case 'swift':
         prefix = '// ';
         break;
