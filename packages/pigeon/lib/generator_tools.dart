@@ -622,6 +622,52 @@ enum FileType {
   na,
 }
 
+/// Recursively search for all the interfaces apis from a list of names of
+/// interfaces.
+Set<AstProxyApi> recursiveFindAllInterfacesApis(
+  Set<String> interfaces,
+  Iterable<AstProxyApi> allProxyApis,
+) {
+  final Set<AstProxyApi> interfacesApis = <AstProxyApi>{};
+
+  for (final AstProxyApi proxyApi in allProxyApis) {
+    if (interfaces.contains(proxyApi.name)) {
+      interfacesApis.add(proxyApi);
+    }
+  }
+
+  for (final AstProxyApi proxyApi in Set<AstProxyApi>.from(interfacesApis)) {
+    interfacesApis.addAll(
+      recursiveFindAllInterfacesApis(proxyApi.interfacesNames, allProxyApis),
+    );
+  }
+
+  return interfacesApis;
+}
+
+/// Recursively find super classes for a ProxyApi and return them in order.
+List<AstProxyApi> recursiveGetSuperClassApisChain(
+  AstProxyApi proxyApi,
+  Iterable<AstProxyApi> allProxyApis,
+) {
+  final List<AstProxyApi> proxyApis = <AstProxyApi>[];
+
+  String? currentProxyApiName = proxyApi.superClassName;
+  while (currentProxyApiName != null) {
+    AstProxyApi? nextProxyApi;
+    for (final AstProxyApi node in allProxyApis) {
+      if (currentProxyApiName == node.name) {
+        nextProxyApi = node;
+        proxyApis.add(node);
+      }
+    }
+
+    currentProxyApiName = nextProxyApi?.superClassName;
+  }
+
+  return proxyApis;
+}
+
 /// Options for [Generator]s that have multiple output file types.
 ///
 /// Specifies which file to write as well as wraps all language options.

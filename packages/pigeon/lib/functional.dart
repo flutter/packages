@@ -13,6 +13,22 @@ Iterable<U> indexMap<T, U>(
   }
 }
 
+/// A [map] function that calls the function with an enumeration as well as the
+/// value.
+T indexFold<T, E>(
+  Iterable<E> iterable,
+  T initialValue,
+  T Function(T previousValue, int index, E element) combine,
+) {
+  int index = 0;
+  T value = initialValue;
+  for (final E element in iterable) {
+    value = combine(value, index, element);
+    ++index;
+  }
+  return value;
+}
+
 /// Performs like [forEach] but invokes [func] with an enumeration.
 void enumerate<T>(Iterable<T> iterable, void Function(int, T) func) {
   int count = 0;
