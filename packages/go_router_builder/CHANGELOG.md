@@ -1,5 +1,3 @@
-## NEXT
-
 ## 2.3.5
 
 * Add support for passing observers to the ShellRoute that will be passed to the nested Navigator.
