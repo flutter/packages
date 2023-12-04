@@ -332,7 +332,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         false;
   }
 
-  // Validates the "implements" keyword for a plugin, returning an error
+  // Validates the "topics" keyword for a plugin, returning an error
   // string if there are any issues.
   String? _checkTopics(
     Pubspec pubspec, {
@@ -350,6 +350,15 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       if (!topics.contains(topicName)) {
         return 'A federated plugin package should include its plugin name as '
             'a topic. Add "$topicName" to the "topics" section.';
+      }
+    }
+    for (final String topic in topics) {
+      final RegExp expectedTopicFormat =
+          RegExp(r'^[a-z](?:[a-z0-9]*[a-z0-9])?(-[a-z0-9]+)*$');
+      if (!expectedTopicFormat.hasMatch(topic)) {
+        return 'Invalid topic value "$topic" in "topics" section. '
+            'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+            'starting with a-z and ending with a-z or 0-9.';
       }
     }
     return null;

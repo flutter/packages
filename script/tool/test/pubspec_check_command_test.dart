@@ -633,6 +633,126 @@ ${_topicsSection()}
       );
     });
 
+    test('fails when topic a topic name contains a space', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin a'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic value "plugin a" in "topics" section. '
+              'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+              'starting with a-z and ending with a-z or 0-9.'),
+        ]),
+      );
+    });
+
+    test('fails when topic a topic name contains double dash', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin--a'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic value "plugin--a" in "topics" section. '
+              'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+              'starting with a-z and ending with a-z or 0-9.'),
+        ]),
+      );
+    });
+
+    test('fails when topic a topic name starts with a number', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['1plugin-a'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic value "1plugin-a" in "topics" section. '
+              'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+              'starting with a-z and ending with a-z or 0-9.'),
+        ]),
+      );
+    });
+
+    test('fails when topic a topic name contains uppercase', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-A'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic value "plugin-A" in "topics" section. '
+              'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+              'starting with a-z and ending with a-z or 0-9.'),
+        ]),
+      );
+    });
+
     test('fails when environment section is out of order', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
