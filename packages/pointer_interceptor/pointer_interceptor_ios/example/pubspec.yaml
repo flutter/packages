@@ -10,8 +10,6 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  pointer_interceptor:
-    path: ../../pointer_interceptor
   pointer_interceptor_platform_interface: ^0.10.0
 
 dev_dependencies:
