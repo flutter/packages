@@ -1066,14 +1066,18 @@ class $codecName extends StandardMessageCodec {
           else
             cb.refer(r'$Copyable')
         ])
-        ..docs.addAll(_asDartComments(api.documentationComments))
+        ..docs.addAll(asDocumentationComments(
+          api.documentationComments,
+          _docCommentSpec,
+        ))
         ..constructors.addAll(
           api.constructors.map(
             (Constructor constructor) => cb.Constructor(
               (cb.ConstructorBuilder builder) => builder
                 ..name = constructor.name.isNotEmpty ? constructor.name : null
-                ..docs.addAll(_asDartComments(
+                ..docs.addAll(asDocumentationComments(
                   constructor.documentationComments,
+                  _docCommentSpec,
                 ))
                 ..optionalParameters.addAll(
                   <cb.Parameter>[
@@ -1705,14 +1709,18 @@ class $codecName extends StandardMessageCodec {
                 ..name = field.name
                 ..type = cb.refer(_addGenericTypesNullable(field.type))
                 ..modifier = cb.FieldModifier.final$
-                ..docs.addAll(_asDartComments(field.documentationComments)),
+                ..docs.addAll(asDocumentationComments(
+                  field.documentationComments,
+                  _docCommentSpec,
+                )),
             ),
           for (final Method method in flutterMethods)
             cb.Field(
               (cb.FieldBuilder builder) => builder
                 ..name = method.name
                 ..modifier = cb.FieldModifier.final$
-                ..docs.addAll(_asDartComments(method.documentationComments))
+                ..docs.addAll(asDocumentationComments(
+                    method.documentationComments, _docCommentSpec))
                 ..type = cb.FunctionType(
                   (cb.FunctionTypeBuilder builder) => builder
                     ..returnType = _referOrNull(
@@ -1740,7 +1748,8 @@ class $codecName extends StandardMessageCodec {
                   ..name = method.name
                   ..modifier = cb.FieldModifier.final$
                   ..annotations.add(cb.refer('override'))
-                  ..docs.addAll(_asDartComments(method.documentationComments))
+                  ..docs.addAll(asDocumentationComments(
+                      method.documentationComments, _docCommentSpec))
                   ..type = cb.FunctionType(
                     (cb.FunctionTypeBuilder builder) => builder
                       ..returnType = _referOrNull(
@@ -1769,7 +1778,8 @@ class $codecName extends StandardMessageCodec {
                 ..modifier = cb.FieldModifier.final$
                 ..static = field.isStatic
                 ..late = !field.isStatic
-                ..docs.addAll(_asDartComments(field.documentationComments))
+                ..docs.addAll(asDocumentationComments(
+                    field.documentationComments, _docCommentSpec))
                 ..assignment = cb.Code('_${field.name}()'),
             ),
         ])
@@ -1886,7 +1896,10 @@ class $codecName extends StandardMessageCodec {
                 ..name = method.name
                 ..static = method.isStatic
                 ..modifier = cb.MethodModifier.async
-                ..docs.addAll(_asDartComments(method.documentationComments))
+                ..docs.addAll(asDocumentationComments(
+                  method.documentationComments,
+                  _docCommentSpec,
+                ))
                 ..returns = _referOrNull(
                   _addGenericTypesNullable(method.returnType),
                   isFuture: true,
@@ -2171,13 +2184,6 @@ PlatformException _createConnectionError(String channelName) {
 \t\tmessage: 'Unable to establish connection on channel: "\$channelName".',
 \t);
 }''');
-  }
-}
-
-// TODO: this needs to be replaced with an addDocumentation like thing
-Iterable<String> _asDartComments(Iterable<String> comments) sync* {
-  for (final String comment in comments) {
-    yield '///$comment';
   }
 }
 
