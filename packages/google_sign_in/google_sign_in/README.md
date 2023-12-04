@@ -64,13 +64,6 @@ To use this plugin, follow the
 
 ### Use the plugin
 
-Add the following import to your Dart code:
-
-<?code-excerpt "example/lib/main.dart (Import)"?>
-```dart
-import 'package:google_sign_in/google_sign_in.dart';
-```
-
 Initialize `GoogleSignIn` with the scopes you want:
 
 <?code-excerpt "example/lib/main.dart (Initialize)"?>
@@ -127,7 +120,12 @@ There's a new method that enables the checks above, `canAccessScopes`:
 
 <?code-excerpt "example/lib/main.dart (CanAccessScopes)"?>
 ```dart
-isAuthorized = await _googleSignIn.canAccessScopes(scopes);
+// In mobile, being authenticated means being authorized...
+bool isAuthorized = account != null;
+// However, in the web...
+if (kIsWeb && account != null) {
+  isAuthorized = await _googleSignIn.canAccessScopes(scopes);
+}
 ```
 
 _(Only implemented in the web platform, from version 6.1.0 of this package)_

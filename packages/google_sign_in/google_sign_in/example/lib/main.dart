@@ -9,9 +9,7 @@ import 'dart:convert' show json;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// #docregion Import
 import 'package:google_sign_in/google_sign_in.dart';
-// #enddocregion Import
 import 'package:http/http.dart' as http;
 
 import 'src/sign_in_button.dart';
@@ -59,14 +57,14 @@ class _SignInDemoState extends State<SignInDemo> {
 
     _googleSignIn.onCurrentUserChanged
         .listen((GoogleSignInAccount? account) async {
+// #docregion CanAccessScopes
       // In mobile, being authenticated means being authorized...
       bool isAuthorized = account != null;
       // However, in the web...
       if (kIsWeb && account != null) {
-// #docregion CanAccessScopes
         isAuthorized = await _googleSignIn.canAccessScopes(scopes);
-// #enddocregion CanAccessScopes
       }
+// #enddocregion CanAccessScopes
 
       setState(() {
         _currentUser = account;
