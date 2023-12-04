@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
+## 2.3.5
+
+* Add support for passing observers to the ShellRoute that will be passed to the nested Navigator.
+
 ## 2.3.4
 
 * Fixes a bug of typeArguments losing NullabilitySuffix
