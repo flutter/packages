@@ -1,6 +1,7 @@
-## NEXT
+## 0.1.0+9
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Adds an optional parameter `initialPage` to `serveWebBenchmark`.
 
 ## 0.1.0+8
 
