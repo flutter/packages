@@ -129,14 +129,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           _clickedOn('transparent-button');
                         },
                       ),
-                      ElevatedButton(
-                        key: const Key('wrapped-transparent-button'),
-                        child:
-                        const Text('Never calls onPressed transparent'),
-                        onPressed: () {
-                          _clickedOn('wrapped-transparent-button');
-                        },
-                      ),
                       PointerInterceptorPlatform.instance.buildWidget(
                         child: ElevatedButton(
                           key: const Key('clickable-button'),
