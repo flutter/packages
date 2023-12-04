@@ -2,7 +2,7 @@ tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
-  - name: prepare tool
+  - name: update pods repo
     script: .ci/scripts/update_pods.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: validate iOS and macOS podspecs
