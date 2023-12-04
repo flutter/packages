@@ -51,9 +51,7 @@ class MyShellRouteData extends ShellRouteData {
 
 class MyNavigatorObserver extends NavigatorObserver {
   @override
-  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
-    print('didPush: ${route.settings.name}');
-  }
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {}
 }
 
 class MyShellRouteScreen extends StatelessWidget {
