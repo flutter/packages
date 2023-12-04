@@ -1081,6 +1081,20 @@ class $codecName extends StandardMessageCodec {
             interfacesMethods: interfacesMethods,
             flutterMethods: flutterMethods,
           ))
+          ..fields.addAll(_proxyApiFields(
+            nonAttachedFields: nonAttachedFields,
+            attachedFields: attachedFields,
+            apiName: api.name,
+            dartPackageName: dartPackageName,
+            codecInstanceName: codecInstanceName,
+            codecName: codecName,
+            interfacesApis: interfacesApis,
+            flutterMethods: flutterMethods,
+            hasSuperClass: superClassApi != null,
+            hasHostMessageSends: hostMethods.isNotEmpty ||
+                api.constructors.isNotEmpty ||
+                attachedFields.any((Field field) => !field.isStatic),
+          ))
         // ..methods.add(
         //   cb.Method.returnsVoid(
         //     (cb.MethodBuilder builder) => builder
@@ -1425,129 +1439,6 @@ class $codecName extends StandardMessageCodec {
         //       ]),
         //   ),
         // )
-        // ..fields.addAll(<cb.Field>[
-        //   if (hostMethods.isNotEmpty ||
-        //       api.constructors.isNotEmpty ||
-        //       attachedFields.where((Field field) => !field.isStatic).isNotEmpty)
-        //     cb.Field(
-        //       (cb.FieldBuilder builder) => builder
-        //         ..name = '_codec${api.name}'
-        //         ..type = cb.refer(codecName)
-        //         ..late = true
-        //         ..modifier = cb.FieldModifier.final$
-        //         ..assignment = cb.Code('$codecName(\$instanceManager)'),
-        //     ),
-        //   if (superClassApi == null) ...<cb.Field>[
-        //     cb.Field(
-        //       (cb.FieldBuilder builder) => builder
-        //         ..name = r'$binaryMessenger'
-        //         ..type = cb.refer('BinaryMessenger?')
-        //         ..modifier = cb.FieldModifier.final$
-        //         ..docs.addAll(<String>[
-        //           '/// Sends and receives binary data across the Flutter platform barrier.',
-        //           '///',
-        //           '/// If it is null, the default BinaryMessenger will be used, which routes to',
-        //           '/// the host platform.',
-        //         ])
-        //         ..annotations.addAll(<cb.Expression>[
-        //           if (superClassApi == null && interfacesApis.isNotEmpty)
-        //             cb.refer('override'),
-        //         ]),
-        //     ),
-        //     cb.Field(
-        //       (cb.FieldBuilder builder) => builder
-        //         ..name = r'$instanceManager'
-        //         ..type = cb.refer(r'$InstanceManager')
-        //         ..modifier = cb.FieldModifier.final$
-        //         ..docs.add(
-        //           '/// Maintains instances stored to communicate with native language objects.',
-        //         )
-        //         ..annotations.addAll(<cb.Expression>[
-        //           if (superClassApi == null && interfacesApis.isNotEmpty)
-        //             cb.refer('override'),
-        //         ]),
-        //     ),
-        //   ],
-        //   for (final Field field in nonAttachedFields)
-        //     cb.Field(
-        //       (cb.FieldBuilder builder) => builder
-        //         ..name = field.name
-        //         ..type = cb.refer(_addGenericTypesNullable(field.type))
-        //         ..modifier = cb.FieldModifier.final$
-        //         ..docs.addAll(asDocumentationComments(
-        //           field.documentationComments,
-        //           _docCommentSpec,
-        //         )),
-        //     ),
-        //   for (final Method method in flutterMethods)
-        //     cb.Field(
-        //       (cb.FieldBuilder builder) => builder
-        //         ..name = method.name
-        //         ..modifier = cb.FieldModifier.final$
-        //         ..docs.addAll(asDocumentationComments(
-        //             method.documentationComments, _docCommentSpec))
-        //         ..type = cb.FunctionType(
-        //           (cb.FunctionTypeBuilder builder) => builder
-        //             ..returnType = _referOrNull(
-        //               _addGenericTypesNullable(method.returnType),
-        //               isFuture: method.isAsynchronous,
-        //             )
-        //             ..isNullable = !method.required
-        //             ..requiredParameters.addAll(<cb.Reference>[
-        //               cb.refer('${api.name} instance'),
-        //               ...indexMap(
-        //                 method.parameters,
-        //                 (int index, NamedType parameter) {
-        //                   return cb.refer(
-        //                     '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
-        //                   );
-        //                 },
-        //               ),
-        //             ]),
-        //         ),
-        //     ),
-        //   for (final AstProxyApi proxyApi in interfacesApis)
-        //     for (final Method method in proxyApi.methods)
-        //       cb.Field(
-        //         (cb.FieldBuilder builder) => builder
-        //           ..name = method.name
-        //           ..modifier = cb.FieldModifier.final$
-        //           ..annotations.add(cb.refer('override'))
-        //           ..docs.addAll(asDocumentationComments(
-        //               method.documentationComments, _docCommentSpec))
-        //           ..type = cb.FunctionType(
-        //             (cb.FunctionTypeBuilder builder) => builder
-        //               ..returnType = _referOrNull(
-        //                 _addGenericTypesNullable(method.returnType),
-        //                 isFuture: method.isAsynchronous,
-        //               )
-        //               ..isNullable = !method.required
-        //               ..requiredParameters.addAll(<cb.Reference>[
-        //                 cb.refer('${proxyApi.name} instance'),
-        //                 ...indexMap(
-        //                   method.parameters,
-        //                   (int index, NamedType parameter) {
-        //                     return cb.refer(
-        //                       '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
-        //                     );
-        //                   },
-        //                 ),
-        //               ]),
-        //           ),
-        //       ),
-        //   for (final Field field in attachedFields)
-        //     cb.Field(
-        //       (cb.FieldBuilder builder) => builder
-        //         ..name = field.name
-        //         ..type = cb.refer(_addGenericTypesNullable(field.type))
-        //         ..modifier = cb.FieldModifier.final$
-        //         ..static = field.isStatic
-        //         ..late = !field.isStatic
-        //         ..docs.addAll(asDocumentationComments(
-        //             field.documentationComments, _docCommentSpec))
-        //         ..assignment = cb.Code('_${field.name}()'),
-        //     ),
-        // ])
         // ..methods.addAll(<cb.Method>[
         //   for (final Field field in attachedFields)
         //     cb.Method(
@@ -1920,7 +1811,7 @@ class $codecName extends StandardMessageCodec {
               )
               ..body = cb.Block.of(<cb.Code>[
                 cb.Code(
-                  "final String ${_varNamePrefix}channelName = r'$channelName';",
+                  "const String ${_varNamePrefix}channelName = r'$channelName';",
                 ),
                 _basicMessageChannel(
                   codec: cb.refer(codecInstanceName),
@@ -2077,6 +1968,161 @@ class $codecName extends StandardMessageCodec {
           ),
       ),
     ];
+  }
+
+  Iterable<cb.Field> _proxyApiFields({
+    required Iterable<Field> nonAttachedFields,
+    required Iterable<Field> attachedFields,
+    required String apiName,
+    required String dartPackageName,
+    required String codecInstanceName,
+    required String codecName,
+    required Iterable<AstProxyApi> interfacesApis,
+    required Iterable<Method> flutterMethods,
+    required bool hasSuperClass,
+    required bool hasHostMessageSends,
+  }) {
+    return <cb.Field>[
+      if (hasHostMessageSends)
+        cb.Field(
+          (cb.FieldBuilder builder) => builder
+            ..name = codecInstanceName
+            ..type = cb.refer(codecName)
+            ..late = true
+            ..modifier = cb.FieldModifier.final$
+            ..assignment = cb.Code('$codecName(\$instanceManager)'),
+        ),
+      if (!hasSuperClass) ...<cb.Field>[
+        cb.Field(
+          (cb.FieldBuilder builder) => builder
+            ..name = r'$binaryMessenger'
+            ..type = cb.refer('BinaryMessenger?')
+            ..modifier = cb.FieldModifier.final$
+            ..docs.addAll(<String>[
+              '/// Sends and receives binary data across the Flutter platform barrier.',
+              '///',
+              '/// If it is null, the default BinaryMessenger will be used, which routes to',
+              '/// the host platform.',
+            ])
+            ..annotations.addAll(<cb.Expression>[
+              if (!hasSuperClass && interfacesApis.isNotEmpty)
+                cb.refer('override'),
+            ]),
+        ),
+        cb.Field(
+          (cb.FieldBuilder builder) => builder
+            ..name = r'$instanceManager'
+            ..type = cb.refer(r'$InstanceManager')
+            ..modifier = cb.FieldModifier.final$
+            ..docs.add(
+              '/// Maintains instances stored to communicate with native language objects.',
+            )
+            ..annotations.addAll(<cb.Expression>[
+              if (!hasSuperClass && interfacesApis.isNotEmpty)
+                cb.refer('override'),
+            ]),
+        ),
+      ],
+      for (final Field field in nonAttachedFields)
+        cb.Field(
+          (cb.FieldBuilder builder) => builder
+            ..name = field.name
+            ..type = cb.refer(_addGenericTypesNullable(field.type))
+            ..modifier = cb.FieldModifier.final$
+            ..docs.addAll(asDocumentationComments(
+              field.documentationComments,
+              _docCommentSpec,
+            )),
+        ),
+      for (final Method method in flutterMethods)
+        cb.Field(
+          (cb.FieldBuilder builder) => builder
+            ..name = method.name
+            ..modifier = cb.FieldModifier.final$
+            ..docs.addAll(asDocumentationComments(
+              method.documentationComments,
+              _docCommentSpec,
+            ))
+            ..type = cb.FunctionType(
+              (cb.FunctionTypeBuilder builder) => builder
+                ..returnType = _referOrNull(
+                  _addGenericTypesNullable(method.returnType),
+                  isFuture: method.isAsynchronous,
+                )
+                ..isNullable = !method.required
+                ..requiredParameters.addAll(<cb.Reference>[
+                  cb.refer('$apiName instance'),
+                  ...indexMap(
+                    method.parameters,
+                    (int index, NamedType parameter) {
+                      return cb.refer(
+                        '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
+                      );
+                    },
+                  ),
+                ]),
+            ),
+        ),
+      for (final AstProxyApi proxyApi in interfacesApis)
+        for (final Method method in proxyApi.methods)
+          cb.Field(
+            (cb.FieldBuilder builder) => builder
+              ..name = method.name
+              ..modifier = cb.FieldModifier.final$
+              ..annotations.add(cb.refer('override'))
+              ..docs.addAll(asDocumentationComments(
+                  method.documentationComments, _docCommentSpec))
+              ..type = cb.FunctionType(
+                (cb.FunctionTypeBuilder builder) => builder
+                  ..returnType = _referOrNull(
+                    _addGenericTypesNullable(method.returnType),
+                    isFuture: method.isAsynchronous,
+                  )
+                  ..isNullable = !method.required
+                  ..requiredParameters.addAll(<cb.Reference>[
+                    cb.refer('${proxyApi.name} instance'),
+                    ...indexMap(
+                      method.parameters,
+                      (int index, NamedType parameter) {
+                        return cb.refer(
+                          '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
+                        );
+                      },
+                    ),
+                  ]),
+              ),
+          ),
+      for (final Field field in attachedFields)
+        cb.Field(
+          (cb.FieldBuilder builder) => builder
+            ..name = field.name
+            ..type = cb.refer(_addGenericTypesNullable(field.type))
+            ..modifier = cb.FieldModifier.final$
+            ..static = field.isStatic
+            ..late = !field.isStatic
+            ..docs.addAll(asDocumentationComments(
+              field.documentationComments,
+              _docCommentSpec,
+            ))
+            ..assignment = cb.Code('_${field.name}()'),
+        ),
+    ];
+  }
+
+  Iterable<cb.Field> _proxyApiMethods({
+    required Iterable<Method> hostMethods,
+    required Iterable<Method> flutterMethods,
+    required String apiName,
+    required String dartPackageName,
+    required String codecInstanceName,
+    required String codecName,
+    // required Iterable<Field> nonAttachedFields,
+    // required Iterable<Field> attachedFields,
+    // required Iterable<AstProxyApi> interfacesApis,
+    // required bool hasSuperClass,
+    // required bool hasHostMessageSends,
+  }) {
+
   }
 
   /// Generates Dart source code for test support libraries based on the given AST
