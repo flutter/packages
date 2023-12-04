@@ -445,6 +445,7 @@ class CameraController extends ValueNotifier<CameraValue> {
     value = value.copyWith(focusMode: mode);
   }
 
+  /// Sets the capture mode for the camera.
   Future<void> setCaptureMode(CaptureMode mode) async {
     await CameraPlatform.instance.setCaptureMode(_cameraId, mode);
     value = value.copyWith(captureMode: mode);

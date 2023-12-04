@@ -1150,8 +1150,8 @@ void main() {
         isMethodCall('stopImageStream', arguments: null),
       ]);
     });
-    
-    test('Should set the capture mode',() async {
+
+    test('Should set the capture mode', () async {
       // Arrange
       final MethodChannelMock channel = MethodChannelMock(
         channelName: _channelName,

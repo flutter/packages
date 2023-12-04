@@ -169,7 +169,9 @@ NSString *const errorMethod = @"error";
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  if (![self setCaptureSessionWithResolutionPreset:_resolutionPreset withCaptureMode:_captureMode withError:error]) {
+  if (![self setCaptureSessionWithResolutionPreset:_resolutionPreset
+                                   withCaptureMode:_captureMode
+                                         withError:error]) {
     return nil;
   }
   [self updateOrientation];
@@ -346,8 +348,8 @@ NSString *const errorMethod = @"error";
   return file;
 }
 
-
-- (BOOL)setCaptureSessionForVideo:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
+- (BOOL)setCaptureSessionForVideo:(FLTResolutionPreset)resolutionPreset
+                        withError:(NSError **)error {
   switch (resolutionPreset) {
     case FLTResolutionPresetMax:
     case FLTResolutionPresetUltraHigh:
@@ -359,8 +361,8 @@ NSString *const errorMethod = @"error";
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetHigh]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetHigh;
         _previewSize =
-        CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
-                    _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
+            CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
+                       _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
         break;
       }
     case FLTResolutionPresetVeryHigh:
@@ -404,7 +406,8 @@ NSString *const errorMethod = @"error";
   return YES;
 }
 
-- (BOOL)setCaptureSessionForPhoto:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
+- (BOOL)setCaptureSessionForPhoto:(FLTResolutionPreset)resolutionPreset
+                        withError:(NSError **)error {
   switch (resolutionPreset) {
     case FLTResolutionPresetMax:
     case FLTResolutionPresetUltraHigh:
@@ -416,7 +419,8 @@ NSString *const errorMethod = @"error";
       // Selects the appropriate 1080p resolution to match the desired aspect ratio for photos.
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetInputPriority]) {
         for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
-          CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+          CMVideoDimensions dimensions =
+              CMVideoFormatDescriptionGetDimensions(format.formatDescription);
           if (dimensions.height == 1080) {
             if (fabs((double)dimensions.width / dimensions.height - (double)4 / 3) < 0.01) {
               if ([_captureDevice lockForConfiguration:nil]) {
@@ -429,10 +433,12 @@ NSString *const errorMethod = @"error";
         }
       }
     case FLTResolutionPresetHigh:
-      // Selects the appropriate 720p or 768p resolution to match the desired aspect ratio for photos.
+      // Selects the appropriate 720p or 768p resolution to match the desired aspect ratio for
+      // photos.
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetInputPriority]) {
         for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
-          CMVideoDimensions dimensions = CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+          CMVideoDimensions dimensions =
+              CMVideoFormatDescriptionGetDimensions(format.formatDescription);
           if (dimensions.height == 720 || dimensions.height == 768) {
             if (fabs((double)dimensions.width / dimensions.height - (double)4 / 3) < 0.01) {
               if ([_captureDevice lockForConfiguration:nil]) {
@@ -444,8 +450,8 @@ NSString *const errorMethod = @"error";
           }
         }
       }
-      // Most device format resolutions lower than 720/768p are generally 4:3 resolutions. Meaning the aspect ratio
-      // is the same regardless of the preset chosen.
+      // Most device format resolutions lower than 720/768p are generally 4:3 resolutions. Meaning
+      // the aspect ratio is the same regardless of the preset chosen.
     case FLTResolutionPresetMedium:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset640x480]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset640x480;
@@ -473,9 +479,9 @@ NSString *const errorMethod = @"error";
 }
 
 - (BOOL)setCaptureSessionWithResolutionPreset:(FLTResolutionPreset)resolutionPreset
-                              withCaptureMode: (FLTCaptureMode) captureMode
-                              withError:(NSError **)error {
- // NSArray<AVCaptureDeviceFormat *> *formats = _captureDevice.formats;
+                              withCaptureMode:(FLTCaptureMode)captureMode
+                                    withError:(NSError **)error {
+  // NSArray<AVCaptureDeviceFormat *> *formats = _captureDevice.formats;
   if (captureMode == FLTCaptureModeVideo) {
     if (![self setCaptureSessionForVideo:resolutionPreset withError:error]) {
       return NO;
@@ -485,7 +491,8 @@ NSString *const errorMethod = @"error";
       return NO;
     }
   }
-  CMVideoDimensions previewDimensions = CMVideoFormatDescriptionGetDimensions(_captureDevice.activeFormat.formatDescription);
+  CMVideoDimensions previewDimensions =
+      CMVideoFormatDescriptionGetDimensions(_captureDevice.activeFormat.formatDescription);
   _previewSize = CGSizeMake(previewDimensions.width, previewDimensions.height);
   _audioCaptureSession.sessionPreset = _videoCaptureSession.sessionPreset;
   return YES;
@@ -955,7 +962,9 @@ NSString *const errorMethod = @"error";
   }
   NSError *error;
   _captureMode = mode;
-  [self setCaptureSessionWithResolutionPreset:_resolutionPreset withCaptureMode:_captureMode withError: &error];
+  [self setCaptureSessionWithResolutionPreset:_resolutionPreset
+                              withCaptureMode:_captureMode
+                                    withError:&error];
   [result sendSuccessWithData:@{
     @"previewWidth" : @(_previewSize.width),
     @"previewHeight" : @(_previewSize.height),

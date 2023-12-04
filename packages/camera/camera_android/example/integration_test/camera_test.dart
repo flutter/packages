@@ -40,6 +40,16 @@ void main() {
     // Don't bother checking for max here since it could be anything.
   };
 
+  final Map<ResolutionPreset, Size> presetImageExpectedSizes =
+      <ResolutionPreset, Size>{
+    ResolutionPreset.low: const Size(240, 320),
+    ResolutionPreset.medium: const Size(480, 720),
+    ResolutionPreset.high: const Size(768, 1024),
+    ResolutionPreset.veryHigh: const Size(1080, 1440),
+    ResolutionPreset.ultraHigh: const Size(2160, 2880),
+    // Don't bother checking for max here since it could be anything.
+  };
+
   /// Verify that [actual] has dimensions that are at least as large as
   /// [expectedSize]. Allows for a mismatch in portrait vs landscape. Returns
   /// whether the dimensions exactly match.
@@ -81,7 +91,7 @@ void main() {
       for (final CameraDescription cameraDescription in cameras) {
         bool previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
-            in presetExpectedSizes.entries) {
+            in presetImageExpectedSizes.entries) {
           final CameraController controller =
               CameraController(cameraDescription, preset.key);
           await controller.initialize();

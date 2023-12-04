@@ -50,7 +50,6 @@ void main() {
     // Don't bother checking for max here since it could be anything.
   };
 
-
   /// Verify that [actual] has dimensions that are at least as large as
   /// [expectedSize]. Allows for a mismatch in portrait vs landscape. Returns
   /// whether the dimensions exactly match.
@@ -105,7 +104,7 @@ void main() {
     }
   });
 
-      // This tests that the capture is no bigger than the preset, since we have
+  // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
   // whether the image is exactly the desired resolution.
   Future<bool> testCaptureImageInPhotoModeResolution(
@@ -125,7 +124,7 @@ void main() {
         expectedSize, Size(image.height.toDouble(), image.width.toDouble()));
   }
 
-    testWidgets('Capture specific image resolutions',
+  testWidgets('Capture specific image resolutions',
       (WidgetTester tester) async {
     final List<CameraDescription> cameras =
         await CameraPlatform.instance.availableCameras();

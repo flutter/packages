@@ -22,20 +22,19 @@
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
   _camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-
 }
 
-- (void) testCaptureMode_shouldBeVideoByDefault {
+- (void)testCaptureMode_shouldBeVideoByDefault {
   XCTAssertEqual(_camera.captureMode, FLTCaptureModeVideo);
 }
 
-- (void) testCaptureMode_shouldBeVideoAfterSettingVideo {
+- (void)testCaptureMode_shouldBeVideoAfterSettingVideo {
   [_camera setCaptureMode:FLTCaptureModePhoto];
   [_camera setCaptureMode:FLTCaptureModeVideo];
   XCTAssertEqual(_camera.captureMode, FLTCaptureModeVideo);
 }
 
-- (void) testCaptureMode_shouldBePhotoAfterSettingPhoto {
+- (void)testCaptureMode_shouldBePhotoAfterSettingPhoto {
   [_camera setCaptureMode:FLTCaptureModePhoto];
   XCTAssertEqual(_camera.captureMode, FLTCaptureModePhoto);
 }
