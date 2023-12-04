@@ -3,8 +3,8 @@ description: Demonstrates how to use the flutter_plugin_android_lifecycle plugin
 publish_to: none
 
 environment:
-  sdk: ">=2.19.0 <4.0.0"
-  flutter: ">=3.7.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.10.0"
 
 dependencies:
   flutter:

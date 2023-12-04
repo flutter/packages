@@ -5,7 +5,7 @@
 import 'ast.dart';
 import 'generator_tools.dart';
 
-/// Writes the AST represention of [root] to [sink].
+/// Writes the AST representation of [root] to [sink].
 void generateAst(Root root, StringSink sink) {
   final Indent indent = Indent(sink);
   final String output = root.toString();

@@ -5,8 +5,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 5.7.0
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
-  flutter: ">=3.13.0"
+  sdk: ">=3.2.0 <4.0.0"
+  flutter: ">=3.16.0"
 
 flutter:
   plugin:
@@ -43,5 +43,6 @@ topics:
 false_secrets:
   - /darwin/Tests/GoogleSignInTests.m
   - /example/ios/Runner/GoogleService-Info.plist
+  - /example/ios/Runner/Info.plist
   - /example/lib/main.dart
   - /example/macos/Runner/GoogleService-Info.plist

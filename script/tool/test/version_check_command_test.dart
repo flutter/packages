@@ -961,7 +961,7 @@ packages/plugin/example/lib/foo.dart
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('No CHANGELOG change found'),
+            contains('No CHANGELOG change found.\nIf'),
             contains('plugin:\n'
                 '    Missing CHANGELOG change'),
           ]),
@@ -1222,7 +1222,10 @@ packages/plugin/lib/plugin.dart
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('No version change found'),
+            contains(
+              'No version change found, but the change to this package could '
+              'not be verified to be exempt\n',
+            ),
             contains('plugin:\n'
                 '    Missing version change'),
           ]),
