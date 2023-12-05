@@ -5,9 +5,8 @@
 @TestOn('browser') // Uses package:js
 
 import 'package:google_identity_services_web/loader.dart';
-import 'package:google_identity_services_web/src/js_interop/dom.dart' as dom;
-
 import 'package:test/test.dart';
+import 'package:web/web.dart' as web;
 
 import 'tools.dart';
 
@@ -23,7 +22,8 @@ import 'tools.dart';
 
 void main() {
   group('loadWebSdk (TrustedTypes configured)', () {
-    final dom.DomHtmlElement target = dom.document.createElement('div');
+    final web.HTMLDivElement target =
+        web.document.createElement('div') as web.HTMLDivElement;
     injectMetaTag(<String, String>{
       'http-equiv': 'Content-Security-Policy',
       'content': "trusted-types my-custom-policy-name 'allow-duplicates';",
