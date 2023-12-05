@@ -116,7 +116,7 @@ class _MyExtraDecoder extends Converter<Object?, Object?> {
     if (inputAsList[0] == 'ComplexData2') {
       return ComplexData2(inputAsList[1]! as String);
     }
-    throw FormatException('Unable tp parse input: $input');
+    throw FormatException('Unable to parse input: $input');
   }
 }
 
