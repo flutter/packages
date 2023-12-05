@@ -356,16 +356,18 @@ class PubspecCheckCommand extends PackageLoopingCommand {
             'a topic. Add "$topicName" to the "topics" section.';
       }
     }
-    for (final String topic in topics) {
-      // Validates topic names according to https://dart.dev/tools/pub/pubspec#topics
-      final RegExp expectedTopicFormat =
-          RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
-      if (!expectedTopicFormat.hasMatch(topic) || topic.length < 2 || topic.length > 32 ) {
-        return 'Invalid topic value "$topic" in "topics" section. '
-            'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
-            'start with a-z and ending with a-z or 0-9, have a minimum of 2 characters '
-            'and have a maximum of 32 characters.';
-      }
+    
+    // Validates topic names according to https://dart.dev/tools/pub/pubspec#topics
+    final RegExp expectedTopicFormat = RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
+    final Iterable<String> invalidTopics = topics.where((String topic) =>
+        !expectedTopicFormat.hasMatch(topic) ||
+        topic.length < 2 ||
+        topic.length > 32);
+    if (invalidTopics.isNotEmpty) {
+      return 'Invalid topic(s): ${invalidTopics.join(', ')} in "topics" section. '
+          'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+          'start with a-z and ending with a-z or 0-9, have a minimum of 2 characters '
+          'and have a maximum of 32 characters.';
     }
     return null;
   }

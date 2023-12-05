@@ -633,7 +633,7 @@ ${_topicsSection()}
       );
     });
 
-    test('fails when topic a topic name contains a space', () async {
+    test('fails when topic name contains a space', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
@@ -656,9 +656,7 @@ ${_topicsSection(<String>['plugin a'])}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Invalid topic value "plugin a" in "topics" section. '
-              'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
-              'starting with a-z and ending with a-z or 0-9.'),
+          contains('Invalid topic(s): plugin a in "topics" section. '),
         ]),
       );
     });
@@ -686,9 +684,7 @@ ${_topicsSection(<String>['plugin--a'])}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Invalid topic value "plugin--a" in "topics" section. '
-              'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
-              'starting with a-z and ending with a-z or 0-9.'),
+          contains('Invalid topic(s): plugin--a in "topics" section. '),
         ]),
       );
     });
@@ -716,9 +712,7 @@ ${_topicsSection(<String>['1plugin-a'])}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Invalid topic value "1plugin-a" in "topics" section. '
-              'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
-              'starting with a-z and ending with a-z or 0-9.'),
+          contains('Invalid topic(s): 1plugin-a in "topics" section. '),
         ]),
       );
     });
@@ -746,9 +740,159 @@ ${_topicsSection(<String>['plugin-A'])}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Invalid topic value "plugin-A" in "topics" section. '
+          contains('Invalid topic(s): plugin-A in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails when there are more than 5 topics', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>[
+            'plugin-a',
+            'plugin-a',
+            'plugin-a',
+            'plugin-a',
+            'plugin-a',
+            'plugin-a'
+          ])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              '  A published package should have maximum 5 topics. See https://dart.dev/tools/pub/pubspec#topics.'),
+        ]),
+      );
+    });
+
+    test('fails if a topic name is longer than 32 characters', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['foobarfoobarfoobarfoobarfoobarfoobarfoo'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains(
+              'Invalid topic(s): foobarfoobarfoobarfoobarfoobarfoobarfoo in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails if a topic name is longer than 2 characters', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['a'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): a in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('fails if a topic name ends in a dash', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): plugin- in "topics" section. '),
+        ]),
+      );
+    });
+
+    test('Invalid topics section has expected error message', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, examples: <String>[]);
+
+      plugin.pubspecFile.writeAsStringSync('''
+${_headerSection('plugin')}
+${_environmentSection()}
+${_flutterSection(isPlugin: true)}
+${_dependenciesSection()}
+${_devDependenciesSection()}
+${_topicsSection(<String>['plugin-A', 'Plugin-b'])}
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['pubspec-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Invalid topic(s): plugin-A, Plugin-b in "topics" section. '
               'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
-              'starting with a-z and ending with a-z or 0-9.'),
+              'start with a-z and ending with a-z or 0-9, have a minimum of 2 characters '
+              'and have a maximum of 32 characters.'),
         ]),
       );
     });
