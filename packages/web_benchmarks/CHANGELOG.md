@@ -1,3 +1,7 @@
+## 0.1.0+10
+
+* Migrates benchmark recorder away from deprecated `js_util` APIs.
+
 ## 0.1.0+9
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

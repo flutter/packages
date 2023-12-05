@@ -4,10 +4,9 @@
 
 import 'dart:async';
 import 'dart:html' as html;
-import 'dart:js';
-import 'dart:js_util' as js_util;
 import 'dart:math' as math;
 import 'dart:ui';
+import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -1210,20 +1209,19 @@ final Map<String, EngineBenchmarkValueListener> _engineBenchmarkListeners =
 /// Registers a [listener] for engine benchmark values labeled by [name].
 ///
 /// If another listener is already registered, overrides it.
-void registerEngineBenchmarkValueListener(
-    String name, EngineBenchmarkValueListener listener) {
+void registerEngineBenchmarkValueListener(String name, EngineBenchmarkValueListener listener) {
   if (_engineBenchmarkListeners.containsKey(name)) {
-    throw StateError('A listener for "$name" is already registered.\n'
-        'Call `stopListeningToEngineBenchmarkValues` to unregister the previous '
-        'listener before registering a new one.');
+    throw StateError(
+      'A listener for "$name" is already registered.\n'
+      'Call `stopListeningToEngineBenchmarkValues` to unregister the previous '
+      'listener before registering a new one.'
+    );
   }
 
   if (_engineBenchmarkListeners.isEmpty) {
     // The first listener is being registered. Register the global listener.
-    js_util.setProperty(html.window, '_flutter_internal_on_benchmark',
-        allowInterop(_dispatchEngineBenchmarkValue));
+    ui_web.benchmarkValueCallback = _dispatchEngineBenchmarkValue;
   }
-
   _engineBenchmarkListeners[name] = listener;
 }
 
@@ -1231,8 +1229,9 @@ void registerEngineBenchmarkValueListener(
 void stopListeningToEngineBenchmarkValues(String name) {
   _engineBenchmarkListeners.remove(name);
   if (_engineBenchmarkListeners.isEmpty) {
+
     // The last listener unregistered. Remove the global listener.
-    js_util.setProperty(html.window, '_flutter_internal_on_benchmark', null);
+    ui_web.benchmarkValueCallback = null;
   }
 }
 
