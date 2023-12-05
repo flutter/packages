@@ -1,3 +1,19 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.4
+
+* Fixes a bug of typeArguments losing NullabilitySuffix
+
+## 2.3.3
+
+* Adds `initialLocation` for `StatefulShellBranchConfig`
+
+## 2.3.2
+
+* Supports the latest `package:analyzer`.
+
 ## 2.3.1
 
 * Adds pub topics to package metadata.

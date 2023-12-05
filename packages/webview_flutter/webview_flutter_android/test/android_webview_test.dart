@@ -528,6 +528,13 @@ void main() {
           100,
         ));
       });
+
+      test('getUserAgentString', () async {
+        const String userAgent = 'str';
+        when(mockPlatformHostApi.getUserAgentString(webSettingsInstanceId))
+            .thenReturn(userAgent);
+        expect(await webSettings.getUserAgentString(), userAgent);
+      });
     });
 
     group('JavaScriptChannel', () {
@@ -1118,6 +1125,81 @@ void main() {
         flutterApi.onHideCustomView(instanceIdentifier);
 
         expect(callbackParameters, <Object?>[instance]);
+      });
+
+      test('onConsoleMessage', () async {
+        late final List<Object> result;
+        when(mockWebChromeClient.onConsoleMessage).thenReturn(
+          (WebChromeClient instance, ConsoleMessage message) {
+            result = <Object>[instance, message];
+          },
+        );
+
+        final ConsoleMessage message = ConsoleMessage(
+          lineNumber: 0,
+          message: 'message',
+          level: ConsoleMessageLevel.error,
+          sourceId: 'sourceId',
+        );
+
+        flutterApi.onConsoleMessage(
+          mockWebChromeClientInstanceId,
+          message,
+        );
+        expect(result[0], mockWebChromeClient);
+        expect(result[1], message);
+      });
+
+      test('setSynchronousReturnValueForOnConsoleMessage', () {
+        final MockTestWebChromeClientHostApi mockHostApi =
+            MockTestWebChromeClientHostApi();
+        TestWebChromeClientHostApi.setup(mockHostApi);
+
+        WebChromeClient.api =
+            WebChromeClientHostApiImpl(instanceManager: instanceManager);
+
+        final WebChromeClient webChromeClient = WebChromeClient.detached();
+        instanceManager.addHostCreatedInstance(webChromeClient, 2);
+
+        webChromeClient.setSynchronousReturnValueForOnConsoleMessage(false);
+
+        verify(
+          mockHostApi.setSynchronousReturnValueForOnConsoleMessage(2, false),
+        );
+      });
+
+      test(
+          'setSynchronousReturnValueForOnConsoleMessage throws StateError when onConsoleMessage is null',
+          () {
+        final MockTestWebChromeClientHostApi mockHostApi =
+            MockTestWebChromeClientHostApi();
+        TestWebChromeClientHostApi.setup(mockHostApi);
+
+        WebChromeClient.api =
+            WebChromeClientHostApiImpl(instanceManager: instanceManager);
+
+        final WebChromeClient clientWithNullCallback =
+            WebChromeClient.detached();
+        instanceManager.addHostCreatedInstance(clientWithNullCallback, 2);
+
+        expect(
+          () => clientWithNullCallback
+              .setSynchronousReturnValueForOnConsoleMessage(true),
+          throwsStateError,
+        );
+
+        final WebChromeClient clientWithNonnullCallback =
+            WebChromeClient.detached(
+          onConsoleMessage: (_, __) async {},
+        );
+        instanceManager.addHostCreatedInstance(clientWithNonnullCallback, 3);
+
+        clientWithNonnullCallback
+            .setSynchronousReturnValueForOnConsoleMessage(true);
+
+        verify(
+          mockHostApi.setSynchronousReturnValueForOnConsoleMessage(3, true),
+        );
       });
 
       test('copy', () {

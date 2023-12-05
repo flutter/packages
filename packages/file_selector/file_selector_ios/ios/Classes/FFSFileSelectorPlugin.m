@@ -21,7 +21,7 @@
                  initWithDocumentTypes:config.utis
                                 inMode:UIDocumentPickerModeImport];
   documentPicker.delegate = self;
-  documentPicker.allowsMultipleSelection = config.allowMultiSelection.boolValue;
+  documentPicker.allowsMultipleSelection = config.allowMultiSelection;
 
   UIViewController *presentingVC =
       self.presentingViewControllerOverride
@@ -41,7 +41,7 @@
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FFSFileSelectorPlugin *plugin = [[FFSFileSelectorPlugin alloc] init];
-  FFSFileSelectorApiSetup(registrar.messenger, plugin);
+  SetUpFFSFileSelectorApi(registrar.messenger, plugin);
 }
 
 #pragma mark - UIDocumentPickerDelegate

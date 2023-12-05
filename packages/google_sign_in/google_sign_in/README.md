@@ -27,59 +27,7 @@ Otherwise, you may encounter `APIException` errors.
 
 ### iOS integration
 
-1. [First register your application](https://firebase.google.com/docs/ios/setup).
-2. Make sure the file you download in step 1 is named
-   `GoogleService-Info.plist`.
-3. Move or copy `GoogleService-Info.plist` into the `[my_project]/ios/Runner`
-   directory.
-4. Open Xcode, then right-click on `Runner` directory and select
-   `Add Files to "Runner"`.
-5. Select `GoogleService-Info.plist` from the file manager.
-6. A dialog will show up and ask you to select the targets, select the `Runner`
-   target.
-7. If you need to authenticate to a backend server you can add a
-   `SERVER_CLIENT_ID` key value pair in your `GoogleService-Info.plist`.
-   ```xml
-   <key>SERVER_CLIENT_ID</key>
-   <string>[YOUR SERVER CLIENT ID]</string>
-   ```
-8. Then add the `CFBundleURLTypes` attributes below into the
-   `[my_project]/ios/Runner/Info.plist` file.
-
-```xml
-<!-- Put me in the [my_project]/ios/Runner/Info.plist file -->
-<!-- Google Sign-in Section -->
-<key>CFBundleURLTypes</key>
-<array>
-	<dict>
-		<key>CFBundleTypeRole</key>
-		<string>Editor</string>
-		<key>CFBundleURLSchemes</key>
-		<array>
-			<!-- TODO Replace this value: -->
-			<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
-			<string>com.googleusercontent.apps.861823949799-vc35cprkp249096uujjn0vvnmcvjppkn</string>
-		</array>
-	</dict>
-</array>
-<!-- End of the Google Sign-in Section -->
-```
-
-As an alternative to adding `GoogleService-Info.plist` to your Xcode project,
-you can instead configure your app in Dart code. In this case, skip steps 3 to 7
- and pass `clientId` and `serverClientId` to the `GoogleSignIn` constructor:
-
-```dart
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  ...
-  // The OAuth client id of your app. This is required.
-  clientId: ...,
-  // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
-  serverClientId: ...,
-);
-```
-
-Note that step 8 is still required.
+Please see [instructions on integrating Google Sign-In for iOS](https://pub.dev/packages/google_sign_in_ios#ios-integration).
 
 #### iOS additional requirement
 
@@ -212,12 +160,12 @@ For more details, take a look at the
 
 ### Does an app always need to check `canAccessScopes`?
 
-The new web SDK implicitly grant access to the `email`, `profile` and `openid` 
+The new web SDK implicitly grant access to the `email`, `profile` and `openid`
 scopes when users complete the sign-in process (either via the One Tap UX or the
 Google Sign In button).
 
 If an app only needs an `idToken`, or only requests permissions to any/all of
-the three scopes mentioned above 
+the three scopes mentioned above
 ([OpenID Connect scopes](https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect)),
 it won't need to implement any additional scope handling.
 

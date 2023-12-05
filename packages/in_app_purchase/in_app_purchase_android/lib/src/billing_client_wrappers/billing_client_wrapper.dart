@@ -414,6 +414,10 @@ enum BillingResponse {
   /// Failure to consume since item is not owned.
   @JsonValue(8)
   itemNotOwned,
+
+  /// Network connection failure between the device and Play systems.
+  @JsonValue(12)
+  networkError,
 }
 
 /// Serializer for [BillingResponse].

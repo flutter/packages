@@ -22,6 +22,7 @@ void main() async {
   final IdConfiguration config = IdConfiguration(
     client_id: 'your-client_id.apps.googleusercontent.com',
     callback: allowInterop(onCredentialResponse),
+    use_fedcm_for_prompt: true,
   );
 
   id.initialize(config);

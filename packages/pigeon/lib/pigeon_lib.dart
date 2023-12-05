@@ -21,6 +21,7 @@ import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
+import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
 
 import 'ast.dart';
@@ -756,20 +757,21 @@ List<Error> _validateAst(Root root, String source) {
   final List<String> customClasses =
       root.classes.map((Class x) => x.name).toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
-  for (final Class klass in root.classes) {
-    for (final NamedType field in getFieldsInSerializationOrder(klass)) {
+  for (final Class classDefinition in root.classes) {
+    for (final NamedType field
+        in getFieldsInSerializationOrder(classDefinition)) {
       for (final TypeDeclaration typeArgument in field.type.typeArguments) {
         if (!typeArgument.isNullable) {
           result.add(Error(
             message:
-                'Generic type arguments must be nullable in field "${field.name}" in class "${klass.name}".',
+                'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
         if (customEnums.contains(typeArgument.baseName)) {
           result.add(Error(
             message:
-                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${klass.name}".',
+                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
@@ -779,7 +781,7 @@ List<Error> _validateAst(Root root, String source) {
           customEnums.contains(field.type.baseName))) {
         result.add(Error(
           message:
-              'Unsupported datatype:"${field.type.baseName}" in class "${klass.name}".',
+              'Unsupported datatype:"${field.type.baseName}" in class "${classDefinition.name}".',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
@@ -787,31 +789,44 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
-      for (final NamedType unnamedType in method.arguments
-          .where((NamedType element) => element.type.baseName.isEmpty)) {
-        result.add(Error(
-          message:
-              'Arguments must specify their type in method "${method.name}" in API: "${api.name}"',
-          lineNumber: _calculateLineNumberNullable(source, unnamedType.offset),
-        ));
+      for (final Parameter param in method.parameters) {
+        if (param.type.baseName.isEmpty) {
+          result.add(Error(
+            message:
+                'Parameters must specify their type in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        } else if (param.name.startsWith('__pigeon_')) {
+          result.add(Error(
+            message:
+                'Parameter name must not begin with "__pigeon_" in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        } else if (param.name == 'pigeonChannelCodec') {
+          result.add(Error(
+            message:
+                'Parameter name must not be "pigeonChannelCodec" in method "${method.name}" in API: "${api.name}"',
+            lineNumber: _calculateLineNumberNullable(source, param.offset),
+          ));
+        }
       }
       if (method.objcSelector.isNotEmpty) {
         if (':'.allMatches(method.objcSelector).length !=
-            method.arguments.length) {
+            method.parameters.length) {
           result.add(Error(
             message:
-                'Invalid selector, expected ${method.arguments.length} arguments.',
+                'Invalid selector, expected ${method.parameters.length} parameters.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
       }
       if (method.swiftFunction.isNotEmpty) {
         final RegExp signatureRegex =
-            RegExp('\\w+ *\\((\\w+:){${method.arguments.length}}\\)');
+            RegExp('\\w+ *\\((\\w+:){${method.parameters.length}}\\)');
         if (!signatureRegex.hasMatch(method.swiftFunction)) {
           result.add(Error(
             message:
-                'Invalid function signature, expected ${method.arguments.length} arguments.',
+                'Invalid function signature, expected ${method.parameters.length} parameters.',
             lineNumber: _calculateLineNumberNullable(source, method.offset),
           ));
         }
@@ -850,6 +865,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   final String source;
 
   Class? _currentClass;
+  Map<String, String> _currentClassDefaultValues = <String, String>{};
   Api? _currentApi;
   Map<String, Object>? _pigeonOptions;
 
@@ -864,6 +880,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentClass != null) {
       _classes.add(_currentClass!);
       _currentClass = null;
+      _currentClassDefaultValues = <String, String>{};
     }
   }
 
@@ -908,6 +925,24 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
+    for (final Class classDefinition in referencedClasses) {
+      final List<NamedType> fields = <NamedType>[];
+      for (final NamedType field in classDefinition.fields) {
+        fields.add(field.copyWithType(_attachClassesAndEnums(field.type)));
+      }
+      classDefinition.fields = fields;
+    }
+
+    for (final Api api in _apis) {
+      for (final Method func in api.methods) {
+        final List<Parameter> paramList = <Parameter>[];
+        for (final Parameter param in func.parameters) {
+          paramList.add(param.copyWithType(_attachClassesAndEnums(param.type)));
+        }
+        func.parameters = paramList;
+        func.returnType = _attachClassesAndEnums(func.returnType);
+      }
+    }
 
     return ParseResults(
       root: totalErrors.isEmpty
@@ -916,6 +951,19 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );
+  }
+
+  TypeDeclaration _attachClassesAndEnums(TypeDeclaration type) {
+    final Enum? assocEnum = _enums.firstWhereOrNull(
+        (Enum enumDefinition) => enumDefinition.name == type.baseName);
+    final Class? assocClass = _classes.firstWhereOrNull(
+        (Class classDefinition) => classDefinition.name == type.baseName);
+    if (assocClass != null) {
+      return type.copyWithClass(assocClass);
+    } else if (assocEnum != null) {
+      return type.copyWithEnum(assocEnum);
+    }
+    return type;
   }
 
   Object _expressionToMap(dart_ast.Expression expression) {
@@ -1059,26 +1107,56 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         <String>[];
   }
 
-  NamedType formalParameterToField(dart_ast.FormalParameter parameter) {
-    final dart_ast.NamedType? namedType =
-        getFirstChildOfType<dart_ast.NamedType>(parameter);
-    if (namedType != null) {
-      final String argTypeBaseName = _getNamedTypeQualifiedName(namedType);
-      final bool isNullable = namedType.question != null;
+  Parameter formalParameterToPigeonParameter(
+    dart_ast.FormalParameter formalParameter, {
+    bool? isNamed,
+    bool? isOptional,
+    bool? isPositional,
+    bool? isRequired,
+    String? defaultValue,
+  }) {
+    final dart_ast.NamedType? parameter =
+        getFirstChildOfType<dart_ast.NamedType>(formalParameter);
+    final dart_ast.SimpleFormalParameter? simpleFormalParameter =
+        getFirstChildOfType<dart_ast.SimpleFormalParameter>(formalParameter);
+    if (parameter != null) {
+      final String argTypeBaseName = _getNamedTypeQualifiedName(parameter);
+      final bool isNullable = parameter.question != null;
       final List<TypeDeclaration> argTypeArguments =
-          typeAnnotationsToTypeArguments(namedType.typeArguments);
-      return NamedType(
-          type: TypeDeclaration(
-              baseName: argTypeBaseName,
-              isNullable: isNullable,
-              typeArguments: argTypeArguments),
-          name: parameter.name?.lexeme ?? '',
-          offset: parameter.offset);
+          typeAnnotationsToTypeArguments(parameter.typeArguments);
+      return Parameter(
+        type: TypeDeclaration(
+          baseName: argTypeBaseName,
+          isNullable: isNullable,
+          typeArguments: argTypeArguments,
+        ),
+        name: formalParameter.name?.lexeme ?? '',
+        offset: formalParameter.offset,
+        isNamed: isNamed,
+        isOptional: isOptional,
+        isPositional: isPositional,
+        isRequired: isRequired,
+        defaultValue: defaultValue,
+      );
+    } else if (simpleFormalParameter != null) {
+      String? defaultValue;
+      if (formalParameter is dart_ast.DefaultFormalParameter) {
+        defaultValue = formalParameter.defaultValue?.toString();
+      }
+
+      return formalParameterToPigeonParameter(
+        simpleFormalParameter,
+        isNamed: simpleFormalParameter.isNamed,
+        isOptional: simpleFormalParameter.isOptional,
+        isPositional: simpleFormalParameter.isPositional,
+        isRequired: simpleFormalParameter.isRequired,
+        defaultValue: defaultValue,
+      );
     } else {
-      return NamedType(
+      return Parameter(
         name: '',
         type: const TypeDeclaration(baseName: '', isNullable: false),
-        offset: parameter.offset,
+        offset: formalParameter.offset,
       );
     }
   }
@@ -1108,8 +1186,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    final List<NamedType> arguments =
-        parameters.parameters.map(formalParameterToField).toList();
+    final List<Parameter> arguments =
+        parameters.parameters.map(formalParameterToPigeonParameter).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
             ?.arguments
@@ -1149,7 +1227,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               typeArguments:
                   typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
-          arguments: arguments,
+          parameters: arguments,
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,
@@ -1222,17 +1300,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               lineNumber: _calculateLineNumber(source, node.offset)));
         } else {
           final dart_ast.TypeArgumentList? typeArguments = type.typeArguments;
-          _currentClass!.fields.add(NamedType(
+          final String name = node.fields.variables[0].name.lexeme;
+          final NamedType field = NamedType(
             type: TypeDeclaration(
               baseName: _getNamedTypeQualifiedName(type),
               isNullable: type.question != null,
               typeArguments: typeAnnotationsToTypeArguments(typeArguments),
             ),
-            name: node.fields.variables[0].name.lexeme,
+            name: name,
             offset: node.offset,
+            defaultValue: _currentClassDefaultValues[name],
             documentationComments:
                 _documentationCommentsParser(node.documentationComment?.tokens),
-          ));
+          );
+          _currentClass!.fields.add(field);
         }
       } else {
         _errors.add(Error(
@@ -1265,6 +1346,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             message:
                 'Constructor initializers aren\'t supported in data classes (use "this.fieldName") ("$node").',
             lineNumber: _calculateLineNumber(source, node.offset)));
+      } else {
+        for (final dart_ast.FormalParameter param
+            in node.parameters.parameters) {
+          if (param is dart_ast.DefaultFormalParameter) {
+            if (param.name != null && param.defaultValue != null) {
+              _currentClassDefaultValues[param.name!.toString()] =
+                  param.defaultValue!.toString();
+            }
+          }
+        }
       }
     }
     node.visitChildren(this);
