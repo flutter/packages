@@ -692,7 +692,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testPublishesInRegistration {
-  NSString* pluginKey = @"TestRegistration";
+  NSString *pluginKey = @"TestRegistration";
   NSObject<FlutterPluginRegistry> *registry = GetPluginRegistry();
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:pluginKey];
 
