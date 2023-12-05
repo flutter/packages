@@ -55,7 +55,13 @@ class BenchmarkServer {
     required this.chromeDebugPort,
     required this.headless,
     required this.treeShakeIcons,
+    this.initialPage = defaultInitialPage,
   });
+
+  /// The default initial page to load upon opening the benchmark app in Chrome.
+  ///
+  /// This value will be used by default if no value is passed to [initialPage].
+  static const String defaultInitialPage = 'index.html';
 
   final ProcessManager _processManager = const LocalProcessManager();
 
@@ -89,6 +95,14 @@ class BenchmarkServer {
   ///
   /// When false, '--no-tree-shake-icons' will be passed as a build argument.
   final bool treeShakeIcons;
+
+  /// The initial page to load upon opening the benchmark app in Chrome.
+  ///
+  /// The default value is [defaultInitialPage].
+  final String initialPage;
+
+  String get _benchmarkAppUrl =>
+      'http://localhost:$benchmarkServerPort/$initialPage';
 
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {
@@ -252,7 +266,7 @@ class BenchmarkServer {
           .path;
 
       final ChromeOptions options = ChromeOptions(
-        url: 'http://localhost:$benchmarkServerPort/index.html',
+        url: _benchmarkAppUrl,
         userDataDirectory: userDataDir,
         headless: headless,
         debugPort: chromeDebugPort,

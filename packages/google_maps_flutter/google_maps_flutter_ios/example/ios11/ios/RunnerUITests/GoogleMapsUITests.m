@@ -6,6 +6,8 @@
 @import XCTest;
 @import os.log;
 
+static const NSTimeInterval kWaitTime = 60;
+
 @interface GoogleMapsUITests : XCTestCase
 @property(nonatomic, strong) XCUIApplication *app;
 @end
@@ -25,7 +27,7 @@
                                           XCUIElement *locationPermission =
                                               interruptingElement.buttons[@"Allow While Using App"];
                                           if (![locationPermission
-                                                  waitForExistenceWithTimeout:30.0]) {
+                                                  waitForExistenceWithTimeout:kWaitTime]) {
                                             XCTFail(@"Failed due to not able to find "
                                                     @"locationPermission button");
                                           }
@@ -34,7 +36,7 @@
                                         } else {
                                           XCUIElement *allow =
                                               interruptingElement.buttons[@"Allow"];
-                                          if (![allow waitForExistenceWithTimeout:30.0]) {
+                                          if (![allow waitForExistenceWithTimeout:kWaitTime]) {
                                             XCTFail(@"Failed due to not able to find Allow button");
                                           }
                                           [allow tap];
@@ -46,14 +48,14 @@
 - (void)testUserInterface {
   XCUIApplication *app = self.app;
   XCUIElement *userInteface = app.staticTexts[@"User interface"];
-  if (![userInteface waitForExistenceWithTimeout:30.0]) {
+  if (![userInteface waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find User interface");
   }
   [userInteface tap];
 
   XCUIElement *platformView = app.otherElements[@"platform_view[0]"];
-  if (![platformView waitForExistenceWithTimeout:30.0]) {
+  if (![platformView waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find platform view");
   }
@@ -66,7 +68,7 @@
   XCUICoordinate *coordinate = [app coordinateWithNormalizedOffset:CGVectorMake(0, 0)];
   [coordinate tap];
   XCUIElement *compass = app.buttons[@"disable compass"];
-  if (![compass waitForExistenceWithTimeout:30.0]) {
+  if (![compass waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find disable compass button");
   }
@@ -77,20 +79,20 @@
 - (void)testMapCoordinatesPage {
   XCUIApplication *app = self.app;
   XCUIElement *mapCoordinates = app.staticTexts[@"Map coordinates"];
-  if (![mapCoordinates waitForExistenceWithTimeout:30.0]) {
+  if (![mapCoordinates waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find 'Map coordinates''");
   }
   [mapCoordinates tap];
 
   XCUIElement *platformView = app.otherElements[@"platform_view[0]"];
-  if (![platformView waitForExistenceWithTimeout:30.0]) {
+  if (![platformView waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find platform view");
   }
 
   XCUIElement *titleBar = app.otherElements[@"Map coordinates"];
-  if (![titleBar waitForExistenceWithTimeout:30.0]) {
+  if (![titleBar waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find title bar");
   }
@@ -99,7 +101,7 @@
       [NSPredicate predicateWithFormat:@"label BEGINSWITH 'VisibleRegion'"];
   XCUIElement *visibleRegionText =
       [app.staticTexts elementMatchingPredicate:visibleRegionPredicate];
-  if (![visibleRegionText waitForExistenceWithTimeout:30.0]) {
+  if (![visibleRegionText waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find Visible Region label'");
   }
@@ -168,14 +170,14 @@
 - (void)testMapClickPage {
   XCUIApplication *app = self.app;
   XCUIElement *mapClick = app.staticTexts[@"Map click"];
-  if (![mapClick waitForExistenceWithTimeout:30.0]) {
+  if (![mapClick waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find 'Map click''");
   }
   [mapClick tap];
 
   XCUIElement *platformView = app.otherElements[@"platform_view[0]"];
-  if (![platformView waitForExistenceWithTimeout:30.0]) {
+  if (![platformView waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find platform view");
   }
@@ -183,7 +185,7 @@
   [platformView tap];
 
   XCUIElement *tapped = app.staticTexts[@"Tapped"];
-  if (![tapped waitForExistenceWithTimeout:30.0]) {
+  if (![tapped waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find 'tapped''");
   }
@@ -191,7 +193,7 @@
   [platformView pressForDuration:5.0];
 
   XCUIElement *longPressed = app.staticTexts[@"Long pressed"];
-  if (![longPressed waitForExistenceWithTimeout:30.0]) {
+  if (![longPressed waitForExistenceWithTimeout:kWaitTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", app.debugDescription);
     XCTFail(@"Failed due to not able to find 'longPressed''");
   }
@@ -207,6 +209,69 @@
   }
   XCUICoordinate *coordinate = [button coordinateWithNormalizedOffset:CGVectorMake(0, 0)];
   [coordinate tap];
+}
+
+- (void)testMarkerDraggingCallbacks {
+  XCUIApplication *application = [[XCUIApplication alloc] init];
+  [application launch];
+  XCUIElement *placeMarkerButton = application.staticTexts[@"Place marker"];
+  if (![placeMarkerButton waitForExistenceWithTimeout:kWaitTime]) {
+    NSLog(@"application.debugDescription: %@", application.debugDescription);
+    XCTFail(@"Failed to find the Place marker button.");
+  }
+  [placeMarkerButton tap];
+
+  XCUIElement *Add = application.buttons[@"Add"];
+  if (![Add waitForExistenceWithTimeout:kWaitTime]) {
+    NSLog(@"application.debugDescription: %@", application.debugDescription);
+    XCTFail(@"Failed to find the Add button.");
+  }
+  [Add tap];
+
+  XCUIElement *marker = application.buttons[@"marker_id_1"];
+  if (![marker waitForExistenceWithTimeout:kWaitTime]) {
+    NSLog(@"application.debugDescription: %@", application.debugDescription);
+    XCTFail(@"Failed to find the marker.");
+  }
+  [marker tap];
+
+  XCUIElement *toggleDraggable = application.buttons[@"toggle draggable"];
+  if (![toggleDraggable waitForExistenceWithTimeout:kWaitTime]) {
+    NSLog(@"application.debugDescription: %@", application.debugDescription);
+    XCTFail(@"Failed to find the toggle draggable.");
+  }
+  [toggleDraggable tap];
+
+  // Drag marker to center
+  [marker pressForDuration:5 thenDragToElement:application];
+
+  NSPredicate *predicateDragStart =
+      [NSPredicate predicateWithFormat:@"label CONTAINS[c] %@", @"_onMarkerDragStart"];
+  NSPredicate *predicateDrag =
+      [NSPredicate predicateWithFormat:@"label CONTAINS[c] %@", @"_onMarkerDrag called"];
+  NSPredicate *predicateDragEnd =
+      [NSPredicate predicateWithFormat:@"label CONTAINS[c] %@", @"_onMarkerDragEnd"];
+
+  XCUIElement *dragStart = [application.staticTexts matchingPredicate:predicateDragStart].element;
+  if (![dragStart waitForExistenceWithTimeout:kWaitTime]) {
+    NSLog(@"application.debugDescription: %@", application.debugDescription);
+    XCTFail(@"Failed to find the _onMarkerDragStart.");
+  }
+  XCTAssertTrue(dragStart.exists);
+
+  XCUIElement *drag = [application.staticTexts matchingPredicate:predicateDrag].element;
+  if (![drag waitForExistenceWithTimeout:kWaitTime]) {
+    NSLog(@"application.debugDescription: %@", application.debugDescription);
+    XCTFail(@"Failed to find the _onMarkerDrag.");
+  }
+  XCTAssertTrue(drag.exists);
+
+  XCUIElement *dragEnd = [application.staticTexts matchingPredicate:predicateDragEnd].element;
+  if (![dragEnd waitForExistenceWithTimeout:kWaitTime]) {
+    NSLog(@"application.debugDescription: %@", application.debugDescription);
+    XCTFail(@"Failed to find the _onMarkerDragEnd.");
+  }
+  XCTAssertTrue(dragEnd.exists);
 }
 
 @end
