@@ -1,6 +1,6 @@
 # extension_google_sign_in_as_googleapis_auth
 
-A bridge package between Flutter's [`google_sign_in` plugin](https://pub.dev/packages/google_sign_in) and Dart's [`googleapis` package](https://pub.dev/packages/googleapis), that is able to create [`googleapis_auth`-like `AuthClient` instances](https://pub.dev/documentation/googleapis_auth/latest/googleapis_auth.auth/AuthClient-class.html) directly from the `GoogleSignIn` plugin.
+A bridge package between Flutter's [`google_sign_in` plugin](https://pub.dev/packages/google_sign_in) and Dart's [`googleapis` package](https://pub.dev/packages/googleapis), that is able to create [`googleapis_auth`-like `AuthClient` instances](https://pub.dev/documentation/googleapis_auth/latest/googleapis_auth/AuthClient-class.html) directly from the `GoogleSignIn` plugin.
 
 ## Usage
 
