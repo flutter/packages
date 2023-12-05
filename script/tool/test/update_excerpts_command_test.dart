@@ -33,12 +33,13 @@ void runAllTests(MockPlatform platform) {
       ));
   });
 
-  Future<void> testInjection(String before, String source, String after,
+  Future<void> testInjection(
+      String before, String source, String after, String fileName,
       {bool failOnChange = false}) async {
     final RepositoryPackage package =
         createFakePackage('a_package', packagesDir);
     package.readmeFile.writeAsStringSync(before);
-    package.directory.childFile('main.dart').writeAsStringSync(source);
+    package.directory.childFile(fileName).writeAsStringSync(source);
     Object? errorObject;
     final List<String> output = await runCapturingPrint(
       runner,
@@ -57,10 +58,12 @@ void runAllTests(MockPlatform platform) {
   }
 
   test('succeeds when nothing has changed', () async {
+    const String fileName = 'main.dart';
+
     const String readme = '''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 A B C
 ```
@@ -72,7 +75,7 @@ A B C
 // #enddocregion SomeSection
 FAIL
 ''';
-    await testInjection(readme, source, readme);
+    await testInjection(readme, source, readme, fileName);
   });
 
   test('fails if example injection fails', () async {
@@ -112,31 +115,29 @@ FAIL
   });
 
   test('updates files', () async {
-    await testInjection(
-      '''
+    const String fileName = 'main.dart';
+
+    await testInjection('''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 X Y Z
 ```
-''',
-      '''
+''', '''
 FAIL
 // #docregion SomeSection
 A B C
 // #enddocregion SomeSection
 FAIL
-''',
-      '''
+''', '''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 A B C
 ```
-''',
-    );
+''', fileName);
   });
 
   test('fails if READMEs are changed with --fail-on-change', () async {
@@ -174,14 +175,16 @@ FAIL
 
   test('does not fail if READMEs are not changed with --fail-on-change',
       () async {
+    const String fileName = 'main.dart';
+
     const String readme = '''
 Example:
 
-<?code-excerpt "main.dart (aa)"?>
+<?code-excerpt "$fileName (aa)"?>
 ```dart
 A
 ```
-<?code-excerpt "main.dart (bb)"?>
+<?code-excerpt "$fileName (bb)"?>
 ```dart
 B
 ```
@@ -197,128 +200,121 @@ B
 // #enddocregion bb
 ''',
       readme,
+      fileName,
       failOnChange: true,
     );
   });
 
   test('indents the plaster', () async {
-    await testInjection(
-      '''
+    const String fileName = 'main.dart';
+
+    await testInjection('''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 ```
-''',
-      '''
+''', '''
 // #docregion SomeSection
 A
   // #enddocregion SomeSection
 // #docregion SomeSection
 B
 // #enddocregion SomeSection
-''',
-      '''
+''', '''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 A
   // ···
 B
 ```
-''',
-    );
+''', fileName);
   });
 
   test('does not unindent blocks if plaster will not unindent', () async {
-    await testInjection(
-      '''
+    const String fileName = 'main.dart';
+
+    await testInjection('''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 ```
-''',
-      '''
+''', '''
 // #docregion SomeSection
   A
 // #enddocregion SomeSection
 // #docregion SomeSection
     B
 // #enddocregion SomeSection
-''',
-      '''
+''', '''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
   A
 // ···
     B
 ```
-''',
-    );
+''', fileName);
   });
 
   test('unindents blocks', () async {
-    await testInjection(
-      '''
+    const String fileName = 'main.dart';
+
+    await testInjection('''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 ```
-''',
-      '''
+''', '''
   // #docregion SomeSection
   A
   // #enddocregion SomeSection
     // #docregion SomeSection
     B
     // #enddocregion SomeSection
-''',
-      '''
+''', '''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 A
 // ···
   B
 ```
-''',
-    );
+''', fileName);
   });
 
   test('unindents blocks and plaster', () async {
-    await testInjection(
-      '''
+    const String fileName = 'main.dart';
+
+    await testInjection('''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 ```
-''',
-      '''
+''', '''
   // #docregion SomeSection
   A
     // #enddocregion SomeSection
     // #docregion SomeSection
     B
     // #enddocregion SomeSection
-''',
-      '''
+''', '''
 Example:
 
-<?code-excerpt "main.dart (SomeSection)"?>
+<?code-excerpt "$fileName (SomeSection)"?>
 ```dart
 A
   // ···
   B
 ```
-''',
-    );
+''', fileName);
   });
 
   test('relative path bases', () async {
@@ -446,6 +442,411 @@ FAIL
         contains('Checked 1 snippet(s) in README.md.'),
       ]),
     );
+  });
+
+  test('updates gradle files', () async {
+    const String fileName = 'main.gradle';
+    const String language = 'groovy';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates java files', () async {
+    const String fileName = 'main.java';
+    const String language = 'java';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates sh files', () async {
+    const String fileName = 'main.sh';
+    const String language = 'sh';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+# #docregion SomeSection
+A B C
+# #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates cc files', () async {
+    const String fileName = 'main.cc';
+    const String language = 'cc';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates cpp files', () async {
+    const String fileName = 'main.cpp';
+    const String language = 'c++';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates files with no extension', () async {
+    const String fileName = 'main';
+    const String language = 'txt';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+#docregion SomeSection
+A B C
+#enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates kotlin files', () async {
+    const String fileName = 'main.kt';
+    const String language = 'kotlin';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates m files', () async {
+    const String fileName = 'main.m';
+    const String language = 'objectivec';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates js files', () async {
+    const String fileName = 'main.js';
+    const String language = 'js';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates java files', () async {
+    const String fileName = 'main.java';
+    const String language = 'java';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates swift files', () async {
+    const String fileName = 'main.swift';
+    const String language = 'swift';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+// #docregion SomeSection
+A B C
+// #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates css files', () async {
+    const String fileName = 'main.css';
+    const String language = 'css';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+/* #docregion SomeSection */
+A B C
+/* #enddocregion SomeSection */
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates html files', () async {
+    const String fileName = 'main.html';
+    const String language = 'html';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+<!--#docregion SomeSection-->
+A B C
+<!--#enddocregion SomeSection-->
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates xml files', () async {
+    const String fileName = 'main.xml';
+    const String language = 'xml';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+<!--#docregion SomeSection-->
+A B C
+<!--#enddocregion SomeSection-->
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
+  });
+
+  test('updates yaml files', () async {
+    const String fileName = 'main.yaml';
+    const String language = 'yaml';
+
+    await testInjection('''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+X Y Z
+```
+''', '''
+FAIL
+# #docregion SomeSection
+A B C
+# #enddocregion SomeSection
+FAIL
+''', '''
+Example:
+
+<?code-excerpt "$fileName (SomeSection)"?>
+```$language
+A B C
+```
+''', fileName);
   });
 }
 
