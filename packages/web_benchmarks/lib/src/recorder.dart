@@ -1209,12 +1209,15 @@ final Map<String, EngineBenchmarkValueListener> _engineBenchmarkListeners =
 /// Registers a [listener] for engine benchmark values labeled by [name].
 ///
 /// If another listener is already registered, overrides it.
-void registerEngineBenchmarkValueListener(String name, EngineBenchmarkValueListener listener) {
+void registerEngineBenchmarkValueListener(
+  String name,
+  EngineBenchmarkValueListener listener,
+) {
   if (_engineBenchmarkListeners.containsKey(name)) {
     throw StateError(
       'A listener for "$name" is already registered.\n'
       'Call `stopListeningToEngineBenchmarkValues` to unregister the previous '
-      'listener before registering a new one.'
+      'listener before registering a new one.',
     );
   }
 
@@ -1229,7 +1232,6 @@ void registerEngineBenchmarkValueListener(String name, EngineBenchmarkValueListe
 void stopListeningToEngineBenchmarkValues(String name) {
   _engineBenchmarkListeners.remove(name);
   if (_engineBenchmarkListeners.isEmpty) {
-
     // The last listener unregistered. Remove the global listener.
     ui_web.benchmarkValueCallback = null;
   }
