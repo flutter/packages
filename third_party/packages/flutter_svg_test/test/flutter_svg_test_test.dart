@@ -174,10 +174,12 @@ class _FakeHttpClientResponse extends Fake implements HttpClientResponse {
   }
 }
 
+// Ignore this because the minimum flutter sdk needs this cast.
+// ignore: unnecessary_cast
 final Uint8List _svgBytes = utf8.encode(_svgStr) as Uint8List;
 
 const String _svgStr = '''
 <svg height="100" width="100">
   <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
-</svg> 
+</svg>
 ''';
