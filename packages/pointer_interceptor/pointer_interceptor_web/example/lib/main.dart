@@ -131,15 +131,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         },
                       ),
                       PointerInterceptorWeb().buildWidget(
-                        intercepting: false,
-                          child:
-                      ElevatedButton(
-                        key: const Key('transparent-button'),
-                        child: const Text('Never calls onPressed'),
-                        onPressed: () {
-                          _clickedOn('transparent-button');
-                        },
-                      )),
+                          intercepting: false,
+                          child: ElevatedButton(
+                            key: const Key('wrapped-transparent-button'),
+                            child: const Text('Never calls onPressed transparent'),
+                            onPressed: () {
+                              _clickedOn('wrapped-transparent-button');
+                            },
+                          )),
                       PointerInterceptorPlatform.instance.buildWidget(
                         child: ElevatedButton(
                           key: const Key('clickable-button'),
