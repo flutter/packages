@@ -138,6 +138,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
     bool requestFocus = true,
+    TransitionDelegate<dynamic>? transitionDelegate,
   }) {
     return GoRouter.routingConfig(
       routingConfig: _ConstantRoutingConfig(
@@ -160,6 +161,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       navigatorKey: navigatorKey,
       restorationScopeId: restorationScopeId,
       requestFocus: requestFocus,
+      transitionDelegate: transitionDelegate,
     );
   }
 
@@ -182,6 +184,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
     bool requestFocus = true,
+    TransitionDelegate<dynamic>? transitionDelegate,
   })  : _routingConfig = routingConfig,
         backButtonDispatcher = RootBackButtonDispatcher(),
         assert(
@@ -242,6 +245,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       ],
       restorationScopeId: restorationScopeId,
       requestFocus: requestFocus,
+      transitionDelegate: transitionDelegate,
       // wrap the returned Navigator to enable GoRouter.of(context).go() et al,
       // allowing the caller to wrap the navigator themselves
       builderWithNav: (BuildContext context, Widget child) =>

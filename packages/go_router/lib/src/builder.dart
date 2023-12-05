@@ -46,6 +46,7 @@ class RouteBuilder {
     required this.observers,
     required this.onPopPageWithRouteMatch,
     this.requestFocus = true,
+    this.transitionDelegate,
   });
 
   /// Builder function for a go router with Navigator.
@@ -91,6 +92,9 @@ class RouteBuilder {
   final Map<GlobalKey<NavigatorState>, HeroController> _goHeroCache =
       <GlobalKey<NavigatorState>, HeroController>{};
 
+  /// Pass this down to [Navigator.transitionDelegate]
+  final TransitionDelegate<dynamic>? transitionDelegate;
+
   /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
     BuildContext context,
@@ -111,7 +115,8 @@ class RouteBuilder {
           final Map<Page<Object?>, GoRouterState> newRegistry =
               <Page<Object?>, GoRouterState>{};
           final Widget result = tryBuild(context, matchList, routerNeglect,
-              configuration.navigatorKey, newRegistry);
+              configuration.navigatorKey, newRegistry,
+              transitionDelegate: transitionDelegate);
           _registry.updateRegistry(newRegistry);
           return GoRouterStateRegistryScope(registry: _registry, child: result);
         },
@@ -129,8 +134,9 @@ class RouteBuilder {
     RouteMatchList matchList,
     bool routerNeglect,
     GlobalKey<NavigatorState> navigatorKey,
-    Map<Page<Object?>, GoRouterState> registry,
-  ) {
+    Map<Page<Object?>, GoRouterState> registry, {
+    TransitionDelegate<dynamic>? transitionDelegate,
+  }) {
     // TODO(chunhtai): move the state from local scope to a central place.
     // https://github.com/flutter/flutter/issues/126365
     final _PagePopContext pagePopContext =
@@ -140,11 +146,13 @@ class RouteBuilder {
       _buildNavigator(
         pagePopContext.onPopPage,
         _buildPages(context, matchList, pagePopContext, routerNeglect,
-            navigatorKey, registry),
+            navigatorKey, registry,
+            transitionDelegate: transitionDelegate),
         navigatorKey,
         observers: observers,
         restorationScopeId: restorationScopeId,
         requestFocus: requestFocus,
+        transitionDelegate: transitionDelegate,
       ),
     );
   }
@@ -152,12 +160,14 @@ class RouteBuilder {
   /// Returns the top-level pages instead of the root navigator. Used for
   /// testing.
   List<Page<Object?>> _buildPages(
-      BuildContext context,
-      RouteMatchList matchList,
-      _PagePopContext pagePopContext,
-      bool routerNeglect,
-      GlobalKey<NavigatorState> navigatorKey,
-      Map<Page<Object?>, GoRouterState> registry) {
+    BuildContext context,
+    RouteMatchList matchList,
+    _PagePopContext pagePopContext,
+    bool routerNeglect,
+    GlobalKey<NavigatorState> navigatorKey,
+    Map<Page<Object?>, GoRouterState> registry, {
+    TransitionDelegate<dynamic>? transitionDelegate,
+  }) {
     final Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPage;
     if (matchList.isError) {
       keyToPage = <GlobalKey<NavigatorState>, List<Page<Object?>>>{
@@ -168,7 +178,8 @@ class RouteBuilder {
     } else {
       keyToPage = <GlobalKey<NavigatorState>, List<Page<Object?>>>{};
       _buildRecursive(context, matchList, 0, pagePopContext, routerNeglect,
-          keyToPage, navigatorKey, registry);
+          keyToPage, navigatorKey, registry,
+          transitionDelegate: transitionDelegate);
 
       // Every Page should have a corresponding RouteMatch.
       assert(keyToPage.values.flattened.every((Page<Object?> page) =>
@@ -206,8 +217,9 @@ class RouteBuilder {
     bool routerNeglect,
     Map<GlobalKey<NavigatorState>, List<Page<Object?>>> keyToPages,
     GlobalKey<NavigatorState> navigatorKey,
-    Map<Page<Object?>, GoRouterState> registry,
-  ) {
+    Map<Page<Object?>, GoRouterState> registry, {
+    TransitionDelegate<dynamic>? transitionDelegate,
+  }) {
     if (startIndex >= matchList.matches.length) {
       return;
     }
@@ -220,7 +232,8 @@ class RouteBuilder {
       page = _buildErrorPage(context, state);
       keyToPages.putIfAbsent(navigatorKey, () => <Page<Object?>>[]).add(page);
       _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
-          routerNeglect, keyToPages, navigatorKey, registry);
+          routerNeglect, keyToPages, navigatorKey, registry,
+          transitionDelegate: transitionDelegate);
     } else {
       // If this RouteBase is for a different Navigator, add it to the
       // list of out of scope pages
@@ -237,7 +250,8 @@ class RouteBuilder {
         }
 
         _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
-            routerNeglect, keyToPages, navigatorKey, registry);
+            routerNeglect, keyToPages, navigatorKey, registry,
+            transitionDelegate: transitionDelegate);
       } else if (route is ShellRouteBase) {
         assert(startIndex + 1 < matchList.matches.length,
             'Shell routes must always have child routes');
@@ -259,7 +273,8 @@ class RouteBuilder {
 
         // Build the remaining pages
         _buildRecursive(context, matchList, startIndex + 1, pagePopContext,
-            routerNeglect, keyToPages, shellNavigatorKey, registry);
+            routerNeglect, keyToPages, shellNavigatorKey, registry,
+            transitionDelegate: transitionDelegate);
 
         final HeroController heroController = _goHeroCache.putIfAbsent(
             shellNavigatorKey, () => _getHeroController(context));
@@ -278,6 +293,7 @@ class RouteBuilder {
             restorationScopeId: restorationScopeId,
             heroController: heroController,
             requestFocus: requestFocus,
+            transitionDelegate: transitionDelegate,
           );
         }
 
@@ -312,6 +328,7 @@ class RouteBuilder {
     String? restorationScopeId,
     HeroController? heroController,
     bool requestFocus = true,
+    TransitionDelegate<dynamic>? transitionDelegate,
   }) {
     final Widget navigator = Navigator(
       key: navigatorKey,
@@ -320,6 +337,8 @@ class RouteBuilder {
       observers: observers,
       onPopPage: onPopPage,
       requestFocus: requestFocus,
+      transitionDelegate:
+          transitionDelegate ?? const DefaultTransitionDelegate<dynamic>(),
     );
     if (heroController != null) {
       return HeroControllerScope(
