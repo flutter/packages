@@ -45,14 +45,7 @@ void main() {
 
     test('toJson should return a map with all fields', () {
       const CameraInitializedEvent event = CameraInitializedEvent(
-        1,
-        1024,
-        640,
-        ExposureMode.auto,
-        true,
-        FocusMode.auto,
-        true,
-      );
+          1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
 
       final Map<String, dynamic> jsonMap = event.toJson();
 
@@ -143,14 +136,13 @@ void main() {
       const CameraInitializedEvent event = CameraInitializedEvent(
           1, 1024, 640, ExposureMode.auto, true, FocusMode.auto, true);
       final int expectedHashCode = Object.hash(
-        event.cameraId.hashCode,
-        event.previewWidth,
-        event.previewHeight,
-        event.exposureMode,
-        event.exposurePointSupported,
-        event.focusMode,
-        event.focusPointSupported,
-      );
+          event.cameraId.hashCode,
+          event.previewWidth,
+          event.previewHeight,
+          event.exposureMode,
+          event.exposurePointSupported,
+          event.focusMode,
+          event.focusPointSupported);
 
       expect(event.hashCode, expectedHashCode);
     });
