@@ -1,3 +1,7 @@
+## 0.1.0+10
+
+* Ensure the benchmark client reloads with the proper `initialPage`.
+
 ## 0.1.0+9
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
