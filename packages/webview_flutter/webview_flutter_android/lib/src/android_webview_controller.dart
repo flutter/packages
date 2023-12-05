@@ -1289,6 +1289,8 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
               realm: realm,
             ),
           );
+        } else {
+          httpAuthHandler.cancel();
         }
       },
     );
