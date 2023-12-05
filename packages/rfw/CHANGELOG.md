@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes lint warnings.
 
 ## 1.0.15
 
