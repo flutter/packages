@@ -1,6 +1,6 @@
-## NEXT
+## 2.0.9
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.0.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Migrate motion curves to use `Easing` class.
 
 ## 2.0.8
