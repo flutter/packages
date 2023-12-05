@@ -868,7 +868,7 @@ class _InstanceManagerApi {
 
   final BinaryMessenger? _binaryMessenger;
   
-  static const MessageCodec<Object?> pigeonChannelCodec =
+  static const MessageCodec<Object?> $_pigeonChannelCodec =
      StandardMessageCodec();
 
   static void \$setUpMessageHandlers({
@@ -879,7 +879,7 @@ class _InstanceManagerApi {
         r'$removeStrongReferenceName';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
-      pigeonChannelCodec,
+      $_pigeonChannelCodec,
       binaryMessenger: binaryMessenger,
     );
     channel.setMessageHandler((Object? message) async {
@@ -902,7 +902,7 @@ class _InstanceManagerApi {
         r'$removeStrongReferenceName';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
-      pigeonChannelCodec,
+      $_pigeonChannelCodec,
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
@@ -928,7 +928,7 @@ class _InstanceManagerApi {
         r'$clearName';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
-      pigeonChannelCodec,
+      $_pigeonChannelCodec,
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
@@ -958,7 +958,7 @@ class _InstanceManagerApi {
     final String codecName = _getCodecName(api);
     final String codecInstanceName = '_codec${api.name}';
 
-    // Write Codec
+    // codec
     indent.writeln('''
 class $codecName extends StandardMessageCodec {
  const $codecName(this.instanceManager);
@@ -1054,658 +1054,59 @@ class $codecName extends StandardMessageCodec {
       return method.location == ApiLocation.flutter && method.required;
     });
 
-    final List<String> customEnumNames =
-        root.enums.map((Enum x) => x.name).toList();
-
-    final cb.Class proxyApi = cb.Class((cb.ClassBuilder builder) => builder
-          ..name = api.name
-          ..extend = _referOrNull(superClassApi?.name)
-          ..implements.addAll(<cb.Reference>[
-            if (api.interfacesNames.isNotEmpty)
-              ...api.interfacesNames.map((String name) => cb.refer(name))
-            else
-              cb.refer(r'$Copyable')
-          ])
-          ..docs.addAll(asDocumentationComments(
-            api.documentationComments,
-            _docCommentSpec,
-          ))
-          ..constructors.addAll(_proxyApiConstructors(
-            api.constructors,
-            apiName: api.name,
-            dartPackageName: dartPackageName,
-            codecInstanceName: codecInstanceName,
-            superClassApi: superClassApi,
-            nonAttachedFields: nonAttachedFields,
-            superClassFlutterMethods: superClassFlutterMethods,
-            interfacesMethods: interfacesMethods,
-            flutterMethods: flutterMethods,
-          ))
-          ..fields.addAll(_proxyApiFields(
-            nonAttachedFields: nonAttachedFields,
-            attachedFields: attachedFields,
-            apiName: api.name,
-            dartPackageName: dartPackageName,
-            codecInstanceName: codecInstanceName,
-            codecName: codecName,
-            interfacesApis: interfacesApis,
-            flutterMethods: flutterMethods,
-            hasSuperClass: superClassApi != null,
-            hasHostMessageSends: hostMethods.isNotEmpty ||
-                api.constructors.isNotEmpty ||
-                attachedFields.any((Field field) => !field.isStatic),
-          ))
-        // ..methods.add(
-        //   cb.Method.returnsVoid(
-        //     (cb.MethodBuilder builder) => builder
-        //       ..name = r'$setUpMessageHandlers'
-        //       ..returns = cb.refer('void')
-        //       ..static = true
-        //       ..optionalParameters.addAll(<cb.Parameter>[
-        //         cb.Parameter(
-        //           (cb.ParameterBuilder builder) => builder
-        //             ..name = r'$binaryMessenger'
-        //             ..named = true
-        //             ..type = cb.refer('BinaryMessenger?'),
-        //         ),
-        //         cb.Parameter(
-        //           (cb.ParameterBuilder builder) => builder
-        //             ..name = r'$instanceManager'
-        //             ..named = true
-        //             ..type = cb.refer(r'$InstanceManager?'),
-        //         ),
-        //         if (!hasARequiredFlutterMethod)
-        //           cb.Parameter(
-        //             (cb.ParameterBuilder builder) => builder
-        //               ..name = r'$detached'
-        //               ..named = true
-        //               ..type = cb.FunctionType(
-        //                 (cb.FunctionTypeBuilder builder) => builder
-        //                   ..returnType = cb.refer(api.name)
-        //                   ..isNullable = true
-        //                   ..requiredParameters.addAll(indexMap(
-        //                     nonAttachedFields,
-        //                     (int index, Field field) {
-        //                       return cb.refer(
-        //                         '${_addGenericTypesNullable(field.type)} ${_getParameterName(index, field)}',
-        //                       );
-        //                     },
-        //                   )),
-        //               ),
-        //           ),
-        //         for (final Method method in flutterMethods)
-        //           cb.Parameter(
-        //             (cb.ParameterBuilder builder) => builder
-        //               ..name = method.name
-        //               ..type = cb.FunctionType(
-        //                 (cb.FunctionTypeBuilder builder) => builder
-        //                   ..returnType = _referOrNull(
-        //                     _addGenericTypesNullable(method.returnType),
-        //                     isFuture: method.isAsynchronous,
-        //                   )
-        //                   ..isNullable = true
-        //                   ..requiredParameters.addAll(<cb.Reference>[
-        //                     cb.refer('${api.name} instance'),
-        //                     ...indexMap(
-        //                       method.parameters,
-        //                       (int index, NamedType parameter) {
-        //                         return cb.refer(
-        //                           '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
-        //                         );
-        //                       },
-        //                     )
-        //                   ]),
-        //               ),
-        //           ),
-        //       ])
-        //       ..body = cb.Block.of(<cb.Code>[
-        //         cb.Code(
-        //           'final $codecName codec = $codecName(\$instanceManager ?? \$InstanceManager.instance);',
-        //         ),
-        //         if (!hasARequiredFlutterMethod) ...<cb.Code>[
-        //           const cb.Code('{'),
-        //           _basicMessageChannel(
-        //             channelName: makeChannelNameWithStrings(
-        //               apiName: api.name,
-        //               methodName: r'$detached',
-        //               dartPackageName: dartPackageName,
-        //             ),
-        //             binaryMessenger: cb.refer(r'$binaryMessenger'),
-        //           ),
-        //           cb.refer('channel').property('setMessageHandler').call(
-        //             <cb.Expression>[
-        //               cb.Method(
-        //                 (cb.MethodBuilder builder) => builder
-        //                   ..modifier = cb.MethodModifier.async
-        //                   ..requiredParameters.add(
-        //                     cb.Parameter(
-        //                       (cb.ParameterBuilder builder) => builder
-        //                         ..name = 'message'
-        //                         ..type = cb.refer('Object?'),
-        //                     ),
-        //                   )
-        //                   ..body = cb.Block((cb.BlockBuilder builder) {
-        //                     final String channelName =
-        //                         makeChannelNameWithStrings(
-        //                       apiName: api.name,
-        //                       methodName: r'$detached',
-        //                       dartPackageName: dartPackageName,
-        //                     );
-        //                     builder.statements.addAll(<cb.Code>[
-        //                       _assert(
-        //                         condition: cb
-        //                             .refer('message')
-        //                             .notEqualTo(cb.literalNull),
-        //                         message: cb.literalString(
-        //                           'Argument for $channelName was null.',
-        //                           raw: true,
-        //                         ),
-        //                       ),
-        //                       const cb.Code(
-        //                         'final List<Object?> args = (message as List<Object?>?)!;',
-        //                       ),
-        //                       const cb.Code(
-        //                         'final int? instanceIdentifier = (args[0] as int?);',
-        //                       ),
-        //                       _assert(
-        //                         condition: cb
-        //                             .refer('instanceIdentifier')
-        //                             .notEqualTo(cb.literalNull),
-        //                         message: cb.literalString(
-        //                           'Argument for $channelName was null, expected non-null int.',
-        //                           raw: true,
-        //                         ),
-        //                       ),
-        //                       ...indexFold<List<cb.Code>, Field>(
-        //                         nonAttachedFields,
-        //                         <cb.Code>[],
-        //                         (List<cb.Code> list, int index, Field field) {
-        //                           return list
-        //                             ..addAll(_messageArg(
-        //                               index + 1,
-        //                               field,
-        //                               customEnumNames: customEnumNames,
-        //                               channelName: channelName,
-        //                             ));
-        //                         },
-        //                       ),
-        //                       cb
-        //                           .refer(
-        //                             r'($instanceManager ?? $InstanceManager.instance)',
-        //                           )
-        //                           .property('addHostCreatedInstance')
-        //                           .call(<cb.Expression>[
-        //                         cb
-        //                             .refer(r'$detached?.call')
-        //                             .call(
-        //                               indexMap(
-        //                                 nonAttachedFields,
-        //                                 (int index, Field field) {
-        //                                   // The calling instance is the first arg.
-        //                                   final String name =
-        //                                       _getSafeArgumentName(
-        //                                     index + 1,
-        //                                     field,
-        //                                   );
-        //                                   return field.type.isNullable
-        //                                       ? cb.refer(name)
-        //                                       : cb.refer(name).nullChecked;
-        //                                 },
-        //                               ),
-        //                             )
-        //                             .ifNullThen(
-        //                               cb.refer('${api.name}.\$detached').call(
-        //                                 <cb.Expression>[],
-        //                                 <String, cb.Expression>{
-        //                                   r'$binaryMessenger':
-        //                                       cb.refer(r'$binaryMessenger'),
-        //                                   r'$instanceManager':
-        //                                       cb.refer(r'$instanceManager'),
-        //                                   ...nonAttachedFields
-        //                                       .toList()
-        //                                       .asMap()
-        //                                       .map(
-        //                                     (int index, Field field) {
-        //                                       final String argName =
-        //                                           _getSafeArgumentName(
-        //                                         index + 1,
-        //                                         field,
-        //                                       );
-        //                                       return MapEntry<String,
-        //                                           cb.Expression>(
-        //                                         field.name,
-        //                                         field.type.isNullable
-        //                                             ? cb.refer(argName)
-        //                                             : cb
-        //                                                 .refer(argName)
-        //                                                 .nullChecked,
-        //                                       );
-        //                                     },
-        //                                   )
-        //                                 },
-        //                               ),
-        //                             ),
-        //                         cb.refer('instanceIdentifier').nullChecked
-        //                       ]).statement,
-        //                       const cb.Code('return;'),
-        //                     ]);
-        //                   }),
-        //               ).genericClosure
-        //             ],
-        //           ).statement,
-        //           const cb.Code('}'),
-        //         ],
-        //         ...flutterMethods.fold<List<cb.Code>>(
-        //           <cb.Code>[],
-        //           (List<cb.Code> list, Method method) {
-        //             final String channelName = makeChannelName(
-        //               api,
-        //               method,
-        //               dartPackageName,
-        //             );
-        //             final cb.Expression call = cb
-        //                 .refer(
-        //               '(${method.name} ?? instance!.${method.name})${method.required ? '' : '?'}.call',
-        //             )
-        //                 .call(
-        //               <cb.Expression>[
-        //                 cb.refer('instance').nullChecked,
-        //                 ...indexMap(
-        //                   method.parameters,
-        //                   (int index, NamedType parameter) {
-        //                     final String name = _getSafeArgumentName(
-        //                       index + 1,
-        //                       parameter,
-        //                     );
-        //                     return cb
-        //                         .refer(name)
-        //                         .nullCheckedIf(!parameter.type.isNullable);
-        //                   },
-        //                 ),
-        //               ],
-        //             );
-        //             return list
-        //               ..addAll(<cb.Code>[
-        //                 const cb.Code('{'),
-        //                 _basicMessageChannel(
-        //                   channelName: channelName,
-        //                   binaryMessenger: cb.refer(r'$binaryMessenger'),
-        //                 ),
-        //                 cb.refer('channel').property('setMessageHandler').call(
-        //                   <cb.Expression>[
-        //                     cb.Method(
-        //                       (cb.MethodBuilder builder) => builder
-        //                         ..modifier = cb.MethodModifier.async
-        //                         ..requiredParameters.add(
-        //                           cb.Parameter(
-        //                             (cb.ParameterBuilder builder) => builder
-        //                               ..name = 'message'
-        //                               ..type = cb.refer('Object?'),
-        //                           ),
-        //                         )
-        //                         ..body = cb.Block((cb.BlockBuilder builder) {
-        //                           builder.statements.addAll(<cb.Code>[
-        //                             _assert(
-        //                               condition: cb
-        //                                   .refer('message')
-        //                                   .notEqualTo(cb.literalNull),
-        //                               message: cb.literalString(
-        //                                 'Argument for $channelName was null.',
-        //                                 raw: true,
-        //                               ),
-        //                             ),
-        //                             const cb.Code(
-        //                               'final List<Object?> args = (message as List<Object?>?)!;',
-        //                             ),
-        //                             cb.Code(
-        //                               'final ${api.name}? instance = (args[0] as ${api.name}?);',
-        //                             ),
-        //                             _assert(
-        //                               condition: cb
-        //                                   .refer('instance')
-        //                                   .notEqualTo(cb.literalNull),
-        //                               message: cb.literalString(
-        //                                 'Argument for $channelName was null, expected non-null ${api.name}.',
-        //                                 raw: true,
-        //                               ),
-        //                             ),
-        //                             ...indexFold<List<cb.Code>, NamedType>(
-        //                               method.parameters,
-        //                               <cb.Code>[],
-        //                               (
-        //                                 List<cb.Code> list,
-        //                                 int index,
-        //                                 NamedType type,
-        //                               ) {
-        //                                 return list
-        //                                   ..addAll(_messageArg(
-        //                                     index + 1,
-        //                                     type,
-        //                                     customEnumNames: customEnumNames,
-        //                                     channelName: channelName,
-        //                                   ));
-        //                               },
-        //                             ),
-        //                             const cb.Code('try {'),
-        //                             if (method.returnType.isVoid) ...<cb.Code>[
-        //                               if (method.isAsynchronous)
-        //                                 call.awaited.statement
-        //                               else
-        //                                 call.statement,
-        //                               const cb.Code(
-        //                                 'return wrapResponse(empty: true);',
-        //                               ),
-        //                             ] else ...<cb.Code>[
-        //                               cb
-        //                                   .declareFinal(
-        //                                     'output',
-        //                                     type: cb.refer(
-        //                                       _addGenericTypesNullable(
-        //                                         method.returnType,
-        //                                       ),
-        //                                     ),
-        //                                   )
-        //                                   .assign(
-        //                                     call.awaitedIf(
-        //                                       method.isAsynchronous,
-        //                                     ),
-        //                                   )
-        //                                   .statement,
-        //                               _wrapResultResponse(
-        //                                       root, method.returnType)
-        //                                   .returned
-        //                                   .statement,
-        //                             ],
-        //                             const cb.Code(
-        //                               '} on PlatformException catch (e) {',
-        //                             ),
-        //                             const cb.Code(
-        //                               'return wrapResponse(error: e);',
-        //                             ),
-        //                             const cb.Code('} catch (e) {'),
-        //                             const cb.Code(
-        //                               "return wrapResponse(error: PlatformException(code: 'error', message: e.toString()),);",
-        //                             ),
-        //                             const cb.Code('}')
-        //                           ]);
-        //                         }),
-        //                     ).genericClosure
-        //                   ],
-        //                 ).statement,
-        //                 const cb.Code('}'),
-        //               ]);
-        //           },
-        //         ),
-        //       ]),
-        //   ),
-        // )
-        // ..methods.addAll(<cb.Method>[
-        //   for (final Field field in attachedFields)
-        //     cb.Method(
-        //       (cb.MethodBuilder builder) {
-        //         final String type = _addGenericTypesNullable(field.type);
-        //         final String channelName = makeChannelNameWithStrings(
-        //           apiName: api.name,
-        //           methodName: field.name,
-        //           dartPackageName: dartPackageName,
-        //         );
-        //         builder
-        //           ..name = '_${field.name}'
-        //           ..static = field.isStatic
-        //           ..returns = cb.refer(type)
-        //           ..body = cb.Block.of(
-        //             <cb.Code>[
-        //               cb.Code('final $type instance = $type.\$detached('),
-        //               if (!field.isStatic) ...<cb.Code>[
-        //                 const cb.Code(r'$binaryMessenger: $binaryMessenger,'),
-        //                 const cb.Code(r'$instanceManager: $instanceManager,'),
-        //               ],
-        //               const cb.Code(');'),
-        //               _basicMessageChannel(
-        //                 channelName: channelName,
-        //                 codec: !field.isStatic
-        //                     ? cb.refer('_codec${api.name}')
-        //                     : cb.refer(
-        //                         '$codecName(\$InstanceManager.instance)',
-        //                       ),
-        //                 binaryMessenger: !field.isStatic
-        //                     ? cb.refer(r'$binaryMessenger')
-        //                     : null,
-        //               ),
-        //               cb.Code(
-        //                 'final int instanceIdentifier = ${field.isStatic ? r'$InstanceManager.instance' : r'$instanceManager'}.addDartCreatedInstance(instance);',
-        //               ),
-        //               cb
-        //                   .refer('channel.send')
-        //                   .call(<cb.Expression>[
-        //                     cb.literalList(
-        //                       <Object?>[
-        //                         if (!field.isStatic) cb.refer('this'),
-        //                         cb.refer('instanceIdentifier')
-        //                       ],
-        //                       cb.refer('Object?'),
-        //                     )
-        //                   ])
-        //                   .property('then')
-        //                   .call(
-        //                     <cb.Expression>[
-        //                       cb.Method(
-        //                         (cb.MethodBuilder builder) => builder
-        //                           ..requiredParameters.add(
-        //                             cb.Parameter(
-        //                               (cb.ParameterBuilder builder) => builder
-        //                                 ..name = 'value'
-        //                                 ..type = cb.refer('Object?'),
-        //                             ),
-        //                           )
-        //                           ..body = cb.Block.of(<cb.Code>[
-        //                             const cb.Code(
-        //                               'final List<Object?>? replyList = value as List<Object?>?;',
-        //                             ),
-        //                             const cb.Code('if (replyList == null) {'),
-        //                             cb.InvokeExpression.newOf(
-        //                                 cb.refer('PlatformException'),
-        //                                 <cb.Expression>[],
-        //                                 <String, cb.Expression>{
-        //                                   'code':
-        //                                       cb.literalString('channel-error'),
-        //                                   'message': cb.literalString(
-        //                                     'Unable to establish connection on channel.',
-        //                                   )
-        //                                 }).thrown.statement,
-        //                             const cb.Code(
-        //                               '} else if (replyList.length > 1) {',
-        //                             ),
-        //                             cb.InvokeExpression.newOf(
-        //                                 cb.refer('PlatformException'),
-        //                                 <cb.Expression>[],
-        //                                 <String, cb.Expression>{
-        //                                   'code': cb
-        //                                       .refer('replyList')
-        //                                       .index(cb.literal(0))
-        //                                       .nullChecked
-        //                                       .asA(cb.refer('String')),
-        //                                   'message': cb
-        //                                       .refer('replyList')
-        //                                       .index(cb.literal(1))
-        //                                       .asA(cb.refer('String?')),
-        //                                   'details': cb
-        //                                       .refer('replyList')
-        //                                       .index(cb.literal(2)),
-        //                                 }).thrown.statement,
-        //                             const cb.Code('}'),
-        //                           ]),
-        //                       ).genericClosure,
-        //                     ],
-        //                     <String, cb.Expression>{},
-        //                     <cb.Reference>[cb.refer('void')],
-        //                   )
-        //                   .statement,
-        //               const cb.Code('return instance;'),
-        //             ],
-        //           );
-        //       },
-        //     ),
-        //   for (final Method method in hostMethods)
-        //     cb.Method(
-        //       (cb.MethodBuilder builder) => builder
-        //         ..name = method.name
-        //         ..static = method.isStatic
-        //         ..modifier = cb.MethodModifier.async
-        //         ..docs.addAll(asDocumentationComments(
-        //           method.documentationComments,
-        //           _docCommentSpec,
-        //         ))
-        //         ..returns = _referOrNull(
-        //           _addGenericTypesNullable(method.returnType),
-        //           isFuture: true,
-        //         )
-        //         ..requiredParameters.addAll(indexMap(
-        //           method.parameters,
-        //           (int index, NamedType parameter) => cb.Parameter(
-        //             (cb.ParameterBuilder builder) => builder
-        //               ..name = _getSafeArgumentName(index, parameter)
-        //               ..type = cb.refer(
-        //                 _addGenericTypesNullable(parameter.type),
-        //               ),
-        //           ),
-        //         ))
-        //         ..optionalParameters.addAll(<cb.Parameter>[
-        //           if (method.isStatic) ...<cb.Parameter>[
-        //             cb.Parameter(
-        //               (cb.ParameterBuilder builder) => builder
-        //                 ..name = r'$binaryMessenger'
-        //                 ..type = cb.refer('BinaryMessenger?')
-        //                 ..named = true,
-        //             ),
-        //             cb.Parameter(
-        //               (cb.ParameterBuilder builder) => builder
-        //                 ..name = r'$instanceManager'
-        //                 ..type = cb.refer(r'$InstanceManager?'),
-        //             ),
-        //           ],
-        //         ])
-        //         ..body = cb.Block.of(<cb.Code>[
-        //           _basicMessageChannel(
-        //             channelName: makeChannelName(api, method, dartPackageName),
-        //             codec: !method.isStatic
-        //                 ? cb.refer('_codec${api.name}')
-        //                 : cb.refer(
-        //                     '$codecName(\$instanceManager ?? \$InstanceManager.instance)',
-        //                   ),
-        //             binaryMessenger: cb.refer(r'$binaryMessenger'),
-        //           ),
-        //           const cb.Code('final List<Object?>? replyList ='),
-        //           cb
-        //               .refer('channel.send')
-        //               .call(<cb.Expression>[
-        //                 cb.literalList(
-        //                   <Object?>[
-        //                     if (!method.isStatic) cb.refer('this'),
-        //                     ...indexMap(
-        //                       method.parameters,
-        //                       (int index, NamedType parameter) => _referOrNull(
-        //                         _getSafeArgumentName(index, parameter),
-        //                         isNullable: parameter.type.isNullable,
-        //                       )!
-        //                           .propertyIf(
-        //                         root.enums.map((Enum e) => e.name).contains(
-        //                               parameter.type.baseName,
-        //                             ),
-        //                         'index',
-        //                       ),
-        //                     ),
-        //                   ],
-        //                   cb.refer('Object?'),
-        //                 )
-        //               ])
-        //               .awaited
-        //               .asA(cb.refer('List<Object?>?'))
-        //               .statement,
-        //           const cb.Code('if (replyList == null) {'),
-        //           cb.InvokeExpression.newOf(
-        //               cb.refer('PlatformException'),
-        //               <cb.Expression>[],
-        //               <String, cb.Expression>{
-        //                 'code': cb.literalString('channel-error'),
-        //                 'message': cb.literalString(
-        //                   'Unable to establish connection on channel.',
-        //                 )
-        //               }).thrown.statement,
-        //           const cb.Code(
-        //             '} else if (replyList.length > 1) {',
-        //           ),
-        //           cb.InvokeExpression.newOf(
-        //               cb.refer('PlatformException'),
-        //               <cb.Expression>[],
-        //               <String, cb.Expression>{
-        //                 'code': cb
-        //                     .refer('replyList')
-        //                     .index(cb.literal(0))
-        //                     .nullChecked
-        //                     .asA(cb.refer('String')),
-        //                 'message': cb
-        //                     .refer('replyList')
-        //                     .index(cb.literal(1))
-        //                     .asA(cb.refer('String?')),
-        //                 'details': cb.refer('replyList').index(cb.literal(2)),
-        //               }).thrown.statement,
-        //           // On iOS we can return nil from functions to accommodate error
-        //           // handling.  Returning a nil value and not returning an error is an
-        //           // exception.
-        //           if (!method.returnType.isNullable &&
-        //               !method.returnType.isVoid) ...<cb.Code>[
-        //             const cb.Code(
-        //               '} else if (replyList[0] == null) {',
-        //             ),
-        //             cb.InvokeExpression.newOf(
-        //                 cb.refer('PlatformException'),
-        //                 <cb.Expression>[],
-        //                 <String, cb.Expression>{
-        //                   'code': cb.literalString('null-error'),
-        //                   'message': cb.literalString(
-        //                     'Host platform returned null value for non-null return value.',
-        //                   )
-        //                 }).thrown.statement,
-        //           ],
-        //           const cb.Code('} else {'),
-        //           _unwrapReturnValue(
-        //             method.returnType,
-        //             customEnumNames: customEnumNames,
-        //           ).returned.statement,
-        //           const cb.Code('}'),
-        //         ]),
-        //     ),
-        //   cb.Method(
-        //     (cb.MethodBuilder builder) => builder
-        //       ..name = r'$copy'
-        //       ..returns = cb.refer(api.name)
-        //       ..annotations.add(cb.refer('override'))
-        //       ..body = cb.Block.of(<cb.Code>[
-        //         cb
-        //             .refer('${api.name}.\$detached')
-        //             .call(
-        //               <cb.Expression>[],
-        //               <String, cb.Expression>{
-        //                 r'$binaryMessenger': cb.refer(r'$binaryMessenger'),
-        //                 r'$instanceManager': cb.refer(r'$instanceManager'),
-        //                 for (final Field field in nonAttachedFields)
-        //                   field.name: cb.refer(field.name),
-        //                 for (final Method method in superClassFlutterMethods)
-        //                   method.name: cb.refer(method.name),
-        //                 for (final AstProxyApi proxyApi in interfacesApis)
-        //                   for (final Method method in proxyApi.methods)
-        //                     method.name: cb.refer(method.name),
-        //                 for (final Method method in flutterMethods)
-        //                   method.name: cb.refer(method.name),
-        //               },
-        //             )
-        //             .returned
-        //             .statement,
-        //       ]),
-        //   ),
-        // ]),
-        );
+    final cb.Class proxyApi = cb.Class(
+      (cb.ClassBuilder builder) => builder
+        ..name = api.name
+        ..extend = _referOrNull(superClassApi?.name)
+        ..implements.addAll(<cb.Reference>[
+          if (api.interfacesNames.isNotEmpty)
+            ...api.interfacesNames.map((String name) => cb.refer(name))
+          else
+            cb.refer(r'$Copyable')
+        ])
+        ..docs.addAll(asDocumentationComments(
+          api.documentationComments,
+          _docCommentSpec,
+        ))
+        ..constructors.addAll(_proxyApiConstructors(
+          api.constructors,
+          apiName: api.name,
+          dartPackageName: dartPackageName,
+          codecInstanceName: codecInstanceName,
+          superClassApi: superClassApi,
+          nonAttachedFields: nonAttachedFields,
+          superClassFlutterMethods: superClassFlutterMethods,
+          interfacesMethods: interfacesMethods,
+          flutterMethods: flutterMethods,
+        ))
+        ..fields.addAll(_proxyApiFields(
+          nonAttachedFields: nonAttachedFields,
+          attachedFields: attachedFields,
+          apiName: api.name,
+          dartPackageName: dartPackageName,
+          codecInstanceName: codecInstanceName,
+          codecName: codecName,
+          interfacesApis: interfacesApis,
+          flutterMethods: flutterMethods,
+          hasSuperClass: superClassApi != null,
+          referencesCodecInstance: hostMethods.isNotEmpty ||
+              api.constructors.isNotEmpty ||
+              attachedFields.any((Field field) => !field.isStatic),
+        ))
+        ..methods.addAll(_proxyApiMethods(
+          hostMethods: hostMethods,
+          flutterMethods: flutterMethods,
+          superClassFlutterMethods: superClassFlutterMethods,
+          apiName: api.name,
+          dartPackageName: dartPackageName,
+          codecInstanceName: codecInstanceName,
+          codecName: codecName,
+          nonAttachedFields: nonAttachedFields,
+          attachedFields: attachedFields,
+          interfacesApis: interfacesApis,
+          hasARequiredFlutterMethod: hasARequiredFlutterMethod,
+        )),
+    );
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.writeln(DartFormatter().format('${proxyApi.accept(emitter)}'));
@@ -1980,10 +1381,10 @@ class $codecName extends StandardMessageCodec {
     required Iterable<AstProxyApi> interfacesApis,
     required Iterable<Method> flutterMethods,
     required bool hasSuperClass,
-    required bool hasHostMessageSends,
+    required bool referencesCodecInstance,
   }) {
     return <cb.Field>[
-      if (hasHostMessageSends)
+      if (referencesCodecInstance)
         cb.Field(
           (cb.FieldBuilder builder) => builder
             ..name = codecInstanceName
@@ -2109,20 +1510,591 @@ class $codecName extends StandardMessageCodec {
     ];
   }
 
-  Iterable<cb.Field> _proxyApiMethods({
+  Iterable<cb.Method> _proxyApiMethods({
     required Iterable<Method> hostMethods,
     required Iterable<Method> flutterMethods,
+    required Iterable<Method> superClassFlutterMethods,
     required String apiName,
     required String dartPackageName,
     required String codecInstanceName,
     required String codecName,
-    // required Iterable<Field> nonAttachedFields,
-    // required Iterable<Field> attachedFields,
-    // required Iterable<AstProxyApi> interfacesApis,
-    // required bool hasSuperClass,
-    // required bool hasHostMessageSends,
+    required Iterable<Field> nonAttachedFields,
+    required Iterable<Field> attachedFields,
+    required Iterable<AstProxyApi> interfacesApis,
+    required bool hasARequiredFlutterMethod,
   }) {
-
+    return <cb.Method>[
+      cb.Method.returnsVoid(
+        (cb.MethodBuilder builder) => builder
+          ..name = r'$setUpMessageHandlers'
+          ..returns = cb.refer('void')
+          ..static = true
+          ..optionalParameters.addAll(<cb.Parameter>[
+            cb.Parameter(
+              (cb.ParameterBuilder builder) => builder
+                ..name = r'$binaryMessenger'
+                ..named = true
+                ..type = cb.refer('BinaryMessenger?'),
+            ),
+            cb.Parameter(
+              (cb.ParameterBuilder builder) => builder
+                ..name = r'$instanceManager'
+                ..named = true
+                ..type = cb.refer(r'$InstanceManager?'),
+            ),
+            if (!hasARequiredFlutterMethod)
+              cb.Parameter(
+                (cb.ParameterBuilder builder) => builder
+                  ..name = r'$detached'
+                  ..named = true
+                  ..type = cb.FunctionType(
+                    (cb.FunctionTypeBuilder builder) => builder
+                      ..returnType = cb.refer(apiName)
+                      ..isNullable = true
+                      ..requiredParameters.addAll(indexMap(
+                        nonAttachedFields,
+                        (int index, Field field) {
+                          return cb.refer(
+                            '${_addGenericTypesNullable(field.type)} ${_getParameterName(index, field)}',
+                          );
+                        },
+                      )),
+                  ),
+              ),
+            for (final Method method in flutterMethods)
+              cb.Parameter(
+                (cb.ParameterBuilder builder) => builder
+                  ..name = method.name
+                  ..type = cb.FunctionType(
+                    (cb.FunctionTypeBuilder builder) => builder
+                      ..returnType = _referOrNull(
+                        _addGenericTypesNullable(method.returnType),
+                        isFuture: method.isAsynchronous,
+                      )
+                      ..isNullable = true
+                      ..requiredParameters.addAll(<cb.Reference>[
+                        cb.refer('$apiName instance'),
+                        ...indexMap(
+                          method.parameters,
+                          (int index, NamedType parameter) {
+                            return cb.refer(
+                              '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
+                            );
+                          },
+                        )
+                      ]),
+                  ),
+              ),
+          ])
+          ..body = cb.Block.of(<cb.Code>[
+            cb.Code(
+              'final $codecName $_pigeonChannelCodec = $codecName(\$instanceManager ?? \$InstanceManager.instance);',
+            ),
+            if (!hasARequiredFlutterMethod) ...<cb.Code>[
+              const cb.Code('{'),
+              cb.Code(
+                "const String ${_varNamePrefix}channelName = r'${makeChannelNameWithStrings(
+                  apiName: apiName,
+                  methodName: r'$detached',
+                  dartPackageName: dartPackageName,
+                )}';",
+              ),
+              _basicMessageChannel(
+                binaryMessenger: cb.refer(r'$binaryMessenger'),
+              ),
+              cb.refer('${_varNamePrefix}channel.setMessageHandler').call(
+                <cb.Expression>[
+                  cb.Method(
+                    (cb.MethodBuilder builder) => builder
+                      ..modifier = cb.MethodModifier.async
+                      ..requiredParameters.add(
+                        cb.Parameter(
+                          (cb.ParameterBuilder builder) => builder
+                            ..name = 'message'
+                            ..type = cb.refer('Object?'),
+                        ),
+                      )
+                      ..body = cb.Block((cb.BlockBuilder builder) {
+                        builder.statements.addAll(<cb.Code>[
+                          _assert(
+                            condition:
+                                cb.refer('message').notEqualTo(cb.literalNull),
+                            message: cb.literalString(
+                              'Argument for \$${_varNamePrefix}channelName was null.',
+                            ),
+                          ),
+                          const cb.Code(
+                            'final List<Object?> args = (message as List<Object?>?)!;',
+                          ),
+                          const cb.Code(
+                            'final int? instanceIdentifier = (args[0] as int?);',
+                          ),
+                          _assert(
+                            condition: cb
+                                .refer('instanceIdentifier')
+                                .notEqualTo(cb.literalNull),
+                            message: cb.literalString(
+                              'Argument for \$${_varNamePrefix}channelName was null, expected non-null int.',
+                            ),
+                          ),
+                          ...indexFold<List<cb.Code>, Field>(
+                            nonAttachedFields,
+                            <cb.Code>[],
+                            (List<cb.Code> list, int index, Field field) {
+                              return list
+                                ..addAll(
+                                  _messageArg(index + 1, field),
+                                );
+                            },
+                          ),
+                          cb
+                              .refer(
+                                r'($instanceManager ?? $InstanceManager.instance)',
+                              )
+                              .property('addHostCreatedInstance')
+                              .call(<cb.Expression>[
+                            cb
+                                .refer(r'$detached?.call')
+                                .call(
+                                  indexMap(
+                                    nonAttachedFields,
+                                    (int index, Field field) {
+                                      // The calling instance is the first arg.
+                                      final String name = _getSafeArgumentName(
+                                        index + 1,
+                                        field,
+                                      );
+                                      return cb.refer(name).nullCheckedIf(
+                                            !field.type.isNullable,
+                                          );
+                                    },
+                                  ),
+                                )
+                                .ifNullThen(
+                                  cb.refer('$apiName.\$detached').call(
+                                    <cb.Expression>[],
+                                    <String, cb.Expression>{
+                                      r'$binaryMessenger':
+                                          cb.refer(r'$binaryMessenger'),
+                                      r'$instanceManager':
+                                          cb.refer(r'$instanceManager'),
+                                      ...nonAttachedFields.toList().asMap().map(
+                                        (int index, Field field) {
+                                          final String argName =
+                                              _getSafeArgumentName(
+                                            index + 1,
+                                            field,
+                                          );
+                                          return MapEntry<String,
+                                              cb.Expression>(
+                                            field.name,
+                                            cb.refer(argName).nullCheckedIf(
+                                                  !field.type.isNullable,
+                                                ),
+                                          );
+                                        },
+                                      )
+                                    },
+                                  ),
+                                ),
+                            cb.refer('instanceIdentifier').nullChecked
+                          ]).statement,
+                          const cb.Code('return;'),
+                        ]);
+                      }),
+                  ).genericClosure
+                ],
+              ).statement,
+              const cb.Code('}'),
+            ],
+            ...flutterMethods.fold<List<cb.Code>>(
+              <cb.Code>[],
+              (List<cb.Code> list, Method method) {
+                final String channelName = makeChannelNameWithStrings(
+                  apiName: apiName,
+                  methodName: method.name,
+                  dartPackageName: dartPackageName,
+                );
+                final cb.Expression call = cb
+                    .refer(
+                  '(${method.name} ?? instance!.${method.name})${method.required ? '' : '?'}.call',
+                )
+                    .call(
+                  <cb.Expression>[
+                    cb.refer('instance').nullChecked,
+                    ...indexMap(
+                      method.parameters,
+                      (int index, NamedType parameter) {
+                        final String name = _getSafeArgumentName(
+                          index + 1,
+                          parameter,
+                        );
+                        return cb
+                            .refer(name)
+                            .nullCheckedIf(!parameter.type.isNullable);
+                      },
+                    ),
+                  ],
+                );
+                return list
+                  ..addAll(<cb.Code>[
+                    const cb.Code('{'),
+                    cb.Code(
+                      "const String ${_varNamePrefix}channelName = r'$channelName';",
+                    ),
+                    _basicMessageChannel(
+                      binaryMessenger: cb.refer(r'$binaryMessenger'),
+                    ),
+                    cb.refer('${_varNamePrefix}channel.setMessageHandler').call(
+                      <cb.Expression>[
+                        cb.Method(
+                          (cb.MethodBuilder builder) => builder
+                            ..modifier = cb.MethodModifier.async
+                            ..requiredParameters.add(
+                              cb.Parameter(
+                                (cb.ParameterBuilder builder) => builder
+                                  ..name = 'message'
+                                  ..type = cb.refer('Object?'),
+                              ),
+                            )
+                            ..body = cb.Block((cb.BlockBuilder builder) {
+                              builder.statements.addAll(<cb.Code>[
+                                _assert(
+                                  condition: cb
+                                      .refer('message')
+                                      .notEqualTo(cb.literalNull),
+                                  message: cb.literalString(
+                                    'Argument for \$${_varNamePrefix}channelName was null.',
+                                  ),
+                                ),
+                                const cb.Code(
+                                  'final List<Object?> args = (message as List<Object?>?)!;',
+                                ),
+                                cb.Code(
+                                  'final $apiName? instance = (args[0] as $apiName?);',
+                                ),
+                                _assert(
+                                  condition: cb
+                                      .refer('instance')
+                                      .notEqualTo(cb.literalNull),
+                                  message: cb.literalString(
+                                    'Argument for \$${_varNamePrefix}channelName was null, expected non-null $apiName.',
+                                  ),
+                                ),
+                                ...indexFold<List<cb.Code>, NamedType>(
+                                  method.parameters,
+                                  <cb.Code>[],
+                                  (
+                                    List<cb.Code> list,
+                                    int index,
+                                    NamedType type,
+                                  ) {
+                                    return list
+                                      ..addAll(_messageArg(index + 1, type));
+                                  },
+                                ),
+                                const cb.Code('try {'),
+                                if (method.returnType.isVoid) ...<cb.Code>[
+                                  if (method.isAsynchronous)
+                                    call.awaited.statement
+                                  else
+                                    call.statement,
+                                  const cb.Code(
+                                    'return wrapResponse(empty: true);',
+                                  ),
+                                ] else ...<cb.Code>[
+                                  cb
+                                      .declareFinal(
+                                        'output',
+                                        type: cb.refer(
+                                          _addGenericTypesNullable(
+                                            method.returnType,
+                                          ),
+                                        ),
+                                      )
+                                      .assign(
+                                        call.awaitedIf(method.isAsynchronous),
+                                      )
+                                      .statement,
+                                  _wrapResultResponse(method.returnType)
+                                      .returned
+                                      .statement,
+                                ],
+                                const cb.Code(
+                                  '} on PlatformException catch (e) {',
+                                ),
+                                const cb.Code(
+                                  'return wrapResponse(error: e);',
+                                ),
+                                const cb.Code('} catch (e) {'),
+                                const cb.Code(
+                                  "return wrapResponse(error: PlatformException(code: 'error', message: e.toString()),);",
+                                ),
+                                const cb.Code('}')
+                              ]);
+                            }),
+                        ).genericClosure
+                      ],
+                    ).statement,
+                    const cb.Code('}'),
+                  ]);
+              },
+            ),
+          ]),
+      ),
+      for (final Field field in attachedFields)
+        cb.Method(
+          (cb.MethodBuilder builder) {
+            final String type = _addGenericTypesNullable(field.type);
+            final String channelName = makeChannelNameWithStrings(
+              apiName: apiName,
+              methodName: field.name,
+              dartPackageName: dartPackageName,
+            );
+            builder
+              ..name = '_${field.name}'
+              ..static = field.isStatic
+              ..returns = cb.refer(type)
+              ..body = cb.Block.of(
+                <cb.Code>[
+                  cb.Code('final $type instance = $type.\$detached('),
+                  if (!field.isStatic) ...<cb.Code>[
+                    const cb.Code(r'$binaryMessenger: $binaryMessenger,'),
+                    const cb.Code(r'$instanceManager: $instanceManager,'),
+                  ],
+                  const cb.Code(');'),
+                  cb.Code(
+                    "const String ${_varNamePrefix}channelName = r'$channelName';",
+                  ),
+                  _basicMessageChannel(
+                    codec: !field.isStatic
+                        ? cb.refer('_codec$apiName')
+                        : cb.refer('$codecName(\$InstanceManager.instance)'),
+                    binaryMessenger:
+                        !field.isStatic ? cb.refer(r'$binaryMessenger') : null,
+                  ),
+                  cb
+                      .refer('${_varNamePrefix}channel.send')
+                      .call(<cb.Expression>[
+                        cb.literalList(
+                          <Object?>[
+                            if (!field.isStatic) cb.refer('this'),
+                            cb.refer(
+                              '${field.isStatic ? r'$InstanceManager.instance' : r'$instanceManager'}.addDartCreatedInstance(instance)',
+                            ),
+                          ],
+                          cb.refer('Object?'),
+                        )
+                      ])
+                      .property('then')
+                      .call(
+                        <cb.Expression>[
+                          cb.Method(
+                            (cb.MethodBuilder builder) => builder
+                              ..requiredParameters.add(
+                                cb.Parameter(
+                                  (cb.ParameterBuilder builder) => builder
+                                    ..name = 'value'
+                                    ..type = cb.refer('Object?'),
+                                ),
+                              )
+                              ..body = cb.Block.of(<cb.Code>[
+                                const cb.Code(
+                                  'final List<Object?>? ${_varNamePrefix}replyList = value as List<Object?>?;',
+                                ),
+                                const cb.Code(
+                                  'if (${_varNamePrefix}replyList == null) {',
+                                ),
+                                const cb.Code(
+                                  'throw _createConnectionError(${_varNamePrefix}channelName);',
+                                ),
+                                const cb.Code(
+                                  '} else if (${_varNamePrefix}replyList.length > 1) {',
+                                ),
+                                cb.InvokeExpression.newOf(
+                                    cb.refer('PlatformException'),
+                                    <cb.Expression>[],
+                                    <String, cb.Expression>{
+                                      'code': cb
+                                          .refer('${_varNamePrefix}replyList')
+                                          .index(cb.literal(0))
+                                          .nullChecked
+                                          .asA(cb.refer('String')),
+                                      'message': cb
+                                          .refer('${_varNamePrefix}replyList')
+                                          .index(cb.literal(1))
+                                          .asA(cb.refer('String?')),
+                                      'details': cb
+                                          .refer('${_varNamePrefix}replyList')
+                                          .index(cb.literal(2)),
+                                    }).thrown.statement,
+                                const cb.Code('}'),
+                              ]),
+                          ).genericClosure,
+                        ],
+                        <String, cb.Expression>{},
+                        <cb.Reference>[cb.refer('void')],
+                      )
+                      .statement,
+                  const cb.Code('return instance;'),
+                ],
+              );
+          },
+        ),
+      for (final Method method in hostMethods)
+        cb.Method(
+          (cb.MethodBuilder builder) => builder
+            ..name = method.name
+            ..static = method.isStatic
+            ..modifier = cb.MethodModifier.async
+            ..docs.addAll(asDocumentationComments(
+              method.documentationComments,
+              _docCommentSpec,
+            ))
+            ..returns = _referOrNull(
+              _addGenericTypesNullable(method.returnType),
+              isFuture: true,
+            )
+            ..requiredParameters.addAll(indexMap(
+              method.parameters,
+              (int index, NamedType parameter) => cb.Parameter(
+                (cb.ParameterBuilder builder) => builder
+                  ..name = _getParameterName(index, parameter)
+                  ..type = cb.refer(
+                    _addGenericTypesNullable(parameter.type),
+                  ),
+              ),
+            ))
+            ..optionalParameters.addAll(<cb.Parameter>[
+              if (method.isStatic) ...<cb.Parameter>[
+                cb.Parameter(
+                  (cb.ParameterBuilder builder) => builder
+                    ..name = r'$binaryMessenger'
+                    ..type = cb.refer('BinaryMessenger?')
+                    ..named = true,
+                ),
+                cb.Parameter(
+                  (cb.ParameterBuilder builder) => builder
+                    ..name = r'$instanceManager'
+                    ..type = cb.refer(r'$InstanceManager?'),
+                ),
+              ],
+            ])
+            ..body = cb.Block.of(<cb.Code>[
+              cb.Code(
+                "const String ${_varNamePrefix}channelName = r'${makeChannelNameWithStrings(
+                  apiName: apiName,
+                  methodName: method.name,
+                  dartPackageName: dartPackageName,
+                )}';",
+              ),
+              _basicMessageChannel(
+                codec: !method.isStatic
+                    ? cb.refer('_codec$apiName')
+                    : cb.refer(
+                        '$codecName(\$instanceManager ?? \$InstanceManager.instance)',
+                      ),
+                binaryMessenger: cb.refer(r'$binaryMessenger'),
+              ),
+              const cb.Code(
+                  'final List<Object?>? ${_varNamePrefix}replyList ='),
+              cb
+                  .refer('${_varNamePrefix}channel.send')
+                  .call(<cb.Expression>[
+                    cb.literalList(
+                      <Object?>[
+                        if (!method.isStatic) cb.refer('this'),
+                        ...indexMap(
+                          method.parameters,
+                          (int index, NamedType parameter) => _referOrNull(
+                            _getParameterName(index, parameter),
+                            isNullable: parameter.type.isNullable,
+                          )!
+                              .propertyIf(parameter.type.isEnum, 'index'),
+                        ),
+                      ],
+                      cb.refer('Object?'),
+                    )
+                  ])
+                  .awaited
+                  .asA(cb.refer('List<Object?>?'))
+                  .statement,
+              const cb.Code('if (${_varNamePrefix}replyList == null) {'),
+              const cb.Code(
+                'throw _createConnectionError(${_varNamePrefix}channelName);',
+              ),
+              const cb.Code(
+                '} else if (${_varNamePrefix}replyList.length > 1) {',
+              ),
+              cb.InvokeExpression.newOf(
+                  cb.refer('PlatformException'),
+                  <cb.Expression>[],
+                  <String, cb.Expression>{
+                    'code': cb
+                        .refer('${_varNamePrefix}replyList')
+                        .index(cb.literal(0))
+                        .nullChecked
+                        .asA(cb.refer('String')),
+                    'message': cb
+                        .refer('${_varNamePrefix}replyList')
+                        .index(cb.literal(1))
+                        .asA(cb.refer('String?')),
+                    'details': cb
+                        .refer('${_varNamePrefix}replyList')
+                        .index(cb.literal(2)),
+                  }).thrown.statement,
+              // On iOS we can return nil from functions to accommodate error
+              // handling.  Returning a nil value and not returning an error is an
+              // exception.
+              if (!method.returnType.isNullable &&
+                  !method.returnType.isVoid) ...<cb.Code>[
+                const cb.Code(
+                  '} else if (${_varNamePrefix}replyList[0] == null) {',
+                ),
+                cb.InvokeExpression.newOf(
+                    cb.refer('PlatformException'),
+                    <cb.Expression>[],
+                    <String, cb.Expression>{
+                      'code': cb.literalString('null-error'),
+                      'message': cb.literalString(
+                        'Host platform returned null value for non-null return value.',
+                      )
+                    }).thrown.statement,
+              ],
+              const cb.Code('} else {'),
+              _unwrapReturnValue(method.returnType).returned.statement,
+              const cb.Code('}'),
+            ]),
+        ),
+      cb.Method(
+        (cb.MethodBuilder builder) => builder
+          ..name = r'$copy'
+          ..returns = cb.refer(apiName)
+          ..annotations.add(cb.refer('override'))
+          ..body = cb.Block.of(<cb.Code>[
+            cb
+                .refer('$apiName.\$detached')
+                .call(
+                  <cb.Expression>[],
+                  <String, cb.Expression>{
+                    r'$binaryMessenger': cb.refer(r'$binaryMessenger'),
+                    r'$instanceManager': cb.refer(r'$instanceManager'),
+                    for (final Field field in nonAttachedFields)
+                      field.name: cb.refer(field.name),
+                    for (final Method method in superClassFlutterMethods)
+                      method.name: cb.refer(method.name),
+                    for (final AstProxyApi proxyApi in interfacesApis)
+                      for (final Method method in proxyApi.methods)
+                        method.name: cb.refer(method.name),
+                    for (final Method method in flutterMethods)
+                      method.name: cb.refer(method.name),
+                  },
+                )
+                .returned
+                .statement,
+          ]),
+      ),
+    ];
   }
 
   /// Generates Dart source code for test support libraries based on the given AST
@@ -2265,26 +2237,21 @@ extension on cb.Expression {
       condition ? property(name) : this;
 }
 
-cb.Expression _unwrapReturnValue(
-  TypeDeclaration returnType, {
-  required List<String> customEnumNames,
-}) {
+cb.Expression _unwrapReturnValue(TypeDeclaration returnType) {
   final String type = _makeGenericTypeArguments(returnType);
   final String genericCastCall = _makeGenericCastCall(returnType);
-  const String accessor = 'replyList[0]';
+  const String accessor = '${_varNamePrefix}replyList[0]';
   final String nullablyTypedAccessor =
       type == 'Object' ? accessor : '($accessor as $type?)';
   final String nullHandler =
       returnType.isNullable ? (genericCastCall.isEmpty ? '' : '?') : '!';
-  if (customEnumNames.contains(type)) {
+  if (returnType.isEnum) {
     if (returnType.isNullable) {
       return cb.refer(
         '($accessor as int?) == null ? null : $type.values[$accessor! as int]',
       );
     } else {
-      return cb.refer(
-        '$type.values[$accessor! as int]',
-      );
+      return cb.refer('$type.values[$accessor! as int]');
     }
   } else if (!returnType.isVoid) {
     return cb.refer('$nullablyTypedAccessor$nullHandler$genericCastCall');
@@ -2292,7 +2259,7 @@ cb.Expression _unwrapReturnValue(
   return cb.refer('');
 }
 
-cb.Expression _wrapResultResponse(Root root, TypeDeclaration type) {
+cb.Expression _wrapResultResponse(TypeDeclaration type) {
   return cb
       .refer('wrapResponse')
       .call(<cb.Expression>[], <String, cb.Expression>{
@@ -2307,8 +2274,6 @@ cb.Expression _wrapResultResponse(Root root, TypeDeclaration type) {
 Iterable<cb.Code> _messageArg(
   int index,
   NamedType parameter, {
-  required List<String> customEnumNames,
-  required String channelName,
   String argsVariableName = 'args',
 }) {
   final String argType = _addGenericTypes(parameter.type);
@@ -2317,7 +2282,7 @@ Iterable<cb.Code> _messageArg(
   final String castCall = _makeGenericCastCall(parameter.type);
 
   late final cb.Expression assign;
-  if (customEnumNames.contains(parameter.type.baseName)) {
+  if (parameter.type.isEnum) {
     assign = cb
         .refer(
           '$argsVariableName[$index] == null ? null : $argType.values[$argsVariableName[$index]! as int]',
@@ -2340,8 +2305,7 @@ Iterable<cb.Code> _messageArg(
       _assert(
         condition: cb.refer(argName).notEqualTo(cb.literalNull),
         message: cb.literalString(
-          'Argument for $channelName was null, expected non-null $argType.',
-          raw: true,
+          'Argument for \$${_varNamePrefix}channelName was null, expected non-null $argType.',
         ),
       ),
   ];
@@ -2355,7 +2319,7 @@ cb.Code _assert({
 }
 
 cb.Code _basicMessageChannel({
-  cb.Expression codec = const cb.Reference('codec'),
+  cb.Expression codec = const cb.Reference(_pigeonChannelCodec),
   cb.Expression? binaryMessenger = const cb.Reference('binaryMessenger'),
 }) {
   final cb.Reference basicMessageChannel = cb.refer(

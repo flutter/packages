@@ -226,6 +226,8 @@ class Field extends NamedType {
       type: type,
       offset: offset,
       documentationComments: documentationComments,
+      isAttached: isAttached,
+      isStatic: isStatic,
     );
   }
 }
