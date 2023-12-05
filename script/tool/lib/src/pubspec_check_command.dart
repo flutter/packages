@@ -343,6 +343,10 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       return 'A published package should include "topics". '
           'See https://dart.dev/tools/pub/pubspec#topics.';
     }
+    if (topics.length > 5) {
+      return 'A published package should have maximum 5 topics. '
+          'See https://dart.dev/tools/pub/pubspec#topics.';
+    }
     if (isFlutterPlugin(package) && package.isFederated) {
       final String pluginName = package.directory.parent.basename;
       // '_' isn't allowed in topics, so convert to '-'.
@@ -353,12 +357,14 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       }
     }
     for (final String topic in topics) {
+      // Validates topic names according to https://dart.dev/tools/pub/pubspec#topics
       final RegExp expectedTopicFormat =
-          RegExp(r'^[a-z](?:[a-z0-9]*[a-z0-9])?(-[a-z0-9]+)*$');
-      if (!expectedTopicFormat.hasMatch(topic)) {
+          RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
+      if (!expectedTopicFormat.hasMatch(topic) || topic.length < 2 || topic.length > 32 ) {
         return 'Invalid topic value "$topic" in "topics" section. '
             'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
-            'starting with a-z and ending with a-z or 0-9.';
+            'start with a-z and ending with a-z or 0-9, have a minimum of 2 characters '
+            'and have a maximum of 32 characters.';
       }
     }
     return null;
