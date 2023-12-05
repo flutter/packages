@@ -1,6 +1,7 @@
 ## 0.1.0+10
 
 * Ensure the benchmark client reloads with the proper `initialPage`.
+* Migrates benchmark recorder away from deprecated `js_util` APIs.
 
 ## 0.1.0+9
 
