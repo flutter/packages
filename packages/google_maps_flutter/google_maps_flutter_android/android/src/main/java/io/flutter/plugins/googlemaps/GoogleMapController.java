@@ -10,10 +10,13 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.SurfaceTexture;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Choreographer;
+import android.view.TextureView;
+import android.view.TextureView.SurfaceTextureListener;
 import android.view.View;
+import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -135,61 +138,13 @@ final class GoogleMapController
     return trackCameraPosition ? googleMap.getCameraPosition() : null;
   }
 
-  private boolean loadedCallbackPending = false;
-
-  /**
-   * Invalidates the map view after the map has finished rendering.
-   *
-   * <p>gmscore GL renderer uses a {@link android.view.TextureView}. Android platform views that are
-   * displayed as a texture after Flutter v3.0.0. require that the view hierarchy is notified after
-   * all drawing operations have been flushed.
-   *
-   * <p>Since the GL renderer doesn't use standard Android views, and instead uses GL directly, we
-   * notify the view hierarchy by invalidating the view.
-   *
-   * <p>Unfortunately, when {@link GoogleMap.OnMapLoadedCallback} is fired, the texture may not have
-   * been updated yet.
-   *
-   * <p>To workaround this limitation, wait two frames. This ensures that at least the frame budget
-   * (16.66ms at 60hz) have passed since the drawing operation was issued.
-   */
-  private void invalidateMapIfNeeded() {
-    if (googleMap == null || loadedCallbackPending) {
-      return;
-    }
-    loadedCallbackPending = true;
-    googleMap.setOnMapLoadedCallback(
-        () -> {
-          loadedCallbackPending = false;
-          postFrameCallback(
-              () -> {
-                postFrameCallback(
-                    () -> {
-                      if (mapView != null) {
-                        mapView.invalidate();
-                      }
-                    });
-              });
-        });
-  }
-
-  private static void postFrameCallback(Runnable f) {
-    Choreographer.getInstance()
-        .postFrameCallback(
-            new Choreographer.FrameCallback() {
-              @Override
-              public void doFrame(long frameTimeNanos) {
-                f.run();
-              }
-            });
-  }
-
   @Override
   public void onMapReady(GoogleMap googleMap) {
     this.googleMap = googleMap;
     this.googleMap.setIndoorEnabled(this.indoorEnabled);
     this.googleMap.setTrafficEnabled(this.trafficEnabled);
     this.googleMap.setBuildingsEnabled(this.buildingsEnabled);
+    installInvalidator();
     googleMap.setOnInfoWindowClickListener(this);
     if (mapReadyResult != null) {
       mapReadyResult.success(null);
@@ -214,6 +169,71 @@ final class GoogleMapController
           initialPadding.get(2),
           initialPadding.get(3));
     }
+  }
+
+  // Returns the first TextureView found in the view hierarchy.
+  private static TextureView findTextureView(ViewGroup group) {
+    final int n = group.getChildCount();
+    for (int i = 0; i < n; i++) {
+      View view = group.getChildAt(i);
+      if (view instanceof TextureView) {
+        return (TextureView) view;
+      }
+      if (view instanceof ViewGroup) {
+        TextureView r = findTextureView((ViewGroup) view);
+        if (r != null) {
+          return r;
+        }
+      }
+    }
+    return null;
+  }
+
+  private void installInvalidator() {
+    if (mapView == null) {
+      // This should only happen in tests.
+      return;
+    }
+    TextureView textureView = findTextureView(mapView);
+    if (textureView == null) {
+      Log.i(TAG, "No TextureView found. Likely using the LEGACY renderer.");
+      return;
+    }
+    Log.i(TAG, "Installing custom TextureView driven invalidator.");
+    SurfaceTextureListener internalListener = textureView.getSurfaceTextureListener();
+    // Override the Maps internal SurfaceTextureListener with our own. Our listener
+    // mostly just invokes the internal listener callbacks but in onSurfaceTextureUpdated
+    // the mapView is invalidated which ensures that all map updates are presented to the
+    // screen.
+    final MapView mapView = this.mapView;
+    textureView.setSurfaceTextureListener(
+        new TextureView.SurfaceTextureListener() {
+          public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            if (internalListener != null) {
+              internalListener.onSurfaceTextureAvailable(surface, width, height);
+            }
+          }
+
+          public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            if (internalListener != null) {
+              return internalListener.onSurfaceTextureDestroyed(surface);
+            }
+            return true;
+          }
+
+          public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+            if (internalListener != null) {
+              internalListener.onSurfaceTextureSizeChanged(surface, width, height);
+            }
+          }
+
+          public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+            if (internalListener != null) {
+              internalListener.onSurfaceTextureUpdated(surface);
+            }
+            mapView.invalidate();
+          }
+        });
   }
 
   @Override
@@ -309,7 +329,6 @@ final class GoogleMapController
         }
       case "markers#update":
         {
-          invalidateMapIfNeeded();
           List<Object> markersToAdd = call.argument("markersToAdd");
           markersController.addMarkers(markersToAdd);
           List<Object> markersToChange = call.argument("markersToChange");
@@ -339,7 +358,6 @@ final class GoogleMapController
         }
       case "polygons#update":
         {
-          invalidateMapIfNeeded();
           List<Object> polygonsToAdd = call.argument("polygonsToAdd");
           polygonsController.addPolygons(polygonsToAdd);
           List<Object> polygonsToChange = call.argument("polygonsToChange");
@@ -351,7 +369,6 @@ final class GoogleMapController
         }
       case "polylines#update":
         {
-          invalidateMapIfNeeded();
           List<Object> polylinesToAdd = call.argument("polylinesToAdd");
           polylinesController.addPolylines(polylinesToAdd);
           List<Object> polylinesToChange = call.argument("polylinesToChange");
@@ -363,7 +380,6 @@ final class GoogleMapController
         }
       case "circles#update":
         {
-          invalidateMapIfNeeded();
           List<Object> circlesToAdd = call.argument("circlesToAdd");
           circlesController.addCircles(circlesToAdd);
           List<Object> circlesToChange = call.argument("circlesToChange");
@@ -443,7 +459,6 @@ final class GoogleMapController
         }
       case "map#setStyle":
         {
-          invalidateMapIfNeeded();
           boolean mapStyleSet;
           if (call.arguments instanceof String) {
             String mapStyle = (String) call.arguments;
@@ -466,7 +481,6 @@ final class GoogleMapController
         }
       case "tileOverlays#update":
         {
-          invalidateMapIfNeeded();
           List<Map<String, ?>> tileOverlaysToAdd = call.argument("tileOverlaysToAdd");
           tileOverlaysController.addTileOverlays(tileOverlaysToAdd);
           List<Map<String, ?>> tileOverlaysToChange = call.argument("tileOverlaysToChange");
@@ -478,7 +492,6 @@ final class GoogleMapController
         }
       case "tileOverlays#clearTileCache":
         {
-          invalidateMapIfNeeded();
           String tileOverlayId = call.argument("tileOverlayId");
           tileOverlaysController.clearTileCache(tileOverlayId);
           result.success(null);
