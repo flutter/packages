@@ -38,6 +38,18 @@ void main() {
     }, semanticsEnabled: false);
 
     testWidgets(
+        'on wrapped elements with intercepting set to false, the browser hits the background-html-view',
+        (WidgetTester tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      final html.Element element =
+          _getHtmlElementAtCenter(clickableWrappedButtonFinder, tester);
+
+      expect(element.id, 'background-html-view');
+    }, semanticsEnabled: false);
+
+    testWidgets(
         'on unwrapped elements, the browser hits the background-html-view',
         (WidgetTester tester) async {
       app.main();

@@ -8,6 +8,7 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
 import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
+import 'package:pointer_interceptor_web/pointer_interceptor_web.dart';
 
 const String _htmlElementViewType = '_htmlElementViewType';
 const double _videoWidth = 640;
@@ -129,6 +130,16 @@ class _MyHomePageState extends State<MyHomePage> {
                           _clickedOn('transparent-button');
                         },
                       ),
+                      PointerInterceptorWeb().buildWidget(
+                        intercepting: false,
+                          child:
+                      ElevatedButton(
+                        key: const Key('transparent-button'),
+                        child: const Text('Never calls onPressed'),
+                        onPressed: () {
+                          _clickedOn('transparent-button');
+                        },
+                      )),
                       PointerInterceptorPlatform.instance.buildWidget(
                         child: ElevatedButton(
                           key: const Key('clickable-button'),
