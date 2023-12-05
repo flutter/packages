@@ -153,6 +153,26 @@ class AstProxyApi extends Api {
   /// Name of the classes this class considers to be implemented.
   final Set<String> interfacesNames;
 
+  /// Methods implemented in the host platform language.
+  Iterable<Method> get hostMethods => methods.where(
+        (Method method) => method.location == ApiLocation.host,
+      );
+
+  /// Methods implemented in Flutter.
+  Iterable<Method> get flutterMethods => methods.where(
+        (Method method) => method.location == ApiLocation.flutter,
+      );
+
+  /// All fields that are attached .
+  Iterable<Field> get attachedFields => fields.where(
+        (Field field) => field.isAttached,
+      );
+
+  /// All fields that are not attached.
+  Iterable<Field> get nonAttachedFields => fields.where(
+        (Field field) => !field.isAttached,
+      );
+
   @override
   String toString() {
     return '(ProxyApi name:$name methods:$methods documentationComments:$documentationComments superClassName:$superClassName interfacesNames:$interfacesNames)';

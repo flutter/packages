@@ -988,21 +988,6 @@ class $codecName extends StandardMessageCodec {
 }
 ''');
 
-    final Iterable<Method> hostMethods = api.methods.where(
-      (Method method) => method.location == ApiLocation.host,
-    );
-
-    final Iterable<Method> flutterMethods = api.methods.where(
-      (Method method) => method.location == ApiLocation.flutter,
-    );
-
-    final Iterable<Field> attachedFields = api.fields.where(
-      (Field field) => field.isAttached,
-    );
-    final Iterable<Field> nonAttachedFields = api.fields.where(
-      (Field field) => !field.isAttached,
-    );
-
     final Iterable<AstProxyApi> allProxyApis =
         root.apis.whereType<AstProxyApi>();
 
@@ -1074,35 +1059,35 @@ class $codecName extends StandardMessageCodec {
           dartPackageName: dartPackageName,
           codecInstanceName: codecInstanceName,
           superClassApi: superClassApi,
-          nonAttachedFields: nonAttachedFields,
+          nonAttachedFields: api.nonAttachedFields,
           superClassFlutterMethods: superClassFlutterMethods,
           interfacesMethods: interfacesMethods,
-          flutterMethods: flutterMethods,
+          flutterMethods: api.flutterMethods,
         ))
         ..fields.addAll(_proxyApiFields(
-          nonAttachedFields: nonAttachedFields,
-          attachedFields: attachedFields,
+          nonAttachedFields: api.nonAttachedFields,
+          attachedFields: api.attachedFields,
           apiName: api.name,
           dartPackageName: dartPackageName,
           codecInstanceName: codecInstanceName,
           codecName: codecName,
           interfacesApis: interfacesApis,
-          flutterMethods: flutterMethods,
+          flutterMethods: api.flutterMethods,
           hasSuperClass: superClassApi != null,
-          referencesCodecInstance: hostMethods.isNotEmpty ||
+          referencesCodecInstance: api.hostMethods.isNotEmpty ||
               api.constructors.isNotEmpty ||
-              attachedFields.any((Field field) => !field.isStatic),
+              api.attachedFields.any((Field field) => !field.isStatic),
         ))
         ..methods.addAll(_proxyApiMethods(
-          hostMethods: hostMethods,
-          flutterMethods: flutterMethods,
+          hostMethods: api.hostMethods,
+          flutterMethods: api.flutterMethods,
           superClassFlutterMethods: superClassFlutterMethods,
           apiName: api.name,
           dartPackageName: dartPackageName,
           codecInstanceName: codecInstanceName,
           codecName: codecName,
-          nonAttachedFields: nonAttachedFields,
-          attachedFields: attachedFields,
+          nonAttachedFields: api.nonAttachedFields,
+          attachedFields: api.attachedFields,
           interfacesApis: interfacesApis,
           hasARequiredFlutterMethod: hasARequiredFlutterMethod,
         )),
