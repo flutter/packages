@@ -7,8 +7,6 @@ import 'dart:convert' show json;
 import 'dart:html' as html;
 import 'dart:math' as math;
 
-import 'package:path/path.dart';
-
 import 'src/common.dart';
 import 'src/recorder.dart';
 export 'src/recorder.dart';
@@ -58,7 +56,7 @@ Future<void> runBenchmarks(
     port: currentUri.port,
     path: initialPage,
   );
-  
+
   // Reloading the window will trigger the next benchmark to run.
   html.window.location.replace(newUri.toString());
 }
