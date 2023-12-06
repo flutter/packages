@@ -719,7 +719,7 @@ zipStorePath=wrapper/dists
 distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
 ''');
 
-        final List<String> whatever = await runCapturingPrint(runner, <String>[
+        await runCapturingPrint(runner, <String>[
           'update-dependency',
           '--packages',
           package.displayName,
@@ -728,8 +728,6 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
           '--version',
           newGradleVersion,
         ]);
-
-        print(whatever);
 
         final String updatedGradleWrapperPropertiesContents =
             gradleWrapperPropertiesFile.readAsStringSync();
@@ -810,7 +808,7 @@ zipStorePath=wrapper/dists
 distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
 ''');
 
-        final List<String> whatever = await runCapturingPrint(runner, <String>[
+        await runCapturingPrint(runner, <String>[
           'update-dependency',
           '--packages',
           package.displayName,
@@ -819,8 +817,6 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
           '--version',
           newGradleVersion,
         ]);
-
-        print(whatever);
 
         final String updatedGradleWrapperPropertiesContents =
             gradleWrapperPropertiesFile.readAsStringSync();

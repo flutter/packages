@@ -1,5 +1,6 @@
-## NEXT
+## 0.0.5
 
+* Updates example app Gradle version to 7.6.3.
 * Fixes bug where having one reversed axis caused incorrect painting of a pinned row.
 * Adds support for BorderRadius in TableSpanDecorations.
 
