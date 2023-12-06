@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@TestOn('browser') // Uses package:js
+@TestOn('browser') // Uses package:web
 
 import 'package:google_identity_services_web/loader.dart';
 import 'package:test/test.dart';
