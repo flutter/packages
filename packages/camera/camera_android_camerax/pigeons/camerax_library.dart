@@ -226,9 +226,10 @@ abstract class DeviceOrientationManagerHostApi {
 
   void stopListeningForDeviceOrientationChange();
 
-  int getPhotoOrientation();
+  // TODO(camsim99): Change String orientations to enum for readability.
+  int getPhotoOrientation(String? orientation);
 
-  int getVideoOrientation();
+  int getVideoOrientation(String? orientation);
 }
 
 @FlutterApi()

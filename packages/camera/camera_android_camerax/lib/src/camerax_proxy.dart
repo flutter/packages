@@ -4,6 +4,8 @@
 
 import 'dart:ui' show Size;
 
+import 'package:flutter/services.dart' show DeviceOrientation;
+
 import 'analyzer.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
@@ -61,8 +63,9 @@ class CameraXProxy {
   /// Returns a [Preview] configured with the specified target rotation and
   /// specified [ResolutionSelector].
   Preview Function(
-      {required int targetRotation,
-      ResolutionSelector? resolutionSelector}) createPreview;
+    ResolutionSelector? resolutionSelector,
+    int? targetRotation,
+  ) createPreview;
 
   /// Returns an [ImageCapture] configured with specified flash mode and
   /// the specified [ResolutionSelector].
@@ -133,11 +136,11 @@ class CameraXProxy {
   /// the ID corresponding to the surface it will provide.
   Future<int> Function(Preview preview) setPreviewSurfaceProvider;
 
-  /// Retrieves current photo orientation.
-  Future<int> Function() getPhotoOrientation;
+  /// Retrieves current photo orientation in degrees.
+  Future<int> Function(DeviceOrientation? orientation) getPhotoOrientation;
 
-  /// Retrieves current video orientation.
-  Future<int> Function() getVideoOrientation;
+  /// Retrieves current video orientation in degrees.
+  Future<int> Function(DeviceOrientation? orientation) getVideoOrientation;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -156,7 +159,7 @@ class CameraXProxy {
   }
 
   static Preview _createAttachedPreview(
-      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
+      ResolutionSelector? resolutionSelector, int? targetRotation) {
     return Preview(
         targetRotation: targetRotation, resolutionSelector: resolutionSelector);
   }
@@ -235,11 +238,13 @@ class CameraXProxy {
     return preview.setSurfaceProvider();
   }
 
-  static Future<int> _getPhotoOrientation() async {
-    return DeviceOrientationManager.getPhotoOrientation();
+  static Future<int> _getPhotoOrientation(
+      DeviceOrientation? orientation) async {
+    return DeviceOrientationManager.getPhotoOrientation(orientation);
   }
 
-  static Future<int> _getVideoOrientation() async {
-    return DeviceOrientationManager.getVideoOrientation();
+  static Future<int> _getVideoOrientation(
+      DeviceOrientation? orientation) async {
+    return DeviceOrientationManager.getVideoOrientation(orientation);
   }
 }

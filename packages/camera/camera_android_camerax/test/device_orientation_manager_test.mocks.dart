@@ -72,18 +72,18 @@ class MockTestDeviceOrientationManagerHostApi extends _i1.Mock
         returnValueForMissingStub: null,
       );
   @override
-  int getPhotoOrientation() => (super.noSuchMethod(
+  int getPhotoOrientation(String? orientation) => (super.noSuchMethod(
         Invocation.method(
           #getPhotoOrientation,
-          [],
+          [orientation],
         ),
         returnValue: 0,
       ) as int);
   @override
-  int getVideoOrientation() => (super.noSuchMethod(
+  int getVideoOrientation(String? orientation) => (super.noSuchMethod(
         Invocation.method(
           #getVideoOrientation,
-          [],
+          [orientation],
         ),
         returnValue: 0,
       ) as int);

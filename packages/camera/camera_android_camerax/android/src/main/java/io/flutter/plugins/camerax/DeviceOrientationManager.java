@@ -19,6 +19,8 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 
+import android.util.Log;
+
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */
@@ -114,26 +116,40 @@ public class DeviceOrientationManager {
       orientation = getUIOrientation();
     }
 
+    Log.e("CAMILLE", "----------------------------------------------------------");
+
+    Log.e("CAMILLE SENSOR ORIENTATION", Integer.toString(sensorOrientation));
+    Log.e("CAMILLE ORIENTATION", orientation.toString());
+    Log.e("CAMILLE ISFRONTFACING", isFrontFacing ? "true":"false");
+
     switch (orientation) {
       case PORTRAIT_UP:
-        angle = 90;
-        break;
-      case PORTRAIT_DOWN:
-        angle = 270;
-        break;
-      case LANDSCAPE_LEFT:
         angle = isFrontFacing ? 180 : 0;
         break;
-      case LANDSCAPE_RIGHT:
+      case PORTRAIT_DOWN:
         angle = isFrontFacing ? 0 : 180;
         break;
+      case LANDSCAPE_LEFT:
+        angle =  isFrontFacing ? 90 : 270; // isFrontFacing ? 270 : 90;
+        break;
+      case LANDSCAPE_RIGHT:
+        angle =  isFrontFacing ? 270 : 90; // isFrontFacing ? 90 : 270;
+        break;
     }
+
+    Log.e("CAMILLE ANGLE", Integer.toString(angle));
+
+    int ans = (angle + sensorOrientation + 270) % 360;
+
+    Log.e("CAMILLE ANS", Integer.toString(ans));
+    Log.e("CAMILLE", "----------------------------------------------------------");
 
     // Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X).
     // This has to be taken into account so the JPEG is rotated properly.
     // For devices with orientation of 90, this simply returns the mapping from ORIENTATIONS.
     // For devices with orientation of 270, the JPEG is rotated 180 degrees instead.
-    return (angle + sensorOrientation + 270) % 360;
+    // return ans;
+    return 180;
   }
 
   /**

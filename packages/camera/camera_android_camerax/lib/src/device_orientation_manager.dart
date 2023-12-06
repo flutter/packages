@@ -49,22 +49,48 @@ class DeviceOrientationManager {
     api.stopListeningForDeviceOrientationChange();
   }
 
-  /// Retrieves photo orientation.
-  static Future<int> getPhotoOrientation(
+  /// Retrieves photo orientation in degrees based on the sensor orientation
+  /// and the last known UI orientation.
+  ///
+  /// [startListeningForDeviceOrientationChange] must be called before calling
+  /// this method.
+  static Future<int> getPhotoOrientation(DeviceOrientation? sensorOrientation,
       {BinaryMessenger? binaryMessenger}) async {
     final DeviceOrientationManagerHostApi api =
         DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
 
-    return api.getPhotoOrientation();
+    return api.getPhotoOrientation(sensorOrientation == null
+        ? null
+        : serializeDeviceOrientation(sensorOrientation));
   }
 
-  /// Retrieves video orientation.
-  static Future<int> getVideoOrientation(
+  /// Retrieves video orientation in degrees based on the sensor
+  /// [DeviceOrientation] and the last known UI orientation.
+  ///
+  /// [startListeningForDeviceOrientationChange] must be called before calling
+  /// this method.
+  static Future<int> getVideoOrientation(DeviceOrientation? sensorOrientation,
       {BinaryMessenger? binaryMessenger}) async {
     final DeviceOrientationManagerHostApi api =
         DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
 
-    return api.getVideoOrientation();
+    return api.getVideoOrientation(sensorOrientation == null
+        ? null
+        : serializeDeviceOrientation(sensorOrientation));
+  }
+
+  /// Serializes[DeviceOrientation] into a [String].
+  static String serializeDeviceOrientation(DeviceOrientation orientation) {
+    switch (orientation) {
+      case DeviceOrientation.landscapeLeft:
+        return 'LANDSCAPE_LEFT';
+      case DeviceOrientation.landscapeRight:
+        return 'LANDSCAPE_RIGHT';
+      case DeviceOrientation.portraitDown:
+        return 'PORTRAIT_DOWN';
+      case DeviceOrientation.portraitUp:
+        return 'PORTRAIT_UP';
+    }
   }
 }
 

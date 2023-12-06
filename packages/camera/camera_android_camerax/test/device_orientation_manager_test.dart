@@ -47,17 +47,34 @@ void main() {
       verify(mockApi.stopListeningForDeviceOrientationChange());
     });
 
-    test('getPhotorientation retrieves expected orientation', () async {
+    test('getPhotoOrientation retrieves expected orientation', () async {
       final MockTestDeviceOrientationManagerHostApi mockApi =
           MockTestDeviceOrientationManagerHostApi();
       TestDeviceOrientationManagerHostApi.setup(mockApi);
 
-      const int photoOrientation = 270;
-      when(mockApi.getPhotoOrientation()).thenReturn(photoOrientation);
+      int offsetForTesting = 1;
+      for (final DeviceOrientation orientation in DeviceOrientation.values) {
+        String? serializedDeviceOrientation;
+        switch (orientation) {
+          case DeviceOrientation.landscapeLeft:
+            serializedDeviceOrientation = 'LANDSCAPE_LEFT';
+          case DeviceOrientation.landscapeRight:
+            serializedDeviceOrientation = 'LANDSCAPE_RIGHT';
+          case DeviceOrientation.portraitDown:
+            serializedDeviceOrientation = 'PORTRAIT_DOWN';
+          case DeviceOrientation.portraitUp:
+            serializedDeviceOrientation = 'PORTRAIT_UP';
+        }
+        final int photoOrientation = 270 + offsetForTesting;
+        offsetForTesting += 1;
 
-      expect(await DeviceOrientationManager.getPhotoOrientation(),
-          equals(photoOrientation));
-      verify(mockApi.getPhotoOrientation());
+        when(mockApi.getPhotoOrientation(serializedDeviceOrientation))
+            .thenReturn(photoOrientation);
+
+        expect(await DeviceOrientationManager.getPhotoOrientation(orientation),
+            equals(photoOrientation));
+        verify(mockApi.getPhotoOrientation(serializedDeviceOrientation));
+      }
     });
 
     test('getVideoOrientation retrieves expected orientation', () async {
@@ -65,12 +82,29 @@ void main() {
           MockTestDeviceOrientationManagerHostApi();
       TestDeviceOrientationManagerHostApi.setup(mockApi);
 
-      const int videoOrientation = 180;
-      when(mockApi.getVideoOrientation()).thenReturn(videoOrientation);
+      int offsetForTesting = 1;
+      for (final DeviceOrientation orientation in DeviceOrientation.values) {
+        String? serializedDeviceOrientation;
+        switch (orientation) {
+          case DeviceOrientation.landscapeLeft:
+            serializedDeviceOrientation = 'LANDSCAPE_LEFT';
+          case DeviceOrientation.landscapeRight:
+            serializedDeviceOrientation = 'LANDSCAPE_RIGHT';
+          case DeviceOrientation.portraitDown:
+            serializedDeviceOrientation = 'PORTRAIT_DOWN';
+          case DeviceOrientation.portraitUp:
+            serializedDeviceOrientation = 'PORTRAIT_UP';
+        }
+        final int videoOrientation = 270 + offsetForTesting;
+        offsetForTesting += 1;
 
-      expect(await DeviceOrientationManager.getVideoOrientation(),
-          equals(videoOrientation));
-      verify(mockApi.getVideoOrientation());
+        when(mockApi.getVideoOrientation(serializedDeviceOrientation))
+            .thenReturn(videoOrientation);
+
+        expect(await DeviceOrientationManager.getVideoOrientation(orientation),
+            equals(videoOrientation));
+        verify(mockApi.getVideoOrientation(serializedDeviceOrientation));
+      }
     });
 
     test('onDeviceOrientationChanged adds new orientation to stream', () {
