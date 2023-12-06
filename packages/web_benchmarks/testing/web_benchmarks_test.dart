@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 
 import 'package:web_benchmarks/server.dart';
-import 'package:web_benchmarks/src/runner.dart';
+import 'package:web_benchmarks/src/common.dart';
 
 Future<void> main() async {
   test('Can run a web benchmark', () async {
@@ -30,7 +30,7 @@ Future<void> main() async {
 Future<void> _runBenchmarks({
   required List<String> benchmarkNames,
   required String entryPoint,
-  String initialPage = BenchmarkServer.defaultInitialPage,
+  String initialPage = defaultInitialPage,
 }) async {
   final BenchmarkResults taskResult = await serveWebBenchmark(
     benchmarkAppDirectory: Directory('testing/test_app'),

@@ -50,32 +50,37 @@ static FlutterError *getFlutterError(NSError *error) {
 // The contents of GoogleService-Info.plist, if it exists.
 @property(strong, nullable) NSDictionary<NSString *, id> *googleServiceProperties;
 
-// Redeclared as not a designated initializer.
-- (instancetype)init;
+// The plugin registrar, for querying views.
+@property(strong, nonnull) id<FlutterPluginRegistrar> registrar;
 
 @end
 
 @implementation FLTGoogleSignInPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc] init];
+  FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc] initWithRegistrar:registrar];
   [registrar addApplicationDelegate:instance];
   FSIGoogleSignInApiSetup(registrar.messenger, instance);
 }
 
-- (instancetype)init {
-  return [self initWithSignIn:GIDSignIn.sharedInstance];
-}
-
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn {
-  return [self initWithSignIn:signIn withGoogleServiceProperties:loadGoogleServiceInfo()];
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  return [self initWithSignIn:GIDSignIn.sharedInstance registrar:registrar];
 }
 
 - (instancetype)initWithSignIn:(GIDSignIn *)signIn
-    withGoogleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties {
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  return [self initWithSignIn:signIn
+                    registrar:registrar
+      googleServiceProperties:loadGoogleServiceInfo()];
+}
+
+- (instancetype)initWithSignIn:(GIDSignIn *)signIn
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+       googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties {
   self = [super init];
   if (self) {
     _signIn = signIn;
+    _registrar = registrar;
     _googleServiceProperties = googleServiceProperties;
 
     // On the iOS simulator, we get "Broken pipe" errors after sign-in for some
@@ -88,9 +93,19 @@ static FlutterError *getFlutterError(NSError *error) {
 
 #pragma mark - <FlutterPlugin> protocol
 
+#if TARGET_OS_IOS
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
   return [self.signIn handleURL:url];
 }
+#else
+- (BOOL)handleOpenURLs:(NSArray<NSURL *> *)urls {
+  BOOL handled = NO;
+  for (NSURL *url in urls) {
+    handled = handled || [self.signIn handleURL:url];
+  }
+  return handled;
+}
+#endif
 
 #pragma mark - FSIGoogleSignInApi
 
@@ -134,23 +149,21 @@ static FlutterError *getFlutterError(NSError *error) {
       self.signIn.configuration = self.configuration;
     }
 
-    [self.signIn signInWithPresentingViewController:[self topViewController]
-                                               hint:nil
-                                   additionalScopes:self.requestedScopes.allObjects
-                                         completion:^(GIDSignInResult *_Nullable signInResult,
-                                                      NSError *_Nullable error) {
-                                           GIDGoogleUser *user;
-                                           NSString *serverAuthCode;
-                                           if (signInResult) {
-                                             user = signInResult.user;
-                                             serverAuthCode = signInResult.serverAuthCode;
-                                           }
+    [self signInWithHint:nil
+        additionalScopes:self.requestedScopes.allObjects
+              completion:^(GIDSignInResult *_Nullable signInResult, NSError *_Nullable error) {
+                GIDGoogleUser *user;
+                NSString *serverAuthCode;
+                if (signInResult) {
+                  user = signInResult.user;
+                  serverAuthCode = signInResult.serverAuthCode;
+                }
 
-                                           [self didSignInForUser:user
-                                               withServerAuthCode:serverAuthCode
-                                                       completion:completion
-                                                            error:error];
-                                         }];
+                [self didSignInForUser:user
+                    withServerAuthCode:serverAuthCode
+                            completion:completion
+                                 error:error];
+              }];
   } @catch (NSException *e) {
     completion(nil, [FlutterError errorWithCode:@"google_sign_in" message:e.reason details:e.name]);
     [e raise];
@@ -196,50 +209,66 @@ static FlutterError *getFlutterError(NSError *error) {
                                           message:@"No account to grant scopes."
                                           details:nil]);
     }
-    [currentUser addScopes:requestedScopes.allObjects
-        presentingViewController:[self topViewController]
-                      completion:^(GIDSignInResult *_Nullable signInResult,
-                                   NSError *_Nullable addedScopeError) {
-                        BOOL granted = NO;
-                        FlutterError *error = nil;
+    [self addScopes:requestedScopes.allObjects
+         completion:^(GIDSignInResult *_Nullable signInResult, NSError *_Nullable addedScopeError) {
+           BOOL granted = NO;
+           FlutterError *error = nil;
 
-                        if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
-                            addedScopeError.code == kGIDSignInErrorCodeMismatchWithCurrentUser) {
-                          error =
-                              [FlutterError errorWithCode:@"mismatch_user"
-                                                  message:@"There is an operation on a previous "
-                                                          @"user. Try signing in again."
-                                                  details:nil];
-                        } else if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
-                                   addedScopeError.code ==
-                                       kGIDSignInErrorCodeScopesAlreadyGranted) {
-                          // Scopes already granted, report success.
-                          granted = YES;
-                        } else if (signInResult.user) {
-                          NSSet<NSString *> *grantedScopes =
-                              [NSSet setWithArray:signInResult.user.grantedScopes];
-                          granted = [requestedScopes isSubsetOfSet:grantedScopes];
-                        }
-                        completion(error == nil ? @(granted) : nil, error);
-                      }];
+           if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
+               addedScopeError.code == kGIDSignInErrorCodeMismatchWithCurrentUser) {
+             error = [FlutterError errorWithCode:@"mismatch_user"
+                                         message:@"There is an operation on a previous "
+                                                 @"user. Try signing in again."
+                                         details:nil];
+           } else if ([addedScopeError.domain isEqualToString:kGIDSignInErrorDomain] &&
+                      addedScopeError.code == kGIDSignInErrorCodeScopesAlreadyGranted) {
+             // Scopes already granted, report success.
+             granted = YES;
+           } else if (signInResult.user) {
+             NSSet<NSString *> *grantedScopes =
+                 [NSSet setWithArray:signInResult.user.grantedScopes];
+             granted = [requestedScopes isSubsetOfSet:grantedScopes];
+           }
+           completion(error == nil ? @(granted) : nil, error);
+         }];
   } @catch (NSException *e) {
     completion(nil, [FlutterError errorWithCode:@"request_scopes" message:e.reason details:e.name]);
   }
 }
 
-#pragma mark - <GIDSignInUIDelegate> protocol
-
-- (void)signIn:(GIDSignIn *)signIn presentViewController:(UIViewController *)viewController {
-  UIViewController *rootViewController =
-      [UIApplication sharedApplication].delegate.window.rootViewController;
-  [rootViewController presentViewController:viewController animated:YES completion:nil];
-}
-
-- (void)signIn:(GIDSignIn *)signIn dismissViewController:(UIViewController *)viewController {
-  [viewController dismissViewControllerAnimated:YES completion:nil];
-}
-
 #pragma mark - private methods
+
+// Wraps the iOS and macOS sign in display methods.
+- (void)signInWithHint:(nullable NSString *)hint
+      additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+            completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
+                                          NSError *_Nullable error))completion {
+#if TARGET_OS_OSX
+  [self.signIn signInWithPresentingWindow:self.registrar.view.window
+                                     hint:hint
+                         additionalScopes:additionalScopes
+                               completion:completion];
+#else
+  [self.signIn signInWithPresentingViewController:[self topViewController]
+                                             hint:hint
+                                 additionalScopes:additionalScopes
+                                       completion:completion];
+#endif
+}
+
+// Wraps the iOS and macOS scope addition methods.
+- (void)addScopes:(NSArray<NSString *> *)scopes
+       completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
+                                     NSError *_Nullable error))completion {
+  GIDGoogleUser *currentUser = self.signIn.currentUser;
+#if TARGET_OS_OSX
+  [currentUser addScopes:scopes presentingWindow:self.registrar.view.window completion:completion];
+#else
+  [currentUser addScopes:scopes
+      presentingViewController:[self topViewController]
+                    completion:completion];
+#endif
+}
 
 /// @return @c nil if GoogleService-Info.plist not found and clientId is not provided.
 - (GIDConfiguration *)configurationWithClientIdArgument:(id)clientIDArg
@@ -299,6 +328,8 @@ static FlutterError *getFlutterError(NSError *error) {
   }
 }
 
+#if TARGET_OS_IOS
+
 - (UIViewController *)topViewController {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -336,5 +367,7 @@ static FlutterError *getFlutterError(NSError *error) {
   }
   return viewController;
 }
+
+#endif
 
 @end
