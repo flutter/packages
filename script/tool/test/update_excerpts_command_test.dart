@@ -444,11 +444,45 @@ FAIL
     );
   });
 
-  test('updates gradle files', () async {
-    const String fileName = 'main.gradle';
-    const String language = 'groovy';
+  group('File type tests', () {
+    const List<Map<String, String>> testCases = <Map<String, String>>[
+      <String, String>{'fileName': 'main.cc'},
+      <String, String>{'fileName': 'main.cpp', 'language': 'c++'},
+      <String, String>{'fileName': 'main.dart'},
+      <String, String>{'fileName': 'main.js'},
+      <String, String>{'fileName': 'main.kt', 'language': 'kotlin'},
+      <String, String>{'fileName': 'main.java'},
+      <String, String>{'fileName': 'main.gradle', 'language': 'groovy'},
+      <String, String>{'fileName': 'main.m', 'language': 'objectivec'},
+      <String, String>{'fileName': 'main.swift'},
+      <String, String>{
+        'fileName': 'main.css',
+        'prefix': '/* ',
+        'suffix': ' */'
+      },
+      <String, String>{
+        'fileName': 'main.html',
+        'prefix': '<!--',
+        'suffix': '-->'
+      },
+      <String, String>{
+        'fileName': 'main.xml',
+        'prefix': '<!--',
+        'suffix': '-->'
+      },
+      <String, String>{'fileName': 'main.yaml', 'prefix': '# '},
+      <String, String>{'fileName': 'main.sh', 'prefix': '# '},
+      <String, String>{'fileName': 'main', 'language': 'txt', 'prefix': ''},
+    ];
 
-    await testInjection('''
+    void runTest(Map<String, String> testCase) {
+      test('updates ${testCase['fileName']} files', () async {
+        final String fileName = testCase['fileName']!;
+        final String language = testCase['language'] ?? fileName.split('.')[1];
+        final String prefix = testCase['prefix'] ?? '// ';
+        final String suffix = testCase['suffix'] ?? '';
+
+        await testInjection('''
 Example:
 
 <?code-excerpt "$fileName (SomeSection)"?>
@@ -457,9 +491,9 @@ X Y Z
 ```
 ''', '''
 FAIL
-// #docregion SomeSection
+$prefix#docregion SomeSection$suffix
 A B C
-// #enddocregion SomeSection
+$prefix#enddocregion SomeSection$suffix
 FAIL
 ''', '''
 Example:
@@ -469,384 +503,13 @@ Example:
 A B C
 ```
 ''', fileName);
-  });
+      });
+    }
 
-  test('updates java files', () async {
-    const String fileName = 'main.java';
-    const String language = 'java';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-// #docregion SomeSection
-A B C
-// #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates sh files', () async {
-    const String fileName = 'main.sh';
-    const String language = 'sh';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-# #docregion SomeSection
-A B C
-# #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates cc files', () async {
-    const String fileName = 'main.cc';
-    const String language = 'cc';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-// #docregion SomeSection
-A B C
-// #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates cpp files', () async {
-    const String fileName = 'main.cpp';
-    const String language = 'c++';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-// #docregion SomeSection
-A B C
-// #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates files with no extension', () async {
-    const String fileName = 'main';
-    const String language = 'txt';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-#docregion SomeSection
-A B C
-#enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates kotlin files', () async {
-    const String fileName = 'main.kt';
-    const String language = 'kotlin';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-// #docregion SomeSection
-A B C
-// #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates m files', () async {
-    const String fileName = 'main.m';
-    const String language = 'objectivec';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-// #docregion SomeSection
-A B C
-// #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates js files', () async {
-    const String fileName = 'main.js';
-    const String language = 'js';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-// #docregion SomeSection
-A B C
-// #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates java files', () async {
-    const String fileName = 'main.java';
-    const String language = 'java';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-// #docregion SomeSection
-A B C
-// #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates swift files', () async {
-    const String fileName = 'main.swift';
-    const String language = 'swift';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-// #docregion SomeSection
-A B C
-// #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates css files', () async {
-    const String fileName = 'main.css';
-    const String language = 'css';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-/* #docregion SomeSection */
-A B C
-/* #enddocregion SomeSection */
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates html files', () async {
-    const String fileName = 'main.html';
-    const String language = 'html';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-<!--#docregion SomeSection-->
-A B C
-<!--#enddocregion SomeSection-->
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates xml files', () async {
-    const String fileName = 'main.xml';
-    const String language = 'xml';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-<!--#docregion SomeSection-->
-A B C
-<!--#enddocregion SomeSection-->
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
-  });
-
-  test('updates yaml files', () async {
-    const String fileName = 'main.yaml';
-    const String language = 'yaml';
-
-    await testInjection('''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-X Y Z
-```
-''', '''
-FAIL
-# #docregion SomeSection
-A B C
-# #enddocregion SomeSection
-FAIL
-''', '''
-Example:
-
-<?code-excerpt "$fileName (SomeSection)"?>
-```$language
-A B C
-```
-''', fileName);
+    // ignore: prefer_foreach
+    for (final Map<String, String> testCase in testCases) {
+      runTest(testCase);
+    }
   });
 }
 
