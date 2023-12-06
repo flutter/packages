@@ -3,30 +3,43 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
+import 'package:flutter_test/flutter_test.dart';
+import 'package:google_identity_services_web/id.dart';
 import 'package:google_identity_services_web/oauth2.dart';
-import 'package:google_identity_services_web/src/js_interop/dom.dart';
-import 'package:js/js.dart';
-import 'package:js/js_util.dart';
+import 'package:web/web.dart' as web;
 
-@JS('window')
-external Object get domWindow;
+/// Function that lets us expect that a JSObject has a [name] property that matches [matcher].
+///
+/// Use [createExpectConfigValue] to create one of this functions associated with
+/// a specific [JSObject].
+typedef ExpectConfigValueFn = void Function(String name, Object? matcher);
+
+/// Creates a [ExpectConfigValueFn] for the `config` [JSObject].
+ExpectConfigValueFn createExpectConfigValue(JSObject config) {
+  return (String name, Object? matcher) {
+    expect(config.getProperty(name.toJS), matcher, reason: name);
+  };
+}
 
 /// Installs mock-gis.js in the page.
 /// Returns a future that completes when the 'load' event of the script fires.
 Future<void> installGisMock() {
   final Completer<void> completer = Completer<void>();
-  final DomHtmlScriptElement script =
-      document.createElement('script') as DomHtmlScriptElement;
+
+  final web.HTMLScriptElement script =
+      web.document.createElement('script') as web.HTMLScriptElement;
   script.src = 'mock-gis.js';
-  setProperty(script, 'type', 'module');
-  callMethod(script, 'addEventListener', <Object>[
-    'load',
-    allowInterop((_) {
-      completer.complete();
-    })
-  ]);
-  document.head.appendChild(script);
+  script.type = 'module';
+  script.addEventListener(
+      'load',
+      (JSAny? _) {
+        completer.complete();
+      }.toJS);
+
+  web.document.head!.appendChild(script);
   return completer.future;
 }
 
@@ -36,41 +49,48 @@ Future<TokenResponse> fakeAuthZWithScopes(List<String> scopes) {
       StreamController<TokenResponse>();
   final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
     client_id: 'for-tests',
-    callback: allowInterop(controller.add),
-    scope: scopes.join(' '),
+    callback: controller.add,
+    scope: scopes,
   ));
   setMockTokenResponse(client, 'some-non-null-auth-token-value');
   client.requestAccessToken();
   return controller.stream.first;
 }
 
+/// Allows calling a `setMockTokenResponse` method (added by mock-gis.js)
+extension on TokenClient {
+  external void setMockTokenResponse(JSString? token);
+}
+
 /// Sets a mock TokenResponse value in a [client].
 void setMockTokenResponse(TokenClient client, [String? authToken]) {
-  callMethod(
-    client,
-    'setMockTokenResponse',
-    <Object?>[authToken],
+  client.setMockTokenResponse(authToken?.toJS);
+}
+
+/// Allows calling a `setMockCredentialResponse` method (set by mock-gis.js)
+extension on GoogleAccountsId {
+  external void setMockCredentialResponse(
+    JSString credential,
+    JSString select_by, //ignore: non_constant_identifier_names
   );
 }
 
 /// Sets a mock credential response in `google.accounts.id`.
 void setMockCredentialResponse([String value = 'default_value']) {
-  callMethod(
-    _getGoogleAccountsId(),
-    'setMockCredentialResponse',
-    <Object>[value, 'auto'],
-  );
+  _getGoogleAccountsId().setMockCredentialResponse(value.toJS, 'auto'.toJS);
 }
 
-Object _getGoogleAccountsId() {
-  return _getDeepProperty<Object>(domWindow, 'google.accounts.id');
+GoogleAccountsId _getGoogleAccountsId() {
+  return _getDeepProperty<GoogleAccountsId>(
+      web.window as JSObject, 'google.accounts.id');
 }
 
 // Attempts to retrieve a deeply nested property from a jsObject (or die tryin')
-T _getDeepProperty<T>(Object jsObject, String deepProperty) {
+T _getDeepProperty<T>(JSObject jsObject, String deepProperty) {
   final List<String> properties = deepProperty.split('.');
-  return properties.fold(
+  return properties.fold<JSObject?>(
     jsObject,
-    (Object jsObj, String prop) => getProperty<Object>(jsObj, prop),
+    (JSObject? jsObj, String prop) =>
+        jsObj?.getProperty(prop.toJS) as JSObject?,
   ) as T;
 }
