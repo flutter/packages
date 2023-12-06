@@ -39,8 +39,8 @@
   bool hasMaxWidth = maxWidth != nil;
   bool hasMaxHeight = maxHeight != nil;
 
-  double width = hasMaxWidth ? MIN([maxWidth doubleValue], originalWidth) : originalWidth;
-  double height = hasMaxHeight ? MIN([maxHeight doubleValue], originalHeight) : originalHeight;
+  double width = hasMaxWidth ? MIN(round([maxWidth doubleValue]), originalWidth) : originalWidth;
+  double height = hasMaxHeight ? MIN(round([maxHeight doubleValue]), originalHeight) : originalHeight;
 
   bool shouldDownscaleWidth = hasMaxWidth && [maxWidth doubleValue] < originalWidth;
   bool shouldDownscaleHeight = hasMaxHeight && [maxHeight doubleValue] < originalHeight;
@@ -51,9 +51,9 @@
       double downScaledHeight = width / aspectRatio;
 
       if (downScaledHeight > height) {
-        width = downScaledWidth;
+        width = round(downScaledWidth);
       } else {
-        height = downScaledHeight;
+        height = round(downScaledHeight);
       }
     }
 

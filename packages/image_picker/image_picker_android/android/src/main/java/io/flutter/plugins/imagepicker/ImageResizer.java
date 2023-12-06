@@ -82,18 +82,18 @@ class ImageResizer {
   }
 
   private SizeFCompat calculateTargetSize(
-      @NonNull Double originalWidth,
-      @NonNull Double originalHeight,
+      @NonNull double originalWidth,
+      @NonNull double originalHeight,
       @Nullable Double maxWidth,
       @Nullable Double maxHeight) {
 
-    Double aspectRatio = originalWidth / originalHeight;
+    double aspectRatio = originalWidth / originalHeight;
 
     boolean hasMaxWidth = maxWidth != null;
     boolean hasMaxHeight = maxHeight != null;
 
-    Double width = hasMaxWidth ? Math.min(originalWidth, maxWidth) : originalWidth;
-    Double height = hasMaxHeight ? Math.min(originalHeight, maxHeight) : originalHeight;
+    Double width = hasMaxWidth ? Math.min(originalWidth, Math.round(maxWidth)) : originalWidth;
+    Double height = hasMaxHeight ? Math.min(originalHeight, Math.round(maxHeight)) : originalHeight;
 
     boolean shouldDownscaleWidth = hasMaxWidth && maxWidth < originalWidth;
     boolean shouldDownscaleHeight = hasMaxHeight && maxHeight < originalHeight;
@@ -104,9 +104,9 @@ class ImageResizer {
       double downScaledHeight = width / aspectRatio;
 
       if (downScaledHeight > height) {
-        width = downScaledWidth;
+        width = (double)Math.round(downScaledWidth);
       } else {
-        height = downScaledHeight;
+        height = (double)Math.round(downScaledHeight);
       }
     }
 
