@@ -1,3 +1,7 @@
+## 0.5.0+24
+
+* Updates example app Gradle version to 7.6.3.
+
 ## 0.5.0+23
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
