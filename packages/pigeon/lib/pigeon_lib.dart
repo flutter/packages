@@ -114,13 +114,7 @@ class FlutterApi {
 /// or static methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass, this.interfaces = const <Type>{}});
-
-  /// The ProxyApi that this class extends.
-  final Type? superClass;
-
-  /// The set of interfaces this class implements.
-  final Set<Type> interfaces;
+  const ProxyApi();
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1257,10 +1251,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           methods: <Method>[],
           constructors: <Constructor>[],
           fields: <Field>[],
-          superClassName: annotationMap['superClass'] as String?,
-          interfacesNames: annotationMap['interfaces'] != null
-              ? (annotationMap['interfaces']! as Set<dynamic>).cast<String>()
-              : <String>{},
+          superClassName: node.extendsClause?.superclass.name2.lexeme,
+          interfacesNames: node.implementsClause?.interfaces
+                  .map<String>((dart_ast.NamedType type) => type.name2.lexeme)
+                  .toSet() ??
+              <String>{},
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
