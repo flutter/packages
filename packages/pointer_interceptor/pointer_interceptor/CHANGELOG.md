@@ -1,7 +1,3 @@
-## NEXT
-
-* Adds iOS implementation.
-
 ## 0.9.3+7
 
 * Updates metadata to point to new source folder
