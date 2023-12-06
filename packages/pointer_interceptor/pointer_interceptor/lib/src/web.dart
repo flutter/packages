@@ -7,9 +7,6 @@ import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-
-import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
 
 const String _viewType = '__webPointerInterceptorViewType__';
 const String _debug = 'debug__';
@@ -36,14 +33,35 @@ void _registerFactory({bool debug = false}) {
 /// The web implementation of the `PointerInterceptor` widget.
 ///
 /// A `Widget` that prevents clicks from being swallowed by [HtmlElementView]s.
-class PointerInterceptorWeb extends PointerInterceptorPlatform {
-  static bool _registered = false;
-
-  /// Register the plugin
-  static void registerWith(Registrar? registrar) {
-    PointerInterceptorPlatform.instance = PointerInterceptorWeb();
+class PointerInterceptor extends StatelessWidget {
+  /// Creates a PointerInterceptor for the web.
+  PointerInterceptor({
+    required this.child,
+    this.intercepting = true,
+    this.debug = false,
+    super.key,
+  }) {
+    if (!_registered) {
+      _register();
+    }
   }
 
+  /// The `Widget` that is being wrapped by this `PointerInterceptor`.
+  final Widget child;
+
+  /// Whether or not this `PointerInterceptor` should intercept pointer events.
+  final bool intercepting;
+
+  /// When true, the widget renders with a semi-transparent red background, for debug purposes.
+  ///
+  /// This is useful when rendering this as a "layout" widget, like the root child
+  /// of a [Drawer].
+  final bool debug;
+
+  // Keeps track if this widget has already registered its view factories or not.
+  static bool _registered = false;
+
+  // Registers the view factories for the interceptor widgets.
   static void _register() {
     assert(!_registered);
 
@@ -54,20 +72,12 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
   }
 
   @override
-  Widget buildWidget({
-    required Widget child,
-    bool debug = false,
-    bool intercepting = true,
-    Key? key,
-  }) {
-    final String viewType = _getViewType(debug: debug);
-
-    if (!_registered) {
-      _register();
-    }
+  Widget build(BuildContext context) {
     if (!intercepting) {
       return child;
     }
+
+    final String viewType = _getViewType(debug: debug);
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
