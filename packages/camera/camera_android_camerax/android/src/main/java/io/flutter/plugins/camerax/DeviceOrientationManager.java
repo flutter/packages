@@ -19,8 +19,6 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 
-import android.util.Log;
-
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */
@@ -109,48 +107,58 @@ public class DeviceOrientationManager {
    *     into degrees.
    * @return The device's photo orientation in degrees.
    */
-  public int getPhotoOrientation(@Nullable PlatformChannel.DeviceOrientation orientation) {
-    int angle = 0;
-    // Fallback to device orientation when the orientation value is null.
-    if (orientation == null) {
-      orientation = getUIOrientation();
+  // public int getPhotoOrientation(@Nullable PlatformChannel.DeviceOrientation orientation) {
+  //   int angle = 0;
+  //   // Fallback to device orientation when the orientation value is null.
+  //   if (orientation == null) {
+  //     orientation = getUIOrientation();
+  //   }
+
+  //   switch (orientation) {
+  //     case PORTRAIT_UP:
+  //       angle = 90;
+  //       break;
+  //     case PORTRAIT_DOWN:
+  //       angle = 270;
+  //       break;
+  //     case LANDSCAPE_LEFT:
+  //       angle = isFrontFacing ? 180 : 0;
+  //       break;
+  //     case LANDSCAPE_RIGHT:
+  //       angle = isFrontFacing ? 0 : 180;
+  //       break;
+  //   }
+
+  //   // Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X).
+  //   // This has to be taken into account so the JPEG is rotated properly.
+  //   // For devices with orientation of 90, this simply returns the mapping from ORIENTATIONS.
+  //   // For devices with orientation of 270, the JPEG is rotated 180 degrees instead.
+  //   return (angle + sensorOrientation + 270) % 360;
+  // }
+
+  public int getPhotoOrientation(@Nullable PlatformChannel.DeviceOrientation lockedOrientation) {
+    PlatformChannel.DeviceOrientation currentOrientation = this.lastOrientation;
+    if (currentOrientation == null) {
+      currentOrientation = getUIOrientation();
     }
 
-    Log.e("CAMILLE", "----------------------------------------------------------");
+    return (decodeOrientation(currentOrientation, !isFrontFacing) + decodeOrientation(lockedOrientation, true) + 360) % 360;
+  }
 
-    Log.e("CAMILLE SENSOR ORIENTATION", Integer.toString(sensorOrientation));
-    Log.e("CAMILLE ORIENTATION", orientation.toString());
-    Log.e("CAMILLE ISFRONTFACING", isFrontFacing ? "true":"false");
 
+  public int decodeOrientation(@NonNull PlatformChannel.DeviceOrientation orientation, bool clockwise) {
     switch (orientation) {
       case PORTRAIT_UP:
-        angle = isFrontFacing ? 180 : 0;
-        break;
-      case PORTRAIT_DOWN:
-        angle = isFrontFacing ? 0 : 180;
-        break;
-      case LANDSCAPE_LEFT:
-        angle =  isFrontFacing ? 90 : 270; // isFrontFacing ? 270 : 90;
-        break;
+        return 0;
       case LANDSCAPE_RIGHT:
-        angle =  isFrontFacing ? 270 : 90; // isFrontFacing ? 90 : 270;
-        break;
+        return clockwise ? 90: 270;
+      case PORTRAIT_DOWN:
+        return 180;
+      case LANDSCAPE_LEFT:
+        return clockwise ? 270 : 90;
     }
-
-    Log.e("CAMILLE ANGLE", Integer.toString(angle));
-
-    int ans = (angle + sensorOrientation + 270) % 360;
-
-    Log.e("CAMILLE ANS", Integer.toString(ans));
-    Log.e("CAMILLE", "----------------------------------------------------------");
-
-    // Sensor orientation is 90 for most devices, or 270 for some devices (eg. Nexus 5X).
-    // This has to be taken into account so the JPEG is rotated properly.
-    // For devices with orientation of 90, this simply returns the mapping from ORIENTATIONS.
-    // For devices with orientation of 270, the JPEG is rotated 180 degrees instead.
-    // return ans;
-    return 180;
   }
+
 
   /**
    * Returns the device's video orientation in clockwise degrees based on the sensor orientation and
