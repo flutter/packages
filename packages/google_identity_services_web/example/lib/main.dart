@@ -19,8 +19,7 @@ void main() async {
   id.setLogLevel('debug');
 
   final IdConfiguration config = IdConfiguration(
-    client_id:
-        '451137223537-t8qp8tl992tgqj5focnc6mh8cp2psn8g.apps.googleusercontent.com',
+    client_id: 'your-google-client-id-goes-here.apps.googleusercontent.com',
     callback: onCredentialResponse,
     use_fedcm_for_prompt: true,
   );
