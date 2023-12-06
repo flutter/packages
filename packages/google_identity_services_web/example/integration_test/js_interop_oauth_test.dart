@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// the following ignore is needed for downgraded analyzer (casts to JSObject).
+// ignore_for_file: unnecessary_cast
+
 import 'dart:async';
 import 'dart:js_interop';
 
