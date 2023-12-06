@@ -4,11 +4,14 @@
 
 import 'dart:async';
 import 'dart:convert' show json;
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:math' as math;
+
+import 'package:web/helpers.dart' as html;
 
 import 'src/common.dart';
 import 'src/recorder.dart';
+
 export 'src/recorder.dart';
 
 /// Signature for a function that creates a [Recorder].
@@ -127,33 +130,32 @@ void _fallbackToManual(String error) {
         ${_benchmarks.keys.map((String name) => '<li><button id="$name">$name</button></li>').join('\n')}
       </ul>
     </div>
-  ''',
-      validator: html.NodeValidatorBuilder()
-        ..allowHtml5()
-        ..allowInlineStyles());
+  ''');
 
   for (final String benchmarkName in _benchmarks.keys) {
     // Find the button elements added above.
     final html.Element button = html.document.querySelector('#$benchmarkName')!;
-    button.addEventListener('click', (_) {
-      final html.Element? manualPanel =
-          html.document.querySelector('#manual-panel');
-      manualPanel?.remove();
-      _runBenchmark(benchmarkName);
-    });
+    button.addEventListener(
+        'click',
+        (JSAny? arg) {
+          final html.Element? manualPanel =
+              html.document.querySelector('#manual-panel');
+          manualPanel?.remove();
+          _runBenchmark(benchmarkName);
+        }.toJS);
   }
 }
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  final html.BodyElement body = html.document.body!;
+  final html.HTMLBodyElement body = html.document.body! as html.HTMLBodyElement;
 
-  body.innerHtml = '<h2>${profile.name}</h2>';
+  body.innerHTML = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     body.appendHtml('<h2>$scoreKey</h2>');
     body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    body.append(TimeseriesVisualization(timeseries).render());
+    body.append(TimeseriesVisualization(timeseries).render() as JSObject);
   });
 }
 
@@ -163,7 +165,7 @@ class TimeseriesVisualization {
   TimeseriesVisualization(this._timeseries) {
     _stats = _timeseries.computeStats();
     _canvas = html.CanvasElement();
-    _screenWidth = html.window.screen!.width!;
+    _screenWidth = html.window.screen.width;
     _canvas.width = _screenWidth;
     _canvas.height = (_kCanvasHeight * html.window.devicePixelRatio).round();
     _canvas.style
@@ -220,19 +222,19 @@ class TimeseriesVisualization {
 
       if (sample.isWarmUpValue) {
         // Put gray background behind warm-up samples.
-        _ctx.fillStyle = 'rgba(200,200,200,1)';
+        _ctx.fillStyle = 'rgba(200,200,200,1)'.toJS;
         _ctx.fillRect(xOffset, 0, barWidth, _normalized(_maxValueChartRange));
       }
 
       if (sample.magnitude > _maxValueChartRange) {
         // The sample value is so big it doesn't fit on the chart. Paint it purple.
-        _ctx.fillStyle = 'rgba(100,50,100,0.8)';
+        _ctx.fillStyle = 'rgba(100,50,100,0.8)'.toJS;
       } else if (sample.isOutlier) {
         // The sample is an outlier, color it light red.
-        _ctx.fillStyle = 'rgba(255,50,50,0.6)';
+        _ctx.fillStyle = 'rgba(255,50,50,0.6)'.toJS;
       } else {
         // A non-outlier sample, color it light blue.
-        _ctx.fillStyle = 'rgba(50,50,255,0.6)';
+        _ctx.fillStyle = 'rgba(50,50,255,0.6)'.toJS;
       }
 
       _ctx.fillRect(xOffset, 0, barWidth - 1, _normalized(sample.magnitude));
@@ -245,12 +247,12 @@ class TimeseriesVisualization {
         _normalized(_stats.average));
 
     // Draw a horizontal dashed line corresponding to the outlier cut off.
-    _ctx.setLineDash(<num>[5, 5]);
+    _ctx.setLineDash(<JSNumber>[5.toJS, 5.toJS].toJS);
     drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth,
         _normalized(_stats.outlierCutOff));
 
     // Draw a light red band that shows the noise (1 stddev in each direction).
-    _ctx.fillStyle = 'rgba(255,50,50,0.3)';
+    _ctx.fillStyle = 'rgba(255,50,50,0.3)'.toJS;
     _ctx.fillRect(
       0,
       _normalized(_stats.average * (1 - _stats.noise)),
@@ -283,7 +285,7 @@ class LocalBenchmarkServerClient {
   /// Returns [kManualFallback] if local server is not available (uses 404 as a
   /// signal).
   Future<String> requestNextBenchmark() async {
-    final html.HttpRequest request = await _requestXhr(
+    final html.XMLHttpRequest request = await _requestXhr(
       '/next-benchmark',
       method: 'POST',
       mimeType: 'application/json',
@@ -298,7 +300,7 @@ class LocalBenchmarkServerClient {
     }
 
     isInManualMode = false;
-    return request.responseText ?? kManualFallback;
+    return request.responseText;
   }
 
   void _checkNotManualMode() {
@@ -335,7 +337,7 @@ class LocalBenchmarkServerClient {
   /// server.
   Future<void> sendProfileData(Profile profile) async {
     _checkNotManualMode();
-    final html.HttpRequest request = await html.HttpRequest.request(
+    final html.XMLHttpRequest request = await _requestXhr(
       '/profile-data',
       method: 'POST',
       mimeType: 'application/json',
@@ -376,21 +378,26 @@ class LocalBenchmarkServerClient {
 
   /// This is the same as calling [html.HttpRequest.request] but it doesn't
   /// crash on 404, which we use to detect `flutter run`.
-  Future<html.HttpRequest> _requestXhr(
+  Future<html.XMLHttpRequest> _requestXhr(
     String url, {
     required String method,
     required String mimeType,
-    required dynamic sendData,
+    required String sendData,
   }) {
-    final Completer<html.HttpRequest> completer = Completer<html.HttpRequest>();
-    final html.HttpRequest xhr = html.HttpRequest();
-    xhr.open(method, url, async: true);
+    final Completer<html.XMLHttpRequest> completer =
+        Completer<html.XMLHttpRequest>();
+    final html.XMLHttpRequest xhr = html.XMLHttpRequest();
+    xhr.open(method, url, true);
     xhr.overrideMimeType(mimeType);
     xhr.onLoad.listen((html.ProgressEvent e) {
       completer.complete(xhr);
     });
     xhr.onError.listen(completer.completeError);
-    xhr.send(sendData);
+    xhr.send(sendData.toJS);
     return completer.future;
   }
+}
+
+extension on html.HTMLElement {
+  void appendHtml(String input) => insertAdjacentHTML('beforeend', input);
 }

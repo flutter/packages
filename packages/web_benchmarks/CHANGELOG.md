@@ -1,3 +1,7 @@
+## 0.1.0+11
+
+* Migrates benchmark recorder from `dart:html` to `package:web` to support WebAssembly.
+
 ## 0.1.0+10
 
 * Ensure the benchmark client reloads with the proper `initialPage`.
