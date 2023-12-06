@@ -8,7 +8,7 @@ This package is implemented as an [extension method](https://dart.dev/guides/lan
 
 In order to use it, you need to add a `dependency` to your `pubspec.yaml`. Then, wherever you're importing `package:google_sign_in/google_sign_in.dart`, add the following:
 
-<?code-excerpt "example/lib/readme_excerpts.dart (Import)"?>
+<?code-excerpt "example/lib/main.dart (Import)"?>
 ```dart
 import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sign_in_as_googleapis_auth.dart';
 ```
@@ -17,10 +17,16 @@ From that moment on, your `GoogleSignIn` instance will have an additional `Futur
 
 That object can then be used to create instances of `googleapis` API clients:
 
-<?code-excerpt "example/lib/readme_excerpts.dart (CreateAPIClient)"?>
+<?code-excerpt "example/lib/main.dart (CreateAPIClient)"?>
 ```dart
-final PeopleServiceApi peopleApi =
-    PeopleServiceApi((await _googleSignIn.authenticatedClient())!);
+// Retrieve an [auth.AuthClient] from the current [GoogleSignIn] instance.
+final auth.AuthClient? client = await _googleSignIn.authenticatedClient();
+
+assert(client != null, 'Authenticated client missing!');
+
+// Prepare a People Service authenticated client.
+final PeopleServiceApi peopleApi = PeopleServiceApi(client!);
+// Retrieve a list of the `names` of my `connections`
 final ListConnectionsResponse response =
     await peopleApi.people.connections.list(
   'people/me',
