@@ -1,6 +1,7 @@
-## NEXT
+## 5.7.0
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Adds support for macOS.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 5.6.5
 

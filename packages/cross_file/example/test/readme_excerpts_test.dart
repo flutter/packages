@@ -6,7 +6,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:cross_file_example/readme_excerpts.dart';
 import 'package:test/test.dart';
 
-const bool kIsWeb = bool.fromEnvironment('dart.library.js_util');
+const bool kIsWeb = bool.fromEnvironment('dart.library.js_interop');
 
 void main() {
   test('instantiateXFile loads asset file', () async {
