@@ -155,7 +155,9 @@ void _printResultsToScreen(Profile profile) {
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     body.appendHtml('<h2>$scoreKey</h2>');
     body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    body.append(TimeseriesVisualization(timeseries).render() as JSObject);
+    // TODO(kevmoo): remove `NodeClue` cast when we no longer need to support
+    // pkg:web 0.3.0
+    html.NodeGlue(body).append(TimeseriesVisualization(timeseries).render());
   });
 }
 
