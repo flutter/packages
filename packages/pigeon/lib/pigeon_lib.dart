@@ -818,7 +818,13 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     if (api is AstProxyApi) {
-      result.addAll(_validateProxyApi(api, source, customClasses));
+      result.addAll(_validateProxyApi(
+        api,
+        source,
+        customClasses: customClasses.toSet(),
+        customEnums: customEnums.toSet(),
+        proxyApis: root.apis.whereType<AstProxyApi>().toSet(),
+      ));
     }
     for (final Method method in api.methods) {
       for (final Parameter param in method.parameters) {
@@ -878,77 +884,128 @@ List<Error> _validateAst(Root root, String source) {
 
 List<Error> _validateProxyApi(
   AstProxyApi api,
-  String source,
-  List<String> customClasses,
-) {
-  return <Error>[];
-  // final List<Error> result = <Error>[];
-  //
-  // Error unsupportedDataClassError(NamedType type) {
-  //   return Error(
-  //     message: 'ProxyApis do not support data classes: ${type.type.baseName}.',
-  //     lineNumber: _calculateLineNumberNullable(source, type.offset),
-  //   );
-  // }
-  //
-  // if (api.constructors.length > 1 && api.nonAttachedFields.isNotEmpty) {
-  //   result.add(Error(
-  //     message:
-  //         'ProxyApis with more than one constructor can not have any non attached fields: ${api.nonAttachedFields.first.name}',
-  //     lineNumber: _calculateLineNumberNullable(
-  //       source,
-  //       api.nonAttachedFields.first.offset,
-  //     ),
-  //   ));
-  // }
-  //
-  // for (final Constructor constructor in api.constructors) {
-  //   for (final Parameter parameter in constructor.parameters) {
-  //     if (customClasses.contains(parameter.type.baseName)) {
-  //       result.add(unsupportedDataClassError(parameter));
-  //     }
-  //   }
-  // }
-  //
-  // for (final Method method in api.methods) {
-  //   for (final Parameter parameter in method.parameters) {
-  //     if (customClasses.contains(parameter.type.baseName)) {
-  //       result.add(unsupportedDataClassError(parameter));
-  //     }
-  //   }
-  //
-  //   if (method.location == ApiLocation.flutter && method.isStatic) {
-  //     result.add(Error(
-  //       message: 'Static callback methods are not supported: ${method.name}.',
-  //       lineNumber: _calculateLineNumberNullable(source, method.offset),
-  //     ));
-  //   }
-  // }
-  //
-  // for (final Field field in api.fields) {
-  //   if (customClasses.contains(field.type.baseN)) {
-  //     result.add(unsupportedDataClassError(field));
-  //   }
-  //
-  //   if (!field.type.isProxyApi) {
-  //     if (field.isStatic) {
-  //       print(field);
-  //       result.add(Error(
-  //         message:
-  //             'Static fields are considered attached fields and must be another ProxyApi: ${field.type.baseName}.',
-  //         lineNumber: _calculateLineNumberNullable(source, field.offset),
-  //       ));
-  //     } else if (field.isAttached) {
-  //       result.add(Error(
-  //         message:
-  //             'Attached fields must be another ProxyApi: ${field.type.baseName}.',
-  //         lineNumber: _calculateLineNumberNullable(source, field.offset),
-  //       ));
-  //     }
-  //   }
-  // }
-  //
-  // return result;
+  String source, {
+  required Set<String> customClasses,
+  required Set<String> customEnums,
+  required Set<AstProxyApi> proxyApis,
+}) {
+  final List<Error> result = <Error>[];
+
+  bool isDataClass(NamedType type) =>
+      customClasses.contains(type.type.baseName);
+  bool isEnum(NamedType type) => customEnums.contains(type.type.baseName);
+  bool isProxyApi(NamedType type) => proxyApis.any(
+        (AstProxyApi api) => api.name == type.type.baseName,
+      );
+  Error unsupportedDataClassError(NamedType type) {
+    return Error(
+      message: 'ProxyApis do not support data classes: ${type.type.baseName}.',
+      lineNumber: _calculateLineNumberNullable(source, type.offset),
+    );
+  }
+
+  final List<AstProxyApi> superClassChain =
+      recursiveGetSuperClassApisChain(api, proxyApis);
+
+  // Verify that the api does not inherit a non attached field from its super class.
+  if (superClassChain.isNotEmpty &&
+      superClassChain.first.nonAttachedFields.isNotEmpty) {
+    result.add(Error(
+      message:
+          'Non attached fields can not be inherited. Non attached field found for parent class ${api.nonAttachedFields.first.name}',
+      lineNumber: _calculateLineNumberNullable(
+        source,
+        api.nonAttachedFields.first.offset,
+      ),
+    ));
+  }
+
+  // Verify this api is not used as an attached field while either:
+  // 1. Having a non-attached field.
+  // 2. Having a required Flutter method.
+  final bool hasNonAttachedField = api.nonAttachedFields.isNotEmpty;
+  final bool hasRequiredFlutterMethod =
+      api.flutterMethods.any((Method method) => method.required);
+  if (hasNonAttachedField || hasRequiredFlutterMethod) {
+    for (final AstProxyApi proxyApi in proxyApis) {
+      for (final Field field in proxyApi.attachedFields) {
+        if (field.type.baseName == api.name) {
+          if (hasNonAttachedField) {
+            result.add(Error(
+              message:
+                  'ProxyApis with fields can not be used as attached fields: ${field.name}',
+              lineNumber: _calculateLineNumberNullable(
+                source,
+                field.offset,
+              ),
+            ));
+          }
+          if (hasRequiredFlutterMethod) {
+            result.add(Error(
+              message:
+                  'ProxyApis with required callback methods can not be used as attached fields: ${field.name}',
+              lineNumber: _calculateLineNumberNullable(
+                source,
+                field.offset,
+              ),
+            ));
+          }
+        }
+      }
+    }
+  }
+
+  // TODO: verify all super clases are proxy apis
+  // TODO: same for interfaces
+
+  for (final String interfaceName in api.interfacesNames) {
+    //final
+  }
+
+  for (final Constructor constructor in api.constructors) {
+    for (final Parameter parameter in constructor.parameters) {
+      if (isDataClass(parameter)) {
+        result.add(unsupportedDataClassError(parameter));
+      }
+    }
+  }
+
+  for (final Method method in api.methods) {
+    for (final Parameter parameter in method.parameters) {
+      if (isDataClass(parameter)) {
+        result.add(unsupportedDataClassError(parameter));
+      }
+    }
+
+    if (method.location == ApiLocation.flutter && method.isStatic) {
+      result.add(Error(
+        message: 'Static callback methods are not supported: ${method.name}.',
+        lineNumber: _calculateLineNumberNullable(source, method.offset),
+      ));
+    }
+  }
+
+  for (final Field field in api.fields) {
+    if (isDataClass(field)) {
+      result.add(unsupportedDataClassError(field));
+    } else if (!isProxyApi(field)) {
+      if (field.isStatic) {
+        result.add(Error(
+          message:
+              'Static fields are considered attached fields and must be another ProxyApi: ${field.type.baseName}.',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      } else if (field.isAttached) {
+        result.add(Error(
+          message:
+              'Attached fields must be another ProxyApi: ${field.type.baseName}.',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      }
+    }
+  }
+
+  return result;
 }
 
 class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
