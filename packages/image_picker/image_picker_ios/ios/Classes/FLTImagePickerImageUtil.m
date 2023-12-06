@@ -40,22 +40,23 @@
   bool hasMaxHeight = maxHeight != nil;
 
   double width = hasMaxWidth ? MIN(round([maxWidth doubleValue]), originalWidth) : originalWidth;
-  double height = hasMaxHeight ? MIN(round([maxHeight doubleValue]), originalHeight) : originalHeight;
+  double height =
+      hasMaxHeight ? MIN(round([maxHeight doubleValue]), originalHeight) : originalHeight;
 
   bool shouldDownscaleWidth = hasMaxWidth && [maxWidth doubleValue] < originalWidth;
   bool shouldDownscaleHeight = hasMaxHeight && [maxHeight doubleValue] < originalHeight;
   bool shouldDownscale = shouldDownscaleWidth || shouldDownscaleHeight;
 
-    if (shouldDownscale) {
-      double downScaledWidth = height * aspectRatio;
-      double downScaledHeight = width / aspectRatio;
+  if (shouldDownscale) {
+    double downScaledWidth = height * aspectRatio;
+    double downScaledHeight = width / aspectRatio;
 
-      if (downScaledHeight > height) {
-        width = round(downScaledWidth);
-      } else {
-        height = round(downScaledHeight);
-      }
+    if (downScaledHeight > height) {
+      width = round(downScaledWidth);
+    } else {
+      height = round(downScaledHeight);
     }
+  }
 
   if (!isMetadataAvailable) {
     UIImage *imageToScale = [UIImage imageWithCGImage:image.CGImage

@@ -104,9 +104,9 @@ class ImageResizer {
       double downScaledHeight = width / aspectRatio;
 
       if (downScaledHeight > height) {
-        width = (double)Math.round(downScaledWidth);
+        width = (double) Math.round(downScaledWidth);
       } else {
-        height = (double)Math.round(downScaledHeight);
+        height = (double) Math.round(downScaledHeight);
       }
     }
 

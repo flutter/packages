@@ -74,8 +74,8 @@
 
 - (void)testScaledImage_TallImage_ShouldBeScaledBelowMaxHeight {
   UIImage *image = [UIImage imageWithData:ImagePickerTestImages.TallJPGTestData];
-    XCTAssertEqual(image.size.width, 4);
-    XCTAssertEqual(image.size.height, 7);
+  XCTAssertEqual(image.size.width, 4);
+  XCTAssertEqual(image.size.height, 7);
   UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
                                                   maxWidth:@5
                                                  maxHeight:@5
@@ -109,8 +109,8 @@
 
 - (void)testScaledImage_WideImage_ShouldBeScaledBelowMaxHeight {
   UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
-    XCTAssertEqual(image.size.width, 12);
-    XCTAssertEqual(image.size.height, 7);
+  XCTAssertEqual(image.size.width, 12);
+  XCTAssertEqual(image.size.height, 7);
   UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
                                                   maxWidth:@20
                                                  maxHeight:@6
