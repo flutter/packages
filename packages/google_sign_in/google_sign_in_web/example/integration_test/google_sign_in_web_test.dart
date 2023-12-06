@@ -250,6 +250,24 @@ void main() {
         expect(arguments.elementAt(1), someAccessToken);
       });
     });
+
+    group('requestServerAuthCode', () {
+      const String someAuthCode = '50m3_4u7h_c0d3';
+
+      setUp(() {
+        plugin.initWithParams(options);
+      });
+
+      testWidgets('passes-through call to gis client', (_) async {
+        mockito
+            .when(mockGis.requestServerAuthCode())
+            .thenAnswer((_) => Future<String>.value(someAuthCode));
+
+        final String? serverAuthCode = await plugin.requestServerAuthCode();
+
+        expect(serverAuthCode, someAuthCode);
+      });
+    });
   });
 
   group('userDataEvents', () {
