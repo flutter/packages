@@ -824,7 +824,7 @@ List<Error> _validateAst(Root root, String source) {
   }
   for (final Api api in root.apis) {
     if (api is AstProxyApi) {
-      continue;
+      result.addAll(_validateProxyApi(api, source, customClasses));
     }
     for (final Method method in api.methods) {
       for (final Parameter param in method.parameters) {
@@ -870,7 +870,7 @@ List<Error> _validateAst(Root root, String source) {
         }
       }
       if (method.taskQueueType != TaskQueueType.serial &&
-          api is AstFlutterApi) {
+          method.location == ApiLocation.flutter) {
         result.add(Error(
           message: 'Unsupported TaskQueue specification on ${method.name}',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
@@ -880,6 +880,81 @@ List<Error> _validateAst(Root root, String source) {
   }
 
   return result;
+}
+
+List<Error> _validateProxyApi(
+  AstProxyApi api,
+  String source,
+  List<String> customClasses,
+) {
+  return <Error>[];
+  // final List<Error> result = <Error>[];
+  //
+  // Error unsupportedDataClassError(NamedType type) {
+  //   return Error(
+  //     message: 'ProxyApis do not support data classes: ${type.type.baseName}.',
+  //     lineNumber: _calculateLineNumberNullable(source, type.offset),
+  //   );
+  // }
+  //
+  // if (api.constructors.length > 1 && api.nonAttachedFields.isNotEmpty) {
+  //   result.add(Error(
+  //     message:
+  //         'ProxyApis with more than one constructor can not have any non attached fields: ${api.nonAttachedFields.first.name}',
+  //     lineNumber: _calculateLineNumberNullable(
+  //       source,
+  //       api.nonAttachedFields.first.offset,
+  //     ),
+  //   ));
+  // }
+  //
+  // for (final Constructor constructor in api.constructors) {
+  //   for (final Parameter parameter in constructor.parameters) {
+  //     if (customClasses.contains(parameter.type.baseName)) {
+  //       result.add(unsupportedDataClassError(parameter));
+  //     }
+  //   }
+  // }
+  //
+  // for (final Method method in api.methods) {
+  //   for (final Parameter parameter in method.parameters) {
+  //     if (customClasses.contains(parameter.type.baseName)) {
+  //       result.add(unsupportedDataClassError(parameter));
+  //     }
+  //   }
+  //
+  //   if (method.location == ApiLocation.flutter && method.isStatic) {
+  //     result.add(Error(
+  //       message: 'Static callback methods are not supported: ${method.name}.',
+  //       lineNumber: _calculateLineNumberNullable(source, method.offset),
+  //     ));
+  //   }
+  // }
+  //
+  // for (final Field field in api.fields) {
+  //   if (customClasses.contains(field.type.baseN)) {
+  //     result.add(unsupportedDataClassError(field));
+  //   }
+  //
+  //   if (!field.type.isProxyApi) {
+  //     if (field.isStatic) {
+  //       print(field);
+  //       result.add(Error(
+  //         message:
+  //             'Static fields are considered attached fields and must be another ProxyApi: ${field.type.baseName}.',
+  //         lineNumber: _calculateLineNumberNullable(source, field.offset),
+  //       ));
+  //     } else if (field.isAttached) {
+  //       result.add(Error(
+  //         message:
+  //             'Attached fields must be another ProxyApi: ${field.type.baseName}.',
+  //         lineNumber: _calculateLineNumberNullable(source, field.offset),
+  //       ));
+  //     }
+  //   }
+  // }
+  //
+  // return result;
 }
 
 class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
@@ -966,7 +1041,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     for (final Class classDefinition in referencedClasses) {
       final List<NamedType> fields = <NamedType>[];
       for (final NamedType field in classDefinition.fields) {
-        fields.add(field.copyWithType(_attachClassesAndEnums(field.type)));
+        fields.add(field.copyWithType(
+          _attachClassesEnumsAndProxyApis(field.type),
+        ));
       }
       classDefinition.fields = fields;
     }
@@ -975,17 +1052,19 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       for (final Method func in api.methods) {
         final List<Parameter> paramList = <Parameter>[];
         for (final Parameter param in func.parameters) {
-          paramList.add(param.copyWithType(_attachClassesAndEnums(param.type)));
+          paramList.add(param.copyWithType(
+            _attachClassesEnumsAndProxyApis(param.type),
+          ));
         }
         func.parameters = paramList;
-        func.returnType = _attachClassesAndEnums(func.returnType);
+        func.returnType = _attachClassesEnumsAndProxyApis(func.returnType);
       }
       if (api is AstProxyApi) {
         for (final Constructor constructor in api.constructors) {
           final List<Parameter> paramList = <Parameter>[];
           for (final Parameter param in constructor.parameters) {
             paramList.add(
-              param.copyWithType(_attachClassesAndEnums(param.type)),
+              param.copyWithType(_attachClassesEnumsAndProxyApis(param.type)),
             );
           }
           constructor.parameters = paramList;
@@ -993,9 +1072,11 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
         final List<Field> fieldList = <Field>[];
         for (final Field field in api.fields) {
-          fieldList.add(field.copyWithType(_attachClassesAndEnums(field.type)));
-          api.fields = fieldList;
+          fieldList.add(field.copyWithType(
+            _attachClassesEnumsAndProxyApis(field.type),
+          ));
         }
+        api.fields = fieldList;
       }
     }
 
@@ -1008,15 +1089,21 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     );
   }
 
-  TypeDeclaration _attachClassesAndEnums(TypeDeclaration type) {
+  TypeDeclaration _attachClassesEnumsAndProxyApis(TypeDeclaration type) {
     final Enum? assocEnum = _enums.firstWhereOrNull(
         (Enum enumDefinition) => enumDefinition.name == type.baseName);
     final Class? assocClass = _classes.firstWhereOrNull(
         (Class classDefinition) => classDefinition.name == type.baseName);
+    final AstProxyApi? assocProxyApi =
+        _apis.whereType<AstProxyApi>().firstWhereOrNull(
+              (Api apiDefinition) => apiDefinition.name == type.baseName,
+            );
     if (assocClass != null) {
       return type.copyWithClass(assocClass);
     } else if (assocEnum != null) {
       return type.copyWithEnum(assocEnum);
+    } else if (assocProxyApi != null) {
+      return type.copyWithProxyApi(assocProxyApi);
     }
     return type;
   }
@@ -1494,7 +1581,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                     ),
                   ),
                   name: node.fields.variables[0].name.lexeme,
-                  isAttached: _hasMetadata(node.metadata, 'attached'),
+                  isAttached:
+                      _hasMetadata(node.metadata, 'attached') || isStatic,
                   isStatic: isStatic,
                   offset: node.offset,
                   documentationComments: _documentationCommentsParser(

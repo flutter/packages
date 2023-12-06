@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO: replace usage with mapIndexed
 /// A [map] function that calls the function with an enumeration as well as the
 /// value.
 Iterable<U> indexMap<T, U>(
@@ -13,6 +14,7 @@ Iterable<U> indexMap<T, U>(
   }
 }
 
+// TODO: replace usage with foldIndexed
 /// A [map] function that calls the function with an enumeration as well as the
 /// value.
 T indexFold<T, E>(
@@ -29,6 +31,7 @@ T indexFold<T, E>(
   return value;
 }
 
+// TODO: replace usage with forEachIndexed
 /// Performs like [forEach] but invokes [func] with an enumeration.
 void enumerate<T>(Iterable<T> iterable, void Function(int, T) func) {
   int count = 0;

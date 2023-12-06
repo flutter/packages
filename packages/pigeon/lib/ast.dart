@@ -227,15 +227,17 @@ class Field extends NamedType {
     super.documentationComments,
     this.isAttached = false,
     this.isStatic = false,
-  });
+  }) : assert(!isStatic || isAttached);
 
-  /// Whether this is an attached field for a [ProxyApiNode].
+  /// Whether this is an attached field for a [AstProxyApi].
   ///
-  /// Attached fields provide a synchronous [ProxyApiNode] instance as a field for
-  /// another [ProxyApiNode]
+  /// Attached fields provide a synchronous [AstProxyApi] instance as a field
+  /// for another [AstProxyApi].
   final bool isAttached;
 
-  /// Whether this is a static field of a ProxyApi.
+  /// Whether this is a static field of a [AstProxyApi].
+  ///
+  /// A static field must also be attached.
   final bool isStatic;
 
   /// Returns a copy of [Parameter] instance with new attached [TypeDeclaration].
@@ -289,6 +291,7 @@ class TypeDeclaration {
     required this.isNullable,
     this.associatedEnum,
     this.associatedClass,
+    this.associatedProxyApi,
     this.typeArguments = const <TypeDeclaration>[],
   });
 
@@ -298,6 +301,7 @@ class TypeDeclaration {
         isNullable = false,
         associatedEnum = null,
         associatedClass = null,
+        associatedProxyApi = null,
         typeArguments = const <TypeDeclaration>[];
 
   /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
@@ -323,6 +327,10 @@ class TypeDeclaration {
 
   /// Associated [Class], if any.
   final Class? associatedClass;
+
+  final AstProxyApi? associatedProxyApi;
+
+  bool get isProxyApi => associatedProxyApi != null;
 
   @override
   int get hashCode {
@@ -373,11 +381,21 @@ class TypeDeclaration {
     );
   }
 
+  /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
+  TypeDeclaration copyWithProxyApi(AstProxyApi proxyApiDefinition) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      associatedProxyApi: proxyApiDefinition,
+      typeArguments: typeArguments,
+    );
+  }
+
   @override
   String toString() {
     final String typeArgumentsStr =
         typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
-    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass)';
+    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';
   }
 }
 
