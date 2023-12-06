@@ -29,7 +29,10 @@ final LocalBenchmarkServerClient _client = LocalBenchmarkServerClient();
 ///
 /// When used without a server, prompts the user to select a benchmark to
 /// run next.
-Future<void> runBenchmarks(Map<String, RecorderFactory> benchmarks) async {
+Future<void> runBenchmarks(
+  Map<String, RecorderFactory> benchmarks, {
+  String initialPage = defaultInitialPage,
+}) async {
   // Set local benchmarks.
   _benchmarks = benchmarks;
 
@@ -43,7 +46,19 @@ Future<void> runBenchmarks(Map<String, RecorderFactory> benchmarks) async {
   }
 
   await _runBenchmark(nextBenchmark);
-  html.window.location.reload();
+
+  final Uri currentUri = Uri.parse(html.window.location.href);
+  // Create a new URI with the current 'page' value set to [initialPage] to
+  // ensure the benchmark app is reloaded at the proper location.
+  final Uri newUri = Uri(
+    scheme: currentUri.scheme,
+    host: currentUri.host,
+    port: currentUri.port,
+    path: initialPage,
+  );
+
+  // Reloading the window will trigger the next benchmark to run.
+  html.window.location.replace(newUri.toString());
 }
 
 Future<void> _runBenchmark(String? benchmarkName) async {

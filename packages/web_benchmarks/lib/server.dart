@@ -8,6 +8,7 @@ import 'dart:io' as io;
 import 'package:logging/logging.dart';
 
 import 'src/benchmark_result.dart';
+import 'src/common.dart';
 import 'src/runner.dart';
 
 export 'src/benchmark_result.dart';
@@ -47,7 +48,7 @@ Future<BenchmarkResults> serveWebBenchmark({
   int chromeDebugPort = defaultChromeDebugPort,
   bool headless = true,
   bool treeShakeIcons = true,
-  String initialPage = BenchmarkServer.defaultInitialPage,
+  String initialPage = defaultInitialPage,
 }) async {
   // Reduce logging level. Otherwise, package:webkit_inspection_protocol is way too spammy.
   Logger.root.level = Level.INFO;
