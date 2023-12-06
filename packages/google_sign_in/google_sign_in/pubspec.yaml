@@ -48,3 +48,4 @@ false_secrets:
   - /example/ios/Runner/Info.plist
   - /example/ios/RunnerTests/GoogleService-Info.plist
   - /example/ios/RunnerTests/GoogleSignInTests.m
+  - /example/macos/Runner/Info.plist
