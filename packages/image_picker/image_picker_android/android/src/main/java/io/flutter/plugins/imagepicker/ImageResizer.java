@@ -87,6 +87,8 @@ class ImageResizer {
       @Nullable Double maxWidth,
       @Nullable Double maxHeight) {
 
+    Double aspectRatio = originalWidth / originalHeight;
+
     boolean hasMaxWidth = maxWidth != null;
     boolean hasMaxHeight = maxHeight != null;
 
@@ -98,27 +100,13 @@ class ImageResizer {
     boolean shouldDownscale = shouldDownscaleWidth || shouldDownscaleHeight;
 
     if (shouldDownscale) {
-      double downScaledWidth = (height / originalHeight) * originalWidth;
-      double downScaledHeight = (width / originalWidth) * originalHeight;
+      double downScaledWidth = height * aspectRatio;
+      double downScaledHeight = width / aspectRatio;
 
-      if (width < height) {
-        if (!hasMaxWidth) {
-          width = downScaledWidth;
-        } else {
-          height = downScaledHeight;
-        }
-      } else if (height < width) {
-        if (!hasMaxHeight) {
-          height = downScaledHeight;
-        } else {
-          width = downScaledWidth;
-        }
+      if (downScaledHeight > height) {
+        width = downScaledWidth;
       } else {
-        if (originalWidth < originalHeight) {
-          width = downScaledWidth;
-        } else if (originalHeight < originalWidth) {
-          height = downScaledHeight;
-        }
+        height = downScaledHeight;
       }
     }
 

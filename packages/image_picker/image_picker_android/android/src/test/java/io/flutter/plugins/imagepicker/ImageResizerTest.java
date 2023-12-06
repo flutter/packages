@@ -144,12 +144,12 @@ public class ImageResizerTest {
 
   @Test
   public void onResizeImageIfNeeded_whenHeightAndWidthAreNotNull_shouldResizeCorrectly() {
-    String outputFile = resizer.resizeImageIfNeeded(tallJPG.getPath(), 6.0, 6.0, 100);
+    String outputFile = resizer.resizeImageIfNeeded(tallJPG.getPath(), 5.0, 5.0, 100);
     SizeFCompat originalSize = resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageTall.jpg");
     
     float width = originalSize.getWidth();
     float height = originalSize.getHeight();
     assertThat(width, equalTo(3));
-    assertThat(height, equalTo(6));
+    assertThat(height, equalTo(5));
   }
 }

@@ -34,6 +34,7 @@
      isMetadataAvailable:(BOOL)isMetadataAvailable {
   double originalWidth = image.size.width;
   double originalHeight = image.size.height;
+  double aspectRatio = originalWidth / originalHeight;
 
   bool hasMaxWidth = maxWidth != nil;
   bool hasMaxHeight = maxHeight != nil;
@@ -45,30 +46,16 @@
   bool shouldDownscaleHeight = hasMaxHeight && [maxHeight doubleValue] < originalHeight;
   bool shouldDownscale = shouldDownscaleWidth || shouldDownscaleHeight;
 
-  if (shouldDownscale) {
-    double downScaledWidth = floor((height / originalHeight) * originalWidth);
-    double downScaledHeight = floor((width / originalWidth) * originalHeight);
+    if (shouldDownscale) {
+      double downScaledWidth = height * aspectRatio;
+      double downScaledHeight = width / aspectRatio;
 
-    if (width < height) {
-      if (!hasMaxWidth) {
+      if (downScaledHeight > height) {
         width = downScaledWidth;
       } else {
-        height = downScaledHeight;
-      }
-    } else if (height < width) {
-      if (!hasMaxHeight) {
-        height = downScaledHeight;
-      } else {
-        width = downScaledWidth;
-      }
-    } else {
-      if (originalWidth < originalHeight) {
-        width = downScaledWidth;
-      } else if (originalHeight < originalWidth) {
         height = downScaledHeight;
       }
     }
-  }
 
   if (!isMetadataAvailable) {
     UIImage *imageToScale = [UIImage imageWithCGImage:image.CGImage

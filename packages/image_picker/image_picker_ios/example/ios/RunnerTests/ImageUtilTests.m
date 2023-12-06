@@ -77,12 +77,12 @@
     XCTAssertEqual(image.size.width, 4);
     XCTAssertEqual(image.size.height, 7);
   UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
-                                                  maxWidth:@6
-                                                 maxHeight:@6
+                                                  maxWidth:@5
+                                                 maxHeight:@5
                                        isMetadataAvailable:YES];
 
   XCTAssertEqual(newImage.size.width, 3);
-  XCTAssertEqual(newImage.size.height, 6);
+  XCTAssertEqual(newImage.size.height, 5);
 }
 
 @end
