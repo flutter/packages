@@ -1,34 +1,36 @@
 ## 0.3.0
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* Migrated from to `package:web` so this package can compile to WASM.
-* **Breaking API changes** and fixes to align with the GIS SDK:
-  * **Removed the need to explicitly `allowInterop` in all callbacks.**
+* Migrates from `package:js`/`dart:html` to `package:web` so this package can
+  compile to WASM.
+* Performs the following **breaking API changes (in bold)** and other fixes to
+  align with the published GIS SDK:
+  * **Removes the need to explicitly `allowInterop` in all callbacks.**
   * `id`:
-    * **Changed type:**
+    * **Changes type:**
       * `IdConfiguration.intermediate_iframe_close_callback` to
       `VoidFn?`.
-    * Added: `fedcm` to `CredentialSelectBy` enum.
-    * Fixed typo in `storeCredential` `callback` positional parameter name.
+    * Adds: `fedcm` to `CredentialSelectBy` enum.
+    * Fixes typo in `storeCredential` `callback` positional parameter name.
   * `oauth2`:
-    * **Removed:**
+    * **Removes:**
       * `CodeClientConfig.auto_select`, `hint` (now `login_hint`), and `hosted_domain` (now `hd`).
       * `TokenClientConfig.hint` (now `login_hint`) and `hosted_domain` (now `hd`).
       * `OverridableTokenClientConfig.hint` (now `login_hint`).
-    * **Changed types:**
+    * **Changes types:**
       * `CodeClientConfig.redirect_uri` to `Uri?`.
       * `scope` in `CodeClientConfig` and `CodeResponse` to `List<String>`.
       * `CodeResponse.code` and `state` to `String?` (now nullable).
       * `scope` in `TokenClientConfig`, `OverridableTokenClientConfig`, and `TokenResponse` to `List<String>`.
-      * Made the following `TokenResponse` getters nullable: `access_token`,
+      * The following `TokenResponse` getters are now nullable: `access_token`,
         `expires_in`, `hd`, `prompt`, `token_type`, and `state`.
       * The `error_callback` functions now receive a `GoogleIdentityServicesError` parameter, instead of `Object`.
-    * Added:
+    * Adds:
       * `include_granted_scopes` and `enable_granular_consent` to `CodeClientConfig`.
       * `include_granted_scopes` and `enable_granular_consent` to `TokenClientConfig`.
       * `enable_granular_consent` to `OverridableTokenClientConfig`.
       * `message` to `GoogleIdentityServicesError`.
-    * Fixed:
+    * Fixes:
       * Assert that `CodeClientConfig.scope` is not empty when creating an instance.
       * `TokenClientConfig.scope` is no longer `required`.
       * Deprecated `enable_serial_consent`.
