@@ -1,5 +1,6 @@
-## NEXT
+## 2.0.9
 
+* Adds ability to show a translucent modal route by setting `opaqueRoute` to `false`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 2.0.8
