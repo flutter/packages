@@ -250,7 +250,7 @@ abstract class TokenClientConfig {
     return TokenClientConfig._toJS(
       client_id: client_id.toJS,
       callback: callback.toJS,
-      scope: scope?.join(' ').toJS,
+      scope: scope.join(' ').toJS,
       include_granted_scopes: include_granted_scopes?.toJS,
       prompt: prompt?.toJS,
       enable_granular_consent: enable_granular_consent?.toJS,

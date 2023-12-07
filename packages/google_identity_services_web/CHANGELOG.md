@@ -31,8 +31,8 @@
       * `enable_granular_consent` to `OverridableTokenClientConfig`.
       * `message` to `GoogleIdentityServicesError`.
     * Fixes:
-      * Assert that `CodeClientConfig.scope` is not empty when creating an instance.
-      * `TokenClientConfig.scope` is no longer `required`.
+      * Assert that `scope` is not empty when used to create `CodeClientConfig`,
+        `TokenClientConfig`, and `OverridableTokenClientConfig` instances.
       * Deprecated `enable_serial_consent`.
 
 ## 0.2.2
