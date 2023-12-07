@@ -1,6 +1,6 @@
 ## 0.3.0+1
 
-* Updates sdk versions to match repo, and re-publish pub.dev docs.
+* Corrects 0.3.0 changelog entry about the minimum Flutter/Dart dependencies.
 
 ## 0.3.0
 
