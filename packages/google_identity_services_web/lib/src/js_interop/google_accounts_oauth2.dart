@@ -235,7 +235,7 @@ abstract class TokenClientConfig {
   factory TokenClientConfig({
     required String client_id,
     required TokenClientCallbackFn callback,
-    List<String>? scope,
+    required List<String> scope,
     bool? include_granted_scopes,
     String? prompt,
     bool? enable_granular_consent,
@@ -246,6 +246,7 @@ abstract class TokenClientConfig {
     String? state,
     ErrorCallbackFn? error_callback,
   }) {
+    assert(scope.isNotEmpty);
     return TokenClientConfig._toJS(
       client_id: client_id.toJS,
       callback: callback.toJS,
@@ -373,6 +374,7 @@ abstract class OverridableTokenClientConfig {
     /// authorization server's response.
     String? state,
   }) {
+    assert(scope == null || scope.isNotEmpty);
     return OverridableTokenClientConfig._toJS(
       scope: scope?.join(' ').toJS,
       include_granted_scopes: include_granted_scopes?.toJS,
