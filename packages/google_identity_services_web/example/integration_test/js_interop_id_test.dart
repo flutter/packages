@@ -62,9 +62,9 @@ void main() async {
 
       expectConfigValue('client_id', 'testing_1-2-3');
       expectConfigValue('auto_select', isFalse);
-      expectConfigValue('callback', isA<JSFunction>());
+      expectConfigValue('callback', utils.isAJs('function'));
       expectConfigValue('login_uri', 'https://www.example.com/login');
-      expectConfigValue('native_callback', isA<JSFunction>());
+      expectConfigValue('native_callback', utils.isAJs('function'));
       expectConfigValue('cancel_on_tap_outside', isFalse);
       expectConfigValue('allowed_parent_origin', isA<JSArray>());
       expectConfigValue('prompt_parent_id', 'some_dom_id');
@@ -75,7 +75,7 @@ void main() async {
       expectConfigValue(
           'allowed_parent_origin', <String>['allowed', 'another']);
       expectConfigValue(
-          'intermediate_iframe_close_callback', isA<JSFunction>());
+          'intermediate_iframe_close_callback', utils.isAJs('function'));
       expectConfigValue('itp_support', isTrue);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');

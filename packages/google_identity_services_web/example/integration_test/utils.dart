@@ -23,9 +23,15 @@ typedef ExpectConfigValueFn = void Function(String name, Object? matcher);
 /// Creates a [ExpectConfigValueFn] for the `config` [JSObject].
 ExpectConfigValueFn createExpectConfigValue(JSObject config) {
   return (String name, Object? matcher) {
-    expect(config.getProperty(name.toJS), matcher, reason: name);
+    expect(config[name], matcher, reason: name);
   };
 }
+
+/// A matcher that checks if: value typeof [thing] == true (in JS).
+///
+/// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof
+Matcher isAJs(String thing) => isA<JSAny?>()
+    .having((JSAny? p0) => p0.typeofEquals(thing), 'typeof "$thing"', isTrue);
 
 /// Installs mock-gis.js in the page.
 /// Returns a future that completes when the 'load' event of the script fires.
@@ -93,7 +99,6 @@ T _getDeepProperty<T>(JSObject jsObject, String deepProperty) {
   final List<String> properties = deepProperty.split('.');
   return properties.fold<JSObject?>(
     jsObject,
-    (JSObject? jsObj, String prop) =>
-        jsObj?.getProperty(prop.toJS) as JSObject?,
+    (JSObject? jsObj, String prop) => jsObj?[prop] as JSObject?,
   ) as T;
 }

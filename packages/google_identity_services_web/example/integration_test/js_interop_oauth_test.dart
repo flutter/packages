@@ -41,7 +41,7 @@ void main() async {
           utils.createExpectConfigValue(config as JSObject);
 
       expectConfigValue('client_id', 'testing_1-2-3');
-      expectConfigValue('callback', isA<JSFunction>());
+      expectConfigValue('callback', utils.isAJs('function'));
       expectConfigValue('scope', 'one two three');
       expectConfigValue('include_granted_scopes', isTrue);
       expectConfigValue('prompt', 'some-prompt');
@@ -49,7 +49,7 @@ void main() async {
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');
       expectConfigValue('state', 'some-state');
-      expectConfigValue('error_callback', isA<JSFunction>());
+      expectConfigValue('error_callback', utils.isAJs('function'));
     });
 
     testWidgets('OverridableTokenClientConfig', (_) async {
@@ -95,14 +95,14 @@ void main() async {
       expectConfigValue('scope', 'one two three');
       expectConfigValue('include_granted_scopes', isTrue);
       expectConfigValue('redirect_uri', 'https://www.example.com/login');
-      expectConfigValue('callback', isA<JSFunction>());
+      expectConfigValue('callback', utils.isAJs('function'));
       expectConfigValue('state', 'some-state');
       expectConfigValue('enable_granular_consent', isTrue);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');
       expectConfigValue('ux_mode', 'popup');
       expectConfigValue('select_account', isTrue);
-      expectConfigValue('error_callback', isA<JSFunction>());
+      expectConfigValue('error_callback', utils.isAJs('function'));
     });
   });
 
