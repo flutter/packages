@@ -20,7 +20,7 @@ private fun wrapResult(result: Any?): List<Any?> {
 }
 
 private fun wrapError(exception: Throwable): List<Any?> {
-  if (exception is FlutterError) {
+  if (exception is CoreTestsError) {
     return listOf(exception.code, exception.message, exception.details)
   } else {
     return listOf(
@@ -30,8 +30,8 @@ private fun wrapError(exception: Throwable): List<Any?> {
   }
 }
 
-private fun createConnectionError(channelName: String): FlutterError {
-  return FlutterError(
+private fun createConnectionError(channelName: String): CoreTestsError {
+  return CoreTestsError(
       "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
 }
 
@@ -42,7 +42,7 @@ private fun createConnectionError(channelName: String): FlutterError {
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError(
+class CoreTestsError(
     val code: String,
     override val message: String? = null,
     val details: Any? = null
@@ -2397,7 +2397,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(null) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2414,7 +2415,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(null) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0]
           callback(Result.success(output))
@@ -2432,7 +2434,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(null) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2449,11 +2452,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(everythingArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2477,7 +2481,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(everythingArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as AllNullableTypes?
           callback(Result.success(output))
@@ -2504,11 +2509,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aNullableBoolArg, aNullableIntArg, aNullableStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2529,11 +2535,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aBoolArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2554,11 +2561,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(anIntArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2579,11 +2587,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aDoubleArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2604,11 +2613,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2629,11 +2639,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aListArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2654,11 +2665,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aListArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2679,11 +2691,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2704,11 +2717,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(anEnumArg.raw)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -2729,7 +2743,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aBoolArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as Boolean?
           callback(Result.success(output))
@@ -2747,7 +2762,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(anIntArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0].let { if (it is Int) it.toLong() else it as Long? }
           callback(Result.success(output))
@@ -2765,7 +2781,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aDoubleArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as Double?
           callback(Result.success(output))
@@ -2783,7 +2800,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as String?
           callback(Result.success(output))
@@ -2801,7 +2819,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aListArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as ByteArray?
           callback(Result.success(output))
@@ -2819,7 +2838,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aListArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as List<Any?>?
           callback(Result.success(output))
@@ -2840,7 +2860,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aMapArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as Map<String?, Any?>?
           callback(Result.success(output))
@@ -2858,7 +2879,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(anEnumArg?.raw)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = (it[0] as Int?)?.let { AnEnum.ofRaw(it) }
           callback(Result.success(output))
@@ -2879,7 +2901,8 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(null) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2896,11 +2919,12 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -3057,11 +3081,12 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(msgArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))
@@ -3081,11 +3106,12 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
     channel.send(listOf(aStringArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
               Result.failure(
-                  FlutterError(
+                  CoreTestsError(
                       "null-error",
                       "Flutter api returned null value for non-null return value.",
                       "")))

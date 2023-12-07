@@ -1,7 +1,7 @@
-## 14.0.1
+## 15.0.0
 
+* **Breaking Change** [kotlin] Updates Flutter API to use new errorClassName.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-* [kotlin] Updates Flutter API to use new errorClassName.
 
 ## 14.0.0
 
