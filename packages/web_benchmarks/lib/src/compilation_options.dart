@@ -18,6 +18,11 @@ class CompilationOptions {
 
   /// Whether to build the app with dart2wasm.
   final bool useWasm;
+
+  @override
+  String toString() {
+    return '(renderer: ${renderer.name}, compiler: ${useWasm ? 'dart2wasm' : 'dart2js'})';
+  }
 }
 
 /// The possible types of web renderers Flutter can build for.

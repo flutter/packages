@@ -110,6 +110,8 @@ class BenchmarkServer {
           "flutter executable is not runnable. Make sure it's in the PATH.");
     }
 
+    final DateTime startTime = DateTime.now();
+    print('Building Flutter web app $compilationOptions...');
     final io.ProcessResult buildResult = await _processManager.run(
       <String>[
         'flutter',
@@ -129,6 +131,12 @@ class BenchmarkServer {
       ],
       workingDirectory: benchmarkAppDirectory.path,
     );
+
+    final int buildTime = Duration(
+      milliseconds: DateTime.now().millisecondsSinceEpoch -
+          startTime.millisecondsSinceEpoch,
+    ).inSeconds;
+    print('Build took ${buildTime}s to complete.');
 
     if (buildResult.exitCode != 0) {
       io.stderr.writeln(buildResult.stdout);
