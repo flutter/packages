@@ -163,9 +163,11 @@ class GisSdkClient {
       hd: hostedDomain,
       callback: _onTokenResponse,
       error_callback: _onTokenError,
-      // `scope` will be modified by the `signIn` method, in case we need to
-      // backfill user Profile info.
-      // scope: ' ',
+      // This is here only to satisfy the initialization of the JS TokenClient.
+      // In reality, `scope` is always overridden when calling `requestScopes`
+      // (or the deprecated `signIn`) through an [OverridableTokenClientConfig]
+      // object.
+      scope: <String>[' '], // Fake (but non-empty) list of scopes.
     );
     return oauth2.initTokenClient(tokenConfig);
   }
