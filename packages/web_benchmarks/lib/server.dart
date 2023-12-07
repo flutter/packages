@@ -49,6 +49,7 @@ Future<BenchmarkResults> serveWebBenchmark({
   bool headless = true,
   bool treeShakeIcons = true,
   String initialPage = defaultInitialPage,
+  bool useWasm = false,
 }) async {
   // Reduce logging level. Otherwise, package:webkit_inspection_protocol is way too spammy.
   Logger.root.level = Level.INFO;
@@ -62,5 +63,6 @@ Future<BenchmarkResults> serveWebBenchmark({
     headless: headless,
     treeShakeIcons: treeShakeIcons,
     initialPage: initialPage,
+    useWasm: useWasm,
   ).run();
 }

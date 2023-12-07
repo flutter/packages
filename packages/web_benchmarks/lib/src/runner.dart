@@ -55,6 +55,7 @@ class BenchmarkServer {
     required this.chromeDebugPort,
     required this.headless,
     required this.treeShakeIcons,
+    this.useWasm = false,
     this.initialPage = defaultInitialPage,
   });
 
@@ -74,6 +75,9 @@ class BenchmarkServer {
 
   /// Whether to build the app in CanvasKit mode.
   final bool useCanvasKit;
+
+  /// Whether to build the app with dart2wasm.
+  final bool useWasm;
 
   /// The port this benchmark server serves the app on.
   final int benchmarkServerPort;
@@ -114,8 +118,13 @@ class BenchmarkServer {
         'flutter',
         'build',
         'web',
+        if (useWasm) ...<String>[
+          '--wasm',
+          '--wasm-opt=debug',
+          '--omit-type-checks',
+        ],
+        if (useCanvasKit) '--web-renderer=canvaskit',
         '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
-        if (useCanvasKit) '--dart-define=FLUTTER_WEB_USE_SKIA=true',
         if (!treeShakeIcons) '--no-tree-shake-icons',
         '--profile',
         '-t',

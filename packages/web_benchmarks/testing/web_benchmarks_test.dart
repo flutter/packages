@@ -25,12 +25,21 @@ Future<void> main() async {
       initialPage: 'index.html#about',
     );
   }, timeout: Timeout.none);
+
+  test('Can run a web benchmark with wasm', () async {
+    await _runBenchmarks(
+      benchmarkNames: <String>['simple'],
+      entryPoint: 'lib/benchmarks/runner_simple.dart',
+      useWasm: true,
+    );
+  }, timeout: Timeout.none);
 }
 
 Future<void> _runBenchmarks({
   required List<String> benchmarkNames,
   required String entryPoint,
   String initialPage = defaultInitialPage,
+  bool useWasm = false,
 }) async {
   final BenchmarkResults taskResult = await serveWebBenchmark(
     benchmarkAppDirectory: Directory('testing/test_app'),
@@ -38,6 +47,7 @@ Future<void> _runBenchmarks({
     useCanvasKit: false,
     treeShakeIcons: false,
     initialPage: initialPage,
+    useWasm: useWasm,
   );
 
   for (final String benchmarkName in benchmarkNames) {
