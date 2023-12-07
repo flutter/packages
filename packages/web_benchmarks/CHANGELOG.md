@@ -1,3 +1,7 @@
+## 0.1.0+12
+
+* Add the ability to run a benchmark with WebAssembly.
+
 ## 0.1.0+11
 
 * Migrates benchmark recorder from `dart:html` to `package:web` to support WebAssembly.
