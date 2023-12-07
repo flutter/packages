@@ -816,13 +816,35 @@ List<Error> _validateAst(Root root, String source) {
       }
     }
   }
+
+  // Verify all super classes and interfaces for ProxyApis are other ProxyAps
+  final Iterable<AstProxyApi> allProxyApis = root.apis.whereType<AstProxyApi>();
+  for (final AstProxyApi api in allProxyApis) {
+    final String? superClassName = api.superClassName;
+    if (api.superClassName != null &&
+        !allProxyApis.any((AstProxyApi api) => api.name == superClassName)) {
+      result.add(Error(
+        message:
+            'Super class of ${api.name} is not marked as a @ProxyApi: $superClassName',
+      ));
+    }
+
+    for (final String interfaceName in api.interfacesNames) {
+      if (!allProxyApis.any((AstProxyApi api) => api.name == interfaceName)) {
+        result.add(Error(
+          message:
+              'Interface of ${api.name} is not marked as a @ProxyApi: $interfaceName',
+        ));
+      }
+    }
+  }
+
   for (final Api api in root.apis) {
     if (api is AstProxyApi) {
       result.addAll(_validateProxyApi(
         api,
         source,
         customClasses: customClasses.toSet(),
-        customEnums: customEnums.toSet(),
         proxyApis: root.apis.whereType<AstProxyApi>().toSet(),
       ));
     }
@@ -886,14 +908,12 @@ List<Error> _validateProxyApi(
   AstProxyApi api,
   String source, {
   required Set<String> customClasses,
-  required Set<String> customEnums,
   required Set<AstProxyApi> proxyApis,
 }) {
   final List<Error> result = <Error>[];
 
   bool isDataClass(NamedType type) =>
       customClasses.contains(type.type.baseName);
-  bool isEnum(NamedType type) => customEnums.contains(type.type.baseName);
   bool isProxyApi(NamedType type) => proxyApis.any(
         (AstProxyApi api) => api.name == type.type.baseName,
       );
@@ -955,17 +975,41 @@ List<Error> _validateProxyApi(
     }
   }
 
-  // TODO: verify all super clases are proxy apis
-  // TODO: same for interfaces
-
-  for (final String interfaceName in api.interfacesNames) {
-    //final
-  }
-
   for (final Constructor constructor in api.constructors) {
     for (final Parameter parameter in constructor.parameters) {
       if (isDataClass(parameter)) {
         result.add(unsupportedDataClassError(parameter));
+      }
+
+      if (parameter.type.baseName.isEmpty) {
+        result.add(Error(
+          message:
+              'Parameters must specify their type in constructor "${constructor.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      } else if (parameter.name.startsWith('__pigeon_')) {
+        result.add(Error(
+          message:
+              'Parameter name must not begin with "__pigeon_" in constructor "${constructor.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      } else if (parameter.name == 'pigeonChannelCodec') {
+        result.add(Error(
+          message:
+              'Parameter name must not be "pigeonChannelCodec" in constructor "${constructor.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      }
+    }
+    if (constructor.swiftFunction.isNotEmpty) {
+      final RegExp signatureRegex =
+          RegExp('\\w+ *\\((\\w+:){${constructor.parameters.length}}\\)');
+      if (!signatureRegex.hasMatch(constructor.swiftFunction)) {
+        result.add(Error(
+          message:
+              'Invalid constructor signature, expected ${constructor.parameters.length} parameters.',
+          lineNumber: _calculateLineNumberNullable(source, constructor.offset),
+        ));
       }
     }
   }
