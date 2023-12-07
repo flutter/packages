@@ -77,7 +77,7 @@ class GisSdkClient {
     _tokenResponses.stream.listen((TokenResponse response) {
       _lastTokenResponse = response;
       _lastTokenResponseExpiration =
-          DateTime.now().add(Duration(seconds: response.expires_in));
+          DateTime.now().add(Duration(seconds: response.expires_in!));
     }, onError: (Object error) {
       _logIfEnabled('Error on TokenResponse:', <Object>[error.toString()]);
       _lastTokenResponse = null;
@@ -129,7 +129,7 @@ class GisSdkClient {
     // Initialize `id` for the silent-sign in code.
     final IdConfiguration idConfig = IdConfiguration(
       client_id: clientId,
-      callback: onResponse.toJS as CallbackFn,
+      callback: onResponse,
       cancel_on_tap_outside: false,
       auto_select: true, // Attempt to sign-in silently.
       hd: hostedDomain,
@@ -160,12 +160,12 @@ class GisSdkClient {
     // Create a Token Client for authorization calls.
     final TokenClientConfig tokenConfig = TokenClientConfig(
       client_id: clientId,
-      hosted_domain: hostedDomain,
-      callback: _onTokenResponse.toJS as TokenClientCallbackFn,
-      error_callback: _onTokenError.toJS as ErrorCallbackFn,
+      hd: hostedDomain,
+      callback: _onTokenResponse,
+      error_callback: _onTokenError,
       // `scope` will be modified by the `signIn` method, in case we need to
       // backfill user Profile info.
-      scope: ' ',
+      // scope: ' ',
     );
     return oauth2.initTokenClient(tokenConfig);
   }
@@ -202,10 +202,10 @@ class GisSdkClient {
     // Create a Token Client for authorization calls.
     final CodeClientConfig codeConfig = CodeClientConfig(
       client_id: clientId,
-      hosted_domain: hostedDomain,
-      callback: _onCodeResponse.toJS as CodeClientCallbackFn,
-      error_callback: _onCodeError.toJS as ErrorCallbackFn,
-      scope: scopes.join(' '),
+      hd: hostedDomain,
+      callback: _onCodeResponse,
+      error_callback: _onCodeError,
+      scope: scopes,
       select_account: true,
       ux_mode: UxMode.popup,
     );
@@ -241,7 +241,7 @@ class GisSdkClient {
     // And also handle its "moments".
     id.prompt((PromptMomentNotification moment) {
       _onPromptMoment(moment, userDataCompleter);
-    }.toJS as PromptMomentListenerFn);
+    });
 
     return userDataCompleter.future;
   }
@@ -331,14 +331,14 @@ class GisSdkClient {
     // user activation.
     _tokenClient.requestAccessToken(OverridableTokenClientConfig(
       prompt: knownUser == null ? 'select_account' : '',
-      hint: knownUser?.email,
+      login_hint: knownUser?.email,
       scope: <String>[
         ..._initialScopes,
         // If the user hasn't gone through the auth process,
         // the plugin will attempt to `requestUserData` after,
         // so we need extra scopes to retrieve that info.
         if (_lastCredentialResponse == null) ...people.scopes,
-      ].join(' '),
+      ],
     ));
 
     await _tokenResponses.stream.first;
@@ -384,7 +384,7 @@ class GisSdkClient {
   /// Revokes the current authorization and authentication.
   Future<void> disconnect() async {
     if (_lastTokenResponse != null) {
-      oauth2.revoke(_lastTokenResponse!.access_token);
+      oauth2.revoke(_lastTokenResponse!.access_token!);
     }
     await signOut();
   }
@@ -431,8 +431,8 @@ class GisSdkClient {
 
     _tokenClient.requestAccessToken(OverridableTokenClientConfig(
       prompt: knownUser == null ? 'select_account' : '',
-      hint: knownUser?.email,
-      scope: scopes.join(' '),
+      login_hint: knownUser?.email,
+      scope: scopes,
       include_granted_scopes: true,
     ));
 

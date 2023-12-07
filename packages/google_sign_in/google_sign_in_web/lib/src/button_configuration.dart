@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:google_identity_services_web/id.dart' as id;
-import 'package:js/js_util.dart' as js_util;
 
 /// Converts user-facing `GisButtonConfiguration` into the JS-Interop `id.GsiButtonConfiguration`.
 id.GsiButtonConfiguration? convertButtonConfiguration(
@@ -12,17 +11,16 @@ id.GsiButtonConfiguration? convertButtonConfiguration(
   if (config == null) {
     return null;
   }
-  return js_util.jsify(<String, Object?>{
-    if (config.type != null) 'type': _idType[config.type],
-    if (config.theme != null) 'theme': _idTheme[config.theme],
-    if (config.size != null) 'size': _idSize[config.size],
-    if (config.text != null) 'text': _idText[config.text],
-    if (config.shape != null) 'shape': _idShape[config.shape],
-    if (config.logoAlignment != null)
-      'logo_alignment': _idLogoAlignment[config.logoAlignment],
-    if (config.minimumWidth != null) 'width': config.minimumWidth,
-    if (config.locale != null) 'locale': config.locale,
-  }) as id.GsiButtonConfiguration;
+  return id.GsiButtonConfiguration(
+    type: _idType[config.type],
+    theme: _idTheme[config.theme],
+    size: _idSize[config.size],
+    text: _idText[config.text],
+    shape: _idShape[config.shape],
+    logo_alignment: _idLogoAlignment[config.logoAlignment],
+    width: config.minimumWidth,
+    locale: config.locale,
+  );
 }
 
 /// A class to configure the Google Sign-In Button for web.
