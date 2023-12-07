@@ -1033,6 +1033,15 @@ public class CoreTests {
     /** Returns the passed enum to test serialization and deserialization. */
     @NonNull
     AnEnum echoEnum(@NonNull AnEnum anEnum);
+    /** Returns the default string. */
+    @NonNull
+    String echoNamedDefaultString(@NonNull String aString);
+    /** Returns passed in double. */
+    @NonNull
+    Double echoOptionalDefaultDouble(@NonNull Double aDouble);
+    /** Returns passed in int. */
+    @NonNull
+    Long echoRequiredInt(@NonNull Long anInt);
     /** Returns the passed object, to test serialization and deserialization. */
     @Nullable
     AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything);
@@ -1079,6 +1088,12 @@ public class CoreTests {
 
     @Nullable
     AnEnum echoNullableEnum(@Nullable AnEnum anEnum);
+    /** Returns passed in int. */
+    @Nullable
+    Long echoOptionalNullableInt(@Nullable Long aNullableInt);
+    /** Returns the passed in string. */
+    @Nullable
+    String echoNamedNullableString(@Nullable String aNullableString);
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
@@ -1574,6 +1589,82 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String aStringArg = (String) args.get(0);
+                try {
+                  String output = api.echoNamedDefaultString(aStringArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Double aDoubleArg = (Double) args.get(0);
+                try {
+                  Double output = api.echoOptionalDefaultDouble(aDoubleArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number anIntArg = (Number) args.get(0);
+                try {
+                  Long output =
+                      api.echoRequiredInt((anIntArg == null) ? null : anIntArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes",
                 getCodec());
         if (api != null) {
@@ -1893,6 +1984,58 @@ public class CoreTests {
                 try {
                   AnEnum output = api.echoNullableEnum(anEnumArg);
                   wrapped.add(0, output == null ? null : output.index);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number aNullableIntArg = (Number) args.get(0);
+                try {
+                  Long output =
+                      api.echoOptionalNullableInt(
+                          (aNullableIntArg == null) ? null : aNullableIntArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String aNullableStringArg = (String) args.get(0);
+                try {
+                  String output = api.echoNamedNullableString(aNullableStringArg);
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;

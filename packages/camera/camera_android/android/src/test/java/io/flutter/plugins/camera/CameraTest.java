@@ -166,7 +166,7 @@ public class CameraTest {
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            new Camera.Parameters(resolutionPreset, enableAudio));
+            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio));
 
     final CamcorderProfile mockProfileLegacy = mock(CamcorderProfile.class);
     mockProfileLegacy.videoFrameRate = 15;
@@ -214,7 +214,7 @@ public class CameraTest {
             spyMockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            new Camera.Parameters(resolutionPreset, enableAudio));
+            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio));
 
     verify(spyMockCameraFeatureFactory, times(1))
         .createSensorOrientationFeature(mockCameraProperties, mockActivity, mockDartMessenger);
@@ -1215,8 +1215,8 @@ public class CameraTest {
 
     when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
 
-    final Camera.Parameters parameters =
-        new Camera.Parameters(resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate);
+    final Camera.VideoCaptureSettings parameters =
+        new Camera.VideoCaptureSettings(resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate);
 
     final Range<Integer>[] mockRanges =
         (Range<Integer>[]) new Range<?>[] {new Range<Integer>(10, 20)};
@@ -1304,6 +1304,20 @@ public class CameraTest {
       verify(recorder).setAudioEncodingBitRate(audioBitrate);
       verify(recorder).setVideoEncodingBitRate(videoBitrate);
       //endregion
+    }
+
+    @Test
+    public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed() throws CameraAccessException
+    {
+      ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+      mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
+      CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
+      TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+
+      camera.close();
+      camera.pausePreview();
+
+      verify(mockCaptureSession, never()).stopRepeating();
     }
   }
 

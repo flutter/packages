@@ -1,6 +1,7 @@
 ## 0.3.0
 
 * Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.2.1+8
 

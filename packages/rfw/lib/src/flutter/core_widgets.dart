@@ -8,6 +8,7 @@
 
 // This file is hand-formatted.
 
+// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
 import 'dart:ui' show FontFeature;
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;

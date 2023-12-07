@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes lint warnings.
+
 ## 0.6.18+2
 
 * Removes leading whitespace from list items.

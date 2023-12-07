@@ -187,14 +187,14 @@ class Camera
     }
   }
 
-  public static class Parameters {
+  public static class VideoCaptureSettings {
     @NonNull public final ResolutionPreset resolutionPreset;
     public final boolean enableAudio;
     @Nullable public final Integer fps;
     @Nullable public final Integer videoBitrate;
     @Nullable public final Integer audioBitrate;
 
-    public Parameters(
+    public VideoCaptureSettings(
         @NonNull ResolutionPreset resolutionPreset,
         boolean enableAudio,
         @Nullable Integer fps,
@@ -207,7 +207,7 @@ class Camera
       this.audioBitrate = audioBitrate;
     }
 
-    public Parameters(@NonNull ResolutionPreset resolutionPreset, boolean enableAudio) {
+    public VideoCaptureSettings(@NonNull ResolutionPreset resolutionPreset, boolean enableAudio) {
       this(resolutionPreset, enableAudio, null, null, null);
     }
   }
@@ -218,7 +218,7 @@ class Camera
       final CameraFeatureFactory cameraFeatureFactory,
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
-      final Parameters parameters) {
+      final VideoCaptureSettings parameters) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
@@ -1143,8 +1143,13 @@ class Camera
 
   /** Pause the preview from dart. */
   public void pausePreview() throws CameraAccessException {
-    this.pausedPreview = true;
-    this.captureSession.stopRepeating();
+    if (!this.pausedPreview) {
+      this.pausedPreview = true;
+
+      if (this.captureSession != null) {
+        this.captureSession.stopRepeating();
+      }
+    }
   }
 
   /** Resume the preview from dart. */

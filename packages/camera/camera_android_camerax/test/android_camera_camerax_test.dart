@@ -14,6 +14,7 @@ import 'package:camera_android_camerax/src/camera_selector.dart';
 import 'package:camera_android_camerax/src/camera_state.dart';
 import 'package:camera_android_camerax/src/camera_state_error.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/camerax_proxy.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/fallback_strategy.dart';
 import 'package:camera_android_camerax/src/image_analysis.dart';
@@ -45,20 +46,26 @@ import 'android_camera_camerax_test.mocks.dart';
 import 'test_camerax_library.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
+  MockSpec<Analyzer>(),
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
   MockSpec<CameraControl>(),
   MockSpec<CameraImageData>(),
   MockSpec<CameraSelector>(),
   MockSpec<ExposureState>(),
+  MockSpec<FallbackStrategy>(),
   MockSpec<ImageAnalysis>(),
   MockSpec<ImageCapture>(),
   MockSpec<ImageProxy>(),
+  MockSpec<Observer<CameraState>>(),
+  MockSpec<PendingRecording>(),
   MockSpec<PlaneProxy>(),
   MockSpec<Preview>(),
   MockSpec<ProcessCameraProvider>(),
+  MockSpec<QualitySelector>(),
   MockSpec<Recorder>(),
-  MockSpec<PendingRecording>(),
+  MockSpec<ResolutionSelector>(),
+  MockSpec<ResolutionStrategy>(),
   MockSpec<Recording>(),
   MockSpec<VideoCapture>(),
   MockSpec<BuildContext>(),
@@ -107,8 +114,7 @@ void main() {
   test('Should fetch CameraDescription instances for available cameras',
       () async {
     // Arrange
-    final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
-    camera.processCameraProvider = MockProcessCameraProvider();
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final List<dynamic> returnData = <dynamic>[
       <String, dynamic>{
         'name': 'Camera 0',
@@ -123,23 +129,38 @@ void main() {
     ];
 
     // Create mocks to use
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+    final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
     final MockCameraInfo mockFrontCameraInfo = MockCameraInfo();
     final MockCameraInfo mockBackCameraInfo = MockCameraInfo();
 
+    // Tell plugin to create mock CameraSelectors for testing.
+    camera.proxy = CameraXProxy(
+      getProcessCameraProvider: () =>
+          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+      createCameraSelector: (int cameraSelectorLensDirection) {
+        switch (cameraSelectorLensDirection) {
+          case CameraSelector.lensFacingFront:
+            return mockFrontCameraSelector;
+          case CameraSelector.lensFacingBack:
+          default:
+            return mockBackCameraSelector;
+        }
+      },
+    );
+
     // Mock calls to native platform
-    when(camera.processCameraProvider!.getAvailableCameraInfos()).thenAnswer(
+    when(mockProcessCameraProvider.getAvailableCameraInfos()).thenAnswer(
         (_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo]);
-    when(camera.mockBackCameraSelector
-            .filter(<MockCameraInfo>[mockFrontCameraInfo]))
+    when(mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]))
         .thenAnswer((_) async => <MockCameraInfo>[]);
-    when(camera.mockBackCameraSelector
-            .filter(<MockCameraInfo>[mockBackCameraInfo]))
+    when(mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]))
         .thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
-    when(camera.mockFrontCameraSelector
-            .filter(<MockCameraInfo>[mockBackCameraInfo]))
+    when(mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]))
         .thenAnswer((_) async => <MockCameraInfo>[]);
-    when(camera.mockFrontCameraSelector
-            .filter(<MockCameraInfo>[mockFrontCameraInfo]))
+    when(mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]))
         .thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
     when(mockBackCameraInfo.getSensorRotationDegrees())
         .thenAnswer((_) async => 0);
@@ -167,10 +188,7 @@ void main() {
   test(
       'createCamera requests permissions, starts listening for device orientation changes, updates camera state observers, and returns flutter surface texture ID',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
-    final MockProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
@@ -179,18 +197,75 @@ void main() {
         sensorOrientation: testSensorOrientation);
 
     const int testSurfaceTextureId = 6;
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockPreview mockPreview = MockPreview();
+    final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+    final MockImageCapture mockImageCapture = MockImageCapture();
+    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+    final MockRecorder mockRecorder = MockRecorder();
+    final MockVideoCapture mockVideoCapture = MockVideoCapture();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+    bool cameraPermissionsRequested = false;
+    bool startedListeningForDeviceOrientationChanges = false;
 
-    when(camera.testPreview.setSurfaceProvider())
+    // Tell plugin to create mock/detached objects and stub method calls for the
+    // testing of createCamera.
+    camera.proxy = CameraXProxy(
+      getProcessCameraProvider: () =>
+          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+      createCameraSelector: (int cameraSelectorLensDirection) {
+        switch (cameraSelectorLensDirection) {
+          case CameraSelector.lensFacingFront:
+            return MockCameraSelector();
+          case CameraSelector.lensFacingBack:
+          default:
+            return mockBackCameraSelector;
+        }
+      },
+      createPreview: (
+              {required int targetRotation,
+              ResolutionSelector? resolutionSelector}) =>
+          mockPreview,
+      createImageCapture: (_) => mockImageCapture,
+      createRecorder: (_) => mockRecorder,
+      createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
+      createImageAnalysis: (_) => mockImageAnalysis,
+      createResolutionStrategy: (
+              {bool highestAvailable = false,
+              Size? boundSize,
+              int? fallbackRule}) =>
+          MockResolutionStrategy(),
+      createResolutionSelector: (_) => MockResolutionSelector(),
+      createFallbackStrategy: (
+              {required VideoQuality quality,
+              required VideoResolutionFallbackRule fallbackRule}) =>
+          MockFallbackStrategy(),
+      createQualitySelector: (
+              {required VideoQuality videoQuality,
+              required FallbackStrategy fallbackStrategy}) =>
+          MockQualitySelector(),
+      createCameraStateObserver: (void Function(Object) onChanged) =>
+          Observer<CameraState>.detached(onChanged: onChanged),
+      requestCameraPermissions: (_) {
+        cameraPermissionsRequested = true;
+        return Future<void>.value();
+      },
+      startListeningForDeviceOrientationChange: (_, __) {
+        startedListeningForDeviceOrientationChanges = true;
+      },
+    );
+
+    when(mockPreview.setSurfaceProvider())
         .thenAnswer((_) async => testSurfaceTextureId);
-    when(mockProcessCameraProvider.bindToLifecycle(
-        camera.mockBackCameraSelector, <UseCase>[
-      camera.testPreview,
-      camera.testImageCapture,
-      camera.testImageAnalysis
-    ])).thenAnswer((_) async => mockCamera);
+    when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
+            <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis]))
+        .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => mockLiveCameraState);
@@ -210,21 +285,21 @@ void main() {
         equals(testSurfaceTextureId));
 
     // Verify permissions are requested and the camera starts listening for device orientation changes.
-    expect(camera.cameraPermissionsRequested, isTrue);
-    expect(camera.startedListeningForDeviceOrientationChanges, isTrue);
+    expect(cameraPermissionsRequested, isTrue);
+    expect(startedListeningForDeviceOrientationChanges, isTrue);
 
     // Verify CameraSelector is set with appropriate lens direction.
-    expect(camera.cameraSelector, equals(camera.mockBackCameraSelector));
+    expect(camera.cameraSelector, equals(mockBackCameraSelector));
 
     // Verify the camera's Preview instance is instantiated properly.
-    expect(camera.preview, equals(camera.testPreview));
+    expect(camera.preview, equals(mockPreview));
 
     // Verify the camera's ImageCapture instance is instantiated properly.
-    expect(camera.imageCapture, equals(camera.testImageCapture));
+    expect(camera.imageCapture, equals(mockImageCapture));
 
     // Verify the camera's Recorder and VideoCapture instances are instantiated properly.
-    expect(camera.recorder, equals(camera.testRecorder));
-    expect(camera.videoCapture, equals(camera.testVideoCapture));
+    expect(camera.recorder, equals(mockRecorder));
+    expect(camera.videoCapture, equals(mockVideoCapture));
 
     // Verify the camera's Preview instance has its surface provider set.
     verify(camera.preview!.setSurfaceProvider());
@@ -242,10 +317,7 @@ void main() {
   test(
       'createCamera binds Preview and ImageCapture use cases to ProcessCameraProvider instance',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
-    final MockProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
@@ -254,17 +326,65 @@ void main() {
         sensorOrientation: testSensorOrientation);
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const bool enableAudio = true;
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockPreview mockPreview = MockPreview();
+    final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+    final MockImageCapture mockImageCapture = MockImageCapture();
+    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+    final MockRecorder mockRecorder = MockRecorder();
+    final MockVideoCapture mockVideoCapture = MockVideoCapture();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
 
-    camera.processCameraProvider = mockProcessCameraProvider;
+    // Tell plugin to create mock/detached objects and stub method calls for the
+    // testing of createCamera.
+    camera.proxy = CameraXProxy(
+      getProcessCameraProvider: () =>
+          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+      createCameraSelector: (int cameraSelectorLensDirection) {
+        switch (cameraSelectorLensDirection) {
+          case CameraSelector.lensFacingFront:
+            return MockCameraSelector();
+          case CameraSelector.lensFacingBack:
+          default:
+            return mockBackCameraSelector;
+        }
+      },
+      createPreview: (
+              {required int targetRotation,
+              ResolutionSelector? resolutionSelector}) =>
+          mockPreview,
+      createImageCapture: (_) => mockImageCapture,
+      createRecorder: (_) => mockRecorder,
+      createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
+      createImageAnalysis: (_) => mockImageAnalysis,
+      createResolutionStrategy: (
+              {bool highestAvailable = false,
+              Size? boundSize,
+              int? fallbackRule}) =>
+          MockResolutionStrategy(),
+      createResolutionSelector: (_) => MockResolutionSelector(),
+      createFallbackStrategy: (
+              {required VideoQuality quality,
+              required VideoResolutionFallbackRule fallbackRule}) =>
+          MockFallbackStrategy(),
+      createQualitySelector: (
+              {required VideoQuality videoQuality,
+              required FallbackStrategy fallbackStrategy}) =>
+          MockQualitySelector(),
+      createCameraStateObserver: (void Function(Object) onChanged) =>
+          Observer<CameraState>.detached(onChanged: onChanged),
+      requestCameraPermissions: (_) => Future<void>.value(),
+      startListeningForDeviceOrientationChange: (_, __) {},
+    );
 
-    when(mockProcessCameraProvider.bindToLifecycle(
-        camera.mockBackCameraSelector, <UseCase>[
-      camera.testPreview,
-      camera.testImageCapture,
-      camera.testImageAnalysis
-    ])).thenAnswer((_) async => mockCamera);
+    when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
+            <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis]))
+        .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
@@ -281,12 +401,8 @@ void main() {
         ));
 
     // Verify expected UseCases were bound.
-    verify(camera.processCameraProvider!.bindToLifecycle(
-        camera.cameraSelector!, <UseCase>[
-      camera.testPreview,
-      camera.testImageCapture,
-      camera.testImageAnalysis
-    ]));
+    verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
+        <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis]));
 
     // Verify the camera's CameraInfo instance got updated.
     expect(camera.cameraInfo, equals(mockCameraInfo));
@@ -295,10 +411,7 @@ void main() {
   test(
       'createCamera properly sets preset resolution for non-video capture use cases',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
-    final MockProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
@@ -307,16 +420,71 @@ void main() {
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
     final MockCamera mockCamera = MockCamera();
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+    final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+    final MockVideoCapture mockVideoCapture = MockVideoCapture();
+    final MockRecorder mockRecorder = MockRecorder();
 
-    camera.processCameraProvider = mockProcessCameraProvider;
+    // Tell plugin to create mock/detached objects for testing createCamera
+    // as needed.
+    camera.proxy = CameraXProxy(
+      getProcessCameraProvider: () =>
+          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+      createCameraSelector: (int cameraSelectorLensDirection) {
+        switch (cameraSelectorLensDirection) {
+          case CameraSelector.lensFacingFront:
+            return mockFrontCameraSelector;
+          case CameraSelector.lensFacingBack:
+          default:
+            return mockBackCameraSelector;
+        }
+      },
+      createPreview: (
+              {required int targetRotation,
+              ResolutionSelector? resolutionSelector}) =>
+          Preview.detached(
+              targetRotation: targetRotation,
+              resolutionSelector: resolutionSelector),
+      createImageCapture: (ResolutionSelector? resolutionSelector) =>
+          ImageCapture.detached(resolutionSelector: resolutionSelector),
+      createRecorder: (_) => mockRecorder,
+      createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
+      createImageAnalysis: (ResolutionSelector? resolutionSelector) =>
+          ImageAnalysis.detached(resolutionSelector: resolutionSelector),
+      createResolutionStrategy: (
+          {bool highestAvailable = false, Size? boundSize, int? fallbackRule}) {
+        if (highestAvailable) {
+          return ResolutionStrategy.detachedHighestAvailableStrategy();
+        }
 
-    when(mockProcessCameraProvider.bindToLifecycle(
-        camera.mockBackCameraSelector, <UseCase>[
-      camera.testPreview,
-      camera.testImageCapture,
-      camera.testImageAnalysis
-    ])).thenAnswer((_) async => mockCamera);
+        return ResolutionStrategy.detached(
+            boundSize: boundSize, fallbackRule: fallbackRule);
+      },
+      createResolutionSelector: (ResolutionStrategy resolutionStrategy) =>
+          ResolutionSelector.detached(resolutionStrategy: resolutionStrategy),
+      createFallbackStrategy: (
+              {required VideoQuality quality,
+              required VideoResolutionFallbackRule fallbackRule}) =>
+          MockFallbackStrategy(),
+      createQualitySelector: (
+              {required VideoQuality videoQuality,
+              required FallbackStrategy fallbackStrategy}) =>
+          MockQualitySelector(),
+      createCameraStateObserver: (_) => MockObserver(),
+      requestCameraPermissions: (_) => Future<void>.value(),
+      startListeningForDeviceOrientationChange: (_, __) {},
+      setPreviewSurfaceProvider: (_) => Future<int>.value(
+          3), // 3 is a random Flutter SurfaceTexture ID for testing},
+    );
+
+    when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector, any))
+        .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
@@ -394,10 +562,7 @@ void main() {
   test(
       'createCamera properly sets preset resolution for video capture use case',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
-    final MockProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
@@ -406,20 +571,71 @@ void main() {
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
     final MockCamera mockCamera = MockCamera();
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+    final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+    final MockPreview mockPreview = MockPreview();
+    final MockImageCapture mockImageCapture = MockImageCapture();
+    final MockVideoCapture mockVideoCapture = MockVideoCapture();
+    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
-    camera.processCameraProvider = mockProcessCameraProvider;
+    // Tell plugin to create mock/detached objects for testing createCamera
+    // as needed.
+    camera.proxy = CameraXProxy(
+      getProcessCameraProvider: () =>
+          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+      createCameraSelector: (int cameraSelectorLensDirection) {
+        switch (cameraSelectorLensDirection) {
+          case CameraSelector.lensFacingFront:
+            return mockFrontCameraSelector;
+          case CameraSelector.lensFacingBack:
+          default:
+            return mockBackCameraSelector;
+        }
+      },
+      createPreview: (
+              {required int targetRotation,
+              ResolutionSelector? resolutionSelector}) =>
+          mockPreview,
+      createImageCapture: (_) => mockImageCapture,
+      createRecorder: (QualitySelector? qualitySelector) =>
+          Recorder.detached(qualitySelector: qualitySelector),
+      createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
+      createImageAnalysis: (_) => mockImageAnalysis,
+      createResolutionStrategy: (
+              {bool highestAvailable = false,
+              Size? boundSize,
+              int? fallbackRule}) =>
+          MockResolutionStrategy(),
+      createResolutionSelector: (_) => MockResolutionSelector(),
+      createFallbackStrategy: (
+              {required VideoQuality quality,
+              required VideoResolutionFallbackRule fallbackRule}) =>
+          FallbackStrategy.detached(
+              quality: quality, fallbackRule: fallbackRule),
+      createQualitySelector: (
+              {required VideoQuality videoQuality,
+              required FallbackStrategy fallbackStrategy}) =>
+          QualitySelector.detached(qualityList: <VideoQualityData>[
+        VideoQualityData(quality: videoQuality)
+      ], fallbackStrategy: fallbackStrategy),
+      createCameraStateObserver: (void Function(Object) onChanged) =>
+          Observer<CameraState>.detached(onChanged: onChanged),
+      requestCameraPermissions: (_) => Future<void>.value(),
+      startListeningForDeviceOrientationChange: (_, __) {},
+    );
 
-    when(mockProcessCameraProvider.bindToLifecycle(
-        camera.mockBackCameraSelector, <UseCase>[
-      camera.testPreview,
-      camera.testImageCapture,
-      camera.testImageAnalysis
-    ])).thenAnswer((_) async => mockCamera);
+    when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
+            <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis]))
+        .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
-    camera.processCameraProvider = mockProcessCameraProvider;
 
     // Test non-null resolution presets.
     for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
@@ -476,10 +692,8 @@ void main() {
   });
 
   test('initializeCamera sends expected CameraInitializedEvent', () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
-    final MockProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+
     const int cameraId = 10;
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 90;
@@ -492,7 +706,58 @@ void main() {
     final Camera mockCamera = MockCamera();
     final ResolutionInfo testResolutionInfo =
         ResolutionInfo(width: resolutionWidth, height: resolutionHeight);
+
+    // Mocks for (typically attached) objects created by createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
     final CameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+    final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+    final MockPreview mockPreview = MockPreview();
+    final MockImageCapture mockImageCapture = MockImageCapture();
+    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+
+    // Tell plugin to create mock/detached objects for testing createCamera
+    // as needed.
+    camera.proxy = CameraXProxy(
+      getProcessCameraProvider: () =>
+          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+      createCameraSelector: (int cameraSelectorLensDirection) {
+        switch (cameraSelectorLensDirection) {
+          case CameraSelector.lensFacingFront:
+            return mockFrontCameraSelector;
+          case CameraSelector.lensFacingBack:
+          default:
+            return mockBackCameraSelector;
+        }
+      },
+      createPreview: (
+              {required int targetRotation,
+              ResolutionSelector? resolutionSelector}) =>
+          mockPreview,
+      createImageCapture: (_) => mockImageCapture,
+      createRecorder: (QualitySelector? qualitySelector) => MockRecorder(),
+      createVideoCapture: (_) => Future<VideoCapture>.value(MockVideoCapture()),
+      createImageAnalysis: (_) => mockImageAnalysis,
+      createResolutionStrategy: (
+              {bool highestAvailable = false,
+              Size? boundSize,
+              int? fallbackRule}) =>
+          MockResolutionStrategy(),
+      createResolutionSelector: (_) => MockResolutionSelector(),
+      createFallbackStrategy: (
+              {required VideoQuality quality,
+              required VideoResolutionFallbackRule fallbackRule}) =>
+          MockFallbackStrategy(),
+      createQualitySelector: (
+              {required VideoQuality videoQuality,
+              required FallbackStrategy fallbackStrategy}) =>
+          MockQualitySelector(),
+      createCameraStateObserver: (void Function(Object) onChanged) =>
+          Observer<CameraState>.detached(onChanged: onChanged),
+      requestCameraPermissions: (_) => Future<void>.value(),
+      startListeningForDeviceOrientationChange: (_, __) {},
+    );
 
     // TODO(camsim99): Modify this when camera configuration is supported and
     // default values no longer being used.
@@ -508,22 +773,16 @@ void main() {
             FocusMode.auto,
             false);
 
-    camera.processCameraProvider = mockProcessCameraProvider;
-
     // Call createCamera.
-    when(camera.testPreview.setSurfaceProvider())
-        .thenAnswer((_) async => cameraId);
+    when(mockPreview.setSurfaceProvider()).thenAnswer((_) async => cameraId);
 
-    when(camera.processCameraProvider!.bindToLifecycle(
-        camera.mockBackCameraSelector, <UseCase>[
-      camera.testPreview,
-      camera.testImageCapture,
-      camera.testImageAnalysis
-    ])).thenAnswer((_) async => mockCamera);
+    when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
+            <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis]))
+        .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
-    when(camera.testPreview.getResolutionInfo())
+    when(mockPreview.getResolutionInfo())
         .thenAnswer((_) async => testResolutionInfo);
 
     await camera.createCameraWithSettings(
@@ -645,6 +904,7 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
 
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = MockProcessCameraProvider();
     camera.preview = MockPreview();
 
@@ -661,6 +921,7 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
 
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = MockProcessCameraProvider();
     camera.preview = MockPreview();
 
@@ -680,6 +941,7 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
 
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
@@ -705,17 +967,25 @@ void main() {
   test(
       'resumePreview binds preview to lifecycle and updates camera state observers if not already bound',
       () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX.forTesting(
-        shouldCreateDetachedObjectForTesting: true);
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
 
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+
+    // Tell plugin to create a detached Observer<CameraState>, that is created to
+    // track camera state once preview is bound to the lifecycle and needed to
+    // test for expected updates.
+    camera.proxy = CameraXProxy(
+        createCameraStateObserver:
+            (void Function(Object stateAsObject) onChanged) =>
+                Observer<CameraState>.detached(onChanged: onChanged));
 
     when(mockProcessCameraProvider
             .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
@@ -741,17 +1011,22 @@ void main() {
   test(
       'buildPreview returns a FutureBuilder that does not return a Texture until the preview is bound to the lifecycle',
       () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX.forTesting(
-        shouldCreateDetachedObjectForTesting: true);
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int textureId = 75;
 
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+
+    // Tell plugin to create a mock Observer<CameraState>, that is created to
+    // track camera state once preview is bound to the lifecycle.
+    camera.proxy =
+        CameraXProxy(createCameraStateObserver: (_) => MockObserver());
 
     when(mockProcessCameraProvider
             .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
@@ -780,17 +1055,22 @@ void main() {
   test(
       'buildPreview returns a FutureBuilder that returns a Texture once the preview is bound to the lifecycle',
       () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX.forTesting(
-        shouldCreateDetachedObjectForTesting: true);
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int textureId = 75;
 
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.preview = MockPreview();
+
+    // Tell plugin to create a mock Observer<CameraState>, that is created to
+    // track camera state once preview is bound to the lifecycle.
+    camera.proxy =
+        CameraXProxy(createCameraStateObserver: (_) => MockObserver());
 
     when(mockProcessCameraProvider
             .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
@@ -813,17 +1093,19 @@ void main() {
         'startVideoCapturing binds video capture use case and starts the recording',
         () async {
       // Set up mocks and constants.
-      final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
-      camera.processCameraProvider = MockProcessCameraProvider();
-      camera.cameraSelector = MockCameraSelector();
-      camera.recorder = camera.testRecorder;
-      camera.videoCapture = camera.testVideoCapture;
-      camera.camera = MockCamera();
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockPendingRecording mockPendingRecording = MockPendingRecording();
       final MockRecording mockRecording = MockRecording();
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+      // Set directly for test versus calling createCamera.
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.camera = MockCamera();
+      camera.recorder = MockRecorder();
+      camera.videoCapture = MockVideoCapture();
+      camera.cameraSelector = MockCameraSelector();
 
       const int cameraId = 17;
       const String outputPath = '/temp/MOV123.temp';
@@ -831,7 +1113,7 @@ void main() {
       // Mock method calls.
       when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
           .thenReturn(outputPath);
-      when(camera.testRecorder.prepareRecording(outputPath))
+      when(camera.recorder!.prepareRecording(outputPath))
           .thenAnswer((_) async => mockPendingRecording);
       when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
       when(camera.processCameraProvider!.isBound(camera.videoCapture!))
@@ -852,17 +1134,18 @@ void main() {
         'startVideoCapturing binds video capture use case and starts the recording'
         ' on first call, and does nothing on second call', () async {
       // Set up mocks and constants.
-      final FakeAndroidCameraCameraX camera = FakeAndroidCameraCameraX();
-      camera.processCameraProvider = MockProcessCameraProvider();
-      camera.cameraSelector = MockCameraSelector();
-      camera.recorder = camera.testRecorder;
-      camera.videoCapture = camera.testVideoCapture;
-      camera.camera = MockCamera();
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockPendingRecording mockPendingRecording = MockPendingRecording();
       final MockRecording mockRecording = MockRecording();
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+      // Set directly for test versus calling createCamera.
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.recorder = MockRecorder();
+      camera.videoCapture = MockVideoCapture();
+      camera.cameraSelector = MockCameraSelector();
 
       const int cameraId = 17;
       const String outputPath = '/temp/MOV123.temp';
@@ -870,14 +1153,14 @@ void main() {
       // Mock method calls.
       when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
           .thenReturn(outputPath);
-      when(camera.testRecorder.prepareRecording(outputPath))
+      when(camera.recorder!.prepareRecording(outputPath))
           .thenAnswer((_) async => mockPendingRecording);
       when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
       when(camera.processCameraProvider!.isBound(camera.videoCapture!))
           .thenAnswer((_) async => false);
       when(camera.processCameraProvider!.bindToLifecycle(
               camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
-          .thenAnswer((_) async => camera.camera!);
+          .thenAnswer((_) async => MockCamera());
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -891,8 +1174,8 @@ void main() {
       verify(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
           .called(1);
       verifyNoMoreInteractions(mockSystemServicesApi);
-      verify(camera.testRecorder.prepareRecording(outputPath)).called(1);
-      verifyNoMoreInteractions(camera.testRecorder);
+      verify(camera.recorder!.prepareRecording(outputPath)).called(1);
+      verifyNoMoreInteractions(camera.recorder);
       verify(mockPendingRecording.start()).called(1);
       verifyNoMoreInteractions(mockPendingRecording);
     });
@@ -901,20 +1184,28 @@ void main() {
         'startVideoCapturing called with stream options starts image streaming',
         () async {
       // Set up mocks and constants.
-      final FakeAndroidCameraCameraX camera =
-          FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+
+      // Set directly for test versus calling createCamera.
       final MockProcessCameraProvider mockProcessCameraProvider =
           MockProcessCameraProvider();
       camera.processCameraProvider = mockProcessCameraProvider;
       camera.cameraSelector = MockCameraSelector();
-      camera.recorder = camera.testRecorder;
-      camera.videoCapture = camera.testVideoCapture;
-      camera.imageAnalysis = camera.testImageAnalysis;
+      camera.videoCapture = MockVideoCapture();
+      camera.imageAnalysis = MockImageAnalysis();
       camera.camera = MockCamera();
+      final Recorder mockRecorder = MockRecorder();
+      camera.recorder = mockRecorder;
       final MockPendingRecording mockPendingRecording = MockPendingRecording();
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+      // Tell plugin to create detached Analyzer for testing.
+      camera.proxy = CameraXProxy(
+          createAnalyzer:
+              (Future<void> Function(ImageProxy imageProxy) analyze) =>
+                  Analyzer.detached(analyze: analyze));
 
       const int cameraId = 17;
       const String outputPath = '/temp/MOV123.temp';
@@ -930,7 +1221,7 @@ void main() {
           .thenAnswer((_) async => true);
       when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
           .thenReturn(outputPath);
-      when(camera.testRecorder.prepareRecording(outputPath))
+      when(camera.recorder!.prepareRecording(outputPath))
           .thenAnswer((_) async => mockPendingRecording);
       when(mockProcessCameraProvider.bindToLifecycle(any, any))
           .thenAnswer((_) => Future<Camera>.value(camera.camera));
@@ -949,7 +1240,10 @@ void main() {
     test('pauseVideoRecording pauses the recording', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
+
+      // Set directly for test versus calling startVideoCapturing.
       camera.recording = recording;
+
       await camera.pauseVideoRecording(0);
       verify(recording.pause());
       verifyNoMoreInteractions(recording);
@@ -958,7 +1252,10 @@ void main() {
     test('resumeVideoRecording resumes the recording', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
+
+      // Set directly for test versus calling startVideoCapturing.
       camera.recording = recording;
+
       await camera.resumeVideoRecording(0);
       verify(recording.resume());
       verifyNoMoreInteractions(recording);
@@ -972,6 +1269,7 @@ void main() {
       final MockVideoCapture videoCapture = MockVideoCapture();
       const String videoOutputPath = '/test/output/path';
 
+      // Set directly for test versus calling createCamera and startVideoCapturing.
       camera.processCameraProvider = processCameraProvider;
       camera.recording = recording;
       camera.videoCapture = videoCapture;
@@ -990,6 +1288,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const String videoOutputPath = '/test/output/path';
 
+      // Set directly for test versus calling startVideoCapturing.
       camera.recording = null;
       camera.videoOutputPath = videoOutputPath;
 
@@ -1003,6 +1302,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
 
+      // Set directly for test versus calling startVideoCapturing.
       camera.recording = recording;
       camera.videoOutputPath = null;
 
@@ -1021,6 +1321,7 @@ void main() {
       final MockVideoCapture videoCapture = MockVideoCapture();
       const String videoOutputPath = '/test/output/path';
 
+      // Set directly for test versus calling createCamera and startVideoCapturing.
       camera.processCameraProvider = processCameraProvider;
       camera.recording = recording;
       camera.videoCapture = videoCapture;
@@ -1040,6 +1341,7 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const String testPicturePath = 'test/absolute/path/to/picture';
 
+    // Set directly for test versus calling createCamera.
     camera.imageCapture = MockImageCapture();
 
     when(camera.imageCapture!.takePicture())
@@ -1056,6 +1358,7 @@ void main() {
     const int cameraId = 77;
     final MockCameraControl mockCameraControl = MockCameraControl();
 
+    // Set directly for test versus calling createCamera.
     camera.imageCapture = MockImageCapture();
     camera.camera = MockCamera();
 
@@ -1074,6 +1377,7 @@ void main() {
     const int cameraId = 22;
     final MockCameraControl mockCameraControl = MockCameraControl();
 
+    // Set directly for test versus calling createCamera.
     camera.imageCapture = MockImageCapture();
     camera.camera = MockCamera();
 
@@ -1116,6 +1420,7 @@ void main() {
     const int cameraId = 44;
     final MockCameraControl mockCameraControl = MockCameraControl();
 
+    // Set directly for test versus calling createCamera.
     camera.camera = MockCamera();
 
     when(camera.camera!.getCameraControl())
@@ -1133,6 +1438,7 @@ void main() {
     const int cameraId = 33;
     final MockCameraControl mockCameraControl = MockCameraControl();
 
+    // Set directly for test versus calling createCamera.
     camera.camera = MockCamera();
 
     when(camera.camera!.getCameraControl())
@@ -1165,6 +1471,7 @@ void main() {
             ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
         exposureCompensationStep: 0.2);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
     when(mockCameraInfo.getExposureState())
@@ -1183,6 +1490,7 @@ void main() {
             ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
         exposureCompensationStep: 0.2);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
     when(mockCameraInfo.getExposureState())
@@ -1200,6 +1508,7 @@ void main() {
             ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
         exposureCompensationStep: 0.2);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
     when(mockCameraInfo.getExposureState())
@@ -1216,6 +1525,7 @@ void main() {
     final ZoomState zoomState =
         ZoomState.detached(maxZoomRatio: maxZoomRatio, minZoomRatio: 0);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
     when(mockCameraInfo.getZoomState())
@@ -1233,6 +1543,7 @@ void main() {
     final ZoomState zoomState =
         ZoomState.detached(maxZoomRatio: 1, minZoomRatio: minZoomRatio);
 
+    // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
     when(mockCameraInfo.getZoomState())
@@ -1248,6 +1559,7 @@ void main() {
     const double zoomRatio = 0.3;
     final MockCameraControl mockCameraControl = MockCameraControl();
 
+    // Set directly for test versus calling createCamera.
     camera.camera = MockCamera();
 
     when(camera.camera!.getCameraControl())
@@ -1261,14 +1573,20 @@ void main() {
   test(
       'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int cameraId = 22;
 
+    // Tell plugin to create detached Analyzer for testing.
+    camera.proxy = CameraXProxy(
+        createAnalyzer:
+            (Future<void> Function(ImageProxy imageProxy) analyze) =>
+                Analyzer.detached(analyze: analyze));
+
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.imageAnalysis = MockImageAnalysis();
@@ -1295,14 +1613,20 @@ void main() {
   test(
       'onStreamedFrameAvailable emits CameraImageData when listened to after cancelation',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const int cameraId = 22;
 
+    // Tell plugin to create detached Analyzer for testing.
+    camera.proxy = CameraXProxy(
+        createAnalyzer:
+            (Future<void> Function(ImageProxy imageProxy) analyze) =>
+                Analyzer.detached(analyze: analyze));
+
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = MockCameraSelector();
     camera.imageAnalysis = MockImageAnalysis();
@@ -1339,8 +1663,7 @@ void main() {
   test(
       'onStreamedFrameAvailable returns stream that responds expectedly to being listened to',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 33;
     final ProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
@@ -1358,6 +1681,13 @@ void main() {
     const int imageHeight = 100;
     const int imageWidth = 200;
 
+    // Tell plugin to create detached Analyzer for testing.
+    camera.proxy = CameraXProxy(
+        createAnalyzer:
+            (Future<void> Function(ImageProxy imageProxy) analyze) =>
+                Analyzer.detached(analyze: analyze));
+
+    // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
     camera.cameraSelector = mockCameraSelector;
     camera.imageAnalysis = mockImageAnalysis;
@@ -1412,16 +1742,11 @@ void main() {
   test(
       'onStreamedFrameAvailable returns stream that responds expectedly to being canceled',
       () async {
-    final FakeAndroidCameraCameraX camera =
-        FakeAndroidCameraCameraX(shouldCreateDetachedObjectForTesting: true);
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 32;
-    final ProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
-    final CameraSelector mockCameraSelector = MockCameraSelector();
     final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
-    camera.processCameraProvider = mockProcessCameraProvider;
-    camera.cameraSelector = mockCameraSelector;
+    // Set directly for test versus calling createCamera.
     camera.imageAnalysis = mockImageAnalysis;
 
     final StreamSubscription<CameraImageData> imageStreamSubscription = camera
@@ -1432,75 +1757,4 @@ void main() {
 
     verify(mockImageAnalysis.clearAnalyzer());
   });
-}
-
-/// Fake [AndroidCameraCameraX] that stubs behavior of some methods for testing.
-class FakeAndroidCameraCameraX extends AndroidCameraCameraX {
-  FakeAndroidCameraCameraX({super.shouldCreateDetachedObjectForTesting})
-      : super.forTesting();
-
-  bool cameraPermissionsRequested = false;
-  bool startedListeningForDeviceOrientationChanges = false;
-
-  // Mocks available for use throughout testing.
-  final MockPreview testPreview = MockPreview();
-  final MockImageCapture testImageCapture = MockImageCapture();
-  final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
-  final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-  final MockRecorder testRecorder = MockRecorder();
-  final MockVideoCapture testVideoCapture = MockVideoCapture();
-  final MockImageAnalysis testImageAnalysis = MockImageAnalysis();
-
-  @override
-  Future<void> requestCameraPermissions(bool enableAudio) async {
-    cameraPermissionsRequested = true;
-  }
-
-  @override
-  void startListeningForDeviceOrientationChange(
-      bool cameraIsFrontFacing, int sensorOrientation) {
-    startedListeningForDeviceOrientationChanges = true;
-    return;
-  }
-
-  @override
-  CameraSelector createCameraSelector(int cameraSelectorLensDirection) {
-    switch (cameraSelectorLensDirection) {
-      case CameraSelector.lensFacingFront:
-        return mockFrontCameraSelector;
-      case CameraSelector.lensFacingBack:
-      default:
-        return mockBackCameraSelector;
-    }
-  }
-
-  @override
-  Preview createPreview(
-      {required int targetRotation, ResolutionSelector? resolutionSelector}) {
-    when(testPreview.resolutionSelector).thenReturn(resolutionSelector);
-    return testPreview;
-  }
-
-  @override
-  ImageCapture createImageCapture(ResolutionSelector? resolutionSelector) {
-    when(testImageCapture.resolutionSelector).thenReturn(resolutionSelector);
-    return testImageCapture;
-  }
-
-  @override
-  Recorder createRecorder(QualitySelector? qualitySelector) {
-    when(testRecorder.qualitySelector).thenReturn(qualitySelector);
-    return testRecorder;
-  }
-
-  @override
-  Future<VideoCapture> createVideoCapture(Recorder recorder) {
-    return Future<VideoCapture>.value(testVideoCapture);
-  }
-
-  @override
-  ImageAnalysis createImageAnalysis(ResolutionSelector? resolutionSelector) {
-    when(testImageAnalysis.resolutionSelector).thenReturn(resolutionSelector);
-    return testImageAnalysis;
-  }
 }
