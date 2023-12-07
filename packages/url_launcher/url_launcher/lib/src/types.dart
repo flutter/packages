@@ -62,8 +62,8 @@ class BrowserConfiguration {
   /// Creates a new InAppBrowserConfiguration with given settings.
   const BrowserConfiguration({this.showTitle = false});
 
-  /// Whether or not to show the webpage title when using Chrome Custom Tabs.
+  /// Whether or not to show the webpage title.
   ///
-  /// Only works on Android.
+  /// May not be supported on all platforms.
   final bool showTitle;
 }
