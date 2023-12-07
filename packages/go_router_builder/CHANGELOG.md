@@ -1,4 +1,4 @@
-## 2.3.5
+## 2.4.0
 
 * Adds support for passing observers to the ShellRoute for the nested Navigator.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
