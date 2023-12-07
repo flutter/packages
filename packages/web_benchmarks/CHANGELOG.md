@@ -1,5 +1,6 @@
-## 0.1.0+12
+## 1.0.0
 
+* **Breaking change:** replace 'useCanvasKit' parameter with 'compilationOptions'.
 * Add the ability to run a benchmark with WebAssembly.
 
 ## 0.1.0+11

@@ -43,13 +43,12 @@ const int defaultChromeDebugPort = 10000;
 Future<BenchmarkResults> serveWebBenchmark({
   required io.Directory benchmarkAppDirectory,
   required String entryPoint,
-  required bool useCanvasKit,
   int benchmarkServerPort = defaultBenchmarkServerPort,
   int chromeDebugPort = defaultChromeDebugPort,
   bool headless = true,
   bool treeShakeIcons = true,
   String initialPage = defaultInitialPage,
-  bool useWasm = false,
+  CompilationOptions compilationOptions = const CompilationOptions(),
 }) async {
   // Reduce logging level. Otherwise, package:webkit_inspection_protocol is way too spammy.
   Logger.root.level = Level.INFO;
@@ -57,12 +56,11 @@ Future<BenchmarkResults> serveWebBenchmark({
   return BenchmarkServer(
     benchmarkAppDirectory: benchmarkAppDirectory,
     entryPoint: entryPoint,
-    useCanvasKit: useCanvasKit,
     benchmarkServerPort: benchmarkServerPort,
     chromeDebugPort: chromeDebugPort,
     headless: headless,
+    compilationOptions: compilationOptions,
     treeShakeIcons: treeShakeIcons,
     initialPage: initialPage,
-    useWasm: useWasm,
   ).run();
 }

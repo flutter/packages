@@ -50,12 +50,11 @@ class BenchmarkServer {
   BenchmarkServer({
     required this.benchmarkAppDirectory,
     required this.entryPoint,
-    required this.useCanvasKit,
     required this.benchmarkServerPort,
     required this.chromeDebugPort,
     required this.headless,
     required this.treeShakeIcons,
-    this.useWasm = false,
+    this.compilationOptions = const CompilationOptions(),
     this.initialPage = defaultInitialPage,
   });
 
@@ -73,11 +72,8 @@ class BenchmarkServer {
   /// the app.
   final String entryPoint;
 
-  /// Whether to build the app in CanvasKit mode.
-  final bool useCanvasKit;
-
-  /// Whether to build the app with dart2wasm.
-  final bool useWasm;
+  /// The compilation options to use for building the benchmark web app.
+  final CompilationOptions compilationOptions;
 
   /// The port this benchmark server serves the app on.
   final int benchmarkServerPort;
@@ -118,12 +114,12 @@ class BenchmarkServer {
         'flutter',
         'build',
         'web',
-        if (useWasm) ...<String>[
+        if (compilationOptions.useWasm) ...<String>[
           '--wasm',
           '--wasm-opt=debug',
           '--omit-type-checks',
         ],
-        if (useCanvasKit) '--web-renderer=canvaskit',
+        '--web-renderer=${compilationOptions.renderer.name}',
         '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
         if (!treeShakeIcons) '--no-tree-shake-icons',
         '--profile',
@@ -342,4 +338,34 @@ class BenchmarkServer {
       unawaited(server.close());
     }
   }
+}
+
+/// Compilation options for bulding a Flutter web app.
+///
+/// This object holds metadata that is used to determine how the benchmark app
+/// should be built.
+class CompilationOptions {
+  /// Creates a [CompilationOptions] object.
+  const CompilationOptions({
+    this.renderer = WebRenderer.html,
+    this.useWasm = false,
+  });
+
+  /// The renderer to use for the build.
+  final WebRenderer renderer;
+
+  /// Whether to build the app with dart2wasm.
+  final bool useWasm;
+}
+
+/// The possible types of web renderers Flutter can build for.
+enum WebRenderer {
+  /// The HTML web renderer.
+  html,
+
+  /// The CanvasKit web renderer.
+  canvaskit,
+
+  /// The SKIA Wasm web renderer.
+  skwasm,
 }

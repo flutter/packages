@@ -9,6 +9,7 @@ import 'package:test/test.dart';
 
 import 'package:web_benchmarks/server.dart';
 import 'package:web_benchmarks/src/common.dart';
+import 'package:web_benchmarks/src/runner.dart';
 
 Future<void> main() async {
   test('Can run a web benchmark', () async {
@@ -30,7 +31,7 @@ Future<void> main() async {
     await _runBenchmarks(
       benchmarkNames: <String>['simple'],
       entryPoint: 'lib/benchmarks/runner_simple.dart',
-      useWasm: true,
+      compilationOptions: const CompilationOptions(useWasm: true),
     );
   }, timeout: Timeout.none);
 }
@@ -39,15 +40,14 @@ Future<void> _runBenchmarks({
   required List<String> benchmarkNames,
   required String entryPoint,
   String initialPage = defaultInitialPage,
-  bool useWasm = false,
+  CompilationOptions compilationOptions = const CompilationOptions(),
 }) async {
   final BenchmarkResults taskResult = await serveWebBenchmark(
     benchmarkAppDirectory: Directory('testing/test_app'),
     entryPoint: entryPoint,
-    useCanvasKit: false,
     treeShakeIcons: false,
     initialPage: initialPage,
-    useWasm: useWasm,
+    compilationOptions: compilationOptions,
   );
 
   for (final String benchmarkName in benchmarkNames) {
