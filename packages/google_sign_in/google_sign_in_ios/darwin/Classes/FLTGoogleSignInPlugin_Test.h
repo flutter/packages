@@ -29,12 +29,17 @@ NS_ASSUME_NONNULL_BEGIN
 // sign in, sign out, and requesting additional scopes.
 @property(strong, readonly) GIDSignIn *signIn;
 
+/// Inject @c FlutterPluginRegistrar for testing.
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+
 /// Inject @c GIDSignIn for testing.
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn;
+- (instancetype)initWithSignIn:(GIDSignIn *)signIn
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 /// Inject @c GIDSignIn and @c googleServiceProperties for testing.
 - (instancetype)initWithSignIn:(GIDSignIn *)signIn
-    withGoogleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+       googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
     NS_DESIGNATED_INITIALIZER;
 
 @end

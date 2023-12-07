@@ -20,7 +20,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: 5.4.1
+  mockito: 5.4.3
   standard_message_codec: ^0.0.1+3
 
 topics:
