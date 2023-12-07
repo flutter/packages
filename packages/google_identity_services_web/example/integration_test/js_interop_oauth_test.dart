@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// the following ignore is needed for downgraded analyzer (casts to JSObject).
+// ignore_for_file: unnecessary_cast
+
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_identity_services_web/oauth2.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:js/js.dart';
 
 import 'utils.dart' as utils;
 
@@ -19,12 +22,96 @@ void main() async {
     await utils.installGisMock();
   });
 
+  group('Config objects pass values from Dart to JS - ', () {
+    testWidgets('TokenClientConfig', (_) async {
+      final TokenClientConfig config = TokenClientConfig(
+        client_id: 'testing_1-2-3',
+        callback: (_) {},
+        scope: <String>['one', 'two', 'three'],
+        include_granted_scopes: true,
+        prompt: 'some-prompt',
+        enable_granular_consent: true,
+        login_hint: 'login-hint@example.com',
+        hd: 'hd_value',
+        state: 'some-state',
+        error_callback: (_) {},
+      );
+
+      final utils.ExpectConfigValueFn expectConfigValue =
+          utils.createExpectConfigValue(config as JSObject);
+
+      expectConfigValue('client_id', 'testing_1-2-3');
+      expectConfigValue('callback', utils.isAJs('function'));
+      expectConfigValue('scope', 'one two three');
+      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('prompt', 'some-prompt');
+      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('login_hint', 'login-hint@example.com');
+      expectConfigValue('hd', 'hd_value');
+      expectConfigValue('state', 'some-state');
+      expectConfigValue('error_callback', utils.isAJs('function'));
+    });
+
+    testWidgets('OverridableTokenClientConfig', (_) async {
+      final OverridableTokenClientConfig config = OverridableTokenClientConfig(
+        scope: <String>['one', 'two', 'three'],
+        include_granted_scopes: true,
+        prompt: 'some-prompt',
+        enable_granular_consent: true,
+        login_hint: 'login-hint@example.com',
+        state: 'some-state',
+      );
+
+      final utils.ExpectConfigValueFn expectConfigValue =
+          utils.createExpectConfigValue(config as JSObject);
+
+      expectConfigValue('scope', 'one two three');
+      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('prompt', 'some-prompt');
+      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('login_hint', 'login-hint@example.com');
+      expectConfigValue('state', 'some-state');
+    });
+
+    testWidgets('CodeClientConfig', (_) async {
+      final CodeClientConfig config = CodeClientConfig(
+        client_id: 'testing_1-2-3',
+        scope: <String>['one', 'two', 'three'],
+        include_granted_scopes: true,
+        redirect_uri: Uri.parse('https://www.example.com/login'),
+        callback: (_) {},
+        state: 'some-state',
+        enable_granular_consent: true,
+        login_hint: 'login-hint@example.com',
+        hd: 'hd_value',
+        ux_mode: UxMode.popup,
+        select_account: true,
+        error_callback: (_) {},
+      );
+
+      final utils.ExpectConfigValueFn expectConfigValue =
+          utils.createExpectConfigValue(config as JSObject);
+
+      expectConfigValue('scope', 'one two three');
+      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('redirect_uri', 'https://www.example.com/login');
+      expectConfigValue('callback', utils.isAJs('function'));
+      expectConfigValue('state', 'some-state');
+      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('login_hint', 'login-hint@example.com');
+      expectConfigValue('hd', 'hd_value');
+      expectConfigValue('ux_mode', 'popup');
+      expectConfigValue('select_account', isTrue);
+      expectConfigValue('error_callback', utils.isAJs('function'));
+    });
+  });
+
   group('initTokenClient', () {
     testWidgets('returns a tokenClient', (_) async {
       final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
         client_id: 'for-tests',
-        callback: null,
-        scope: 'some_scope for_tests not_real',
+        callback: (_) {},
+        scope: <String>['some_scope', 'for_tests', 'not_real'],
       ));
 
       expect(client, isNotNull);
@@ -40,8 +127,8 @@ void main() async {
 
       final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
         client_id: 'for-tests',
-        callback: allowInterop(controller.add),
-        scope: scopes.join(' '),
+        callback: controller.add,
+        scope: scopes,
       ));
 
       utils.setMockTokenResponse(client, 'some-non-null-auth-token-value');
@@ -52,7 +139,7 @@ void main() async {
 
       expect(response, isNotNull);
       expect(response.error, isNull);
-      expect(response.scope, scopes.join(' '));
+      expect(response.scope, scopes);
     });
 
     testWidgets('configuration can be overridden', (_) async {
@@ -63,21 +150,21 @@ void main() async {
 
       final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
         client_id: 'for-tests',
-        callback: allowInterop(controller.add),
-        scope: 'blank',
+        callback: controller.add,
+        scope: <String>['blank'],
       ));
 
       utils.setMockTokenResponse(client, 'some-non-null-auth-token-value');
 
       client.requestAccessToken(OverridableTokenClientConfig(
-        scope: scopes.join(' '),
+        scope: scopes,
       ));
 
       final TokenResponse response = await controller.stream.first;
 
       expect(response, isNotNull);
       expect(response.error, isNull);
-      expect(response.scope, scopes.join(' '));
+      expect(response.scope, scopes);
     });
   });
 
