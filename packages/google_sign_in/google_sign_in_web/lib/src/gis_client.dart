@@ -63,7 +63,8 @@ class GisSdkClient {
 
   void _logIfEnabled(String message, [List<Object?>? more]) {
     if (_loggingEnabled) {
-      final String log = <Object?>['[google_sign_in_web]', message, ...?more].join(' ');
+      final String log =
+          <Object?>['[google_sign_in_web]', message, ...?more].join(' ');
       web.console.info(log.toJS);
     }
   }
@@ -290,7 +291,7 @@ class GisSdkClient {
     Object parent,
     GSIButtonConfiguration options,
   ) async {
-    return id.renderButton(parent, convertButtonConfiguration(options)!);
+    return id.renderButton(parent, convertButtonConfiguration(options));
   }
 
   /// Requests a server auth code per:
@@ -323,8 +324,8 @@ class GisSdkClient {
     // Warn users that this method will be removed.
     web.console.warn(
         'The google_sign_in plugin `signIn` method is deprecated on the web, and will be removed in Q2 2024. Please use `renderButton` instead. See: '
-        'https://pub.dev/packages/google_sign_in_web#migrating-to-v011-and-v012-google-identity-services'.toJS
-    );
+                'https://pub.dev/packages/google_sign_in_web#migrating-to-v011-and-v012-google-identity-services'
+            .toJS);
     // If we already know the user, use their `email` as a `hint`, so they don't
     // have to pick their user again in the Authorization popup.
     final GoogleSignInUserData? knownUser =

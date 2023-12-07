@@ -221,8 +221,9 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     if (kDebugMode) {
       web.console.warn(
           "The `signIn` method is discouraged on the web because it can't reliably provide an `idToken`.\n"
-          'Use `signInSilently` and `renderButton` to authenticate your users instead.\n'
-          'Read more: https://pub.dev/packages/google_sign_in_web'.toJS);
+                  'Use `signInSilently` and `renderButton` to authenticate your users instead.\n'
+                  'Read more: https://pub.dev/packages/google_sign_in_web'
+              .toJS);
     }
     await initialized;
 

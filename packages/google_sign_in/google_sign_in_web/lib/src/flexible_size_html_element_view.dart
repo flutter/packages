@@ -55,7 +55,12 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   /// Update the state with the new `size`, if needed.
   void _doResize(Size size) {
     if (size != _lastReportedSize) {
-      final String log = <Object?>['Resizing: ', widget.viewType, size.width, size.height].join(' ');
+      final String log = <Object?>[
+        'Resizing: ',
+        widget.viewType,
+        size.width,
+        size.height
+      ].join(' ');
       web.console.debug(log.toJS);
       setState(() {
         _lastReportedSize = size;
@@ -68,7 +73,8 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
     JSArray resizes,
     web.ResizeObserver observer,
   ) {
-    final web.DOMRectReadOnly rect = resizes.toDart.cast<web.ResizeObserverEntry>().last.contentRect;
+    final web.DOMRectReadOnly rect =
+        resizes.toDart.cast<web.ResizeObserverEntry>().last.contentRect;
     if (rect.width > 0 && rect.height > 0) {
       _doResize(Size(rect.width.toDouble(), rect.height.toDouble()));
     }
@@ -82,19 +88,20 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
     JSArray mutations,
     web.MutationObserver observer,
   ) {
-    mutations.toDart.cast<web.MutationRecord>()
-      .forEach((web.MutationRecord mutation) {
-        if (mutation.addedNodes.length > 0) {
-          final web.Element? element = _locateSizeProvider(mutation.addedNodes);
-          if (element != null) {
-            _resizeObserver = web.ResizeObserver(_onResizeEntries.toJS);
-            _resizeObserver?.observe(element);
-            // Stop looking at other mutations
-            observer.disconnect();
-            return;
-          }
+    mutations.toDart
+        .cast<web.MutationRecord>()
+        .forEach((web.MutationRecord mutation) {
+      if (mutation.addedNodes.length > 0) {
+        final web.Element? element = _locateSizeProvider(mutation.addedNodes);
+        if (element != null) {
+          _resizeObserver = web.ResizeObserver(_onResizeEntries.toJS);
+          _resizeObserver?.observe(element);
+          // Stop looking at other mutations
+          observer.disconnect();
+          return;
         }
-      });
+      }
+    });
   }
 
   /// Registers a MutationObserver on the root element of the HtmlElementView.
