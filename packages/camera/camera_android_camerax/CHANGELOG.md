@@ -1,4 +1,4 @@
-## 0.6.0
+## 0.5.1
 
 * Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
 

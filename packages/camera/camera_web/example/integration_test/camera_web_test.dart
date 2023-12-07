@@ -533,32 +533,19 @@ void main() {
             enableAudio: true,
           );
 
-          expect(
-            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
-            isA<Camera>()
-                .having(
-                  (Camera camera) => camera.textureId,
-                  'textureId',
-                  cameraId,
-                )
-                .having(
-                  (Camera camera) => camera.options,
-                  'options',
-                  CameraOptions(
-                    audio: const AudioConstraints(enabled: true),
-                    video: VideoConstraints(
-                      facingMode: FacingModeConstraint(CameraType.user),
-                      width: VideoSizeConstraint(
-                        ideal: ultraHighResolutionSize.width.toInt(),
-                      ),
-                      height: VideoSizeConstraint(
-                        ideal: ultraHighResolutionSize.height.toInt(),
-                      ),
-                      deviceId: cameraMetadata.deviceId,
-                    ),
-                  ),
-                ),
-          );
+          final Camera? camera =
+              (CameraPlatform.instance as CameraPlugin).cameras[cameraId];
+
+          expect(camera, isA<Camera>());
+          expect(camera!.textureId, cameraId);
+          expect(camera.options.audio.enabled, isTrue);
+          expect(camera.options.video.facingMode,
+              equals(FacingModeConstraint(CameraType.user)));
+          expect(camera.options.video.width!.ideal,
+              ultraHighResolutionSize.width.toInt());
+          expect(camera.options.video.height!.ideal,
+              ultraHighResolutionSize.height.toInt());
+          expect(camera.options.video.deviceId, cameraMetadata.deviceId);
         });
 
         testWidgets('with appropriate createCameraWithSettings options',
@@ -579,32 +566,19 @@ void main() {
             ),
           );
 
-          expect(
-            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
-            isA<Camera>()
-                .having(
-                  (Camera camera) => camera.textureId,
-                  'textureId',
-                  cameraId,
-                )
-                .having(
-                  (Camera camera) => camera.options,
-                  'options',
-                  CameraOptions(
-                    audio: const AudioConstraints(enabled: true),
-                    video: VideoConstraints(
-                      facingMode: FacingModeConstraint(CameraType.user),
-                      width: VideoSizeConstraint(
-                        ideal: ultraHighResolutionSize.width.toInt(),
-                      ),
-                      height: VideoSizeConstraint(
-                        ideal: ultraHighResolutionSize.height.toInt(),
-                      ),
-                      deviceId: cameraMetadata.deviceId,
-                    ),
-                  ),
-                ),
-          );
+          final Camera? camera =
+              (CameraPlatform.instance as CameraPlugin).cameras[cameraId];
+
+          expect(camera, isA<Camera>());
+          expect(camera!.textureId, cameraId);
+          expect(camera.options.audio.enabled, isTrue);
+          expect(camera.options.video.facingMode,
+              equals(FacingModeConstraint(CameraType.user)));
+          expect(camera.options.video.width!.ideal,
+              ultraHighResolutionSize.width.toInt());
+          expect(camera.options.video.height!.ideal,
+              ultraHighResolutionSize.height.toInt());
+          expect(camera.options.video.deviceId, cameraMetadata.deviceId);
         });
 
         testWidgets(
@@ -620,26 +594,19 @@ void main() {
             null,
           );
 
-          expect(
-            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
-            isA<Camera>().having(
-              (Camera camera) => camera.options,
-              'options',
-              CameraOptions(
-                audio: const AudioConstraints(),
-                video: VideoConstraints(
-                  facingMode: FacingModeConstraint(CameraType.user),
-                  width: VideoSizeConstraint(
-                    ideal: maxResolutionSize.width.toInt(),
-                  ),
-                  height: VideoSizeConstraint(
-                    ideal: maxResolutionSize.height.toInt(),
-                  ),
-                  deviceId: cameraMetadata.deviceId,
-                ),
-              ),
-            ),
-          );
+          final Camera? camera =
+              (CameraPlatform.instance as CameraPlugin).cameras[cameraId];
+
+          expect(camera, isA<Camera>());
+          expect(camera!.textureId, cameraId);
+          expect(camera.options.audio.enabled, isFalse);
+          expect(camera.options.video.facingMode,
+              equals(FacingModeConstraint(CameraType.user)));
+          expect(camera.options.video.width!.ideal,
+              maxResolutionSize.width.toInt());
+          expect(camera.options.video.height!.ideal,
+              maxResolutionSize.height.toInt());
+          expect(camera.options.video.deviceId, cameraMetadata.deviceId);
         });
 
         testWidgets(
@@ -659,26 +626,18 @@ void main() {
             ),
           );
 
-          expect(
-            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
-            isA<Camera>().having(
-              (Camera camera) => camera.options,
-              'options',
-              CameraOptions(
-                audio: const AudioConstraints(),
-                video: VideoConstraints(
-                  facingMode: FacingModeConstraint(CameraType.user),
-                  width: VideoSizeConstraint(
-                    ideal: maxResolutionSize.width.toInt(),
-                  ),
-                  height: VideoSizeConstraint(
-                    ideal: maxResolutionSize.height.toInt(),
-                  ),
-                  deviceId: cameraMetadata.deviceId,
-                ),
-              ),
-            ),
-          );
+          final Camera? camera =
+              (CameraPlatform.instance as CameraPlugin).cameras[cameraId];
+
+          expect(camera, isA<Camera>());
+          expect(camera!.options.audio.enabled, isFalse);
+          expect(camera.options.video.facingMode,
+              equals(FacingModeConstraint(CameraType.user)));
+          expect(camera.options.video.width!.ideal,
+              maxResolutionSize.width.toInt());
+          expect(camera.options.video.height!.ideal,
+              maxResolutionSize.height.toInt());
+          expect(camera.options.video.deviceId, cameraMetadata.deviceId);
         });
       });
 

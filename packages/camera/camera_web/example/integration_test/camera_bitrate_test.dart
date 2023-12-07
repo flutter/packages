@@ -63,7 +63,7 @@ void main() {
       final CanvasElement canvasElement = CanvasElement(
         width: videoSize.width.toInt(),
         height: videoSize.height.toInt(),
-      )..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
+      )..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
 
       final VideoElement videoElement = VideoElement();
 

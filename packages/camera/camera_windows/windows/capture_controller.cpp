@@ -217,7 +217,7 @@ HRESULT CaptureControllerImpl::CreateCaptureEngine() {
   }
 
   // Creates audio source only if not already initialized by test framework
-  if (record_audio_ && !audio_source_) {
+  if (media_settings_.record_audio && !audio_source_) {
     hr = CreateDefaultAudioCaptureSource();
     if (FAILED(hr)) {
       return hr;
@@ -241,7 +241,7 @@ HRESULT CaptureControllerImpl::CreateCaptureEngine() {
   }
 
   hr = attributes->SetUINT32(MF_CAPTURE_ENGINE_USE_VIDEO_DEVICE_ONLY,
-                             !record_audio_);
+                             !media_settings_.record_audio);
   if (FAILED(hr)) {
     return hr;
   }
@@ -301,8 +301,7 @@ void CaptureControllerImpl::ResetCaptureController() {
 
 bool CaptureControllerImpl::InitCaptureDevice(
     flutter::TextureRegistrar* texture_registrar, const std::string& device_id,
-    bool record_audio, ResolutionPreset resolution_preset, int fps,
-    int video_bitrate, int audio_bitrate) {
+    ResolutionPreset resolution_preset, const RecordSettings& record_settings) {
   assert(capture_controller_listener_);
 
   if (IsInitialized()) {
@@ -317,10 +316,7 @@ bool CaptureControllerImpl::InitCaptureDevice(
 
   capture_engine_state_ = CaptureEngineState::kInitializing;
   resolution_preset_ = resolution_preset;
-  fps_ = fps;
-  video_bitrate_ = video_bitrate;
-  audio_bitrate_ = audio_bitrate;
-  record_audio_ = record_audio;
+  media_settings_ = record_settings;
   texture_registrar_ = texture_registrar;
   video_device_id_ = device_id;
 
@@ -522,8 +518,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path,
   }
 
   if (!record_handler_) {
-    record_handler_ = std::make_unique<RecordHandler>(
-        record_audio_, fps_, video_bitrate_, audio_bitrate_);
+    record_handler_ = std::make_unique<RecordHandler>(media_settings_);
   } else if (!record_handler_->CanStart()) {
     return OnRecordStarted(
         CameraResult::kError,

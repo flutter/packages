@@ -33,7 +33,7 @@ public class MediaRecorderBuilderTest {
     MediaRecorderBuilder builder =
         new MediaRecorderBuilder(
             CamcorderProfile.get(CamcorderProfile.QUALITY_1080P),
-            new MediaRecorderBuilder.Parameters(""));
+            new MediaRecorderBuilder.RecordingParameters(""));
 
     assertNotNull(builder);
   }
@@ -44,7 +44,7 @@ public class MediaRecorderBuilderTest {
     MediaRecorderBuilder builder =
         new MediaRecorderBuilder(
             CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P),
-            new MediaRecorderBuilder.Parameters(""));
+            new MediaRecorderBuilder.RecordingParameters(""));
 
     assertNotNull(builder);
   }
@@ -56,7 +56,7 @@ public class MediaRecorderBuilderTest {
     MediaRecorderBuilder builder =
         new MediaRecorderBuilder(
             CamcorderProfile.get(CamcorderProfile.QUALITY_1080P),
-            new MediaRecorderBuilder.Parameters(""));
+            new MediaRecorderBuilder.RecordingParameters(""));
 
     assertNotNull(builder);
   }
@@ -67,7 +67,7 @@ public class MediaRecorderBuilderTest {
     MediaRecorderBuilder builder =
         new MediaRecorderBuilder(
             CamcorderProfile.getAll("0", CamcorderProfile.QUALITY_1080P),
-            new MediaRecorderBuilder.Parameters(""));
+            new MediaRecorderBuilder.RecordingParameters(""));
 
     assertNotNull(builder);
   }
@@ -86,7 +86,7 @@ public class MediaRecorderBuilderTest {
         new MediaRecorderBuilder(
                 recorderProfile,
                 mockFactory,
-                new MediaRecorderBuilder.Parameters(
+                new MediaRecorderBuilder.RecordingParameters(
                     outputFilePath, testFps, testVideoBitrate, null))
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
@@ -126,7 +126,7 @@ public class MediaRecorderBuilderTest {
         new MediaRecorderBuilder(
                 recorderProfile,
                 mockFactory,
-                new MediaRecorderBuilder.Parameters(
+                new MediaRecorderBuilder.RecordingParameters(
                     outputFilePath, testFps, testVideoBitrate, null))
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
@@ -162,7 +162,9 @@ public class MediaRecorderBuilderTest {
     int mediaOrientation = 1;
     MediaRecorderBuilder builder =
         new MediaRecorderBuilder(
-                recorderProfile, mockFactory, new MediaRecorderBuilder.Parameters(outputFilePath))
+                recorderProfile,
+                mockFactory,
+                new MediaRecorderBuilder.RecordingParameters(outputFilePath))
             .setEnableAudio(false)
             .setMediaOrientation(mediaOrientation);
 
@@ -185,7 +187,7 @@ public class MediaRecorderBuilderTest {
         new MediaRecorderBuilder(
                 recorderProfile,
                 mockFactory,
-                new MediaRecorderBuilder.Parameters(
+                new MediaRecorderBuilder.RecordingParameters(
                     outputFilePath, testFps, testVideoBitrate, testAudioBitrate))
             .setEnableAudio(true)
             .setMediaOrientation(mediaOrientation);
@@ -229,7 +231,7 @@ public class MediaRecorderBuilderTest {
         new MediaRecorderBuilder(
                 recorderProfile,
                 mockFactory,
-                new MediaRecorderBuilder.Parameters(
+                new MediaRecorderBuilder.RecordingParameters(
                     outputFilePath, testFps, testVideoBitrate, testAudioBitrate))
             .setEnableAudio(true)
             .setMediaOrientation(mediaOrientation);

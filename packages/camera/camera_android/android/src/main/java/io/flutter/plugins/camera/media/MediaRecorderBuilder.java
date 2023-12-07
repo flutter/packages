@@ -20,17 +20,17 @@ public class MediaRecorderBuilder {
     }
   }
 
-  public static class Parameters {
+  public static class RecordingParameters {
     @NonNull public final String outputFilePath;
     @Nullable public final Integer fps;
     @Nullable public final Integer videoBitrate;
     @Nullable public final Integer audioBitrate;
 
-    public Parameters(@NonNull String outputFilePath) {
+    public RecordingParameters(@NonNull String outputFilePath) {
       this(outputFilePath, null, null, null);
     }
 
-    public Parameters(
+    public RecordingParameters(
         @NonNull String outputFilePath,
         @Nullable Integer fps,
         @Nullable Integer videoBitrate,
@@ -45,25 +45,25 @@ public class MediaRecorderBuilder {
   private final CamcorderProfile camcorderProfile;
   private final EncoderProfiles encoderProfiles;
   private final MediaRecorderFactory recorderFactory;
-  @NonNull private final Parameters parameters;
+  @NonNull private final RecordingParameters parameters;
 
   private boolean enableAudio;
   private int mediaOrientation;
 
   public MediaRecorderBuilder(
-      @NonNull CamcorderProfile camcorderProfile, @NonNull Parameters parameters) {
+      @NonNull CamcorderProfile camcorderProfile, @NonNull RecordingParameters parameters) {
     this(camcorderProfile, new MediaRecorderFactory(), parameters);
   }
 
   public MediaRecorderBuilder(
-      @NonNull EncoderProfiles encoderProfiles, @NonNull Parameters parameters) {
+      @NonNull EncoderProfiles encoderProfiles, @NonNull RecordingParameters parameters) {
     this(encoderProfiles, new MediaRecorderFactory(), parameters);
   }
 
   MediaRecorderBuilder(
       @NonNull CamcorderProfile camcorderProfile,
       MediaRecorderFactory helper,
-      @NonNull Parameters parameters) {
+      @NonNull RecordingParameters parameters) {
     this.camcorderProfile = camcorderProfile;
     this.encoderProfiles = null;
     this.recorderFactory = helper;
@@ -73,7 +73,7 @@ public class MediaRecorderBuilder {
   MediaRecorderBuilder(
       @NonNull EncoderProfiles encoderProfiles,
       MediaRecorderFactory helper,
-      @NonNull Parameters parameters) {
+      @NonNull RecordingParameters parameters) {
     this.encoderProfiles = encoderProfiles;
     this.camcorderProfile = null;
     this.recorderFactory = helper;

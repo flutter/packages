@@ -114,7 +114,7 @@ class Camera
   private int initialCameraFacing;
 
   private final SurfaceTextureEntry flutterTexture;
-  private final Parameters parameters;
+  private final VideoCaptureSettings videoCaptureSettings;
   private final Context applicationContext;
   final DartMessenger dartMessenger;
   private CameraProperties cameraProperties;
@@ -218,7 +218,7 @@ class Camera
       final CameraFeatureFactory cameraFeatureFactory,
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
-      final VideoCaptureSettings parameters) {
+      final VideoCaptureSettings videoCaptureSettings) {
 
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
@@ -229,19 +229,19 @@ class Camera
     this.applicationContext = activity.getApplicationContext();
     this.cameraProperties = cameraProperties;
     this.cameraFeatureFactory = cameraFeatureFactory;
-    this.parameters = parameters;
+    this.videoCaptureSettings = videoCaptureSettings;
     this.cameraFeatures =
         CameraFeatures.init(
             cameraFeatureFactory,
             cameraProperties,
             activity,
             dartMessenger,
-            parameters.resolutionPreset);
+            videoCaptureSettings.resolutionPreset);
 
     Integer recordingFps = null;
 
-    if (parameters.fps != null && parameters.fps.intValue() > 0) {
-      recordingFps = parameters.fps;
+    if (videoCaptureSettings.fps != null && videoCaptureSettings.fps.intValue() > 0) {
+      recordingFps = videoCaptureSettings.fps;
     } else {
 
       if (SdkCapabilityChecker.supportsEncoderProfiles()) {
@@ -313,25 +313,25 @@ class Camera
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
               getRecordingProfile(),
-              new MediaRecorderBuilder.Parameters(
+              new MediaRecorderBuilder.RecordingParameters(
                   outputFilePath,
-                  parameters.fps,
-                  parameters.videoBitrate,
-                  parameters.audioBitrate));
+                  videoCaptureSettings.fps,
+                  videoCaptureSettings.videoBitrate,
+                  videoCaptureSettings.audioBitrate));
     } else {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
               getRecordingProfileLegacy(),
-              new MediaRecorderBuilder.Parameters(
+              new MediaRecorderBuilder.RecordingParameters(
                   outputFilePath,
-                  parameters.fps,
-                  parameters.videoBitrate,
-                  parameters.audioBitrate));
+                  videoCaptureSettings.fps,
+                  videoCaptureSettings.videoBitrate,
+                  videoCaptureSettings.audioBitrate));
     }
 
     mediaRecorder =
         mediaRecorderBuilder
-            .setEnableAudio(parameters.enableAudio)
+            .setEnableAudio(videoCaptureSettings.enableAudio)
             .setMediaOrientation(
                 lockedOrientation == null
                     ? getDeviceOrientationManager().getVideoOrientation()
@@ -1385,7 +1385,7 @@ class Camera
             cameraProperties,
             activity,
             dartMessenger,
-            parameters.resolutionPreset);
+            videoCaptureSettings.resolutionPreset);
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
     try {

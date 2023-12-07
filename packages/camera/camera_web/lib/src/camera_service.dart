@@ -325,6 +325,14 @@ class CameraService {
       case ResolutionPreset.low:
         return 200 * _kiloBits;
     }
+
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return 1 * _megaBits;
   }
 
   /// Maps the given [resolutionPreset] to audio bitrate.
@@ -342,6 +350,14 @@ class CameraService {
       case ResolutionPreset.low:
         return 32 * _kiloBits;
     }
+
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return 64 * _kiloBits;
   }
 
   /// Maps the given [deviceOrientation] to [OrientationType].
