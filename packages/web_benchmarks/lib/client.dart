@@ -4,11 +4,14 @@
 
 import 'dart:async';
 import 'dart:convert' show json;
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:math' as math;
+
+import 'package:web/helpers.dart';
 
 import 'src/common.dart';
 import 'src/recorder.dart';
+
 export 'src/recorder.dart';
 
 /// Signature for a function that creates a [Recorder].
@@ -47,7 +50,7 @@ Future<void> runBenchmarks(
 
   await _runBenchmark(nextBenchmark);
 
-  final Uri currentUri = Uri.parse(html.window.location.href);
+  final Uri currentUri = Uri.parse(window.location.href);
   // Create a new URI with the current 'page' value set to [initialPage] to
   // ensure the benchmark app is reloaded at the proper location.
   final Uri newUri = Uri(
@@ -58,7 +61,7 @@ Future<void> runBenchmarks(
   );
 
   // Reloading the window will trigger the next benchmark to run.
-  html.window.location.replace(newUri.toString());
+  window.location.replace(newUri.toString());
 }
 
 Future<void> _runBenchmark(String? benchmarkName) async {
@@ -116,7 +119,7 @@ Future<void> _runBenchmark(String? benchmarkName) async {
 }
 
 void _fallbackToManual(String error) {
-  html.document.body!.appendHtml('''
+  document.body!.appendHtml('''
     <div id="manual-panel">
       <h3>$error</h3>
 
@@ -127,33 +130,33 @@ void _fallbackToManual(String error) {
         ${_benchmarks.keys.map((String name) => '<li><button id="$name">$name</button></li>').join('\n')}
       </ul>
     </div>
-  ''',
-      validator: html.NodeValidatorBuilder()
-        ..allowHtml5()
-        ..allowInlineStyles());
+  ''');
 
   for (final String benchmarkName in _benchmarks.keys) {
     // Find the button elements added above.
-    final html.Element button = html.document.querySelector('#$benchmarkName')!;
-    button.addEventListener('click', (_) {
-      final html.Element? manualPanel =
-          html.document.querySelector('#manual-panel');
-      manualPanel?.remove();
-      _runBenchmark(benchmarkName);
-    });
+    final Element button = document.querySelector('#$benchmarkName')!;
+    button.addEventListener(
+        'click',
+        (JSAny? arg) {
+          final Element? manualPanel = document.querySelector('#manual-panel');
+          manualPanel?.remove();
+          _runBenchmark(benchmarkName);
+        }.toJS);
   }
 }
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  final html.BodyElement body = html.document.body!;
+  final HTMLBodyElement body = document.body! as HTMLBodyElement;
 
-  body.innerHtml = '<h2>${profile.name}</h2>';
+  body.innerHTML = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     body.appendHtml('<h2>$scoreKey</h2>');
     body.appendHtml('<pre>${timeseries.computeStats()}</pre>');
-    body.append(TimeseriesVisualization(timeseries).render());
+    // TODO(kevmoo): remove `NodeGlue` cast when we no longer need to support
+    // pkg:web 0.3.0
+    NodeGlue(body).append(TimeseriesVisualization(timeseries).render());
   });
 }
 
@@ -162,10 +165,10 @@ class TimeseriesVisualization {
   /// Creates a visualization for a [Timeseries].
   TimeseriesVisualization(this._timeseries) {
     _stats = _timeseries.computeStats();
-    _canvas = html.CanvasElement();
-    _screenWidth = html.window.screen!.width!;
+    _canvas = CanvasElement();
+    _screenWidth = window.screen.width;
     _canvas.width = _screenWidth;
-    _canvas.height = (_kCanvasHeight * html.window.devicePixelRatio).round();
+    _canvas.height = (_kCanvasHeight * window.devicePixelRatio).round();
     _canvas.style
       ..width = '100%'
       ..height = '${_kCanvasHeight}px'
@@ -186,8 +189,8 @@ class TimeseriesVisualization {
 
   final Timeseries _timeseries;
   late TimeseriesStats _stats;
-  late html.CanvasElement _canvas;
-  late html.CanvasRenderingContext2D _ctx;
+  late CanvasElement _canvas;
+  late CanvasRenderingContext2D _ctx;
   late int _screenWidth;
 
   // Used to normalize benchmark values to chart height.
@@ -209,9 +212,9 @@ class TimeseriesVisualization {
   }
 
   /// Renders the timeseries into a `<canvas>` and returns the canvas element.
-  html.CanvasElement render() {
-    _ctx.translate(0, _kCanvasHeight * html.window.devicePixelRatio);
-    _ctx.scale(1, -html.window.devicePixelRatio);
+  CanvasElement render() {
+    _ctx.translate(0, _kCanvasHeight * window.devicePixelRatio);
+    _ctx.scale(1, -window.devicePixelRatio);
 
     final double barWidth = _screenWidth / _stats.samples.length;
     double xOffset = 0;
@@ -220,19 +223,19 @@ class TimeseriesVisualization {
 
       if (sample.isWarmUpValue) {
         // Put gray background behind warm-up samples.
-        _ctx.fillStyle = 'rgba(200,200,200,1)';
+        _ctx.fillStyle = 'rgba(200,200,200,1)'.toJS;
         _ctx.fillRect(xOffset, 0, barWidth, _normalized(_maxValueChartRange));
       }
 
       if (sample.magnitude > _maxValueChartRange) {
         // The sample value is so big it doesn't fit on the chart. Paint it purple.
-        _ctx.fillStyle = 'rgba(100,50,100,0.8)';
+        _ctx.fillStyle = 'rgba(100,50,100,0.8)'.toJS;
       } else if (sample.isOutlier) {
         // The sample is an outlier, color it light red.
-        _ctx.fillStyle = 'rgba(255,50,50,0.6)';
+        _ctx.fillStyle = 'rgba(255,50,50,0.6)'.toJS;
       } else {
         // A non-outlier sample, color it light blue.
-        _ctx.fillStyle = 'rgba(50,50,255,0.6)';
+        _ctx.fillStyle = 'rgba(50,50,255,0.6)'.toJS;
       }
 
       _ctx.fillRect(xOffset, 0, barWidth - 1, _normalized(sample.magnitude));
@@ -245,12 +248,12 @@ class TimeseriesVisualization {
         _normalized(_stats.average));
 
     // Draw a horizontal dashed line corresponding to the outlier cut off.
-    _ctx.setLineDash(<num>[5, 5]);
+    _ctx.setLineDash(<JSNumber>[5.toJS, 5.toJS].toJS);
     drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth,
         _normalized(_stats.outlierCutOff));
 
     // Draw a light red band that shows the noise (1 stddev in each direction).
-    _ctx.fillStyle = 'rgba(255,50,50,0.3)';
+    _ctx.fillStyle = 'rgba(255,50,50,0.3)'.toJS;
     _ctx.fillRect(
       0,
       _normalized(_stats.average * (1 - _stats.noise)),
@@ -283,7 +286,7 @@ class LocalBenchmarkServerClient {
   /// Returns [kManualFallback] if local server is not available (uses 404 as a
   /// signal).
   Future<String> requestNextBenchmark() async {
-    final html.HttpRequest request = await _requestXhr(
+    final XMLHttpRequest request = await _requestXhr(
       '/next-benchmark',
       method: 'POST',
       mimeType: 'application/json',
@@ -298,7 +301,7 @@ class LocalBenchmarkServerClient {
     }
 
     isInManualMode = false;
-    return request.responseText ?? kManualFallback;
+    return request.responseText;
   }
 
   void _checkNotManualMode() {
@@ -314,7 +317,7 @@ class LocalBenchmarkServerClient {
   /// DevTools Protocol.
   Future<void> startPerformanceTracing(String? benchmarkName) async {
     _checkNotManualMode();
-    await html.HttpRequest.request(
+    await HttpRequest.request(
       '/start-performance-tracing?label=$benchmarkName',
       method: 'POST',
       mimeType: 'application/json',
@@ -324,7 +327,7 @@ class LocalBenchmarkServerClient {
   /// Stops the performance tracing session started by [startPerformanceTracing].
   Future<void> stopPerformanceTracing() async {
     _checkNotManualMode();
-    await html.HttpRequest.request(
+    await HttpRequest.request(
       '/stop-performance-tracing',
       method: 'POST',
       mimeType: 'application/json',
@@ -335,7 +338,7 @@ class LocalBenchmarkServerClient {
   /// server.
   Future<void> sendProfileData(Profile profile) async {
     _checkNotManualMode();
-    final html.HttpRequest request = await html.HttpRequest.request(
+    final XMLHttpRequest request = await _requestXhr(
       '/profile-data',
       method: 'POST',
       mimeType: 'application/json',
@@ -352,7 +355,7 @@ class LocalBenchmarkServerClient {
   /// The server will halt the devicelab task and log the error.
   Future<void> reportError(dynamic error, StackTrace stackTrace) async {
     _checkNotManualMode();
-    await html.HttpRequest.request(
+    await HttpRequest.request(
       '/on-error',
       method: 'POST',
       mimeType: 'application/json',
@@ -366,7 +369,7 @@ class LocalBenchmarkServerClient {
   /// Reports a message about the demo to the benchmark server.
   Future<void> printToConsole(String report) async {
     _checkNotManualMode();
-    await html.HttpRequest.request(
+    await HttpRequest.request(
       '/print-to-console',
       method: 'POST',
       mimeType: 'text/plain',
@@ -374,23 +377,27 @@ class LocalBenchmarkServerClient {
     );
   }
 
-  /// This is the same as calling [html.HttpRequest.request] but it doesn't
+  /// This is the same as calling [XMLHttpRequest.request] but it doesn't
   /// crash on 404, which we use to detect `flutter run`.
-  Future<html.HttpRequest> _requestXhr(
+  Future<XMLHttpRequest> _requestXhr(
     String url, {
     required String method,
     required String mimeType,
-    required dynamic sendData,
+    required String sendData,
   }) {
-    final Completer<html.HttpRequest> completer = Completer<html.HttpRequest>();
-    final html.HttpRequest xhr = html.HttpRequest();
-    xhr.open(method, url, async: true);
+    final Completer<XMLHttpRequest> completer = Completer<XMLHttpRequest>();
+    final XMLHttpRequest xhr = XMLHttpRequest();
+    xhr.open(method, url, true);
     xhr.overrideMimeType(mimeType);
-    xhr.onLoad.listen((html.ProgressEvent e) {
+    xhr.onLoad.listen((ProgressEvent e) {
       completer.complete(xhr);
     });
     xhr.onError.listen(completer.completeError);
-    xhr.send(sendData);
+    xhr.send(sendData.toJS);
     return completer.future;
   }
+}
+
+extension on HTMLElement {
+  void appendHtml(String input) => insertAdjacentHTML('beforeend', input);
 }
