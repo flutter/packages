@@ -1,7 +1,9 @@
 ## 1.0.0
 
-* **Breaking change:** replace 'useCanvasKit' parameter with 'compilationOptions'.
-* Add the ability to run a benchmark with WebAssembly.
+* **Breaking change:** replace the `useCanvasKit` parameter in the `serveWebBenchmark`
+method with a new parameter `compilationOptions`, which allows you to:
+  * specify the web renderer to use for the benchmark app (html, canvaskit, or skwasm)
+  * specify whether to use WebAssembly to build the benchmark app
 
 ## 0.1.0+11
 
