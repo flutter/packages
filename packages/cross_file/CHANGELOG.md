@@ -1,3 +1,8 @@
+## 0.3.3+8
+
+* Now supports `dart2wasm` compilation.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 0.3.3+7
 
 * Updates README to improve example of instantiating an XFile.
