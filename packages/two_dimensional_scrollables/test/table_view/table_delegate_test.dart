@@ -11,6 +11,18 @@ const Widget cell = SizedBox.shrink();
 
 void main() {
   group('TableCellBuilderDelegate', () {
+    test('exposes addAutomaticKeepAlives from super class', () {
+      final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
+        cellBuilder: (_, __) => cell,
+        columnBuilder: (_) => span,
+        rowBuilder: (_) => span,
+        columnCount: 5,
+        rowCount: 6,
+        addAutomaticKeepAlives: false,
+      );
+      expect(delegate.addAutomaticKeepAlives, isFalse);
+    });
+
     test('asserts  valid counts for rows and columns', () {
       TableCellBuilderDelegate? delegate;
       expect(
@@ -205,6 +217,16 @@ void main() {
   });
 
   group('TableCellListDelegate', () {
+    test('exposes addAutomaticKeepAlives from super class', () {
+      final TableCellListDelegate delegate = TableCellListDelegate(
+        cells: <List<Widget>>[<Widget>[]],
+        columnBuilder: (_) => span,
+        rowBuilder: (_) => span,
+        addAutomaticKeepAlives: false,
+      );
+      expect(delegate.addAutomaticKeepAlives, isFalse);
+    });
+
     test('asserts  valid counts for rows and columns', () {
       TableCellListDelegate? delegate;
       expect(
