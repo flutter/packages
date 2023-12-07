@@ -290,6 +290,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.writeln(
             'private @Nullable ${hostDatatype.datatype} ${field.name};');
         indent.newln();
+        indent.writeln('@CanIgnoreReturnValue');
         indent.writeScoped(
             'public @NonNull Builder ${_makeSetter(field)}($nullability ${hostDatatype.datatype} setterArg) {',
             '}', () {
@@ -939,6 +940,14 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     });
   }
 
+  void _writeCanIgnoreReturnValueAnnotation(
+      JavaOptions opt, Root root, Indent indent) {
+    indent.newln();
+    indent.writeln('@Target(METHOD)');
+    indent.writeln('@Retention(CLASS)');
+    indent.writeln('@interface CanIgnoreReturnValue {}');
+  }
+
   @override
   void writeGeneralUtilities(
     JavaOptions generatorOptions,
@@ -960,6 +969,9 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     if (hasFlutterApi) {
       indent.newln();
       _writeCreateConnectionError(indent);
+    }
+    if (root.classes.isNotEmpty) {
+      _writeCanIgnoreReturnValueAnnotation(generatorOptions, root, indent);
     }
   }
 

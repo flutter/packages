@@ -53,6 +53,7 @@ void main() {
     expect(code, contains('public static final class Foobar'));
     expect(code, contains('public static final class Builder'));
     expect(code, contains('private @Nullable Long field1;'));
+    expect(code, contains('@CanIgnoreReturnValue'));
   });
 
   test('gen one enum', () {
