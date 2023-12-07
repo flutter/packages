@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'dart:ui_web' as ui_web;
@@ -15,6 +15,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
+import 'package:web/helpers.dart' as html;
 
 import 'common.dart';
 
@@ -1188,7 +1189,7 @@ void endMeasureFrame() {
     html.window.performance.mark('measured_frame_end#$_currentFrameNumber');
     html.window.performance.measure(
       'measured_frame',
-      'measured_frame_start#$_currentFrameNumber',
+      'measured_frame_start#$_currentFrameNumber'.toJS,
       'measured_frame_end#$_currentFrameNumber',
     );
 
