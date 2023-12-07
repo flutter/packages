@@ -18,6 +18,7 @@ import 'package:shelf_static/shelf_static.dart';
 import 'benchmark_result.dart';
 import 'browser.dart';
 import 'common.dart';
+import 'compilation_options.dart';
 
 /// The default port number used by the local benchmark server.
 const int defaultBenchmarkServerPort = 9999;
@@ -338,34 +339,4 @@ class BenchmarkServer {
       unawaited(server.close());
     }
   }
-}
-
-/// Compilation options for bulding a Flutter web app.
-///
-/// This object holds metadata that is used to determine how the benchmark app
-/// should be built.
-class CompilationOptions {
-  /// Creates a [CompilationOptions] object.
-  const CompilationOptions({
-    this.renderer = WebRenderer.html,
-    this.useWasm = false,
-  });
-
-  /// The renderer to use for the build.
-  final WebRenderer renderer;
-
-  /// Whether to build the app with dart2wasm.
-  final bool useWasm;
-}
-
-/// The possible types of web renderers Flutter can build for.
-enum WebRenderer {
-  /// The HTML web renderer.
-  html,
-
-  /// The CanvasKit web renderer.
-  canvaskit,
-
-  /// The SKIA Wasm web renderer.
-  skwasm,
 }

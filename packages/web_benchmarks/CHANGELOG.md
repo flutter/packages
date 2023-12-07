@@ -4,6 +4,8 @@
 method with a new parameter `compilationOptions`, which allows you to:
   * specify the web renderer to use for the benchmark app (html, canvaskit, or skwasm)
   * specify whether to use WebAssembly to build the benchmark app
+* **Breaking change:** `serveWebBenchmark` now uses `canvaskit` instead of `html` as the
+default web renderer.
 
 ## 0.1.0+11
 

@@ -9,7 +9,6 @@ import 'package:test/test.dart';
 
 import 'package:web_benchmarks/server.dart';
 import 'package:web_benchmarks/src/common.dart';
-import 'package:web_benchmarks/src/runner.dart';
 
 Future<void> main() async {
   test('Can run a web benchmark', () async {

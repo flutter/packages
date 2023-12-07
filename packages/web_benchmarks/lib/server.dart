@@ -9,9 +9,11 @@ import 'package:logging/logging.dart';
 
 import 'src/benchmark_result.dart';
 import 'src/common.dart';
+import 'src/compilation_options.dart';
 import 'src/runner.dart';
 
 export 'src/benchmark_result.dart';
+export 'src/compilation_options.dart';
 
 /// The default port number used by the local benchmark server.
 const int defaultBenchmarkServerPort = 9999;
