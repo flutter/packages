@@ -328,8 +328,10 @@ class TypeDeclaration {
   /// Associated [Class], if any.
   final Class? associatedClass;
 
+  /// Associated [AstProxyApi], if any.
   final AstProxyApi? associatedProxyApi;
 
+  /// Whether the [TypeDeclaration] has an [associatedProxyApi].
   bool get isProxyApi => associatedProxyApi != null;
 
   @override
