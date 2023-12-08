@@ -992,7 +992,7 @@ List<Error> _validateProxyApi(
         if (interfaceName == api.name) {
           result.add(Error(
             message:
-                'ProxyApis that are implemented can only have callback methods: ${proxyApi.name}',
+                'ProxyApis used as interfaces can only have callback methods: ${proxyApi.name}',
           ));
         }
       }
@@ -1063,13 +1063,13 @@ List<Error> _validateProxyApi(
       if (field.isStatic) {
         result.add(Error(
           message:
-              'Static fields are considered attached fields and must be another ProxyApi: ${field.type.baseName}.',
+              'Static fields are considered attached fields and must be a ProxyApi: ${field.type.baseName}.',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       } else if (field.isAttached) {
         result.add(Error(
           message:
-              'Attached fields must be another ProxyApi: ${field.type.baseName}.',
+              'Attached fields must be a ProxyApi: ${field.type.baseName}.',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
