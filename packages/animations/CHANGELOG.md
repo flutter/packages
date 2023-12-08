@@ -1,6 +1,11 @@
-## NEXT
+## 2.0.10
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.0.9
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Migrate motion curves to use `Easing` class.
 
 ## 2.0.8
 
@@ -28,7 +33,7 @@
 * Updates for non-nullable bindings.
 
 ## 2.0.2
-* Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`. 
+* Fixed documentation for `OpenContainer` class; replaced `openBuilder` with `closedBuilder`.
 
 ## 2.0.1
 * Add links to the spec and codelab.
