@@ -1,7 +1,3 @@
-## 0.10.8+15
-
-* Fixes typo "intialize" in doc comment.
-
 ## 0.10.8+14
 
 * Fixes `pausePreview` null pointer error. `pausePreview` should not be called 

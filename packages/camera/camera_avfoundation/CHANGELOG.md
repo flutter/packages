@@ -1,6 +1,5 @@
-## 0.9.13+8
+## NEXT
 
-* Fixes typo "intialize" in doc comment.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.9.13+7
