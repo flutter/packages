@@ -691,6 +691,19 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                                handler:nil];  // No assertions needed. Lack of crash is a success.
 }
 
+- (void)testPublishesInRegistration {
+  NSString *pluginKey = @"TestRegistration";
+  NSObject<FlutterPluginRegistry> *registry = GetPluginRegistry();
+  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:pluginKey];
+
+  [FVPVideoPlayerPlugin registerWithRegistrar:registrar];
+
+  id publishedValue = [registry valuePublishedByPlugin:pluginKey];
+
+  XCTAssertNotNil(publishedValue);
+  XCTAssertTrue([publishedValue isKindOfClass:[FVPVideoPlayerPlugin class]]);
+}
+
 #if TARGET_OS_IOS
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
   AVAssetTrack *track = [[FakeAVAssetTrack alloc] initWithOrientation:orientation];
