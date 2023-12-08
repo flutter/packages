@@ -18,8 +18,8 @@ should add it to your `pubspec.yaml` as usual.
 
 ### A launch needs to be triggered by a user action
 
-Some web browsers, such as Safari, may prevent URL launching if it is not
-triggered by a user action (e.g. a button click).
+Web browsers prevent launching URLs in a new tab/window, unless triggered
+by a user action (e.g. a button click).
 
 Even if a user triggers a launch through a button click, if there is a delay due
 to awaiting a Future before the launch, the browser may still block it. This is
