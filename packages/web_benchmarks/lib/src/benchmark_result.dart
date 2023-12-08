@@ -14,13 +14,17 @@ class BenchmarkScore {
 
   /// Deserializes a JSON object to create a [BenchmarkScore] object.
   factory BenchmarkScore.parse(Map<String, Object?> json) {
-    final String metric = json[_metricKey]! as String;
-    final double value = (json[_valueKey]! as num).toDouble();
+    final String metric = json[metricKey]! as String;
+    final double value = (json[valueKey]! as num).toDouble();
     return BenchmarkScore(metric: metric, value: value);
   }
 
-  static const String _metricKey = 'metric';
-  static const String _valueKey = 'value';
+  /// The key for the value [metric] in the [BenchmarkScore] JSON
+  /// representation.
+  static const String metricKey = 'metric';
+
+  /// The key for the value [value] in the [BenchmarkScore] JSON representation.
+  static const String valueKey = 'value';
 
   /// The name of the metric that this score is categorized under.
   ///
@@ -34,8 +38,8 @@ class BenchmarkScore {
   /// Serializes the benchmark metric to a JSON object.
   Map<String, Object?> toJson() {
     return <String, Object?>{
-      _metricKey: metric,
-      _valueKey: value,
+      metricKey: metric,
+      valueKey: value,
     };
   }
 }
