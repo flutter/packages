@@ -28,3 +28,5 @@ user interaction, particularly if the Future takes too long to complete. In such
 cases, you can use the `webOnlyWindowName` parameter, setting it to "_self", to
 open the URL within the current tab. Another approach is to ensure that the
 `uri` is synchronously ready.
+
+Read more: MDN > [Transient activation](https://developer.mozilla.org/en-US/docs/Glossary/Transient_activation).
