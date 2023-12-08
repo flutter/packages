@@ -823,28 +823,6 @@ List<Error> _validateAst(Root root, String source) {
     }
   }
 
-  // Verify all super classes and interfaces for ProxyApis are other ProxyAps
-  final Iterable<AstProxyApi> allProxyApis = root.apis.whereType<AstProxyApi>();
-  for (final AstProxyApi api in allProxyApis) {
-    final String? superClassName = api.superClassName;
-    if (api.superClassName != null &&
-        !allProxyApis.any((AstProxyApi api) => api.name == superClassName)) {
-      result.add(Error(
-        message:
-            'Super class of ${api.name} is not marked as a @ProxyApi: $superClassName',
-      ));
-    }
-
-    for (final String interfaceName in api.interfacesNames) {
-      if (!allProxyApis.any((AstProxyApi api) => api.name == interfaceName)) {
-        result.add(Error(
-          message:
-              'Interface of ${api.name} is not marked as a @ProxyApi: $interfaceName',
-        ));
-      }
-    }
-  }
-
   for (final Api api in root.apis) {
     if (api is AstProxyApi) {
       result.addAll(_validateProxyApi(
@@ -930,11 +908,36 @@ List<Error> _validateProxyApi(
     );
   }
 
-  final List<AstProxyApi> superClassChain =
-      recursiveGetSuperClassApisChain(api, proxyApis);
+  // Validate super class is another ProxyApi
+  final String? superClassName = api.superClassName;
+  if (api.superClassName != null &&
+      !proxyApis.any((AstProxyApi api) => api.name == superClassName)) {
+    result.add(Error(
+      message:
+          'Super class of ${api.name} is not marked as a @ProxyApi: $superClassName',
+    ));
+  }
 
-  // Verify that the api does not inherit a non attached field from its super class.
-  if (superClassChain.isNotEmpty &&
+  // Validate all interfaces are other ProxyApis
+  for (final String interfaceName in api.interfacesNames) {
+    if (!proxyApis.any((AstProxyApi api) => api.name == interfaceName)) {
+      result.add(Error(
+        message:
+            'Interface of ${api.name} is not marked as a @ProxyApi: $interfaceName',
+      ));
+    }
+  }
+
+  List<AstProxyApi>? superClassChain;
+  try {
+    superClassChain = recursiveGetSuperClassApisChain(api, proxyApis);
+  } catch (error) {
+    result.add(Error(message: error.toString()));
+  }
+
+  // Validate that the api does not inherit a non attached field from its super class.
+  if (superClassChain != null &&
+      superClassChain.isNotEmpty &&
       superClassChain.first.nonAttachedFields.isNotEmpty) {
     result.add(Error(
       message:
@@ -946,14 +949,14 @@ List<Error> _validateProxyApi(
     ));
   }
 
-  // Verify this api is not used as an attached field while either:
-  // 1. Having a non-attached field.
-  // 2. Having a required Flutter method.
-  final bool hasNonAttachedField = api.nonAttachedFields.isNotEmpty;
-  final bool hasRequiredFlutterMethod =
-      api.flutterMethods.any((Method method) => method.required);
-  if (hasNonAttachedField || hasRequiredFlutterMethod) {
-    for (final AstProxyApi proxyApi in proxyApis) {
+  for (final AstProxyApi proxyApi in proxyApis) {
+    // Validate this api is not used as an attached field while either:
+    // 1. Having a non-attached field.
+    // 2. Having a required Flutter method.
+    final bool hasNonAttachedField = api.nonAttachedFields.isNotEmpty;
+    final bool hasRequiredFlutterMethod =
+        api.flutterMethods.any((Method method) => method.required);
+    if (hasNonAttachedField || hasRequiredFlutterMethod) {
       for (final Field field in proxyApi.attachedFields) {
         if (field.type.baseName == api.name) {
           if (hasNonAttachedField) {
@@ -979,8 +982,24 @@ List<Error> _validateProxyApi(
         }
       }
     }
+
+    // Validate only Flutter methods are used for implemented ProxyApis.
+    final bool isValidInterfaceProxyApi = api.hostMethods.isEmpty ||
+        api.constructors.isEmpty ||
+        api.fields.isEmpty;
+    if (!isValidInterfaceProxyApi) {
+      for (final String interfaceName in proxyApi.interfacesNames) {
+        if (interfaceName == api.name) {
+          result.add(Error(
+            message:
+                'ProxyApis that are implemented can only have callback methods: ${proxyApi.name}',
+          ));
+        }
+      }
+    }
   }
 
+  // Validate constructor parameters
   for (final Constructor constructor in api.constructors) {
     for (final Parameter parameter in constructor.parameters) {
       if (isDataClass(parameter)) {
@@ -1020,6 +1039,7 @@ List<Error> _validateProxyApi(
     }
   }
 
+  // Validate method parameters
   for (final Method method in api.methods) {
     for (final Parameter parameter in method.parameters) {
       if (isDataClass(parameter)) {
@@ -1035,6 +1055,7 @@ List<Error> _validateProxyApi(
     }
   }
 
+  // Validate fields
   for (final Field field in api.fields) {
     if (isDataClass(field)) {
       result.add(unsupportedDataClassError(field));
