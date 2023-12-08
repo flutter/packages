@@ -1,3 +1,7 @@
+## 14.1.0
+
+* ProxyApi support.
+
 ## 14.0.1
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
