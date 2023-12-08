@@ -1,149 +1,243 @@
 'p: animations':
-  - packages/animations/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/animations/**/*
 
 'p: camera':
-  - packages/camera/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+     - packages/camera/**/*
 
 'p: cross_file':
-  - packages/cross_file/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/cross_file/**/*
 
 'p: css_colors':
-  - packages/css_colors/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/css_colors/**/*
 
 'p: cupertino_icons':
-  - third_party/packages/cupertino_icons/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/cupertino_icons/**/*
 
 'p: dynamic_layouts':
-  - packages/dynamic_layouts/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/dynamic_layouts/**/*
 
 'p: espresso':
-  - packages/espresso/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/espresso/**/*
 
 'p: extension_google_sign_in_as_googleapis_auth':
-  - packages/extension_google_sign_in_as_googleapis_auth/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/extension_google_sign_in_as_googleapis_auth/**/*
 
 'p: file_selector':
-  - packages/file_selector/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/file_selector/**/*
 
 'p: flutter_adaptive_scaffold':
-  - packages/flutter_adaptive_scaffold/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_adaptive_scaffold/**/*
 
 'p: flutter_image':
-  - packages/flutter_image/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_image/**/*
 
 'p: flutter_lints':
-  - packages/flutter_lints/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_lints/**/*
 
 'p: flutter_markdown':
-  - packages/flutter_markdown/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_markdown/**/*
 
 'p: flutter_migrate':
-  - packages/flutter_migrate/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_migrate/**/*
 
 'p: flutter_plugin_android_lifecycle':
-  - packages/flutter_plugin_android_lifecycle/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_plugin_android_lifecycle/**/*
 
 'p: flutter_template_images':
-  - packages/flutter_template_images/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/flutter_template_images/**/*
 
 'p: go_router':
-  - packages/go_router/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/go_router/**/*
 
 'p: go_router_builder':
-  - packages/go_router_builder/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/go_router_builder/**/*
 
 'p: google_identity_services':
-  - packages/google_indentity_services_web/**
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/google_indentity_services_web/**
 
 'p: google_maps_flutter':
-  - packages/google_maps_flutter/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/google_maps_flutter/**/*
 
 'p: google_sign_in':
-  - packages/google_sign_in/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/google_sign_in/**/*
 
 'p: image_picker':
-  - packages/image_picker/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/image_picker/**/*
 
 'p: in_app_purchase':
-  - packages/in_app_purchase/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/in_app_purchase/**/*
 
 'p: ios_platform_images':
-  - packages/ios_platform_images/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/ios_platform_images/**/*
 
 'p: local_auth':
-  - packages/local_auth/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/local_auth/**/*
 
 'p: metrics_center':
-  - packages/metrics_center/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/metrics_center/**/*
 
 'p: multicast_dns':
-  - packages/multicast_dns/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/multicast_dns/**/*
 
 'p: palette_generator':
-  - packages/palette_generator/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/palette_generator/**/*
 
 'p: path_provider':
-  - packages/path_provider/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/path_provider/**/*
 
 'p: pigeon':
-  - packages/pigeon/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/pigeon/**/*
 
 'p: plugin_platform_interface':
-  - packages/plugin_platform_interface/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/plugin_platform_interface/**/*
 
 'p: pointer_interceptor':
-  - packages/pointer_interceptor/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/pointer_interceptor/**/*
 
 'p: quick_actions':
-  - packages/quick_actions/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/quick_actions/**/*
 
 'p: rfw':
-  - packages/rfw/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/rfw/**/*
 
 'p: shared_preferences':
-  - packages/shared_preferences/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/shared_preferences/**/*
 
 'p: standard_message_codec':
-  - packages/standard_message_codec/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/standard_message_codec/**/*
 
 'p: url_launcher':
-  - packages/url_launcher/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/url_launcher/**/*
 
 'p: video_player':
-  - packages/video_player/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/video_player/**/*
 
 'p: web_benchmarks':
-  - packages/web_benchmarks/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/web_benchmarks/**/*
 
 'p: webview_flutter':
-  - packages/webview_flutter/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/webview_flutter/**/*
 
 'p: xdg_directories':
-  - packages/xdg_directories/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/xdg_directories/**/*
 
 'platform-android':
-  - packages/*/*_android/**/*
-  - packages/**/android/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/*/*_android/**/*
+      - packages/**/android/**/*
 
 'platform-ios':
-  - packages/*/*_ios/**/*
-  - packages/*/*_storekit/**/*
-  - packages/*/*_wkwebview/**/*
-  - packages/**/ios/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/*/*_ios/**/*
+      - packages/*/*_storekit/**/*
+      - packages/*/*_wkwebview/**/*
+      - packages/**/ios/**/*
 
 'platform-linux':
-  - packages/*/*_linux/**/*
-  - packages/**/linux/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/*/*_linux/**/*
+      - packages/**/linux/**/*
 
 'platform-macos':
-  - packages/*/*_macos/**/*
-  - packages/**/macos/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/*/*_macos/**/*
+      - packages/**/macos/**/*
 
 'platform-web':
-  - packages/*/*_web/**/*
-  - packages/**/web/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/*/*_web/**/*
+      - packages/**/web/**/*
 
 'platform-windows':
-  - packages/*/*_windows/**/*
-  - packages/**/windows/**/*
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/*/*_windows/**/*
+      - packages/**/windows/**/*
 
