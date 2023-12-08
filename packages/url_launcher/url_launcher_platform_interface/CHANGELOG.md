@@ -1,3 +1,9 @@
+## 2.3.0
+
+* Adds `InAppBrowserConfiguration` parameter to `LaunchOptions`, to configure in-app browser views, such as Android Custom Tabs or SFSafariViewController.
+* Adds `showTitle` parameter to `InAppBrowserConfiguration` in order to control web-page title visibility.
+
+
 ## 2.2.0
 
 * Adds a new `inAppBrowserView` launch mode, to distinguish in-app browser

@@ -1,3 +1,8 @@
+## 6.3.0
+
+* Implement taking in `BrowserConfiguration` parameter
+* Implement `showTitle` functionality for Android Custom Tabs
+
 ## 6.2.0
 
 * Adds support for `inAppBrowserView` as a separate launch mode option from
