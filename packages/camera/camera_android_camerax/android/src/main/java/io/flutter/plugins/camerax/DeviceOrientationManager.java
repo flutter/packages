@@ -19,6 +19,8 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 
+import android.util.Log;
+
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */
@@ -142,21 +144,26 @@ public class DeviceOrientationManager {
       currentOrientation = getUIOrientation();
     }
 
-    return (decodeOrientation(currentOrientation, !isFrontFacing) + decodeOrientation(lockedOrientation, true) + 360) % 360;
+    Log.e("CAMILLE", Integer.toString(decodeOrientation(lockedOrientation)));
+    Log.e("CAMILLE", Integer.toString(decodeOrientation(currentOrientation)));
+    // return (decodeOrientation(lockedOrientation) - decodeOrientation(currentOrientation) + 360) % 360;
+        return ((360 - decodeOrientation(lockedOrientation)) + 360) % 360;
+
   }
 
 
-  public int decodeOrientation(@NonNull PlatformChannel.DeviceOrientation orientation, bool clockwise) {
+  public int decodeOrientation(@NonNull PlatformChannel.DeviceOrientation orientation) {
     switch (orientation) {
       case PORTRAIT_UP:
         return 0;
       case LANDSCAPE_RIGHT:
-        return clockwise ? 90: 270;
+        return 90;
       case PORTRAIT_DOWN:
         return 180;
       case LANDSCAPE_LEFT:
-        return clockwise ? 270 : 90;
+        return 270;
     }
+    throw new IllegalArgumentException("um no");
   }
 
 
@@ -340,6 +347,11 @@ public class DeviceOrientationManager {
     } else {
       return Configuration.ORIENTATION_PORTRAIT;
     }
+  }
+
+  /** Gets default capture rotation for CameraX {@code UseCase}s. */
+  Long getDefaultRotation() {
+    return Long.valueOf(getDisplay().getRotation()); // todo: consider saving this value (display) since we could be calling this a lot. also makes this an int and the host api Long
   }
 
   /**

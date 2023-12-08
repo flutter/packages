@@ -79,6 +79,14 @@ class DeviceOrientationManager {
         : serializeDeviceOrientation(sensorOrientation));
   }
 
+  static Future<int> getDefaultRotation(
+      {BinaryMessenger? binaryMessenger}) async {
+    final DeviceOrientationManagerHostApi api =
+        DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
+
+    return api.getDefaultRotation();
+  }
+
   /// Serializes[DeviceOrientation] into a [String].
   static String serializeDeviceOrientation(DeviceOrientation orientation) {
     switch (orientation) {

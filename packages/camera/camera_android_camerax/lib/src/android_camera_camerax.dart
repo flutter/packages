@@ -164,6 +164,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   bool captureOrientationLocked = false;
 
+  bool shouldSetDefaultRotation = false;
+
   DeviceOrientation? lockedOrientation;
 
   /// Returns list of all available cameras and their descriptions.
@@ -386,6 +388,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     int cameraId,
     DeviceOrientation orientation,
   ) async {
+    shouldSetDefaultRotation = true;
     captureOrientationLocked = true;
     lockedOrientation = orientation;
 
@@ -555,14 +558,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
     // Set target rotation to current photo orientation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked) {
-      // print(await proxy.getPhotoOrientation(null));
-      // print(await prox)
-      await imageCapture!.setTargetRotation(
-          _getTargetRotation(await proxy.getPhotoOrientation(null)));
-    } else {
-      await imageCapture!.setTargetRotation(_getTargetRotation(
-          await proxy.getPhotoOrientation(lockedOrientation)));
+    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+      // TESTER: use for testing not other use cases
+      print("SETTING DEFAULT ROTATION!");
+      print(await proxy.getDefaultRotation());
+      await imageCapture!.setTargetRotation(await proxy.getDefaultRotation());
     }
 
     final String picturePath = await imageCapture!.takePicture();
@@ -652,6 +652,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (!captureOrientationLocked) {
       await videoCapture!.setTargetRotation(
           _getTargetRotation(await proxy.getVideoOrientation(null)));
+    } else if (shouldSetDefaultRotation) {
+      await imageCapture!.setTargetRotation(await proxy.getDefaultRotation());
     }
 
     videoOutputPath =
@@ -760,6 +762,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (!captureOrientationLocked) {
       await imageAnalysis!.setTargetRotation(
           _getTargetRotation(await proxy.getPhotoOrientation(null)));
+    } else if (shouldSetDefaultRotation) {
+      await imageCapture!.setTargetRotation(await proxy.getDefaultRotation());
     }
 
     // Create and set Analyzer that can read image data for image streaming.

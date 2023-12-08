@@ -494,6 +494,8 @@ abstract class TestDeviceOrientationManagerHostApi {
 
   int getVideoOrientation(String? orientation);
 
+  int getDefaultRotation();
+
   static void setup(TestDeviceOrientationManagerHostApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -561,6 +563,20 @@ abstract class TestDeviceOrientationManagerHostApi {
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_orientation = (args[0] as String?);
           final int output = api.getVideoOrientation(arg_orientation);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultRotation', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(channel, (Object? message) async {
+          // ignore message
+          final int output = api.getDefaultRotation();
           return <Object?>[output];
         });
       }

@@ -52,6 +52,7 @@ class CameraXProxy {
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
     this.getPhotoOrientation = _getPhotoOrientation,
     this.getVideoOrientation = _getVideoOrientation,
+    this.getDefaultRotation = _getDefaultRotation,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -141,6 +142,8 @@ class CameraXProxy {
 
   /// Retrieves current video orientation in degrees.
   Future<int> Function(DeviceOrientation? orientation) getVideoOrientation;
+
+  Future<int> Function() getDefaultRotation;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -246,5 +249,9 @@ class CameraXProxy {
   static Future<int> _getVideoOrientation(
       DeviceOrientation? orientation) async {
     return DeviceOrientationManager.getVideoOrientation(orientation);
+  }
+
+  static Future<int> _getDefaultRotation() async {
+    return DeviceOrientationManager.getDefaultRotation();
   }
 }

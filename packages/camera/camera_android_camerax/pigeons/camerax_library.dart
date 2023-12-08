@@ -230,6 +230,8 @@ abstract class DeviceOrientationManagerHostApi {
   int getPhotoOrientation(String? orientation);
 
   int getVideoOrientation(String? orientation);
+
+  int getDefaultRotation();
 }
 
 @FlutterApi()

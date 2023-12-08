@@ -131,4 +131,13 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
     }
     return Long.valueOf(deviceOrientationManager.getVideoOrientation(deserializeDeviceOrientationString(orientation)));
   }
+
+  @Override 
+  public @NonNull Long getDefaultRotation() {
+        if (deviceOrientationManager == null) {
+      throw new NullPointerException(
+          "startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the video orientation.");
+    }
+    return deviceOrientationManager.getDefaultRotation();
+  }
 }
