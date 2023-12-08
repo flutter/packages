@@ -14,6 +14,7 @@ void main() {
   final GoogleMapsFlutterPlatform mapsImplementation =
       GoogleMapsFlutterPlatform.instance;
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
+    // Force Hybrid Composition mode.
     mapsImplementation.useAndroidViewSurface = true;
   }
   // #enddocregion DisplayMode

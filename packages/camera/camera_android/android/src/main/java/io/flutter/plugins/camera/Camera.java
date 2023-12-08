@@ -1076,8 +1076,13 @@ class Camera
 
   /** Pause the preview from dart. */
   public void pausePreview() throws CameraAccessException {
-    this.pausedPreview = true;
-    this.captureSession.stopRepeating();
+    if (!this.pausedPreview) {
+      this.pausedPreview = true;
+
+      if (this.captureSession != null) {
+        this.captureSession.stopRepeating();
+      }
+    }
   }
 
   /** Resume the preview from dart. */

@@ -2,9 +2,9 @@
 
 A Flutter plugin for [Google Sign In](https://developers.google.com/identity/).
 
-|             | Android | iOS     | Web |
-|-------------|---------|---------|-----|
-| **Support** | SDK 16+ | iOS 11+ | Any |
+|             | Android | iOS   | macOS  | Web |
+|-------------|---------|-------|--------|-----|
+| **Support** | SDK 16+ | 11.0+ | 10.15+ | Any |
 
 ## Platform integration
 
@@ -41,6 +41,10 @@ Consider also using an Apple sign in plugin from pub.dev.
 The Flutter Favorite
 [sign_in_with_apple](https://pub.dev/packages/sign_in_with_apple) plugin could
 be an option.
+
+### macOS integration
+
+Please see [instructions on integrating Google Sign-In for macOS](https://pub.dev/packages/google_sign_in_ios#macos-setup).
 
 ### Web integration
 

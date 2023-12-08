@@ -110,12 +110,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		331C80D6294CF71000263BE5 /* RunnerTests */ = {
+		330B3F8E2B1F9C6A00E6DC3F /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
 				33683FF02ABCAC94007305E4 /* VideoPlayerTests.m */,
 			);
-			path = RunnerTests;
+			name = RunnerTests;
 			sourceTree = "<group>";
 		};
 		33BA886A226E78AF003329D5 /* Configs */ = {
@@ -134,7 +134,7 @@
 			children = (
 				33FAB671232836740065AC1E /* Runner */,
 				33CEB47122A05771004F2AC0 /* Flutter */,
-				331C80D6294CF71000263BE5 /* RunnerTests */,
+				330B3F8E2B1F9C6A00E6DC3F /* RunnerTests */,
 				33CC10EE2044A3C60003C045 /* Products */,
 				D73912EC22F37F3D000D13A0 /* Frameworks */,
 				628924301D1755B9EF85E51F /* Pods */,
