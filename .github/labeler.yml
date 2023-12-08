@@ -6,7 +6,7 @@
 'p: camera':
   - changed-files:
     - any-glob-to-any-file:
-     - packages/camera/**/*
+      - packages/camera/**/*
 
 'p: cross_file':
   - changed-files:
