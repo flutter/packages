@@ -1,6 +1,10 @@
+## 0.3.0+1
+
+* Corrects 0.3.0 changelog entry about the minimum Flutter/Dart dependencies.
+
 ## 0.3.0
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 * Migrates from `package:js`/`dart:html` to `package:web` so this package can
   compile to WASM.
 * Performs the following **breaking API changes (in bold)** and other fixes to
