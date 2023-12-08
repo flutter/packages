@@ -252,8 +252,6 @@ public class UrlLauncherTest {
     api.setActivity(activity);
     String url = "https://flutter.dev";
     HashMap<String, String> headers = new HashMap<>();
-    String headerKey = "Content-Type";
-    headers.put(headerKey, "text/plain");
 
     boolean result =
         api.openUrlInApp(
@@ -283,8 +281,6 @@ public class UrlLauncherTest {
     api.setActivity(activity);
     String url = "https://flutter.dev";
     HashMap<String, String> headers = new HashMap<>();
-    String headerKey = "Content-Type";
-    headers.put(headerKey, "text/plain");
 
     boolean result =
         api.openUrlInApp(

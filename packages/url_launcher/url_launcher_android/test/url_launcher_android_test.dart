@@ -436,10 +436,6 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
       headers: headers,
     );
 
-    passedBrowserOptions = BrowserOptions(
-      showTitle: true,
-    );
-
     usedWebView = false;
     return _launch(url);
   }

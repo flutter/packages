@@ -144,8 +144,7 @@ final class UrlLauncher implements UrlLauncherApi {
     return CustomTabsClient.getPackageName(applicationContext, Collections.emptyList()) != null;
   }
 
-  @VisibleForTesting
-  public static boolean openCustomTab(
+  private static boolean openCustomTab(
       @NonNull Context context,
       @NonNull Uri uri,
       @NonNull Bundle headersBundle,
@@ -179,8 +178,7 @@ final class UrlLauncher implements UrlLauncherApi {
     return false;
   }
 
-  @VisibleForTesting
-  public static @NonNull Bundle extractBundle(Map<String, String> headersMap) {
+  private static @NonNull Bundle extractBundle(Map<String, String> headersMap) {
     final Bundle headersBundle = new Bundle();
     for (String key : headersMap.keySet()) {
       final String value = headersMap.get(key);
