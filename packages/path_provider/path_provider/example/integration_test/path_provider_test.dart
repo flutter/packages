@@ -117,6 +117,6 @@ void _verifySampleFile(Directory? directory, String name) {
 
   file.writeAsStringSync('Hello world!');
   expect(file.readAsStringSync(), 'Hello world!');
-  expect(directory.listSync(), isNotEmpty);
+  expect((Process.runSync('ls', [directory.path]).stdout as String), contains(name));
   file.deleteSync();
 }
