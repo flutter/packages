@@ -847,7 +847,7 @@ Future<List<Error>> _validateAst(Root root, String source) async {
     }
   }
 
-  result.addAll(await _verifyProxyApisInheritance(allProxyApis));
+  result.addAll(await _validateProxyApisInheritance(allProxyApis));
 
   for (final Api api in root.apis) {
     if (api is AstProxyApi) {
@@ -917,10 +917,15 @@ Future<List<Error>> _validateAst(Root root, String source) async {
 // Verifies that the super classes and interfaces of ProxyApis don't cause an
 // error. It creates a new file with just the class declarations and runs
 // analysis on it.
-Future<List<Error>> _verifyProxyApisInheritance(
+//
+// This method is really slow, so it doesn't run if proxyApis is empty.
+Future<List<Error>> _validateProxyApisInheritance(
   Iterable<AstProxyApi> proxyApis,
 ) async {
   final List<Error> errors = <Error>[];
+  if (proxyApis.isEmpty) {
+    return errors;
+  }
 
   final File tempFile =
       File('${Directory.systemTemp.path}/pigeon_inheritance_check.dart');
