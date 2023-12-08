@@ -984,8 +984,8 @@ List<Error> _validateProxyApi(
     }
 
     // Validate only Flutter methods are used for implemented ProxyApis.
-    final bool isValidInterfaceProxyApi = api.hostMethods.isEmpty ||
-        api.constructors.isEmpty ||
+    final bool isValidInterfaceProxyApi = api.hostMethods.isEmpty &&
+        api.constructors.isEmpty &&
         api.fields.isEmpty;
     if (!isValidInterfaceProxyApi) {
       for (final String interfaceName in proxyApi.interfacesNames) {

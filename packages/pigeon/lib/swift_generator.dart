@@ -236,7 +236,8 @@ import FlutterMacOS
     required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
-        api is AstHostApi && api.methods.any((Method it) => it.isAsynchronous))) {
+        api is AstHostApi &&
+        api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
     super.writeApis(generatorOptions, root, indent,
@@ -797,8 +798,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi =
-        root.apis.whereType<AstHostApi>().any((Api api) => api.methods.isNotEmpty);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);

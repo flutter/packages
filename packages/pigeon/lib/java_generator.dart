@@ -545,7 +545,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
-        api is AstHostApi && api.methods.any((Method it) => it.isAsynchronous) ||
+        api is AstHostApi &&
+            api.methods.any((Method it) => it.isAsynchronous) ||
         api is AstFlutterApi)) {
       indent.newln();
       _writeResultInterfaces(indent);
@@ -943,8 +944,9 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi =
-        root.apis.whereType<AstHostApi>().any((Api api) => api.methods.isNotEmpty);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);

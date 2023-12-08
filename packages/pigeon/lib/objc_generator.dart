@@ -700,8 +700,9 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi =
-        root.apis.whereType<AstHostApi>().any((Api api) => api.methods.isNotEmpty);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
