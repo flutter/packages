@@ -659,6 +659,9 @@ Set<AstProxyApi> recursiveFindAllInterfacesApis(
 }
 
 /// Recursively find super classes for a ProxyApi and return them in order.
+///
+/// This method assumes the super classes of each ProxyApi doesn't create a
+/// loop. Throws a [StateError] if a loop is found.
 List<AstProxyApi> recursiveGetSuperClassApisChain(
   AstProxyApi proxyApi,
   Iterable<AstProxyApi> allProxyApis,
@@ -667,6 +670,15 @@ List<AstProxyApi> recursiveGetSuperClassApisChain(
 
   String? currentProxyApiName = proxyApi.superClassName;
   while (currentProxyApiName != null) {
+    if (proxyApis.length > allProxyApis.length) {
+      final Iterable<String> apiNames = proxyApis.map(
+        (AstProxyApi api) => api.name,
+      );
+      throw StateError(
+        'Loop found when processing super classes for a ProxyApi: ${proxyApi.name},${apiNames.join(',')}',
+      );
+    }
+
     AstProxyApi? nextProxyApi;
     for (final AstProxyApi node in allProxyApis) {
       if (currentProxyApiName == node.name) {

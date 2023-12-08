@@ -12,8 +12,7 @@ import 'package:analyzer/dart/analysis/analysis_context.dart'
     show AnalysisContext;
 import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
     show AnalysisContextCollection;
-import 'package:analyzer/dart/analysis/results.dart'
-    show ParsedUnitResult, ErrorsResult;
+import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
 import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
 import 'package:analyzer/dart/ast/syntactic_entity.dart'
@@ -788,7 +787,7 @@ extension _ObjectAs on Object {
   T? asNullable<T>() => this as T?;
 }
 
-Future<List<Error>> _validateAst(Root root, String source) async {
+List<Error> _validateAst(Root root, String source) {
   final List<Error> result = <Error>[];
   final List<String> customClasses =
       root.classes.map((Class x) => x.name).toList();
@@ -824,9 +823,8 @@ Future<List<Error>> _validateAst(Root root, String source) async {
     }
   }
 
-  final Iterable<AstProxyApi> allProxyApis = root.apis.whereType<AstProxyApi>();
-
   // Verify all super classes and interfaces for ProxyApis are other ProxyAps
+  final Iterable<AstProxyApi> allProxyApis = root.apis.whereType<AstProxyApi>();
   for (final AstProxyApi api in allProxyApis) {
     final String? superClassName = api.superClassName;
     if (api.superClassName != null &&
@@ -846,8 +844,6 @@ Future<List<Error>> _validateAst(Root root, String source) async {
       }
     }
   }
-
-  result.addAll(await _validateProxyApisInheritance(allProxyApis));
 
   for (final Api api in root.apis) {
     if (api is AstProxyApi) {
@@ -912,59 +908,6 @@ Future<List<Error>> _validateAst(Root root, String source) async {
   }
 
   return result;
-}
-
-// Verifies that the super classes and interfaces of ProxyApis don't cause an
-// error. It creates a new file with just the class declarations and runs
-// analysis on it.
-//
-// This method is really slow, so it doesn't run if proxyApis is empty.
-Future<List<Error>> _validateProxyApisInheritance(
-  Iterable<AstProxyApi> proxyApis,
-) async {
-  final List<Error> errors = <Error>[];
-  if (proxyApis.isEmpty) {
-    return errors;
-  }
-
-  final File tempFile =
-      File('${Directory.systemTemp.path}/pigeon_inheritance_check.dart');
-  tempFile.createSync();
-
-  final StringBuffer testSource = StringBuffer();
-  for (final AstProxyApi api in proxyApis) {
-    final String extendsClause =
-        api.superClassName != null ? 'extends ${api.superClassName}' : '';
-    final String implementsClause = api.interfacesNames.isNotEmpty
-        ? 'implements ${api.interfacesNames.join(',')}'
-        : '';
-
-    testSource.writeln('class ${api.name} $extendsClause $implementsClause {}');
-  }
-
-  tempFile.writeAsStringSync(testSource.toString());
-
-  final AnalysisContextCollection collection = AnalysisContextCollection(
-    includedPaths: <String>[tempFile.path],
-  );
-
-  for (final AnalysisContext context in collection.contexts) {
-    for (final String path in context.contextRoot.analyzedFiles()) {
-      final AnalysisSession session = context.currentSession;
-
-      final ErrorsResult result = await session.getErrors(path) as ErrorsResult;
-      for (final AnalysisError error in result.errors) {
-        errors.add(
-          Error(
-            message: 'Error parsing ProxyApis: ${error.message}',
-            filename: error.source.fullName,
-          ),
-        );
-      }
-    }
-  }
-
-  return errors;
 }
 
 List<Error> _validateProxyApi(
@@ -1155,7 +1098,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
   }
 
-  Future<ParseResults> results() async {
+  ParseResults results() {
     _storeCurrentApi();
     _storeCurrentClass();
 
@@ -1171,7 +1114,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final Root completeRoot =
         Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
 
-    final List<Error> validateErrors = await _validateAst(completeRoot, source);
+    final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
     totalErrors.addAll(validateErrors);
 
@@ -1851,7 +1794,7 @@ class Pigeon {
   /// it.  [types] optionally filters out what datatypes are actually parsed.
   /// [sdkPath] for specifying the Dart SDK path for
   /// [AnalysisContextCollection].
-  Future<ParseResults> parseFile(String inputPath, {String? sdkPath}) async {
+  ParseResults parseFile(String inputPath, {String? sdkPath}) {
     final List<String> includedPaths = <String>[
       path.absolute(path.normalize(inputPath))
     ];
@@ -1970,7 +1913,7 @@ ${_argParser.usage}''';
         help: 'The package that generated code will be in.');
 
   /// Convert command-line arguments to [PigeonOptions].
-  static Future<PigeonOptions> parseArgs(List<String> args) async {
+  static PigeonOptions parseArgs(List<String> args) {
     // Note: This function shouldn't perform any logic, just translate the args
     // to PigeonOptions.  Synthesized values inside of the PigeonOption should
     // get set in the `run` function to accommodate users that are using the
@@ -2036,8 +1979,8 @@ ${_argParser.usage}''';
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
   static Future<int> run(List<String> args,
-      {List<GeneratorAdapter>? adapters, String? sdkPath}) async {
-    final PigeonOptions options = await Pigeon.parseArgs(args);
+      {List<GeneratorAdapter>? adapters, String? sdkPath}) {
+    final PigeonOptions options = Pigeon.parseArgs(args);
     return runWithOptions(options, adapters: adapters, sdkPath: sdkPath);
   }
 
@@ -2070,7 +2013,7 @@ ${_argParser.usage}''';
     }
 
     final ParseResults parseResults =
-        await pigeon.parseFile(options.input!, sdkPath: sdkPath);
+        pigeon.parseFile(options.input!, sdkPath: sdkPath);
 
     final List<Error> errors = <Error>[];
     errors.addAll(parseResults.errors);
