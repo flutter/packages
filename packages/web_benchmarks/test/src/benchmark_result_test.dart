@@ -8,13 +8,13 @@ import 'package:web_benchmarks/server.dart';
 void main() {
   group('can serialize and deserialize', () {
     test('$BenchmarkResults', () {
-      final Map<String, dynamic> data = <String, dynamic>{
-        'foo': <Map<String, dynamic>>[
-          <String, dynamic>{'metric': 'foo.bar', 'value': 12.34},
-          <String, dynamic>{'metric': 'foo.baz', 'value': 10},
+      final Map<String, Object?> data = <String, Object?>{
+        'foo': <Map<String, Object?>>[
+          <String, Object?>{'metric': 'foo.bar', 'value': 12.34},
+          <String, Object?>{'metric': 'foo.baz', 'value': 10},
         ],
-        'bar': <Map<String, dynamic>>[
-          <String, dynamic>{'metric': 'bar.foo', 'value': 1.23},
+        'bar': <Map<String, Object?>>[
+          <String, Object?>{'metric': 'bar.foo', 'value': 1.23},
         ]
       };
 
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('$BenchmarkScore', () {
-      final Map<String, dynamic> data = <String, dynamic>{
+      final Map<String, Object?> data = <String, Object?>{
         'metric': 'foo',
         'value': 1.234
       };

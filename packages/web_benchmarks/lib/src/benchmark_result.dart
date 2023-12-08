@@ -13,7 +13,7 @@ class BenchmarkScore {
   });
 
   /// Deserializes a JSON object to create a [BenchmarkScore] object.
-  factory BenchmarkScore.parse(Map<String, dynamic> json) {
+  factory BenchmarkScore.parse(Map<String, Object?> json) {
     final String metric = json[_metricKey]! as String;
     final double value = (json[_valueKey]! as num).toDouble();
     return BenchmarkScore(metric: metric, value: value);
@@ -32,8 +32,8 @@ class BenchmarkScore {
   final num value;
 
   /// Serializes the benchmark metric to a JSON object.
-  Map<String, dynamic> toJson() {
-    return <String, dynamic>{
+  Map<String, Object?> toJson() {
+    return <String, Object?>{
       _metricKey: metric,
       _valueKey: value,
     };
@@ -46,13 +46,13 @@ class BenchmarkResults {
   BenchmarkResults(this.scores);
 
   /// Deserializes a JSON object to create a [BenchmarkResults] object.
-  factory BenchmarkResults.parse(Map<String, dynamic> json) {
+  factory BenchmarkResults.parse(Map<String, Object?> json) {
     final Map<String, List<BenchmarkScore>> results =
         <String, List<BenchmarkScore>>{};
     for (final String key in json.keys) {
       final List<BenchmarkScore> scores = (json[key]! as List<Object?>)
           .cast<Map<String, Object?>>()
-          .map((Map<String, Object?> s) => BenchmarkScore.parse(s))
+          .map(BenchmarkScore.parse)
           .toList();
       results[key] = scores;
     }
@@ -63,10 +63,10 @@ class BenchmarkResults {
   final Map<String, List<BenchmarkScore>> scores;
 
   /// Serializes benchmark metrics to JSON.
-  Map<String, List<Map<String, dynamic>>> toJson() {
-    return scores.map<String, List<Map<String, dynamic>>>(
+  Map<String, List<Map<String, Object?>>> toJson() {
+    return scores.map<String, List<Map<String, Object?>>>(
         (String benchmarkName, List<BenchmarkScore> scores) {
-      return MapEntry<String, List<Map<String, dynamic>>>(
+      return MapEntry<String, List<Map<String, Object?>>>(
         benchmarkName,
         scores.map((BenchmarkScore score) => score.toJson()).toList(),
       );
