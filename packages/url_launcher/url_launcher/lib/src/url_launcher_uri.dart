@@ -29,7 +29,7 @@ import 'type_conversion.dart';
 ///  - "_self" opens the new URL in the current tab.
 /// Default behaviour when unset is to open the url in a new tab.
 ///
-/// Some web browsers, such as Safari, may prevent the launch if it is not
+/// Web browsers prevent launching URLs in a new tab/window, unless
 /// triggered by a user action (e.g. a button click). See
 /// [package:url_launcher_web](https://pub.dev/packages/url_launcher_web#limitations-on-the-web-platform)
 /// for more details.
