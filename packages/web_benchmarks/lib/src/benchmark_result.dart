@@ -12,6 +12,16 @@ class BenchmarkScore {
     required this.value,
   });
 
+  /// Deserializes a JSON object to create a [BenchmarkScore] object.
+  factory BenchmarkScore.parse(Map<String, dynamic> json) {
+    final String metric = json[_metricKey]! as String;
+    final double value = (json[_valueKey]! as num).toDouble();
+    return BenchmarkScore(metric: metric, value: value);
+  }
+
+  static const String _metricKey = 'metric';
+  static const String _valueKey = 'value';
+
   /// The name of the metric that this score is categorized under.
   ///
   /// Scores collected over time under the same name can be visualized as a
@@ -24,8 +34,8 @@ class BenchmarkScore {
   /// Serializes the benchmark metric to a JSON object.
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'metric': metric,
-      'value': value,
+      _metricKey: metric,
+      _valueKey: value,
     };
   }
 }
@@ -34,6 +44,20 @@ class BenchmarkScore {
 class BenchmarkResults {
   /// Constructs a result containing scores from a single run benchmark run.
   BenchmarkResults(this.scores);
+
+  /// Deserializes a JSON object to create a [BenchmarkResults] object.
+  factory BenchmarkResults.parse(Map<String, dynamic> json) {
+    final Map<String, List<BenchmarkScore>> results =
+        <String, List<BenchmarkScore>>{};
+    for (final String key in json.keys) {
+      final List<BenchmarkScore> scores = (json[key]! as List<Object?>)
+          .cast<Map<String, Object?>>()
+          .map((Map<String, Object?> s) => BenchmarkScore.parse(s))
+          .toList();
+      results[key] = scores;
+    }
+    return BenchmarkResults(results);
+  }
 
   /// Scores collected in a benchmark run.
   final Map<String, List<BenchmarkScore>> scores;
@@ -44,13 +68,7 @@ class BenchmarkResults {
         (String benchmarkName, List<BenchmarkScore> scores) {
       return MapEntry<String, List<Map<String, dynamic>>>(
         benchmarkName,
-        scores
-            .map<Map<String, dynamic>>(
-                (BenchmarkScore score) => <String, dynamic>{
-                      'metric': score.metric,
-                      'value': score.value,
-                    })
-            .toList(),
+        scores.map((BenchmarkScore score) => score.toJson()).toList(),
       );
     });
   }
