@@ -19,7 +19,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:0 error:&error];
   WKWebViewConfiguration *configuration =
       (WKWebViewConfiguration *)[instanceManager instanceForIdentifier:0];
   XCTAssertTrue([configuration isKindOfClass:[WKWebViewConfiguration class]]);
@@ -37,7 +37,7 @@
   [instanceManager addDartCreatedInstance:mockWebView withIdentifier:0];
 
   FlutterError *error;
-  [hostAPI createFromWebViewWithIdentifier:@1 webViewIdentifier:@0 error:&error];
+  [hostAPI createFromWebViewWithIdentifier:1 webViewIdentifier:0 error:&error];
   WKWebViewConfiguration *configuration =
       (WKWebViewConfiguration *)[instanceManager instanceForIdentifier:1];
   XCTAssertTrue([configuration isKindOfClass:[WKWebViewConfiguration class]]);
@@ -55,9 +55,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:@0
-                                                            isAllowed:@NO
-                                                                error:&error];
+  [hostAPI setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:0 isAllowed:NO error:&error];
   OCMVerify([mockWebViewConfiguration setAllowsInlineMediaPlayback:NO]);
   XCTAssertNil(error);
 }
@@ -73,8 +71,8 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:@0
-                                                                     isLimited:@NO
+  [hostAPI setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:0
+                                                                     isLimited:NO
                                                                          error:&error];
   OCMVerify([mockWebViewConfiguration setLimitsNavigationsToAppBoundDomains:NO]);
   XCTAssertNil(error);
@@ -92,7 +90,7 @@
 
   FlutterError *error;
   [hostAPI
-      setMediaTypesRequiresUserActionForConfigurationWithIdentifier:@0
+      setMediaTypesRequiresUserActionForConfigurationWithIdentifier:0
                                                            forTypes:@[
                                                              [FWFWKAudiovisualMediaTypeEnumData
                                                                  makeWithValue:

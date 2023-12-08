@@ -2,6 +2,7 @@
 
 * Adds `InAppBrowserConfiguration` parameter to `LaunchOptions`, to configure in-app browser views, such as Android Custom Tabs or SFSafariViewController.
 * Adds `showTitle` parameter to `InAppBrowserConfiguration` in order to control web-page title visibility.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 
 ## 2.2.0

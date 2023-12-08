@@ -2,6 +2,7 @@
 
 * Implement taking in `BrowserConfiguration` parameter
 * Implement `showTitle` functionality for Android Custom Tabs
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 6.2.0
 

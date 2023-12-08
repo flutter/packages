@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html' as html;
 import 'dart:js_util';
 import 'dart:ui_web' as ui_web;
 
@@ -11,6 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_web/src/link.dart';
+import 'package:web/helpers.dart' as html;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -174,7 +174,9 @@ void main() {
 
 html.Element _findSingleAnchor() {
   final List<html.Element> foundAnchors = <html.Element>[];
-  for (final html.Element anchor in html.document.querySelectorAll('a')) {
+  html.NodeList anchors = html.document.querySelectorAll('a');
+  for (int i = 0; i < anchors.length; i++) {
+    final html.Element anchor = anchors.item(i)! as html.Element;
     if (hasProperty(anchor, linkViewIdProperty)) {
       foundAnchors.add(anchor);
     }
@@ -184,7 +186,9 @@ html.Element _findSingleAnchor() {
   final html.ShadowRoot? shadowRoot =
       html.document.querySelector('flt-glass-pane')?.shadowRoot;
   if (shadowRoot != null) {
-    for (final html.Element anchor in shadowRoot.querySelectorAll('a')) {
+    anchors = shadowRoot.querySelectorAll('a');
+    for (int i = 0; i < anchors.length; i++) {
+      final html.Element anchor = anchors.item(i)! as html.Element;
       if (hasProperty(anchor, linkViewIdProperty)) {
         foundAnchors.add(anchor);
       }

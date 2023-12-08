@@ -22,6 +22,7 @@ void main() {
   late FormatCommand analyzeCommand;
   late CommandRunner<void> runner;
   late String javaFormatPath;
+  late String kotlinFormatPath;
 
   setUp(() {
     fileSystem = MemoryFileSystem();
@@ -34,12 +35,16 @@ void main() {
       platform: mockPlatform,
     );
 
-    // Create the java formatter file that the command checks for, to avoid
-    // a download.
+    // Create the Java and Kotlin formatter files that the command checks for,
+    // to avoid a download.
     final p.Context path = analyzeCommand.path;
     javaFormatPath = path.join(path.dirname(path.fromUri(mockPlatform.script)),
         'google-java-format-1.3-all-deps.jar');
     fileSystem.file(javaFormatPath).createSync(recursive: true);
+    kotlinFormatPath = path.join(
+        path.dirname(path.fromUri(mockPlatform.script)),
+        'ktfmt-0.46-jar-with-dependencies.jar');
+    fileSystem.file(kotlinFormatPath).createSync(recursive: true);
 
     runner = CommandRunner<void>('format_command', 'Test for format_command');
     runner.addCommand(analyzeCommand);
@@ -426,6 +431,62 @@ void main() {
           contains(
               'Failed to format C, C++, and Objective-C files: exit code 1.'),
         ]));
+  });
+
+  group('kotlin-format', () {
+    test('formats .kt files', () async {
+      const List<String> files = <String>[
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/b.kt',
+      ];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+
+      await runCapturingPrint(runner, <String>['format']);
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            const ProcessCall('java', <String>['-version'], null),
+            ProcessCall(
+                'java',
+                <String>[
+                  '-jar',
+                  kotlinFormatPath,
+                  ...getPackagesDirRelativePaths(plugin, files)
+                ],
+                packagesDir.path),
+          ]));
+    });
+
+    test('fails if Kotlin formatter fails', () async {
+      const List<String> files = <String>[
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/b.kt',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      processRunner.mockProcessesForExecutable['java'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(), <String>['-version']), // check for working java
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['-jar']), // format
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['format'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to format Kotlin files: exit code 1.'),
+          ]));
+    });
   });
 
   group('swift-format', () {
