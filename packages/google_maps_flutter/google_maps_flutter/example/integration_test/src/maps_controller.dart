@@ -139,7 +139,7 @@ void runTests() {
     expect(secondVisibleRegion.contains(newCenter), isTrue);
   },
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      skip: true);
+      skip: isIOS);
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -275,7 +275,7 @@ void runTests() {
     expect(zoom, equals(7));
   },
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      skip: true);
+      skip: isIOS);
 
   testWidgets('testScreenCoordinate', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -310,7 +310,7 @@ void runTests() {
     expect(topLeft, const ScreenCoordinate(x: 0, y: 0));
   },
       // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      skip: true);
+      skip: isIOS);
 
   testWidgets('testResizeWidget', (WidgetTester tester) async {
     final Completer<GoogleMapController> controllerCompleter =
