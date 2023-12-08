@@ -1352,7 +1352,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           dartHostTestHandler: dartHostTestHandler,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
-        ) as Api;
+        );
       } else if (_hasMetadata(node.metadata, 'FlutterApi')) {
         _currentApi = AstFlutterApi(
           name: node.name.lexeme,
