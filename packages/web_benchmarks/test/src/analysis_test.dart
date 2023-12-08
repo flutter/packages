@@ -8,7 +8,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web_benchmarks/analysis.dart';
-import 'package:web_benchmarks/server.dart';
 
 void main() {
   group('averageBenchmarkResults', () {
