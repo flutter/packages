@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
+import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
 
-/// A [Widget] that prevents clicks from being swallowed by [HtmlElementView]s.
+/// A [Widget] that prevents clicks from being swallowed by PlatformViews.
 class PointerInterceptor extends StatelessWidget {
   /// Create a `PointerInterceptor` wrapping a `child`.
   // ignore: prefer_const_constructors_in_immutables
@@ -29,6 +30,10 @@ class PointerInterceptor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return child;
+    if (!intercepting) {
+      return child;
+    }
+    return PointerInterceptorPlatform.instance
+        .buildWidget(child: child, debug: debug, key: key);
   }
 }
