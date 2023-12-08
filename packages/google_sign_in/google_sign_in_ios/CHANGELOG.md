@@ -1,3 +1,12 @@
+## 5.7.0
+
+* Adds support for macOS.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 5.6.5
+
+* Upgrades GoogleSignIn iOS SDK to 7.0.
+
 ## 5.6.4
 
 * Converts platform communication to Pigeon.

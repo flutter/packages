@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'configuration.dart';
@@ -9,7 +13,6 @@ import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
-import 'misc/errors.dart';
 import 'misc/inherited_router.dart';
 import 'parser.dart';
 import 'route.dart';
@@ -24,10 +27,57 @@ typedef GoExceptionHandler = void Function(
   GoRouter router,
 );
 
+/// A set of parameters that defines routing in GoRouter.
+///
+/// This is typically used with [GoRouter.routingConfig] to create a go router
+/// with dynamic routing config.
+///
+/// See [routing_config.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/routing_config.dart).
+///
+/// {@category Configuration}
+class RoutingConfig {
+  /// Creates a routing config.
+  ///
+  /// The [routes] must not be empty.
+  const RoutingConfig({
+    required this.routes,
+    this.redirect = _defaultRedirect,
+    this.redirectLimit = 5,
+  });
+
+  static FutureOr<String?> _defaultRedirect(
+          BuildContext context, GoRouterState state) =>
+      null;
+
+  /// The supported routes.
+  ///
+  /// The `routes` list specifies the top-level routes for the app. It must not be
+  /// empty and must contain an [GoRoute] to match `/`.
+  ///
+  /// See [GoRouter].
+  final List<RouteBase> routes;
+
+  /// The top-level callback allows the app to redirect to a new location.
+  ///
+  /// Alternatively, you can specify a redirect for an individual route using
+  /// [GoRoute.redirect]. If [BuildContext.dependOnInheritedWidgetOfExactType] is
+  /// used during the redirection (which is how `of` methods are usually
+  /// implemented), a re-evaluation will be triggered when the [InheritedWidget]
+  /// changes.
+  ///
+  /// See [GoRouter].
+  final GoRouterRedirect redirect;
+
+  /// The maximum number of redirection allowed.
+  ///
+  /// See [GoRouter].
+  final int redirectLimit;
+}
+
 /// The route configuration for the app.
 ///
 /// The `routes` list specifies the top-level routes for the app. It must not be
-/// empty and must contain an [GoRouter] to match `/`.
+/// empty and must contain an [GoRoute] to match `/`.
 ///
 /// See the [Get
 /// started](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
@@ -70,14 +120,59 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// and an error page builder.
   ///
   /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
-  GoRouter({
+  factory GoRouter({
     required List<RouteBase> routes,
+    Codec<Object?, Object?>? extraCodec,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
     GoRouterRedirect? redirect,
     Listenable? refreshListenable,
     int redirectLimit = 5,
+    bool routerNeglect = false,
+    String? initialLocation,
+    bool overridePlatformDefaultLocation = false,
+    Object? initialExtra,
+    List<NavigatorObserver>? observers,
+    bool debugLogDiagnostics = false,
+    GlobalKey<NavigatorState>? navigatorKey,
+    String? restorationScopeId,
+    bool requestFocus = true,
+  }) {
+    return GoRouter.routingConfig(
+      routingConfig: _ConstantRoutingConfig(
+        RoutingConfig(
+            routes: routes,
+            redirect: redirect ?? RoutingConfig._defaultRedirect,
+            redirectLimit: redirectLimit),
+      ),
+      extraCodec: extraCodec,
+      onException: onException,
+      errorPageBuilder: errorPageBuilder,
+      errorBuilder: errorBuilder,
+      refreshListenable: refreshListenable,
+      routerNeglect: routerNeglect,
+      initialLocation: initialLocation,
+      overridePlatformDefaultLocation: overridePlatformDefaultLocation,
+      initialExtra: initialExtra,
+      observers: observers,
+      debugLogDiagnostics: debugLogDiagnostics,
+      navigatorKey: navigatorKey,
+      restorationScopeId: restorationScopeId,
+      requestFocus: requestFocus,
+    );
+  }
+
+  /// Creates a [GoRouter] with a dynamic [RoutingConfig].
+  ///
+  /// See [routing_config.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/routing_config.dart).
+  GoRouter.routingConfig({
+    required ValueListenable<RoutingConfig> routingConfig,
+    Codec<Object?, Object?>? extraCodec,
+    GoExceptionHandler? onException,
+    GoRouterPageBuilder? errorPageBuilder,
+    GoRouterWidgetBuilder? errorBuilder,
+    Listenable? refreshListenable,
     bool routerNeglect = false,
     String? initialLocation,
     this.overridePlatformDefaultLocation = false,
@@ -87,7 +182,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GlobalKey<NavigatorState>? navigatorKey,
     String? restorationScopeId,
     bool requestFocus = true,
-  })  : backButtonDispatcher = RootBackButtonDispatcher(),
+  })  : _routingConfig = routingConfig,
+        backButtonDispatcher = RootBackButtonDispatcher(),
         assert(
           initialExtra == null || initialLocation != null,
           'initialLocation must be set in order to use initialExtra',
@@ -99,25 +195,17 @@ class GoRouter implements RouterConfig<RouteMatchList> {
                     (errorPageBuilder == null ? 0 : 1) +
                     (errorBuilder == null ? 0 : 1) <
                 2,
-            'Only one of onException, errorPageBuilder, or errorBuilder can be provided.'),
-        assert(_debugCheckPath(routes, true)),
-        assert(
-            _debugVerifyNoDuplicatePathParameter(routes, <String, GoRoute>{})),
-        assert(_debugCheckParentNavigatorKeys(
-            routes,
-            navigatorKey == null
-                ? <GlobalKey<NavigatorState>>[]
-                : <GlobalKey<NavigatorState>>[navigatorKey])) {
+            'Only one of onException, errorPageBuilder, or errorBuilder can be provided.') {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
     navigatorKey ??= GlobalKey<NavigatorState>();
 
+    _routingConfig.addListener(_handleRoutingConfigChanged);
     configuration = RouteConfiguration(
-      routes: routes,
-      topRedirect: redirect ?? (_, __) => null,
-      redirectLimit: redirectLimit,
+      _routingConfig,
       navigatorKey: navigatorKey,
+      extraCodec: extraCodec,
     );
 
     final ParserExceptionHandler? parserExceptionHandler;
@@ -166,103 +254,6 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     }());
   }
 
-  static bool _debugCheckPath(List<RouteBase> routes, bool isTopLevel) {
-    for (final RouteBase route in routes) {
-      late bool subRouteIsTopLevel;
-      if (route is GoRoute) {
-        if (isTopLevel) {
-          assert(route.path.startsWith('/'),
-              'top-level path must start with "/": $route');
-        } else {
-          assert(!route.path.startsWith('/') && !route.path.endsWith('/'),
-              'sub-route path may not start or end with "/": $route');
-        }
-        subRouteIsTopLevel = false;
-      } else if (route is ShellRouteBase) {
-        subRouteIsTopLevel = isTopLevel;
-      }
-      _debugCheckPath(route.routes, subRouteIsTopLevel);
-    }
-    return true;
-  }
-
-  // Check that each parentNavigatorKey refers to either a ShellRoute's
-  // navigatorKey or the root navigator key.
-  static bool _debugCheckParentNavigatorKeys(
-      List<RouteBase> routes, List<GlobalKey<NavigatorState>> allowedKeys) {
-    for (final RouteBase route in routes) {
-      if (route is GoRoute) {
-        final GlobalKey<NavigatorState>? parentKey = route.parentNavigatorKey;
-        if (parentKey != null) {
-          // Verify that the root navigator or a ShellRoute ancestor has a
-          // matching navigator key.
-          assert(
-              allowedKeys.contains(parentKey),
-              'parentNavigatorKey $parentKey must refer to'
-              " an ancestor ShellRoute's navigatorKey or GoRouter's"
-              ' navigatorKey');
-
-          _debugCheckParentNavigatorKeys(
-            route.routes,
-            <GlobalKey<NavigatorState>>[
-              // Once a parentNavigatorKey is used, only that navigator key
-              // or keys above it can be used.
-              ...allowedKeys.sublist(0, allowedKeys.indexOf(parentKey) + 1),
-            ],
-          );
-        } else {
-          _debugCheckParentNavigatorKeys(
-            route.routes,
-            <GlobalKey<NavigatorState>>[
-              ...allowedKeys,
-            ],
-          );
-        }
-      } else if (route is ShellRoute) {
-        _debugCheckParentNavigatorKeys(
-          route.routes,
-          <GlobalKey<NavigatorState>>[...allowedKeys..add(route.navigatorKey)],
-        );
-      } else if (route is StatefulShellRoute) {
-        for (final StatefulShellBranch branch in route.branches) {
-          assert(
-              !allowedKeys.contains(branch.navigatorKey),
-              'StatefulShellBranch must not reuse an ancestor navigatorKey '
-              '(${branch.navigatorKey})');
-
-          _debugCheckParentNavigatorKeys(
-            branch.routes,
-            <GlobalKey<NavigatorState>>[
-              ...allowedKeys,
-              branch.navigatorKey,
-            ],
-          );
-        }
-      }
-    }
-    return true;
-  }
-
-  static bool _debugVerifyNoDuplicatePathParameter(
-      List<RouteBase> routes, Map<String, GoRoute> usedPathParams) {
-    for (final RouteBase route in routes) {
-      if (route is! GoRoute) {
-        continue;
-      }
-      for (final String pathParam in route.pathParameters) {
-        if (usedPathParams.containsKey(pathParam)) {
-          final bool sameRoute = usedPathParams[pathParam] == route;
-          throw GoError(
-              "duplicate path parameter, '$pathParam' found in ${sameRoute ? '$route' : '${usedPathParams[pathParam]}, and $route'}");
-        }
-        usedPathParams[pathParam] = route;
-      }
-      _debugVerifyNoDuplicatePathParameter(route.routes, usedPathParams);
-      route.pathParameters.forEach(usedPathParams.remove);
-    }
-    return true;
-  }
-
   /// Whether the imperative API affects browser URL bar.
   ///
   /// The Imperative APIs refer to [push], [pushReplacement], or [replace].
@@ -302,6 +293,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   @override
   late final GoRouteInformationParser routeInformationParser;
 
+  void _handleRoutingConfigChanged() {
+    // Reparse is needed to update its builder
+    restore(configuration.reparse(routerDelegate.currentConfiguration));
+  }
+
   /// Whether to ignore platform's default initial location when
   /// `initialLocation` is set.
   ///
@@ -318,6 +314,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// default initial location to be used even if the `initialLocation` is set.
   /// It's advisable to only set this to [true] if one explicitly wants to.
   final bool overridePlatformDefaultLocation;
+
+  final ValueListenable<RoutingConfig> _routingConfig;
 
   /// Returns `true` if there is at least two or more route can be pop.
   bool canPop() => routerDelegate.canPop();
@@ -522,6 +520,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// Disposes resource created by this object.
   void dispose() {
+    _routingConfig.removeListener(_handleRoutingConfigChanged);
     routeInformationProvider.dispose();
     routerDelegate.dispose();
   }
@@ -532,8 +531,18 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       // verified by assert() during the initialization.
       return initialLocation!;
     }
-    final String platformDefault =
-        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+    Uri platformDefaultUri = Uri.parse(
+      WidgetsBinding.instance.platformDispatcher.defaultRouteName,
+    );
+    if (platformDefaultUri.hasEmptyPath) {
+      // TODO(chunhtai): Clean up this once `RouteInformation.uri` is available
+      // in packages repo.
+      platformDefaultUri = Uri(
+        path: '/',
+        queryParameters: platformDefaultUri.queryParameters,
+      );
+    }
+    final String platformDefault = platformDefaultUri.toString();
     if (initialLocation == null) {
       return platformDefault;
     } else if (platformDefault == '/') {
@@ -542,4 +551,21 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       return platformDefault;
     }
   }
+}
+
+/// A routing config that is never going to change.
+class _ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
+  const _ConstantRoutingConfig(this.value);
+  @override
+  void addListener(VoidCallback listener) {
+    // Intentionally empty because listener will never be called.
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    // Intentionally empty because listener will never be called.
+  }
+
+  @override
+  final RoutingConfig value;
 }

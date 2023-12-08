@@ -142,6 +142,19 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test(
+      'Default implementation of setOnHttpAuthRequest should throw unimplemented error',
+      () {
+    final PlatformNavigationDelegate callbackDelegate =
+        ExtendsPlatformNavigationDelegate(
+            const PlatformNavigationDelegateCreationParams());
+
+    expect(
+      () => callbackDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {}),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform

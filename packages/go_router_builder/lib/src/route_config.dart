@@ -40,6 +40,7 @@ class ShellRouteConfig extends RouteBaseConfig {
     required this.navigatorKey,
     required this.parentNavigatorKey,
     required super.routeDataClass,
+    required this.observers,
     required super.parent,
   }) : super._();
 
@@ -48,6 +49,9 @@ class ShellRouteConfig extends RouteBaseConfig {
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
+
+  /// The navigator observers.
+  final String? observers;
 
   @override
   Iterable<String> classDeclarations() {
@@ -72,7 +76,8 @@ class ShellRouteConfig extends RouteBaseConfig {
   @override
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
-      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}';
+      '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}'
+      '${observers == null ? '' : 'observers: $observers,'}';
 
   @override
   String get factorConstructorParameters =>
@@ -475,6 +480,10 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$parentNavigatorKey',
           ),
+          observers: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$observers',
+          ),
         );
         break;
       case 'TypedStatefulShellRoute':
@@ -568,7 +577,9 @@ abstract class RouteBaseConfig {
           if (!element.isStatic || element.name != parameterName) {
             return false;
           }
-          if (parameterName.toLowerCase().contains('navigatorkey')) {
+          if (parameterName
+              .toLowerCase()
+              .contains(RegExp('navigatorKey | observers'))) {
             final DartType type = element.type;
             if (type is! ParameterizedType) {
               return false;
@@ -591,7 +602,6 @@ abstract class RouteBaseConfig {
     if (fieldDisplayName != null) {
       return '${classElement.name}.$fieldDisplayName';
     }
-
     final String? methodDisplayName = classElement.methods
         .where((MethodElement element) {
           return element.isStatic && element.name == parameterName;

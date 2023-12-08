@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.2.3
+
+* Migrates to a Swift implementation.
+
 ## 0.2.2+3
 
 * Converts platform communication to Pigeon.

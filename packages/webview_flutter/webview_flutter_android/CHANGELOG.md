@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 3.12.1
+
+* Fixes `use_build_context_synchronously` lint violations in the example app.
+
 ## 3.12.0
 
 * Adds support for `PlatformWebViewController.getUserAgent`.
