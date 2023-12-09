@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:js/js_util.dart' as js_util;
+import 'dart:js_interop';
 
 /// Converts a [data] object into a JS Object of type `T`.
 T jsifyAs<T>(Map<String, Object?> data) {
-  return js_util.jsify(data) as T;
+  return data.jsify() as T;
 }
