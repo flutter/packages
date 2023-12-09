@@ -261,6 +261,7 @@ class MockCamera extends _i1.Mock implements _i9.Camera {
           ),
         )),
       ) as _i16.Future<_i2.CameraInfo>);
+
   @override
   _i16.Future<_i3.CameraControl> getCameraControl() => (super.noSuchMethod(
         Invocation.method(
@@ -299,6 +300,7 @@ class MockCameraInfo extends _i1.Mock implements _i2.CameraInfo {
         returnValue: _i16.Future<int>.value(0),
         returnValueForMissingStub: _i16.Future<int>.value(0),
       ) as _i16.Future<int>);
+
   @override
   _i16.Future<_i4.LiveData<_i18.CameraState>> getCameraState() =>
       (super.noSuchMethod(
@@ -324,6 +326,7 @@ class MockCameraInfo extends _i1.Mock implements _i2.CameraInfo {
           ),
         )),
       ) as _i16.Future<_i4.LiveData<_i18.CameraState>>);
+
   @override
   _i16.Future<_i5.ExposureState> getExposureState() => (super.noSuchMethod(
         Invocation.method(
@@ -346,6 +349,7 @@ class MockCameraInfo extends _i1.Mock implements _i2.CameraInfo {
           ),
         )),
       ) as _i16.Future<_i5.ExposureState>);
+
   @override
   _i16.Future<_i4.LiveData<_i19.ZoomState>> getZoomState() =>
       (super.noSuchMethod(
@@ -387,6 +391,7 @@ class MockCameraControl extends _i1.Mock implements _i3.CameraControl {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> setZoomRatio(double? ratio) => (super.noSuchMethod(
         Invocation.method(
@@ -415,18 +420,21 @@ class MockCameraImageData extends _i1.Mock implements _i6.CameraImageData {
           Invocation.getter(#format),
         ),
       ) as _i6.CameraImageFormat);
+
   @override
   int get height => (super.noSuchMethod(
         Invocation.getter(#height),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   int get width => (super.noSuchMethod(
         Invocation.getter(#width),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   List<_i6.CameraImagePlane> get planes => (super.noSuchMethod(
         Invocation.getter(#planes),
@@ -472,6 +480,7 @@ class MockExposureState extends _i1.Mock implements _i5.ExposureState {
           Invocation.getter(#exposureCompensationRange),
         ),
       ) as _i7.ExposureCompensationRange);
+
   @override
   double get exposureCompensationStep => (super.noSuchMethod(
         Invocation.getter(#exposureCompensationStep),
@@ -491,6 +500,7 @@ class MockFallbackStrategy extends _i1.Mock implements _i21.FallbackStrategy {
         returnValue: _i7.VideoQuality.SD,
         returnValueForMissingStub: _i7.VideoQuality.SD,
       ) as _i7.VideoQuality);
+
   @override
   _i7.VideoResolutionFallbackRule get fallbackRule => (super.noSuchMethod(
         Invocation.getter(#fallbackRule),
@@ -514,6 +524,7 @@ class MockImageAnalysis extends _i1.Mock implements _i22.ImageAnalysis {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> setAnalyzer(_i15.Analyzer? analyzer) => (super.noSuchMethod(
         Invocation.method(
@@ -523,6 +534,7 @@ class MockImageAnalysis extends _i1.Mock implements _i22.ImageAnalysis {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> clearAnalyzer() => (super.noSuchMethod(
         Invocation.method(
@@ -548,6 +560,7 @@ class MockImageCapture extends _i1.Mock implements _i23.ImageCapture {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> setFlashMode(int? newFlashMode) => (super.noSuchMethod(
         Invocation.method(
@@ -557,6 +570,7 @@ class MockImageCapture extends _i1.Mock implements _i23.ImageCapture {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<String> takePicture() => (super.noSuchMethod(
         Invocation.method(
@@ -579,18 +593,21 @@ class MockImageProxy extends _i1.Mock implements _i17.ImageProxy {
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   int get height => (super.noSuchMethod(
         Invocation.getter(#height),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   int get width => (super.noSuchMethod(
         Invocation.getter(#width),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   _i16.Future<List<_i24.PlaneProxy>> getPlanes() => (super.noSuchMethod(
         Invocation.method(
@@ -602,6 +619,7 @@ class MockImageProxy extends _i1.Mock implements _i17.ImageProxy {
         returnValueForMissingStub:
             _i16.Future<List<_i24.PlaneProxy>>.value(<_i24.PlaneProxy>[]),
       ) as _i16.Future<List<_i24.PlaneProxy>>);
+
   @override
   _i16.Future<void> close() => (super.noSuchMethod(
         Invocation.method(
@@ -624,6 +642,7 @@ class MockObserver extends _i1.Mock implements _i25.Observer<_i18.CameraState> {
         returnValue: (Object value) {},
         returnValueForMissingStub: (Object value) {},
       ) as void Function(Object));
+
   @override
   set onChanged(void Function(Object)? _onChanged) => super.noSuchMethod(
         Invocation.setter(
@@ -674,12 +693,14 @@ class MockPlaneProxy extends _i1.Mock implements _i24.PlaneProxy {
         returnValue: _i26.Uint8List(0),
         returnValueForMissingStub: _i26.Uint8List(0),
       ) as _i26.Uint8List);
+
   @override
   int get pixelStride => (super.noSuchMethod(
         Invocation.getter(#pixelStride),
         returnValue: 0,
         returnValueForMissingStub: 0,
       ) as int);
+
   @override
   int get rowStride => (super.noSuchMethod(
         Invocation.getter(#rowStride),
@@ -702,6 +723,7 @@ class MockPreview extends _i1.Mock implements _i27.Preview {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<int> setSurfaceProvider() => (super.noSuchMethod(
         Invocation.method(
@@ -711,6 +733,7 @@ class MockPreview extends _i1.Mock implements _i27.Preview {
         returnValue: _i16.Future<int>.value(0),
         returnValueForMissingStub: _i16.Future<int>.value(0),
       ) as _i16.Future<int>);
+
   @override
   void releaseFlutterSurfaceTexture() => super.noSuchMethod(
         Invocation.method(
@@ -719,6 +742,7 @@ class MockPreview extends _i1.Mock implements _i27.Preview {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   _i16.Future<_i7.ResolutionInfo> getResolutionInfo() => (super.noSuchMethod(
         Invocation.method(
@@ -762,6 +786,7 @@ class MockProcessCameraProvider extends _i1.Mock
         returnValueForMissingStub:
             _i16.Future<List<_i2.CameraInfo>>.value(<_i2.CameraInfo>[]),
       ) as _i16.Future<List<_i2.CameraInfo>>);
+
   @override
   _i16.Future<_i9.Camera> bindToLifecycle(
     _i20.CameraSelector? cameraSelector,
@@ -796,6 +821,7 @@ class MockProcessCameraProvider extends _i1.Mock
           ),
         )),
       ) as _i16.Future<_i9.Camera>);
+
   @override
   _i16.Future<bool> isBound(_i29.UseCase? useCase) => (super.noSuchMethod(
         Invocation.method(
@@ -805,6 +831,7 @@ class MockProcessCameraProvider extends _i1.Mock
         returnValue: _i16.Future<bool>.value(false),
         returnValueForMissingStub: _i16.Future<bool>.value(false),
       ) as _i16.Future<bool>);
+
   @override
   void unbind(List<_i29.UseCase>? useCases) => super.noSuchMethod(
         Invocation.method(
@@ -813,6 +840,7 @@ class MockProcessCameraProvider extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void unbindAll() => super.noSuchMethod(
         Invocation.method(
@@ -895,6 +923,7 @@ class MockRecording extends _i1.Mock implements _i8.Recording {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> pause() => (super.noSuchMethod(
         Invocation.method(
@@ -904,6 +933,7 @@ class MockRecording extends _i1.Mock implements _i8.Recording {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> resume() => (super.noSuchMethod(
         Invocation.method(
@@ -913,6 +943,7 @@ class MockRecording extends _i1.Mock implements _i8.Recording {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> stop() => (super.noSuchMethod(
         Invocation.method(
@@ -938,6 +969,7 @@ class MockVideoCapture extends _i1.Mock implements _i33.VideoCapture {
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<_i11.Recorder> getOutput() => (super.noSuchMethod(
         Invocation.method(
@@ -978,18 +1010,21 @@ class MockBuildContext extends _i1.Mock implements _i12.BuildContext {
           Invocation.getter(#widget),
         ),
       ) as _i12.Widget);
+
   @override
   bool get mounted => (super.noSuchMethod(
         Invocation.getter(#mounted),
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
+
   @override
   bool get debugDoingBuild => (super.noSuchMethod(
         Invocation.getter(#debugDoingBuild),
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
+
   @override
   _i12.InheritedWidget dependOnInheritedElement(
     _i12.InheritedElement? ancestor, {
@@ -1018,6 +1053,7 @@ class MockBuildContext extends _i1.Mock implements _i12.BuildContext {
           ),
         ),
       ) as _i12.InheritedWidget);
+
   @override
   void visitAncestorElements(_i12.ConditionalElementVisitor? visitor) =>
       super.noSuchMethod(
@@ -1027,6 +1063,7 @@ class MockBuildContext extends _i1.Mock implements _i12.BuildContext {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void visitChildElements(_i12.ElementVisitor? visitor) => super.noSuchMethod(
         Invocation.method(
@@ -1035,6 +1072,7 @@ class MockBuildContext extends _i1.Mock implements _i12.BuildContext {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void dispatchNotification(_i12.Notification? notification) =>
       super.noSuchMethod(
@@ -1044,6 +1082,7 @@ class MockBuildContext extends _i1.Mock implements _i12.BuildContext {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   _i14.DiagnosticsNode describeElement(
     String? name, {
@@ -1072,6 +1111,7 @@ class MockBuildContext extends _i1.Mock implements _i12.BuildContext {
           ),
         ),
       ) as _i14.DiagnosticsNode);
+
   @override
   _i14.DiagnosticsNode describeWidget(
     String? name, {
@@ -1100,6 +1140,7 @@ class MockBuildContext extends _i1.Mock implements _i12.BuildContext {
           ),
         ),
       ) as _i14.DiagnosticsNode);
+
   @override
   List<_i14.DiagnosticsNode> describeMissingAncestor(
           {required Type? expectedAncestorType}) =>
@@ -1112,6 +1153,7 @@ class MockBuildContext extends _i1.Mock implements _i12.BuildContext {
         returnValue: <_i14.DiagnosticsNode>[],
         returnValueForMissingStub: <_i14.DiagnosticsNode>[],
       ) as List<_i14.DiagnosticsNode>);
+
   @override
   _i14.DiagnosticsNode describeOwnershipChain(String? name) =>
       (super.noSuchMethod(
@@ -1168,6 +1210,7 @@ class MockTestSystemServicesHostApi extends _i1.Mock
         returnValueForMissingStub:
             _i16.Future<_i7.CameraPermissionsErrorData?>.value(),
       ) as _i16.Future<_i7.CameraPermissionsErrorData?>);
+
   @override
   String getTempFilePath(
     String? prefix,
@@ -1197,6 +1240,7 @@ class MockZoomState extends _i1.Mock implements _i19.ZoomState {
         returnValue: 0.0,
         returnValueForMissingStub: 0.0,
       ) as double);
+
   @override
   double get maxZoomRatio => (super.noSuchMethod(
         Invocation.getter(#maxZoomRatio),
@@ -1225,6 +1269,7 @@ class MockLiveCameraState extends _i1.Mock
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> removeObservers() => (super.noSuchMethod(
         Invocation.method(
@@ -1256,6 +1301,7 @@ class MockLiveZoomState extends _i1.Mock
         returnValue: _i16.Future<void>.value(),
         returnValueForMissingStub: _i16.Future<void>.value(),
       ) as _i16.Future<void>);
+
   @override
   _i16.Future<void> removeObservers() => (super.noSuchMethod(
         Invocation.method(

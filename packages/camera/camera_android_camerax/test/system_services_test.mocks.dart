@@ -61,6 +61,7 @@ class MockTestSystemServicesHostApi extends _i1.Mock
         ),
         returnValue: _i3.Future<_i4.CameraPermissionsErrorData?>.value(),
       ) as _i3.Future<_i4.CameraPermissionsErrorData?>);
+
   @override
   String getTempFilePath(
     String? prefix,

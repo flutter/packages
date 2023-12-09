@@ -78,6 +78,7 @@ class MockCameraInfo extends _i1.Mock implements _i5.CameraInfo {
         ),
         returnValue: _i6.Future<int>.value(0),
       ) as _i6.Future<int>);
+
   @override
   _i6.Future<_i2.LiveData<_i7.CameraState>> getCameraState() =>
       (super.noSuchMethod(
@@ -94,6 +95,7 @@ class MockCameraInfo extends _i1.Mock implements _i5.CameraInfo {
           ),
         )),
       ) as _i6.Future<_i2.LiveData<_i7.CameraState>>);
+
   @override
   _i6.Future<_i3.ExposureState> getExposureState() => (super.noSuchMethod(
         Invocation.method(
@@ -108,6 +110,7 @@ class MockCameraInfo extends _i1.Mock implements _i5.CameraInfo {
           ),
         )),
       ) as _i6.Future<_i3.ExposureState>);
+
   @override
   _i6.Future<_i2.LiveData<_i8.ZoomState>> getZoomState() => (super.noSuchMethod(
         Invocation.method(
@@ -139,6 +142,7 @@ class MockFallbackStrategy extends _i1.Mock implements _i9.FallbackStrategy {
         Invocation.getter(#quality),
         returnValue: _i4.VideoQuality.SD,
       ) as _i4.VideoQuality);
+
   @override
   _i4.VideoResolutionFallbackRule get fallbackRule => (super.noSuchMethod(
         Invocation.getter(#fallbackRule),
@@ -172,6 +176,7 @@ class MockTestQualitySelectorHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   _i4.ResolutionInfo getResolution(
     int? cameraInfoId,

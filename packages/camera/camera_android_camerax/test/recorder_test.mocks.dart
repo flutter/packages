@@ -138,6 +138,7 @@ class MockTestRecorderHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int getAspectRatio(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -146,6 +147,7 @@ class MockTestRecorderHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   int getTargetVideoEncodingBitRate(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -154,6 +156,7 @@ class MockTestRecorderHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   int prepareRecording(
     int? identifier,
@@ -197,6 +200,7 @@ class MockTestQualitySelectorHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   _i2.ResolutionInfo getResolution(
     int? cameraInfoId,

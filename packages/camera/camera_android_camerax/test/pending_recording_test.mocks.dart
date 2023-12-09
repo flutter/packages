@@ -79,6 +79,7 @@ class MockRecording extends _i1.Mock implements _i3.Recording {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
   @override
   _i4.Future<void> pause() => (super.noSuchMethod(
         Invocation.method(
@@ -88,6 +89,7 @@ class MockRecording extends _i1.Mock implements _i3.Recording {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
   @override
   _i4.Future<void> resume() => (super.noSuchMethod(
         Invocation.method(
@@ -97,6 +99,7 @@ class MockRecording extends _i1.Mock implements _i3.Recording {
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
   @override
   _i4.Future<void> stop() => (super.noSuchMethod(
         Invocation.method(

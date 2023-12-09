@@ -37,6 +37,7 @@ class MockTestRecordingHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void pause(int? identifier) => super.noSuchMethod(
         Invocation.method(
@@ -45,6 +46,7 @@ class MockTestRecordingHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void resume(int? identifier) => super.noSuchMethod(
         Invocation.method(
@@ -53,6 +55,7 @@ class MockTestRecordingHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void stop(int? identifier) => super.noSuchMethod(
         Invocation.method(

@@ -43,6 +43,7 @@ class MockTestCameraInfoHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   int getCameraState(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -51,6 +52,7 @@ class MockTestCameraInfoHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   int getExposureState(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -59,6 +61,7 @@ class MockTestCameraInfoHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   int getZoomState(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -108,6 +111,7 @@ class MockLiveCameraState extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> removeObservers() => (super.noSuchMethod(
         Invocation.method(
@@ -139,6 +143,7 @@ class MockLiveZoomState extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i5.Future<void> removeObservers() => (super.noSuchMethod(
         Invocation.method(

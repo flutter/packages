@@ -58,6 +58,7 @@ class MockTestProcessCameraProviderHostApi extends _i1.Mock
         ),
         returnValue: _i3.Future<int>.value(0),
       ) as _i3.Future<int>);
+
   @override
   List<int?> getAvailableCameraInfos(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -66,6 +67,7 @@ class MockTestProcessCameraProviderHostApi extends _i1.Mock
         ),
         returnValue: <int?>[],
       ) as List<int?>);
+
   @override
   int bindToLifecycle(
     int? identifier,
@@ -83,6 +85,7 @@ class MockTestProcessCameraProviderHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   bool isBound(
     int? identifier,
@@ -98,6 +101,7 @@ class MockTestProcessCameraProviderHostApi extends _i1.Mock
         ),
         returnValue: false,
       ) as bool);
+
   @override
   void unbind(
     int? identifier,
@@ -113,6 +117,7 @@ class MockTestProcessCameraProviderHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void unbindAll(int? identifier) => super.noSuchMethod(
         Invocation.method(

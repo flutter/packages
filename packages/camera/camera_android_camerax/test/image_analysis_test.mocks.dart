@@ -47,6 +47,7 @@ class MockTestImageAnalysisHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setAnalyzer(
     int? identifier,
@@ -62,6 +63,7 @@ class MockTestImageAnalysisHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void clearAnalyzer(int? identifier) => super.noSuchMethod(
         Invocation.method(
@@ -70,6 +72,7 @@ class MockTestImageAnalysisHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setTargetRotation(
     int? identifier,

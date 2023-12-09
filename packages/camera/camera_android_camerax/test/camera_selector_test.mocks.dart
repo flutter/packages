@@ -44,6 +44,7 @@ class MockTestCameraSelectorHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   List<int?> filter(
     int? identifier,

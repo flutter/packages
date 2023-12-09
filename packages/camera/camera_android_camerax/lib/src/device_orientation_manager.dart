@@ -49,36 +49,11 @@ class DeviceOrientationManager {
     api.stopListeningForDeviceOrientationChange();
   }
 
-  /// Retrieves photo orientation in degrees based on the sensor orientation
-  /// and the last known UI orientation.
+  /// Retrieves the default rotation that CameraX uses for [UseCase]s in terms
+  /// of one of the [Surface] rotation constants.
   ///
   /// [startListeningForDeviceOrientationChange] must be called before calling
   /// this method.
-  static Future<int> getPhotoOrientation(DeviceOrientation? sensorOrientation,
-      {BinaryMessenger? binaryMessenger}) async {
-    final DeviceOrientationManagerHostApi api =
-        DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
-
-    return api.getPhotoOrientation(sensorOrientation == null
-        ? null
-        : serializeDeviceOrientation(sensorOrientation));
-  }
-
-  /// Retrieves video orientation in degrees based on the sensor
-  /// [DeviceOrientation] and the last known UI orientation.
-  ///
-  /// [startListeningForDeviceOrientationChange] must be called before calling
-  /// this method.
-  static Future<int> getVideoOrientation(DeviceOrientation? sensorOrientation,
-      {BinaryMessenger? binaryMessenger}) async {
-    final DeviceOrientationManagerHostApi api =
-        DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
-
-    return api.getVideoOrientation(sensorOrientation == null
-        ? null
-        : serializeDeviceOrientation(sensorOrientation));
-  }
-
   static Future<int> getDefaultRotation(
       {BinaryMessenger? binaryMessenger}) async {
     final DeviceOrientationManagerHostApi api =

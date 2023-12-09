@@ -166,8 +166,6 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   bool shouldSetDefaultRotation = false;
 
-  DeviceOrientation? lockedOrientation;
-
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -390,38 +388,23 @@ class AndroidCameraCameraX extends CameraPlatform {
   ) async {
     shouldSetDefaultRotation = true;
     captureOrientationLocked = true;
-    lockedOrientation = orientation;
 
-    // Get rotation for photos and vi
-    //deos based on orientation.
-    final int targetPhotoRotation =
-        _getTargetRotation(await proxy.getPhotoOrientation(orientation));
-
-    final int targetVideoRotation =
-        _getTargetRotation(await proxy.getVideoOrientation(orientation));
+    // Get target rotation based on locked orientation
+    final int targetLockedRotation =
+        (_getRotationFromDeviceOrientation(orientation) + 360) % 360;
 
     /// Update UseCases to use target device orientation.
-    await imageCapture!.setTargetRotation(targetPhotoRotation);
-    await imageAnalysis!.setTargetRotation(targetPhotoRotation);
-    await videoCapture!.setTargetRotation(targetVideoRotation);
+    await imageCapture!.setTargetRotation(targetLockedRotation);
+    await imageAnalysis!.setTargetRotation(targetLockedRotation);
+    await videoCapture!.setTargetRotation(targetLockedRotation);
   }
 
   /// Unlocks the capture orientation.
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
+    // Flag that default rotation should be set for UseCases
+    // as needed.
     captureOrientationLocked = false;
-    lockedOrientation = null;
-
-    // Get current orientation for photos and videos.
-    final int currentPhotoOrientation =
-        _getTargetRotation(await proxy.getPhotoOrientation(null));
-    final int currentVideoOrientation =
-        _getTargetRotation(await proxy.getVideoOrientation(null));
-
-    /// Update UseCases to use current device orientation.
-    await imageCapture!.setTargetRotation(currentPhotoOrientation);
-    await imageAnalysis!.setTargetRotation(currentPhotoOrientation);
-    await videoCapture!.setTargetRotation(currentVideoOrientation);
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
@@ -556,12 +539,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       // been enabled.
       await imageCapture!.setFlashMode(ImageCapture.flashModeOff);
     }
+
     // Set target rotation to current photo orientation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      // TESTER: use for testing not other use cases
-      print("SETTING DEFAULT ROTATION!");
-      print(await proxy.getDefaultRotation());
       await imageCapture!.setTargetRotation(await proxy.getDefaultRotation());
     }
 
@@ -647,13 +628,10 @@ class AndroidCameraCameraX extends CameraPlatform {
           .bindToLifecycle(cameraSelector!, <UseCase>[videoCapture!]);
     }
 
-    // Set target rotation to current video orientation only if capture
+    // Set target rotation to current photo orientation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked) {
-      await videoCapture!.setTargetRotation(
-          _getTargetRotation(await proxy.getVideoOrientation(null)));
-    } else if (shouldSetDefaultRotation) {
-      await imageCapture!.setTargetRotation(await proxy.getDefaultRotation());
+    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+      await videoCapture!.setTargetRotation(await proxy.getDefaultRotation());
     }
 
     videoOutputPath =
@@ -759,11 +737,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> _configureImageAnalysis(int cameraId) async {
     // Set target rotation to current photo orientation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked) {
-      await imageAnalysis!.setTargetRotation(
-          _getTargetRotation(await proxy.getPhotoOrientation(null)));
-    } else if (shouldSetDefaultRotation) {
-      await imageCapture!.setTargetRotation(await proxy.getDefaultRotation());
+    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+      await imageAnalysis!.setTargetRotation(await proxy.getDefaultRotation());
     }
 
     // Create and set Analyzer that can read image data for image streaming.
@@ -908,6 +883,22 @@ class AndroidCameraCameraX extends CameraPlatform {
       default:
         throw ArgumentError(
             '"$sensorOrientation" is not a valid sensor orientation value');
+    }
+  }
+
+  /// Returns counter-clockwise degrees of rotation from
+  /// [DeviceOrientation.portraitUp] required to reach the specified
+  /// [DeviceOrientation].
+  int _getRotationFromDeviceOrientation(DeviceOrientation orientation) {
+    switch (orientation) {
+      case DeviceOrientation.portraitUp:
+        return 0;
+      case DeviceOrientation.landscapeLeft:
+        return 90;
+      case DeviceOrientation.portraitDown:
+        return 180;
+      case DeviceOrientation.landscapeRight:
+        return 270;
     }
   }
 

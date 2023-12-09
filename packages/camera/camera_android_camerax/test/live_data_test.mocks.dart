@@ -45,6 +45,7 @@ class MockTestLiveDataHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void removeObservers(int? identifier) => super.noSuchMethod(
         Invocation.method(
@@ -53,6 +54,7 @@ class MockTestLiveDataHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int? getValue(
     int? identifier,

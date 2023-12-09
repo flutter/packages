@@ -51,6 +51,7 @@ class MockTestImageCaptureHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setFlashMode(
     int? identifier,
@@ -66,6 +67,7 @@ class MockTestImageCaptureHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   _i3.Future<String> takePicture(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -74,6 +76,7 @@ class MockTestImageCaptureHostApi extends _i1.Mock
         ),
         returnValue: _i3.Future<String>.value(''),
       ) as _i3.Future<String>);
+
   @override
   void setTargetRotation(
     int? identifier,

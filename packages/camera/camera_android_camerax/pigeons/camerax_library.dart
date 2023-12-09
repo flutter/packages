@@ -226,11 +226,6 @@ abstract class DeviceOrientationManagerHostApi {
 
   void stopListeningForDeviceOrientationChange();
 
-  // TODO(camsim99): Change String orientations to enum for readability.
-  int getPhotoOrientation(String? orientation);
-
-  int getVideoOrientation(String? orientation);
-
   int getDefaultRotation();
 }
 

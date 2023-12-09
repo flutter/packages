@@ -78,6 +78,7 @@ class MockTestPreviewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   int setSurfaceProvider(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -86,6 +87,7 @@ class MockTestPreviewHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   void releaseFlutterSurfaceTexture() => super.noSuchMethod(
         Invocation.method(
@@ -94,6 +96,7 @@ class MockTestPreviewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   _i2.ResolutionInfo getResolutionInfo(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -108,6 +111,7 @@ class MockTestPreviewHostApi extends _i1.Mock
           ),
         ),
       ) as _i2.ResolutionInfo);
+
   @override
   void setTargetRotation(
     int? identifier,

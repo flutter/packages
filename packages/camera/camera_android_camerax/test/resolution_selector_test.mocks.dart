@@ -37,6 +37,7 @@ class MockAspectRatioStrategy extends _i1.Mock
         Invocation.getter(#preferredAspectRatio),
         returnValue: 0,
       ) as int);
+
   @override
   int get fallbackRule => (super.noSuchMethod(
         Invocation.getter(#fallbackRule),

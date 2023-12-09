@@ -52,6 +52,7 @@ class MockTestVideoCaptureHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   int getOutput(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -60,6 +61,7 @@ class MockTestVideoCaptureHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
   @override
   void setTargetRotation(
     int? identifier,

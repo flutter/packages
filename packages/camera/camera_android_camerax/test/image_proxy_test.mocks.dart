@@ -37,6 +37,7 @@ class MockTestImageProxyHostApi extends _i1.Mock
         ),
         returnValue: <int?>[],
       ) as List<int?>);
+
   @override
   void close(int? identifier) => super.noSuchMethod(
         Invocation.method(
