@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 // This scenario demonstrates how to use redirect to handle a sign-in flow.
 //
-// The GoRouter.redirect method is called before the app is navigate to a
+// The GoRouter.redirect method is called before the app navigates to a
 // new page. You can choose to redirect to a different page by returning a
 // non-null URL string.
 
