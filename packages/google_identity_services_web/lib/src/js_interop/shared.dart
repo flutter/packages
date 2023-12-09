@@ -207,7 +207,10 @@ enum CredentialSelectBy {
   btn_confirm_add_session('btn_confirm_add_session'),
 
   /// A user with an existing session used the browser's "FedCM" flow.
-  fedcm('fedcm');
+  fedcm('fedcm'),
+
+  /// A fedcm authentication without user intervention.
+  fedcm_auto('fedcm_auto');
 
   ///
   const CredentialSelectBy(String selectBy) : _selectBy = selectBy;

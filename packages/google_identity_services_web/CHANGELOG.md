@@ -1,3 +1,7 @@
+## 0.3.0+2
+
+* Adds `fedcm_auto` to `CredentialSelectBy` enum.
+
 ## 0.3.0+1
 
 * Corrects 0.3.0 changelog entry about the minimum Flutter/Dart dependencies.
