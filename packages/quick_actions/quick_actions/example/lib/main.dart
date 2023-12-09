@@ -40,13 +40,16 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
+    // #docregion Initialize
     const QuickActions quickActions = QuickActions();
     quickActions.initialize((String shortcutType) {
       setState(() {
         shortcut = shortcutType;
       });
     });
+    // #enddocregion Initialize
 
+    // #docregion SetShortcuts
     quickActions.setShortcutItems(<ShortcutItem>[
       // NOTE: This first action icon will only work on iOS.
       // In a real world project keep the same file name for both platforms.
@@ -68,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       });
     });
+    // #enddocregion SetShortcuts
   }
 
   @override
