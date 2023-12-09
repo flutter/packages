@@ -107,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                         ),
                       ),
+                      // #docregion PointerInterceptorWrapper
                       PointerInterceptor(
                         child: ElevatedButton(
                           key: const Key('clickable-button'),
@@ -116,6 +117,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                         ),
                       ),
+                      // #enddocregion PointerInterceptorWrapper
+                      _buildConditionalPointerInterceptor(),
+                      _buildBetterConditionalPointerInterceptor(),
                     ],
                   ),
                 ],
@@ -138,6 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+      // #docregion PointerInterceptorDrawer
       drawer: Drawer(
         child: PointerInterceptor(
           // debug: true, // Enable this to "see" the interceptor covering the column.
@@ -160,6 +165,41 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+      // #enddocregion PointerInterceptorDrawer
     );
+  }
+
+  Widget _buildConditionalPointerInterceptor() {
+    // #docregion BadPointerInterceptor
+    if (someCondition()) {
+      return PointerInterceptor(
+        child: ElevatedButton(
+          onPressed: () {},
+          child: const Text('Click me'),
+        ),
+      );
+    } else {
+      return ElevatedButton(
+        onPressed: () {},
+        child: const Text('Click me'),
+      );
+    }
+    // #enddocregion BadPointerInterceptor
+  }
+
+  Widget _buildBetterConditionalPointerInterceptor() {
+    // #docregion GoodPointerInterceptor
+    return PointerInterceptor(
+      intercepting: someCondition(),
+      child: ElevatedButton(
+        onPressed: () {},
+        child: const Text('Click me'),
+      ),
+    );
+    // #enddocregion GoodPointerInterceptor
+  }
+
+  bool someCondition() {
+    return 4 > 5;
   }
 }

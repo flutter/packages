@@ -1,3 +1,4 @@
+<?code-excerpt path-base="./example/lib"?>
 # pointer_interceptor
 
 |             | iOS     | Web |
@@ -44,26 +45,46 @@ All the cases above have in common that they attempt to render Flutter widgets *
 There's two ways that the `PointerInterceptor` widget can be used to solve the problems above:
 
 1. Wrapping your button element directly (FAB, Custom Play/Pause button...):
-
-    ```dart
-    PointerInterceptor(
-      child: ElevatedButton(...),
-    )
-    ```
+<?code-excerpt "main.dart (PointerInterceptorWrapper)"?>
+```dart
+PointerInterceptor(
+  child: ElevatedButton(
+    key: const Key('clickable-button'),
+    child: const Text('Works As Expected'),
+    onPressed: () {
+      _clickedOn('clickable-button');
+    },
+  ),
+),
+```
 
 2. As a root container for a "layout" element, wrapping a bunch of other elements (like a Drawer):
 
-    ```dart
-    Scaffold(
-      ...
-      drawer: PointerInterceptor(
-        child: Drawer(
-          child: ...
+<?code-excerpt "main.dart (PointerInterceptorDrawer)"?>
+```dart
+drawer: Drawer(
+  child: PointerInterceptor(
+    // debug: true, // Enable this to "see" the interceptor covering the column.
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        ListTile(
+          title: const Text('Item 1'),
+          onTap: () {
+            _clickedOn('drawer-item-1');
+          },
         ),
-      ),
-      ...
-    )
-    ```
+        ListTile(
+          title: const Text('Item 2'),
+          onTap: () {
+            _clickedOn('drawer-item-2');
+          },
+        ),
+      ],
+    ),
+  ),
+),
+```
 
 ### `intercepting`
 
@@ -74,24 +95,35 @@ The `intercepting` property allows the `PointerInterceptor` widget to render
 itself (or not) depending on a boolean value, instead of having to manually
 write an `if/else` on the Flutter App widget tree, so code like this:
 
-  ```dart
-  if (someCondition) {
-    return PointerInterceptor(
-      child: ElevatedButton(...),
-    )
-  } else {
-    return ElevatedButton(...),
-  }
-  ```
+<?code-excerpt "main.dart (BadPointerInterceptor)"?>
+```dart
+if (someCondition()) {
+  return PointerInterceptor(
+    child: ElevatedButton(
+      onPressed: () {},
+      child: const Text('Click me'),
+    ),
+  );
+} else {
+  return ElevatedButton(
+    onPressed: () {},
+    child: const Text('Click me'),
+  );
+}
+```
 
 can be rewritten as:
 
-   ```dart
-    return PointerInterceptor(
-      intercepting: someCondition,
-      child: ElevatedButton(...),
-    )
-   ```
+<?code-excerpt "main.dart (GoodPointerInterceptor)"?>
+```dart
+return PointerInterceptor(
+  intercepting: someCondition(),
+  child: ElevatedButton(
+    onPressed: () {},
+    child: const Text('Click me'),
+  ),
+);
+```
 
 Note: when `intercepting` is false, the `PointerInterceptor` will not render
 _anything_ in flutter, and just return its `child`. The code is exactly

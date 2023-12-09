@@ -1,5 +1,6 @@
 ## 0.10.0
 
+* Adopts code-excerpt in README.
 * Transitions to federated architecture.
 * Adds iOS implementation to federated package.
 
