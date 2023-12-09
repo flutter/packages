@@ -1,3 +1,4 @@
+<?code-excerpt path-base="./example/lib"?>
 # Palette Generator package
 
 [![pub package](https://img.shields.io/pub/v/palette_generator.svg)](https://pub.dartlang.org/packages/palette_generator)
@@ -13,7 +14,7 @@ To use this package, add `palette_generator` as a
 ## Example
 
 Import the library via
-
+<?code-excerpt "main.dart (Import)"?>
 ```dart
 import 'package:palette_generator/palette_generator.dart';
 ```
