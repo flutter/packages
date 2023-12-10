@@ -2,14 +2,14 @@ name: google_sign_in_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
-  flutter: ">=3.13.0"
+  sdk: ">=3.2.0 <4.0.0"
+  flutter: ">=3.16.0"
 
 dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  google_identity_services_web: ^0.2.1
+  google_identity_services_web: ^0.3.0
   google_sign_in_platform_interface: ^2.4.0
   google_sign_in_web:
     path: ../
@@ -21,8 +21,8 @@ dev_dependencies:
   http: ">=0.13.0 <2.0.0"
   integration_test:
     sdk: flutter
-  js: ^0.6.3
-  mockito: 5.4.1
+  mockito: 5.4.3
+  web: ">=0.3.0 <0.5.0"
 
 flutter:
   uses-material-design: true
