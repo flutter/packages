@@ -204,7 +204,10 @@ enum CredentialSelectBy {
   /// A user without an existing session first pressed the Sign In With Google
   /// button to select a Google Account and then pressed the Confirm button to
   /// consent and share credentials.
-  btn_confirm_add_session('btn_confirm_add_session');
+  btn_confirm_add_session('btn_confirm_add_session'),
+
+  /// A user with an existing session used the browser's "FedCM" flow.
+  fedcm('fedcm');
 
   ///
   const CredentialSelectBy(String selectBy) : _selectBy = selectBy;
