@@ -45,17 +45,9 @@ BenchmarkResults computeDelta(
   for (final String benchmarkName in test.scores.keys) {
     final List<BenchmarkScore> testScores = test.scores[benchmarkName]!;
     final List<BenchmarkScore>? baselineScores = baseline.scores[benchmarkName];
-    if (baselineScores == null) {
-      delta[benchmarkName] = List<BenchmarkScore>.generate(
-        testScores.length,
-        (int i) => testScores[i]._copyWith(),
-      );
-      continue;
-    }
-
     delta[benchmarkName] = testScores.map<BenchmarkScore>(
       (BenchmarkScore testScore) {
-        final BenchmarkScore? baselineScore = baselineScores.firstWhereOrNull(
+        final BenchmarkScore? baselineScore = baselineScores?.firstWhereOrNull(
             (BenchmarkScore s) => s.metric == testScore.metric);
         return testScore._copyWith(
           delta: baselineScore == null
