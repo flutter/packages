@@ -117,8 +117,12 @@ void _verifySampleFile(Directory? directory, String name) {
 
   file.writeAsStringSync('Hello world!');
   expect(file.readAsStringSync(), 'Hello world!');
-  // This check intentionally avoids using Directory.listSync due to
+  // This check intentionally avoids using Directory.listSync on Android due to
   // https://github.com/dart-lang/sdk/issues/54287.
-  expect(Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
+  if (Platform.isAndroid) {
+    expect(Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
+  } else {
+    expect(directory.listSync(), isNotEmpty);
+  }
   file.deleteSync();
 }
