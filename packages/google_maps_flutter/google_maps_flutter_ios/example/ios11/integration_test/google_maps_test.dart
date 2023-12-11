@@ -341,9 +341,7 @@ void main() {
     expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
 
     await tester.binding.setSurfaceSize(null);
-  },
-      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-      skip: true);
+  });
 
   testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
     final Key key = GlobalKey();

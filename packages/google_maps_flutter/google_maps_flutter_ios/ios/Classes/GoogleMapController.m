@@ -229,7 +229,11 @@
     if (self.mapView != nil) {
       CLLocationCoordinate2D location =
           [FLTGoogleMapJSONConversions locationFromLatLong:call.arguments];
+      NSLog(@"projection: %@", self.mapView);
+      NSLog(@"projection: %@", self.mapView.projection);
+      NSLog(@"CLLocationCoordinate2D latitude: %f, longitude: %f", location.latitude, location.longitude);
       CGPoint point = [self.mapView.projection pointForCoordinate:location];
+      NSLog(@"CGPoint point: %f, longitude: %f", point.x, point.y);
       result([FLTGoogleMapJSONConversions dictionaryFromPoint:point]);
     } else {
       result([FlutterError errorWithCode:@"GoogleMap uninitialized"
