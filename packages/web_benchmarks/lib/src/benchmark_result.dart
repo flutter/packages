@@ -37,7 +37,7 @@ class BenchmarkScore {
 
   /// Optional delta value describing the difference between this metric's score
   /// and the score of a matching metric from another [BenchmarkResults].
-  /// 
+  ///
   /// This value may be assigned by the [computeDelta] analysis method.
   num? delta;
 

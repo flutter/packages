@@ -94,8 +94,7 @@ void main() {
         BenchmarkResults.parse(testBenchmarkResults1);
     final BenchmarkResults benchmark2 =
         BenchmarkResults.parse(testBenchmarkResults2);
-    final BenchmarkResults delta =
-        computeDelta(benchmark1, benchmark2);
+    final BenchmarkResults delta = computeDelta(benchmark1, benchmark2);
     expect(delta.toJson(), expectedBenchmarkDelta);
   });
 }
