@@ -17,9 +17,8 @@ void main() {
       _benchmarkResultsFromFile('/path/to/benchmark_test_2.json');
 
   // Compute the delta between [baselineResults] and [testResults1].
-  final Map<String, List<Map<String, Object?>>> delta =
-      computeDelta(baselineResults, testResults1);
-  stdout.writeln(delta);
+  final BenchmarkResults delta = computeDelta(baselineResults, testResults1);
+  stdout.writeln(delta.toJson());
 
   // Compute the average of [testResults] and [testResults2].
   final BenchmarkResults average =
