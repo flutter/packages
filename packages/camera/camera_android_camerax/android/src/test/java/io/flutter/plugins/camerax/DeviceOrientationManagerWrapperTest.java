@@ -77,7 +77,7 @@ public class DeviceOrientationManagerWrapperTest {
     // Test that the DeviceOrientationManager starts listening for device orientation changes.
     verify(mockDeviceOrientationManager).start();
 
-    // Test that the DevieOrientationManager can stop listening for device orientation changes.
+    // Test that the DeviceOrientationManager can stop listening for device orientation changes.
     hostApi.stopListeningForDeviceOrientationChange();
     verify(mockDeviceOrientationManager).stop();
   }

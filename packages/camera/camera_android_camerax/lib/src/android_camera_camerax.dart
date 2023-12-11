@@ -881,24 +881,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
-  /// Returns [Surface] target rotation constant that maps to specified sensor
-  /// orientation.
-  int _getTargetRotationConstant(int sensorOrientation) {
-    switch (sensorOrientation) {
-      case 90:
-        return Surface.ROTATION_90;
-      case 180:
-        return Surface.ROTATION_180;
-      case 270:
-        return Surface.ROTATION_270;
-      case 0:
-        return Surface.ROTATION_0;
-      default:
-        throw ArgumentError(
-            '"$sensorOrientation" is not a valid sensor orientation value');
-    }
-  }
-
   /// Returns [Surface] constant for counter-clockwise degrees of rotation from
   /// [DeviceOrientation.portraitUp] required to reach the specified
   /// [DeviceOrientation].

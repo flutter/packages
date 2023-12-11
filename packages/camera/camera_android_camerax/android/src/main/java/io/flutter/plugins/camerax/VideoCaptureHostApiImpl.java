@@ -57,7 +57,7 @@ public class VideoCaptureHostApiImpl implements VideoCaptureHostApi {
   }
 
   /**
-   * Retrieives the {@link VideoCapture} instance associated with the specified {@code identifier}.
+   * Retrieves the {@link VideoCapture} instance associated with the specified {@code identifier}.
    */
   private VideoCapture<Recorder> getVideoCaptureInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));

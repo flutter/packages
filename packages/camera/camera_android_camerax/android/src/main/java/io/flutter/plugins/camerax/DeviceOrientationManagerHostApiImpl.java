@@ -82,10 +82,13 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
   /** Gets default capture rotation for CameraX {@code UseCase}s. */
   @Override
   public @NonNull Long getDefaultRotation() {
-    if (deviceOrientationManager == null) {
-      throw new NullPointerException(
-          "startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the video orientation.");
+    int defaultRotation;
+    try {
+      defaultRotation = deviceOrientationManager.getDefaultRotation();
+    } catch (NullPointerException e) {
+       throw new IllegalStateException("startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the video orientation.");
     }
-    return Long.valueOf(deviceOrientationManager.getDefaultRotation());
+
+    return Long.valueOf(defaultRotation);
   }
 }
