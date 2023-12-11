@@ -13,31 +13,30 @@ export 'src/benchmark_result.dart';
 /// metrics; otherwise, an [Exception] will be thrown.
 BenchmarkResults computeAverage(List<BenchmarkResults> results) {
   if (results.isEmpty) {
-    throw Exception('Cannot take average of empty list.');
+    throw ArgumentError('Cannot take average of empty list.');
   }
 
-  BenchmarkResults totalSum = results.first;
-  for (int i = 1; i < results.length; i++) {
-    final BenchmarkResults current = results[i];
-    totalSum = totalSum._sumWith(current);
-  }
+  final BenchmarkResults totalSum = results.reduce(
+    (BenchmarkResults sum, BenchmarkResults next) => sum._sumWith(next),
+  );
 
-  final Map<String, List<Map<String, Object?>>> average = totalSum.toJson();
+  final BenchmarkResults average = totalSum;
   for (final String benchmark in totalSum.scores.keys) {
     final List<BenchmarkScore> scoresForBenchmark = totalSum.scores[benchmark]!;
     for (int i = 0; i < scoresForBenchmark.length; i++) {
       final BenchmarkScore score = scoresForBenchmark[i];
       final double averageValue = score.value / results.length;
-      average[benchmark]![i][BenchmarkScore.valueKey] = averageValue;
+      average.scores[benchmark]![i] =
+          BenchmarkScore(metric: score.metric, value: averageValue);
     }
   }
-  return BenchmarkResults.parse(average);
+  return average;
 }
 
-/// Computes the delta between [test] and [baseline], and returns the results
-/// as a JSON object where each benchmark score entry contains a new field
-/// 'delta' with the metric value comparison.
-Map<String, List<Map<String, Object?>>> computeDelta(
+/// Computes the delta for each matching metric in [test] and [baseline],
+/// assigns the delta values to each [BenchmarkScore] in [test], and then
+/// returns the modified [test] object.
+BenchmarkResults computeDelta(
   BenchmarkResults baseline,
   BenchmarkResults test,
 ) {
@@ -58,39 +57,13 @@ Map<String, List<Map<String, Object?>>> computeDelta(
       }
 
       // Add the delta to the [testMetric].
-      _benchmarkDeltas[score] = (score.value - baselineScore.value).toDouble();
+      score.delta = (score.value - baselineScore.value).toDouble();
     }
   }
-  return test._toJsonWithDeltas();
+  return test;
 }
 
-/// An expando to hold benchmark delta values computed during a [computeDelta]
-/// operation.
-Expando<double> _benchmarkDeltas = Expando<double>();
-
 extension _AnalysisExtension on BenchmarkResults {
-  /// Returns the JSON representation of this [BenchmarkResults] instance with
-  /// an added field 'delta' that contains the delta for this metric as computed
-  /// by the [compareBenchmarks] method.
-  Map<String, List<Map<String, Object?>>> _toJsonWithDeltas() {
-    return scores.map<String, List<Map<String, Object?>>>(
-      (String benchmarkName, List<BenchmarkScore> scores) {
-        return MapEntry<String, List<Map<String, Object?>>>(
-          benchmarkName,
-          scores.map<Map<String, Object?>>(
-            (BenchmarkScore score) {
-              final double? delta = _benchmarkDeltas[score];
-              return <String, Object?>{
-                ...score.toJson(),
-                if (delta != null) 'delta': delta,
-              };
-            },
-          ).toList(),
-        );
-      },
-    );
-  }
-
   /// Sums this [BenchmarkResults] instance with [other] by adding the values
   /// of each matching benchmark score.
   ///

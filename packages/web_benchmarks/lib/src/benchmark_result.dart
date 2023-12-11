@@ -35,11 +35,18 @@ class BenchmarkScore {
   /// The result of measuring a particular metric in this benchmark run.
   final num value;
 
+  /// Optional delta value describing the difference between this metric's score
+  /// and the score of a matching metric from another [BenchmarkResults].
+  /// 
+  /// This value may be assigned by the [computeDelta] analysis method.
+  num? delta;
+
   /// Serializes the benchmark metric to a JSON object.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       metricKey: metric,
       valueKey: value,
+      if (delta != null) 'delta': delta,
     };
   }
 }

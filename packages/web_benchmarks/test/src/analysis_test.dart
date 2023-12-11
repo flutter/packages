@@ -94,9 +94,9 @@ void main() {
         BenchmarkResults.parse(testBenchmarkResults1);
     final BenchmarkResults benchmark2 =
         BenchmarkResults.parse(testBenchmarkResults2);
-    final Map<String, List<Map<String, Object?>>> delta =
+    final BenchmarkResults delta =
         computeDelta(benchmark1, benchmark2);
-    expect(delta, expectedBenchmarkDelta);
+    expect(delta.toJson(), expectedBenchmarkDelta);
   });
 }
 
