@@ -53,20 +53,17 @@ BenchmarkResults computeDelta(
       continue;
     }
 
-    final List<BenchmarkScore> scoresWithDelta = <BenchmarkScore>[];
-    for (int i = 0; i < testScores.length; i++) {
-      final BenchmarkScore testScore = testScores[i];
-      final BenchmarkScore? baselineScore = baselineScores
-          .firstWhereOrNull((BenchmarkScore s) => s.metric == testScore.metric);
-      scoresWithDelta.add(
-        testScore._copyWith(
+    delta[benchmarkName] = testScores.map<BenchmarkScore>(
+      (BenchmarkScore testScore) {
+        final BenchmarkScore? baselineScore = baselineScores.firstWhereOrNull(
+            (BenchmarkScore s) => s.metric == testScore.metric);
+        return testScore._copyWith(
           delta: baselineScore == null
               ? null
               : (testScore.value - baselineScore.value).toDouble(),
-        ),
-      );
-    }
-    delta[benchmarkName] = scoresWithDelta;
+        );
+      },
+    ).toList();
   }
   return BenchmarkResults(delta);
 }
