@@ -10,13 +10,15 @@ class BenchmarkScore {
   BenchmarkScore({
     required this.metric,
     required this.value,
+    this.delta,
   });
 
   /// Deserializes a JSON object to create a [BenchmarkScore] object.
   factory BenchmarkScore.parse(Map<String, Object?> json) {
     final String metric = json[metricKey]! as String;
     final double value = (json[valueKey]! as num).toDouble();
-    return BenchmarkScore(metric: metric, value: value);
+    final num? delta = json[deltaKey] as num?;
+    return BenchmarkScore(metric: metric, value: value, delta: delta);
   }
 
   /// The key for the value [metric] in the [BenchmarkScore] JSON
@@ -25,6 +27,9 @@ class BenchmarkScore {
 
   /// The key for the value [value] in the [BenchmarkScore] JSON representation.
   static const String valueKey = 'value';
+
+  /// The key for the value [delta] in the [BenchmarkScore] JSON representation.
+  static const String deltaKey = 'delta';
 
   /// The name of the metric that this score is categorized under.
   ///
@@ -39,14 +44,14 @@ class BenchmarkScore {
   /// and the score of a matching metric from another [BenchmarkResults].
   ///
   /// This value may be assigned by the [computeDelta] analysis method.
-  num? delta;
+  final num? delta;
 
   /// Serializes the benchmark metric to a JSON object.
   Map<String, Object?> toJson() {
     return <String, Object?>{
       metricKey: metric,
       valueKey: value,
-      if (delta != null) 'delta': delta,
+      if (delta != null) deltaKey: delta,
     };
   }
 }

@@ -33,13 +33,14 @@ BenchmarkResults computeAverage(List<BenchmarkResults> results) {
   return average;
 }
 
-/// Computes the delta for each matching metric in [test] and [baseline],
-/// assigns the delta values to each [BenchmarkScore] in [test], and then
-/// returns the modified [test] object.
+/// Computes the delta for each matching metric in [test] and [baseline], and
+/// returns a new [BenchmarkResults] object where each [BenchmarkScore] contains
+/// a [delta] value.
 BenchmarkResults computeDelta(
   BenchmarkResults baseline,
   BenchmarkResults test,
 ) {
+  final BenchmarkResults delta = test.copy();
   for (final String benchmarkName in test.scores.keys) {
     // Lookup this benchmark in the baseline.
     final List<BenchmarkScore>? baselineScores = baseline.scores[benchmarkName];
@@ -48,22 +49,36 @@ BenchmarkResults computeDelta(
     }
 
     final List<BenchmarkScore> testScores = test.scores[benchmarkName]!;
-    for (final BenchmarkScore score in testScores) {
+    final List<BenchmarkScore> deltaScores = delta.scores[benchmarkName]!;
+
+    for (int i = 0; i < testScores.length; i++) {
+      final BenchmarkScore testScore = testScores[i];
       // Lookup this metric in the baseline.
       final BenchmarkScore? baselineScore = baselineScores
-          .firstWhereOrNull((BenchmarkScore s) => s.metric == score.metric);
+          .firstWhereOrNull((BenchmarkScore s) => s.metric == testScore.metric);
       if (baselineScore == null) {
         continue;
       }
 
-      // Add the delta to the [testMetric].
-      score.delta = (score.value - baselineScore.value).toDouble();
+      final BenchmarkScore scoreWithDelta = BenchmarkScore(
+        metric: testScore.metric,
+        value: testScore.value,
+        delta: (testScore.value - baselineScore.value).toDouble(),
+      );
+      deltaScores
+        ..removeAt(i)
+        ..insert(i, scoreWithDelta);
     }
   }
-  return test;
+  return delta;
 }
 
 extension _AnalysisExtension on BenchmarkResults {
+  /// Returns a new [BenchmarkResults] object that is a copy of [this].
+  BenchmarkResults copy() {
+    return BenchmarkResults.parse(toJson());
+  }
+
   /// Sums this [BenchmarkResults] instance with [other] by adding the values
   /// of each matching benchmark score.
   ///
