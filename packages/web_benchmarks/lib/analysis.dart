@@ -58,14 +58,11 @@ BenchmarkResults computeDelta(
       final BenchmarkScore testScore = testScores[i];
       final BenchmarkScore? baselineScore = baselineScores
           .firstWhereOrNull((BenchmarkScore s) => s.metric == testScore.metric);
-      if (baselineScore == null) {
-        scoresWithDelta.add(testScore._copyWith());
-        continue;
-      }
-
       scoresWithDelta.add(
         testScore._copyWith(
-          delta: (testScore.value - baselineScore.value).toDouble(),
+          delta: baselineScore == null
+              ? null
+              : (testScore.value - baselineScore.value).toDouble(),
         ),
       );
     }
