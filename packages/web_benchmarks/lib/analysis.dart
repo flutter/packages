@@ -73,7 +73,8 @@ extension _AnalysisExtension on BenchmarkResults {
     BenchmarkResults other, {
     bool throwExceptionOnMismatch = true,
   }) {
-    final Map<String, List<Map<String, Object?>>> sum = toJson();
+    final Map<String, List<BenchmarkScore>> sum =
+        <String, List<BenchmarkScore>>{};
     for (final String benchmark in scores.keys) {
       // Look up this benchmark in [other].
       final List<BenchmarkScore>? matchingBenchmark = other.scores[benchmark];
@@ -88,26 +89,25 @@ extension _AnalysisExtension on BenchmarkResults {
       }
 
       final List<BenchmarkScore> scoresForBenchmark = scores[benchmark]!;
-      for (int i = 0; i < scoresForBenchmark.length; i++) {
-        final BenchmarkScore score = scoresForBenchmark[i];
+      sum[benchmark] =
+          scoresForBenchmark.map<BenchmarkScore>((BenchmarkScore score) {
         // Look up this score in the [matchingBenchmark] from [other].
         final BenchmarkScore? matchingScore = matchingBenchmark
             .firstWhereOrNull((BenchmarkScore s) => s.metric == score.metric);
-        if (matchingScore == null) {
-          if (throwExceptionOnMismatch) {
-            throw Exception(
-              'Cannot sum benchmarks because benchmark "$benchmark" is missing '
-              'a score for metric ${score.metric}.',
-            );
-          }
-          continue;
+        if (matchingScore == null && throwExceptionOnMismatch) {
+          throw Exception(
+            'Cannot sum benchmarks because benchmark "$benchmark" is missing '
+            'a score for metric ${score.metric}.',
+          );
         }
-
-        final num sumScore = score.value + matchingScore.value;
-        sum[benchmark]![i][BenchmarkScore.valueKey] = sumScore;
-      }
+        return score._copyWith(
+          value: matchingScore == null
+              ? score.value
+              : score.value + matchingScore.value,
+        );
+      }).toList();
     }
-    return BenchmarkResults.parse(sum);
+    return BenchmarkResults(sum);
   }
 }
 
