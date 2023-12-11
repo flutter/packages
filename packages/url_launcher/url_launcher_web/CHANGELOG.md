@@ -1,3 +1,8 @@
+## 2.2.2
+
+* Adds documentation that a launch in a new window/tab needs to be triggered by
+  a user action.
+
 ## 2.2.1
 
 * Supports Flutter Web + Wasm
