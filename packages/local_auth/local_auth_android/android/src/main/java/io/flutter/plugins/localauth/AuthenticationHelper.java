@@ -218,7 +218,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
         (dialog, which) -> {
           completionHandler.complete(Messages.AuthResult.FAILURE);
           stop();
-          activity.startActivity(new Intent(Settings.ACTION_SECURITY_SETTINGS));
+          activity.startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS),7);
         };
     OnClickListener cancelHandler =
         (dialog, which) -> {

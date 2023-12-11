@@ -12,6 +12,9 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.biometric.BiometricManager;
@@ -30,6 +33,8 @@ import io.flutter.plugins.localauth.Messages.AuthResult;
 import io.flutter.plugins.localauth.Messages.AuthStrings;
 import io.flutter.plugins.localauth.Messages.LocalAuthApi;
 import io.flutter.plugins.localauth.Messages.Result;
+import io.flutter.plugin.common.MethodCall;
+import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -39,10 +44,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * <p>Instantiate this in an add to app scenario to gracefully handle activity and context changes.
  */
-public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthApi {
+public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthApi, MethodChannel.MethodCallHandler{
   private static final int LOCK_REQUEST_CODE = 221;
+  private static final int REQUEST_SETTING_CALLBACK = 7;
+  private MethodChannel.Result requestPermissionsResult;
   private Activity activity;
   private AuthenticationHelper authHelper;
+  private MethodChannel methodChannel;
+  private final Handler mHandler = new Handler(Looper.getMainLooper());
 
   @VisibleForTesting final AtomicBoolean authInProgress = new AtomicBoolean(false);
 
@@ -55,6 +64,15 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
       new PluginRegistry.ActivityResultListener() {
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+          if (requestCode == REQUEST_SETTING_CALLBACK) {
+            mHandler.post(new Runnable() {
+              @Override
+              public void run() {
+                System.out.println("Luan push message from native");
+                requestPermissionsResult.success(REQUEST_SETTING_CALLBACK);
+              }
+            });
+          }
           if (requestCode == LOCK_REQUEST_CODE) {
             if (resultCode == RESULT_OK && lockRequestResult != null) {
               onAuthenticationCompleted(lockRequestResult, AuthResult.SUCCESS);
@@ -225,11 +243,14 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     LocalAuthApi.setup(binding.getBinaryMessenger(), this);
+    methodChannel = new MethodChannel(binding.getBinaryMessenger(), "setting_channel");
+    methodChannel.setMethodCallHandler(this);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     LocalAuthApi.setup(binding.getBinaryMessenger(), null);
+    methodChannel.setMethodCallHandler(null);
   }
 
   private void setServicesFromActivity(Activity activity) {
@@ -238,6 +259,21 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     Context context = activity.getBaseContext();
     biometricManager = BiometricManager.from(activity);
     keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
+  }
+
+  @Override
+  public void onMethodCall(@NonNull MethodCall  call,@NonNull MethodChannel.Result result) {
+    if (call.method.equals("REQUEST_SETTING")) {
+      mHandler.post(new Runnable() {
+        @Override
+        public void run() {
+          requestPermissionsResult = result;
+        }
+      });
+
+    } else {
+      result.notImplemented();
+    }
   }
 
   @Override
