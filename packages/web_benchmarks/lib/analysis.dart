@@ -40,29 +40,38 @@ BenchmarkResults computeDelta(
   BenchmarkResults baseline,
   BenchmarkResults test,
 ) {
-  final Map<String, List<Map<String, Object?>>> delta = test.toJson();
+  final Map<String, List<BenchmarkScore>> delta =
+      <String, List<BenchmarkScore>>{};
   for (final String benchmarkName in test.scores.keys) {
-    // Lookup this benchmark in the baseline.
+    final List<BenchmarkScore> testScores = test.scores[benchmarkName]!;
     final List<BenchmarkScore>? baselineScores = baseline.scores[benchmarkName];
     if (baselineScores == null) {
+      delta[benchmarkName] = List<BenchmarkScore>.generate(
+        testScores.length,
+        (int i) => testScores[i]._copyWith(),
+      );
       continue;
     }
 
-    final List<BenchmarkScore> testScores = test.scores[benchmarkName]!;
+    final List<BenchmarkScore> scoresWithDelta = <BenchmarkScore>[];
     for (int i = 0; i < testScores.length; i++) {
       final BenchmarkScore testScore = testScores[i];
-      // Lookup this metric in the baseline.
       final BenchmarkScore? baselineScore = baselineScores
           .firstWhereOrNull((BenchmarkScore s) => s.metric == testScore.metric);
       if (baselineScore == null) {
+        scoresWithDelta.add(testScore._copyWith());
         continue;
       }
 
-      delta[benchmarkName]![i][BenchmarkScore.deltaKey] =
-          (testScore.value - baselineScore.value).toDouble();
+      scoresWithDelta.add(
+        testScore._copyWith(
+          delta: (testScore.value - baselineScore.value).toDouble(),
+        ),
+      );
     }
+    delta[benchmarkName] = scoresWithDelta;
   }
-  return BenchmarkResults.parse(delta);
+  return BenchmarkResults(delta);
 }
 
 extension _AnalysisExtension on BenchmarkResults {
@@ -114,4 +123,13 @@ extension _AnalysisExtension on BenchmarkResults {
     }
     return BenchmarkResults.parse(sum);
   }
+}
+
+extension _CopyExtension on BenchmarkScore {
+  BenchmarkScore _copyWith({String? metric, num? value, num? delta}) =>
+      BenchmarkScore(
+        metric: metric ?? this.metric,
+        value: value ?? this.value,
+        delta: delta ?? this.delta,
+      );
 }
