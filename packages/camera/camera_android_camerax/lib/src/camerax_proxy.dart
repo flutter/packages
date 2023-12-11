@@ -4,8 +4,6 @@
 
 import 'dart:ui' show Size;
 
-import 'package:flutter/services.dart' show DeviceOrientation;
-
 import 'analyzer.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
@@ -135,6 +133,8 @@ class CameraXProxy {
   /// the ID corresponding to the surface it will provide.
   Future<int> Function(Preview preview) setPreviewSurfaceProvider;
 
+  /// Returns default rotation for [UseCase]s in terms of one of the [Surface]
+  /// rotation constants.
   Future<int> Function() getDefaultRotation;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {

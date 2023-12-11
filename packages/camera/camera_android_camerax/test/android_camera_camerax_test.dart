@@ -1230,6 +1230,7 @@ void main() {
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
+      const int defaultTargetRotation = Surface.ROTATION_270;
 
       // Set directly for test versus calling createCamera.
       camera.processCameraProvider = MockProcessCameraProvider();
@@ -1239,8 +1240,8 @@ void main() {
       camera.cameraSelector = MockCameraSelector();
 
       // Tell plugin to mock call to get current video orientation.
-      camera.proxy =
-          CameraXProxy(getVideoOrientation: (_) => Future<int>.value(270));
+      camera.proxy = CameraXProxy(
+          getDefaultRotation: () => Future<int>.value(defaultTargetRotation));
 
       const int cameraId = 87;
       const String outputPath = '/temp/MOV123.temp';
@@ -1254,16 +1255,34 @@ void main() {
       when(camera.processCameraProvider!.isBound(camera.videoCapture!))
           .thenAnswer((_) async => true);
 
-      // Test when orientation is unlocked.
-      await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
-      verify(mockVideoCapture.setTargetRotation(Surface.ROTATION_270));
-
-      // Test when orientation is locked.
-      camera.captureOrientationLocked = true;
-      clearInteractions(mockVideoCapture);
-
+      // Orientation is unlocked and plugin does not need to set default target
+      // rotation manually.
+      camera.recording = null;
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
+
+      // Orientation is locked and plugin does not need to set default target
+      // rotation manually.
+      camera.recording = null;
+      camera.captureOrientationLocked = true;
+      await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
+      verifyNever(mockVideoCapture.setTargetRotation(any));
+
+      // Orientation is locked and plugin does need to set default target
+      // rotation manually.
+      camera.recording = null;
+      camera.captureOrientationLocked = true;
+      camera.shouldSetDefaultRotation = true;
+      await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
+      verifyNever(mockVideoCapture.setTargetRotation(any));
+
+      // Orientation is unlocked and plugin does need to set default target
+      // rotation manually.
+      camera.recording = null;
+      camera.captureOrientationLocked = false;
+      camera.shouldSetDefaultRotation = true;
+      await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
+      verify(mockVideoCapture.setTargetRotation(defaultTargetRotation));
     });
 
     test('pauseVideoRecording pauses the recording', () async {
@@ -1389,27 +1408,43 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockImageCapture mockImageCapture = MockImageCapture();
+    const int cameraId = 3;
+    const int defaultTargetRotation = Surface.ROTATION_180;
 
     // Set directly for test versus calling createCamera.
     camera.imageCapture = mockImageCapture;
 
     // Tell plugin to mock call to get current photo orientation.
-    camera.proxy =
-        CameraXProxy(getPhotoOrientation: (_) => Future<int>.value(180));
+    camera.proxy = CameraXProxy(
+        getDefaultRotation: () => Future<int>.value(defaultTargetRotation));
 
     when(camera.imageCapture!.takePicture())
         .thenAnswer((_) async => 'test/absolute/path/to/picture');
 
-    // Test when orientation is unlocked.
-    await camera.takePicture(3);
-    verify(mockImageCapture.setTargetRotation(Surface.ROTATION_180));
-
-    // Test when orientation is locked.
-    camera.captureOrientationLocked = true;
-    clearInteractions(mockImageCapture);
-
-    await camera.takePicture(3);
+    // Orientation is unlocked and plugin does not need to set default target
+    // rotation manually.
+    await camera.takePicture(cameraId);
     verifyNever(mockImageCapture.setTargetRotation(any));
+
+    // Orientation is locked and plugin does not need to set default target
+    // rotation manually.
+    camera.captureOrientationLocked = true;
+    await camera.takePicture(cameraId);
+    verifyNever(mockImageCapture.setTargetRotation(any));
+
+    // Orientation is locked and plugin does need to set default target
+    // rotation manually.
+    camera.captureOrientationLocked = true;
+    camera.shouldSetDefaultRotation = true;
+    await camera.takePicture(cameraId);
+    verifyNever(mockImageCapture.setTargetRotation(any));
+
+    // Orientation is unlocked and plugin does need to set default target
+    // rotation manually.
+    camera.captureOrientationLocked = false;
+    camera.shouldSetDefaultRotation = true;
+    await camera.takePicture(cameraId);
+    verify(mockImageCapture.setTargetRotation(defaultTargetRotation));
   });
 
   test('takePicture turns non-torch flash mode off when torch mode enabled',
@@ -1843,6 +1878,7 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 35;
+    const int defaultTargetRotation = Surface.ROTATION_90;
     final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
     // Set directly for test versus calling createCamera.
@@ -1852,25 +1888,47 @@ void main() {
     // call to get current photo orientation.
     camera.proxy = CameraXProxy(
         createAnalyzer: (_) => MockAnalyzer(),
-        getPhotoOrientation: (_) => Future<int>.value(90));
+        getDefaultRotation: () => Future<int>.value(defaultTargetRotation));
 
-    // Test when orientation is unlocked.
+    // Orientation is unlocked and plugin does not need to set default target
+    // rotation manually.
     StreamSubscription<CameraImageData> imageStreamSubscription = camera
         .onStreamedFrameAvailable(cameraId)
-        .listen((CameraImageData imageData) {});
-
-    await untilCalled(mockImageAnalysis.setTargetRotation(Surface.ROTATION_90));
+        .listen((CameraImageData data) {});
+    await untilCalled(mockImageAnalysis.setAnalyzer(any));
+    verifyNever(mockImageAnalysis.setTargetRotation(any));
     await imageStreamSubscription.cancel();
 
-    // Wait until onListen completes and then test when orientation is locked.
+    // Orientation is locked and plugin does not need to set default target
+    // rotation manually.
     camera.captureOrientationLocked = true;
-    clearInteractions(mockImageAnalysis);
     imageStreamSubscription = camera
         .onStreamedFrameAvailable(cameraId)
         .listen((CameraImageData data) {});
-
     await untilCalled(mockImageAnalysis.setAnalyzer(any));
-    verifyNever(mockImageAnalysis.setTargetRotation(Surface.ROTATION_90));
+    verifyNever(mockImageAnalysis.setTargetRotation(any));
+    await imageStreamSubscription.cancel();
+
+    // Orientation is locked and plugin does need to set default target
+    // rotation manually.
+    camera.captureOrientationLocked = true;
+    camera.shouldSetDefaultRotation = true;
+    imageStreamSubscription = camera
+        .onStreamedFrameAvailable(cameraId)
+        .listen((CameraImageData data) {});
+    await untilCalled(mockImageAnalysis.setAnalyzer(any));
+    verifyNever(mockImageAnalysis.setTargetRotation(any));
+    await imageStreamSubscription.cancel();
+
+    // Orientation is unlocked and plugin does need to set default target
+    // rotation manually.
+    camera.captureOrientationLocked = false;
+    camera.shouldSetDefaultRotation = true;
+    imageStreamSubscription = camera
+        .onStreamedFrameAvailable(cameraId)
+        .listen((CameraImageData data) {});
+    await untilCalled(
+        mockImageAnalysis.setTargetRotation(defaultTargetRotation));
     await imageStreamSubscription.cancel();
   });
 
@@ -1879,7 +1937,6 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 44;
-    const DeviceOrientation testOrientation = DeviceOrientation.landscapeLeft;
 
     final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
     final MockImageCapture mockImageCapture = MockImageCapture();
@@ -1890,34 +1947,31 @@ void main() {
     camera.imageCapture = mockImageCapture;
     camera.videoCapture = mockVideoCapture;
 
-    // Tell plugin to mock calls to retrieve photo and video orientations.
-    const int targetPhotoOrientation = 90;
-    const int targetPhotoOrientationConstant = Surface.ROTATION_90;
-    const int targetVideoOrientation = 270;
-    const int targetVideoOrientationConstant = Surface.ROTATION_270;
-    camera.proxy = CameraXProxy(
-      getPhotoOrientation: (DeviceOrientation? orientation) {
-        if (orientation == testOrientation) {
-          return Future<int>.value(targetPhotoOrientation);
-        } else {
-          return Future<int>.value(0);
-        }
-      },
-      getVideoOrientation: (DeviceOrientation? orientation) {
-        if (orientation == testOrientation) {
-          return Future<int>.value(targetVideoOrientation);
-        } else {
-          return Future<int>.value(0);
-        }
-      },
-    );
+    for (final DeviceOrientation orientation in DeviceOrientation.values) {
+      int? expectedTargetRotation;
+      switch (orientation) {
+        case DeviceOrientation.portraitUp:
+          expectedTargetRotation = Surface.ROTATION_0;
+        case DeviceOrientation.landscapeLeft:
+          expectedTargetRotation = Surface.ROTATION_90;
+        case DeviceOrientation.portraitDown:
+          expectedTargetRotation = Surface.ROTATION_180;
+        case DeviceOrientation.landscapeRight:
+          expectedTargetRotation = Surface.ROTATION_270;
+      }
 
-    await camera.lockCaptureOrientation(cameraId, testOrientation);
+      await camera.lockCaptureOrientation(cameraId, orientation);
 
-    verify(mockImageAnalysis.setTargetRotation(targetPhotoOrientationConstant));
-    verify(mockImageCapture.setTargetRotation(targetPhotoOrientationConstant));
-    verify(mockVideoCapture.setTargetRotation(targetVideoOrientationConstant));
-    expect(camera.captureOrientationLocked, isTrue);
+      verify(mockImageAnalysis.setTargetRotation(expectedTargetRotation));
+      verify(mockImageCapture.setTargetRotation(expectedTargetRotation));
+      verify(mockVideoCapture.setTargetRotation(expectedTargetRotation));
+      expect(camera.captureOrientationLocked, isTrue);
+      expect(camera.shouldSetDefaultRotation, isTrue);
+
+      // Reset flags for testing.
+      camera.captureOrientationLocked = false;
+      camera.shouldSetDefaultRotation = false;
+    }
   });
 
   test(
@@ -1926,46 +1980,8 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 57;
 
-    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
-    final MockImageCapture mockImageCapture = MockImageCapture();
-    final MockVideoCapture mockVideoCapture = MockVideoCapture();
-
-    // Set directly for test versus calling createCamera.
-    camera.imageAnalysis = mockImageAnalysis;
-    camera.imageCapture = mockImageCapture;
-    camera.videoCapture = mockVideoCapture;
-
-    // Set flag to test it is properly changed.
     camera.captureOrientationLocked = true;
-
-    // Tell plugin to mock current photo & video orientations.
-    const int targetPhotoOrientation = 270;
-    const int targetPhotoOrientationConstant = Surface.ROTATION_270;
-    const int targetVideoOrientation = 180;
-    const int targetVideoOrientationConstant = Surface.ROTATION_180;
-
-    camera.proxy = CameraXProxy(
-      getPhotoOrientation: (DeviceOrientation? orientation) {
-        if (orientation == null) {
-          return Future<int>.value(targetPhotoOrientation);
-        } else {
-          return Future<int>.value(0);
-        }
-      },
-      getVideoOrientation: (DeviceOrientation? orientation) {
-        if (orientation == null) {
-          return Future<int>.value(targetVideoOrientation);
-        } else {
-          return Future<int>.value(0);
-        }
-      },
-    );
-
     await camera.unlockCaptureOrientation(cameraId);
-
-    verify(mockImageAnalysis.setTargetRotation(targetPhotoOrientationConstant));
-    verify(mockImageCapture.setTargetRotation(targetPhotoOrientationConstant));
-    verify(mockVideoCapture.setTargetRotation(targetVideoOrientationConstant));
     expect(camera.captureOrientationLocked, isFalse);
   });
 }

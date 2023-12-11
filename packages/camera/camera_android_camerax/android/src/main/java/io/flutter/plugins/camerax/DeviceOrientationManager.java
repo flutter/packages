@@ -18,7 +18,6 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 
-
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */

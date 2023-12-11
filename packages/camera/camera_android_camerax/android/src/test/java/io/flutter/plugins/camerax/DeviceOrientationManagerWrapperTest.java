@@ -83,26 +83,14 @@ public class DeviceOrientationManagerWrapperTest {
   }
 
   @Test
-  public void getPhotoOrientation_returnsExpectedOrientation() {
+  public void getDefaultRotation_returnsExpectedRotation() {
     final DeviceOrientationManagerHostApiImpl hostApi =
         new DeviceOrientationManagerHostApiImpl(mockBinaryMessenger, mockInstanceManager);
-    final int photoOrientation = 90;
+    final int defaultRotation = 180;
 
     hostApi.deviceOrientationManager = mockDeviceOrientationManager;
-    when(mockDeviceOrientationManager.getPhotoOrientation()).thenReturn(photoOrientation);
+    when(mockDeviceOrientationManager.getDefaultRotation()).thenReturn(defaultRotation);
 
-    assertEquals(hostApi.getPhotoOrientation(), Long.valueOf(photoOrientation));
-  }
-
-  @Test
-  public void getVideoOrientation_returnsExpectedOrientation() {
-    final DeviceOrientationManagerHostApiImpl hostApi =
-        new DeviceOrientationManagerHostApiImpl(mockBinaryMessenger, mockInstanceManager);
-    final int videoOrientation = 180;
-
-    hostApi.deviceOrientationManager = mockDeviceOrientationManager;
-    when(mockDeviceOrientationManager.getVideoOrientation()).thenReturn(videoOrientation);
-
-    assertEquals(hostApi.getVideoOrientation(), Long.valueOf(videoOrientation));
+    assertEquals(hostApi.getDefaultRotation(), Long.valueOf(defaultRotation));
   }
 }

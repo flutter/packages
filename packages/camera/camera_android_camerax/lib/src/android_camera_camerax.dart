@@ -164,6 +164,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   bool captureOrientationLocked = false;
 
+  /// Whether or not the default rotation for [UseCase]s needs to be set
+  /// manually because the capture orientation was previously locked.
+  ///
+  /// Currently, CameraX provides no way to unset target rotations for
+  /// [UseCase]s, so once they are set and unset, this plugin must start setting
+  /// the default orientation manually.
+  ///
+  /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture#setTargetRotation(int)
+  /// for an example on how setting target rotations for [UseCase]s work.
   bool shouldSetDefaultRotation = false;
 
   /// Returns list of all available cameras and their descriptions.
@@ -386,14 +395,19 @@ class AndroidCameraCameraX extends CameraPlatform {
     int cameraId,
     DeviceOrientation orientation,
   ) async {
-    shouldSetDefaultRotation = true;
+    // Flag that (1) default rotation for UseCases will need to be set manually
+    // if orientation ever unlocked and (2) the capture orientation is locked
+    // and should not be changed.
+    if (!shouldSetDefaultRotation) {
+      shouldSetDefaultRotation = true;
+    }
     captureOrientationLocked = true;
 
-    // Get target rotation based on locked orientation
+    // Get target rotation based on locked orientation.
     final int targetLockedRotation =
-        (_getRotationFromDeviceOrientation(orientation) + 360) % 360;
+        _getRotationConstantFromDeviceOrientation(orientation);
 
-    /// Update UseCases to use target device orientation.
+    // Update UseCases to use target device orientation.
     await imageCapture!.setTargetRotation(targetLockedRotation);
     await imageAnalysis!.setTargetRotation(targetLockedRotation);
     await videoCapture!.setTargetRotation(targetLockedRotation);
@@ -402,8 +416,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Unlocks the capture orientation.
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
-    // Flag that default rotation should be set for UseCases
-    // as needed.
+    // Flag that default rotation should be set for UseCases as needed.
     captureOrientationLocked = false;
   }
 
@@ -870,7 +883,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Returns [Surface] target rotation constant that maps to specified sensor
   /// orientation.
-  int _getTargetRotation(int sensorOrientation) {
+  int _getTargetRotationConstant(int sensorOrientation) {
     switch (sensorOrientation) {
       case 90:
         return Surface.ROTATION_90;
@@ -886,19 +899,19 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
-  /// Returns counter-clockwise degrees of rotation from
+  /// Returns [Surface] constant for counter-clockwise degrees of rotation from
   /// [DeviceOrientation.portraitUp] required to reach the specified
   /// [DeviceOrientation].
-  int _getRotationFromDeviceOrientation(DeviceOrientation orientation) {
+  int _getRotationConstantFromDeviceOrientation(DeviceOrientation orientation) {
     switch (orientation) {
       case DeviceOrientation.portraitUp:
-        return 0;
+        return Surface.ROTATION_0;
       case DeviceOrientation.landscapeLeft:
-        return 90;
+        return Surface.ROTATION_90;
       case DeviceOrientation.portraitDown:
-        return 180;
+        return Surface.ROTATION_180;
       case DeviceOrientation.landscapeRight:
-        return 270;
+        return Surface.ROTATION_270;
     }
   }
 

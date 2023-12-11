@@ -86,6 +86,9 @@ class ImageCapture extends UseCase {
 
   /// Dynamically sets the target rotation of this instance.
   ///
+  /// The target rotations should be expressed in the counter-clockwise
+  /// direction and relative to [DeviceOrientation.portraitUp].
+  ///
   /// [rotation] should be one of the [Surface] rotation constants.
   Future<void> setTargetRotation(int rotation) =>
       _api.setTargetRotationFromInstances(this, rotation);
