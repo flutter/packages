@@ -172,7 +172,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// the default orientation manually.
   ///
   /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture#setTargetRotation(int)
-  /// for an example on how setting target rotations for [UseCase]s work.
+  /// for an example on how setting target rotations for [UseCase]s works.
   bool shouldSetDefaultRotation = false;
 
   /// Returns list of all available cameras and their descriptions.
@@ -260,19 +260,19 @@ class AndroidCameraCameraX extends CameraPlatform {
     processCameraProvider!.unbindAll();
 
     // Configure Preview instance.
-    preview = proxy.createPreview(
-        presetResolutionSelector, /* use default target rotation */ null);
+    preview = proxy.createPreview(presetResolutionSelector,
+        /* use CameraX default target rotation */ null);
     final int flutterSurfaceTextureId =
         await proxy.setPreviewSurfaceProvider(preview!);
 
     // Configure ImageCapture instance.
-    imageCapture = proxy.createImageCapture(
-        presetResolutionSelector, /* use default target rotation */ null);
+    imageCapture = proxy.createImageCapture(presetResolutionSelector,
+        /* use CameraX default target rotation */ null);
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = proxy.createImageAnalysis(
-        presetResolutionSelector, /* use default target rotation */ null);
+    imageAnalysis = proxy.createImageAnalysis(presetResolutionSelector,
+        /* use CameraX default target rotation */ null);
 
     // Configure VideoCapture and Recorder instances.
     recorder = proxy.createRecorder(presetQualitySelector);
@@ -396,8 +396,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     DeviceOrientation orientation,
   ) async {
     // Flag that (1) default rotation for UseCases will need to be set manually
-    // if orientation ever unlocked and (2) the capture orientation is locked
-    // and should not be changed.
+    // if orientation is ever unlocked and (2) the capture orientation is locked
+    // and should not be changed until unlocked.
     if (!shouldSetDefaultRotation) {
       shouldSetDefaultRotation = true;
     }

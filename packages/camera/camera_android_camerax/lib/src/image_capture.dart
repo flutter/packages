@@ -17,13 +17,10 @@ import 'use_case.dart';
 @immutable
 class ImageCapture extends UseCase {
   /// Creates an [ImageCapture].
-  ///
-  /// [targetRotation] should be specified in terms of one of the [Surface]
-  /// rotation constants.
   ImageCapture({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    this.targetRotation,
+    this.initialTargetRotation,
     this.targetFlashMode,
     this.resolutionSelector,
   }) : super.detached(
@@ -33,18 +30,15 @@ class ImageCapture extends UseCase {
     _api = ImageCaptureHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     _api.createFromInstance(
-        this, targetRotation, targetFlashMode, resolutionSelector);
+        this, initialTargetRotation, targetFlashMode, resolutionSelector);
   }
 
   /// Constructs a [ImageCapture] that is not automatically attached to a
   /// native object.
-  ///
-  /// [targetRotation] should be specified in terms of one of the [Surface]
-  /// rotation constants.
   ImageCapture.detached({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    this.targetRotation,
+    this.initialTargetRotation,
     this.targetFlashMode,
     this.resolutionSelector,
   }) : super.detached(
@@ -57,8 +51,12 @@ class ImageCapture extends UseCase {
 
   late final ImageCaptureHostApiImpl _api;
 
-  /// Target rotation of the camera used for the preview stream.
-  final int? targetRotation;
+  /// Initial target rotation of the camera used for the preview stream.
+  ///
+  /// Should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
+  final int? initialTargetRotation;
 
   /// Flash mode used to take a picture.
   final int? targetFlashMode;
@@ -86,10 +84,9 @@ class ImageCapture extends UseCase {
 
   /// Dynamically sets the target rotation of this instance.
   ///
-  /// The target rotations should be expressed in the counter-clockwise
-  /// direction and relative to [DeviceOrientation.portraitUp].
-  ///
-  /// [rotation] should be one of the [Surface] rotation constants.
+  /// [rotation] should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
   Future<void> setTargetRotation(int rotation) =>
       _api.setTargetRotationFromInstances(this, rotation);
 
@@ -153,7 +150,7 @@ class ImageCaptureHostApiImpl extends ImageCaptureHostApi {
       return ImageCapture.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
-          targetRotation: original.targetRotation,
+          initialTargetRotation: original.initialTargetRotation,
           targetFlashMode: original.targetFlashMode,
           resolutionSelector: original.resolutionSelector);
     });

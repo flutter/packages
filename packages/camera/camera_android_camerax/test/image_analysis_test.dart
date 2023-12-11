@@ -41,7 +41,7 @@ void main() {
       );
 
       ImageAnalysis.detached(
-        targetRotation: Surface.ROTATION_270,
+        initialTargetRotation: Surface.ROTATION_270,
         resolutionSelector: MockResolutionSelector(),
         instanceManager: instanceManager,
       );
@@ -70,7 +70,7 @@ void main() {
       });
 
       final ImageAnalysis instance = ImageAnalysis(
-        targetRotation: targetRotation,
+        initialTargetRotation: targetRotation,
         resolutionSelector: mockResolutionSelector,
         instanceManager: instanceManager,
       );

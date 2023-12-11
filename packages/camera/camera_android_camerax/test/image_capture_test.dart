@@ -36,7 +36,7 @@ void main() {
       );
       ImageCapture.detached(
         instanceManager: instanceManager,
-        targetRotation: Surface.ROTATION_180,
+        initialTargetRotation: Surface.ROTATION_180,
         targetFlashMode: ImageCapture.flashModeOn,
         resolutionSelector: MockResolutionSelector(),
       );
@@ -67,7 +67,7 @@ void main() {
 
       ImageCapture(
         instanceManager: instanceManager,
-        targetRotation: targetRotation,
+        initialTargetRotation: targetRotation,
         targetFlashMode: targetFlashMode,
         resolutionSelector: mockResolutionSelector,
       );

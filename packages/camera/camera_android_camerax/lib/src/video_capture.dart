@@ -17,7 +17,8 @@ import 'use_case.dart';
 /// See https://developer.android.com/reference/androidx/camera/video/VideoCapture.
 @immutable
 class VideoCapture extends UseCase {
-  /// Creates a VideoCapture that is not automatically attached to a native object.
+  /// Creates a [VideoCapture] that is not automatically attached to a native
+  /// object.
   VideoCapture.detached(
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager})
       : super.detached(
@@ -42,10 +43,9 @@ class VideoCapture extends UseCase {
 
   /// Dynamically sets the target rotation of this instance.
   ///
-  /// The target rotations should be expressed in the counter-clockwise
-  /// direction and relative to [DeviceOrientation.portraitUp].
-  ///
-  /// [rotation] should be one of the [Surface] rotation constants.
+  /// [rotation] should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
   Future<void> setTargetRotation(int rotation) =>
       _api.setTargetRotationFromInstances(this, rotation);
 

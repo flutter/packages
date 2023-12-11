@@ -21,32 +21,26 @@ import 'use_case.dart';
 @immutable
 class ImageAnalysis extends UseCase {
   /// Creates an [ImageAnalysis].
-  ///
-  /// [targetRotation] should be specified in terms of one of the [Surface]
-  /// rotation constants.
   ImageAnalysis(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.targetRotation,
+      this.initialTargetRotation,
       this.resolutionSelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = _ImageAnalysisHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstances(this, targetRotation, resolutionSelector);
+    _api.createFromInstances(this, initialTargetRotation, resolutionSelector);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
   /// Constructs an [ImageAnalysis] that is not automatically attached to a
   /// native object.
-  ///
-  /// [targetRotation] should be specified in terms of one of the [Surface]
-  /// rotation constants.
   ImageAnalysis.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.targetRotation,
+      this.initialTargetRotation,
       this.resolutionSelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
@@ -58,8 +52,12 @@ class ImageAnalysis extends UseCase {
 
   late final _ImageAnalysisHostApiImpl _api;
 
-  /// Target rotation of the camera used for the preview stream.
-  final int? targetRotation;
+  /// Initial target rotation of the camera used for the preview stream.
+  ///
+  /// Should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
+  final int? initialTargetRotation;
 
   /// Target resolution of the camera preview stream.
   ///
@@ -69,10 +67,9 @@ class ImageAnalysis extends UseCase {
 
   /// Dynamically sets the target rotation of this instance.
   ///
-  /// The target rotations should be expressed in the counter-clockwise
-  /// direction and relative to [DeviceOrientation.portraitUp].
-  ///
-  /// [rotation] should be one of the [Surface] rotation constants.
+  /// [rotation] should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
   Future<void> setTargetRotation(int rotation) =>
       _api.setTargetRotationFromInstances(this, rotation);
 
@@ -115,7 +112,7 @@ class _ImageAnalysisHostApiImpl extends ImageAnalysisHostApi {
       instanceManager.addDartCreatedInstance(
         instance,
         onCopy: (ImageAnalysis original) => ImageAnalysis.detached(
-          targetRotation: original.targetRotation,
+          initialTargetRotation: original.initialTargetRotation,
           resolutionSelector: original.resolutionSelector,
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,

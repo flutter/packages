@@ -126,7 +126,7 @@ public class DeviceOrientationManager {
   @SuppressWarnings("deprecation")
   @VisibleForTesting
   PlatformChannel.DeviceOrientation getUIOrientation() {
-    final int rotation = getDisplay().getRotation();
+    final int rotation = getDefaultRotation();
     final int orientation = activity.getResources().getConfiguration().orientation;
 
     switch (orientation) {

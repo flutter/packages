@@ -430,20 +430,20 @@ void main() {
       createPreview:
           (ResolutionSelector? resolutionSelector, int? targetRotation) =>
               Preview.detached(
-                  targetRotation: targetRotation,
+                  initialTargetRotation: targetRotation,
                   resolutionSelector: resolutionSelector),
       createImageCapture:
           (ResolutionSelector? resolutionSelector, int? targetRotation) =>
               ImageCapture.detached(
                   resolutionSelector: resolutionSelector,
-                  targetRotation: targetRotation),
+                  initialTargetRotation: targetRotation),
       createRecorder: (_) => mockRecorder,
       createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
       createImageAnalysis:
           (ResolutionSelector? resolutionSelector, int? targetRotation) =>
               ImageAnalysis.detached(
                   resolutionSelector: resolutionSelector,
-                  targetRotation: targetRotation),
+                  initialTargetRotation: targetRotation),
       createResolutionStrategy: (
           {bool highestAvailable = false, Size? boundSize, int? fallbackRule}) {
         if (highestAvailable) {

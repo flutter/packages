@@ -13,7 +13,6 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerHostApi;
 
-
 public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationManagerHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
@@ -86,7 +85,8 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
     try {
       defaultRotation = deviceOrientationManager.getDefaultRotation();
     } catch (NullPointerException e) {
-       throw new IllegalStateException("startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve the video orientation.");
+      throw new IllegalStateException(
+          "startListeningForDeviceOrientationChange must first be called to subscribe to device orientation changes in order to retrieve default rotation.");
     }
 
     return Long.valueOf(defaultRotation);

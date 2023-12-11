@@ -34,7 +34,7 @@ void main() {
       );
       Preview.detached(
         instanceManager: instanceManager,
-        targetRotation: Surface.ROTATION_90,
+        initialTargetRotation: Surface.ROTATION_90,
         resolutionSelector: MockResolutionSelector(),
       );
 
@@ -62,7 +62,7 @@ void main() {
 
       Preview(
         instanceManager: instanceManager,
-        targetRotation: targetRotation,
+        initialTargetRotation: targetRotation,
         resolutionSelector: mockResolutionSelector,
       );
 

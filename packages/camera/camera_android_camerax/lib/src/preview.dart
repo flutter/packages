@@ -17,27 +17,24 @@ import 'use_case.dart';
 @immutable
 class Preview extends UseCase {
   /// Creates a [Preview].
-  ///
-  /// [targetRotation] should be specified in terms of one of the [Surface]
-  /// rotation constants.
   Preview(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.targetRotation,
+      this.initialTargetRotation,
       this.resolutionSelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
             instanceManager: instanceManager) {
     _api = PreviewHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-    _api.createFromInstance(this, targetRotation, resolutionSelector);
+    _api.createFromInstance(this, initialTargetRotation, resolutionSelector);
   }
 
   /// Constructs a [Preview] that is not automatically attached to a native object.
   Preview.detached(
       {BinaryMessenger? binaryMessenger,
       InstanceManager? instanceManager,
-      this.targetRotation,
+      this.initialTargetRotation,
       this.resolutionSelector})
       : super.detached(
             binaryMessenger: binaryMessenger,
@@ -49,7 +46,11 @@ class Preview extends UseCase {
   late final PreviewHostApiImpl _api;
 
   /// Target rotation of the camera used for the preview stream.
-  final int? targetRotation;
+  ///
+  /// Should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
+  final int? initialTargetRotation;
 
   /// Target resolution of the camera preview stream.
   ///
@@ -59,10 +60,9 @@ class Preview extends UseCase {
 
   /// Dynamically sets the target rotation of this instance.
   ///
-  /// The target rotations should be expressed in the counter-clockwise
-  /// direction and relative to [DeviceOrientation.portraitUp].
-  ///
-  /// [rotation] should be one of the [Surface] rotation constants.
+  /// [rotation] should be specified in terms of one of the [Surface]
+  /// rotation constants that represents the counter-clockwise degrees of
+  /// rotation relative to [DeviceOrientation.portraitUp].
   Future<void> setTargetRotation(int rotation) =>
       _api.setTargetRotationFromInstances(this, rotation);
 
@@ -115,7 +115,7 @@ class PreviewHostApiImpl extends PreviewHostApi {
       return Preview.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
-          targetRotation: original.targetRotation,
+          initialTargetRotation: original.initialTargetRotation,
           resolutionSelector: original.resolutionSelector);
     });
     create(

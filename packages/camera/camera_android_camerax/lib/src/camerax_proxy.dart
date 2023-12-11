@@ -156,13 +156,15 @@ class CameraXProxy {
   static Preview _createAttachedPreview(
       ResolutionSelector? resolutionSelector, int? targetRotation) {
     return Preview(
-        targetRotation: targetRotation, resolutionSelector: resolutionSelector);
+        initialTargetRotation: targetRotation,
+        resolutionSelector: resolutionSelector);
   }
 
   static ImageCapture _createAttachedImageCapture(
       ResolutionSelector? resolutionSelector, int? targetRotation) {
     return ImageCapture(
-        resolutionSelector: resolutionSelector, targetRotation: targetRotation);
+        resolutionSelector: resolutionSelector,
+        initialTargetRotation: targetRotation);
   }
 
   static Recorder _createAttachedRecorder(QualitySelector? qualitySelector) {
@@ -177,7 +179,8 @@ class CameraXProxy {
   static ImageAnalysis _createAttachedImageAnalysis(
       ResolutionSelector? resolutionSelector, int? targetRotation) {
     return ImageAnalysis(
-        resolutionSelector: resolutionSelector, targetRotation: targetRotation);
+        resolutionSelector: resolutionSelector,
+        initialTargetRotation: targetRotation);
   }
 
   static Analyzer _createAttachedAnalyzer(
