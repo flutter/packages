@@ -40,7 +40,7 @@ BenchmarkResults computeDelta(
   BenchmarkResults baseline,
   BenchmarkResults test,
 ) {
-  final BenchmarkResults delta = test.copy();
+  final Map<String, List<Map<String, Object?>>> delta = test.toJson();
   for (final String benchmarkName in test.scores.keys) {
     // Lookup this benchmark in the baseline.
     final List<BenchmarkScore>? baselineScores = baseline.scores[benchmarkName];
@@ -49,8 +49,6 @@ BenchmarkResults computeDelta(
     }
 
     final List<BenchmarkScore> testScores = test.scores[benchmarkName]!;
-    final List<BenchmarkScore> deltaScores = delta.scores[benchmarkName]!;
-
     for (int i = 0; i < testScores.length; i++) {
       final BenchmarkScore testScore = testScores[i];
       // Lookup this metric in the baseline.
@@ -60,25 +58,14 @@ BenchmarkResults computeDelta(
         continue;
       }
 
-      final BenchmarkScore scoreWithDelta = BenchmarkScore(
-        metric: testScore.metric,
-        value: testScore.value,
-        delta: (testScore.value - baselineScore.value).toDouble(),
-      );
-      deltaScores
-        ..removeAt(i)
-        ..insert(i, scoreWithDelta);
+      delta[benchmarkName]![i][BenchmarkScore.deltaKey] =
+          (testScore.value - baselineScore.value).toDouble();
     }
   }
-  return delta;
+  return BenchmarkResults.parse(delta);
 }
 
 extension _AnalysisExtension on BenchmarkResults {
-  /// Returns a new [BenchmarkResults] object that is a copy of [this].
-  BenchmarkResults copy() {
-    return BenchmarkResults.parse(toJson());
-  }
-
   /// Sums this [BenchmarkResults] instance with [other] by adding the values
   /// of each matching benchmark score.
   ///

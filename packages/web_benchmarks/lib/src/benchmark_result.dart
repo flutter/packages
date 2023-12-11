@@ -69,7 +69,7 @@ class BenchmarkResults {
       final List<BenchmarkScore> scores = (json[key]! as List<Object?>)
           .cast<Map<String, Object?>>()
           .map(BenchmarkScore.parse)
-          .toList();
+          .toList(growable: false);
       results[key] = scores;
     }
     return BenchmarkResults(results);
