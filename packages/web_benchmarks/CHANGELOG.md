@@ -1,3 +1,7 @@
+## 1.0.1
+
+* Adds `parse` constructors for the `BenchmarkResults` and `BenchmarkScore` classes.
+
 ## 1.0.0
 
 * **Breaking change:** replace the `useCanvasKit` parameter in the `serveWebBenchmark`
