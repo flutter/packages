@@ -31,11 +31,11 @@
 - (void)scrollViewDidScrollForDelegate:(FWFScrollViewDelegate *)instance
                           uiScrollView:(UIScrollView *)scrollView
                             completion:(void (^)(FlutterError *_Nullable))completion {
-  [self scrollViewDidScrollWithIdentifier:@([self identifierForDelegate:instance])
-                   uiScrollViewIdentifier:@([self.instanceManager
-                                              identifierWithStrongReferenceForInstance:scrollView])
-                                        x:@(scrollView.contentOffset.x)
-                                        y:@(scrollView.contentOffset.y)
+  [self scrollViewDidScrollWithIdentifier:[self identifierForDelegate:instance]
+                   uiScrollViewIdentifier:[self.instanceManager
+                                              identifierWithStrongReferenceForInstance:scrollView]
+                                        x:scrollView.contentOffset.x
+                                        y:scrollView.contentOffset.y
                                completion:completion];
 }
 @end
@@ -81,12 +81,10 @@
   return self;
 }
 
-- (void)createWithIdentifier:(nonnull NSNumber *)identifier
-                       error:(FlutterError *_Nullable *_Nonnull)error {
+- (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error {
   FWFScrollViewDelegate *uiScrollViewDelegate =
       [[FWFScrollViewDelegate alloc] initWithBinaryMessenger:self.binaryMessenger
                                              instanceManager:self.instanceManager];
-  [self.instanceManager addDartCreatedInstance:uiScrollViewDelegate
-                                withIdentifier:identifier.longValue];
+  [self.instanceManager addDartCreatedInstance:uiScrollViewDelegate withIdentifier:identifier];
 }
 @end

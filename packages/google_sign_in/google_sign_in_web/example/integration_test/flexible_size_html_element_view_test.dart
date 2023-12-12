@@ -9,8 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_web/src/flexible_size_html_element_view.dart';
 import 'package:integration_test/integration_test.dart';
-
-import 'src/dom.dart';
+import 'package:web/web.dart' as web;
 
 /// Used to keep track of the number of HtmlElementView factories the test has registered.
 int widgetFactoryNumber = 0;
@@ -54,7 +53,8 @@ void main() {
         (WidgetTester tester) async {
       const Size childSize = Size(300, 40);
 
-      final DomHtmlElement resizable = document.createElement('div');
+      final web.HTMLDivElement resizable =
+          web.document.createElement('div') as web.HTMLDivElement;
       resize(resizable, childSize);
 
       final Element element = await pumpResizableWidget(
@@ -73,7 +73,8 @@ void main() {
       const Size initialSize = Size(160, 100);
       const Size newSize = Size(300, 40);
 
-      final DomHtmlElement resizable = document.createElement('div');
+      final web.HTMLDivElement resizable =
+          web.document.createElement('div') as web.HTMLDivElement;
       resize(resizable, newSize);
 
       final Element element = await pumpResizableWidget(
@@ -94,7 +95,8 @@ void main() {
       final Size expandedSize = initialSize * 2;
       final Size contractedSize = initialSize / 2;
 
-      final DomHtmlElement resizable = document.createElement('div')
+      final web.HTMLDivElement resizable = web.document.createElement('div')
+          as web.HTMLDivElement
         ..setAttribute(
             'style', 'width: 100%; height: 100%; background: #fabada;');
 
@@ -160,7 +162,8 @@ class ResizableFromJs extends StatelessWidget {
     ui_web.platformViewRegistry.registerViewFactory(
       'resizable_from_js_$instanceId',
       (int viewId) {
-        final DomHtmlElement element = document.createElement('div');
+        final web.HTMLDivElement element =
+            web.document.createElement('div') as web.HTMLDivElement;
         element.setAttribute('style',
             'width: 100%; height: 100%; overflow: hidden; background: red;');
         element.id = 'test_element_$viewId';
@@ -191,16 +194,16 @@ class ResizableFromJs extends StatelessWidget {
 }
 
 /// Resizes `resizable` to `size`.
-void resize(DomHtmlElement resizable, Size size) {
+void resize(web.HTMLElement resizable, Size size) {
   resizable.setAttribute('style',
       'width: ${size.width}px; height: ${size.height}px; background: #fabada');
 }
 
 /// Returns a function that can be used to inject `element` in `onPlatformViewCreated` callbacks.
-void Function(int) injectElement(DomHtmlElement element) {
+void Function(int) injectElement(web.HTMLElement element) {
   return (int viewId) {
-    final DomHtmlElement root =
-        document.querySelector('#test_element_$viewId')!;
-    root.appendChild(element);
+    final web.Element? root =
+        web.document.querySelector('#test_element_$viewId');
+    root!.appendChild(element);
   };
 }

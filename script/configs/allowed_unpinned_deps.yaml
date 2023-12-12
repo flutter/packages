@@ -51,6 +51,7 @@
 - test_api
 - vm_service
 - wasm
+- web
 - yaml
 # Google-owned packages
 - _discoveryapis_commons

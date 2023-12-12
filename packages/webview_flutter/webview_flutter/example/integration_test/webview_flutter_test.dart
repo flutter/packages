@@ -537,7 +537,7 @@ Future<void> main() async {
       )));
       unawaited(controller.setOnScrollPositionChange(
           (ScrollPositionChange contentOffsetChange) {
-            recordedPosition = contentOffsetChange;
+        recordedPosition = contentOffsetChange;
       }));
 
       unawaited(controller.loadRequest(Uri.parse(
