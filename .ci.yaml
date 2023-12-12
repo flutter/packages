@@ -832,7 +832,6 @@ targets:
 
   - name: Mac_arm64 macos_platform_tests stable - packages
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -927,7 +926,6 @@ targets:
   # Don't run full platform tests on both channels in pre-submit.
   - name: Mac_arm64 ios_platform_tests_shard_1 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -938,7 +936,6 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_2 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -949,7 +946,6 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_3 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -960,7 +956,6 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_4 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -971,7 +966,6 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_5 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
