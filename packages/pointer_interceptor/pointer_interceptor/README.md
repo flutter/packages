@@ -45,42 +45,21 @@ All the cases above have in common that they attempt to render Flutter widgets *
 There's two ways that the `PointerInterceptor` widget can be used to solve the problems above:
 
 1. Wrapping your button element directly (FAB, Custom Play/Pause button...):
-<?code-excerpt "main.dart (PointerInterceptorWrapper)"?>
+<?code-excerpt "main.dart (PointerInterceptorWrapper)" plaster="none"?>
 ```dart
 PointerInterceptor(
   child: ElevatedButton(
-    key: const Key('clickable-button'),
-    child: const Text('Works As Expected'),
-    onPressed: () {
-      _clickedOn('clickable-button');
-    },
   ),
 ),
 ```
 
 2. As a root container for a "layout" element, wrapping a bunch of other elements (like a Drawer):
 
-<?code-excerpt "main.dart (PointerInterceptorDrawer)"?>
+<?code-excerpt "main.dart (PointerInterceptorDrawer)" plaster="none"?>
 ```dart
 drawer: Drawer(
   child: PointerInterceptor(
-    // debug: true, // Enable this to "see" the interceptor covering the column.
     child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        ListTile(
-          title: const Text('Item 1'),
-          onTap: () {
-            _clickedOn('drawer-item-1');
-          },
-        ),
-        ListTile(
-          title: const Text('Item 2'),
-          onTap: () {
-            _clickedOn('drawer-item-2');
-          },
-        ),
-      ],
     ),
   ),
 ),
@@ -95,32 +74,26 @@ The `intercepting` property allows the `PointerInterceptor` widget to render
 itself (or not) depending on a boolean value, instead of having to manually
 write an `if/else` on the Flutter App widget tree, so code like this:
 
-<?code-excerpt "main.dart (BadPointerInterceptor)"?>
+<?code-excerpt "main.dart (BadPointerInterceptor)" plaster="none"?>
 ```dart
 if (someCondition()) {
   return PointerInterceptor(
     child: ElevatedButton(
-      onPressed: () {},
-      child: const Text('Click me'),
     ),
   );
 } else {
   return ElevatedButton(
-    onPressed: () {},
-    child: const Text('Click me'),
   );
 }
 ```
 
 can be rewritten as:
 
-<?code-excerpt "main.dart (GoodPointerInterceptor)"?>
+<?code-excerpt "main.dart (GoodPointerInterceptor)" plaster="none"?>
 ```dart
 return PointerInterceptor(
   intercepting: someCondition(),
   child: ElevatedButton(
-    onPressed: () {},
-    child: const Text('Click me'),
   ),
 );
 ```

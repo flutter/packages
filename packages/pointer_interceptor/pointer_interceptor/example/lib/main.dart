@@ -110,11 +110,13 @@ class _MyHomePageState extends State<MyHomePage> {
                       // #docregion PointerInterceptorWrapper
                       PointerInterceptor(
                         child: ElevatedButton(
+                          // #enddocregion PointerInterceptorWrapper
                           key: const Key('clickable-button'),
                           child: const Text('Works As Expected'),
                           onPressed: () {
                             _clickedOn('clickable-button');
                           },
+                          // #docregion PointerInterceptorWrapper
                         ),
                       ),
                       // #enddocregion PointerInterceptorWrapper
@@ -145,8 +147,11 @@ class _MyHomePageState extends State<MyHomePage> {
       // #docregion PointerInterceptorDrawer
       drawer: Drawer(
         child: PointerInterceptor(
+          // #enddocregion PointerInterceptorDrawer
           // debug: true, // Enable this to "see" the interceptor covering the column.
+          // #docregion PointerInterceptorDrawer
           child: Column(
+            // #enddocregion PointerInterceptorDrawer
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               ListTile(
@@ -162,6 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ],
+            // #docregion PointerInterceptorDrawer
           ),
         ),
       ),
@@ -174,14 +180,19 @@ class _MyHomePageState extends State<MyHomePage> {
     if (someCondition()) {
       return PointerInterceptor(
         child: ElevatedButton(
+          // #enddocregion BadPointerInterceptor
+
           onPressed: () {},
           child: const Text('Click me'),
+          // #docregion BadPointerInterceptor
         ),
       );
     } else {
       return ElevatedButton(
+        // #enddocregion BadPointerInterceptor
         onPressed: () {},
         child: const Text('Click me'),
+        // #docregion BadPointerInterceptor
       );
     }
     // #enddocregion BadPointerInterceptor
@@ -192,8 +203,10 @@ class _MyHomePageState extends State<MyHomePage> {
     return PointerInterceptor(
       intercepting: someCondition(),
       child: ElevatedButton(
+        // #enddocregion GoodPointerInterceptor
         onPressed: () {},
         child: const Text('Click me'),
+        // #docregion GoodPointerInterceptor
       ),
     );
     // #enddocregion GoodPointerInterceptor
