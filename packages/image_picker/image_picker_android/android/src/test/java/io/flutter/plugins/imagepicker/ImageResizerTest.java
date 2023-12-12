@@ -53,7 +53,9 @@ public class ImageResizerTest {
     mockCloseable = MockitoAnnotations.openMocks(this);
     imageFile = new File(getClass().getClassLoader().getResource("pngImage.png").getFile());
     svgImageFile = new File(getClass().getClassLoader().getResource("flutter_image.svg").getFile());
+    // tallJPG has height 7px and width 4px.
     tallJPG = new File(getClass().getClassLoader().getResource("jpgImageTall.jpg").getFile());
+    // wideJPG has height 7px and width 12px.
     wideJPG = new File(getClass().getClassLoader().getResource("jpgImageWide.jpg").getFile());
     originalImageBitmap = BitmapFactory.decodeFile(imageFile.getPath());
     TemporaryFolder temporaryFolder = new TemporaryFolder();

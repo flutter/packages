@@ -48,13 +48,13 @@
   bool shouldDownscale = shouldDownscaleWidth || shouldDownscaleHeight;
 
   if (shouldDownscale) {
-    double downScaledWidth = height * aspectRatio;
-    double downScaledHeight = width / aspectRatio;
+    double widthForMaxHeight = height * aspectRatio;
+    double heightForMaxWidth = width / aspectRatio;
 
-    if (downScaledHeight > height) {
-      width = round(downScaledWidth);
+    if (heightForMaxWidth > height) {
+      width = round(widthForMaxHeight);
     } else {
-      height = round(downScaledHeight);
+      height = round(heightForMaxWidth);
     }
   }
 

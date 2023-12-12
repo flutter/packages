@@ -73,7 +73,7 @@
   return data;
 }
 
-+ (NSData *)TallJPGTestData {
++ (NSData *)JPGTallTestData {
   NSBundle *bundle = [NSBundle bundleForClass:self];
   NSURL *url = [bundle URLForResource:@"jpgImageTall" withExtension:@"jpg"];
   NSData *data = [NSData dataWithContentsOfURL:url];
