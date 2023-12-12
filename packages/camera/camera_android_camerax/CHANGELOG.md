@@ -1,3 +1,8 @@
+## 0.5.0+23
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Adds `CameraXProxy` class to test `JavaObject` creation and their method calls in the plugin.
+
 ## 0.5.0+22
 
 * Fixes `_getResolutionSelectorFromPreset` null pointer error.

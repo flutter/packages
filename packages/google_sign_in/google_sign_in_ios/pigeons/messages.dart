@@ -7,8 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   objcOptions: ObjcOptions(prefix: 'FSI'),
-  objcHeaderOut: 'ios/Classes/messages.g.h',
-  objcSourceOut: 'ios/Classes/messages.g.m',
+  objcHeaderOut: 'darwin/Classes/messages.g.h',
+  objcSourceOut: 'darwin/Classes/messages.g.m',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
@@ -43,6 +43,7 @@ class UserData {
     this.displayName,
     this.photoUrl,
     this.serverAuthCode,
+    this.idToken,
   });
 
   final String? displayName;
@@ -50,6 +51,7 @@ class UserData {
   final String userId;
   final String? photoUrl;
   final String? serverAuthCode;
+  final String? idToken;
 }
 
 /// Pigeon version of GoogleSignInTokenData.

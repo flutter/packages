@@ -2503,6 +2503,21 @@ void main() {
       TestWidgetsFlutterBinding.instance.platformDispatcher
           .clearDefaultRouteNameTestValue();
     });
+
+    testWidgets(
+        'When platformDispatcher.defaultRouteName is deep-link Uri with '
+        'scheme, authority, no path, and query parameters',
+        (WidgetTester tester) async {
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .defaultRouteNameTestValue = 'https://domain.com?param=1';
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+      );
+      expect(router.routeInformationProvider.value.uri.toString(), '/?param=1');
+      TestWidgetsFlutterBinding.instance.platformDispatcher
+          .clearDefaultRouteNameTestValue();
+    });
   });
 
   group('params', () {

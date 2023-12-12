@@ -737,7 +737,7 @@ Future<void> main() async {
       unawaited(controller.setPlatformNavigationDelegate(delegate));
       unawaited(controller.setOnScrollPositionChange(
           (ScrollPositionChange scrollPositionChange) {
-            recordedPosition =  scrollPositionChange;
+        recordedPosition = scrollPositionChange;
       }));
 
       await controller.loadRequest(
