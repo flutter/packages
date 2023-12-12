@@ -1661,12 +1661,12 @@ void main() {
   test('gen host uses default error class', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstHostApi(
           name: 'Api',
-          location: ApiLocation.host,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1700,12 +1700,12 @@ void main() {
   test('gen flutter uses default error class', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1739,12 +1739,12 @@ void main() {
   test('gen host uses error class', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstHostApi(
           name: 'Api',
-          location: ApiLocation.host,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1781,12 +1781,12 @@ void main() {
   test('gen flutter uses error class', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
