@@ -950,6 +950,9 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     });
   }
 
+  // We are emitting our own definition of [@CanIgnoreReturnValue] to support
+  // clients who use CheckReturnValue, without having to force Pigeon clients
+  // to take a new dependency on error_prone_annotations.
   void _writeCanIgnoreReturnValueAnnotation(
       JavaOptions opt, Root root, Indent indent) {
     indent.newln();
