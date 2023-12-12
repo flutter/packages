@@ -3,7 +3,6 @@
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 * Updates example app Gradle version to 7.6.3.
 
-
 ## 1.0.4
 
 * Updates README to fix broken link.

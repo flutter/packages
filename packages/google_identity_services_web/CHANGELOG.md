@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-
 ## 0.3.0+1
 
 * Corrects 0.3.0 changelog entry about the minimum Flutter/Dart dependencies.
