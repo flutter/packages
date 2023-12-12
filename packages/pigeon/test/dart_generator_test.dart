@@ -1738,4 +1738,44 @@ name: foobar
         contains(
             '\'Unable to establish connection on channel: "\$channelName".\''));
   });
+
+  group('ProxyApi', () {
+    test('gen one api', () {
+      final Root root = Root(apis: <Api>[
+        AstProxyApi(
+            name: 'Api',
+            constructors: <Constructor>[],
+            fields: <Field>[],
+            methods: <Method>[
+              Method(
+                name: 'doSomething',
+                location: ApiLocation.host,
+                parameters: <Parameter>[
+                  Parameter(
+                      type: const TypeDeclaration(
+                        baseName: 'Input',
+                        isNullable: false,
+                      ),
+                      name: 'input')
+                ],
+                returnType: const TypeDeclaration(
+                  baseName: 'String',
+                  isNullable: false,
+                ),
+              )
+            ])
+      ], classes: <Class>[], enums: <Enum>[]);
+      final StringBuffer sink = StringBuffer();
+      const DartGenerator generator = DartGenerator();
+      generator.generate(
+        const DartOptions(),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final String code = sink.toString();
+      expect(code, contains('class Api'));
+      expect(code, contains('Future<String> doSomething(Input input)'));
+    });
+  });
 }

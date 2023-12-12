@@ -1,6 +1,10 @@
-## 14.1.0
+## 15.1.0
 
 * ProxyApi support.
+
+## 15.0.0
+
+* **Breaking Change** [kotlin] Updates Flutter API to use new errorClassName.
 
 ## 14.0.1
 

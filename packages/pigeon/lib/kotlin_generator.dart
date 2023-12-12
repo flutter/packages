@@ -357,6 +357,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         });
       });
 
+      final String errorClassName = _getErrorClassName(generatorOptions);
       for (final Method func in api.methods) {
         final String returnType = func.returnType.isVoid
             ? 'Unit'
@@ -395,12 +396,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             indent.writeScoped('if (it is List<*>) {', '} ', () {
               indent.writeScoped('if (it.size > 1) {', '} ', () {
                 indent.writeln(
-                    'callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))');
+                    'callback(Result.failure($errorClassName(it[0] as String, it[1] as String, it[2] as String?)))');
               }, addTrailingNewline: false);
               if (!func.returnType.isNullable && !func.returnType.isVoid) {
                 indent.addScoped('else if (it[0] == null) {', '} ', () {
                   indent.writeln(
-                      'callback(Result.failure(FlutterError("null-error", "Flutter api returned null value for non-null return value.", "")))');
+                      'callback(Result.failure($errorClassName("null-error", "Flutter api returned null value for non-null return value.", "")))');
                 }, addTrailingNewline: false);
               }
               indent.addScoped('else {', '}', () {
@@ -678,8 +679,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.newln();
     indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
-      indent.write(
-          'if (exception is ${generatorOptions.errorClassName ?? "FlutterError"}) ');
+      indent
+          .write('if (exception is ${_getErrorClassName(generatorOptions)}) ');
       indent.addScoped('{', '}', () {
         indent.write('return ');
         indent.addScoped('listOf(', ')', () {
@@ -710,7 +711,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln(
         ' * @property details The error details. Must be a datatype supported by the api codec.');
     indent.writeln(' */');
-    indent.write('class ${generatorOptions.errorClassName ?? "FlutterError"} ');
+    indent.write('class ${_getErrorClassName(generatorOptions)} ');
     indent.addScoped('(', ')', () {
       indent.writeln('val code: String,');
       indent.writeln('override val message: String? = null,');
@@ -719,13 +720,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.addln(' : Throwable()');
   }
 
-  void _writeCreateConnectionError(Indent indent) {
+  void _writeCreateConnectionError(
+      KotlinOptions generatorOptions, Indent indent) {
+    final String errorClassName = _getErrorClassName(generatorOptions);
     indent.newln();
     indent.write(
-        'private fun createConnectionError(channelName: String): FlutterError ');
+        'private fun createConnectionError(channelName: String): $errorClassName ');
     indent.addScoped('{', '}', () {
       indent.write(
-          'return FlutterError("channel-error",  "Unable to establish connection on channel: \'\$channelName\'.", "")');
+          'return $errorClassName("channel-error",  "Unable to establish connection on channel: \'\$channelName\'.", "")');
     });
   }
 
@@ -748,7 +751,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       _writeWrapError(generatorOptions, indent);
     }
     if (hasFlutterApi) {
-      _writeCreateConnectionError(indent);
+      _writeCreateConnectionError(generatorOptions, indent);
     }
     _writeErrorClass(generatorOptions, indent);
   }
@@ -761,6 +764,9 @@ HostDatatype _getHostDatatype(Root root, NamedType field) {
 
 /// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(Api api) => '${api.name}Codec';
+
+String _getErrorClassName(KotlinOptions generatorOptions) =>
+    generatorOptions.errorClassName ?? 'FlutterError';
 
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;
