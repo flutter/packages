@@ -446,7 +446,7 @@ FAIL
 
   group('File type tests', () {
     const List<Map<String, String>> testCases = <Map<String, String>>[
-      <String, String>{'filename': 'main.cc'},
+      <String, String>{'filename': 'main.cc', 'language': 'c++'},
       <String, String>{'filename': 'main.cpp', 'language': 'c++'},
       <String, String>{'filename': 'main.dart'},
       <String, String>{'filename': 'main.js'},
