@@ -34,8 +34,11 @@ void runAllTests(MockPlatform platform) {
   });
 
   Future<void> testInjection(
-      String before, String source, String after, String filename,
-      {bool failOnChange = false}) async {
+      {required String before,
+      required String source,
+      required String after,
+      required String filename,
+      bool failOnChange = false}) async {
     final RepositoryPackage package =
         createFakePackage('a_package', packagesDir);
     package.readmeFile.writeAsStringSync(before);
@@ -75,7 +78,8 @@ A B C
 // #enddocregion SomeSection
 FAIL
 ''';
-    await testInjection(readme, source, readme, filename);
+    await testInjection(
+        before: readme, source: source, after: readme, filename: filename);
   });
 
   test('fails if example injection fails', () async {
@@ -117,27 +121,34 @@ FAIL
   test('updates files', () async {
     const String filename = 'main.dart';
 
-    await testInjection('''
+    const String before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
 ```dart
 X Y Z
 ```
-''', '''
+''';
+
+    const String source = '''
 FAIL
 // #docregion SomeSection
 A B C
 // #enddocregion SomeSection
 FAIL
-''', '''
+''';
+
+    const String after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
 ```dart
 A B C
 ```
-''', filename);
+''';
+
+    await testInjection(
+        before: before, source: source, after: after, filename: filename);
   });
 
   test('fails if READMEs are changed with --fail-on-change', () async {
@@ -189,18 +200,21 @@ A
 B
 ```
 ''';
-    await testInjection(
-      readme,
-      '''
+
+    const String source = '''
 // #docregion aa
 A
 // #enddocregion aa
 // #docregion bb
 B
 // #enddocregion bb
-''',
-      readme,
-      filename,
+''';
+
+    await testInjection(
+      before: readme,
+      source: source,
+      after: readme,
+      filename: filename,
       failOnChange: true,
     );
   });
@@ -208,20 +222,24 @@ B
   test('indents the plaster', () async {
     const String filename = 'main.dart';
 
-    await testInjection('''
+    const String before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
 ```dart
 ```
-''', '''
+''';
+
+    const String source = '''
 // #docregion SomeSection
 A
   // #enddocregion SomeSection
 // #docregion SomeSection
 B
 // #enddocregion SomeSection
-''', '''
+''';
+
+    const String after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -230,26 +248,33 @@ A
   // ···
 B
 ```
-''', filename);
+''';
+
+    await testInjection(
+        before: before, source: source, after: after, filename: filename);
   });
 
   test('does not unindent blocks if plaster will not unindent', () async {
     const String filename = 'main.dart';
 
-    await testInjection('''
+    const String before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
 ```dart
 ```
-''', '''
+''';
+
+    const String source = '''
 // #docregion SomeSection
   A
 // #enddocregion SomeSection
 // #docregion SomeSection
     B
 // #enddocregion SomeSection
-''', '''
+''';
+
+    const String after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -258,26 +283,33 @@ Example:
 // ···
     B
 ```
-''', filename);
+''';
+
+    await testInjection(
+        before: before, source: source, after: after, filename: filename);
   });
 
   test('unindents blocks', () async {
     const String filename = 'main.dart';
 
-    await testInjection('''
+    const String before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
 ```dart
 ```
-''', '''
+''';
+
+    const String source = '''
   // #docregion SomeSection
   A
   // #enddocregion SomeSection
     // #docregion SomeSection
     B
     // #enddocregion SomeSection
-''', '''
+''';
+
+    const String after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -286,26 +318,33 @@ A
 // ···
   B
 ```
-''', filename);
+''';
+
+    await testInjection(
+        before: before, source: source, after: after, filename: filename);
   });
 
   test('unindents blocks and plaster', () async {
     const String filename = 'main.dart';
 
-    await testInjection('''
+    const String before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
 ```dart
 ```
-''', '''
+''';
+
+    const String source = '''
   // #docregion SomeSection
   A
     // #enddocregion SomeSection
     // #docregion SomeSection
     B
     // #enddocregion SomeSection
-''', '''
+''';
+
+    const String after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -314,7 +353,10 @@ A
   // ···
   B
 ```
-''', filename);
+''';
+
+    await testInjection(
+        before: before, source: source, after: after, filename: filename);
   });
 
   test('relative path bases', () async {
@@ -482,27 +524,34 @@ FAIL
         final String prefix = testCase['prefix'] ?? '// ';
         final String suffix = testCase['suffix'] ?? '';
 
-        await testInjection('''
+        final String before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
 ```$language
 X Y Z
 ```
-''', '''
+''';
+
+        final String source = '''
 FAIL
 $prefix#docregion SomeSection$suffix
 A B C
 $prefix#enddocregion SomeSection$suffix
 FAIL
-''', '''
+''';
+
+        final String after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
 ```$language
 A B C
 ```
-''', filename);
+''';
+
+        await testInjection(
+            before: before, source: source, after: after, filename: filename);
       });
     }
 
