@@ -2,15 +2,29 @@ name: pointer_interceptor
 description: A widget to prevent clicks from being swallowed by underlying HtmlElementViews on the web.
 repository: https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+pointer_interceptor%22
-version: 0.9.3+7
+version: 0.10.0
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
   flutter: ">=3.13.0"
 
+flutter:
+  plugin:
+    implements: pointer_interceptor_platform_interface
+    platforms:
+      web:
+        default_package: pointer_interceptor_web
+      ios:
+        default_package: pointer_interceptor_ios
+
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  pointer_interceptor_ios: ^0.10.0
+  pointer_interceptor_platform_interface: ^0.10.0
+  pointer_interceptor_web: ^0.10.0
 
 dev_dependencies:
   flutter_test:
@@ -19,3 +33,4 @@ dev_dependencies:
 topics:
   - web
   - widgets
+  - pointer-interceptor
