@@ -34,12 +34,12 @@ void runAllTests(MockPlatform platform) {
   });
 
   Future<void> testInjection(
-      String before, String source, String after, String fileName,
+      String before, String source, String after, String filename,
       {bool failOnChange = false}) async {
     final RepositoryPackage package =
         createFakePackage('a_package', packagesDir);
     package.readmeFile.writeAsStringSync(before);
-    package.directory.childFile(fileName).writeAsStringSync(source);
+    package.directory.childFile(filename).writeAsStringSync(source);
     Object? errorObject;
     final List<String> output = await runCapturingPrint(
       runner,
@@ -58,12 +58,12 @@ void runAllTests(MockPlatform platform) {
   }
 
   test('succeeds when nothing has changed', () async {
-    const String fileName = 'main.dart';
+    const String filename = 'main.dart';
 
     const String readme = '''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 A B C
 ```
@@ -75,7 +75,7 @@ A B C
 // #enddocregion SomeSection
 FAIL
 ''';
-    await testInjection(readme, source, readme, fileName);
+    await testInjection(readme, source, readme, filename);
   });
 
   test('fails if example injection fails', () async {
@@ -115,12 +115,12 @@ FAIL
   });
 
   test('updates files', () async {
-    const String fileName = 'main.dart';
+    const String filename = 'main.dart';
 
     await testInjection('''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 X Y Z
 ```
@@ -133,11 +133,11 @@ FAIL
 ''', '''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 A B C
 ```
-''', fileName);
+''', filename);
   });
 
   test('fails if READMEs are changed with --fail-on-change', () async {
@@ -175,16 +175,16 @@ FAIL
 
   test('does not fail if READMEs are not changed with --fail-on-change',
       () async {
-    const String fileName = 'main.dart';
+    const String filename = 'main.dart';
 
     const String readme = '''
 Example:
 
-<?code-excerpt "$fileName (aa)"?>
+<?code-excerpt "$filename (aa)"?>
 ```dart
 A
 ```
-<?code-excerpt "$fileName (bb)"?>
+<?code-excerpt "$filename (bb)"?>
 ```dart
 B
 ```
@@ -200,18 +200,18 @@ B
 // #enddocregion bb
 ''',
       readme,
-      fileName,
+      filename,
       failOnChange: true,
     );
   });
 
   test('indents the plaster', () async {
-    const String fileName = 'main.dart';
+    const String filename = 'main.dart';
 
     await testInjection('''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 ```
 ''', '''
@@ -224,22 +224,22 @@ B
 ''', '''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 A
   // ···
 B
 ```
-''', fileName);
+''', filename);
   });
 
   test('does not unindent blocks if plaster will not unindent', () async {
-    const String fileName = 'main.dart';
+    const String filename = 'main.dart';
 
     await testInjection('''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 ```
 ''', '''
@@ -252,22 +252,22 @@ Example:
 ''', '''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
   A
 // ···
     B
 ```
-''', fileName);
+''', filename);
   });
 
   test('unindents blocks', () async {
-    const String fileName = 'main.dart';
+    const String filename = 'main.dart';
 
     await testInjection('''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 ```
 ''', '''
@@ -280,22 +280,22 @@ Example:
 ''', '''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 A
 // ···
   B
 ```
-''', fileName);
+''', filename);
   });
 
   test('unindents blocks and plaster', () async {
-    const String fileName = 'main.dart';
+    const String filename = 'main.dart';
 
     await testInjection('''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 ```
 ''', '''
@@ -308,13 +308,13 @@ Example:
 ''', '''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```dart
 A
   // ···
   B
 ```
-''', fileName);
+''', filename);
   });
 
   test('relative path bases', () async {
@@ -446,46 +446,46 @@ FAIL
 
   group('File type tests', () {
     const List<Map<String, String>> testCases = <Map<String, String>>[
-      <String, String>{'fileName': 'main.cc'},
-      <String, String>{'fileName': 'main.cpp', 'language': 'c++'},
-      <String, String>{'fileName': 'main.dart'},
-      <String, String>{'fileName': 'main.js'},
-      <String, String>{'fileName': 'main.kt', 'language': 'kotlin'},
-      <String, String>{'fileName': 'main.java'},
-      <String, String>{'fileName': 'main.gradle', 'language': 'groovy'},
-      <String, String>{'fileName': 'main.m', 'language': 'objectivec'},
-      <String, String>{'fileName': 'main.swift'},
+      <String, String>{'filename': 'main.cc'},
+      <String, String>{'filename': 'main.cpp', 'language': 'c++'},
+      <String, String>{'filename': 'main.dart'},
+      <String, String>{'filename': 'main.js'},
+      <String, String>{'filename': 'main.kt', 'language': 'kotlin'},
+      <String, String>{'filename': 'main.java'},
+      <String, String>{'filename': 'main.gradle', 'language': 'groovy'},
+      <String, String>{'filename': 'main.m', 'language': 'objectivec'},
+      <String, String>{'filename': 'main.swift'},
       <String, String>{
-        'fileName': 'main.css',
+        'filename': 'main.css',
         'prefix': '/* ',
         'suffix': ' */'
       },
       <String, String>{
-        'fileName': 'main.html',
+        'filename': 'main.html',
         'prefix': '<!--',
         'suffix': '-->'
       },
       <String, String>{
-        'fileName': 'main.xml',
+        'filename': 'main.xml',
         'prefix': '<!--',
         'suffix': '-->'
       },
-      <String, String>{'fileName': 'main.yaml', 'prefix': '# '},
-      <String, String>{'fileName': 'main.sh', 'prefix': '# '},
-      <String, String>{'fileName': 'main', 'language': 'txt', 'prefix': ''},
+      <String, String>{'filename': 'main.yaml', 'prefix': '# '},
+      <String, String>{'filename': 'main.sh', 'prefix': '# '},
+      <String, String>{'filename': 'main', 'language': 'txt', 'prefix': ''},
     ];
 
     void runTest(Map<String, String> testCase) {
-      test('updates ${testCase['fileName']} files', () async {
-        final String fileName = testCase['fileName']!;
-        final String language = testCase['language'] ?? fileName.split('.')[1];
+      test('updates ${testCase['filename']} files', () async {
+        final String filename = testCase['filename']!;
+        final String language = testCase['language'] ?? filename.split('.')[1];
         final String prefix = testCase['prefix'] ?? '// ';
         final String suffix = testCase['suffix'] ?? '';
 
         await testInjection('''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```$language
 X Y Z
 ```
@@ -498,11 +498,11 @@ FAIL
 ''', '''
 Example:
 
-<?code-excerpt "$fileName (SomeSection)"?>
+<?code-excerpt "$filename (SomeSection)"?>
 ```$language
 A B C
 ```
-''', fileName);
+''', filename);
       });
     }
 
