@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Adds `computeAverage` and `computeDelta` methods to support analysis of benchmark results.
+
 ## 1.0.1
 
 * Adds `parse` constructors for the `BenchmarkResults` and `BenchmarkScore` classes.
