@@ -74,7 +74,9 @@ public class Messages {
     /** The user is locked out temporarily due to too many failed attempts. */
     ERROR_LOCKED_OUT_TEMPORARILY(7),
     /** The user is locked out until they log in another way due to too many failed attempts. */
-    ERROR_LOCKED_OUT_PERMANENTLY(8);
+    ERROR_LOCKED_OUT_PERMANENTLY(8),
+
+    CALLBACK_SETTING(9);
 
     final int index;
 

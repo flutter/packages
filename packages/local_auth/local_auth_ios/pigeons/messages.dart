@@ -52,6 +52,8 @@ enum AuthResult {
 
   /// No passcode is set.
   errorPasscodeNotSet,
+
+  callbackSetting,
 }
 
 class AuthOptions {

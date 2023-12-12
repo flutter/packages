@@ -39,7 +39,7 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     _installerPlatform.invokeMethod('REQUEST_SETTING').then((resp) {
       switch (resp) {
         case REQUEST_SETTING_CALLBACK:
-          print("Luan receive callback at flutter");
+          print("Receive callback from flutter");
           break;
       }
     });
@@ -59,6 +59,10 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     switch (result) {
       case AuthResult.success:
         return true;
+      case AuthResult.callbackSetting:
+        throw PlatformException(
+            code: 'CallbackSetting',
+            message: 'CallbackSetting');
       case AuthResult.failure:
         return false;
       case AuthResult.errorAlreadyInProgress:

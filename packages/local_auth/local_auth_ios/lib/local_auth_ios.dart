@@ -56,6 +56,11 @@ class LocalAuthIOS extends LocalAuthPlatform {
             code: 'NotAvailable',
             message: resultDetails.errorMessage,
             details: resultDetails.errorDetails);
+      case AuthResult.callbackSetting:
+        throw PlatformException(
+            code: 'CallbackSetting',
+            message: "callbackSetting",
+            details: "callbackSetting");
       case AuthResult.errorNotEnrolled:
         throw PlatformException(
             code: 'NotEnrolled',

@@ -38,6 +38,8 @@ enum AuthResult {
 
   /// No passcode is set.
   errorPasscodeNotSet,
+
+  callbackSetting,
 }
 
 /// Pigeon equivalent of the subset of BiometricType used by iOS.
