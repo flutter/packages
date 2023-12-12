@@ -1,6 +1,8 @@
-## NEXT
+## 4.1.10
 
+* Fixes image asset link to use image within package.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates README to improve example of using `NetworkImageWithRetry`.
 
 ## 4.1.9
 

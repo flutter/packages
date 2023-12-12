@@ -1,3 +1,7 @@
+## 12.1.3
+
+* Fixes a typo in `navigation.md`.
+
 ## 12.1.2
 
 * Fixes an incorrect use of `extends` for Dart 3 compatibility.
