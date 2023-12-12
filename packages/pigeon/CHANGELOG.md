@@ -1,6 +1,8 @@
-## NEXT
+## 14.0.1
 
+* Updates Gradle version of example apps to 7.6.3.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates issue_tracker link.
 
 ## 14.0.0
 

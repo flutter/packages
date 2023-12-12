@@ -300,4 +300,11 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   @override
   Stream<GoogleSignInUserData?>? get userDataEvents =>
       _userDataController.stream;
+
+  /// Requests server auth code from GIS Client per:
+  /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
+  Future<String?> requestServerAuthCode() async {
+    await initialized;
+    return _gisClient.requestServerAuthCode();
+  }
 }

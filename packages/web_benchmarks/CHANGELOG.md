@@ -1,6 +1,16 @@
-## NEXT
+## 0.1.0+11
+
+* Migrates benchmark recorder from `dart:html` to `package:web` to support WebAssembly.
+
+## 0.1.0+10
+
+* Ensure the benchmark client reloads with the proper `initialPage`.
+* Migrates benchmark recorder away from deprecated `js_util` APIs.
+
+## 0.1.0+9
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Adds an optional parameter `initialPage` to `serveWebBenchmark`.
 
 ## 0.1.0+8
 

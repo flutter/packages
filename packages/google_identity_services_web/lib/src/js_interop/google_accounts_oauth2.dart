@@ -12,9 +12,8 @@
 @JS()
 library google_accounts_oauth2;
 
-import 'package:js/js.dart';
+import 'dart:js_interop';
 
-import 'dom.dart';
 import 'shared.dart';
 
 /// Binding to the `google.accounts.oauth2` JS global.
@@ -45,7 +44,7 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   // Method: google.accounts.oauth2.hasGrantedAllScopes
   // https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   @JS('hasGrantedAllScopes')
-  external bool _hasGrantedScope(TokenResponse token, String scope);
+  external bool _hasGrantedScope(TokenResponse token, JSString scope);
 
   /// Checks if hte user has granted **all** the specified [scopes].
   ///
@@ -55,7 +54,7 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   bool hasGrantedAllScopes(TokenResponse tokenResponse, List<String> scopes) {
     return scopes
-        .every((String scope) => _hasGrantedScope(tokenResponse, scope));
+        .every((String scope) => _hasGrantedScope(tokenResponse, scope.toJS));
   }
 
   /// Checks if hte user has granted **all** the specified [scopes].
@@ -65,7 +64,8 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   /// Method: google.accounts.oauth2.hasGrantedAllScopes
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.hasGrantedAllScopes
   bool hasGrantedAnyScopes(TokenResponse tokenResponse, List<String> scopes) {
-    return scopes.any((String scope) => _hasGrantedScope(tokenResponse, scope));
+    return scopes
+        .any((String scope) => _hasGrantedScope(tokenResponse, scope.toJS));
   }
 
   /// Revokes all of the scopes that the user granted to the app.
@@ -77,10 +77,20 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   ///
   /// Method: google.accounts.oauth2.revoke
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.revoke
-  external void revoke(
+  void revoke(
     String accessToken, [
-    RevokeTokenDoneFn done,
-  ]);
+    RevokeTokenDoneFn? done,
+  ]) {
+    if (done == null) {
+      return _revoke(accessToken.toJS);
+    }
+    return _revokeWithDone(accessToken.toJS, done.toJS);
+  }
+
+  @JS('revoke')
+  external void _revoke(JSString accessToken);
+  @JS('revoke')
+  external void _revokeWithDone(JSString accessToken, JSFunction done);
 }
 
 /// The configuration object for the [initCodeClient] method.
@@ -95,19 +105,54 @@ abstract class CodeClientConfig {
   ///
   /// The [callback] property must be wrapped in [allowInterop] before it's
   /// passed to this constructor.
-  external factory CodeClientConfig({
+  factory CodeClientConfig({
     required String client_id,
-    required String scope,
-    String? redirect_uri,
-    bool? auto_select,
+    required List<String> scope,
+    bool? include_granted_scopes,
+    Uri? redirect_uri,
     CodeClientCallbackFn? callback,
-    ErrorCallbackFn? error_callback,
     String? state,
+    bool? enable_granular_consent,
+    @Deprecated('Use `enable_granular_consent` instead.')
     bool? enable_serial_consent,
-    String? hint,
-    String? hosted_domain,
+    String? login_hint,
+    String? hd,
     UxMode? ux_mode,
     bool? select_account,
+    ErrorCallbackFn? error_callback,
+  }) {
+    assert(scope.isNotEmpty);
+    return CodeClientConfig._toJS(
+      client_id: client_id.toJS,
+      scope: scope.join(' ').toJS,
+      include_granted_scopes: include_granted_scopes?.toJS,
+      redirect_uri: redirect_uri?.toString().toJS,
+      callback: callback?.toJS,
+      state: state?.toJS,
+      enable_granular_consent: enable_granular_consent?.toJS,
+      enable_serial_consent: enable_serial_consent?.toJS,
+      login_hint: login_hint?.toJS,
+      hd: hd?.toJS,
+      ux_mode: ux_mode.toString().toJS,
+      select_account: select_account?.toJS,
+      error_callback: error_callback?.toJS,
+    );
+  }
+
+  external factory CodeClientConfig._toJS({
+    JSString? client_id,
+    JSString? scope,
+    JSBoolean? include_granted_scopes,
+    JSString? redirect_uri,
+    JSFunction? callback,
+    JSString? state,
+    JSBoolean? enable_granular_consent,
+    JSBoolean? enable_serial_consent,
+    JSString? login_hint,
+    JSString? hd,
+    JSString? ux_mode,
+    JSBoolean? select_account,
+    JSFunction? error_callback,
   });
 }
 
@@ -138,26 +183,38 @@ abstract class CodeResponse {}
 /// The fields that are contained in the code response object.
 extension CodeResponseExtension on CodeResponse {
   /// The authorization code of a successful token response.
-  external String get code;
+  String? get code => _code?.toDart;
+  @JS('code')
+  external JSString? get _code;
 
-  /// A space-delimited list of scopes that are approved by the user.
-  external String get scope;
+  /// A list of scopes that are approved by the user.
+  List<String> get scope => _scope?.toDart.split(' ') ?? List<String>.empty();
+  @JS('scope')
+  external JSString? get _scope;
 
   /// The string value that your application uses to maintain state between your
   /// authorization request and the response.
-  external String get state;
+  String? get state => _state?.toDart;
+  @JS('state')
+  external JSString? get _state;
 
   /// A single ASCII error code.
-  external String? get error;
+  String? get error => _error?.toDart;
+  @JS('error')
+  external JSString? get _error;
 
   /// Human-readable ASCII text providing additional information, used to assist
   /// the client developer in understanding the error that occurred.
-  external String? get error_description;
+  String? get error_description => _error_description?.toDart;
+  @JS('error_description')
+  external JSString? get _error_description;
 
   /// A URI identifying a human-readable web page with information about the
   /// error, used to provide the client developer with additional information
   /// about the error.
-  external String? get error_uri;
+  String? get error_uri => _error_uri?.toDart;
+  @JS('error_uri')
+  external JSString? get _error_uri;
 }
 
 /// The type of the `callback` function passed to [CodeClientConfig].
@@ -175,16 +232,48 @@ abstract class TokenClientConfig {
   ///
   /// The [callback] property must be wrapped in [allowInterop] before it's
   /// passed to this constructor.
-  external factory TokenClientConfig({
+  factory TokenClientConfig({
     required String client_id,
-    required TokenClientCallbackFn? callback,
-    required String scope,
-    ErrorCallbackFn? error_callback,
+    required TokenClientCallbackFn callback,
+    required List<String> scope,
+    bool? include_granted_scopes,
     String? prompt,
+    bool? enable_granular_consent,
+    @Deprecated('Use `enable_granular_consent` instead.')
     bool? enable_serial_consent,
-    String? hint,
-    String? hosted_domain,
+    String? login_hint,
+    String? hd,
     String? state,
+    ErrorCallbackFn? error_callback,
+  }) {
+    assert(scope.isNotEmpty);
+    return TokenClientConfig._toJS(
+      client_id: client_id.toJS,
+      callback: callback.toJS,
+      scope: scope.join(' ').toJS,
+      include_granted_scopes: include_granted_scopes?.toJS,
+      prompt: prompt?.toJS,
+      enable_granular_consent: enable_granular_consent?.toJS,
+      enable_serial_consent: enable_serial_consent?.toJS,
+      login_hint: login_hint?.toJS,
+      hd: hd?.toJS,
+      state: state?.toJS,
+      error_callback: error_callback?.toJS,
+    );
+  }
+
+  external factory TokenClientConfig._toJS({
+    JSString? client_id,
+    JSFunction? callback,
+    JSString? scope,
+    JSBoolean? include_granted_scopes,
+    JSString? prompt,
+    JSBoolean? enable_granular_consent,
+    JSBoolean? enable_serial_consent,
+    JSString? login_hint,
+    JSString? hd,
+    JSString? state,
+    JSFunction? error_callback,
   });
 }
 
@@ -201,9 +290,20 @@ abstract class TokenClient {}
 /// The methods available on the [TokenClient].
 extension TokenClientExtension on TokenClient {
   /// Starts the OAuth 2.0 Code UX flow.
-  external void requestAccessToken([
-    OverridableTokenClientConfig overrideConfig,
-  ]);
+  void requestAccessToken([
+    OverridableTokenClientConfig? overrideConfig,
+  ]) {
+    if (overrideConfig == null) {
+      return _requestAccessToken();
+    }
+    return _requestAccessTokenWithConfig(overrideConfig);
+  }
+
+  @JS('requestAccessToken')
+  external void _requestAccessToken();
+  @JS('requestAccessToken')
+  external void _requestAccessTokenWithConfig(
+      OverridableTokenClientConfig config);
 }
 
 /// The overridable configuration object for the [TokenClientExtension.requestAccessToken] method.
@@ -218,18 +318,42 @@ abstract class OverridableTokenClientConfig {
   ///
   /// The [callback] property must be wrapped in [allowInterop] before it's
   /// passed to this constructor.
-  external factory OverridableTokenClientConfig({
+  factory OverridableTokenClientConfig({
+    /// A list of scopes that identify the resources that your application could
+    /// access on the user's behalf. These values inform the consent screen that
+    /// Google displays to the user.
+    // b/251971390
+    List<String>? scope,
+
+    /// Enables applications to use incremental authorization to request access
+    /// to additional scopes in context. If you set this parameter's value to
+    /// `false` and the authorization request is granted, then the new access
+    /// token will only cover any scopes to which the `scope` requested in this
+    /// [OverridableTokenClientConfig].
+    bool? include_granted_scopes,
+
     /// A space-delimited, case-sensitive list of prompts to present the user.
     ///
     /// See `prompt` in [TokenClientConfig].
     String? prompt,
 
-    /// For clients created before 2019, when set to `false`, disables "more
-    /// granular Google Account permissions".
+    /// If set to false, "more granular Google Account permissions" would be
+    /// disabled for OAuth client IDs created before 2019. If both
+    /// `enable_granular_consent` and `enable_serial_consent` are set, only
+    /// `enable_granular_consent` value would take effect and
+    /// `enable_serial_consent` value would be ignored.
     ///
-    /// This setting has no effect in newer clients.
+    /// No effect for newer OAuth client IDs, since more granular permissions is
+    /// always enabled for them.
+    bool? enable_granular_consent,
+
+    /// This has the same effect as `enable_granular_consent`. Existing
+    /// applications that use `enable_serial_consent` can continue to do so, but
+    /// you are encouraged to update your code to use `enable_granular_consent`
+    /// in your next application update.
     ///
     /// See: https://developers.googleblog.com/2018/10/more-granular-google-account.html
+    @Deprecated('Use `enable_granular_consent` instead.')
     bool? enable_serial_consent,
 
     /// When your app knows which user it is trying to authenticate, it can
@@ -243,23 +367,33 @@ abstract class OverridableTokenClientConfig {
     /// equivalent to the user's Google ID.
     ///
     /// About Multiple Sign-in: https://support.google.com/accounts/answer/1721977
-    String? hint,
-
-    /// A space-delimited list of scopes that identify the resources that your
-    /// application could access on the user's behalf. These values inform the
-    /// consent screen that Google displays to the user.
-    // b/251971390
-    String? scope,
+    String? login_hint,
 
     /// **Not recommended.** Specifies any string value that your application
     /// uses to maintain state between your authorization request and the
     /// authorization server's response.
     String? state,
+  }) {
+    assert(scope == null || scope.isNotEmpty);
+    return OverridableTokenClientConfig._toJS(
+      scope: scope?.join(' ').toJS,
+      include_granted_scopes: include_granted_scopes?.toJS,
+      prompt: prompt?.toJS,
+      enable_granular_consent: enable_granular_consent?.toJS,
+      enable_serial_consent: enable_serial_consent?.toJS,
+      login_hint: login_hint?.toJS,
+      state: state?.toJS,
+    );
+  }
 
-    /// Preserves previously requested scopes in this new request.
-    ///
-    /// (Undocumented)
-    bool? include_granted_scopes,
+  external factory OverridableTokenClientConfig._toJS({
+    JSString? scope,
+    JSBoolean? include_granted_scopes,
+    JSString? prompt,
+    JSBoolean? enable_granular_consent,
+    JSBoolean? enable_serial_consent,
+    JSString? login_hint,
+    JSString? state,
   });
 }
 
@@ -274,70 +408,86 @@ abstract class TokenResponse {}
 /// The fields that are contained in the code response object.
 extension TokenResponseExtension on TokenResponse {
   /// The access token of a successful token response.
-  external String get access_token;
+  String? get access_token => _access_token?.toDart;
+  @JS('access_token')
+  external JSString? get _access_token;
 
   /// The lifetime in seconds of the access token.
-  external int get expires_in;
+  int? get expires_in => _expires_in?.toDartInt;
+  @JS('expires_in')
+  external JSNumber? get _expires_in;
 
   /// The hosted domain the signed-in user belongs to.
-  external String get hd;
+  String? get hd => _hd?.toDart;
+  @JS('hd')
+  external JSString? get _hd;
 
   /// The prompt value that was used from the possible list of values specified
   /// by [TokenClientConfig] or [OverridableTokenClientConfig].
-  external String get prompt;
+  String? get prompt => _prompt?.toDart;
+  @JS('prompt')
+  external JSString? get _prompt;
 
   /// The type of the token issued.
-  external String get token_type;
+  String? get token_type => _token_type?.toDart;
+  @JS('token_type')
+  external JSString? get _token_type;
 
-  /// A space-delimited list of scopes that are approved by the user.
-  external String get scope;
+  /// A list of scopes that are approved by the user.
+  List<String> get scope => _scope?.toDart.split(' ') ?? List<String>.empty();
+  @JS('scope')
+  external JSString? get _scope;
 
   /// The string value that your application uses to maintain state between your
   /// authorization request and the response.
-  external String get state;
+  String? get state => _state?.toDart;
+  @JS('state')
+  external JSString? get _state;
 
   /// A single ASCII error code.
-  external String? get error;
+  String? get error => _error?.toDart;
+  @JS('error')
+  external JSString? get _error;
 
   /// Human-readable ASCII text providing additional information, used to assist
   /// the client developer in understanding the error that occurred.
-  external String? get error_description;
+  String? get error_description => _error_description?.toDart;
+  @JS('error_description')
+  external JSString? get _error_description;
 
   /// A URI identifying a human-readable web page with information about the
   /// error, used to provide the client developer with additional information
   /// about the error.
-  external String? get error_uri;
+  String? get error_uri => _error_uri?.toDart;
+  @JS('error_uri')
+  external JSString? get _error_uri;
 }
 
 /// The type of the `callback` function passed to [TokenClientConfig].
 typedef TokenClientCallbackFn = void Function(TokenResponse response);
 
 /// The type of the `error_callback` in both oauth2 initXClient calls.
-///
-/// (Currently undocumented)
-///
-/// `error` should be of type [GoogleIdentityServicesError]?, but it cannot be
-/// because of this DDC bug: https://github.com/dart-lang/sdk/issues/50899
-typedef ErrorCallbackFn = void Function(Object? error);
+typedef ErrorCallbackFn = void Function(GoogleIdentityServicesError? error);
 
 /// An error returned by `initTokenClient` or `initDataClient`.
-///
-/// Cannot be used: https://github.com/dart-lang/sdk/issues/50899
 @JS()
 @staticInterop
-abstract class GoogleIdentityServicesError extends DomError {}
+abstract class GoogleIdentityServicesError {}
 
 /// Methods of the GoogleIdentityServicesError object.
-///
-/// Cannot be used: https://github.com/dart-lang/sdk/issues/50899
 extension GoogleIdentityServicesErrorExtension on GoogleIdentityServicesError {
-  @JS('type')
-  external String get _type;
-  // String get _type => js_util.getProperty<String>(this, 'type');
-
   /// The type of error
   GoogleIdentityServicesErrorType get type =>
-      GoogleIdentityServicesErrorType.values.byName(_type);
+      GoogleIdentityServicesErrorType.values.byName(_type.toDart);
+  @JS('type')
+  external JSString get _type;
+
+  /// A human-readable description of the error `type`.
+  ///
+  /// (Undocumented)
+  String? get message => _message?.toDart;
+  @JS('message')
+  external JSString? get _message;
 }
 
 /// The signature of the `done` function for [revoke].
@@ -355,12 +505,18 @@ abstract class TokenRevocationResponse {}
 extension TokenRevocationResponseExtension on TokenRevocationResponse {
   /// This field is a boolean value set to true if the revoke method call
   /// succeeded or false on failure.
-  external bool get successful;
+  bool get successful => _successful.toDart;
+  @JS('successful')
+  external JSBoolean get _successful;
 
   /// This field is a string value and contains a detailed error message if the
   /// revoke method call failed, it is undefined on success.
-  external String? get error;
+  String? get error => _error?.toDart;
+  @JS('error')
+  external JSString? get _error;
 
   /// The description of the error.
-  external String? get error_description;
+  String? get error_description => _error_description?.toDart;
+  @JS('error_description')
+  external JSString? get _error_description;
 }

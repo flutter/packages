@@ -1,3 +1,7 @@
+## 6.2.2
+
+* Updates example app Gradle version to 7.6.3.
+
 ## 6.2.1
 
 * Fixes incorrect types in `supportsLaunchMode` and

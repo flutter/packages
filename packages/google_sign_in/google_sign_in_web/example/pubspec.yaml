@@ -22,7 +22,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   js: ^0.6.3
-  mockito: 5.4.1
+  mockito: 5.4.3
 
 flutter:
   uses-material-design: true
