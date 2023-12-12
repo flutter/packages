@@ -555,10 +555,7 @@ A B C
       });
     }
 
-    // ignore: prefer_foreach
-    for (final Map<String, String> testCase in testCases) {
-      runTest(testCase);
-    }
+    testCases.forEach(runTest);
   });
 }
 
