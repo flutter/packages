@@ -229,39 +229,6 @@ class GisSdkClient {
     }
   }
 
-// Creates a `oauth2.CodeClient` used for authorization (scope) requests.
-  CodeClient _initializeCodeClient(
-    String clientId, {
-    String? hostedDomain,
-    required List<String> scopes,
-    required CodeClientCallbackFn onResponse,
-    required ErrorCallbackFn onError,
-  }) {
-    // Create a Token Client for authorization calls.
-    final CodeClientConfig codeConfig = CodeClientConfig(
-      client_id: clientId,
-      hosted_domain: hostedDomain,
-      callback: allowInterop(_onCodeResponse),
-      error_callback: allowInterop(_onCodeError),
-      scope: scopes.join(' '),
-      select_account: true,
-      ux_mode: UxMode.popup,
-    );
-    return oauth2.initCodeClient(codeConfig);
-  }
-
-  void _onCodeResponse(CodeResponse response) {
-    if (response.error != null) {
-      _codeResponses.addError(response.error!);
-    } else {
-      _codeResponses.add(response);
-    }
-  }
-
-  void _onCodeError(Object? error) {
-    _codeResponses.addError(getProperty(error!, 'type'));
-  }
-
   /// Attempts to sign-in the user using the OneTap UX flow.
   ///
   /// If the user consents, to OneTap, the [GoogleSignInUserData] will be
@@ -325,20 +292,6 @@ class GisSdkClient {
     GSIButtonConfiguration options,
   ) async {
     return id.renderButton(parent, convertButtonConfiguration(options));
-  }
-
-  /// Requests a server auth code per:
-  /// https://developers.google.com/identity/oauth2/web/guides/use-code-model#initialize_a_code_client
-  Future<String?> requestServerAuthCode() async {
-    // TODO(dit): Enable granular authorization, https://github.com/flutter/flutter/issues/139406
-    assert(_codeClient != null,
-        'CodeClient not initialized correctly. Ensure the `scopes` list passed to `init()` or `initWithParams()` is not empty!');
-    if (_codeClient == null) {
-      return null;
-    }
-    _codeClient!.requestCode();
-    final CodeResponse response = await _codeResponses.stream.first;
-    return response.code;
   }
 
   /// Requests a server auth code per:
