@@ -52,6 +52,14 @@ enum AuthResult {
 
   /// No passcode is set.
   errorPasscodeNotSet,
+
+  callbackSetting,
+
+  iOSLockedOut,
+
+  errorUserFallback,
+
+  errorUserCancel,
 }
 
 class AuthOptions {

@@ -56,6 +56,26 @@ class LocalAuthIOS extends LocalAuthPlatform {
             code: 'NotAvailable',
             message: resultDetails.errorMessage,
             details: resultDetails.errorDetails);
+      case AuthResult.callbackSetting:
+        throw PlatformException(
+            code: 'CallbackSetting',
+            message: "callbackSetting",
+            details: "callbackSetting");
+      case AuthResult.iOSLockedOut:
+        throw PlatformException(
+            code: 'iOSLockedOut',
+            message: "iOSLockedOut",
+            details: "iOSLockedOut");
+      case AuthResult.errorUserFallback:
+        throw PlatformException(
+            code: 'ErrorUserFallback',
+            message: "errorUserFallback",
+            details: "errorUserFallback");  
+      case AuthResult.errorUserCancel:
+        throw PlatformException(
+            code: 'ErrorUserCancel',
+            message: "errorUserCancel",
+            details: "errorUserCancel");  
       case AuthResult.errorNotEnrolled:
         throw PlatformException(
             code: 'NotEnrolled',

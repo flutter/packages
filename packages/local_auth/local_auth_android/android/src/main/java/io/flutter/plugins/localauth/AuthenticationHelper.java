@@ -100,6 +100,11 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
     biometricPrompt.authenticate(promptInfo);
   }
 
+  void returnCallback() {
+    completionHandler.complete(Messages.AuthResult.CALLBACK_SETTING);
+    stop();
+  }
+
   /** Cancels the biometric authentication. */
   void stopAuthentication() {
     if (biometricPrompt != null) {
@@ -216,8 +221,7 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
     Context context = new ContextThemeWrapper(activity, R.style.AlertDialogCustom);
     OnClickListener goToSettingHandler =
         (dialog, which) -> {
-          completionHandler.complete(Messages.AuthResult.FAILURE);
-          stop();
+
           activity.startActivityForResult(new Intent(Settings.ACTION_SECURITY_SETTINGS),7);
         };
     OnClickListener cancelHandler =

@@ -14,7 +14,6 @@ export 'package:local_auth_platform_interface/types/auth_messages.dart';
 export 'package:local_auth_platform_interface/types/auth_options.dart';
 export 'package:local_auth_platform_interface/types/biometric_type.dart';
 
-const MethodChannel _installerPlatform = const MethodChannel('setting_channel');
 /// The implementation of [LocalAuthPlatform] for Android.
 class LocalAuthAndroid extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
@@ -27,7 +26,6 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     LocalAuthPlatform.instance = LocalAuthAndroid();
   }
 
-  static const REQUEST_SETTING_CALLBACK = 7;
   final LocalAuthApi _api;
 
   @override
@@ -36,13 +34,6 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     required Iterable<AuthMessages> authMessages,
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
-    _installerPlatform.invokeMethod('REQUEST_SETTING').then((resp) {
-      switch (resp) {
-        case REQUEST_SETTING_CALLBACK:
-          print("Luan receive callback at flutter");
-          break;
-      }
-    });
     assert(localizedReason.isNotEmpty);
     final AuthResult result = await _api.authenticate(
         AuthOptions(
@@ -59,6 +50,10 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     switch (result) {
       case AuthResult.success:
         return true;
+      case AuthResult.callbackSetting:
+        throw PlatformException(
+            code: 'CallbackSetting',
+            message: 'CallbackSetting');
       case AuthResult.failure:
         return false;
       case AuthResult.errorAlreadyInProgress:

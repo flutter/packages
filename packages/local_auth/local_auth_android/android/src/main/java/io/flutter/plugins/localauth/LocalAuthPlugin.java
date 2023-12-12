@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * <p>Instantiate this in an add to app scenario to gracefully handle activity and context changes.
  */
-public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthApi, MethodChannel.MethodCallHandler{
+public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthApi{
   private static final int LOCK_REQUEST_CODE = 221;
   private static final int REQUEST_SETTING_CALLBACK = 7;
   private MethodChannel.Result requestPermissionsResult;
@@ -65,13 +65,7 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
           if (requestCode == REQUEST_SETTING_CALLBACK) {
-            mHandler.post(new Runnable() {
-              @Override
-              public void run() {
-                System.out.println("Luan push message from native");
-                requestPermissionsResult.success(REQUEST_SETTING_CALLBACK);
-              }
-            });
+            authHelper.returnCallback();
           }
           if (requestCode == LOCK_REQUEST_CODE) {
             if (resultCode == RESULT_OK && lockRequestResult != null) {
@@ -243,14 +237,11 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     LocalAuthApi.setup(binding.getBinaryMessenger(), this);
-    methodChannel = new MethodChannel(binding.getBinaryMessenger(), "setting_channel");
-    methodChannel.setMethodCallHandler(this);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     LocalAuthApi.setup(binding.getBinaryMessenger(), null);
-    methodChannel.setMethodCallHandler(null);
   }
 
   private void setServicesFromActivity(Activity activity) {
@@ -259,21 +250,6 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     Context context = activity.getBaseContext();
     biometricManager = BiometricManager.from(activity);
     keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
-  }
-
-  @Override
-  public void onMethodCall(@NonNull MethodCall  call,@NonNull MethodChannel.Result result) {
-    if (call.method.equals("REQUEST_SETTING")) {
-      mHandler.post(new Runnable() {
-        @Override
-        public void run() {
-          requestPermissionsResult = result;
-        }
-      });
-
-    } else {
-      result.notImplemented();
-    }
   }
 
   @Override

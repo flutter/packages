@@ -55,6 +55,7 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
 @property(nonatomic, strong) NSObject<FLAAuthContextFactory> *authContextFactory;
 @end
 
+
 @implementation FLTLocalAuthPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
@@ -153,6 +154,8 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
 
 #pragma mark Private Methods
 
+FLAAuthCompletion _completionHandler = nil;
+
 - (void)showAlertWithMessage:(NSString *)message
           dismissButtonTitle:(NSString *)dismissButtonTitle
      openSettingsButtonTitle:(NSString *)openSettingsButtonTitle
@@ -178,8 +181,10 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
                   NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
                   [[UIApplication sharedApplication] openURL:url
                                                      options:@{}
-                                           completionHandler:NULL];
-                  [self handleSucceeded:NO withCompletion:completion];
+                                           completionHandler:^(BOOL success) {
+                      _completionHandler = completion;
+                  }];
+
                 }];
     [alert addAction:additionalAction];
   }
@@ -241,27 +246,68 @@ typedef void (^FLAAuthCompletion)(FLAAuthResultDetails *_Nullable, FlutterError 
                  dismissButtonTitle:strings.cancelButton
             openSettingsButtonTitle:strings.goToSettingsButton
                          completion:completion];
-        return;
+          
+       return;
+      } else {
+          result = authError.code == LAErrorPasscodeNotSet ? FLAAuthResultErrorPasscodeNotSet
+                                                           : FLAAuthResultErrorNotEnrolled;
+          completion([FLAAuthResultDetails makeWithResult:result
+                      errorMessage:authError.localizedDescription
+                      errorDetails:authError.domain],
+          nil);
       }
-      result = authError.code == LAErrorPasscodeNotSet ? FLAAuthResultErrorPasscodeNotSet
-                                                       : FLAAuthResultErrorNotEnrolled;
+     
       break;
     case LAErrorBiometryLockout:
       [self showAlertWithMessage:strings.lockOut
                dismissButtonTitle:strings.cancelButton
           openSettingsButtonTitle:nil
-                       completion:completion];
+                      completion:completion];
+
+          result = FLAAuthResultPermanentLockedOut;
+
+          completion([FLAAuthResultDetails makeWithResult:result
+                      errorMessage:authError.localizedDescription
+                      errorDetails:authError.domain],
+          nil);
       return;
+    case LAErrorUserFallback:
+          result = FLAAuthResultUserFallback;
+
+          completion([FLAAuthResultDetails makeWithResult:result
+                      errorMessage:authError.localizedDescription
+                      errorDetails:authError.domain],
+          nil);
+      break;
+    case LAErrorUserCancel:
+      result = FLAAuthResultUserCancel;
+
+      completion([FLAAuthResultDetails makeWithResult:result
+                  errorMessage:authError.localizedDescription
+                  errorDetails:authError.domain],
+      nil);
+      break;
+    default:
+          completion([FLAAuthResultDetails makeWithResult:result
+                  errorMessage:authError.localizedDescription
+                  errorDetails:authError.domain],
+          nil);
+      break;
   }
-  completion([FLAAuthResultDetails makeWithResult:result
-                                     errorMessage:authError.localizedDescription
-                                     errorDetails:authError.domain],
-             nil);
 }
 
 #pragma mark - AppDelegate
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+  NSLog(@"App resume");
+  if (_completionHandler != nil) {
+        _completionHandler(
+        [FLAAuthResultDetails makeWithResult:FLAAuthResultCallbackSetting
+                                errorMessage:nil
+                                errorDetails:nil],
+        nil);
+      _completionHandler = nil;
+  }
   if (self.lastCallState != nil) {
     [self authenticateWithOptions:_lastCallState.options
                           strings:_lastCallState.strings
