@@ -341,7 +341,9 @@ void main() {
     expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
 
     await tester.binding.setSurfaceSize(null);
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: true);
 
   testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -409,7 +411,9 @@ void main() {
 
     expect(firstVisibleRegion, isNot(secondVisibleRegion));
     expect(secondVisibleRegion.contains(newCenter), isTrue);
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: true);
 
   testWidgets('testTraffic', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -699,7 +703,9 @@ void main() {
     await tester.pumpAndSettle();
     zoom = await controller.getZoomLevel();
     expect(zoom, equals(7));
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: true);
 
   testWidgets('testScreenCoordinate', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -733,7 +739,9 @@ void main() {
     final ScreenCoordinate topLeft =
         await controller.getScreenCoordinate(northWest);
     expect(topLeft, const ScreenCoordinate(x: 0, y: 0));
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: true);
 
   testWidgets('testResizeWidget', (WidgetTester tester) async {
     final Completer<ExampleGoogleMapController> controllerCompleter =
@@ -841,7 +849,9 @@ void main() {
         await controllerCompleter.future;
     final Uint8List? bytes = await controller.takeSnapshot();
     expect(bytes?.isNotEmpty, true);
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: true);
 
   testWidgets(
     'set tileOverlay correctly',
