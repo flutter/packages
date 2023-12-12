@@ -2,6 +2,10 @@
 
 * Updates example app Gradle version to 7.6.3.
 
+## 0.10.5+7
+
+* Updates example app to use non-deprecated video_player method.
+
 ## 0.10.5+6
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

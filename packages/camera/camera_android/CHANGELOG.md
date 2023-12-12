@@ -2,6 +2,10 @@
 
 * Updates example app Gradle version to 7.6.3.
 
+## 0.10.8+15
+
+* Updates example app to use non-deprecated video_player method.
+
 ## 0.10.8+14
 
 * Fixes `pausePreview` null pointer error. `pausePreview` should not be called 
