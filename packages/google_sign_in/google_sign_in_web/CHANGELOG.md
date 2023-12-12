@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
+
+## 0.12.3
+
+* Migrates to `package:web`.
+
 ## 0.12.2+1
 
 * Re-publishes `0.12.2` with a small fix to the CodeClient initialization.

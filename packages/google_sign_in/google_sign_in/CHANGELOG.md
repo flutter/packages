@@ -1,7 +1,15 @@
-## 6.1.7
+## NEXT
 
 * Updates example app Gradle version to 7.6.3.
+
+## 6.2.1
+
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 6.2.0
+
+* Adds support for macOS.
+* Updates minimum supported SDK version to Flutter 3.16.
 
 ## 6.1.6
 

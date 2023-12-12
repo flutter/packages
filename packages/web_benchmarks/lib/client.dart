@@ -53,15 +53,18 @@ Future<void> runBenchmarks(
   final Uri currentUri = Uri.parse(window.location.href);
   // Create a new URI with the current 'page' value set to [initialPage] to
   // ensure the benchmark app is reloaded at the proper location.
-  final Uri newUri = Uri(
+  final String newUri = Uri(
     scheme: currentUri.scheme,
     host: currentUri.host,
     port: currentUri.port,
     path: initialPage,
-  );
+  ).toString();
 
   // Reloading the window will trigger the next benchmark to run.
-  window.location.replace(newUri.toString());
+  await _client.printToConsole(
+    'Client preparing to reload the window to: "$newUri"',
+  );
+  window.location.replace(newUri);
 }
 
 Future<void> _runBenchmark(String? benchmarkName) async {

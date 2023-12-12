@@ -1,6 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
+
 ## 6.2.2
 
-* Updates example app Gradle version to 7.6.3.
+* Adds a link about web limitations to the `url_launcher_web` package in the
+  `url_launcher` `README.md` and `launchUrl` method.
 
 ## 6.2.1
 

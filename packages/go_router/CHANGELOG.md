@@ -1,6 +1,10 @@
-## 12.1.3
+## NEXT
 
 * Updates example app Gradle version to 7.6.3.
+
+## 12.1.3
+
+* Fixes a typo in `navigation.md`.
 
 ## 12.1.2
 
