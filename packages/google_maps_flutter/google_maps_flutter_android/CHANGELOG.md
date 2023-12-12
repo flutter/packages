@@ -1,4 +1,4 @@
-## 2.6.1
+## NEXT
 
 * Updates example app Gradle version to 7.6.3.
 

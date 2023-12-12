@@ -1,6 +1,9 @@
-## 2.0.12
+## NEXT
 
 * Updates example app Gradle version to 7.6.3.
+
+## 2.0.12
+
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 2.0.11
