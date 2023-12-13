@@ -103,6 +103,7 @@ void _verifySampleFile(String? directoryPath, String name) {
   expect(file.readAsStringSync(), 'Hello world!');
   // This check intentionally avoids using Directory.listSync due to
   // https://github.com/dart-lang/sdk/issues/54287.
-  expect(Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
+  expect(
+      Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
   file.deleteSync();
 }
