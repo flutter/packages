@@ -8,6 +8,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraControl;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.FocusMeteringResult;
 import androidx.core.content.ContextCompat;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -74,6 +76,31 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
           },
           ContextCompat.getMainExecutor(context));
     }
+
+    @NonNull
+    public void startFocusAndMetering(
+        @NonNull CameraControl cameraControl,
+        @NonNull FocusMeteringAction focusMeteringAction,
+        @NonNull GeneratedCameraXLibrary.Result<Long> result) {
+      ListenableFuture<FocusMeteringResult> focusMeteringResultFuture =
+          cameraControl.startFocusAndMetering(action);
+
+      Futures.addCallback(
+          focusMeteringResultFuture,
+          new FutureCallback<FocusMeteringResult>() {
+            public void onSuccess(FocusMeteringResult focusMeteringResult) {
+              final FocusMeteringResultFlutterApiImpl flutterApi =
+                  new FocusMeteringResultFlutterApiImpl(binaryMessenger, instanceManager);
+              flutterApi.create(focusMeteringResult, reply -> {});
+              result.success(instanceManager.getIdentifierForStrongReference(focusMeteringResult));
+            }
+
+            public void onFailure(Throwable t) {
+              result.error(t);
+            }
+          },
+          ContextCompat.getMainExecutor(context));
+    }
   }
 
   /**
@@ -119,8 +146,7 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
       @NonNull Long identifier,
       @NonNull Boolean torch,
       @NonNull GeneratedCameraXLibrary.Result<Void> result) {
-    proxy.enableTorch(
-        Objects.requireNonNull(instanceManager.getInstance(identifier)), torch, result);
+    proxy.enableTorch(getCameraControlInstance(identifier), torch, result);
   }
 
   @Override
@@ -128,7 +154,19 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
       @NonNull Long identifier,
       @NonNull Double ratio,
       @NonNull GeneratedCameraXLibrary.Result<Void> result) {
-    proxy.setZoomRatio(
-        Objects.requireNonNull(instanceManager.getInstance(identifier)), ratio, result);
+    proxy.setZoomRatio(getCameraControlInstance(identifier), ratio, result);
+  }
+
+  @Override
+  public void startFocusAndMetering(
+      @NonNull Long identifier, @NonNull Long focusMeteringActionId, @NonNull Result<Long> result) {
+    proxy.startFocusAndMetering(
+        getCameraControlInstance(identifier),
+        Objects.requireNonNull(instanceManager.getInstance(focusMeteringActionId)),
+        result);
+  }
+
+  private CameraControl getCameraControlInstance(@NonNull Long identifier) {
+    return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
 }

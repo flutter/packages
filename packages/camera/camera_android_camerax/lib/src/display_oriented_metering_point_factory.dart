@@ -16,19 +16,19 @@ import 'metering_point_factory.dart';
 class DisplayOrientedMeteringPointFactory extends MeteringPointFactory {
   /// Creates a [MeteringPoint] that is not automatically attached to a
   /// native object.
-  MeteringPoint.detached({
+  DisplayOrientedMeteringPointFactory.detached({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
         ) {
-    _api = _MeteringPointHostApiImpl(
+    _api = _DisplayOrientedMeteringPointFactory(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
-  late final _MeteringPointHostApiImpl _api;
+  late final _DisplayOrientedMeteringPointFactory _api;
 
   /// somethin
   @override

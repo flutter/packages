@@ -462,7 +462,14 @@ abstract class CameraControlFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestFocusMeteringActionHostApi')
 abstract class FocusMeteringActionHostApi {
-  void create(int identifier, int meteringPointId, int meteringMode);
+  void create(int identifier, int meteringPointId, int? meteringMode);
+
+  int addPoint(int identifier, int meteringPointId, int? meteringMode);
+}
+
+@FlutterApi()
+abstract class FocusMeteringActionFlutterApi {
+  void create(int identifier, int meteringPointId, int? meteringMode);
 }
 
 @HostApi()
