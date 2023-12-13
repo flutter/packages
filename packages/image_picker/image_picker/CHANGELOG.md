@@ -1,3 +1,8 @@
+## 1.0.5
+
+* Updates example app to use non-deprecated video_player method.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 1.0.4
 
 * Updates README to fix broken link.

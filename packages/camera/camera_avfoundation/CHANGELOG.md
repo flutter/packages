@@ -1,3 +1,8 @@
+## 0.9.13+8
+
+* Updates example app to use non-deprecated video_player method.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 0.9.13+7
 
 * Fixes inverted orientation strings.
