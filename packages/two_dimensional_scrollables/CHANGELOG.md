@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates example app Gradle version to 7.6.3.
- 
 ## 0.0.5
 
 * Exposes addAutomaticKeepAlives in TableCellBuilderDelegate and TableCellListDelegate
