@@ -34,8 +34,3 @@ topics:
   - html
   - webview
   - webview-flutter
-
-# FOR TESTING ONLY. DO NOT MERGE.
-dependency_overrides:
-  webview_flutter_platform_interface:
-    path: ../webview_flutter_platform_interface
