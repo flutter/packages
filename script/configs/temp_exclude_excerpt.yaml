@@ -8,7 +8,6 @@
 - espresso
 - extension_google_sign_in_as_googleapis_auth
 - go_router_builder
-- google_sign_in/google_sign_in
 - image_picker_for_web
 - in_app_purchase/in_app_purchase
 - ios_platform_images

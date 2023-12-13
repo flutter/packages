@@ -1,3 +1,7 @@
+## 6.2.1
+
+* Improves README example and updates it to use code excerpts.
+
 ## 6.2.0
 
 * Adds support for macOS.
