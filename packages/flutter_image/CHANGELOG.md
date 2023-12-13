@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates example app Gradle version to 7.6.3.
-
 ## 4.1.10
 
 * Fixes image asset link to use image within package.
