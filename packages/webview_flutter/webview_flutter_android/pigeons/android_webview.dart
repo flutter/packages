@@ -358,6 +358,14 @@ abstract class WebViewClientFlutterApi {
     String url,
     bool isReload,
   );
+
+  void onReceivedHttpAuthRequest(
+    int instanceId,
+    int webViewInstanceId,
+    int httpAuthHandlerInstanceId,
+    String host,
+    String realm,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestDownloadListenerHostApi')
@@ -548,6 +556,38 @@ abstract class GeolocationPermissionsCallbackHostApi {
 /// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
 @FlutterApi()
 abstract class GeolocationPermissionsCallbackFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId);
+}
+
+/// Host API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+@HostApi(dartHostTestHandler: 'TestHttpAuthHandlerHostApi')
+abstract class HttpAuthHandlerHostApi {
+  /// Handles Dart method `HttpAuthHandler.useHttpAuthUsernamePassword`.
+  bool useHttpAuthUsernamePassword(int instanceId);
+
+  /// Handles Dart method `HttpAuthHandler.cancel`.
+  void cancel(int instanceId);
+
+  /// Handles Dart method `HttpAuthHandler.proceed`.
+  void proceed(int instanceId, String username, String password);
+}
+
+/// Flutter API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+@FlutterApi()
+abstract class HttpAuthHandlerFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int instanceId);
 }
