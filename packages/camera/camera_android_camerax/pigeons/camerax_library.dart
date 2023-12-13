@@ -469,7 +469,7 @@ abstract class FocusMeteringActionHostApi {
 
 @FlutterApi()
 abstract class FocusMeteringActionFlutterApi {
-  void create(int identifier, int meteringPointId, int? meteringMode);
+  void create(int identifier);
 }
 
 @HostApi()
@@ -484,12 +484,11 @@ abstract class FocusMeteringResultFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestMeteringPointHostApi')
 abstract class MeteringPointHostApi {
-  int getSize(int identifier);
-}
+  void create(int identifier, double x, double y, double? size);
 
-@FlutterApi()
-abstract class MeteringPointFlutterApi {
-  void create(int identifier);
+  double getDefaultPointSize();
+
+  double getSize(int identifier);
 }
 
 @HostApi(dartHostTestHandler: 'TestDisplayOrientedMeteringPointFactoryHostApi')

@@ -17,8 +17,8 @@ class FocusMeteringAction extends JavaObject {
   FocusMeteringAction({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    required this.meteringPoint,
-    required this.meteringMode,
+    required MeteringPoint meteringPoint,
+    int? meteringMode,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -34,8 +34,6 @@ class FocusMeteringAction extends JavaObject {
   FocusMeteringAction.detached({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    required this.meteringPoint,
-    required this.meteringMode,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -45,12 +43,6 @@ class FocusMeteringAction extends JavaObject {
   }
 
   late final _FocusMeteringActionHostApiImpl _api;
-
-  /// something
-  final MeteringPoint meteringPoint;
-
-  /// something
-  final int? meteringMode;
 
   /// Flag for metering mode that indicates the AF (Auto Focus) region is
   /// enabled.
@@ -75,7 +67,7 @@ class FocusMeteringAction extends JavaObject {
 
 /// Host API implementation of [FocusMeteringAction].
 class _FocusMeteringActionHostApiImpl extends FocusMeteringActionHostApi {
-  /// Constructs a [FocusMeteringActionHostApiImpl].
+  /// Constructs a [_FocusMeteringActionHostApiImpl].
   ///
   /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
   /// which routes to the host platform.
@@ -104,10 +96,7 @@ class _FocusMeteringActionHostApiImpl extends FocusMeteringActionHostApi {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (FocusMeteringAction original) {
       return FocusMeteringAction.detached(
-          binaryMessenger: binaryMessenger,
-          instanceManager: instanceManager,
-          meteringPoint: meteringPoint,
-          meteringMode: meteringMode);
+          binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     });
     create(identifier, instanceManager.getIdentifier(meteringPoint)!,
         meteringMode);
@@ -150,21 +139,15 @@ class FocusMeteringActionFlutterApiImpl extends FocusMeteringActionFlutterApi {
   final InstanceManager _instanceManager;
 
   @override
-  void create(int identifier, int meteringPointId, int? meteringMode) {
+  void create(int identifier) {
     _instanceManager.addHostCreatedInstance(
       FocusMeteringAction.detached(
-          binaryMessenger: _binaryMessenger,
-          instanceManager: _instanceManager,
-          meteringPoint: _instanceManager
-              .getInstanceWithWeakReference<MeteringPoint>(meteringPointId),
-          meteringMode: meteringMode),
+          binaryMessenger: _binaryMessenger, instanceManager: _instanceManager),
       identifier,
       onCopy: (FocusMeteringAction original) {
         return FocusMeteringAction.detached(
           binaryMessenger: _binaryMessenger,
           instanceManager: _instanceManager,
-          meteringMode: original.meteringMode,
-          meteringPoint: original.meteringPoint,
         );
       },
     );

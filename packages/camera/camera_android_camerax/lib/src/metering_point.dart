@@ -13,6 +13,23 @@ import 'java_object.dart';
 /// somethin
 @immutable
 class MeteringPoint extends JavaObject {
+  /// Creates a [MeteringPoint].
+  MeteringPoint({
+    BinaryMessenger? binaryMessenger,
+    InstanceManager? instanceManager,
+    required double x,
+    required double y,
+    required double? size,
+  }) : super.detached(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ) {
+    _api = _MeteringPointHostApiImpl(
+        binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+    _api.createFromInstance(this, x, y, size);
+    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
+  }
+
   /// Creates a [MeteringPoint] that is not automatically attached to a
   /// native object.
   MeteringPoint.detached({
@@ -29,8 +46,11 @@ class MeteringPoint extends JavaObject {
 
   late final _MeteringPointHostApiImpl _api;
 
+  /// something
+  Future<double> getDefaultPointSize() => _api.getDefaultPointSize();
+
   /// somethin
-  Future<int> getSize() => _api.getSizeFromInstance(this);
+  Future<double> getSize() => _api.getSizeFromInstance(this);
 }
 
 /// Host API implementation of [MeteringPoint].
@@ -58,7 +78,7 @@ class _MeteringPointHostApiImpl extends MeteringPointHostApi {
   late final InstanceManager instanceManager;
 
   /// somethin
-  Future<int> getSizeFromInstance(MeteringPoint instance) {
+  Future<double> getSizeFromInstance(MeteringPoint instance) {
     final int identifier = instanceManager.getIdentifier(instance)!;
     return getSize(identifier);
   }

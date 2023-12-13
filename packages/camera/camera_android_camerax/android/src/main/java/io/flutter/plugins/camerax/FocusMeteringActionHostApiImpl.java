@@ -92,6 +92,6 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
         final FocusMeteringActionFlutterApiImpl flutterApi =
           new FocusMeteringActionFlutterApiImpl(binaryMessenger, instanceManager);
         flutterApi.create(newFocusMeteringAction, reply -> {});
-        return instanceManager.getIdentifierForStrongReference(newFocusMeteringAction); // TODO(camsim99): I'm here! Need to figure out how to handle list of metering points. Thinking use getter.
+        return instanceManager.getIdentifierForStrongReference(newFocusMeteringAction);
     }
 }

@@ -40,12 +40,10 @@ public class FocusMeteringActionFlutterApiWrapper {
    */
   public void create(
       @NonNull FocusMeteringAction instance,
-      @NonNull Long meteringPointIdArg,
-      @Nullable Long meteringModeArg,
       @NonNull Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
       focusMeteringActionFlutterApi.create(
-          instanceManager.addHostCreatedInstance(instance), code, callback);
+          instanceManager.addHostCreatedInstance(instance), callback);
     }
   }
 
