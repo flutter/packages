@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example app Gradle version to 7.6.3.
+
 ## 6.2.0
 
 * Adds support for macOS.

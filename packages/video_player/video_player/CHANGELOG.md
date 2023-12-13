@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates example app Gradle version to 7.6.3.
+
 ## 2.8.1
 
 * Updates the example app: replaces `ButtonBar` with `OverflowBar` widget.

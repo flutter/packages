@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates example app Gradle version to 7.6.3.
+
 ## 0.3.0+15
 
 * Adds missing network error response code to BillingResponse enum.

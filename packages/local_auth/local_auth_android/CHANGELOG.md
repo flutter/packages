@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example app Gradle version to 7.6.3.
+
 ## 1.0.36
 
 * Updates androidx.fragment version to 1.6.2.

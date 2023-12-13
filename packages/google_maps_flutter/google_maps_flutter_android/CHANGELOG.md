@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example app Gradle version to 7.6.3.
+
 ## 2.6.0
 
 * Fixes missing updates in TLHC mode.

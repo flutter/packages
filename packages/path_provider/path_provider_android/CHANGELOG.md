@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates example app Gradle version to 7.6.3.
+
 ## 2.2.1
 
 * Updates annotations lib to 1.7.0.

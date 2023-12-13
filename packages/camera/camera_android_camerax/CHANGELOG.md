@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example app Gradle version to 7.6.3.
+
 ## 0.5.0+24
 
 * Updates example app to use non-deprecated video_player method.

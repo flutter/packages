@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates Gradle version of example apps to 7.6.3.
+
 ## 15.0.1
 
 * [java] Adds @CanIgnoreReturnValue annotation to class builder.

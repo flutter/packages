@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example app Gradle version to 7.6.3.
+
 ## 6.2.2
 
 * Adds a link about web limitations to the `url_launcher_web` package in the

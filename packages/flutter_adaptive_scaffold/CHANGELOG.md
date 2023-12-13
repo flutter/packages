@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates example app Gradle version to 7.6.3.
+
 ## 0.1.7+1
 
 * Adds pub topics to package metadata.
