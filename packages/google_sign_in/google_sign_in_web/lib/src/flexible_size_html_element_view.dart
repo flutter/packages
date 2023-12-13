@@ -73,6 +73,8 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
 
   /// The function called whenever an observed resize occurs.
   void _onResizeEntries(
+    // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
+    // ignore: always_specify_types
     JSArray resizes,
     web.ResizeObserver observer,
   ) {
@@ -88,6 +90,8 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
   /// When mutations are received, this function attaches a Resize Observer to
   /// the first child of the mutation, which will drive
   void _onMutationRecords(
+    // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
+    // ignore: always_specify_types
     JSArray mutations,
     web.MutationObserver observer,
   ) {
