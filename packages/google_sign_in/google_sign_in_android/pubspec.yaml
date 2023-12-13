@@ -28,7 +28,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.1
+  mockito: 5.4.3
   pigeon: ^10.1.0
 
 topics:

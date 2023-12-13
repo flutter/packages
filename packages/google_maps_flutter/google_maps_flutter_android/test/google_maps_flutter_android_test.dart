@@ -158,7 +158,7 @@ void main() {
     expect(widget, isA<PlatformViewLink>());
   });
 
-  testWidgets('Defaults to surface view', (WidgetTester tester) async {
+  testWidgets('Defaults to AndroidView', (WidgetTester tester) async {
     final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
 
     final Widget widget = maps.buildViewWithConfiguration(1, (int _) {},
@@ -167,7 +167,7 @@ void main() {
                 CameraPosition(target: LatLng(0, 0), zoom: 1),
             textDirection: TextDirection.ltr));
 
-    expect(widget, isA<PlatformViewLink>());
+    expect(widget, isA<AndroidView>());
   });
 
   testWidgets('cloudMapId is passed', (WidgetTester tester) async {
@@ -177,7 +177,7 @@ void main() {
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
       SystemChannels.platform_views,
-      (MethodCall methodCall) {
+      (MethodCall methodCall) async {
         if (methodCall.method == 'create') {
           final Map<String, dynamic> args = Map<String, dynamic>.from(
               methodCall.arguments as Map<dynamic, dynamic>);
@@ -198,7 +198,7 @@ void main() {
             }
           }
         }
-        return null;
+        return 0;
       },
     );
 

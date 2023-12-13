@@ -1,6 +1,11 @@
+## 0.10.0
+
+* Transitions to federated architecture.
+* Adds iOS implementation to federated package.
+
 ## 0.9.3+7
 
-* Updates metadata to point to new source folder
+* Updates metadata to point to new source folder.
 
 ## 0.9.3+6
 

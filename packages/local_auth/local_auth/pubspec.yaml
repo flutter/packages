@@ -32,7 +32,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.1
+  mockito: 5.4.3
   plugin_platform_interface: ^2.1.2
 
 topics:
