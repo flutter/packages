@@ -2,6 +2,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 * Fixes lint warnings.
+* Add one core widget and one material widget.
 
 ## 1.0.15
 
