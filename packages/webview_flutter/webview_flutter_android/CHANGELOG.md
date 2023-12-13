@@ -1,5 +1,6 @@
-## NEXT
+## 3.13.0
 
+* Adds support for `PlatformNavigationDelegate.setOnHttpAuthRequest`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 3.12.1
