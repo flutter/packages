@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import androidx.core.util.SizeFCompat;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -40,6 +41,8 @@ public class ImageResizerTest {
   Context mockContext;
   File imageFile;
   File svgImageFile;
+  File tallJPG;
+  File wideJPG;
   File externalDirectory;
   Bitmap originalImageBitmap;
 
@@ -50,6 +53,10 @@ public class ImageResizerTest {
     mockCloseable = MockitoAnnotations.openMocks(this);
     imageFile = new File(getClass().getClassLoader().getResource("pngImage.png").getFile());
     svgImageFile = new File(getClass().getClassLoader().getResource("flutter_image.svg").getFile());
+    // tallJPG has height 7px and width 4px.
+    tallJPG = new File(getClass().getClassLoader().getResource("jpgImageTall.jpg").getFile());
+    // wideJPG has height 7px and width 12px.
+    wideJPG = new File(getClass().getClassLoader().getResource("jpgImageWide.jpg").getFile());
     originalImageBitmap = BitmapFactory.decodeFile(imageFile.getPath());
     TemporaryFolder temporaryFolder = new TemporaryFolder();
     temporaryFolder.create();
@@ -133,5 +140,83 @@ public class ImageResizerTest {
       assertTrue(capturedOptions.get(0).inJustDecodeBounds);
       assertFalse(capturedOptions.get(1).inJustDecodeBounds);
     }
+  }
+
+  @Test
+  public void
+      onResizeImageIfNeeded_whenImageIsVertical_WidthIsGreaterThanOriginal_shouldResizeCorrectly() {
+    String outputFile = resizer.resizeImageIfNeeded(tallJPG.getPath(), 5.0, 5.0, 100);
+    SizeFCompat originalSize =
+        resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageTall.jpg");
+
+    float width = originalSize.getWidth();
+    float height = originalSize.getHeight();
+    assertThat(width, equalTo(3.0F));
+    assertThat(height, equalTo(5.0F));
+  }
+
+  @Test
+  public void
+      onResizeImageIfNeeded_whenImageIsVertical_HeightIsGreaterThanOriginal_shouldResizeCorrectly() {
+    String outputFile = resizer.resizeImageIfNeeded(tallJPG.getPath(), 3.0, 10.0, 100);
+    SizeFCompat originalSize =
+        resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageTall.jpg");
+
+    float width = originalSize.getWidth();
+    float height = originalSize.getHeight();
+    assertThat(width, equalTo(3.0F));
+    assertThat(height, equalTo(5.0F));
+  }
+
+  @Test
+  public void
+      onResizeImageIfNeeded_whenImageIsVertical_HeightAndWidthIsGreaterThanOriginal_shouldNotResize() {
+    String outputFile = resizer.resizeImageIfNeeded(tallJPG.getPath(), 10.0, 10.0, 100);
+    SizeFCompat originalSize =
+        resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageTall.jpg");
+
+    float width = originalSize.getWidth();
+    float height = originalSize.getHeight();
+    assertThat(width, equalTo(4.0F));
+    assertThat(height, equalTo(7.0F));
+  }
+
+  @Test
+  public void
+      onResizeImageIfNeeded_whenImageIsHorizontal_WidthIsGreaterThanOriginal_shouldResizeCorrectly() {
+    String outputFile = resizer.resizeImageIfNeeded(wideJPG.getPath(), 10.0, 20.0, 100);
+    SizeFCompat originalSize =
+        resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageWide.jpg");
+
+    float width = originalSize.getWidth();
+    float height = originalSize.getHeight();
+    assertThat(width, equalTo(10.0F));
+    assertThat(height, equalTo(6.0F));
+  }
+
+  @Test
+  public void
+      onResizeImageIfNeeded_whenImageIsHorizontal_HeightIsGreaterThanOriginal_shouldResizeCorrectly() {
+    String outputFile = resizer.resizeImageIfNeeded(wideJPG.getPath(), 10.0, 10.0, 100);
+    SizeFCompat originalSize =
+        resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageWide.jpg");
+
+    float width = originalSize.getWidth();
+    float height = originalSize.getHeight();
+    assertThat(width, equalTo(10.0F));
+    assertThat(height, equalTo(6.0F));
+  }
+
+  @Test
+  public void
+      onResizeImageIfNeeded_whenImageIsHorizontal_HeightAndWidthIsGreaterThanOriginal_shouldNotResize() {
+    String outputFile = resizer.resizeImageIfNeeded(wideJPG.getPath(), 100.0, 100.0, 100);
+    SizeFCompat originalSize =
+        resizer.readFileDimensions(externalDirectory.getPath() + "/scaled_jpgImageWide.jpg");
+
+    float width = originalSize.getWidth();
+    float height = originalSize.getHeight();
+    assertThat(width, equalTo(12.0F));
+    assertThat(height, equalTo(7.0F));
   }
 }

@@ -13,11 +13,9 @@
 
 // See url_launcher_channel.dart for documentation.
 const char kChannelName[] = "plugins.flutter.io/url_launcher_linux";
-const char kBadArgumentsError[] = "Bad Arguments";
 const char kLaunchError[] = "Launch Error";
 const char kCanLaunchMethod[] = "canLaunch";
 const char kLaunchMethod[] = "launch";
-const char kUrlKey[] = "url";
 
 struct _FlUrlLauncherPlugin {
   GObject parent_instance;
@@ -29,21 +27,6 @@ struct _FlUrlLauncherPlugin {
 };
 
 G_DEFINE_TYPE(FlUrlLauncherPlugin, fl_url_launcher_plugin, g_object_get_type())
-
-// Gets the URL from the arguments or generates an error.
-static gchar* get_url(FlValue* args, GError** error) {
-  if (fl_value_get_type(args) != FL_VALUE_TYPE_MAP) {
-    g_set_error(error, 0, 0, "Argument map missing or malformed");
-    return nullptr;
-  }
-  FlValue* url_value = fl_value_lookup_string(args, kUrlKey);
-  if (url_value == nullptr) {
-    g_set_error(error, 0, 0, "Missing URL");
-    return nullptr;
-  }
-
-  return g_strdup(fl_value_get_string(url_value));
-}
 
 // Checks if URI has launchable file resource.
 static gboolean can_launch_uri_with_file_resource(FlUrlLauncherPlugin* self,
@@ -57,12 +40,7 @@ static gboolean can_launch_uri_with_file_resource(FlUrlLauncherPlugin* self,
 
 // Called to check if a URL can be launched.
 FlMethodResponse* can_launch(FlUrlLauncherPlugin* self, FlValue* args) {
-  g_autoptr(GError) error = nullptr;
-  g_autofree gchar* url = get_url(args, &error);
-  if (url == nullptr) {
-    return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        kBadArgumentsError, error->message, nullptr));
-  }
+  const gchar* url = fl_value_get_string(args);
 
   gboolean is_launchable = FALSE;
   g_autofree gchar* scheme = g_uri_parse_scheme(url);
@@ -82,14 +60,10 @@ FlMethodResponse* can_launch(FlUrlLauncherPlugin* self, FlValue* args) {
 
 // Called when a URL should launch.
 static FlMethodResponse* launch(FlUrlLauncherPlugin* self, FlValue* args) {
-  g_autoptr(GError) error = nullptr;
-  g_autofree gchar* url = get_url(args, &error);
-  if (url == nullptr) {
-    return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        kBadArgumentsError, error->message, nullptr));
-  }
+  const gchar* url = fl_value_get_string(args);
 
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
+  g_autoptr(GError) error = nullptr;
   gboolean launched;
   if (view != nullptr) {
     GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));

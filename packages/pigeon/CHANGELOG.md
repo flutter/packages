@@ -2,6 +2,10 @@
 
 * Updates Gradle version of example apps to 7.6.3.
 
+## 15.0.1
+
+* [java] Adds @CanIgnoreReturnValue annotation to class builder.
+
 ## 15.0.0
 
 * **Breaking Change** [kotlin] Updates Flutter API to use new errorClassName.
