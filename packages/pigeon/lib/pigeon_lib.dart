@@ -1008,6 +1008,16 @@ List<Error> _validateProxyApi(
         result.add(unsupportedDataClassError(parameter));
       }
 
+      if (api.fields.any((Field field) => field.name == parameter.name) ||
+          api.flutterMethods
+              .any((Method method) => method.name == parameter.name)) {
+        result.add(Error(
+          message:
+              'Parameter names must not share a name with a field or callback method in constructor "${constructor.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      }
+
       if (parameter.type.baseName.isEmpty) {
         result.add(Error(
           message:
