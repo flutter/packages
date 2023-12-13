@@ -6,10 +6,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-
-// #docregion Import
 import 'package:palette_generator/palette_generator.dart';
-// #enddocregion Import
 
 void main() => runApp(const MyApp());
 
