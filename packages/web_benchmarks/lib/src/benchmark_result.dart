@@ -10,17 +10,26 @@ class BenchmarkScore {
   BenchmarkScore({
     required this.metric,
     required this.value,
+    this.delta,
   });
 
   /// Deserializes a JSON object to create a [BenchmarkScore] object.
   factory BenchmarkScore.parse(Map<String, Object?> json) {
-    final String metric = json[_metricKey]! as String;
-    final double value = (json[_valueKey]! as num).toDouble();
-    return BenchmarkScore(metric: metric, value: value);
+    final String metric = json[metricKey]! as String;
+    final double value = (json[valueKey]! as num).toDouble();
+    final num? delta = json[deltaKey] as num?;
+    return BenchmarkScore(metric: metric, value: value, delta: delta);
   }
 
-  static const String _metricKey = 'metric';
-  static const String _valueKey = 'value';
+  /// The key for the value [metric] in the [BenchmarkScore] JSON
+  /// representation.
+  static const String metricKey = 'metric';
+
+  /// The key for the value [value] in the [BenchmarkScore] JSON representation.
+  static const String valueKey = 'value';
+
+  /// The key for the value [delta] in the [BenchmarkScore] JSON representation.
+  static const String deltaKey = 'delta';
 
   /// The name of the metric that this score is categorized under.
   ///
@@ -31,11 +40,18 @@ class BenchmarkScore {
   /// The result of measuring a particular metric in this benchmark run.
   final num value;
 
+  /// Optional delta value describing the difference between this metric's score
+  /// and the score of a matching metric from another [BenchmarkResults].
+  ///
+  /// This value may be assigned by the [computeDelta] analysis method.
+  final num? delta;
+
   /// Serializes the benchmark metric to a JSON object.
   Map<String, Object?> toJson() {
     return <String, Object?>{
-      _metricKey: metric,
-      _valueKey: value,
+      metricKey: metric,
+      valueKey: value,
+      if (delta != null) deltaKey: delta,
     };
   }
 }
@@ -53,7 +69,7 @@ class BenchmarkResults {
       final List<BenchmarkScore> scores = (json[key]! as List<Object?>)
           .cast<Map<String, Object?>>()
           .map(BenchmarkScore.parse)
-          .toList();
+          .toList(growable: false);
       results[key] = scores;
     }
     return BenchmarkResults(results);

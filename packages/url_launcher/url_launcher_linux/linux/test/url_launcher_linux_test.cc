@@ -15,9 +15,7 @@ namespace url_launcher_plugin {
 namespace test {
 
 TEST(UrlLauncherPlugin, CanLaunchSuccess) {
-  g_autoptr(FlValue) args = fl_value_new_map();
-  fl_value_set_string_take(args, "url",
-                           fl_value_new_string("https://flutter.dev"));
+  g_autoptr(FlValue) args = fl_value_new_string("https://flutter.dev");
   g_autoptr(FlMethodResponse) response = can_launch(nullptr, args);
   ASSERT_NE(response, nullptr);
   ASSERT_TRUE(FL_IS_METHOD_SUCCESS_RESPONSE(response));
@@ -28,8 +26,7 @@ TEST(UrlLauncherPlugin, CanLaunchSuccess) {
 }
 
 TEST(UrlLauncherPlugin, CanLaunchFailureUnhandled) {
-  g_autoptr(FlValue) args = fl_value_new_map();
-  fl_value_set_string_take(args, "url", fl_value_new_string("madeup:scheme"));
+  g_autoptr(FlValue) args = fl_value_new_string("madeup:scheme");
   g_autoptr(FlMethodResponse) response = can_launch(nullptr, args);
   ASSERT_NE(response, nullptr);
   ASSERT_TRUE(FL_IS_METHOD_SUCCESS_RESPONSE(response));
@@ -40,8 +37,7 @@ TEST(UrlLauncherPlugin, CanLaunchFailureUnhandled) {
 }
 
 TEST(UrlLauncherPlugin, CanLaunchFileSuccess) {
-  g_autoptr(FlValue) args = fl_value_new_map();
-  fl_value_set_string_take(args, "url", fl_value_new_string("file:///"));
+  g_autoptr(FlValue) args = fl_value_new_string("file:///");
   g_autoptr(FlMethodResponse) response = can_launch(nullptr, args);
   ASSERT_NE(response, nullptr);
   ASSERT_TRUE(FL_IS_METHOD_SUCCESS_RESPONSE(response));
@@ -52,9 +48,8 @@ TEST(UrlLauncherPlugin, CanLaunchFileSuccess) {
 }
 
 TEST(UrlLauncherPlugin, CanLaunchFailureInvalidFileExtension) {
-  g_autoptr(FlValue) args = fl_value_new_map();
-  fl_value_set_string_take(
-      args, "url", fl_value_new_string("file:///madeup.madeupextension"));
+  g_autoptr(FlValue) args =
+      fl_value_new_string("file:///madeup.madeupextension");
   g_autoptr(FlMethodResponse) response = can_launch(nullptr, args);
   ASSERT_NE(response, nullptr);
   ASSERT_TRUE(FL_IS_METHOD_SUCCESS_RESPONSE(response));
@@ -67,8 +62,7 @@ TEST(UrlLauncherPlugin, CanLaunchFailureInvalidFileExtension) {
 // For consistency with the established mobile implementations,
 // an invalid URL should return false, not an error.
 TEST(UrlLauncherPlugin, CanLaunchFailureInvalidUrl) {
-  g_autoptr(FlValue) args = fl_value_new_map();
-  fl_value_set_string_take(args, "url", fl_value_new_string(""));
+  g_autoptr(FlValue) args = fl_value_new_string("");
   g_autoptr(FlMethodResponse) response = can_launch(nullptr, args);
   ASSERT_NE(response, nullptr);
   ASSERT_TRUE(FL_IS_METHOD_SUCCESS_RESPONSE(response));
