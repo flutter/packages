@@ -126,11 +126,12 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
       child: HtmlElementView(
           viewType: widget.viewType,
           onPlatformViewCreated: (int viewId) {
+            final ElementCreatedCallback? callback = widget.onElementCreated;
             final web.Element root =
                 ui_web.platformViewRegistry.getViewById(viewId) as web.Element;
             _registerListeners(root);
-            if (widget.onElementCreated != null) {
-              widget.onElementCreated!(root);
+            if (callback != null) {
+              callback(root);
             }
           }),
     );

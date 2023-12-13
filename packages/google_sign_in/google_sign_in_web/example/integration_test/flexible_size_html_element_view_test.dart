@@ -22,7 +22,7 @@ void main() {
       widgetFactoryNumber++;
     });
 
-    testWidgets('empty case, calls onPlatformViewCreated',
+    testWidgets('empty case, calls onElementCreated',
         (WidgetTester tester) async {
       final Completer<Object> viewCreatedCompleter = Completer<Object>();
 
@@ -199,8 +199,8 @@ void resize(web.HTMLElement resizable, Size size) {
       'width: ${size.width}px; height: ${size.height}px; background: #fabada');
 }
 
-/// Returns a function that can be used to inject `element` in `onPlatformViewCreated` callbacks.
-void Function(Object) injectElement(web.HTMLElement element) {
+/// Returns an `onElementCreated` callback that injects [element].
+ElementCreatedCallback injectElement(web.HTMLElement element) {
   return (Object root) {
     (root as web.HTMLElement).appendChild(element);
   };
