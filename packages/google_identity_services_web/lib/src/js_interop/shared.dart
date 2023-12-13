@@ -118,7 +118,10 @@ enum MomentSkippedReason {
   tap_outside('tap_outside'),
 
   /// issuing_failed
-  issuing_failed('issuing_failed');
+  issuing_failed('issuing_failed'),
+
+  /// Unknown reason
+  unknown_reason('unknown_reason');
 
   ///
   const MomentSkippedReason(String reason) : _reason = reason;
@@ -137,7 +140,10 @@ enum MomentDismissedReason {
   cancel_called('cancel_called'),
 
   /// flow_restarted
-  flow_restarted('flow_restarted');
+  flow_restarted('flow_restarted'),
+
+  /// Unknown reason
+  unknown_reason('unknown_reason');
 
   ///
   const MomentDismissedReason(String reason) : _reason = reason;

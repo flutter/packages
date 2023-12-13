@@ -1,6 +1,7 @@
 ## 0.3.0+2
 
 * Adds `fedcm_auto` to `CredentialSelectBy` enum.
+* Adds `unknown_reason` to all `Moment*Reason` enums.
 
 ## 0.3.0+1
 
