@@ -4,8 +4,6 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'web_resource_request.dart';
-
 /// Contains information about the response for a request.
 ///
 /// Platform specific implementations can add additional fields by extending
@@ -22,7 +20,8 @@ import 'web_resource_request.dart';
 ///   WebResourceResponse._({
 ///     required WebResourceResponse response,
 ///   }) : super(
-///     request: response.request,
+///     uri: response.uri,
+///     statusCode: response.statusCode,
 ///     headers: response.headers,
 ///   );
 ///
@@ -40,13 +39,13 @@ import 'web_resource_request.dart';
 class WebResourceResponse {
   /// Used by the platform implementation to create a new [WebResourceResponse].
   const WebResourceResponse({
-    required this.request,
+    required this.uri,
     required this.statusCode,
     this.headers = const <String, String>{},
   });
 
-  /// The request
-  final WebResourceRequest request;
+  /// The URI that this response is associated with.
+  final String? uri;
 
   /// The HTTP status code.
   final int statusCode;
