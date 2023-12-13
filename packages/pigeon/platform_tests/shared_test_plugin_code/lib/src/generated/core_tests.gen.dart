@@ -9,8 +9,10 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
+import 'package:flutter/foundation.dart'
+    show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
 PlatformException _createConnectionError(String channelName) {
   return PlatformException(
@@ -28,6 +30,306 @@ List<Object?> wrapResponse(
     return <Object?>[result];
   }
   return <Object?>[error.code, error.message, error.details];
+}
+
+/// An immutable object that can provide functional copies of itself.
+///
+/// All implementers are expected to be immutable as defined by the annotation.
+@immutable
+mixin $Copyable {
+  /// Instantiates and returns a functionally identical object to oneself.
+  ///
+  /// Outside of tests, this method should only ever be called by
+  /// [$InstanceManager].
+  ///
+  /// Subclasses should always override their parent's implementation of this
+  /// method.
+  @protected
+  $Copyable $copy();
+}
+
+/// Maintains instances used to communicate with the native objects they
+/// represent.
+///
+/// Added instances are stored as weak references and their copies are stored
+/// as strong references to maintain access to their variables and callback
+/// methods. Both are stored with the same identifier.
+///
+/// When a weak referenced instance becomes inaccessible,
+/// [onWeakReferenceRemoved] is called with its associated identifier.
+///
+/// If an instance is retrieved and has the possibility to be used,
+/// (e.g. calling [getInstanceWithWeakReference]) a copy of the strong reference
+/// is added as a weak reference with the same identifier. This prevents a
+/// scenario where the weak referenced instance was released and then later
+/// returned by the host platform.
+class $InstanceManager {
+  /// Constructs an [$InstanceManager].
+  $InstanceManager({required void Function(int) onWeakReferenceRemoved}) {
+    this.onWeakReferenceRemoved = (int identifier) {
+      _weakInstances.remove(identifier);
+      onWeakReferenceRemoved(identifier);
+    };
+    _finalizer = Finalizer<int>(this.onWeakReferenceRemoved);
+  }
+
+  // Identifiers are locked to a specific range to avoid collisions with objects
+  // created simultaneously by the host platform.
+  // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
+  // 0 <= n < 2^16.
+  static const int _maxDartCreatedIdentifier = 65536;
+
+  static final $InstanceManager instance = _initInstance();
+
+  // Expando is used because it doesn't prevent its keys from becoming
+  // inaccessible. This allows the manager to efficiently retrieve an identifier
+  // of an instance without holding a strong reference to that instance.
+  //
+  // It also doesn't use `==` to search for identifiers, which would lead to an
+  // infinite loop when comparing an object to its copy. (i.e. which was caused
+  // by calling instanceManager.getIdentifier() inside of `==` while this was a
+  // HashMap).
+  final Expando<int> _identifiers = Expando<int>();
+  final Map<int, WeakReference<$Copyable>> _weakInstances =
+      <int, WeakReference<$Copyable>>{};
+  final Map<int, $Copyable> _strongInstances = <int, $Copyable>{};
+  late final Finalizer<int> _finalizer;
+  int _nextIdentifier = 0;
+
+  /// Called when a weak referenced instance is removed by [removeWeakReference]
+  /// or becomes inaccessible.
+  late final void Function(int) onWeakReferenceRemoved;
+
+  static $InstanceManager _initInstance() {
+    WidgetsFlutterBinding.ensureInitialized();
+    final _InstanceManagerApi api = _InstanceManagerApi();
+    // Clears the native `InstanceManager` on the initial use of the Dart one.
+    api.clear();
+    final $InstanceManager instanceManager = $InstanceManager(
+      onWeakReferenceRemoved: (int identifier) {
+        api.removeStrongReference(identifier);
+      },
+    );
+    _InstanceManagerApi.$setUpMessageHandlers(instanceManager: instanceManager);
+    ProxyIntegrationCoreApi.$setUpMessageHandlers(
+        $instanceManager: instanceManager);
+    return instanceManager;
+  }
+
+  /// Adds a new instance that was instantiated by Dart.
+  ///
+  /// In other words, Dart wants to add a new instance that will represent
+  /// an object that will be instantiated on the host platform.
+  ///
+  /// Throws assertion error if the instance has already been added.
+  ///
+  /// Returns the randomly generated id of the [instance] added.
+  int addDartCreatedInstance($Copyable instance) {
+    final int identifier = _nextUniqueIdentifier();
+    _addInstanceWithIdentifier(instance, identifier);
+    return identifier;
+  }
+
+  /// Removes the instance, if present, and call [onWeakReferenceRemoved] with
+  /// its identifier.
+  ///
+  /// Returns the identifier associated with the removed instance. Otherwise,
+  /// `null` if the instance was not found in this manager.
+  ///
+  /// This does not remove the strong referenced instance associated with
+  /// [instance]. This can be done with [remove].
+  int? removeWeakReference($Copyable instance) {
+    final int? identifier = getIdentifier(instance);
+    if (identifier == null) {
+      return null;
+    }
+
+    _identifiers[instance] = null;
+    _finalizer.detach(instance);
+    onWeakReferenceRemoved(identifier);
+
+    return identifier;
+  }
+
+  /// Removes [identifier] and its associated strongly referenced instance, if
+  /// present, from the manager.
+  ///
+  /// Returns the strong referenced instance associated with [identifier] before
+  /// it was removed. Returns `null` if [identifier] was not associated with
+  /// any strong reference.
+  ///
+  /// This does not remove the weak referenced instance associated with
+  /// [identifier]. This can be done with [removeWeakReference].
+  T? remove<T extends $Copyable>(int identifier) {
+    return _strongInstances.remove(identifier) as T?;
+  }
+
+  /// Retrieves the instance associated with identifier.
+  ///
+  /// The value returned is chosen from the following order:
+  ///
+  /// 1. A weakly referenced instance associated with identifier.
+  /// 2. If the only instance associated with identifier is a strongly
+  /// referenced instance, a copy of the instance is added as a weak reference
+  /// with the same identifier. Returning the newly created copy.
+  /// 3. If no instance is associated with identifier, returns null.
+  ///
+  /// This method also expects the host `InstanceManager` to have a strong
+  /// reference to the instance the identifier is associated with.
+  T? getInstanceWithWeakReference<T extends $Copyable>(int identifier) {
+    final $Copyable? weakInstance = _weakInstances[identifier]?.target;
+
+    if (weakInstance == null) {
+      final $Copyable? strongInstance = _strongInstances[identifier];
+      if (strongInstance != null) {
+        final $Copyable copy = strongInstance.$copy();
+        _identifiers[copy] = identifier;
+        _weakInstances[identifier] = WeakReference<$Copyable>(copy);
+        _finalizer.attach(copy, identifier, detach: copy);
+        return copy as T;
+      }
+      return strongInstance as T?;
+    }
+
+    return weakInstance as T;
+  }
+
+  /// Retrieves the identifier associated with instance.
+  int? getIdentifier($Copyable instance) {
+    return _identifiers[instance];
+  }
+
+  /// Adds a new instance that was instantiated by the host platform.
+  ///
+  /// In other words, the host platform wants to add a new instance that
+  /// represents an object on the host platform. Stored with [identifier].
+  ///
+  /// Throws assertion error if the instance or its identifier has already been
+  /// added.
+  ///
+  /// Returns unique identifier of the [instance] added.
+  void addHostCreatedInstance($Copyable instance, int identifier) {
+    _addInstanceWithIdentifier(instance, identifier);
+  }
+
+  void _addInstanceWithIdentifier($Copyable instance, int identifier) {
+    assert(!containsIdentifier(identifier));
+    assert(getIdentifier(instance) == null);
+    assert(identifier >= 0);
+
+    _identifiers[instance] = identifier;
+    _weakInstances[identifier] = WeakReference<$Copyable>(instance);
+    _finalizer.attach(instance, identifier, detach: instance);
+
+    final $Copyable copy = instance.$copy();
+    _identifiers[copy] = identifier;
+    _strongInstances[identifier] = copy;
+  }
+
+  /// Whether this manager contains the given [identifier].
+  bool containsIdentifier(int identifier) {
+    return _weakInstances.containsKey(identifier) ||
+        _strongInstances.containsKey(identifier);
+  }
+
+  int _nextUniqueIdentifier() {
+    late int identifier;
+    do {
+      identifier = _nextIdentifier;
+      _nextIdentifier = (_nextIdentifier + 1) % _maxDartCreatedIdentifier;
+    } while (containsIdentifier(identifier));
+    return identifier;
+  }
+}
+
+/// Generated API for managing the Dart and native `InstanceManager`s.
+class _InstanceManagerApi {
+  /// Constructor for [_InstanceManagerApi].
+  ///
+  /// The [binaryMessenger] named argument is available for dependency
+  /// injection. If it is left null, the default [BinaryMessenger] will be used
+  /// which routes to the host platform.
+  _InstanceManagerApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      StandardMessageCodec();
+
+  static void $setUpMessageHandlers({
+    BinaryMessenger? binaryMessenger,
+    $InstanceManager? instanceManager,
+  }) {
+    const String channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.$InstanceManagerApi.removeStrongReference';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      pigeonChannelCodec,
+      binaryMessenger: binaryMessenger,
+    );
+    channel.setMessageHandler((Object? message) async {
+      assert(
+        message != null,
+        'Argument for $channelName was null.',
+      );
+      final int? identifier = message as int?;
+      assert(
+        identifier != null,
+        r'Argument for $channelName, expected non-null int.',
+      );
+      (instanceManager ?? $InstanceManager.instance).remove(identifier!);
+      return;
+    });
+  }
+
+  Future<void> removeStrongReference(int identifier) async {
+    const String channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.$InstanceManagerApi.removeStrongReference';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      pigeonChannelCodec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList =
+        await channel.send(identifier) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Clear the native `InstanceManager`.
+  ///
+  /// This is typically called after a hot restart.
+  Future<void> clear() async {
+    const String channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.$InstanceManagerApi.clear';
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+      channelName,
+      pigeonChannelCodec,
+      binaryMessenger: _binaryMessenger,
+    );
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw _createConnectionError(channelName);
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 enum AnEnum {
@@ -3444,5 +3746,3404 @@ abstract class FlutterSmallApi {
         });
       }
     }
+  }
+}
+
+class _ProxyIntegrationCoreApiCodec extends StandardMessageCodec {
+  const _ProxyIntegrationCoreApiCodec(this.instanceManager);
+
+  final $InstanceManager instanceManager;
+
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is $Copyable) {
+      buffer.putUint8(128);
+      writeValue(buffer, instanceManager.getIdentifier(value));
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return instanceManager
+            .getInstanceWithWeakReference(readValue(buffer)! as int);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+/// The core interface that each host language plugin must implement in
+/// platform_test integration tests.
+class ProxyIntegrationCoreApi implements $Copyable {
+  ProxyIntegrationCoreApi({
+    this.$binaryMessenger,
+    $InstanceManager? $instanceManager,
+    required this.aBool,
+    required this.anInt,
+    required this.aDouble,
+    required this.aString,
+    required this.aUint8List,
+    required this.aList,
+    required this.aMap,
+    required this.anEnum,
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableDouble,
+    this.aNullableString,
+    this.aNullableUint8List,
+    this.aNullableList,
+    this.aNullableMap,
+    this.aNullableEnum,
+    this.flutterNoop,
+    this.flutterThrowError,
+    this.flutterThrowErrorFromVoid,
+    this.flutterEchoBool,
+    this.flutterEchoInt,
+    this.flutterEchoDouble,
+    this.flutterEchoString,
+    this.flutterEchoUint8List,
+    this.flutterEchoList,
+    this.flutterEchoMap,
+    this.flutterEchoEnum,
+    this.flutterEchoNullableBool,
+    this.flutterEchoNullableInt,
+    this.flutterEchoNullableDouble,
+    this.flutterEchoNullableString,
+    this.flutterEchoNullableUint8List,
+    this.flutterEchoNullableList,
+    this.flutterEchoNullableMap,
+    this.flutterEchoNullableEnum,
+    this.callFlutterNoopAsync,
+    this.callFlutterEchoAsyncString,
+    required bool boolParam,
+    required int intParam,
+    required double doubleParam,
+    required String stringParam,
+    required Uint8List aUint8ListParam,
+    required List<Object?> listParam,
+    required Map<String?, Object?> mapParam,
+    required AnEnum enumParam,
+    bool? nullableBoolParam,
+    int? nullableIntParam,
+    double? nullableDoubleParam,
+    String? nullableStringParam,
+    Uint8List? nullableUint8ListParam,
+    List<Object?>? nullableListParam,
+    Map<String?, Object?>? nullableMapParam,
+    AnEnum? nullableEnumParam,
+  }) : $instanceManager = $instanceManager ?? $InstanceManager.instance {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.$defaultConstructor';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    __pigeon_channel.send(<Object?>[
+      this.$instanceManager.addDartCreatedInstance(this),
+      aBool,
+      anInt,
+      aDouble,
+      aString,
+      aUint8List,
+      aList,
+      aMap,
+      anEnum.index,
+      aNullableBool,
+      aNullableInt,
+      aNullableDouble,
+      aNullableString,
+      aNullableUint8List,
+      aNullableList,
+      aNullableMap,
+      aNullableEnum?.index,
+      boolParam,
+      intParam,
+      doubleParam,
+      stringParam,
+      aUint8ListParam,
+      listParam,
+      mapParam,
+      enumParam.index,
+      nullableBoolParam,
+      nullableIntParam,
+      nullableDoubleParam,
+      nullableStringParam,
+      nullableUint8ListParam,
+      nullableListParam,
+      nullableMapParam,
+      nullableEnumParam?.index,
+    ]).then<void>((Object? value) {
+      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: (__pigeon_replyList[0]! as String),
+          message: (__pigeon_replyList[1] as String?),
+          details: __pigeon_replyList[2],
+        );
+      }
+    });
+  }
+
+  /// Constructs ProxyIntegrationCoreApi without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies.
+  ProxyIntegrationCoreApi.$detached({
+    this.$binaryMessenger,
+    $InstanceManager? $instanceManager,
+    required this.aBool,
+    required this.anInt,
+    required this.aDouble,
+    required this.aString,
+    required this.aUint8List,
+    required this.aList,
+    required this.aMap,
+    required this.anEnum,
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableDouble,
+    this.aNullableString,
+    this.aNullableUint8List,
+    this.aNullableList,
+    this.aNullableMap,
+    this.aNullableEnum,
+    this.flutterNoop,
+    this.flutterThrowError,
+    this.flutterThrowErrorFromVoid,
+    this.flutterEchoBool,
+    this.flutterEchoInt,
+    this.flutterEchoDouble,
+    this.flutterEchoString,
+    this.flutterEchoUint8List,
+    this.flutterEchoList,
+    this.flutterEchoMap,
+    this.flutterEchoEnum,
+    this.flutterEchoNullableBool,
+    this.flutterEchoNullableInt,
+    this.flutterEchoNullableDouble,
+    this.flutterEchoNullableString,
+    this.flutterEchoNullableUint8List,
+    this.flutterEchoNullableList,
+    this.flutterEchoNullableMap,
+    this.flutterEchoNullableEnum,
+    this.callFlutterNoopAsync,
+    this.callFlutterEchoAsyncString,
+  }) : $instanceManager = $instanceManager ?? $InstanceManager.instance;
+
+  late final _ProxyIntegrationCoreApiCodec _codecProxyIntegrationCoreApi =
+      _ProxyIntegrationCoreApiCodec($instanceManager);
+
+  /// Sends and receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used, which routes to
+  /// the host platform.
+  final BinaryMessenger? $binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final $InstanceManager $instanceManager;
+
+  final bool aBool;
+
+  final int anInt;
+
+  final double aDouble;
+
+  final String aString;
+
+  final Uint8List aUint8List;
+
+  final List<Object?> aList;
+
+  final Map<String?, Object?> aMap;
+
+  final AnEnum anEnum;
+
+  final bool? aNullableBool;
+
+  final int? aNullableInt;
+
+  final double? aNullableDouble;
+
+  final String? aNullableString;
+
+  final Uint8List? aNullableUint8List;
+
+  final List<Object?>? aNullableList;
+
+  final Map<String?, Object?>? aNullableMap;
+
+  final AnEnum? aNullableEnum;
+
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic calling.
+  final void Function(ProxyIntegrationCoreApi instance)? flutterNoop;
+
+  /// Responds with an error from an async function returning a value.
+  final Object? Function(ProxyIntegrationCoreApi instance)? flutterThrowError;
+
+  /// Responds with an error from an async void function.
+  final void Function(ProxyIntegrationCoreApi instance)?
+      flutterThrowErrorFromVoid;
+
+  /// Returns the passed boolean, to test serialization and deserialization.
+  final bool Function(
+    ProxyIntegrationCoreApi instance,
+    bool aBool,
+  )? flutterEchoBool;
+
+  /// Returns the passed int, to test serialization and deserialization.
+  final int Function(
+    ProxyIntegrationCoreApi instance,
+    int anInt,
+  )? flutterEchoInt;
+
+  /// Returns the passed double, to test serialization and deserialization.
+  final double Function(
+    ProxyIntegrationCoreApi instance,
+    double aDouble,
+  )? flutterEchoDouble;
+
+  /// Returns the passed string, to test serialization and deserialization.
+  final String Function(
+    ProxyIntegrationCoreApi instance,
+    String aString,
+  )? flutterEchoString;
+
+  /// Returns the passed byte list, to test serialization and deserialization.
+  final Uint8List Function(
+    ProxyIntegrationCoreApi instance,
+    Uint8List aList,
+  )? flutterEchoUint8List;
+
+  /// Returns the passed list, to test serialization and deserialization.
+  final List<Object?> Function(
+    ProxyIntegrationCoreApi instance,
+    List<Object?> aList,
+  )? flutterEchoList;
+
+  /// Returns the passed map, to test serialization and deserialization.
+  final Map<String?, Object?> Function(
+    ProxyIntegrationCoreApi instance,
+    Map<String?, Object?> aMap,
+  )? flutterEchoMap;
+
+  /// Returns the passed enum to test serialization and deserialization.
+  final AnEnum Function(
+    ProxyIntegrationCoreApi instance,
+    AnEnum anEnum,
+  )? flutterEchoEnum;
+
+  /// Returns the passed boolean, to test serialization and deserialization.
+  final bool? Function(
+    ProxyIntegrationCoreApi instance,
+    bool? aBool,
+  )? flutterEchoNullableBool;
+
+  /// Returns the passed int, to test serialization and deserialization.
+  final int? Function(
+    ProxyIntegrationCoreApi instance,
+    int? anInt,
+  )? flutterEchoNullableInt;
+
+  /// Returns the passed double, to test serialization and deserialization.
+  final double? Function(
+    ProxyIntegrationCoreApi instance,
+    double? aDouble,
+  )? flutterEchoNullableDouble;
+
+  /// Returns the passed string, to test serialization and deserialization.
+  final String? Function(
+    ProxyIntegrationCoreApi instance,
+    String? aString,
+  )? flutterEchoNullableString;
+
+  /// Returns the passed byte list, to test serialization and deserialization.
+  final Uint8List? Function(
+    ProxyIntegrationCoreApi instance,
+    Uint8List? aList,
+  )? flutterEchoNullableUint8List;
+
+  /// Returns the passed list, to test serialization and deserialization.
+  final List<Object?>? Function(
+    ProxyIntegrationCoreApi instance,
+    List<Object?>? aList,
+  )? flutterEchoNullableList;
+
+  /// Returns the passed map, to test serialization and deserialization.
+  final Map<String?, Object?>? Function(
+    ProxyIntegrationCoreApi instance,
+    Map<String?, Object?>? aMap,
+  )? flutterEchoNullableMap;
+
+  /// Returns the passed enum to test serialization and deserialization.
+  final AnEnum? Function(
+    ProxyIntegrationCoreApi instance,
+    AnEnum? anEnum,
+  )? flutterEchoNullableEnum;
+
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  final Future<void> Function(ProxyIntegrationCoreApi instance)?
+      callFlutterNoopAsync;
+
+  /// Returns the passed in generic Object asynchronously.
+  final Future<String> Function(
+    ProxyIntegrationCoreApi instance,
+    String aString,
+  )? callFlutterEchoAsyncString;
+
+  static void $setUpMessageHandlers({
+    BinaryMessenger? $binaryMessenger,
+    $InstanceManager? $instanceManager,
+    ProxyIntegrationCoreApi Function(
+      bool aBool,
+      int anInt,
+      double aDouble,
+      String aString,
+      Uint8List aUint8List,
+      List<Object?> aList,
+      Map<String?, Object?> aMap,
+      AnEnum anEnum,
+      bool? aNullableBool,
+      int? aNullableInt,
+      double? aNullableDouble,
+      String? aNullableString,
+      Uint8List? aNullableUint8List,
+      List<Object?>? aNullableList,
+      Map<String?, Object?>? aNullableMap,
+      AnEnum? aNullableEnum,
+    )? $detached,
+    void Function(ProxyIntegrationCoreApi instance)? flutterNoop,
+    Object? Function(ProxyIntegrationCoreApi instance)? flutterThrowError,
+    void Function(ProxyIntegrationCoreApi instance)? flutterThrowErrorFromVoid,
+    bool Function(
+      ProxyIntegrationCoreApi instance,
+      bool aBool,
+    )? flutterEchoBool,
+    int Function(
+      ProxyIntegrationCoreApi instance,
+      int anInt,
+    )? flutterEchoInt,
+    double Function(
+      ProxyIntegrationCoreApi instance,
+      double aDouble,
+    )? flutterEchoDouble,
+    String Function(
+      ProxyIntegrationCoreApi instance,
+      String aString,
+    )? flutterEchoString,
+    Uint8List Function(
+      ProxyIntegrationCoreApi instance,
+      Uint8List aList,
+    )? flutterEchoUint8List,
+    List<Object?> Function(
+      ProxyIntegrationCoreApi instance,
+      List<Object?> aList,
+    )? flutterEchoList,
+    Map<String?, Object?> Function(
+      ProxyIntegrationCoreApi instance,
+      Map<String?, Object?> aMap,
+    )? flutterEchoMap,
+    AnEnum Function(
+      ProxyIntegrationCoreApi instance,
+      AnEnum anEnum,
+    )? flutterEchoEnum,
+    bool? Function(
+      ProxyIntegrationCoreApi instance,
+      bool? aBool,
+    )? flutterEchoNullableBool,
+    int? Function(
+      ProxyIntegrationCoreApi instance,
+      int? anInt,
+    )? flutterEchoNullableInt,
+    double? Function(
+      ProxyIntegrationCoreApi instance,
+      double? aDouble,
+    )? flutterEchoNullableDouble,
+    String? Function(
+      ProxyIntegrationCoreApi instance,
+      String? aString,
+    )? flutterEchoNullableString,
+    Uint8List? Function(
+      ProxyIntegrationCoreApi instance,
+      Uint8List? aList,
+    )? flutterEchoNullableUint8List,
+    List<Object?>? Function(
+      ProxyIntegrationCoreApi instance,
+      List<Object?>? aList,
+    )? flutterEchoNullableList,
+    Map<String?, Object?>? Function(
+      ProxyIntegrationCoreApi instance,
+      Map<String?, Object?>? aMap,
+    )? flutterEchoNullableMap,
+    AnEnum? Function(
+      ProxyIntegrationCoreApi instance,
+      AnEnum? anEnum,
+    )? flutterEchoNullableEnum,
+    Future<void> Function(ProxyIntegrationCoreApi instance)?
+        callFlutterNoopAsync,
+    Future<String> Function(
+      ProxyIntegrationCoreApi instance,
+      String aString,
+    )? callFlutterEchoAsyncString,
+  }) {
+    final _ProxyIntegrationCoreApiCodec pigeonChannelCodec =
+        _ProxyIntegrationCoreApiCodec(
+            $instanceManager ?? $InstanceManager.instance);
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.$detached';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final int? instanceIdentifier = (args[0] as int?);
+        assert(
+          instanceIdentifier != null,
+          'Argument for $__pigeon_channelName was null, expected non-null int.',
+        );
+        final bool? arg_aBool = (args[1] as bool?);
+        assert(
+          arg_aBool != null,
+          'Argument for $__pigeon_channelName was null, expected non-null bool.',
+        );
+        final int? arg_anInt = (args[2] as int?);
+        assert(
+          arg_anInt != null,
+          'Argument for $__pigeon_channelName was null, expected non-null int.',
+        );
+        final double? arg_aDouble = (args[3] as double?);
+        assert(
+          arg_aDouble != null,
+          'Argument for $__pigeon_channelName was null, expected non-null double.',
+        );
+        final String? arg_aString = (args[4] as String?);
+        assert(
+          arg_aString != null,
+          'Argument for $__pigeon_channelName was null, expected non-null String.',
+        );
+        final Uint8List? arg_aUint8List = (args[5] as Uint8List?);
+        assert(
+          arg_aUint8List != null,
+          'Argument for $__pigeon_channelName was null, expected non-null Uint8List.',
+        );
+        final List<Object?>? arg_aList =
+            (args[6] as List<Object?>?)?.cast<Object?>();
+        assert(
+          arg_aList != null,
+          'Argument for $__pigeon_channelName was null, expected non-null List<Object?>.',
+        );
+        final Map<String?, Object?>? arg_aMap =
+            (args[7] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+        assert(
+          arg_aMap != null,
+          'Argument for $__pigeon_channelName was null, expected non-null Map<String?, Object?>.',
+        );
+        final AnEnum? arg_anEnum =
+            args[8] == null ? null : AnEnum.values[args[8]! as int];
+        assert(
+          arg_anEnum != null,
+          'Argument for $__pigeon_channelName was null, expected non-null AnEnum.',
+        );
+        final bool? arg_aNullableBool = (args[9] as bool?);
+        final int? arg_aNullableInt = (args[10] as int?);
+        final double? arg_aNullableDouble = (args[11] as double?);
+        final String? arg_aNullableString = (args[12] as String?);
+        final Uint8List? arg_aNullableUint8List = (args[13] as Uint8List?);
+        final List<Object?>? arg_aNullableList =
+            (args[14] as List<Object?>?)?.cast<Object?>();
+        final Map<String?, Object?>? arg_aNullableMap =
+            (args[15] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+        final AnEnum? arg_aNullableEnum =
+            args[16] == null ? null : AnEnum.values[args[16]! as int];
+        ($instanceManager ?? $InstanceManager.instance).addHostCreatedInstance(
+          $detached?.call(
+                arg_aBool!,
+                arg_anInt!,
+                arg_aDouble!,
+                arg_aString!,
+                arg_aUint8List!,
+                arg_aList!,
+                arg_aMap!,
+                arg_anEnum!,
+                arg_aNullableBool,
+                arg_aNullableInt,
+                arg_aNullableDouble,
+                arg_aNullableString,
+                arg_aNullableUint8List,
+                arg_aNullableList,
+                arg_aNullableMap,
+                arg_aNullableEnum,
+              ) ??
+              ProxyIntegrationCoreApi.$detached(
+                $binaryMessenger: $binaryMessenger,
+                $instanceManager: $instanceManager,
+                aBool: arg_aBool!,
+                anInt: arg_anInt!,
+                aDouble: arg_aDouble!,
+                aString: arg_aString!,
+                aUint8List: arg_aUint8List!,
+                aList: arg_aList!,
+                aMap: arg_aMap!,
+                anEnum: arg_anEnum!,
+                aNullableBool: arg_aNullableBool,
+                aNullableInt: arg_aNullableInt,
+                aNullableDouble: arg_aNullableDouble,
+                aNullableString: arg_aNullableString,
+                aNullableUint8List: arg_aNullableUint8List,
+                aNullableList: arg_aNullableList,
+                aNullableMap: arg_aNullableMap,
+                aNullableEnum: arg_aNullableEnum,
+              ),
+          instanceIdentifier!,
+        );
+        return;
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterNoop';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        try {
+          (flutterNoop ?? instance!.flutterNoop)?.call(instance!);
+          return wrapResponse(empty: true);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterThrowError';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        try {
+          final Object? output =
+              (flutterThrowError ?? instance!.flutterThrowError)
+                  ?.call(instance!);
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterThrowErrorFromVoid';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        try {
+          (flutterThrowErrorFromVoid ?? instance!.flutterThrowErrorFromVoid)
+              ?.call(instance!);
+          return wrapResponse(empty: true);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoBool';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final bool? arg_aBool = (args[1] as bool?);
+        assert(
+          arg_aBool != null,
+          'Argument for $__pigeon_channelName was null, expected non-null bool.',
+        );
+        try {
+          final bool? output =
+              (flutterEchoBool ?? instance!.flutterEchoBool)?.call(
+            instance!,
+            arg_aBool!,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoInt';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final int? arg_anInt = (args[1] as int?);
+        assert(
+          arg_anInt != null,
+          'Argument for $__pigeon_channelName was null, expected non-null int.',
+        );
+        try {
+          final int? output =
+              (flutterEchoInt ?? instance!.flutterEchoInt)?.call(
+            instance!,
+            arg_anInt!,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoDouble';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final double? arg_aDouble = (args[1] as double?);
+        assert(
+          arg_aDouble != null,
+          'Argument for $__pigeon_channelName was null, expected non-null double.',
+        );
+        try {
+          final double? output =
+              (flutterEchoDouble ?? instance!.flutterEchoDouble)?.call(
+            instance!,
+            arg_aDouble!,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoString';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final String? arg_aString = (args[1] as String?);
+        assert(
+          arg_aString != null,
+          'Argument for $__pigeon_channelName was null, expected non-null String.',
+        );
+        try {
+          final String? output =
+              (flutterEchoString ?? instance!.flutterEchoString)?.call(
+            instance!,
+            arg_aString!,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoUint8List';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final Uint8List? arg_aList = (args[1] as Uint8List?);
+        assert(
+          arg_aList != null,
+          'Argument for $__pigeon_channelName was null, expected non-null Uint8List.',
+        );
+        try {
+          final Uint8List? output =
+              (flutterEchoUint8List ?? instance!.flutterEchoUint8List)?.call(
+            instance!,
+            arg_aList!,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoList';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final List<Object?>? arg_aList =
+            (args[1] as List<Object?>?)?.cast<Object?>();
+        assert(
+          arg_aList != null,
+          'Argument for $__pigeon_channelName was null, expected non-null List<Object?>.',
+        );
+        try {
+          final List<Object?>? output =
+              (flutterEchoList ?? instance!.flutterEchoList)?.call(
+            instance!,
+            arg_aList!,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoMap';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final Map<String?, Object?>? arg_aMap =
+            (args[1] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+        assert(
+          arg_aMap != null,
+          'Argument for $__pigeon_channelName was null, expected non-null Map<String?, Object?>.',
+        );
+        try {
+          final Map<String?, Object?>? output =
+              (flutterEchoMap ?? instance!.flutterEchoMap)?.call(
+            instance!,
+            arg_aMap!,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoEnum';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final AnEnum? arg_anEnum =
+            args[1] == null ? null : AnEnum.values[args[1]! as int];
+        assert(
+          arg_anEnum != null,
+          'Argument for $__pigeon_channelName was null, expected non-null AnEnum.',
+        );
+        try {
+          final AnEnum? output =
+              (flutterEchoEnum ?? instance!.flutterEchoEnum)?.call(
+            instance!,
+            arg_anEnum!,
+          );
+          return wrapResponse(result: output?.index);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableBool';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final bool? arg_aBool = (args[1] as bool?);
+        try {
+          final bool? output =
+              (flutterEchoNullableBool ?? instance!.flutterEchoNullableBool)
+                  ?.call(
+            instance!,
+            arg_aBool,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableInt';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final int? arg_anInt = (args[1] as int?);
+        try {
+          final int? output =
+              (flutterEchoNullableInt ?? instance!.flutterEchoNullableInt)
+                  ?.call(
+            instance!,
+            arg_anInt,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableDouble';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final double? arg_aDouble = (args[1] as double?);
+        try {
+          final double? output =
+              (flutterEchoNullableDouble ?? instance!.flutterEchoNullableDouble)
+                  ?.call(
+            instance!,
+            arg_aDouble,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableString';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final String? arg_aString = (args[1] as String?);
+        try {
+          final String? output =
+              (flutterEchoNullableString ?? instance!.flutterEchoNullableString)
+                  ?.call(
+            instance!,
+            arg_aString,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableUint8List';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final Uint8List? arg_aList = (args[1] as Uint8List?);
+        try {
+          final Uint8List? output = (flutterEchoNullableUint8List ??
+                  instance!.flutterEchoNullableUint8List)
+              ?.call(
+            instance!,
+            arg_aList,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableList';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final List<Object?>? arg_aList =
+            (args[1] as List<Object?>?)?.cast<Object?>();
+        try {
+          final List<Object?>? output =
+              (flutterEchoNullableList ?? instance!.flutterEchoNullableList)
+                  ?.call(
+            instance!,
+            arg_aList,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableMap';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final Map<String?, Object?>? arg_aMap =
+            (args[1] as Map<Object?, Object?>?)?.cast<String?, Object?>();
+        try {
+          final Map<String?, Object?>? output =
+              (flutterEchoNullableMap ?? instance!.flutterEchoNullableMap)
+                  ?.call(
+            instance!,
+            arg_aMap,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableEnum';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final AnEnum? arg_anEnum =
+            args[1] == null ? null : AnEnum.values[args[1]! as int];
+        try {
+          final AnEnum? output =
+              (flutterEchoNullableEnum ?? instance!.flutterEchoNullableEnum)
+                  ?.call(
+            instance!,
+            arg_anEnum,
+          );
+          return wrapResponse(result: output?.index);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterNoopAsync';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        try {
+          await (callFlutterNoopAsync ?? instance!.callFlutterNoopAsync)
+              ?.call(instance!);
+          return wrapResponse(empty: true);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoAsyncString';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyIntegrationCoreApi? instance =
+            (args[0] as ProxyIntegrationCoreApi?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
+        );
+        final String? arg_aString = (args[1] as String?);
+        assert(
+          arg_aString != null,
+          'Argument for $__pigeon_channelName was null, expected non-null String.',
+        );
+        try {
+          final String? output = await (callFlutterEchoAsyncString ??
+                  instance!.callFlutterEchoAsyncString)
+              ?.call(
+            instance!,
+            arg_aString!,
+          );
+          return wrapResponse(result: output);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+  }
+
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic calling.
+  Future<void> noop() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.noop';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns an error, to test error handling.
+  Future<Object?> throwError() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.throwError';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return __pigeon_replyList[0];
+    }
+  }
+
+  /// Returns an error from a void function, to test error handling.
+  Future<void> throwErrorFromVoid() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.throwErrorFromVoid';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns a Flutter error, to test error handling.
+  Future<Object?> throwFlutterError() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.throwFlutterError';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return __pigeon_replyList[0];
+    }
+  }
+
+  /// Returns passed in int.
+  Future<int> echoInt(int anInt) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoInt';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anInt,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?)!;
+    }
+  }
+
+  /// Returns passed in double.
+  Future<double> echoDouble(double aDouble) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoDouble';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aDouble,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as double?)!;
+    }
+  }
+
+  /// Returns the passed in boolean.
+  Future<bool> echoBool(bool aBool) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoBool';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aBool,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
+  /// Returns the passed in string.
+  Future<String> echoString(String aString) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoString';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aString,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?)!;
+    }
+  }
+
+  /// Returns the passed in Uint8List.
+  Future<Uint8List> echoUint8List(Uint8List aUint8List) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoUint8List';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aUint8List,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as Uint8List?)!;
+    }
+  }
+
+  /// Returns the passed in generic Object.
+  Future<Object> echoObject(Object anObject) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoObject';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anObject,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return __pigeon_replyList[0]!;
+    }
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<Object?>> echoList(List<Object?> aList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoList';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)!.cast<Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<String?, Object?>> echoMap(Map<String?, Object?> aMap) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoMap';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aMap,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String?, Object?>();
+    }
+  }
+
+  /// Returns the passed enum to test serialization and deserialization.
+  Future<AnEnum> echoEnum(AnEnum anEnum) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoEnum';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anEnum.index,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[__pigeon_replyList[0]! as int];
+    }
+  }
+
+  /// Returns passed in int.
+  Future<int?> echoNullableInt(int? aNullableInt) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableInt';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aNullableInt,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?);
+    }
+  }
+
+  /// Returns passed in double.
+  Future<double?> echoNullableDouble(double? aNullableDouble) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableDouble';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aNullableDouble,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as double?);
+    }
+  }
+
+  /// Returns the passed in boolean.
+  Future<bool?> echoNullableBool(bool? aNullableBool) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableBool';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aNullableBool,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?);
+    }
+  }
+
+  /// Returns the passed in string.
+  Future<String?> echoNullableString(String? aNullableString) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableString';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aNullableString,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?);
+    }
+  }
+
+  /// Returns the passed in Uint8List.
+  Future<Uint8List?> echoNullableUint8List(
+      Uint8List? aNullableUint8List) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableUint8List';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aNullableUint8List,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as Uint8List?);
+    }
+  }
+
+  /// Returns the passed in generic Object.
+  Future<Object?> echoNullableObject(Object? aNullableObject) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableObject';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aNullableObject,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return __pigeon_replyList[0];
+    }
+  }
+
+  /// Returns the passed list, to test serialization and deserialization.
+  Future<List<Object?>?> echoNullableList(List<Object?>? aNullableList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableList';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aNullableList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)?.cast<Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test serialization and deserialization.
+  Future<Map<String?, Object?>?> echoNullableMap(
+      Map<String?, Object?>? aNullableMap) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableMap';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aNullableMap,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String?, Object?>();
+    }
+  }
+
+  Future<AnEnum?> echoNullableEnum(AnEnum? anEnum) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableEnum';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anEnum?.index,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[__pigeon_replyList[0]! as int];
+    }
+  }
+
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  Future<void> noopAsync() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.noopAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns passed in int asynchronously.
+  Future<int> echoAsyncInt(int anInt) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncInt';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anInt,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?)!;
+    }
+  }
+
+  /// Returns passed in double asynchronously.
+  Future<double> echoAsyncDouble(double aDouble) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncDouble';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aDouble,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as double?)!;
+    }
+  }
+
+  /// Returns the passed in boolean asynchronously.
+  Future<bool> echoAsyncBool(bool aBool) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncBool';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aBool,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
+  /// Returns the passed string asynchronously.
+  Future<String> echoAsyncString(String aString) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncString';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aString,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?)!;
+    }
+  }
+
+  /// Returns the passed in Uint8List asynchronously.
+  Future<Uint8List> echoAsyncUint8List(Uint8List aUint8List) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncUint8List';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aUint8List,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as Uint8List?)!;
+    }
+  }
+
+  /// Returns the passed in generic Object asynchronously.
+  Future<Object> echoAsyncObject(Object anObject) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncObject';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anObject,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return __pigeon_replyList[0]!;
+    }
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  Future<List<Object?>> echoAsyncList(List<Object?> aList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncList';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)!.cast<Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<String?, Object?>> echoAsyncMap(Map<String?, Object?> aMap) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncMap';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aMap,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String?, Object?>();
+    }
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnEnum> echoAsyncEnum(AnEnum anEnum) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncEnum';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anEnum.index,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[__pigeon_replyList[0]! as int];
+    }
+  }
+
+  /// Responds with an error from an async function returning a value.
+  Future<Object?> throwAsyncError() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.throwAsyncError';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return __pigeon_replyList[0];
+    }
+  }
+
+  /// Responds with an error from an async void function.
+  Future<void> throwAsyncErrorFromVoid() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.throwAsyncErrorFromVoid';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Responds with a Flutter error from an async function returning a value.
+  Future<Object?> throwAsyncFlutterError() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.throwAsyncFlutterError';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return __pigeon_replyList[0];
+    }
+  }
+
+  /// Returns passed in int asynchronously.
+  Future<int?> echoAsyncNullableInt(int? anInt) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableInt';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anInt,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?);
+    }
+  }
+
+  /// Returns passed in double asynchronously.
+  Future<double?> echoAsyncNullableDouble(double? aDouble) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableDouble';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aDouble,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as double?);
+    }
+  }
+
+  /// Returns the passed in boolean asynchronously.
+  Future<bool?> echoAsyncNullableBool(bool? aBool) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableBool';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aBool,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?);
+    }
+  }
+
+  /// Returns the passed string asynchronously.
+  Future<String?> echoAsyncNullableString(String? aString) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableString';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aString,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?);
+    }
+  }
+
+  /// Returns the passed in Uint8List asynchronously.
+  Future<Uint8List?> echoAsyncNullableUint8List(Uint8List? aUint8List) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableUint8List';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aUint8List,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as Uint8List?);
+    }
+  }
+
+  /// Returns the passed in generic Object asynchronously.
+  Future<Object?> echoAsyncNullableObject(Object? anObject) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableObject';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anObject,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return __pigeon_replyList[0];
+    }
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  Future<List<Object?>?> echoAsyncNullableList(List<Object?>? aList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableList';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)?.cast<Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<String?, Object?>?> echoAsyncNullableMap(
+      Map<String?, Object?>? aMap) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableMap';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aMap,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String?, Object?>();
+    }
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<AnEnum?> echoAsyncNullableEnum(AnEnum? anEnum) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoAsyncNullableEnum';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anEnum?.index,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[__pigeon_replyList[0]! as int];
+    }
+  }
+
+  static Future<void> staticNoop({
+    BinaryMessenger? $binaryMessenger,
+    $InstanceManager? $instanceManager,
+  }) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.staticNoop';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _ProxyIntegrationCoreApiCodec(
+          $instanceManager ?? $InstanceManager.instance),
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  static Future<String> echoStaticString(
+    String aString, {
+    BinaryMessenger? $binaryMessenger,
+    $InstanceManager? $instanceManager,
+  }) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoStaticString';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _ProxyIntegrationCoreApiCodec(
+          $instanceManager ?? $InstanceManager.instance),
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[aString]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?)!;
+    }
+  }
+
+  static Future<void> staticAsyncNoop({
+    BinaryMessenger? $binaryMessenger,
+    $InstanceManager? $instanceManager,
+  }) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.staticAsyncNoop';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _ProxyIntegrationCoreApiCodec(
+          $instanceManager ?? $InstanceManager.instance),
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> callFlutterNoop() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterNoop';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<Object?> callFlutterThrowError() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterThrowError';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return __pigeon_replyList[0];
+    }
+  }
+
+  Future<void> callFlutterThrowErrorFromVoid() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterThrowErrorFromVoid';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<bool> callFlutterEchoBool(bool aBool) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoBool';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aBool,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?)!;
+    }
+  }
+
+  Future<int> callFlutterEchoInt(int anInt) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoInt';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anInt,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?)!;
+    }
+  }
+
+  Future<double> callFlutterEchoDouble(double aDouble) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoDouble';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aDouble,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as double?)!;
+    }
+  }
+
+  Future<String> callFlutterEchoString(String aString) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoString';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aString,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?)!;
+    }
+  }
+
+  Future<Uint8List> callFlutterEchoUint8List(Uint8List aList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoUint8List';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as Uint8List?)!;
+    }
+  }
+
+  Future<List<Object?>> callFlutterEchoList(List<Object?> aList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoList';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)!.cast<Object?>();
+    }
+  }
+
+  Future<Map<String?, Object?>> callFlutterEchoMap(
+      Map<String?, Object?> aMap) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoMap';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aMap,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String?, Object?>();
+    }
+  }
+
+  Future<AnEnum> callFlutterEchoEnum(AnEnum anEnum) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoEnum';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anEnum.index,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return AnEnum.values[__pigeon_replyList[0]! as int];
+    }
+  }
+
+  Future<bool?> callFlutterEchoNullableBool(bool? aBool) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableBool';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aBool,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as bool?);
+    }
+  }
+
+  Future<int?> callFlutterEchoNullableInt(int? anInt) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableInt';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anInt,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?);
+    }
+  }
+
+  Future<double?> callFlutterEchoNullableDouble(double? aDouble) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableDouble';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aDouble,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as double?);
+    }
+  }
+
+  Future<String?> callFlutterEchoNullableString(String? aString) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableString';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aString,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?);
+    }
+  }
+
+  Future<Uint8List?> callFlutterEchoNullableUint8List(Uint8List? aList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableUint8List';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as Uint8List?);
+    }
+  }
+
+  Future<List<Object?>?> callFlutterEchoNullableList(
+      List<Object?>? aList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableList';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)?.cast<Object?>();
+    }
+  }
+
+  Future<Map<String?, Object?>?> callFlutterEchoNullableMap(
+      Map<String?, Object?>? aMap) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableMap';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aMap,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String?, Object?>();
+    }
+  }
+
+  Future<AnEnum?> callFlutterEchoNullableEnum(AnEnum? anEnum) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableEnum';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyIntegrationCoreApi,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anEnum?.index,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?) == null
+          ? null
+          : AnEnum.values[__pigeon_replyList[0]! as int];
+    }
+  }
+
+  @override
+  ProxyIntegrationCoreApi $copy() {
+    return ProxyIntegrationCoreApi.$detached(
+      $binaryMessenger: $binaryMessenger,
+      $instanceManager: $instanceManager,
+      aBool: aBool,
+      anInt: anInt,
+      aDouble: aDouble,
+      aString: aString,
+      aUint8List: aUint8List,
+      aList: aList,
+      aMap: aMap,
+      anEnum: anEnum,
+      aNullableBool: aNullableBool,
+      aNullableInt: aNullableInt,
+      aNullableDouble: aNullableDouble,
+      aNullableString: aNullableString,
+      aNullableUint8List: aNullableUint8List,
+      aNullableList: aNullableList,
+      aNullableMap: aNullableMap,
+      aNullableEnum: aNullableEnum,
+      flutterNoop: flutterNoop,
+      flutterThrowError: flutterThrowError,
+      flutterThrowErrorFromVoid: flutterThrowErrorFromVoid,
+      flutterEchoBool: flutterEchoBool,
+      flutterEchoInt: flutterEchoInt,
+      flutterEchoDouble: flutterEchoDouble,
+      flutterEchoString: flutterEchoString,
+      flutterEchoUint8List: flutterEchoUint8List,
+      flutterEchoList: flutterEchoList,
+      flutterEchoMap: flutterEchoMap,
+      flutterEchoEnum: flutterEchoEnum,
+      flutterEchoNullableBool: flutterEchoNullableBool,
+      flutterEchoNullableInt: flutterEchoNullableInt,
+      flutterEchoNullableDouble: flutterEchoNullableDouble,
+      flutterEchoNullableString: flutterEchoNullableString,
+      flutterEchoNullableUint8List: flutterEchoNullableUint8List,
+      flutterEchoNullableList: flutterEchoNullableList,
+      flutterEchoNullableMap: flutterEchoNullableMap,
+      flutterEchoNullableEnum: flutterEchoNullableEnum,
+      callFlutterNoopAsync: callFlutterNoopAsync,
+      callFlutterEchoAsyncString: callFlutterEchoAsyncString,
+    );
   }
 }

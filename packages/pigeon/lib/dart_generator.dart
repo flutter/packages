@@ -1211,21 +1211,10 @@ class $codecName extends StandardMessageCodec {
                           cb.refer(
                             '${superClassApi != null ? '' : 'this.'}\$instanceManager.addDartCreatedInstance(this)',
                           ),
-                          ...indexMap(
-                            nonAttachedFields,
-                            (int index, Field field) => _hostMessageArgument(
-                              index,
-                              field,
-                              getArgumentName: _getParameterName,
-                            ),
-                          ),
+                          ...indexMap(nonAttachedFields, _hostMessageArgument),
                           ...indexMap(
                             constructor.parameters,
-                            (int index, NamedType type) => _hostMessageArgument(
-                              index,
-                              type,
-                              getArgumentName: _getParameterName,
-                            ),
+                            _hostMessageArgument,
                           ),
                         ],
                         cb.refer('Object?'),
@@ -1791,17 +1780,18 @@ class $codecName extends StandardMessageCodec {
                                   cb
                                       .declareFinal(
                                         'output',
-                                        type: cb.refer(
-                                          _addGenericTypesNullable(
-                                            method.returnType,
-                                          ),
+                                        type: _referOrNull(
+                                          _addGenericTypes(method.returnType),
+                                          isNullable:
+                                              method.returnType.isNullable ||
+                                                  !method.required,
                                         ),
                                       )
                                       .assign(
                                         call.awaitedIf(method.isAsynchronous),
                                       )
                                       .statement,
-                                  _wrapResultResponse(method.returnType)
+                                  _wrapResultResponse(method)
                                       .returned
                                       .statement,
                                 ],
@@ -1989,14 +1979,7 @@ class $codecName extends StandardMessageCodec {
                     cb.literalList(
                       <Object?>[
                         if (!method.isStatic) cb.refer('this'),
-                        ...indexMap(
-                          method.parameters,
-                          (int index, NamedType parameter) => _referOrNull(
-                            _getParameterName(index, parameter),
-                            isNullable: parameter.type.isNullable,
-                          )!
-                              .propertyIf(parameter.type.isEnum, 'index'),
-                        ),
+                        ...indexMap(method.parameters, _hostMessageArgument),
                       ],
                       cb.refer('Object?'),
                     )
@@ -2244,15 +2227,20 @@ cb.Expression _unwrapReturnValue(TypeDeclaration returnType) {
   return cb.refer('');
 }
 
-cb.Expression _wrapResultResponse(TypeDeclaration type) {
-  return cb
-      .refer('wrapResponse')
-      .call(<cb.Expression>[], <String, cb.Expression>{
-    'result': _referOrNull('output', isNullable: type.isNullable)!.propertyIf(
-      type.isEnum,
-      'index',
-    ),
-  });
+cb.Expression _wrapResultResponse(Method method) {
+  final TypeDeclaration returnType = method.returnType;
+  return cb.refer('wrapResponse').call(
+    <cb.Expression>[],
+    <String, cb.Expression>{
+      if (returnType.isEnum)
+        if (returnType.isNullable || !method.required)
+          'result': cb.refer('output?.index')
+        else
+          'result': cb.refer('output.index')
+      else
+        'result': cb.refer('output'),
+    },
+  );
 }
 
 /// final <type> <name> = (<argsVariableName>[<index>] as <type>);
@@ -2335,7 +2323,7 @@ cb.Expression _hostMessageArgument(
   int index,
   NamedType type, {
   String Function(int index, NamedType type) getArgumentName =
-      _getSafeArgumentName,
+      _getParameterName,
 }) {
   final cb.Reference nameRef = cb.refer(getArgumentName(index, type));
   if (type.type.isEnum) {
