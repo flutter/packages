@@ -126,4 +126,4 @@ abstract class PlatformInterface {
 ///    implements UrlLauncherPlatform {}
 /// ```
 @visibleForTesting
-abstract class MockPlatformInterfaceMixin implements PlatformInterface {}
+abstract mixin class MockPlatformInterfaceMixin implements PlatformInterface {}

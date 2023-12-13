@@ -247,7 +247,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 /// The iterator starts with the navigator that hosts the top-most route. This
 /// navigator may not be the inner-most navigator if the top-most route is a
 /// pageless route, such as a dialog or bottom sheet.
-class _NavigatorStateIterator extends Iterator<NavigatorState> {
+class _NavigatorStateIterator implements Iterator<NavigatorState> {
   _NavigatorStateIterator(this.matchList, this.root)
       : index = matchList.matches.length - 1;
 

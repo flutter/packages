@@ -2,6 +2,7 @@
 
 * Implements `launchUrl`.
 * Simplifies method channel interface by removing unused elements.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 3.1.0
 

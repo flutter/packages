@@ -342,6 +342,12 @@ protocol HostIntegrationCoreApi {
   func echo(_ wrapper: AllClassesWrapper) throws -> AllClassesWrapper
   /// Returns the passed enum to test serialization and deserialization.
   func echo(_ anEnum: AnEnum) throws -> AnEnum
+  /// Returns the default string.
+  func echoNamedDefault(_ aString: String) throws -> String
+  /// Returns passed in double.
+  func echoOptionalDefault(_ aDouble: Double) throws -> Double
+  /// Returns passed in int.
+  func echoRequired(_ anInt: Int64) throws -> Int64
   /// Returns the passed object, to test serialization and deserialization.
   func echo(_ everything: AllNullableTypes?) throws -> AllNullableTypes?
   /// Returns the inner `aString` value from the wrapped object, to test
@@ -369,6 +375,10 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(_ aNullableMap: [String?: Any?]?) throws -> [String?: Any?]?
   func echoNullable(_ anEnum: AnEnum?) throws -> AnEnum?
+  /// Returns passed in int.
+  func echoOptional(_ aNullableInt: Int64?) throws -> Int64?
+  /// Returns the passed in string.
+  func echoNamed(_ aNullableString: String?) throws -> String?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   func noopAsync(completion: @escaping (Result<Void, Error>) -> Void)
@@ -681,6 +691,54 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoEnumChannel.setMessageHandler(nil)
     }
+    /// Returns the default string.
+    let echoNamedDefaultStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNamedDefaultStringChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aStringArg = args[0] as! String
+        do {
+          let result = try api.echoNamedDefault(aStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNamedDefaultStringChannel.setMessageHandler(nil)
+    }
+    /// Returns passed in double.
+    let echoOptionalDefaultDoubleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoOptionalDefaultDoubleChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aDoubleArg = args[0] as! Double
+        do {
+          let result = try api.echoOptionalDefault(aDoubleArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoOptionalDefaultDoubleChannel.setMessageHandler(nil)
+    }
+    /// Returns passed in int.
+    let echoRequiredIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoRequiredIntChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let anIntArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        do {
+          let result = try api.echoRequired(anIntArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoRequiredIntChannel.setMessageHandler(nil)
+    }
     /// Returns the passed object, to test serialization and deserialization.
     let echoAllNullableTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -891,6 +949,38 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoNullableEnumChannel.setMessageHandler(nil)
+    }
+    /// Returns passed in int.
+    let echoOptionalNullableIntChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoOptionalNullableIntChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aNullableIntArg: Int64? = isNullish(args[0]) ? nil : (args[0] is Int64? ? args[0] as! Int64? : Int64(args[0] as! Int32))
+        do {
+          let result = try api.echoOptional(aNullableIntArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoOptionalNullableIntChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed in string.
+    let echoNamedNullableStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoNamedNullableStringChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let aNullableStringArg: String? = nilOrValue(args[0])
+        do {
+          let result = try api.echoNamed(aNullableStringArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      echoNamedNullableStringChannel.setMessageHandler(nil)
     }
     /// A no-op function taking no arguments and returning no value, to sanity
     /// test basic asynchronous calling.

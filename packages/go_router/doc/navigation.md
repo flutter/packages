@@ -88,7 +88,7 @@ onTap: () => context.pop(true)
 You can provide additional data along with navigation.
 
 ```dart
-context.go('/123, extra: 'abc');
+context.go('/123', extra: 'abc');
 ```
 
 and retrieve the data from GoRouterState

@@ -8,7 +8,7 @@ import 'dart:collection';
 import 'resource_record.dart';
 
 /// Class for maintaining state about pending mDNS requests.
-class PendingRequest extends LinkedListEntry<PendingRequest> {
+base class PendingRequest extends LinkedListEntry<PendingRequest> {
   /// Creates a new PendingRequest.
   PendingRequest(this.type, this.domainName, this.controller);
 

@@ -12,22 +12,35 @@ import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
 
+final Class emptyClass = Class(name: 'className', fields: <NamedType>[
+  NamedType(
+    name: 'namedTypeName',
+    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+  )
+]);
+
+final Enum emptyEnum = Enum(
+  name: 'enumName',
+  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
+);
+
 void main() {
   test('gen one class', () {
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'dataType1',
               isNullable: true,
+              associatedClass: emptyClass,
             ),
             name: 'field1'),
       ],
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass],
+      classes: <Class>[classDefinition],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
@@ -75,16 +88,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -115,7 +132,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, contains('Future<Output> doSomething(Input arg_input)'));
+    expect(code, contains('Future<Output> doSomething(Input input)'));
   });
 
   test('host multiple args', () {
@@ -123,12 +140,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'add',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'x',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
-            NamedType(
+            Parameter(
                 name: 'y',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
@@ -147,8 +164,8 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, contains('Future<int> add(int arg_x, int arg_y)'));
-    expect(code, contains('await channel.send(<Object?>[arg_x, arg_y])'));
+    expect(code, contains('Future<int> add(int x, int y)'));
+    expect(code, contains('await __pigeon_channel.send(<Object?>[x, y])'));
   });
 
   test('flutter multiple args', () {
@@ -156,12 +173,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'add',
-          arguments: <NamedType>[
-            NamedType(
+          parameters: <Parameter>[
+            Parameter(
                 name: 'x',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
-            NamedType(
+            Parameter(
                 name: 'y',
                 type:
                     const TypeDeclaration(isNullable: false, baseName: 'int')),
@@ -205,9 +222,10 @@ void main() {
         name: 'Nested',
         fields: <NamedType>[
           NamedType(
-              type: const TypeDeclaration(
+              type: TypeDeclaration(
                 baseName: 'Input',
                 isNullable: true,
+                associatedClass: emptyClass,
               ),
               name: 'nested')
         ],
@@ -253,9 +271,10 @@ void main() {
         name: 'Nested',
         fields: <NamedType>[
           NamedType(
-              type: const TypeDeclaration(
+              type: TypeDeclaration(
                 baseName: 'Input',
                 isNullable: false,
+                associatedClass: emptyClass,
               ),
               name: 'nested')
         ],
@@ -289,16 +308,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -338,11 +361,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
@@ -377,11 +401,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
@@ -419,9 +444,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -452,24 +480,29 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'EnumClass',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
-                name: '')
+                name: 'enumClass')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'EnumClass', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'EnumClass',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
       Class(name: 'EnumClass', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'Enum',
               isNullable: true,
+              associatedEnum: emptyEnum,
             ),
             name: 'enum1')
       ]),
@@ -493,7 +526,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum1?.index,'));
     expect(code, contains('? Enum.values[result[0]! as int]'));
-    expect(code, contains('EnumClass doSomething(EnumClass arg0);'));
+    expect(code, contains('EnumClass doSomething(EnumClass enumClass);'));
   });
 
   test('primitive enum host', () {
@@ -502,11 +535,14 @@ void main() {
         Method(
             name: 'bar',
             returnType: const TypeDeclaration.voidDeclaration(),
-            arguments: <NamedType>[
-              NamedType(
+            parameters: <Parameter>[
+              Parameter(
                   name: 'foo',
-                  type:
-                      const TypeDeclaration(baseName: 'Foo', isNullable: true))
+                  type: TypeDeclaration(
+                    baseName: 'Foo',
+                    isNullable: true,
+                    associatedEnum: emptyEnum,
+                  ))
             ])
       ])
     ], classes: <Class>[], enums: <Enum>[
@@ -525,8 +561,8 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('enum Foo {'));
-    expect(code, contains('Future<void> bar(Foo? arg_foo) async'));
-    expect(code, contains('channel.send(<Object?>[arg_foo?.index])'));
+    expect(code, contains('Future<void> bar(Foo? foo) async'));
+    expect(code, contains('__pigeon_channel.send(<Object?>[foo?.index])'));
   });
 
   test('flutter non-nullable enum argument with enum class', () {
@@ -534,24 +570,29 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'EnumClass',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'EnumClass', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'EnumClass',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
       Class(name: 'EnumClass', fields: <NamedType>[
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'Enum',
               isNullable: false,
+              associatedEnum: emptyEnum,
             ),
             name: 'enum1')
       ]),
@@ -582,9 +623,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -606,7 +650,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, matches('channel.send[(]null[)]'));
+    expect(code, matches('__pigeon_channel.send[(]null[)]'));
   });
 
   test('mock dart handler', () {
@@ -618,24 +662,29 @@ void main() {
           methods: <Method>[
             Method(
               name: 'doSomething',
-              arguments: <NamedType>[
-                NamedType(
-                    type: const TypeDeclaration(
+              parameters: <Parameter>[
+                Parameter(
+                    type: TypeDeclaration(
                       baseName: 'Input',
                       isNullable: false,
+                      associatedClass: emptyClass,
                     ),
                     name: '')
               ],
-              returnType:
-                  const TypeDeclaration(baseName: 'Output', isNullable: false),
+              returnType: TypeDeclaration(
+                baseName: 'Output',
+                isNullable: false,
+                associatedClass: emptyClass,
+              ),
             ),
             Method(
               name: 'voidReturner',
-              arguments: <NamedType>[
-                NamedType(
-                    type: const TypeDeclaration(
+              parameters: <Parameter>[
+                Parameter(
+                    type: TypeDeclaration(
                       baseName: 'Input',
                       isNullable: false,
+                      associatedClass: emptyClass,
                     ),
                     name: '')
               ],
@@ -702,16 +751,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
-                name: '')
+                name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
           isAsynchronous: true,
         )
       ])
@@ -743,9 +796,9 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('abstract class Api'));
-    expect(code, contains('Future<Output> doSomething(Input arg0);'));
-    expect(
-        code, contains('final Output output = await api.doSomething(arg0!);'));
+    expect(code, contains('Future<Output> doSomething(Input input);'));
+    expect(code,
+        contains('final Output output = await api.doSomething(arg_input!);'));
   });
 
   test('gen one async Flutter Api with void return', () {
@@ -753,11 +806,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
@@ -802,16 +856,20 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
           isAsynchronous: true,
         )
       ])
@@ -851,9 +909,12 @@ void main() {
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
           isAsynchronous: true,
         )
       ])
@@ -876,7 +937,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, matches('channel.send[(]null[)]'));
+    expect(code, matches('__pigeon_channel.send[(]null[)]'));
   });
 
   Iterable<String> makeIterable(String string) sync* {
@@ -899,7 +960,7 @@ void main() {
   });
 
   test('generics', () {
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
@@ -914,7 +975,7 @@ void main() {
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass],
+      classes: <Class>[classDefinition],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
@@ -931,7 +992,7 @@ void main() {
   });
 
   test('map generics', () {
-    final Class klass = Class(
+    final Class classDefinition = Class(
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
@@ -947,7 +1008,7 @@ void main() {
     );
     final Root root = Root(
       apis: <Api>[],
-      classes: <Class>[klass],
+      classes: <Class>[classDefinition],
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
@@ -970,8 +1031,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
@@ -1004,8 +1065,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
@@ -1043,7 +1104,7 @@ void main() {
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'int', isNullable: true)
                   ]),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1059,8 +1120,10 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>> doit('));
-    expect(code,
-        contains('return (replyList[0] as List<Object?>?)!.cast<int?>();'));
+    expect(
+        code,
+        contains(
+            'return (__pigeon_replyList[0] as List<Object?>?)!.cast<int?>();'));
   });
 
   test('flutter generics argument non void return', () {
@@ -1075,8 +1138,8 @@ void main() {
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'int', isNullable: true)
                   ]),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     type: const TypeDeclaration(
                         baseName: 'List',
                         isNullable: false,
@@ -1117,7 +1180,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1133,7 +1196,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (replyList[0] as int?);'));
+    expect(code, contains('return (__pigeon_replyList[0] as int?);'));
   });
 
   test('return nullable collection host', () {
@@ -1148,7 +1211,7 @@ void main() {
                   typeArguments: <TypeDeclaration>[
                     TypeDeclaration(baseName: 'int', isNullable: true)
                   ]),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1164,8 +1227,10 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<List<int?>?> doit()'));
-    expect(code,
-        contains('return (replyList[0] as List<Object?>?)?.cast<int?>();'));
+    expect(
+        code,
+        contains(
+            'return (__pigeon_replyList[0] as List<Object?>?)?.cast<int?>();'));
   });
 
   test('return nullable async host', () {
@@ -1178,7 +1243,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <NamedType>[],
+              parameters: <Parameter>[],
               isAsynchronous: true)
         ])
       ],
@@ -1195,7 +1260,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('Future<int?> doit()'));
-    expect(code, contains('return (replyList[0] as int?);'));
+    expect(code, contains('return (__pigeon_replyList[0] as int?);'));
   });
 
   test('return nullable flutter', () {
@@ -1208,7 +1273,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1237,7 +1302,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              arguments: <NamedType>[],
+              parameters: <Parameter>[],
               isAsynchronous: true)
         ])
       ],
@@ -1267,7 +1332,7 @@ void main() {
                 baseName: 'int',
                 isNullable: false,
               ),
-              arguments: <NamedType>[])
+              parameters: <Parameter>[])
         ])
       ],
       classes: <Class>[],
@@ -1295,8 +1360,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     name: 'foo',
                     type: const TypeDeclaration(
                       baseName: 'int',
@@ -1317,7 +1382,7 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('Future<void> doit(int? arg_foo) async {'));
+    expect(code, contains('Future<void> doit(int? foo) async {'));
   });
 
   test('nullable argument flutter', () {
@@ -1327,8 +1392,8 @@ void main() {
           Method(
               name: 'doit',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                     name: 'foo',
                     type: const TypeDeclaration(
                       baseName: 'int',
@@ -1411,8 +1476,8 @@ name: foobar
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
                     baseName: 'int',
@@ -1484,8 +1549,8 @@ name: foobar
             Method(
               name: 'method',
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
                     baseName: 'int',
@@ -1518,16 +1583,20 @@ name: foobar
       Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
           isAsynchronous: true,
         )
       ])
@@ -1572,11 +1641,12 @@ name: foobar
               Method(
                   name: 'doit',
                   returnType: const TypeDeclaration.voidDeclaration(),
-                  arguments: <NamedType>[
-                    NamedType(
-                        type: const TypeDeclaration(
+                  parameters: <Parameter>[
+                    Parameter(
+                        type: TypeDeclaration(
                           baseName: 'Enum',
                           isNullable: false,
+                          associatedEnum: emptyEnum,
                         ),
                         name: 'anEnum')
                   ])
@@ -1619,7 +1689,7 @@ name: foobar
       Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
         Method(
           name: 'method',
-          arguments: <NamedType>[],
+          parameters: <Parameter>[],
           returnType:
               const TypeDeclaration(baseName: 'Output', isNullable: false),
         )
@@ -1634,7 +1704,8 @@ name: foobar
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('throw _createConnectionError(channelName);'));
+    expect(
+        code, contains('throw _createConnectionError(__pigeon_channelName);'));
     expect(
         code,
         contains(

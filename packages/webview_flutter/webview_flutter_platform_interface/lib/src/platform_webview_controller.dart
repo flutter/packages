@@ -17,7 +17,7 @@ import 'webview_platform.dart' show WebViewPlatform;
 /// changes. Extending this class (using `extends`) ensures that the subclass
 /// will get the default implementation, while platform implementations that
 /// `implements` this interface will be broken by newly added
-/// [PlatformWebViewCookieManager] methods.
+/// [PlatformWebViewController] methods.
 abstract class PlatformWebViewController extends PlatformInterface {
   /// Creates a new [PlatformWebViewController]
   factory PlatformWebViewController(
@@ -267,7 +267,7 @@ abstract class PlatformWebViewController extends PlatformInterface {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) {
     throw UnimplementedError(
-      'setOnPermissionRequest is not implemented on the current platform',
+      'setOnPlatformPermissionRequest is not implemented on the current platform',
     );
   }
 
@@ -285,6 +285,14 @@ abstract class PlatformWebViewController extends PlatformInterface {
     throw UnimplementedError(
       'setOnConsoleMessage is not implemented on the current platform',
     );
+  }
+
+  /// Sets the listener for content offset changes.
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) {
+    throw UnimplementedError(
+        'setOnScrollPositionChange is not implemented on the current platform');
   }
 }
 
