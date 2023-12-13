@@ -1,6 +1,6 @@
 ## 0.12.3+1
 
-* Update `FlexHtmlElementView` (the widget backing `renderButton`) to not
+* Updates `FlexHtmlElementView` (the widget backing `renderButton`) to not
   rely on web engine knowledge (a platform view CSS selector) to operate.
 
 ## 0.12.3
