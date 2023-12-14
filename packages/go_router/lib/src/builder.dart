@@ -282,10 +282,15 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     }
 
     // Return the result of the route's builder() or pageBuilder()
-    return _buildPlatformAdapterPage(context, state,
-        Builder(builder: (BuildContext context) {
-      return match.route.buildWidget(context, state, shellRouteContext)!;
-    },),);
+    return _buildPlatformAdapterPage(
+      context,
+      state,
+      Builder(
+        builder: (BuildContext context) {
+          return match.route.buildWidget(context, state, shellRouteContext)!;
+        },
+      ),
+    );
   }
 
   _PageBuilderForAppType? _pageBuilderForAppType;

@@ -596,8 +596,12 @@ class RouteMatchList with Diagnosticable {
       return copyWith(matches: <RouteMatchBase>[...matches, match]);
     }
     return copyWith(
-        matches: _createNewMatchUntilIncompatible(
-            matches, match.matches.matches, match,),);
+      matches: _createNewMatchUntilIncompatible(
+        matches,
+        match.matches.matches,
+        match,
+      ),
+    );
   }
 
   static List<RouteMatchBase> _createNewMatchUntilIncompatible(
