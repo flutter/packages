@@ -20,21 +20,34 @@ import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 /// Demonstrates getting platform-specific attributes from product
 /// and purchase details, for the README.
 void platformSpecific() {
-  const List<ProductDetails> productDetails = <ProductDetails>[];
-  const List<PurchaseDetails> purchaseDetails = <PurchaseDetails>[];
+  final ProductDetails productDetails = ProductDetails(
+      id: '123',
+      title: 'Sticker',
+      description: 'Sticker decoration',
+      price: '1.23',
+      rawPrice: 20,
+      currencyCode: 'USD');
+  final PurchaseVerificationData purchaseVerificationData =
+      PurchaseVerificationData(
+          localVerificationData: 'local_data',
+          serverVerificationData: 'server_data',
+          source: 'test_source');
+  final PurchaseDetails purchaseDetails = PurchaseDetails(
+      productID: '123',
+      verificationData: purchaseVerificationData,
+      transactionDate: '12345',
+      status: PurchaseStatus.purchased);
 
 // #docregion AndroidProduct
   if (productDetails is GooglePlayProductDetails) {
-    final ProductDetailsWrapper skuDetails =
-        (productDetails as GooglePlayProductDetails).productDetails;
+    final ProductDetailsWrapper skuDetails = productDetails.productDetails;
     print(skuDetails.oneTimePurchaseOfferDetails);
   }
 // #enddocregion AndroidProduct
 
 // #docregion IOSProduct
   if (productDetails is AppStoreProductDetails) {
-    final SKProductWrapper skProduct =
-        (productDetails as AppStoreProductDetails).skProduct;
+    final SKProductWrapper skProduct = productDetails.skProduct;
     print(skProduct.subscriptionGroupIdentifier);
   }
 // #enddocregion IOSProduct
@@ -42,7 +55,7 @@ void platformSpecific() {
 // #docregion AndroidPurchase
   if (purchaseDetails is GooglePlayPurchaseDetails) {
     final PurchaseWrapper billingClientPurchase =
-        (purchaseDetails as GooglePlayPurchaseDetails).billingClientPurchase;
+        purchaseDetails.billingClientPurchase;
     print(billingClientPurchase.originalJson);
   }
 // #enddocregion AndroidPurchase
@@ -50,7 +63,7 @@ void platformSpecific() {
 // #docregion IOSPurchase
   if (purchaseDetails is AppStorePurchaseDetails) {
     final SKPaymentTransactionWrapper skProduct =
-        (purchaseDetails as AppStorePurchaseDetails).skPaymentTransaction;
+        purchaseDetails.skPaymentTransaction;
     print(skProduct.transactionState);
   }
 // #enddocregion IOSPurchase
