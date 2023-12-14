@@ -2151,6 +2151,229 @@ name: foobar
       });
     });
 
+    group('Fields', () {
+      test('constructor with fields', () {
+        final Enum anEnum = Enum(
+          name: 'AnEnum',
+          members: <EnumMember>[EnumMember(name: 'one')],
+        );
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[
+                Constructor(
+                  name: 'name',
+                  parameters: <Parameter>[],
+                )
+              ],
+              fields: <Field>[
+                Field(
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'int',
+                  ),
+                  name: 'validType',
+                ),
+                Field(
+                  type: TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'AnEnum',
+                    associatedEnum: anEnum,
+                  ),
+                  name: 'enumType',
+                ),
+                Field(
+                  type: const TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'Api2',
+                  ),
+                  name: 'proxyApiType',
+                ),
+                Field(
+                  type: const TypeDeclaration(
+                    isNullable: true,
+                    baseName: 'int',
+                  ),
+                  name: 'nullableValidType',
+                ),
+                Field(
+                  type: TypeDeclaration(
+                    isNullable: true,
+                    baseName: 'AnEnum',
+                    associatedEnum: anEnum,
+                  ),
+                  name: 'nullableEnumType',
+                ),
+                Field(
+                  type: const TypeDeclaration(
+                    isNullable: true,
+                    baseName: 'Api2',
+                  ),
+                  name: 'nullableProxyApiType',
+                ),
+              ],
+              methods: <Method>[],
+            ),
+            AstProxyApi(
+              name: 'Api2',
+              constructors: <Constructor>[],
+              fields: <Field>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[anEnum],
+        );
+        final StringBuffer sink = StringBuffer();
+        const DartGenerator generator = DartGenerator();
+        generator.generate(
+          const DartOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+        expect(code, contains('class Api'));
+        expect(
+          collapsedCode,
+          contains(
+            r'Api.name({ this.$binaryMessenger, '
+            r'$InstanceManager? $instanceManager, '
+            r'required this.validType, '
+            r'required this.enumType, '
+            r'required this.proxyApiType, '
+            r'this.nullableValidType, '
+            r'this.nullableEnumType, '
+            r'this.nullableProxyApiType, })',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'__pigeon_channel.send(<Object?>[ '
+            r'this.$instanceManager.addDartCreatedInstance(this), '
+            r'validType, enumType.index, proxyApiType, '
+            r'nullableValidType, nullableEnumType?.index, nullableProxyApiType, ])',
+          ),
+        );
+        expect(
+          code,
+          contains(r'final int validType;'),
+        );
+        expect(
+          code,
+          contains(r'final AnEnum enumType;'),
+        );
+        expect(
+          code,
+          contains(r'final Api2 proxyApiType;'),
+        );
+        expect(
+          code,
+          contains(r'final int? nullableValidType;'),
+        );
+        expect(
+          code,
+          contains(r'final AnEnum? nullableEnumType;'),
+        );
+        expect(
+          code,
+          contains(r'final Api2? nullableProxyApiType;'),
+        );
+      });
+
+      test('attached field', () {
+        final AstProxyApi api2 = AstProxyApi(
+          name: 'Api2',
+          constructors: <Constructor>[],
+          fields: <Field>[],
+          methods: <Method>[],
+        );
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <Field>[
+                Field(
+                  name: 'aField',
+                  isAttached: true,
+                  type: TypeDeclaration(
+                    baseName: 'Api2',
+                    isNullable: false,
+                    associatedProxyApi: api2,
+                  ),
+                ),
+              ],
+              methods: <Method>[],
+            ),
+            api2,
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const DartGenerator generator = DartGenerator();
+        generator.generate(
+          const DartOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        expect(code, contains('class Api'));
+        expect(code, contains(r'late final Api2 aField = _aField();'));
+        expect(code, contains(r'Api2 _aField()'));
+      });
+
+      test('static attached field', () {
+        final AstProxyApi api2 = AstProxyApi(
+          name: 'Api2',
+          constructors: <Constructor>[],
+          fields: <Field>[],
+          methods: <Method>[],
+        );
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <Field>[
+                Field(
+                  name: 'aField',
+                  isStatic: true,
+                  isAttached: true,
+                  type: TypeDeclaration(
+                    baseName: 'Api2',
+                    isNullable: false,
+                    associatedProxyApi: api2,
+                  ),
+                ),
+              ],
+              methods: <Method>[],
+            ),
+            api2,
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const DartGenerator generator = DartGenerator();
+        generator.generate(
+          const DartOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        expect(code, contains('class Api'));
+        expect(code, contains(r'static final Api2 aField = _aField();'));
+        expect(code, contains(r'static Api2 _aField()'));
+      });
+    });
+
     group('Host methods', () {
       test('multiple params method', () {
         final Enum anEnum = Enum(
