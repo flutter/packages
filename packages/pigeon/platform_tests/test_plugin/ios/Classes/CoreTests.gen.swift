@@ -1866,6 +1866,8 @@ protocol FlutterIntegrationCoreApiProtocol {
   func echo(_ aMapArg: [String?: Any?], completion: @escaping (Result<[String?: Any?], FlutterError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
   func echo(_ anEnumArg: AnEnum, completion: @escaping (Result<AnEnum, FlutterError>) -> Void)
+  /// Returns the default string.
+  func echoNamedDefault(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void)
   /// Returns the passed boolean, to test serialization and deserialization.
   func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Result<Bool?, FlutterError>) -> Void)
   /// Returns the passed int, to test serialization and deserialization.
@@ -1882,6 +1884,8 @@ protocol FlutterIntegrationCoreApiProtocol {
   func echoNullable(_ aMapArg: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, FlutterError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
   func echoNullable(_ anEnumArg: AnEnum?, completion: @escaping (Result<AnEnum?, FlutterError>) -> Void)
+  /// Returns the passed in string.
+  func echoNamed(_ aNullableStringArg: String?, completion: @escaping (Result<String?, FlutterError>) -> Void)
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   func noopAsync(completion: @escaping (Result<Void, FlutterError>) -> Void)
@@ -2197,6 +2201,28 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       }
     }
   }
+  /// Returns the default string.
+  func echoNamedDefault(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNamedDefaultString"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aStringArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName:channelName)))
+        return
+      }
+      if (listResponse.count > 1) {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)));
+      } else if (listResponse[0] == nil) {
+        completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+      } else {
+        let result = listResponse[0] as! String
+        completion(.success(result))
+      }
+    }
+  }
   /// Returns the passed boolean, to test serialization and deserialization.
   func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Result<Bool?, FlutterError>) -> Void) {
     let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool"
@@ -2353,6 +2379,26 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         completion(.failure(FlutterError(code: code, message: message, details: details)));
       } else {
         let result: AnEnum? = isNullish(listResponse[0]) ? nil : AnEnum(rawValue: listResponse[0] as! Int)!
+        completion(.success(result))
+      }
+    }
+  }
+  /// Returns the passed in string.
+  func echoNamed(_ aNullableStringArg: String?, completion: @escaping (Result<String?, FlutterError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNamedNullableString"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([aNullableStringArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName:channelName)))
+        return
+      }
+      if (listResponse.count > 1) {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)));
+      } else {
+        let result: String? = nilOrValue(listResponse[0])
         completion(.success(result))
       }
     }

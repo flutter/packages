@@ -2735,6 +2735,32 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
       }
     }
   }
+  /** Returns the default string. */
+  fun echoNamedDefaultString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNamedDefaultString"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
   /** Returns the passed boolean, to test serialization and deserialization. */
   fun echoNullableBool(aBoolArg: Boolean?, callback: (Result<Boolean?>) -> Unit) {
     val channelName =
@@ -2883,6 +2909,25 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = (it[0] as Int?)?.let { AnEnum.ofRaw(it) }
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed in string. */
+  fun echoNamedNullableString(aNullableStringArg: String?, callback: (Result<String?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNamedNullableString"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aNullableStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as String?
           callback(Result.success(output))
         }
       } else {

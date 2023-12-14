@@ -26,12 +26,7 @@ static NSArray *wrapResult(id result, FlutterError *error) {
 }
 
 static FlutterError *createConnectionError(NSString *channelName) {
-  return [FlutterError
-      errorWithCode:@"channel-error"
-            message:[NSString stringWithFormat:@"%@/%@/%@",
-                                               @"Unable to establish connection on channel: '",
-                                               channelName, @"'."]
-            details:@""];
+  return [FlutterError errorWithCode:@"channel-error" message:[NSString stringWithFormat:@"%@/%@/%@", @"Unable to establish connection on channel: '", channelName, @"'."] details:@""];
 }
 
 static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
@@ -57,10 +52,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation PGNMessageData
 + (instancetype)makeWithName:(nullable NSString *)name
-                 description:(nullable NSString *)description
-                        code:(PGNCode)code
-                        data:(NSDictionary<NSString *, NSString *> *)data {
-  PGNMessageData *pigeonResult = [[PGNMessageData alloc] init];
+    description:(nullable NSString *)description
+    code:(PGNCode)code
+    data:(NSDictionary<NSString *, NSString *> *)data {
+  PGNMessageData* pigeonResult = [[PGNMessageData alloc] init];
   pigeonResult.name = name;
   pigeonResult.description = description;
   pigeonResult.code = code;
@@ -93,7 +88,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation PGNExampleHostApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 128: 
       return [PGNMessageData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -129,25 +124,21 @@ NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    PGNExampleHostApiCodecReaderWriter *readerWriter =
-        [[PGNExampleHostApiCodecReaderWriter alloc] init];
+    PGNExampleHostApiCodecReaderWriter *readerWriter = [[PGNExampleHostApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
-                            NSObject<PGNExampleHostApi> *api) {
+void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<PGNExampleHostApi> *api) {
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage"
         binaryMessenger:binaryMessenger
-                  codec:PGNExampleHostApiGetCodec()];
+        codec:PGNExampleHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(getHostLanguageWithError:)],
-          @"PGNExampleHostApi api (%@) doesn't respond to @selector(getHostLanguageWithError:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(getHostLanguageWithError:)], @"PGNExampleHostApi api (%@) doesn't respond to @selector(getHostLanguageWithError:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSString *output = [api getHostLanguageWithError:&error];
@@ -158,15 +149,13 @@ void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add"
         binaryMessenger:binaryMessenger
-                  codec:PGNExampleHostApiGetCodec()];
+        codec:PGNExampleHostApiGetCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(addNumber:toNumber:error:)],
-          @"PGNExampleHostApi api (%@) doesn't respond to @selector(addNumber:toNumber:error:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(addNumber:toNumber:error:)], @"PGNExampleHostApi api (%@) doesn't respond to @selector(addNumber:toNumber:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         NSInteger arg_a = [GetNullableObjectAtIndex(args, 0) integerValue];
@@ -180,22 +169,19 @@ void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage"
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:@"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage"
         binaryMessenger:binaryMessenger
-                  codec:PGNExampleHostApiGetCodec()];
+        codec:PGNExampleHostApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(sendMessageMessage:completion:)],
-                @"PGNExampleHostApi api (%@) doesn't respond to "
-                @"@selector(sendMessageMessage:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(sendMessageMessage:completion:)], @"PGNExampleHostApi api (%@) doesn't respond to @selector(sendMessageMessage:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         PGNMessageData *arg_message = GetNullableObjectAtIndex(args, 0);
-        [api sendMessageMessage:arg_message
-                     completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
-                       callback(wrapResult(output, error));
-                     }];
+        [api sendMessageMessage:arg_message completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -221,28 +207,25 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
   }
   return self;
 }
-- (void)flutterMethodAString:(nullable NSString *)arg_aString
-                  completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
-  NSString *channelName =
-      @"dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod";
+- (void)flutterMethodAString:(nullable NSString *)arg_aString completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  NSString *channelName = @"dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod";
   FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel messageChannelWithName:channelName
-                                         binaryMessenger:self.binaryMessenger
-                                                   codec:PGNMessageFlutterApiGetCodec()];
-  [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
-                 reply:^(NSArray<id> *reply) {
-                   if (reply != nil) {
-                     if (reply.count > 1) {
-                       completion(nil, [FlutterError errorWithCode:reply[0]
-                                                           message:reply[1]
-                                                           details:reply[2]]);
-                     } else {
-                       NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
-                       completion(output, nil);
-                     }
-                   } else {
-                     completion(nil, createConnectionError(channelName));
-                   }
-                 }];
+    [FlutterBasicMessageChannel
+      messageChannelWithName:channelName
+      binaryMessenger:self.binaryMessenger
+      codec:PGNMessageFlutterApiGetCodec()];
+  [channel sendMessage:@[arg_aString ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion(nil, [FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        NSString *output = reply[0] == [NSNull null] ? nil : reply[0];
+        completion(output, nil);
+      }
+    } else {
+      completion(nil, createConnectionError(channelName));
+    } 
+  }];
 }
 @end
+
