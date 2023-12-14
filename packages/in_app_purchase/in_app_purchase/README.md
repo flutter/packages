@@ -357,10 +357,13 @@ class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
 
 The dialog can be shown by calling `showPriceConsentIfNeeded` on the `InAppPurchaseStoreKitPlatformAddition`. This future
 will complete immediately when the dialog is shown. A confirmed transaction will be delivered on the `purchaseStream`.
+
+<?code-excerpt "example/lib/main.dart (ShowPriceConsent)"?>
 ```dart
 if (Platform.isIOS) {
-  var iapStoreKitPlatformAddition = _inAppPurchase
-      .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+  final InAppPurchaseStoreKitPlatformAddition iapStoreKitPlatformAddition =
+      _inAppPurchase
+          .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
   await iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
 }
 ```

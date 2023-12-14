@@ -126,7 +126,7 @@ class _MyAppState extends State<_MyApp> {
       });
       return;
     }
-    
+
     if (productDetailResponse.productDetails.isEmpty) {
       setState(() {
         _queryProductError = null;
@@ -495,12 +495,14 @@ class _MyAppState extends State<_MyApp> {
     // instead handled by the Play Store. See
     // https://developer.android.com/google/play/billing/price-changes for more
     // information on price changes on Android.
+    // #docregion ShowPriceConsent
     if (Platform.isIOS) {
       final InAppPurchaseStoreKitPlatformAddition iapStoreKitPlatformAddition =
           _inAppPurchase
               .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
     }
+    // #enddocregion ShowPriceConsent
   }
 
   GooglePlayPurchaseDetails? _getOldSubscription(
