@@ -427,11 +427,17 @@
 }
 
 - (void)animateWithCameraUpdate:(GMSCameraUpdate *)cameraUpdate {
-  [self.mapView animateWithCameraUpdate:cameraUpdate];
+    [CATransaction begin];
+    [CATransaction setValue:[NSNumber numberWithFloat: 1.0f] forKey:kCATransactionAnimationDuration];
+    [self.mapView animateWithCameraUpdate:cameraUpdate];
+    [CATransaction commit];
 }
 
 - (void)moveWithCameraUpdate:(GMSCameraUpdate *)cameraUpdate {
-  [self.mapView moveCamera:cameraUpdate];
+    [CATransaction begin];
+    [CATransaction setValue:[NSNumber numberWithFloat: 1.0f] forKey:kCATransactionAnimationDuration];
+    [self.mapView moveCamera:cameraUpdate];
+    [CATransaction commit];
 }
 
 - (GMSCameraPosition *)cameraPosition {
