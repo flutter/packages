@@ -41,17 +41,7 @@
 }
 
 - (void)testCanMakePayments {
-  XCTestExpectation *expectation = [self expectationWithDescription:@"expect result to be YES"];
-  FlutterMethodCall *call =
-      [FlutterMethodCall methodCallWithMethodName:@"-[SKPaymentQueue canMakePayments:]"
-                                        arguments:NULL];
-  __block id result;
-  [self.plugin handleMethodCall:call
-                         result:^(id r) {
-                           [expectation fulfill];
-                           result = r;
-                         }];
-  [self waitForExpectations:@[ expectation ] timeout:5];
+  id result = [self.plugin canMakePayments:NULL];
   XCTAssertEqual(result, @YES);
 }
 

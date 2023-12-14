@@ -8,6 +8,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
+import '../../src/messages.g.dart';
+
 
 import '../../store_kit_wrappers.dart';
 import '../channel.dart';
@@ -25,7 +27,20 @@ part 'sk_payment_queue_wrapper.g.dart';
 /// Full information on using `SKPaymentQueue` and processing purchases is
 /// available at the [In-App Purchase Programming
 /// Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267).
+
+InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
+
+/// Sets the [PlatformImagesApi] instance used to implement the static methods
+/// of [IosPlatformImages].
+///
+/// This exists only for unit tests.
+@visibleForTesting
+void setPlatformImageHostApi(InAppPurchaseAPI api) {
+  _hostApi = api;
+}
+
 class SKPaymentQueueWrapper {
+
   /// Returns the default payment queue.
   ///
   /// We do not support instantiating a custom payment queue, hence the
@@ -64,6 +79,8 @@ class SKPaymentQueueWrapper {
       (await channel
           .invokeMethod<bool>('-[SKPaymentQueue canMakePayments:]')) ??
       false;
+  //
+  // _hostApi.canMakePayments();
 
   /// Sets an observer to listen to all incoming transaction events.
   ///

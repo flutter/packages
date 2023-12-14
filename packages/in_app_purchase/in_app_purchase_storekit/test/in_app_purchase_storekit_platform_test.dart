@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/src/store_kit_wrappers/enum_converters.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
@@ -28,6 +29,7 @@ void main() {
   });
 
   setUp(() {
+    final InAppPurchaseAPI fakeApi = FakeInAppPurchaseAPI();
     InAppPurchaseStoreKitPlatform.registerPlatform();
     iapStoreKitPlatform =
         InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
@@ -38,7 +40,10 @@ void main() {
 
   group('isAvailable', () {
     test('true', () async {
+      // final InAppPurchaseAPI launcher = InAppPurchaseAPI(api: fakeApi);
       expect(await iapStoreKitPlatform.isAvailable(), isTrue);
+
+      // expect(await InAppPurchaseAPI().canMakePayments(), isTrue);
     });
   });
 
@@ -572,6 +577,25 @@ void main() {
       expect(fakeStoreKitPlatform.queueIsActive, false);
     });
   });
+}
+
+class FakeInAppPurchaseAPI implements InAppPurchaseAPI {
+  @override
+  Future<bool> canMakePayments() async {
+    return true;
+  }
+
+  @override
+  Future<List<PaymentTransactionWrapper?>> transactions() {
+    // TODO: implement transactions
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<StorefrontWrapper?>> storefront() {
+    // TODO: implement storefront
+    throw UnimplementedError();
+  }
 }
 
 /// This allows a value of type T or T? to be treated as a value of type T?.

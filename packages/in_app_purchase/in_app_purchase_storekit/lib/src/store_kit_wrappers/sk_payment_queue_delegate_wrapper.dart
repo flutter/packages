@@ -7,7 +7,7 @@ import '../../store_kit_wrappers.dart';
 /// A wrapper around
 /// [`SKPaymentQueueDelegate`](https://developer.apple.com/documentation/storekit/skpaymentqueuedelegate?language=objc).
 ///
-/// The payment queue delegate can be implementated to provide information
+/// The payment queue delegate can be implemented to provide information
 /// needed to complete transactions.
 ///
 /// The [SKPaymentQueueDelegateWrapper] is available on macOS and iOS 13+.

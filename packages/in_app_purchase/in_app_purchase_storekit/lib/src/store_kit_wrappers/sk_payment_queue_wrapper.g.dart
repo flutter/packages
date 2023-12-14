@@ -22,6 +22,10 @@ SKPaymentWrapper _$SKPaymentWrapperFromJson(Map json) => SKPaymentWrapper(
       quantity: json['quantity'] as int? ?? 0,
       simulatesAskToBuyInSandbox:
           json['simulatesAskToBuyInSandbox'] as bool? ?? false,
+      paymentDiscount: json['paymentDiscount'] == null
+          ? null
+          : SKPaymentDiscountWrapper.fromJson(
+              Map<String, dynamic>.from(json['paymentDiscount'] as Map)),
     );
 
 Map<String, dynamic> _$SKPaymentWrapperToJson(SKPaymentWrapper instance) =>
@@ -31,6 +35,7 @@ Map<String, dynamic> _$SKPaymentWrapperToJson(SKPaymentWrapper instance) =>
       'requestData': instance.requestData,
       'quantity': instance.quantity,
       'simulatesAskToBuyInSandbox': instance.simulatesAskToBuyInSandbox,
+      'paymentDiscount': instance.paymentDiscount,
     };
 
 SKPaymentDiscountWrapper _$SKPaymentDiscountWrapperFromJson(Map json) =>

@@ -9,6 +9,7 @@
 #import "FIAPReceiptManager.h"
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
+#import "messages.g.h"
 
 @interface InAppPurchasePlugin ()
 
@@ -85,9 +86,7 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"-[SKPaymentQueue canMakePayments:]" isEqualToString:call.method]) {
-    [self canMakePayments:result];
-  } else if ([@"-[SKPaymentQueue transactions]" isEqualToString:call.method]) {
+  if ([@"-[SKPaymentQueue transactions]" isEqualToString:call.method]) {
     [self getPendingTransactions:result];
   } else if ([@"-[SKPaymentQueue storefront]" isEqualToString:call.method]) {
     [self getStorefront:result];
@@ -127,8 +126,12 @@
   }
 }
 
-- (void)canMakePayments:(FlutterResult)result {
-  result(@([SKPaymentQueue canMakePayments]));
+//- (void)canMakePayments:(FlutterResult)result {
+//  result(@([SKPaymentQueue canMakePayments]));
+//}
+
+- (nullable NSNumber *)canMakePayments:(FlutterError *_Nullable *_Nonnull)error {
+  return @([SKPaymentQueue canMakePayments]);
 }
 
 - (void)getPendingTransactions:(FlutterResult)result {

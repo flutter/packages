@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../in_app_purchase_storekit.dart';
+import '../src/messages.g.dart';
 import '../store_kit_wrappers.dart';
 
 /// [IAPError.code] code for failed purchases.
@@ -22,12 +23,20 @@ const String kIAPSource = 'app_store';
 /// This translates various `StoreKit` calls and responses into the
 /// generic plugin API.
 class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
-  /// Creates an [InAppPurchaseStoreKitPlatform] object.
-  ///
-  /// This constructor should only be used for testing, for any other purpose
-  /// get the connection from the [instance] getter.
+  /// Creates a new plugin implementation instance.
   @visibleForTesting
-  InAppPurchaseStoreKitPlatform();
+  InAppPurchaseStoreKitPlatform({
+    @visibleForTesting InAppPurchaseAPI? api,
+  }) : _hostApi = api ?? InAppPurchaseAPI();
+
+  final InAppPurchaseAPI _hostApi;
+
+  // /// Creates an [InAppPurchaseStoreKitPlatform] object.
+  // ///
+  // /// This constructor should only be used for testing, for any other purpose
+  // /// get the connection from the [instance] getter.
+  // @visibleForTesting
+  // InAppPurchaseStoreKitPlatform();
 
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
   static late _TransactionObserver _observer;
@@ -65,6 +74,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   }
 
   @override
+  // Future<bool> isAvailable() => _hostApi.canMakePayments();
   Future<bool> isAvailable() => SKPaymentQueueWrapper.canMakePayments();
 
   @override
