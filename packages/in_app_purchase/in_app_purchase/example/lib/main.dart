@@ -457,7 +457,6 @@ class _MyAppState extends State<_MyApp> {
     // handle invalid purchase here if  _verifyPurchase` failed.
   }
 
-// #docregion HandlePurchase
   Future<void> _listenToPurchaseUpdated(
       List<PurchaseDetails> purchaseDetailsList) async {
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
@@ -490,7 +489,6 @@ class _MyAppState extends State<_MyApp> {
       }
     }
   }
-// #enddocregion HandlePurchase
 
   Future<void> confirmPriceChange(BuildContext context) async {
     // Price changes for Android are not handled by the application, but are

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print, unused_local_variable
+// ignore_for_file: avoid_print, unused_local_variable, avoid_function_literals_in_foreach_calls
 
 import 'package:in_app_purchase/in_app_purchase.dart';
 // #docregion AndroidProduct
@@ -78,3 +78,41 @@ Future<void> loadProducts() async {
   final List<ProductDetails> products = response.productDetails;
   // #enddocregion LoadProducts
 }
+
+/// Demonstrate how to handle purchase updates for the README
+// #docregion HandlePurchase
+void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+  purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
+    if (purchaseDetails.status == PurchaseStatus.pending) {
+      _showPendingUI();
+    } else {
+      if (purchaseDetails.status == PurchaseStatus.error) {
+        _handleError(purchaseDetails.error!);
+      } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+          purchaseDetails.status == PurchaseStatus.restored) {
+        final bool valid = await _verifyPurchase(purchaseDetails);
+        if (valid) {
+          _deliverProduct(purchaseDetails);
+        } else {
+          _handleInvalidPurchase(purchaseDetails);
+        }
+      }
+      if (purchaseDetails.pendingCompletePurchase) {
+        await InAppPurchase.instance.completePurchase(purchaseDetails);
+      }
+    }
+  });
+}
+// #enddocregion HandlePurchase
+
+void _showPendingUI() {}
+
+void _handleError(IAPError iapError) {}
+
+Future<bool> _verifyPurchase(PurchaseDetails purchaseDetails) {
+  return Future<bool>.value(true);
+}
+
+void _deliverProduct(PurchaseDetails purchaseDetails) {}
+
+void _handleInvalidPurchase(PurchaseDetails purchaseDetails) {}

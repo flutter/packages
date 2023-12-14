@@ -110,39 +110,29 @@ class _MyAppState extends State<_MyApp> {
 
 Here is an example of how to handle purchase updates:
 
-<?code-excerpt "example/lib/main.dart (HandlePurchase)"?>
+<?code-excerpt "example/lib/readme_excerpts.dart (HandlePurchase)"?>
 ```dart
-Future<void> _listenToPurchaseUpdated(
-    List<PurchaseDetails> purchaseDetailsList) async {
-  for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
+void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+  purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
     if (purchaseDetails.status == PurchaseStatus.pending) {
-      showPendingUI();
+      _showPendingUI();
     } else {
       if (purchaseDetails.status == PurchaseStatus.error) {
-        handleError(purchaseDetails.error!);
+        _handleError(purchaseDetails.error!);
       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
         final bool valid = await _verifyPurchase(purchaseDetails);
         if (valid) {
-          unawaited(deliverProduct(purchaseDetails));
+          _deliverProduct(purchaseDetails);
         } else {
           _handleInvalidPurchase(purchaseDetails);
-          return;
-        }
-      }
-      if (Platform.isAndroid) {
-        if (!_kAutoConsume && purchaseDetails.productID == _kConsumableId) {
-          final InAppPurchaseAndroidPlatformAddition androidAddition =
-              _inAppPurchase.getPlatformAddition<
-                  InAppPurchaseAndroidPlatformAddition>();
-          await androidAddition.consumePurchase(purchaseDetails);
         }
       }
       if (purchaseDetails.pendingCompletePurchase) {
-        await _inAppPurchase.completePurchase(purchaseDetails);
+        await InAppPurchase.instance.completePurchase(purchaseDetails);
       }
     }
-  }
+  });
 }
 ```
 
@@ -200,7 +190,7 @@ call the right purchase method for each type.
 
 <?code-excerpt "example/lib/main.dart (MakePurchase)"?>
 ```dart
-PurchaseParam purchaseParam;
+late PurchaseParam purchaseParam;
 
 if (Platform.isAndroid) {
   // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
