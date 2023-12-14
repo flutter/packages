@@ -21,9 +21,10 @@ String _getViewType({bool debug = false}) {
 void _registerFactory({bool debug = false}) {
   final String viewType = _getViewType(debug: debug);
   ui_web.platformViewRegistry.registerViewFactory(viewType, (int viewId) {
-    final web.HTMLDivElement htmlElement = (web.document.createElement('div') as web.HTMLDivElement)
-      ..style.width = '100%'
-      ..style.height = '100%';
+    final web.HTMLDivElement htmlElement =
+        (web.document.createElement('div') as web.HTMLDivElement)
+          ..style.width = '100%'
+          ..style.height = '100%';
     if (debug) {
       htmlElement.style.backgroundColor = 'rgba(255, 0, 0, .5)';
     }
