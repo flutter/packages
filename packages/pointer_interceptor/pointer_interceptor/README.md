@@ -1,24 +1,25 @@
 # pointer_interceptor
 
-`PointerInterceptor` is a widget that prevents mouse events (in web) from being captured by an underlying [`HtmlElementView`](https://api.flutter.dev/flutter/widgets/HtmlElementView-class.html).
+|             | iOS     | Web |
+|-------------|---------|-----|
+| **Support** | iOS 11+ | Any |
 
-You can use this widget in a cross-platform app freely. In mobile, where the issue that this plugin fixes does not exist, the widget acts as a pass-through of its `children`, without adding anything to the render tree.
+`PointerInterceptor` is a widget that prevents mouse events from being captured by an underlying [`HtmlElementView`](https://api.flutter.dev/flutter/widgets/HtmlElementView-class.html) in web, or an underlying [`PlatformView`](https://api.flutter.dev/flutter/widgets/PlatformViewLink-class.html) on iOS.
 
 ## What is the problem?
 
-When overlaying Flutter widgets on top of `HtmlElementView` widgets that respond to mouse gestures (handle clicks, for example), the clicks will be consumed by the `HtmlElementView`, and not relayed to Flutter.
+When overlaying Flutter widgets on top of `HtmlElementView`/`PlatformView` widgets that respond to mouse gestures (handle clicks, for example), the clicks will be consumed by the `HtmlElementView`/`PlatformView`, and not relayed to Flutter.
 
-The result is that Flutter widget's `onTap` (and other) handlers won't fire as expected, but they'll affect the underlying webview.
+The result is that Flutter widget's `onTap` (and other) handlers won't fire as expected, but they'll affect the underlying native platform view.
 
 |The problem...|
 |:-:|
-|![Depiction of problematic areas](https://raw.githubusercontent.com/flutter/packages/main/packages/pointer_interceptor/doc/img/affected-areas.png)|
+|![Depiction of problematic areas](https://raw.githubusercontent.com/flutter/packages/cb6dbcdd230528c0c246c81d93386c512f9a23d0/packages/pointer_interceptor/pointer_interceptor/doc/img/affected-areas.png)|
 |_In the dashed areas, mouse events won't work as expected. The `HtmlElementView` will consume them before Flutter sees them._|
-
 
 ## How does this work?
 
-`PointerInterceptor` creates a platform view consisting of an empty HTML element. The element has the size of its `child` widget, and is inserted in the layer tree _behind_ its child in paint order.
+In web, `PointerInterceptor` creates a platform view consisting of an empty HTML element, while on iOS it creates an empty `UIView` instead. The element has the size of its `child` widget, and is inserted in the layer tree _behind_ its child in paint order.
 
 This empty platform view doesn't do anything with mouse events, other than preventing them from reaching other platform views underneath it.
 
@@ -26,7 +27,7 @@ This gives an opportunity to the Flutter framework to handle the click, as expec
 
 |The solution...|
 |:-:|
-|![Depiction of the solution](https://raw.githubusercontent.com/flutter/packages/main/packages/pointer_interceptor/doc/img/fixed-areas.png)|
+|![Depiction of the solution](https://raw.githubusercontent.com/flutter/packages/cb6dbcdd230528c0c246c81d93386c512f9a23d0/packages/pointer_interceptor/pointer_interceptor/doc/img/fixed-areas.png)|
 |_Each `PointerInterceptor` (green) renders between Flutter widgets and the underlying `HtmlElementView`. Mouse events now can't reach the background HtmlElementView, and work as expected._|
 
 ## How to use

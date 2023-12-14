@@ -769,6 +769,7 @@ class WebViewClient extends JavaObject {
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
+    this.onReceivedHttpAuthRequest,
     @visibleForTesting super.binaryMessenger,
     @visibleForTesting super.instanceManager,
   }) : super.detached() {
@@ -789,6 +790,7 @@ class WebViewClient extends JavaObject {
     this.requestLoading,
     this.urlLoading,
     this.doUpdateVisitedHistory,
+    this.onReceivedHttpAuthRequest,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached();
@@ -937,6 +939,14 @@ class WebViewClient extends JavaObject {
   final void Function(WebView webView, String url, bool isReload)?
       doUpdateVisitedHistory;
 
+  /// This callback is only called for requests that require HTTP authentication.
+  final void Function(
+    WebView webView,
+    HttpAuthHandler handler,
+    String host,
+    String realm,
+  )? onReceivedHttpAuthRequest;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebViewClient.shouldOverrideUrlLoading(...)`.
   ///
@@ -965,6 +975,7 @@ class WebViewClient extends JavaObject {
       requestLoading: requestLoading,
       urlLoading: urlLoading,
       doUpdateVisitedHistory: doUpdateVisitedHistory,
+      onReceivedHttpAuthRequest: onReceivedHttpAuthRequest,
       binaryMessenger: _api.binaryMessenger,
       instanceManager: _api.instanceManager,
     );
@@ -1494,5 +1505,43 @@ class CustomViewCallback extends JavaObject {
       binaryMessenger: _customViewCallbackApi.binaryMessenger,
       instanceManager: _customViewCallbackApi.instanceManager,
     );
+  }
+}
+
+/// Represents a request for HTTP authentication.
+///
+/// Instances of this class are created by the [WebView] and passed to
+/// [WebViewClient.onReceivedHttpAuthRequest]. The host application must call
+/// either [HttpAuthHandler.proceed] or [HttpAuthHandler.cancel] to set the
+/// WebView's response to the request.
+class HttpAuthHandler extends JavaObject {
+  /// Constructs a [HttpAuthHandler].
+  HttpAuthHandler({
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  /// Pigeon Host Api implementation for [HttpAuthHandler].
+  @visibleForTesting
+  static HttpAuthHandlerHostApiImpl api = HttpAuthHandlerHostApiImpl();
+
+  /// Instructs the WebView to cancel the authentication request.
+  Future<void> cancel() {
+    return api.cancelFromInstance(this);
+  }
+
+  /// Instructs the WebView to proceed with the authentication with the provided
+  /// credentials.
+  Future<void> proceed(String username, String password) {
+    return api.proceedFromInstance(this, username, password);
+  }
+
+  /// Gets whether the credentials stored for the current host are suitable for
+  /// use.
+  ///
+  /// Credentials are not suitable if they have previously been rejected by the
+  /// server for the current request.
+  Future<bool> useHttpAuthUsernamePassword() {
+    return api.useHttpAuthUsernamePasswordFromInstance(this);
   }
 }

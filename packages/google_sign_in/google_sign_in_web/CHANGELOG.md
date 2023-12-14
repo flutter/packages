@@ -1,3 +1,22 @@
+## 0.12.3+1
+
+* Updates `FlexHtmlElementView` (the widget backing `renderButton`) to not
+  rely on web engine knowledge (a platform view CSS selector) to operate.
+
+## 0.12.3
+
+* Migrates to `package:web`.
+* Updates minimum supported SDK version to Flutter 3.16.0/Dart 3.2.0.
+
+## 0.12.2+1
+
+* Re-publishes `0.12.2` with a small fix to the CodeClient initialization.
+
+## 0.12.2 (withdrawn)
+
+* Adds server auth code retrieval to google_sign_in_web.
+* Adds `web_only` library to access web-only methods more easily.
+
 ## 0.12.1
 
 * Enables FedCM on browsers that support this authentication mechanism.

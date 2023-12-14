@@ -2,7 +2,7 @@ group 'com.example.test_plugin'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.9.20'
+    ext.kotlin_version = '1.9.21'
     repositories {
         google()
         mavenCentral()

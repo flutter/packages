@@ -22,7 +22,7 @@ dev_dependencies:
   http: ">=0.13.0 <2.0.0"
   integration_test:
     sdk: flutter
-  mockito: 5.4.1
+  mockito: 5.4.3
 
 dependency_overrides:
   # Override the google_maps_flutter dependency on google_maps_flutter_web.

@@ -2,6 +2,10 @@
 
 * Adds support for picture-in-picture.
 
+## 2.5.3
+
+* Publishes an instance of the plugin to the registrar on macOS, as on iOS.
+
 ## 2.5.2
 
 * Fixes flickering and seek-while-paused on macOS.

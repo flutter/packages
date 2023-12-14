@@ -1,5 +1,11 @@
-## NEXT
+## 0.10.8+15
 
+* Updates example app to use non-deprecated video_player method.
+
+## 0.10.8+14
+
+* Fixes `pausePreview` null pointer error. `pausePreview` should not be called 
+  when camera is closed or not configured.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.10.8+13
