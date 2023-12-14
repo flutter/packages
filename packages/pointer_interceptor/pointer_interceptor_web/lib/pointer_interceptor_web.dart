@@ -2,14 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-
 import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
+import 'package:web/web.dart' as web;
 
 const String _viewType = '__webPointerInterceptorViewType__';
 const String _debug = 'debug__';
@@ -23,7 +21,7 @@ String _getViewType({bool debug = false}) {
 void _registerFactory({bool debug = false}) {
   final String viewType = _getViewType(debug: debug);
   ui_web.platformViewRegistry.registerViewFactory(viewType, (int viewId) {
-    final html.Element htmlElement = html.DivElement()
+    final web.HTMLDivElement htmlElement = (web.document.createElement('div') as web.HTMLDivElement)
       ..style.width = '100%'
       ..style.height = '100%';
     if (debug) {
