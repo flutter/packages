@@ -894,8 +894,6 @@ List<Error> _validateProxyApi(
   required Set<String> customClasses,
   required Set<AstProxyApi> proxyApis,
 }) {
-  // TODO: Verify constructor params dont overlap field params
-
   final List<Error> result = <Error>[];
 
   bool isDataClass(NamedType type) =>
