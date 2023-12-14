@@ -1946,6 +1946,58 @@ name: foobar
         final String code = sink.toString();
         expect(code, contains(r'class Api implements Api2, Api3'));
       });
+
+      test('implements inherits flutter method', () {
+        final Root root = Root(apis: <Api>[
+          AstProxyApi(
+            name: 'Api',
+            constructors: <Constructor>[],
+            fields: <Field>[],
+            methods: <Method>[],
+            interfacesNames: <String>{'Api2'},
+          ),
+          AstProxyApi(
+            name: 'Api2',
+            constructors: <Constructor>[],
+            fields: <Field>[],
+            methods: <Method>[
+              Method(
+                name: 'aFlutterMethod',
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+                location: ApiLocation.flutter,
+              ),
+              Method(
+                name: 'aNullableFlutterMethod',
+                returnType: const TypeDeclaration.voidDeclaration(),
+                parameters: <Parameter>[],
+                location: ApiLocation.flutter,
+                required: true,
+              ),
+            ],
+          ),
+        ], classes: <Class>[], enums: <Enum>[]);
+        final StringBuffer sink = StringBuffer();
+        const DartGenerator generator = DartGenerator();
+        generator.generate(
+          const DartOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+        expect(code, contains(r'class Api implements Api2'));
+        expect(
+          collapsedCode,
+          contains(
+            r'Api.$detached({ this.$binaryMessenger, '
+            r'$InstanceManager? $instanceManager, '
+            r'this.aFlutterMethod, '
+            r'required this.aNullableFlutterMethod, })',
+          ),
+        );
+      });
     });
 
     group('Constructors', () {
@@ -1996,6 +2048,10 @@ name: foobar
       });
 
       test('multiple params constructor', () {
+        final Enum anEnum = Enum(
+          name: 'AnEnum',
+          members: <EnumMember>[EnumMember(name: 'one')],
+        );
         final Root root = Root(
           apis: <Api>[
             AstProxyApi(name: 'Api', constructors: <Constructor>[
@@ -2010,9 +2066,10 @@ name: foobar
                     name: 'validType',
                   ),
                   Parameter(
-                    type: const TypeDeclaration(
+                    type: TypeDeclaration(
                       isNullable: false,
                       baseName: 'AnEnum',
+                      associatedEnum: anEnum,
                     ),
                     name: 'enumType',
                   ),
@@ -2031,9 +2088,10 @@ name: foobar
                     name: 'nullableValidType',
                   ),
                   Parameter(
-                    type: const TypeDeclaration(
+                    type: TypeDeclaration(
                       isNullable: true,
                       baseName: 'AnEnum',
+                      associatedEnum: anEnum,
                     ),
                     name: 'nullableEnumType',
                   ),
@@ -2052,15 +2110,10 @@ name: foobar
               constructors: <Constructor>[],
               fields: <Field>[],
               methods: <Method>[],
-            )
-          ],
-          classes: <Class>[],
-          enums: <Enum>[
-            Enum(
-              name: 'AnEnum',
-              members: <EnumMember>[EnumMember(name: 'one')],
             ),
           ],
+          classes: <Class>[],
+          enums: <Enum>[anEnum],
         );
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
@@ -2091,17 +2144,22 @@ name: foobar
           contains(
             r'__pigeon_channel.send(<Object?>[ '
             r'this.$instanceManager.addDartCreatedInstance(this), '
-            r'validType, enumType, proxyApiType, '
-            r'nullableValidType, nullableEnumType, nullableProxyApiType, ])',
+            r'validType, enumType.index, proxyApiType, '
+            r'nullableValidType, nullableEnumType?.index, nullableProxyApiType, ])',
           ),
         );
       });
     });
 
     group('Host methods', () {
-      test('multiple params host method', () {
-        final Root root = Root(apis: <Api>[
-          AstProxyApi(
+      test('multiple params method', () {
+        final Enum anEnum = Enum(
+          name: 'AnEnum',
+          members: <EnumMember>[EnumMember(name: 'one')],
+        );
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
               name: 'Api',
               constructors: <Constructor>[],
               fields: <Field>[],
@@ -2112,19 +2170,63 @@ name: foobar
                   parameters: <Parameter>[
                     Parameter(
                       type: const TypeDeclaration(
-                          isNullable: false, baseName: 'int'),
-                      name: 'x',
+                        isNullable: false,
+                        baseName: 'int',
+                      ),
+                      name: 'validType',
+                    ),
+                    Parameter(
+                      type: TypeDeclaration(
+                        isNullable: false,
+                        baseName: 'AnEnum',
+                        associatedEnum: anEnum,
+                      ),
+                      name: 'enumType',
                     ),
                     Parameter(
                       type: const TypeDeclaration(
-                          isNullable: false, baseName: 'int'),
-                      name: 'y',
+                        isNullable: false,
+                        baseName: 'Api2',
+                      ),
+                      name: 'proxyApiType',
+                    ),
+                    Parameter(
+                      type: const TypeDeclaration(
+                        isNullable: true,
+                        baseName: 'int',
+                      ),
+                      name: 'nullableValidType',
+                    ),
+                    Parameter(
+                      type: TypeDeclaration(
+                        isNullable: true,
+                        baseName: 'AnEnum',
+                        associatedEnum: anEnum,
+                      ),
+                      name: 'nullableEnumType',
+                    ),
+                    Parameter(
+                      type: const TypeDeclaration(
+                        isNullable: true,
+                        baseName: 'Api2',
+                      ),
+                      name: 'nullableProxyApiType',
                     ),
                   ],
                   returnType: const TypeDeclaration.voidDeclaration(),
-                )
-              ])
-        ], classes: <Class>[], enums: <Enum>[]);
+                ),
+              ],
+            ),
+            AstProxyApi(
+              name: 'Api2',
+              constructors: <Constructor>[],
+              fields: <Field>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[anEnum],
+        );
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
@@ -2138,17 +2240,74 @@ name: foobar
         expect(code, contains('class Api'));
         expect(
           collapsedCode,
-          contains(r'Future<void> doSomething( int x, int y, )'),
+          contains(
+            r'Future<void> doSomething( int validType, AnEnum enumType, '
+            r'Api2 proxyApiType, int? nullableValidType, '
+            r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )',
+          ),
         );
         expect(
           collapsedCode,
-          contains(r'await __pigeon_channel.send(<Object?>[ this, x, y, ])'),
+          contains(
+            r'await __pigeon_channel.send(<Object?>[ this, validType, '
+            r'enumType.index, proxyApiType, nullableValidType, '
+            r'nullableEnumType?.index, nullableProxyApiType, ])',
+          ),
+        );
+      });
+
+      test('static method', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <Field>[],
+              methods: <Method>[
+                Method(
+                  name: 'doSomething',
+                  location: ApiLocation.host,
+                  isStatic: true,
+                  parameters: <Parameter>[],
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const DartGenerator generator = DartGenerator();
+        generator.generate(
+          const DartOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+        expect(code, contains('class Api'));
+        expect(
+          collapsedCode,
+          contains(
+            r'static Future<void> doSomething({ BinaryMessenger? $binaryMessenger, '
+            r'$InstanceManager? $instanceManager, })',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(r'await __pigeon_channel.send(<Object?>[])'),
         );
       });
     });
 
     group('Flutter methods', () {
       test('multiple params flutter method', () {
+        final Enum anEnum = Enum(
+          name: 'AnEnum',
+          members: <EnumMember>[EnumMember(name: 'one')],
+        );
         final Root root = Root(apis: <Api>[
           AstProxyApi(
               name: 'Api',
@@ -2161,19 +2320,55 @@ name: foobar
                   parameters: <Parameter>[
                     Parameter(
                       type: const TypeDeclaration(
-                          isNullable: false, baseName: 'int'),
-                      name: 'x',
+                        isNullable: false,
+                        baseName: 'int',
+                      ),
+                      name: 'validType',
+                    ),
+                    Parameter(
+                      type: TypeDeclaration(
+                        isNullable: false,
+                        baseName: 'AnEnum',
+                        associatedEnum: anEnum,
+                      ),
+                      name: 'enumType',
                     ),
                     Parameter(
                       type: const TypeDeclaration(
-                          isNullable: false, baseName: 'int'),
-                      name: 'y',
+                        isNullable: false,
+                        baseName: 'Api2',
+                      ),
+                      name: 'proxyApiType',
+                    ),
+                    Parameter(
+                      type: const TypeDeclaration(
+                        isNullable: true,
+                        baseName: 'int',
+                      ),
+                      name: 'nullableValidType',
+                    ),
+                    Parameter(
+                      type: TypeDeclaration(
+                        isNullable: true,
+                        baseName: 'AnEnum',
+                        associatedEnum: anEnum,
+                      ),
+                      name: 'nullableEnumType',
+                    ),
+                    Parameter(
+                      type: const TypeDeclaration(
+                        isNullable: true,
+                        baseName: 'Api2',
+                      ),
+                      name: 'nullableProxyApiType',
                     ),
                   ],
                   returnType: const TypeDeclaration.voidDeclaration(),
                 )
               ])
-        ], classes: <Class>[], enums: <Enum>[]);
+        ], classes: <Class>[], enums: <Enum>[
+          anEnum
+        ]);
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
@@ -2188,13 +2383,19 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'final void Function( Api instance, int x, int y, )? doSomething;',
+            r'final void Function( Api instance, int validType, '
+            r'AnEnum enumType, Api2 proxyApiType, int? nullableValidType, '
+            r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )? '
+            r'doSomething;',
           ),
         );
         expect(
           collapsedCode,
           contains(
-              r'void Function( Api instance, int x, int y, )? doSomething'),
+              r'void Function( Api instance, int validType, AnEnum enumType, '
+              r'Api2 proxyApiType, int? nullableValidType, '
+              r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )? '
+              r'doSomething'),
         );
         expect(
           code,
@@ -2202,16 +2403,37 @@ name: foobar
         );
         expect(
           code,
-          contains(r'final int? arg_x = (args[1] as int?);'),
-        );
-        expect(
-          code,
-          contains(r'final int? arg_y = (args[2] as int?);'),
+          contains(r'final int? arg_validType = (args[1] as int?);'),
         );
         expect(
           collapsedCode,
           contains(
-            r'(doSomething ?? instance!.doSomething)?.call( instance!, arg_x!, arg_y!, );',
+            r'final AnEnum? arg_enumType = args[2] == null ? '
+            r'null : AnEnum.values[args[2]! as int];',
+          ),
+        );
+        expect(
+          code,
+          contains(r'final Api2? arg_proxyApiType = (args[3] as Api2?);'),
+        );
+        expect(
+          code,
+          contains(r'final int? arg_nullableValidType = (args[4] as int?);'),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'final AnEnum? arg_nullableEnumType = args[5] == null ? '
+            r'null : AnEnum.values[args[5]! as int];',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'(doSomething ?? instance!.doSomething)?.call( instance!, '
+            r'arg_validType!, arg_enumType!, arg_proxyApiType!, '
+            r'arg_nullableValidType, arg_nullableEnumType, '
+            r'arg_nullableProxyApiType, );',
           ),
         );
       });
