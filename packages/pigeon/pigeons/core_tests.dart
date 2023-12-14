@@ -474,6 +474,11 @@ abstract class HostIntegrationCoreApi {
   AnEnum callFlutterEchoEnum(AnEnum anEnum);
 
   @async
+  @ObjCSelector('callFlutterEchoNamedString:')
+  @SwiftFunction('callFlutterEchoNamed(_:)')
+  String callFlutterEchoNamedString({String aString = 'default'});
+
+  @async
   @ObjCSelector('callFlutterEchoNullableBool:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
   bool? callFlutterEchoNullableBool(bool? aBool);
@@ -513,6 +518,11 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('callFlutterEchoNullableEnum:')
   @SwiftFunction('callFlutterNullableEcho(_:)')
   AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableNamedString:')
+  @SwiftFunction('callFlutterEchoNullableNamed(_:)')
+  String callFlutterEchoNullableNamedString({String? aString});
 }
 
 /// The core interface that the Dart platform_test code implements for host
