@@ -299,7 +299,7 @@ class _MyAppState extends State<_MyApp> {
                   ),
                   onPressed: () {
                     // #docregion MakePurchase
-                    late PurchaseParam purchaseParam;
+                    PurchaseParam purchaseParam;
 
                     if (Platform.isAndroid) {
                       // #docregion ChangeSubscription
@@ -326,7 +326,7 @@ class _MyAppState extends State<_MyApp> {
                       );
                     }
 
-                    if (productDetails.id == _kConsumableId) {
+                    if (_isConsumable(productDetails)) {
                       _inAppPurchase.buyConsumable(
                           purchaseParam: purchaseParam,
                           autoConsume: _kAutoConsume);
@@ -523,6 +523,10 @@ class _MyAppState extends State<_MyApp> {
           purchases[_kSilverSubscriptionId]! as GooglePlayPurchaseDetails;
     }
     return oldSubscription;
+  }
+
+  bool _isConsumable(ProductDetails productDetails) {
+    return productDetails.id == _kConsumableId;
   }
 }
 

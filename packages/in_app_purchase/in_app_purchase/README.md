@@ -190,7 +190,7 @@ call the right purchase method for each type.
 
 <?code-excerpt "example/lib/main.dart (MakePurchase)"?>
 ```dart
-late PurchaseParam purchaseParam;
+PurchaseParam purchaseParam;
 
 if (Platform.isAndroid) {
   // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
@@ -215,7 +215,7 @@ if (Platform.isAndroid) {
   );
 }
 
-if (productDetails.id == _kConsumableId) {
+if (_isConsumable(productDetails)) {
   _inAppPurchase.buyConsumable(
       purchaseParam: purchaseParam,
       autoConsume: _kAutoConsume);
@@ -379,8 +379,7 @@ This is an example on how to get the `oneTimePurchaseOfferDetails` on Android:
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/in_app_purchase_android.dart';
   if (productDetails is GooglePlayProductDetails) {
-    final ProductDetailsWrapper skuDetails =
-        (productDetails as GooglePlayProductDetails).productDetails;
+    final ProductDetailsWrapper skuDetails = productDetails.productDetails;
     print(skuDetails.oneTimePurchaseOfferDetails);
   }
 ```
@@ -392,8 +391,7 @@ And this is the way to get the subscriptionGroupIdentifier of a subscription on 
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
   if (productDetails is AppStoreProductDetails) {
-    final SKProductWrapper skProduct =
-        (productDetails as AppStoreProductDetails).skProduct;
+    final SKProductWrapper skProduct = productDetails.skProduct;
     print(skProduct.subscriptionGroupIdentifier);
   }
 ```
@@ -410,7 +408,7 @@ This is an example on how to get the `originalJson` on Android:
 ```dart
 if (purchaseDetails is GooglePlayPurchaseDetails) {
   final PurchaseWrapper billingClientPurchase =
-      (purchaseDetails as GooglePlayPurchaseDetails).billingClientPurchase;
+      purchaseDetails.billingClientPurchase;
   print(billingClientPurchase.originalJson);
 }
 ```
@@ -421,7 +419,7 @@ How to get the `transactionState` of a purchase in iOS:
 ```dart
 if (purchaseDetails is AppStorePurchaseDetails) {
   final SKPaymentTransactionWrapper skProduct =
-      (purchaseDetails as AppStorePurchaseDetails).skPaymentTransaction;
+      purchaseDetails.skPaymentTransaction;
   print(skProduct.transactionState);
 }
 ```
@@ -434,9 +432,10 @@ The following code brings up a sheet that enables the user to redeem offer
 codes that you've set up in App Store Connect. For more information on
 redeeming offer codes, see [Implementing Offer Codes in Your App](https://developer.apple.com/documentation/storekit/in-app_purchase/subscriptions_and_offers/implementing_offer_codes_in_your_app).
 
-<?code-excerpt "example/lib/readme_excerpts.dart (RedeemOffer)" plaster="none"?>
+<?code-excerpt "example/lib/readme_excerpts.dart (RedeemOffer)"?>
 ```dart
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+// ···
   final InAppPurchaseStoreKitPlatformAddition iosPlatformAddition =
       InAppPurchase.instance
           .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
