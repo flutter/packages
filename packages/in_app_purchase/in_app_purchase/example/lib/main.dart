@@ -30,7 +30,6 @@ void main() {
 // To try without auto-consume on another platform, change `true` to `false` here.
 final bool _kAutoConsume = Platform.isIOS || true;
 
-// #docregion LoadProducts
 const String _kConsumableId = 'consumable';
 const String _kUpgradeId = 'upgrade';
 const String _kSilverSubscriptionId = 'subscription_silver';
@@ -41,7 +40,6 @@ const List<String> _kProductIds = <String>[
   _kSilverSubscriptionId,
   _kGoldSubscriptionId,
 ];
-// #enddocregion LoadProducts
 
 class _MyApp extends StatefulWidget {
   @override
@@ -113,12 +111,9 @@ class _MyAppState extends State<_MyApp> {
     }
 // #enddocregion HandlePaymentPopup
 
-    // #docregion LoadProducts
     final ProductDetailsResponse productDetailResponse =
         await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
     if (productDetailResponse.error != null) {
-      // Handle the error.
-      // #enddocregion LoadProducts
       setState(() {
         _queryProductError = productDetailResponse.error!.message;
         _isAvailable = isAvailable;
@@ -130,10 +125,8 @@ class _MyAppState extends State<_MyApp> {
         _loading = false;
       });
       return;
-      // #docregion LoadProducts
     }
-    // #enddocregion LoadProducts
-
+    
     if (productDetailResponse.productDetails.isEmpty) {
       setState(() {
         _queryProductError = null;
@@ -151,9 +144,7 @@ class _MyAppState extends State<_MyApp> {
     final List<String> consumables = await ConsumableStore.load();
     setState(() {
       _isAvailable = isAvailable;
-      // #docregion LoadProducts
       _products = productDetailResponse.productDetails;
-      // #enddocregion LoadProducts
       _notFoundIds = productDetailResponse.notFoundIDs;
       _consumables = consumables;
       _purchasePending = false;

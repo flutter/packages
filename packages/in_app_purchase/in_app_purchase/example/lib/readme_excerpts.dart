@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, unused_local_variable
 
 import 'package:in_app_purchase/in_app_purchase.dart';
 // #docregion AndroidProduct
@@ -61,4 +61,20 @@ void platformSpecific() {
           .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
   iosPlatformAddition.presentCodeRedemptionSheet();
 // #enddocregion RedeemOffer
+}
+
+/// Demonstrate loading product details for the README
+Future<void> loadProducts() async {
+  // #docregion LoadProducts
+  // Set literals require Dart 2.2. Alternatively, use
+// `Set<String> _kIds = <String>['product1', 'product2'].toSet()`.
+  const Set<String> kIds = <String>{'product1', 'product2'};
+  final ProductDetailsResponse response =
+      await InAppPurchase.instance.queryProductDetails(kIds);
+  if (response.notFoundIDs.isNotEmpty) {
+    // Handle the error.
+  }
+
+  final List<ProductDetails> products = response.productDetails;
+  // #enddocregion LoadProducts
 }

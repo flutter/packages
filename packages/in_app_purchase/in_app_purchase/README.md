@@ -158,24 +158,18 @@ if (!isAvailable) {
 
 ### Loading products for sale
 
-<?code-excerpt "example/lib/main.dart (LoadProducts)" plaster="none"?>
+<?code-excerpt "example/lib/readme_excerpts.dart (LoadProducts)"?>
 ```dart
-const String _kConsumableId = 'consumable';
-const String _kUpgradeId = 'upgrade';
-const String _kSilverSubscriptionId = 'subscription_silver';
-const String _kGoldSubscriptionId = 'subscription_gold';
-const List<String> _kProductIds = <String>[
-  _kConsumableId,
-  _kUpgradeId,
-  _kSilverSubscriptionId,
-  _kGoldSubscriptionId,
-];
-    final ProductDetailsResponse productDetailResponse =
-        await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
-    if (productDetailResponse.error != null) {
-      // Handle the error.
-    }
-      _products = productDetailResponse.productDetails;
+  // Set literals require Dart 2.2. Alternatively, use
+// `Set<String> _kIds = <String>['product1', 'product2'].toSet()`.
+  const Set<String> kIds = <String>{'product1', 'product2'};
+  final ProductDetailsResponse response =
+      await InAppPurchase.instance.queryProductDetails(kIds);
+  if (response.notFoundIDs.isNotEmpty) {
+    // Handle the error.
+  }
+
+  final List<ProductDetails> products = response.productDetails;
 ```
 
 ### Restoring previous purchases
@@ -206,7 +200,7 @@ call the right purchase method for each type.
 
 <?code-excerpt "example/lib/main.dart (MakePurchase)"?>
 ```dart
-late PurchaseParam purchaseParam;
+PurchaseParam purchaseParam;
 
 if (Platform.isAndroid) {
   // NOTE: If you are making a subscription purchase/upgrade/downgrade, we recommend you to
