@@ -589,6 +589,11 @@ abstract class FlutterIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AnEnum echoEnum(AnEnum anEnum);
 
+  /// Returns the default string.
+  @ObjCSelector('echoNamedDefaultString:')
+  @SwiftFunction('echoNamedDefault(_:)')
+  String echoNamedDefaultString({String aString = 'default'});
+
   // ========== Nullable argument/return type tests ==========
 
   /// Returns the passed boolean, to test serialization and deserialization.
@@ -630,6 +635,11 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
   AnEnum? echoNullableEnum(AnEnum? anEnum);
+
+  /// Returns the passed in string.
+  @ObjCSelector('echoNamedNullableString:')
+  @SwiftFunction('echoNamed(_:)')
+  String? echoNamedNullableString({String? aNullableString});
 
   // ========== Async tests ==========
   // These are minimal since async FlutterApi only changes Dart generation.
