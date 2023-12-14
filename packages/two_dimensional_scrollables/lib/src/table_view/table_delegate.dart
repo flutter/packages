@@ -150,8 +150,6 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int get columnCount => maxXIndex! + 1;
   set columnCount(int value) {
     assert(pinnedColumnCount <= value);
-    // TODO(Piinks): remove once this assertion is added in the super class
-    assert(value >= -1);
     maxXIndex = value - 1;
   }
 
@@ -180,8 +178,6 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   int get rowCount => maxYIndex! + 1;
   set rowCount(int value) {
     assert(pinnedRowCount <= value);
-    // TODO(Piinks): remove once this assertion is added in the super class
-    assert(value >= -1);
     maxYIndex = value - 1;
   }
 
