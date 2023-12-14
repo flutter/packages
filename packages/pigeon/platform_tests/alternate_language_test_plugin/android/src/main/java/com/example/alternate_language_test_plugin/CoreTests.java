@@ -4020,39 +4020,6 @@ public class CoreTests {
             }
           });
     }
-    /** Returns the default string. */
-    public void echoNamedDefaultString(@NonNull String aStringArg, @NonNull Result<String> result) {
-      final String channelName =
-          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNamedDefaultString";
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
-      channel.send(
-          new ArrayList<Object>(Collections.singletonList(aStringArg)),
-          channelReply -> {
-            if (channelReply instanceof List) {
-              List<Object> listReply = (List<Object>) channelReply;
-              if (listReply.size() > 1) {
-                result.error(
-                    new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
-              } else if (listReply.get(0) == null) {
-                result.error(
-                    new FlutterError(
-                        "null-error",
-                        "Flutter api returned null value for non-null return value.",
-                        ""));
-              } else {
-                @SuppressWarnings("ConstantConditions")
-                String output = (String) listReply.get(0);
-                result.success(output);
-              }
-            } else {
-              result.error(createConnectionError(channelName));
-            }
-          });
-    }
     /** Returns the passed boolean, to test serialization and deserialization. */
     public void echoNullableBool(
         @Nullable Boolean aBoolArg, @NonNull NullableResult<Boolean> result) {
@@ -4273,34 +4240,6 @@ public class CoreTests {
                 @SuppressWarnings("ConstantConditions")
                 AnEnum output =
                     listReply.get(0) == null ? null : AnEnum.values()[(int) listReply.get(0)];
-                result.success(output);
-              }
-            } else {
-              result.error(createConnectionError(channelName));
-            }
-          });
-    }
-    /** Returns the passed in string. */
-    public void echoNamedNullableString(
-        @Nullable String aNullableStringArg, @NonNull NullableResult<String> result) {
-      final String channelName =
-          "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNamedNullableString";
-      BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
-      channel.send(
-          new ArrayList<Object>(Collections.singletonList(aNullableStringArg)),
-          channelReply -> {
-            if (channelReply instanceof List) {
-              List<Object> listReply = (List<Object>) channelReply;
-              if (listReply.size() > 1) {
-                result.error(
-                    new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
-              } else {
-                @SuppressWarnings("ConstantConditions")
-                String output = (String) listReply.get(0);
                 result.success(output);
               }
             } else {
