@@ -1,6 +1,10 @@
-## 15.1.0
+## 15.0.2
 
-* ProxyApi support.
+* Adds support for `ProxyApi` generation for Dart.
+
+## 15.0.1
+
+* [java] Adds @CanIgnoreReturnValue annotation to class builder.
 
 ## 15.0.0
 
