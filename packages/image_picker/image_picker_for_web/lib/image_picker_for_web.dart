@@ -158,7 +158,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     ) as html.FileUploadInputElement;
     _injectAndActivate(input);
 
-    return _getSelectedXFiles(input).whenComplete(() => _remove(input));
+    return _getSelectedXFiles(input).whenComplete(input.remove);
   }
 
   // Deprecated methods follow...
@@ -320,9 +320,6 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     // TODO(dit): Reimplement this with the showPicker() API, https://github.com/flutter/flutter/issues/130365
     element.click();
   }
-
-  /// Removes the file input element
-  void _remove(html.Element element) => _target.children.clear();
 }
 
 // Some tools to override behavior for unit-testing
