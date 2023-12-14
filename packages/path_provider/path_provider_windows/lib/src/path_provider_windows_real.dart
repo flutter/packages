@@ -7,11 +7,13 @@ import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
-import 'package:win32/win32.dart';
 
 import 'folders.dart';
+import 'guid.dart';
+import 'win32_wrappers.dart';
 
 /// Constant for en-US language used in VersionInfo keys.
 @visibleForTesting
@@ -49,7 +51,7 @@ class VersionInfoQuerier {
       return null;
     }
     final Pointer<Utf16> keyPath =
-        TEXT('\\StringFileInfo\\$language$encoding\\$key');
+        '\\StringFileInfo\\$language$encoding\\$key'.toNativeUtf16();
     final Pointer<UINT> length = calloc<UINT>();
     final Pointer<Pointer<Utf16>> valueAddress = calloc<Pointer<Utf16>>();
     try {
@@ -89,7 +91,7 @@ class PathProviderWindows extends PathProviderPlatform {
 
       if (length == 0) {
         final int error = GetLastError();
-        throw WindowsException(error);
+        throw _createWin32Exception(error);
       } else {
         path = buffer.toDartString();
 
@@ -134,7 +136,7 @@ class PathProviderWindows extends PathProviderPlatform {
   /// [WindowsKnownFolder].
   Future<String?> getPath(String folderID) {
     final Pointer<Pointer<Utf16>> pathPtrPtr = calloc<Pointer<Utf16>>();
-    final Pointer<GUID> knownFolderID = calloc<GUID>()..ref.setGUID(folderID);
+    final Pointer<GUID> knownFolderID = calloc<GUID>()..ref.parse(folderID);
 
     try {
       final int hr = SHGetKnownFolderPath(
@@ -144,9 +146,9 @@ class PathProviderWindows extends PathProviderPlatform {
         pathPtrPtr,
       );
 
-      if (FAILED(hr)) {
+      if (hr != S_OK) {
         if (hr == E_INVALIDARG || hr == E_FAIL) {
-          throw WindowsException(hr);
+          throw _createWin32Exception(hr);
         }
         return Future<String?>.value();
       }
@@ -179,7 +181,8 @@ class PathProviderWindows extends PathProviderPlatform {
     String? companyName;
     String? productName;
 
-    final Pointer<Utf16> moduleNameBuffer = wsalloc(MAX_PATH + 1);
+    final Pointer<Utf16> moduleNameBuffer =
+        calloc<WCHAR>(MAX_PATH + 1).cast<Utf16>();
     final Pointer<DWORD> unused = calloc<DWORD>();
     Pointer<BYTE>? infoBuffer;
     try {
@@ -188,7 +191,7 @@ class PathProviderWindows extends PathProviderPlatform {
           GetModuleFileName(0, moduleNameBuffer, MAX_PATH);
       if (moduleNameLength == 0) {
         final int error = GetLastError();
-        throw WindowsException(error);
+        throw _createWin32Exception(error);
       }
 
       // From that, load the VERSIONINFO resource
@@ -262,4 +265,16 @@ class PathProviderWindows extends PathProviderPlatform {
     }
     return directory.path;
   }
+}
+
+Exception _createWin32Exception(int errorCode) {
+  return PlatformException(
+      code: 'Win32 Error',
+      // TODO(stuartmorgan): Consider getting the system error message via
+      // FormatMessage if it turns out to be necessary for debugging issues.
+      // Plugin-client-level usability isn't a major consideration since per
+      // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
+      // any case that comes up in practice should be handled and returned
+      // via a plugin-specific exception, not this fallback.
+      message: 'Error code 0x${errorCode.toRadixString(16)}');
 }
