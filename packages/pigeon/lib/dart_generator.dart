@@ -2201,8 +2201,6 @@ PlatformException _createConnectionError(String channelName) {
 extension on cb.Expression {
   cb.Expression awaitedIf(bool condition) => condition ? awaited : this;
   cb.Expression nullCheckedIf(bool condition) => condition ? nullChecked : this;
-  cb.Expression propertyIf(bool condition, String name) =>
-      condition ? property(name) : this;
 }
 
 cb.Expression _unwrapReturnValue(TypeDeclaration returnType) {
@@ -2337,6 +2335,7 @@ cb.Expression _hostMessageArgument(
   }
 }
 
+// TODO: can probably get rid of the OrNull
 cb.Reference? _referOrNull(
   String? symbol, {
   bool isFuture = false,
