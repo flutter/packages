@@ -703,7 +703,8 @@ class TestMessage {
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 @ProxyApi()
-abstract class ProxyIntegrationCoreApi {
+abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
+    implements ProxyApiInterface {
   ProxyIntegrationCoreApi(
     // ignore: avoid_unused_constructor_parameters
     bool boolParam,
@@ -1068,4 +1069,16 @@ abstract class ProxyIntegrationCoreApi {
 
   @async
   AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+}
+
+/// ProxyApi to serve as a super class to the core ProxyApi interface.
+@ProxyApi()
+abstract class ProxyApiSuperClass {
+  void aSuperMethod();
+}
+
+/// ProxyApi to serve as an interface to the core ProxyApi interface.
+@ProxyApi()
+abstract class ProxyApiInterface {
+  late void Function()? anInterfaceMethod;
 }

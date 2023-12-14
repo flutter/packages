@@ -113,6 +113,8 @@ class $InstanceManager {
     _InstanceManagerApi.$setUpMessageHandlers(instanceManager: instanceManager);
     ProxyIntegrationCoreApi.$setUpMessageHandlers(
         $instanceManager: instanceManager);
+    ProxyApiSuperClass.$setUpMessageHandlers($instanceManager: instanceManager);
+    ProxyApiInterface.$setUpMessageHandlers($instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -3778,10 +3780,11 @@ class _ProxyIntegrationCoreApiCodec extends StandardMessageCodec {
 
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
-class ProxyIntegrationCoreApi implements $Copyable {
+class ProxyIntegrationCoreApi extends ProxyApiSuperClass
+    implements ProxyApiInterface {
   ProxyIntegrationCoreApi({
-    this.$binaryMessenger,
-    $InstanceManager? $instanceManager,
+    super.$binaryMessenger,
+    super.$instanceManager,
     required this.aBool,
     required this.anInt,
     required this.aDouble,
@@ -3798,6 +3801,7 @@ class ProxyIntegrationCoreApi implements $Copyable {
     this.aNullableList,
     this.aNullableMap,
     this.aNullableEnum,
+    this.anInterfaceMethod,
     this.flutterNoop,
     this.flutterThrowError,
     this.flutterThrowErrorFromVoid,
@@ -3835,7 +3839,7 @@ class ProxyIntegrationCoreApi implements $Copyable {
     List<Object?>? nullableListParam,
     Map<String?, Object?>? nullableMapParam,
     AnEnum? nullableEnumParam,
-  }) : $instanceManager = $instanceManager ?? $InstanceManager.instance {
+  }) : super.$detached() {
     const String __pigeon_channelName =
         r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.$defaultConstructor';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -3845,7 +3849,7 @@ class ProxyIntegrationCoreApi implements $Copyable {
       binaryMessenger: $binaryMessenger,
     );
     __pigeon_channel.send(<Object?>[
-      this.$instanceManager.addDartCreatedInstance(this),
+      $instanceManager.addDartCreatedInstance(this),
       aBool,
       anInt,
       aDouble,
@@ -3897,8 +3901,8 @@ class ProxyIntegrationCoreApi implements $Copyable {
   /// This should only be used by subclasses created by this library or to
   /// create copies.
   ProxyIntegrationCoreApi.$detached({
-    this.$binaryMessenger,
-    $InstanceManager? $instanceManager,
+    super.$binaryMessenger,
+    super.$instanceManager,
     required this.aBool,
     required this.anInt,
     required this.aDouble,
@@ -3915,6 +3919,7 @@ class ProxyIntegrationCoreApi implements $Copyable {
     this.aNullableList,
     this.aNullableMap,
     this.aNullableEnum,
+    this.anInterfaceMethod,
     this.flutterNoop,
     this.flutterThrowError,
     this.flutterThrowErrorFromVoid,
@@ -3936,19 +3941,10 @@ class ProxyIntegrationCoreApi implements $Copyable {
     this.flutterEchoNullableEnum,
     this.callFlutterNoopAsync,
     this.callFlutterEchoAsyncString,
-  }) : $instanceManager = $instanceManager ?? $InstanceManager.instance;
+  }) : super.$detached();
 
   late final _ProxyIntegrationCoreApiCodec _codecProxyIntegrationCoreApi =
       _ProxyIntegrationCoreApiCodec($instanceManager);
-
-  /// Sends and receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used, which routes to
-  /// the host platform.
-  final BinaryMessenger? $binaryMessenger;
-
-  /// Maintains instances stored to communicate with native language objects.
-  final $InstanceManager $instanceManager;
 
   final bool aBool;
 
@@ -4099,6 +4095,9 @@ class ProxyIntegrationCoreApi implements $Copyable {
     ProxyIntegrationCoreApi instance,
     String aString,
   )? callFlutterEchoAsyncString;
+
+  @override
+  final void Function(ProxyApiInterface instance)? anInterfaceMethod;
 
   static void $setUpMessageHandlers({
     BinaryMessenger? $binaryMessenger,
@@ -7123,6 +7122,7 @@ class ProxyIntegrationCoreApi implements $Copyable {
       aNullableList: aNullableList,
       aNullableMap: aNullableMap,
       aNullableEnum: aNullableEnum,
+      anInterfaceMethod: anInterfaceMethod,
       flutterNoop: flutterNoop,
       flutterThrowError: flutterThrowError,
       flutterThrowErrorFromVoid: flutterThrowErrorFromVoid,
@@ -7144,6 +7144,262 @@ class ProxyIntegrationCoreApi implements $Copyable {
       flutterEchoNullableEnum: flutterEchoNullableEnum,
       callFlutterNoopAsync: callFlutterNoopAsync,
       callFlutterEchoAsyncString: callFlutterEchoAsyncString,
+    );
+  }
+}
+
+class _ProxyApiSuperClassCodec extends StandardMessageCodec {
+  const _ProxyApiSuperClassCodec(this.instanceManager);
+
+  final $InstanceManager instanceManager;
+
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is $Copyable) {
+      buffer.putUint8(128);
+      writeValue(buffer, instanceManager.getIdentifier(value));
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return instanceManager
+            .getInstanceWithWeakReference(readValue(buffer)! as int);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+/// ProxyApi to serve as a super class to the core ProxyApi interface.
+class ProxyApiSuperClass implements $Copyable {
+  /// Constructs ProxyApiSuperClass without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies.
+  ProxyApiSuperClass.$detached({
+    this.$binaryMessenger,
+    $InstanceManager? $instanceManager,
+  }) : $instanceManager = $instanceManager ?? $InstanceManager.instance;
+
+  late final _ProxyApiSuperClassCodec _codecProxyApiSuperClass =
+      _ProxyApiSuperClassCodec($instanceManager);
+
+  /// Sends and receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used, which routes to
+  /// the host platform.
+  final BinaryMessenger? $binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final $InstanceManager $instanceManager;
+
+  static void $setUpMessageHandlers({
+    BinaryMessenger? $binaryMessenger,
+    $InstanceManager? $instanceManager,
+    ProxyApiSuperClass Function()? $detached,
+  }) {
+    final _ProxyApiSuperClassCodec pigeonChannelCodec =
+        _ProxyApiSuperClassCodec($instanceManager ?? $InstanceManager.instance);
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.$detached';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final int? instanceIdentifier = (args[0] as int?);
+        assert(
+          instanceIdentifier != null,
+          'Argument for $__pigeon_channelName was null, expected non-null int.',
+        );
+        ($instanceManager ?? $InstanceManager.instance).addHostCreatedInstance(
+          $detached?.call() ??
+              ProxyApiSuperClass.$detached(
+                $binaryMessenger: $binaryMessenger,
+                $instanceManager: $instanceManager,
+              ),
+          instanceIdentifier!,
+        );
+        return;
+      });
+    }
+  }
+
+  Future<void> aSuperMethod() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.aSuperMethod';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyApiSuperClass,
+      binaryMessenger: $binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  @override
+  ProxyApiSuperClass $copy() {
+    return ProxyApiSuperClass.$detached(
+      $binaryMessenger: $binaryMessenger,
+      $instanceManager: $instanceManager,
+    );
+  }
+}
+
+class _ProxyApiInterfaceCodec extends StandardMessageCodec {
+  const _ProxyApiInterfaceCodec(this.instanceManager);
+
+  final $InstanceManager instanceManager;
+
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is $Copyable) {
+      buffer.putUint8(128);
+      writeValue(buffer, instanceManager.getIdentifier(value));
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return instanceManager
+            .getInstanceWithWeakReference(readValue(buffer)! as int);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+/// ProxyApi to serve as an interface to the core ProxyApi interface.
+class ProxyApiInterface implements $Copyable {
+  /// Constructs ProxyApiInterface without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies.
+  ProxyApiInterface.$detached({
+    this.$binaryMessenger,
+    $InstanceManager? $instanceManager,
+    this.anInterfaceMethod,
+  }) : $instanceManager = $instanceManager ?? $InstanceManager.instance;
+
+  /// Sends and receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used, which routes to
+  /// the host platform.
+  final BinaryMessenger? $binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final $InstanceManager $instanceManager;
+
+  final void Function(ProxyApiInterface instance)? anInterfaceMethod;
+
+  static void $setUpMessageHandlers({
+    BinaryMessenger? $binaryMessenger,
+    $InstanceManager? $instanceManager,
+    ProxyApiInterface Function()? $detached,
+    void Function(ProxyApiInterface instance)? anInterfaceMethod,
+  }) {
+    final _ProxyApiInterfaceCodec pigeonChannelCodec =
+        _ProxyApiInterfaceCodec($instanceManager ?? $InstanceManager.instance);
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.$detached';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final int? instanceIdentifier = (args[0] as int?);
+        assert(
+          instanceIdentifier != null,
+          'Argument for $__pigeon_channelName was null, expected non-null int.',
+        );
+        ($instanceManager ?? $InstanceManager.instance).addHostCreatedInstance(
+          $detached?.call() ??
+              ProxyApiInterface.$detached(
+                $binaryMessenger: $binaryMessenger,
+                $instanceManager: $instanceManager,
+              ),
+          instanceIdentifier!,
+        );
+        return;
+      });
+    }
+    {
+      const String __pigeon_channelName =
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: $binaryMessenger,
+      );
+      __pigeon_channel.setMessageHandler((Object? message) async {
+        assert(
+          message != null,
+          'Argument for $__pigeon_channelName was null.',
+        );
+        final List<Object?> args = (message as List<Object?>?)!;
+        final ProxyApiInterface? instance = (args[0] as ProxyApiInterface?);
+        assert(
+          instance != null,
+          'Argument for $__pigeon_channelName was null, expected non-null ProxyApiInterface.',
+        );
+        try {
+          (anInterfaceMethod ?? instance!.anInterfaceMethod)?.call(instance!);
+          return wrapResponse(empty: true);
+        } on PlatformException catch (e) {
+          return wrapResponse(error: e);
+        } catch (e) {
+          return wrapResponse(
+            error: PlatformException(code: 'error', message: e.toString()),
+          );
+        }
+      });
+    }
+  }
+
+  @override
+  ProxyApiInterface $copy() {
+    return ProxyApiInterface.$detached(
+      $binaryMessenger: $binaryMessenger,
+      $instanceManager: $instanceManager,
+      anInterfaceMethod: anInterfaceMethod,
     );
   }
 }

@@ -120,6 +120,9 @@ class ProxyApi {
   ///
   /// This provides an alternative to calling `extends` on a class since this
   /// requires calling the super class constructor.
+  ///
+  /// Note that using this instead of `extends` can cause unexpected conflicts
+  /// with inherited method names.
   final Type? superClass;
 }
 
@@ -1384,13 +1387,24 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
 
+        final String? superClassName = annotationMap['superClass'] as String?;
+        if (superClassName != null && node.extendsClause != null) {
+          _errors.add(
+            Error(
+              message:
+                  'ProxyApis should either set the super class in the annotation OR use extends: ("${node.name.lexeme}").',
+              lineNumber: _calculateLineNumber(source, node.offset),
+            ),
+          );
+        }
+
         _currentApi = AstProxyApi(
           name: node.name.lexeme,
           methods: <Method>[],
           constructors: <Constructor>[],
           fields: <Field>[],
-          superClassName: annotationMap['superClass'] as String? ??
-              node.extendsClause?.superclass.name2.lexeme,
+          superClassName:
+              superClassName ?? node.extendsClause?.superclass.name2.lexeme,
           interfacesNames: node.implementsClause?.interfaces
                   .map<String>((dart_ast.NamedType type) => type.name2.lexeme)
                   .toSet() ??

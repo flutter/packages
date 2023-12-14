@@ -60,6 +60,8 @@ class ErrorOr {
   friend class HostSmallApi;
   friend class FlutterSmallApi;
   friend class ProxyIntegrationCoreApi;
+  friend class ProxyApiSuperClass;
+  friend class ProxyApiInterface;
   ErrorOr() = default;
   T TakeValue() && { return std::get<T>(std::move(v_)); }
 
@@ -139,6 +141,10 @@ class AllTypes {
   friend class FlutterSmallApiCodecSerializer;
   friend class ProxyIntegrationCoreApi;
   friend class ProxyIntegrationCoreApiCodecSerializer;
+  friend class ProxyApiSuperClass;
+  friend class ProxyApiSuperClassCodecSerializer;
+  friend class ProxyApiInterface;
+  friend class ProxyApiInterfaceCodecSerializer;
   friend class CoreTestsTest;
   bool a_bool_;
   int64_t an_int_;
@@ -261,6 +267,10 @@ class AllNullableTypes {
   friend class FlutterSmallApiCodecSerializer;
   friend class ProxyIntegrationCoreApi;
   friend class ProxyIntegrationCoreApiCodecSerializer;
+  friend class ProxyApiSuperClass;
+  friend class ProxyApiSuperClassCodecSerializer;
+  friend class ProxyApiInterface;
+  friend class ProxyApiInterfaceCodecSerializer;
   friend class CoreTestsTest;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
@@ -319,6 +329,10 @@ class AllClassesWrapper {
   friend class FlutterSmallApiCodecSerializer;
   friend class ProxyIntegrationCoreApi;
   friend class ProxyIntegrationCoreApiCodecSerializer;
+  friend class ProxyApiSuperClass;
+  friend class ProxyApiSuperClassCodecSerializer;
+  friend class ProxyApiInterface;
+  friend class ProxyApiInterfaceCodecSerializer;
   friend class CoreTestsTest;
   AllNullableTypes all_nullable_types_;
   std::optional<AllTypes> all_types_;
@@ -354,6 +368,10 @@ class TestMessage {
   friend class FlutterSmallApiCodecSerializer;
   friend class ProxyIntegrationCoreApi;
   friend class ProxyIntegrationCoreApiCodecSerializer;
+  friend class ProxyApiSuperClass;
+  friend class ProxyApiSuperClassCodecSerializer;
+  friend class ProxyApiInterface;
+  friend class ProxyApiInterfaceCodecSerializer;
   friend class CoreTestsTest;
   std::optional<flutter::EncodableList> test_list_;
 };
