@@ -48,8 +48,8 @@ abstract class RouteMatchBase with Diagnosticable {
   GoRouterState buildState(
       RouteConfiguration configuration, RouteMatchList matches);
 
-  /// Generate a list [RouteMatchBase] objects by matching the `route` and its
-  /// sub-routes with `uri`.
+  /// Generates a list of [RouteMatchBase] objects by matching the `route` and
+  /// its sub-routes with `uri`.
   ///
   /// This method returns empty list if it can't find a complete match in the
   /// `route`.
@@ -254,7 +254,7 @@ abstract class RouteMatchBase with Diagnosticable {
       }
     }
     if (subRouteMatches?.isEmpty ?? true) {
-      // If not finding a sub route match, it is consider not matched for this
+      // If not finding a sub route match, it is considered not matched for this
       // route even if this route match part of the `remainingLocation`.
       return _empty;
     }
@@ -347,7 +347,7 @@ class ShellRouteMatch extends RouteMatchBase {
   @override
   final ShellRouteBase route;
 
-  RouteMatch get _leafMatch {
+  RouteMatch get _lastLeaf {
     RouteMatchBase currentMatch = matches.last;
     while (currentMatch is ShellRouteMatch) {
       currentMatch = currentMatch.matches.last;
@@ -371,7 +371,7 @@ class ShellRouteMatch extends RouteMatchBase {
   GoRouterState buildState(
       RouteConfiguration configuration, RouteMatchList matches) {
     // The route related data is stored in the leaf route match.
-    final RouteMatch leafMatch = _leafMatch;
+    final RouteMatch leafMatch = _lastLeaf;
     if (leafMatch is ImperativeRouteMatch) {
       matches = leafMatch.matches;
     }
@@ -597,7 +597,7 @@ class RouteMatchList with Diagnosticable {
     }
     return copyWith(
         matches: _createNewMatchUntilIncompatible(
-            matches, match.matches.matches, match));
+            matches, match.matches.matches, match,),);
   }
 
   static List<RouteMatchBase> _createNewMatchUntilIncompatible(
@@ -687,7 +687,7 @@ class RouteMatchList with Diagnosticable {
   /// order is removed.
   static List<RouteMatchBase> _removeRouteMatchFromList(
       List<RouteMatchBase> matches, RouteMatchBase target) {
-    // Remove is usually caused by pop; therefore, start searching from the end.
+    // Remove is caused by pop; therefore, start searching from the end.
     for (int index = matches.length - 1; index >= 0; index -= 1) {
       final RouteMatchBase match = matches[index];
       if (match == target) {
@@ -722,13 +722,13 @@ class RouteMatchList with Diagnosticable {
   /// The last leaf route.
   ///
   /// If the last RouteMatchBase from [matches] is a ShellRouteMatch, it
-  /// cursively goes into its [ShellRouteMatch.matches] until it reach the leaf
+  /// recursively goes into its [ShellRouteMatch.matches] until it reach the leaf
   /// [RouteMatch].
   RouteMatch get last {
     if (matches.last is RouteMatch) {
       return matches.last as RouteMatch;
     }
-    return (matches.last as ShellRouteMatch)._leafMatch;
+    return (matches.last as ShellRouteMatch)._lastLeaf;
   }
 
   /// Returns true if the current match intends to display an error screen.

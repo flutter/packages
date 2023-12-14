@@ -167,7 +167,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Return a HeroController based on the app type.
+    // Create a HeroController based on the app type.
     if (_controller == null) {
       if (isMaterialApp(context)) {
         _controller = createMaterialHeroController();
@@ -221,7 +221,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     throw GoError('unknown match type ${match.runtimeType}');
   }
 
-  /// Builds a [Page] for [GoRoute]
+  /// Builds a [Page] for a [RouteMatch]
   Page<Object?>? _buildPageForGoRoute(BuildContext context, RouteMatch match) {
     final GoRouterPageBuilder? pageBuilder = match.route.pageBuilder;
     final GoRouterState state =
@@ -244,7 +244,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     }));
   }
 
-  /// Builds a [Page] for [ShellRouteBase]
+  /// Builds a [Page] for a [ShellRouteMatch]
   Page<Object?> _buildPageForShellRoute(
     BuildContext context,
     ShellRouteMatch match,
@@ -285,7 +285,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     return _buildPlatformAdapterPage(context, state,
         Builder(builder: (BuildContext context) {
       return match.route.buildWidget(context, state, shellRouteContext)!;
-    }));
+    },),);
   }
 
   _PageBuilderForAppType? _pageBuilderForAppType;
