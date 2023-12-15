@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
@@ -175,7 +177,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name} ');
     indent.addScoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      anEnum.members.forEachIndexed((int index, EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
@@ -350,7 +352,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             return _flutterApiArgumentType(hostType);
           });
           final Iterable<String> argNames =
-              indexMap(func.parameters, _getArgumentName);
+              func.parameters.mapIndexed(_getArgumentName);
           final List<String> parameters = <String>[
             ...map2(argTypes, argNames, (String x, String y) => '$x $y'),
             ..._flutterApiCallbackParameters(returnType),
@@ -775,9 +777,10 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         returnType: classDefinition.name,
         parameters: <String>['const EncodableList& list'], body: () {
       const String instanceVariable = 'decoded';
-      final Iterable<_IndexedField> indexedFields = indexMap(
-          getFieldsInSerializationOrder(classDefinition),
-          (int index, NamedType field) => _IndexedField(index, field));
+      final Iterable<_IndexedField> indexedFields =
+          getFieldsInSerializationOrder(classDefinition).mapIndexed(
+              (int index, NamedType field) => _IndexedField(index, field));
+
       final Iterable<_IndexedField> nullableFields = indexedFields
           .where((_IndexedField field) => field.field.type.isNullable);
       final Iterable<_IndexedField> nonNullableFields = indexedFields
@@ -851,11 +854,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       // Determine the input parameter list, saved in a structured form for later
       // use as platform channel call arguments.
       final Iterable<_HostNamedType> hostParameters =
-          indexMap(func.parameters, (int i, NamedType arg) {
+          func.parameters.mapIndexed((int i, NamedType arg) {
         final HostDatatype hostType =
             getFieldHostDatatype(arg, _shortBaseCppTypeForBuiltinDartType);
         return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
-      });
+      },);
       final List<String> parameters = <String>[
         ...hostParameters.map((_HostNamedType arg) =>
             '${_flutterApiArgumentType(arg.hostType)} ${arg.name}'),
@@ -979,7 +982,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                   indent.writeln(
                       'const auto& args = std::get<EncodableList>(message);');
 
-                  enumerate(method.parameters, (int index, NamedType arg) {
+                  method.parameters.forEachIndexed((int index, NamedType arg) {
                     final HostDatatype hostType = getHostDatatype(
                         arg.type,
                         (TypeDeclaration x) =>
@@ -1676,7 +1679,7 @@ void _writeFunction(
     indent.add('(${parameters.first})');
   } else {
     indent.addScoped('(', null, () {
-      enumerate(parameters, (int index, final String param) {
+      parameters.forEachIndexed((int index, final String param) {
         if (index == parameters.length - 1) {
           indent.write('$param)');
         } else {

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
@@ -183,7 +185,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
     indent.write('public enum ${anEnum.name} ');
     indent.addScoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      anEnum.members.forEachIndexed((int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
@@ -369,8 +371,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       const String result = 'pigeonResult';
       indent.writeln(
           '${classDefinition.name} $result = new ${classDefinition.name}();');
-      enumerate(getFieldsInSerializationOrder(classDefinition),
-          (int index, final NamedType field) {
+      getFieldsInSerializationOrder(classDefinition)
+          .forEachIndexed((int index, final NamedType field) {
         final String fieldVariable = field.name;
         final String setter = _makeSetter(field);
         indent.writeln('Object $fieldVariable = list.get($index);');
@@ -463,9 +465,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           final Iterable<String> argTypes = func.parameters
               .map((NamedType e) => _nullsafeJavaTypeForDartType(e.type));
           final Iterable<String> argNames =
-              indexMap(func.parameters, _getSafeArgumentName);
+              func.parameters.mapIndexed(_getSafeArgumentName);
           final Iterable<String> enumSafeArgNames =
-              indexMap(func.parameters, getEnumSafeArgumentExpression);
+              func.parameters.mapIndexed(getEnumSafeArgumentExpression);
           if (func.parameters.length == 1) {
             sendArgument =
                 'new ArrayList<Object>(Collections.singletonList(${enumSafeArgNames.first}))';
@@ -716,7 +718,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             if (method.parameters.isNotEmpty) {
               indent.writeln(
                   'ArrayList<Object> args = (ArrayList<Object>) message;');
-              enumerate(method.parameters, (int index, NamedType arg) {
+              method.parameters.forEachIndexed((int index, NamedType arg) {
                 // The StandardMessageCodec can give us [Integer, Long] for
                 // a Dart 'int'.  To keep things simple we just use 64bit
                 // longs in Pigeon with Java.

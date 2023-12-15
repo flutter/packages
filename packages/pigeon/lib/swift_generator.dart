@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
@@ -100,7 +102,7 @@ import FlutterMacOS
 
     indent.write('enum ${anEnum.name}: Int ');
     indent.addScoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      anEnum.members.forEachIndexed((int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         indent.writeln('case ${_camelCase(member.name)} = $index');
@@ -191,8 +193,8 @@ import FlutterMacOS
     indent.write('static func fromList(_ list: [Any?]) -> $className? ');
 
     indent.addScoped('{', '}', () {
-      enumerate(getFieldsInSerializationOrder(classDefinition),
-          (int index, final NamedType field) {
+      getFieldsInSerializationOrder(classDefinition)
+          .forEachIndexed((int index, final NamedType field) {
         final String listValue = 'list[$index]';
 
         _writeDecodeCasting(
@@ -469,8 +471,8 @@ import FlutterMacOS
               final List<String> methodArgument = <String>[];
               if (components.arguments.isNotEmpty) {
                 indent.writeln('let args = message as! [Any?]');
-                enumerate(components.arguments,
-                    (int index, _SwiftFunctionArgument arg) {
+                components.arguments
+                    .forEachIndexed((int index, _SwiftFunctionArgument arg) {
                   final String argName =
                       _getSafeArgumentName(index, arg.namedType);
                   final String argIndex = 'args[$index]';
@@ -904,12 +906,12 @@ String _getMethodSignature(Method func) {
   } else {
     final Iterable<String> argTypes = func.parameters
         .map((NamedType e) => _nullsafeSwiftTypeForDartType(e.type));
-    final Iterable<String> argLabels = indexMap(components.arguments,
-        (int index, _SwiftFunctionArgument argument) {
+    final Iterable<String> argLabels = components.arguments
+        .mapIndexed((int index, _SwiftFunctionArgument argument) {
       return argument.label ?? _getArgumentName(index, argument.namedType);
     });
     final Iterable<String> argNames =
-        indexMap(func.parameters, _getSafeArgumentName);
+        func.parameters.mapIndexed(_getSafeArgumentName);
     final String argsSignature = map3(argTypes, argLabels, argNames,
             (String type, String label, String name) => '$label $name: $type')
         .join(', ');

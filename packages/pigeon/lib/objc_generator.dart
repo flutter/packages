@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
@@ -149,7 +151,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
     indent.write('typedef NS_ENUM(NSUInteger, $enumName) ');
     indent.addScoped('{', '};', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      anEnum.members.forEachIndexed((int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         // Capitalized first letter to ensure Swift compatibility
@@ -572,26 +574,27 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.addScoped('{', '}', () {
       const String resultName = 'pigeonResult';
       indent.writeln('$className *$resultName = [[$className alloc] init];');
-      enumerate(getFieldsInSerializationOrder(classDefinition),
-          (int index, final NamedType field) {
-        final bool isEnumType = field.type.isEnum;
-        final String valueGetter =
-            _listGetter('list', field, index, generatorOptions.prefix);
-        final String? primitiveExtractionMethod =
-            _nsnumberExtractionMethod(field.type);
-        final String ivarValueExpression;
-        if (primitiveExtractionMethod != null) {
-          ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
-        } else if (isEnumType) {
-          indent.writeln('NSNumber *${field.name}AsNumber = $valueGetter;');
-          indent.writeln(
-              '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
-          ivarValueExpression = field.name;
-        } else {
-          ivarValueExpression = valueGetter;
-        }
-        indent.writeln('$resultName.${field.name} = $ivarValueExpression;');
-      });
+      getFieldsInSerializationOrder(classDefinition).forEachIndexed(
+        (int index, final NamedType field) {
+          final bool isEnumType = field.type.isEnum;
+          final String valueGetter =
+              _listGetter('list', field, index, generatorOptions.prefix);
+          final String? primitiveExtractionMethod =
+              _nsnumberExtractionMethod(field.type);
+          final String ivarValueExpression;
+          if (primitiveExtractionMethod != null) {
+            ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
+          } else if (isEnumType) {
+            indent.writeln('NSNumber *${field.name}AsNumber = $valueGetter;');
+            indent.writeln(
+                '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
+            ivarValueExpression = field.name;
+          } else {
+            ivarValueExpression = valueGetter;
+          }
+          indent.writeln('$resultName.${field.name} = $ivarValueExpression;');
+        },
+      );
       indent.writeln('return $resultName;');
     });
 
@@ -858,7 +861,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       final Iterable<String> selectorComponents =
           _getSelectorComponents(func, lastSelectorComponent);
       final Iterable<String> argNames =
-          indexMap(func.parameters, _getSafeArgName);
+          func.parameters.mapIndexed(_getSafeArgName);
       final String callSignature =
           map2(selectorComponents.take(argNames.length), argNames,
               (String selectorComponent, String argName) {
@@ -1453,7 +1456,7 @@ String _makeObjcSignature({
       (int _, NamedType e) =>
           e.type.isNullable && e.type.isEnum ? '${e.name}Boxed' : e.name;
   final Iterable<String> argNames =
-      followedByOne(indexMap(func.parameters, argNameFunc), lastArgName);
+      followedByOne(func.parameters.mapIndexed(argNameFunc), lastArgName);
   final Iterable<String> selectorComponents =
       _getSelectorComponents(func, lastArgName);
   final Iterable<String> argTypes = followedByOne(

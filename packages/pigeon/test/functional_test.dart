@@ -6,34 +6,6 @@ import 'package:pigeon/functional.dart';
 import 'package:test/test.dart';
 
 void main() {
-  test('indexMap', () {
-    final List<String> items = <String>['a', 'b', 'c'];
-    final List<String> result =
-        indexMap(items, (int index, String value) => value + index.toString())
-            .toList();
-    expect(result[0], 'a0');
-    expect(result[1], 'b1');
-    expect(result[2], 'c2');
-  });
-
-  test('enumerate', () {
-    final List<String> items = <String>['a', 'b', 'c'];
-    int saw = 0;
-    enumerate(items, (int index, String value) {
-      if (index == 0) {
-        expect(value, 'a');
-        saw |= 0x1;
-      } else if (index == 1) {
-        expect(value, 'b');
-        saw |= 0x2;
-      } else if (index == 2) {
-        expect(value, 'c');
-        saw |= 0x4;
-      }
-    });
-    expect(saw, 0x7);
-  });
-
   test('map2', () {
     final List<int> result =
         map2(<int>[3, 5, 7], <int>[1, 2, 3], (int x, int y) => x * y).toList();

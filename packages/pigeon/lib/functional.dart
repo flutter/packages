@@ -2,44 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): replace usage with mapIndexed
-/// A [map] function that calls the function with an enumeration as well as the
-/// value.
-Iterable<U> indexMap<T, U>(
-    Iterable<T> iterable, U Function(int index, T value) func) sync* {
-  int index = 0;
-  for (final T value in iterable) {
-    yield func(index, value);
-    ++index;
-  }
-}
-
-// TODO(bparrishMines): replace usage with foldIndexed
-/// A [map] function that calls the function with an enumeration as well as the
-/// value.
-T indexFold<T, E>(
-  Iterable<E> iterable,
-  T initialValue,
-  T Function(T previousValue, int index, E element) combine,
-) {
-  int index = 0;
-  T value = initialValue;
-  for (final E element in iterable) {
-    value = combine(value, index, element);
-    ++index;
-  }
-  return value;
-}
-
-// TODO(bparrishMines): replace usage with forEachIndexed
-/// Performs like [forEach] but invokes [func] with an enumeration.
-void enumerate<T>(Iterable<T> iterable, void Function(int, T) func) {
-  int count = 0;
-  for (final T value in iterable) {
-    func(count, value);
-    ++count;
-  }
-}
+// // TODO(bparrishMines): replace usage with mapIndexed
+// /// A [map] function that calls the function with an enumeration as well as the
+// /// value.
+// Iterable<U> indexMap<T, U>(
+//     Iterable<T> iterable, U Function(int index, T value) func) sync* {
+//   int index = 0;
+//   for (final T value in iterable) {
+//     yield func(index, value);
+//     ++index;
+//   }
+// }
 
 /// A [map] function that takes in 2 iterables.  The [Iterable]s must be of
 /// equal length.

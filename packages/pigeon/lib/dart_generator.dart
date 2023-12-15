@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:code_builder/code_builder.dart' as cb;
+import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
 
 import 'ast.dart';
-import 'functional.dart';
 import 'generator.dart';
 import 'generator_tools.dart';
 
@@ -113,8 +113,13 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
     );
     indent.newln();
-    indent.writeln(
-        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;");
+    if (root.apis.any((Api api) => api is AstProxyApi)) {
+      indent.writeln(
+          "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;");
+    } else {
+      indent.writeln(
+          "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;");
+    }
     indent.writeln("import 'package:flutter/services.dart';");
     if (root.apis.any((Api api) => api is AstProxyApi)) {
       indent.writeln(
@@ -295,8 +300,8 @@ $resultAt != null
       indent.writeln('result as List<Object?>;');
       indent.write('return ${classDefinition.name}');
       indent.addScoped('(', ');', () {
-        enumerate(getFieldsInSerializationOrder(classDefinition),
-            (int index, final NamedType field) {
+        getFieldsInSerializationOrder(classDefinition)
+            .forEachIndexed((int index, final NamedType field) {
           indent.write('${field.name}: ');
           writeValueDecode(field, index);
           indent.addln(',');
@@ -402,7 +407,7 @@ $resultAt != null
                       'final List<Object?> $argsArray = (message as List<Object?>?)!;');
                   String argNameFunc(int index, NamedType type) =>
                       _getSafeArgumentName(index, type);
-                  enumerate(func.parameters, (int count, NamedType arg) {
+                  func.parameters.forEachIndexed((int count, NamedType arg) {
                     final String argType = _addGenericTypes(arg.type);
                     final String argName = argNameFunc(count, arg);
                     final String genericArgType =
@@ -424,7 +429,7 @@ $resultAt != null
                     }
                   });
                   final Iterable<String> argNames =
-                      indexMap(func.parameters, (int index, NamedType field) {
+                      func.parameters.mapIndexed((int index, NamedType field) {
                     final String name = _getSafeArgumentName(index, field);
                     return '$name${field.type.isNullable ? '' : '!'}';
                   });
@@ -532,7 +537,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
         String sendArgument = 'null';
         if (func.parameters.isNotEmpty) {
           final Iterable<String> argExpressions =
-              indexMap(func.parameters, (int index, NamedType type) {
+              func.parameters.mapIndexed((int index, NamedType type) {
             final String name = _getParameterName(index, type);
             if (type.type.isEnum) {
               return '$name${type.type.isNullable ? '?' : ''}.index';
@@ -1174,8 +1179,7 @@ class $codecName extends StandardMessageCodec {
                         ..toThis = true
                         ..required = method.required,
                     ),
-                  ...indexMap(
-                    constructor.parameters,
+                  ...constructor.parameters.mapIndexed(
                     (int index, NamedType parameter) => cb.Parameter(
                       (cb.ParameterBuilder builder) => builder
                         ..name = _getParameterName(index, parameter)
@@ -1185,7 +1189,7 @@ class $codecName extends StandardMessageCodec {
                         ..named = true
                         ..required = !parameter.type.isNullable,
                     ),
-                  ),
+                  )
                 ],
               )
               ..initializers.add(
@@ -1211,11 +1215,10 @@ class $codecName extends StandardMessageCodec {
                           cb.refer(
                             '${superClassApi != null ? '' : 'this.'}\$instanceManager.addDartCreatedInstance(this)',
                           ),
-                          ...indexMap(nonAttachedFields, _hostMessageArgument),
-                          ...indexMap(
-                            constructor.parameters,
+                          ...nonAttachedFields.mapIndexed(_hostMessageArgument),
+                          ...constructor.parameters.mapIndexed(
                             _hostMessageArgument,
-                          ),
+                          )
                         ],
                         cb.refer('Object?'),
                       )
@@ -1427,8 +1430,7 @@ class $codecName extends StandardMessageCodec {
                 ..isNullable = !method.required
                 ..requiredParameters.addAll(<cb.Reference>[
                   cb.refer('$apiName instance'),
-                  ...indexMap(
-                    method.parameters,
+                  ...method.parameters.mapIndexed(
                     (int index, NamedType parameter) {
                       return cb.refer(
                         '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
@@ -1456,14 +1458,12 @@ class $codecName extends StandardMessageCodec {
                   ..isNullable = !method.required
                   ..requiredParameters.addAll(<cb.Reference>[
                     cb.refer('${proxyApi.name} instance'),
-                    ...indexMap(
-                      method.parameters,
-                      (int index, NamedType parameter) {
-                        return cb.refer(
-                          '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
-                        );
-                      },
-                    ),
+                    ...method.parameters
+                        .mapIndexed((int index, NamedType parameter) {
+                      return cb.refer(
+                        '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
+                      );
+                    }),
                   ]),
               ),
           ),
@@ -1525,14 +1525,15 @@ class $codecName extends StandardMessageCodec {
                     (cb.FunctionTypeBuilder builder) => builder
                       ..returnType = cb.refer(apiName)
                       ..isNullable = true
-                      ..requiredParameters.addAll(indexMap(
-                        nonAttachedFields,
-                        (int index, Field field) {
-                          return cb.refer(
-                            '${_addGenericTypesNullable(field.type)} ${_getParameterName(index, field)}',
-                          );
-                        },
-                      )),
+                      ..requiredParameters.addAll(
+                        nonAttachedFields.mapIndexed(
+                          (int index, Field field) {
+                            return cb.refer(
+                              '${_addGenericTypesNullable(field.type)} ${_getParameterName(index, field)}',
+                            );
+                          },
+                        ),
+                      ),
                   ),
               ),
             for (final Method method in flutterMethods)
@@ -1548,14 +1549,13 @@ class $codecName extends StandardMessageCodec {
                       ..isNullable = true
                       ..requiredParameters.addAll(<cb.Reference>[
                         cb.refer('$apiName instance'),
-                        ...indexMap(
-                          method.parameters,
+                        ...method.parameters.mapIndexed(
                           (int index, NamedType parameter) {
                             return cb.refer(
                               '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
                             );
                           },
-                        )
+                        ),
                       ]),
                   ),
               ),
@@ -1611,14 +1611,11 @@ class $codecName extends StandardMessageCodec {
                               'Argument for \$${_varNamePrefix}channelName was null, expected non-null int.',
                             ),
                           ),
-                          ...indexFold<List<cb.Code>, Field>(
-                            nonAttachedFields,
+                          ...nonAttachedFields.foldIndexed<List<cb.Code>>(
                             <cb.Code>[],
-                            (List<cb.Code> list, int index, Field field) {
-                              return list
-                                ..addAll(
-                                  _messageArg(index + 1, field),
-                                );
+                            (int index, List<cb.Code> previous, Field field) {
+                              return previous
+                                ..addAll(_messageArg(index + 1, field));
                             },
                           ),
                           cb
@@ -1629,48 +1626,43 @@ class $codecName extends StandardMessageCodec {
                               .call(<cb.Expression>[
                             cb
                                 .refer(r'$detached?.call')
-                                .call(
-                                  indexMap(
-                                    nonAttachedFields,
+                                .call(nonAttachedFields.mapIndexed(
+                              (int index, Field field) {
+                                // The calling instance is the first arg.
+                                final String name = _getSafeArgumentName(
+                                  index + 1,
+                                  field,
+                                );
+                                return cb.refer(name).nullCheckedIf(
+                                      !field.type.isNullable,
+                                    );
+                              },
+                            )).ifNullThen(
+                              cb.refer('$apiName.\$detached').call(
+                                <cb.Expression>[],
+                                <String, cb.Expression>{
+                                  r'$binaryMessenger':
+                                      cb.refer(r'$binaryMessenger'),
+                                  r'$instanceManager':
+                                      cb.refer(r'$instanceManager'),
+                                  ...nonAttachedFields.toList().asMap().map(
                                     (int index, Field field) {
-                                      // The calling instance is the first arg.
-                                      final String name = _getSafeArgumentName(
+                                      final String argName =
+                                          _getSafeArgumentName(
                                         index + 1,
                                         field,
                                       );
-                                      return cb.refer(name).nullCheckedIf(
-                                            !field.type.isNullable,
-                                          );
+                                      return MapEntry<String, cb.Expression>(
+                                        field.name,
+                                        cb.refer(argName).nullCheckedIf(
+                                              !field.type.isNullable,
+                                            ),
+                                      );
                                     },
-                                  ),
-                                )
-                                .ifNullThen(
-                                  cb.refer('$apiName.\$detached').call(
-                                    <cb.Expression>[],
-                                    <String, cb.Expression>{
-                                      r'$binaryMessenger':
-                                          cb.refer(r'$binaryMessenger'),
-                                      r'$instanceManager':
-                                          cb.refer(r'$instanceManager'),
-                                      ...nonAttachedFields.toList().asMap().map(
-                                        (int index, Field field) {
-                                          final String argName =
-                                              _getSafeArgumentName(
-                                            index + 1,
-                                            field,
-                                          );
-                                          return MapEntry<String,
-                                              cb.Expression>(
-                                            field.name,
-                                            cb.refer(argName).nullCheckedIf(
-                                                  !field.type.isNullable,
-                                                ),
-                                          );
-                                        },
-                                      )
-                                    },
-                                  ),
-                                ),
+                                  )
+                                },
+                              ),
+                            ),
                             cb.refer('instanceIdentifier').nullChecked
                           ]).statement,
                           const cb.Code('return;'),
@@ -1696,8 +1688,7 @@ class $codecName extends StandardMessageCodec {
                     .call(
                   <cb.Expression>[
                     cb.refer('instance').nullChecked,
-                    ...indexMap(
-                      method.parameters,
+                    ...method.parameters.mapIndexed(
                       (int index, NamedType parameter) {
                         final String name = _getSafeArgumentName(
                           index + 1,
@@ -1755,16 +1746,18 @@ class $codecName extends StandardMessageCodec {
                                     'Argument for \$${_varNamePrefix}channelName was null, expected non-null $apiName.',
                                   ),
                                 ),
-                                ...indexFold<List<cb.Code>, NamedType>(
-                                  method.parameters,
+                                ...method.parameters.foldIndexed<List<cb.Code>>(
                                   <cb.Code>[],
                                   (
-                                    List<cb.Code> list,
                                     int index,
-                                    NamedType type,
+                                    List<cb.Code> previous,
+                                    Parameter parameter,
                                   ) {
-                                    return list
-                                      ..addAll(_messageArg(index + 1, type));
+                                    return previous
+                                      ..addAll(_messageArg(
+                                        index + 1,
+                                        parameter,
+                                      ));
                                   },
                                 ),
                                 const cb.Code('try {'),
@@ -1930,16 +1923,17 @@ class $codecName extends StandardMessageCodec {
               _addGenericTypesNullable(method.returnType),
               isFuture: true,
             )
-            ..requiredParameters.addAll(indexMap(
-              method.parameters,
-              (int index, NamedType parameter) => cb.Parameter(
-                (cb.ParameterBuilder builder) => builder
-                  ..name = _getParameterName(index, parameter)
-                  ..type = cb.refer(
-                    _addGenericTypesNullable(parameter.type),
-                  ),
+            ..requiredParameters.addAll(
+              method.parameters.mapIndexed(
+                (int index, NamedType parameter) => cb.Parameter(
+                  (cb.ParameterBuilder builder) => builder
+                    ..name = _getParameterName(index, parameter)
+                    ..type = cb.refer(
+                      _addGenericTypesNullable(parameter.type),
+                    ),
+                ),
               ),
-            ))
+            )
             ..optionalParameters.addAll(<cb.Parameter>[
               if (method.isStatic) ...<cb.Parameter>[
                 cb.Parameter(
@@ -1979,7 +1973,7 @@ class $codecName extends StandardMessageCodec {
                     cb.literalList(
                       <Object?>[
                         if (!method.isStatic) cb.refer('this'),
-                        ...indexMap(method.parameters, _hostMessageArgument),
+                        ...method.parameters.mapIndexed(_hostMessageArgument),
                       ],
                       cb.refer('Object?'),
                     )
@@ -2372,7 +2366,8 @@ void _writeCodec(Indent indent, String codecName, Api api, Root root) {
     indent.writeln('@override');
     indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
     indent.addScoped('{', '}', () {
-      enumerate(codecClasses, (int index, final EnumeratedClass customClass) {
+      codecClasses
+          .forEachIndexed((int index, final EnumeratedClass customClass) {
         final String ifValue = 'if (value is ${customClass.name}) ';
         if (index == 0) {
           indent.write('');

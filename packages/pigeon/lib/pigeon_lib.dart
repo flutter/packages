@@ -22,6 +22,7 @@ import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:collection/collection.dart' as collection;
+import 'package:collection/collection.dart';
 import 'package:path/path.dart' as path;
 
 import 'ast.dart';

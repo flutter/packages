@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
@@ -124,7 +126,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent, anEnum.documentationComments, _docCommentSpec);
     indent.write('enum class ${anEnum.name}(val raw: Int) ');
     indent.addScoped('{', '}', () {
-      enumerate(anEnum.members, (int index, final EnumMember member) {
+      anEnum.members.forEachIndexed((int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
         indent.write('${member.name.toUpperCase()}($index)');
@@ -240,8 +242,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       indent.write('fun fromList(list: List<Any?>): $className ');
 
       indent.addScoped('{', '}', () {
-        enumerate(getFieldsInSerializationOrder(classDefinition),
-            (int index, final NamedType field) {
+        getFieldsInSerializationOrder(classDefinition)
+            .forEachIndexed((int index, final NamedType field) {
           final String listValue = 'list[$index]';
           final String fieldType = _kotlinTypeForDartType(field.type);
 
@@ -375,9 +377,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           final Iterable<String> argTypes = func.parameters
               .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
           final Iterable<String> argNames =
-              indexMap(func.parameters, _getSafeArgumentName);
-          final Iterable<String> enumSafeArgNames = indexMap(
-              func.parameters,
+              func.parameters.mapIndexed(_getSafeArgumentName);
+          final Iterable<String> enumSafeArgNames = func.parameters.mapIndexed(
               (int count, NamedType type) =>
                   _getEnumSafeArgumentExpression(count, type));
           sendArgument = 'listOf(${enumSafeArgNames.join(', ')})';
@@ -548,7 +549,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   final List<String> methodArguments = <String>[];
                   if (method.parameters.isNotEmpty) {
                     indent.writeln('val args = message as List<Any?>');
-                    enumerate(method.parameters, (int index, NamedType arg) {
+                    method.parameters
+                        .forEachIndexed((int index, NamedType arg) {
                       final String argName = _getSafeArgumentName(index, arg);
                       final String argIndex = 'args[$index]';
                       indent.writeln(
