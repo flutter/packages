@@ -1147,10 +1147,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         ),
         name: formalParameter.name?.lexeme ?? '',
         offset: formalParameter.offset,
-        isNamed: isNamed,
-        isOptional: isOptional,
-        isPositional: isPositional,
-        isRequired: isRequired,
+        isNamed: isNamed ?? formalParameter.isNamed,
+        isOptional: isOptional ?? formalParameter.isOptional,
+        isPositional: isPositional ?? formalParameter.isPositional,
+        isRequired: isRequired ?? formalParameter.isRequired,
         defaultValue: defaultValue,
       );
     } else if (simpleFormalParameter != null) {

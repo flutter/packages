@@ -1,6 +1,7 @@
 ## 15.0.2
 
 * Prevents optional and non-positional parameters in flutterApis.
+* [dart] Fixes named parameters in test output of host API methods.
 
 ## 15.0.1
 
