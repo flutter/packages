@@ -107,18 +107,19 @@ class RouteBuilder {
     }
     assert(matchList.isError || !matchList.last.route.redirectOnly);
     return builderWithNav(
-        context,
-        _CustomNavigator(
-          navigatorKey: configuration.navigatorKey,
-          observers: observers,
-          navigatorRestorationId: restorationScopeId,
-          onPopPageWithRouteMatch: onPopPageWithRouteMatch,
-          matchList: matchList,
-          matches: matchList.matches,
-          configuration: configuration,
-          errorBuilder: errorBuilder,
-          errorPageBuilder: errorPageBuilder,
-        ));
+      context,
+      _CustomNavigator(
+        navigatorKey: configuration.navigatorKey,
+        observers: observers,
+        navigatorRestorationId: restorationScopeId,
+        onPopPageWithRouteMatch: onPopPageWithRouteMatch,
+        matchList: matchList,
+        matches: matchList.matches,
+        configuration: configuration,
+        errorBuilder: errorBuilder,
+        errorPageBuilder: errorPageBuilder,
+      ),
+    );
   }
 }
 
@@ -138,6 +139,12 @@ class _CustomNavigator extends StatefulWidget {
 
   final GlobalKey<NavigatorState> navigatorKey;
   final List<NavigatorObserver> observers;
+
+  /// The actual [RouteMatchBase]s to be built.
+  ///
+  /// This can be different from matches in [matchList] if this widget is used
+  /// to build navigator in shell route. In this case, these matches come from
+  /// the [ShellRouteMatch.matches].
   final List<RouteMatchBase> matches;
   final RouteMatchList matchList;
   final RouteConfiguration configuration;
@@ -411,16 +418,12 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       registry: _registry,
       child: HeroControllerScope(
         controller: _controller!,
-        child: Builder(
-          builder: (BuildContext context) {
-            return Navigator(
-              key: widget.navigatorKey,
-              restorationScopeId: widget.navigatorRestorationId,
-              pages: _pages!,
-              observers: widget.observers,
-              onPopPage: _handlePopPage,
-            );
-          },
+        child: Navigator(
+          key: widget.navigatorKey,
+          restorationScopeId: widget.navigatorRestorationId,
+          pages: _pages!,
+          observers: widget.observers,
+          onPopPage: _handlePopPage,
         ),
       ),
     );

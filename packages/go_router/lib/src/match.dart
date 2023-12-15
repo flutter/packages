@@ -118,17 +118,17 @@ abstract class RouteMatchBase with Diagnosticable {
       );
     } else {
       assert(false, 'Unexpected route type: $route');
-      return const <GlobalKey<NavigatorState>?, List<RouteMatchBase>>{};
+      return _empty;
     }
-    // Grabs the route matches for the scope navigator key and put it into the
+    // Grab the route matches for the scope navigator key and put it into the
     // matches for `null`.
     if (result.containsKey(scopedNavigatorKey)) {
-      final List<RouteMatchBase> matchForScopedNavigator =
+      final List<RouteMatchBase> matchesForScopedNavigator =
           result.remove(scopedNavigatorKey)!;
-      assert(matchForScopedNavigator.isNotEmpty);
+      assert(matchesForScopedNavigator.isNotEmpty);
       result
           .putIfAbsent(null, () => <RouteMatchBase>[])
-          .addAll(matchForScopedNavigator);
+          .addAll(matchesForScopedNavigator);
     }
     return result;
   }
@@ -179,11 +179,12 @@ abstract class RouteMatchBase with Diagnosticable {
       pageKey: ValueKey<String>(route.hashCode.toString()),
       navigatorKey: navigatorKeyUsed,
     );
+    subRouteMatches.putIfAbsent(parentKey, () => <RouteMatchBase>[]).insert(
+          0,
+          result,
+        );
 
-    return <GlobalKey<NavigatorState>?, List<RouteMatchBase>>{
-      parentKey: <RouteMatchBase>[result],
-      ...subRouteMatches,
-    };
+    return subRouteMatches;
   }
 
   static Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>
@@ -415,13 +416,6 @@ class ShellRouteMatch extends RouteMatchBase {
   @override
   int get hashCode =>
       Object.hash(route, matchedLocation, Object.hashAll(matches), pageKey);
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-        .add(DiagnosticsProperty<List<RouteMatchBase>>('matches', matches));
-  }
 }
 
 /// The route match that represent route pushed through [GoRouter.push].

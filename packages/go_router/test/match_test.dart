@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:go_router/src/route.dart';
 
 void main() {
   group('RouteMatch', () {
@@ -102,6 +103,94 @@ void main() {
       expect(matches2.length, 1);
       expect(matches1.first.pageKey, matches2.first.pageKey);
     });
+  });
+
+  test('complex parentNavigatorKey works', () {
+    final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>();
+    final GlobalKey<NavigatorState> shell1 = GlobalKey<NavigatorState>();
+    final GlobalKey<NavigatorState> shell2 = GlobalKey<NavigatorState>();
+    final GoRoute route = GoRoute(
+      path: '/',
+      builder: _builder,
+      routes: <RouteBase>[
+        ShellRoute(
+          navigatorKey: shell1,
+          builder: _shellBuilder,
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'a',
+              builder: _builder,
+              routes: <RouteBase>[
+                GoRoute(
+                  parentNavigatorKey: root,
+                  path: 'b',
+                  builder: _builder,
+                  routes: <RouteBase>[
+                    ShellRoute(
+                      navigatorKey: shell2,
+                      builder: _shellBuilder,
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'c',
+                          builder: _builder,
+                          routes: <RouteBase>[
+                            GoRoute(
+                              parentNavigatorKey: root,
+                              path: 'd',
+                              builder: _builder,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+    final Map<String, String> pathParameters = <String, String>{};
+    final List<RouteMatchBase> matches = RouteMatchBase.match(
+      route: route,
+      pathParameters: pathParameters,
+      uri: Uri.parse('/a/b/c/d'),
+      rootNavigatorKey: root,
+    );
+    expect(matches.length, 4);
+    expect(
+      matches[0].route,
+      isA<GoRoute>().having(
+        (GoRoute route) => route.path,
+        'path',
+        '/',
+      ),
+    );
+    expect(
+      matches[1].route,
+      isA<ShellRoute>().having(
+        (ShellRoute route) => route.navigatorKey,
+        'navigator key',
+        shell1,
+      ),
+    );
+    expect(
+      matches[2].route,
+      isA<GoRoute>().having(
+        (GoRoute route) => route.path,
+        'path',
+        'b',
+      ),
+    );
+    expect(
+      matches[3].route,
+      isA<GoRoute>().having(
+        (GoRoute route) => route.path,
+        'path',
+        'd',
+      ),
+    );
   });
 
   group('ImperativeRouteMatch', () {

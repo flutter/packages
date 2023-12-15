@@ -1,6 +1,6 @@
 ## 13.0.0
 
-- Refactored `RouteMatchList` and imperative APIs.
+- Refactors `RouteMatchList` and imperative APIs.
 - **BREAKING CHANGE**:
   - RouteMatchList structure changed.
   - Matching logic updated.
