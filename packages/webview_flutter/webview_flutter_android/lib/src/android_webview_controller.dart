@@ -77,7 +77,7 @@ class AndroidWebViewPermissionResourceType
 
 /// Implementation of the [PlatformWebViewController] with the Android WebView API.
 class AndroidWebViewController extends PlatformWebViewController {
-  /// Creates a new [AndroidWebViewCookieManager].
+  /// Creates a new [AndroidWebViewController].
   AndroidWebViewController(PlatformWebViewControllerCreationParams params)
       : super.implementation(params is AndroidWebViewControllerCreationParams
             ? params
@@ -1268,6 +1268,31 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(AndroidUrlChange(url: url, isReload: isReload));
         }
       },
+      onReceivedHttpAuthRequest: (
+        android_webview.WebView webView,
+        android_webview.HttpAuthHandler httpAuthHandler,
+        String host,
+        String realm,
+      ) {
+        final void Function(HttpAuthRequest)? callback =
+            weakThis.target?._onHttpAuthRequest;
+        if (callback != null) {
+          callback(
+            HttpAuthRequest(
+              onProceed: (WebViewCredential credential) {
+                httpAuthHandler.proceed(credential.user, credential.password);
+              },
+              onCancel: () {
+                httpAuthHandler.cancel();
+              },
+              host: host,
+              realm: realm,
+            ),
+          );
+        } else {
+          httpAuthHandler.cancel();
+        }
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -1324,6 +1349,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   NavigationRequestCallback? _onNavigationRequest;
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
+  HttpAuthRequestCallback? _onHttpAuthRequest;
 
   void _handleNavigation(
     String url, {
@@ -1409,5 +1435,12 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {
     _onUrlChange = onUrlChange;
+  }
+
+  @override
+  Future<void> setOnHttpAuthRequest(
+    HttpAuthRequestCallback onHttpAuthRequest,
+  ) async {
+    _onHttpAuthRequest = onHttpAuthRequest;
   }
 }
