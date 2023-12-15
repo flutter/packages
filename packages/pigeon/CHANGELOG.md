@@ -1,3 +1,7 @@
+## 15.0.2
+
+* Prevents optional and non-positional parameters in flutterApis.
+
 ## 15.0.1
 
 * [java] Adds @CanIgnoreReturnValue annotation to class builder.
