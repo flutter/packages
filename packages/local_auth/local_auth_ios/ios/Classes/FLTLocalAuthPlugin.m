@@ -179,12 +179,15 @@ FLAAuthCompletion _completionHandler = nil;
                   style:UIAlertActionStyleDefault
                 handler:^(UIAlertAction *action) {
                   NSURL *url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+          // *************************** GTCXM-152 START ***********************
+          // [Spike] Trigger callback when go to Device Setting
+          // *******************************************************************
                   [[UIApplication sharedApplication] openURL:url
                                                      options:@{}
                                            completionHandler:^(BOOL success) {
                       _completionHandler = completion;
                   }];
-
+          // *************************** GTCXM-152 END ***********************
                 }];
     [alert addAction:additionalAction];
   }
@@ -238,6 +241,9 @@ FLAAuthCompletion _completionHandler = nil;
             strings:(FLAAuthStrings *)strings
          completion:(nonnull FLAAuthCompletion)completion {
   FLAAuthResult result = FLAAuthResultErrorNotAvailable;
+  // *************************** GTCXM-152 START ***********************
+  // [Spike] Trigger callback when go to Device Setting
+  // *******************************************************************
   switch (authError.code) {
     case LAErrorPasscodeNotSet:
     case LAErrorBiometryNotEnrolled:
@@ -294,11 +300,15 @@ FLAAuthCompletion _completionHandler = nil;
           nil);
       break;
   }
+  // *************************** GTCXM-152 END ***********************
 }
 
 #pragma mark - AppDelegate
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
+  // *************************** GTCXM-152 START ***********************
+  // [Spike] Trigger callback when go to Device Setting
+  // *******************************************************************
   NSLog(@"App resume");
   if (_completionHandler != nil) {
         _completionHandler(
@@ -308,6 +318,7 @@ FLAAuthCompletion _completionHandler = nil;
         nil);
       _completionHandler = nil;
   }
+  // *************************** GTCXM-152 END ***********************
   if (self.lastCallState != nil) {
     [self authenticateWithOptions:_lastCallState.options
                           strings:_lastCallState.strings

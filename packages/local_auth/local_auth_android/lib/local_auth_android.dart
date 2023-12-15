@@ -50,10 +50,14 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     switch (result) {
       case AuthResult.success:
         return true;
+    // *************************** GTCXM-152 START ***********************
+    // [Spike] Trigger callback when go to Device Setting
+    // *******************************************************************
       case AuthResult.callbackSetting:
         throw PlatformException(
             code: 'CallbackSetting',
             message: 'CallbackSetting');
+    // *************************** GTCXM-152 END ***********************
       case AuthResult.failure:
         return false;
       case AuthResult.errorAlreadyInProgress:

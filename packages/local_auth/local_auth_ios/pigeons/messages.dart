@@ -53,6 +53,9 @@ enum AuthResult {
   /// No passcode is set.
   errorPasscodeNotSet,
 
+  // *************************** GTCXM-151 START ***********************
+  // Handle other exception cases
+  // *******************************************************************
   callbackSetting,
 
   iOSLockedOut,
@@ -60,6 +63,7 @@ enum AuthResult {
   errorUserFallback,
 
   errorUserCancel,
+  // *************************** GTCXM-151 END ***********************
 }
 
 class AuthOptions {

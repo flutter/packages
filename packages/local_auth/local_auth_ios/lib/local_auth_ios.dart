@@ -56,6 +56,9 @@ class LocalAuthIOS extends LocalAuthPlatform {
             code: 'NotAvailable',
             message: resultDetails.errorMessage,
             details: resultDetails.errorDetails);
+      // *************************** GTCXM-151 START ***********************
+      // Handle other exception cases
+      // *******************************************************************
       case AuthResult.callbackSetting:
         throw PlatformException(
             code: 'CallbackSetting',
@@ -76,6 +79,7 @@ class LocalAuthIOS extends LocalAuthPlatform {
             code: 'ErrorUserCancel',
             message: "errorUserCancel",
             details: "errorUserCancel");  
+      // *************************** GTCXM-151 END ***********************
       case AuthResult.errorNotEnrolled:
         throw PlatformException(
             code: 'NotEnrolled',

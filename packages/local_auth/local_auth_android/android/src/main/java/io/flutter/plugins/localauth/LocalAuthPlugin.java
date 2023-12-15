@@ -64,9 +64,13 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
       new PluginRegistry.ActivityResultListener() {
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+          // *************************** GTCXM-152 START ***********************
+          // [Spike] Trigger callback when go to Device Setting
+          // *******************************************************************
           if (requestCode == REQUEST_SETTING_CALLBACK) {
             authHelper.returnCallback();
           }
+          // *************************** GTCXM-152 END ***********************
           if (requestCode == LOCK_REQUEST_CODE) {
             if (resultCode == RESULT_OK && lockRequestResult != null) {
               onAuthenticationCompleted(lockRequestResult, AuthResult.SUCCESS);
