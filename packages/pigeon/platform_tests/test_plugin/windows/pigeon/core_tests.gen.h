@@ -59,9 +59,6 @@ class ErrorOr {
   friend class HostTrivialApi;
   friend class HostSmallApi;
   friend class FlutterSmallApi;
-  friend class ProxyIntegrationCoreApi;
-  friend class ProxyApiSuperClass;
-  friend class ProxyApiInterface;
   ErrorOr() = default;
   T TakeValue() && { return std::get<T>(std::move(v_)); }
 

@@ -202,7 +202,12 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
     _writeFlutterError(indent);
     if (hasHostApi) {
-      _writeErrorOr(indent, friends: root.apis.map((Api api) => api.name));
+      _writeErrorOr(
+        indent,
+        friends: root.apis
+            .where((Api api) => api is AstFlutterApi || api is AstHostApi)
+            .map((Api api) => api.name),
+      );
     }
     if (hasFlutterApi) {
       // Nothing yet.
