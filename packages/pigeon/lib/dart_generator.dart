@@ -1006,7 +1006,7 @@ class $codecName extends StandardMessageCodec {
         superClassApisChain.isNotEmpty ? superClassApisChain.first : null;
 
     final Set<AstProxyApi> interfacesApis = recursiveFindAllInterfacesApis(
-      api.interfacesNames,
+      api,
       allProxyApis,
     );
 
@@ -1029,7 +1029,7 @@ class $codecName extends StandardMessageCodec {
 
       final Set<AstProxyApi> superClassInterfacesApis =
           recursiveFindAllInterfacesApis(
-        superClassApi.interfacesNames,
+        superClassApi,
         allProxyApis,
       );
       for (final AstProxyApi proxyApi in superClassInterfacesApis) {

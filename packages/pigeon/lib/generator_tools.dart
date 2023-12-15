@@ -606,21 +606,31 @@ enum FileType {
 
 /// Recursively search for all the interfaces apis from a list of names of
 /// interfaces.
+///
+/// This method assumes that all interfaces names can be found in
+/// [allProxyApis]. Otherwise, throws [ArgumentError].
 Set<AstProxyApi> recursiveFindAllInterfacesApis(
-  Set<String> interfaces,
+  AstProxyApi api,
   Iterable<AstProxyApi> allProxyApis,
 ) {
   final Set<AstProxyApi> interfacesApis = <AstProxyApi>{};
 
   for (final AstProxyApi proxyApi in allProxyApis) {
-    if (interfaces.contains(proxyApi.name)) {
+    if (api.interfacesNames.contains(proxyApi.name)) {
       interfacesApis.add(proxyApi);
     }
   }
 
+  if (interfacesApis.length != api.interfacesNames.length) {
+    throw ArgumentError(
+      'Could not find a ProxyApi for every interface name: '
+      '${api.interfacesNames}, ${allProxyApis.map((Api api) => api.name)}',
+    );
+  }
+
   for (final AstProxyApi proxyApi in Set<AstProxyApi>.from(interfacesApis)) {
     interfacesApis.addAll(
-      recursiveFindAllInterfacesApis(proxyApi.interfacesNames, allProxyApis),
+      recursiveFindAllInterfacesApis(proxyApi, allProxyApis),
     );
   }
 
@@ -631,6 +641,9 @@ Set<AstProxyApi> recursiveFindAllInterfacesApis(
 ///
 /// This method assumes the super classes of each ProxyApi doesn't create a
 /// loop. Throws a [StateError] if a loop is found.
+///
+/// This method also assumes that all super class names can be found in
+/// [allProxyApis].
 List<AstProxyApi> recursiveGetSuperClassApisChain(
   AstProxyApi proxyApi,
   Iterable<AstProxyApi> allProxyApis,
@@ -643,8 +656,9 @@ List<AstProxyApi> recursiveGetSuperClassApisChain(
       final Iterable<String> apiNames = proxyApis.map(
         (AstProxyApi api) => api.name,
       );
-      throw StateError(
-        'Loop found when processing super classes for a ProxyApi: ${proxyApi.name},${apiNames.join(',')}',
+      throw ArgumentError(
+        'Loop found when processing super classes for a ProxyApi: '
+        '${proxyApi.name},${apiNames.join(',')}',
       );
     }
 
@@ -656,7 +670,14 @@ List<AstProxyApi> recursiveGetSuperClassApisChain(
       }
     }
 
-    currentProxyApiName = nextProxyApi?.superClassName;
+    if (nextProxyApi == null) {
+      throw ArgumentError(
+        'Could not find a ProxyApi for every super class name: '
+        '$currentProxyApiName, ${allProxyApis.map((Api api) => api.name)}',
+      );
+    }
+
+    currentProxyApiName = nextProxyApi.superClassName;
   }
 
   return proxyApis;
