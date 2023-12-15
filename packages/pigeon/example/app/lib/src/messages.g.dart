@@ -8,8 +8,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
 PlatformException _createConnectionError(String channelName) {

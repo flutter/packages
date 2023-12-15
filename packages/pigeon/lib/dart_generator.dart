@@ -1047,7 +1047,7 @@ class $codecName extends StandardMessageCodec {
     final cb.Class proxyApi = cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = api.name
-        ..extend = _referOrNull(superClassApi?.name)
+        ..extend = superClassApi != null ? cb.refer(superClassApi.name) : null
         ..implements.addAll(<cb.Reference>[
           if (api.interfacesNames.isNotEmpty)
             ...api.interfacesNames.map((String name) => cb.refer(name))
@@ -1141,10 +1141,9 @@ class $codecName extends StandardMessageCodec {
                   ),
                   cb.Parameter((cb.ParameterBuilder builder) => builder
                     ..name = r'$instanceManager'
-                    ..type = _referOrNull(
-                      superClassApi == null ? r'$InstanceManager' : null,
-                      isNullable: true,
-                    )
+                    ..type = superClassApi == null
+                        ? cb.refer(r'$InstanceManager?')
+                        : null
                     ..named = true
                     ..toSuper = superClassApi != null),
                   for (final Field field in nonAttachedFields)
@@ -1297,10 +1296,9 @@ class $codecName extends StandardMessageCodec {
             cb.Parameter(
               (cb.ParameterBuilder builder) => builder
                 ..name = r'$instanceManager'
-                ..type = _referOrNull(
-                  superClassApi == null ? r'$InstanceManager' : null,
-                  isNullable: true,
-                )
+                ..type = superClassApi == null
+                    ? cb.refer(r'$InstanceManager?')
+                    : null
                 ..named = true
                 ..toSuper = superClassApi != null,
             ),
@@ -1423,7 +1421,7 @@ class $codecName extends StandardMessageCodec {
             ))
             ..type = cb.FunctionType(
               (cb.FunctionTypeBuilder builder) => builder
-                ..returnType = _referOrNull(
+                ..returnType = _refer(
                   _addGenericTypesNullable(method.returnType),
                   isFuture: method.isAsynchronous,
                 )
@@ -1451,7 +1449,7 @@ class $codecName extends StandardMessageCodec {
                   method.documentationComments, _docCommentSpec))
               ..type = cb.FunctionType(
                 (cb.FunctionTypeBuilder builder) => builder
-                  ..returnType = _referOrNull(
+                  ..returnType = _refer(
                     _addGenericTypesNullable(method.returnType),
                     isFuture: method.isAsynchronous,
                   )
@@ -1542,7 +1540,7 @@ class $codecName extends StandardMessageCodec {
                   ..name = method.name
                   ..type = cb.FunctionType(
                     (cb.FunctionTypeBuilder builder) => builder
-                      ..returnType = _referOrNull(
+                      ..returnType = _refer(
                         _addGenericTypesNullable(method.returnType),
                         isFuture: method.isAsynchronous,
                       )
@@ -1773,7 +1771,7 @@ class $codecName extends StandardMessageCodec {
                                   cb
                                       .declareFinal(
                                         'output',
-                                        type: _referOrNull(
+                                        type: _refer(
                                           _addGenericTypes(method.returnType),
                                           isNullable:
                                               method.returnType.isNullable ||
@@ -1919,7 +1917,7 @@ class $codecName extends StandardMessageCodec {
               method.documentationComments,
               _docCommentSpec,
             ))
-            ..returns = _referOrNull(
+            ..returns = _refer(
               _addGenericTypesNullable(method.returnType),
               isFuture: true,
             )
@@ -2329,17 +2327,15 @@ cb.Expression _hostMessageArgument(
   }
 }
 
-// TODO: can probably get rid of the OrNull
-cb.Reference? _referOrNull(
-  String? symbol, {
+cb.Reference _refer(
+  String symbol, {
   bool isFuture = false,
   bool isNullable = false,
 }) {
   final String nullability = isNullable ? '?' : '';
-  return symbol != null
-      ? cb.refer(
-          isFuture ? 'Future<$symbol$nullability>' : '$symbol$nullability')
-      : null;
+  return cb.refer(
+    isFuture ? 'Future<$symbol$nullability>' : '$symbol$nullability',
+  );
 }
 
 String _escapeForDartSingleQuotedString(String raw) {
