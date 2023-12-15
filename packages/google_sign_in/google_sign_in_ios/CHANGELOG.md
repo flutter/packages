@@ -1,3 +1,7 @@
+## 5.7.1
+
+* Changes `pigeon` to a dev dependency.
+
 ## 5.7.0
 
 * Adds support for macOS.
