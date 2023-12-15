@@ -574,27 +574,26 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.addScoped('{', '}', () {
       const String resultName = 'pigeonResult';
       indent.writeln('$className *$resultName = [[$className alloc] init];');
-      getFieldsInSerializationOrder(classDefinition).forEachIndexed(
-        (int index, final NamedType field) {
-          final bool isEnumType = field.type.isEnum;
-          final String valueGetter =
-              _listGetter('list', field, index, generatorOptions.prefix);
-          final String? primitiveExtractionMethod =
-              _nsnumberExtractionMethod(field.type);
-          final String ivarValueExpression;
-          if (primitiveExtractionMethod != null) {
-            ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
-          } else if (isEnumType) {
-            indent.writeln('NSNumber *${field.name}AsNumber = $valueGetter;');
-            indent.writeln(
-                '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
-            ivarValueExpression = field.name;
-          } else {
-            ivarValueExpression = valueGetter;
-          }
-          indent.writeln('$resultName.${field.name} = $ivarValueExpression;');
-        },
-      );
+      getFieldsInSerializationOrder(classDefinition)
+          .forEachIndexed((int index, final NamedType field) {
+        final bool isEnumType = field.type.isEnum;
+        final String valueGetter =
+            _listGetter('list', field, index, generatorOptions.prefix);
+        final String? primitiveExtractionMethod =
+            _nsnumberExtractionMethod(field.type);
+        final String ivarValueExpression;
+        if (primitiveExtractionMethod != null) {
+          ivarValueExpression = '[$valueGetter $primitiveExtractionMethod]';
+        } else if (isEnumType) {
+          indent.writeln('NSNumber *${field.name}AsNumber = $valueGetter;');
+          indent.writeln(
+              '${_enumName(field.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}${field.name} = ${field.name}AsNumber == nil ? nil : [[${_enumName(field.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${field.name}AsNumber integerValue]];');
+          ivarValueExpression = field.name;
+        } else {
+          ivarValueExpression = valueGetter;
+        }
+        indent.writeln('$resultName.${field.name} = $ivarValueExpression;');
+      });
       indent.writeln('return $resultName;');
     });
 

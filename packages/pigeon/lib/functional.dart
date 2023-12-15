@@ -2,18 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// // TODO(bparrishMines): replace usage with mapIndexed
-// /// A [map] function that calls the function with an enumeration as well as the
-// /// value.
-// Iterable<U> indexMap<T, U>(
-//     Iterable<T> iterable, U Function(int index, T value) func) sync* {
-//   int index = 0;
-//   for (final T value in iterable) {
-//     yield func(index, value);
-//     ++index;
-//   }
-// }
-
 /// A [map] function that takes in 2 iterables.  The [Iterable]s must be of
 /// equal length.
 Iterable<V> map2<T, U, V>(

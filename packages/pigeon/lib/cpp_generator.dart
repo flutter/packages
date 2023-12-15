@@ -854,14 +854,11 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       // Determine the input parameter list, saved in a structured form for later
       // use as platform channel call arguments.
       final Iterable<_HostNamedType> hostParameters =
-          func.parameters.mapIndexed(
-        (int i, NamedType arg) {
-          final HostDatatype hostType =
-              getFieldHostDatatype(arg, _shortBaseCppTypeForBuiltinDartType);
-          return _HostNamedType(
-              _getSafeArgumentName(i, arg), hostType, arg.type);
-        },
-      );
+          func.parameters.mapIndexed((int i, NamedType arg) {
+        final HostDatatype hostType =
+            getFieldHostDatatype(arg, _shortBaseCppTypeForBuiltinDartType);
+        return _HostNamedType(_getSafeArgumentName(i, arg), hostType, arg.type);
+      });
       final List<String> parameters = <String>[
         ...hostParameters.map((_HostNamedType arg) =>
             '${_flutterApiArgumentType(arg.hostType)} ${arg.name}'),
