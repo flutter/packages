@@ -295,7 +295,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
             indent.writeln('friend class ${friend.name};');
           }
         }
-        for (final Api api in root.apis) {
+        for (final Api api in root.apis
+            .where((Api api) => api is AstFlutterApi || api is AstHostApi)) {
           // TODO(gaaclarke): Find a way to be more precise with our
           // friendships.
           indent.writeln('friend class ${api.name};');
