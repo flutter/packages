@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
+import 'package:web/helpers.dart';
+
 
 /// Factory class for creating [HttpRequest] instances.
 class HttpRequestFactory {
@@ -61,7 +62,7 @@ class HttpRequestFactory {
   /// when the file cannot be found.
   ///
   /// See also: [authorization headers](http://en.wikipedia.org/wiki/Basic_access_authentication).
-  Future<HttpRequest> request(String url,
+  Future<XMLHttpRequest> request(String url,
       {String? method,
       bool? withCredentials,
       String? responseType,

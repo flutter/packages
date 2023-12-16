@@ -3,12 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
-import 'dart:html' as _i2;
+import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i3;
-import 'package:webview_flutter_web/src/http_request_factory.dart' as _i5;
+import 'package:web/helpers.dart' as _i3;
+import 'package:web/web.dart' as _i2;
+import 'package:webview_flutter_web/src/http_request_factory.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -23,29 +23,9 @@ import 'package:webview_flutter_web/src/http_request_factory.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeHttpRequestUpload_0 extends _i1.SmartFake
-    implements _i2.HttpRequestUpload {
-  _FakeHttpRequestUpload_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeEvents_1 extends _i1.SmartFake implements _i2.Events {
-  _FakeEvents_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeHttpRequest_2 extends _i1.SmartFake implements _i2.HttpRequest {
-  _FakeHttpRequest_2(
+class _FakeXMLHttpRequest_0 extends _i1.SmartFake
+    implements _i2.XMLHttpRequest {
+  _FakeXMLHttpRequest_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -57,295 +37,15 @@ class _FakeHttpRequest_2 extends _i1.SmartFake implements _i2.HttpRequest {
 /// A class which mocks [HttpRequest].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockHttpRequest extends _i1.Mock implements _i2.HttpRequest {
-  @override
-  Map<String, String> get responseHeaders => (super.noSuchMethod(
-        Invocation.getter(#responseHeaders),
-        returnValue: <String, String>{},
-        returnValueForMissingStub: <String, String>{},
-      ) as Map<String, String>);
-
-  @override
-  int get readyState => (super.noSuchMethod(
-        Invocation.getter(#readyState),
-        returnValue: 0,
-        returnValueForMissingStub: 0,
-      ) as int);
-
-  @override
-  String get responseType => (super.noSuchMethod(
-        Invocation.getter(#responseType),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#responseType),
-        ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#responseType),
-        ),
-      ) as String);
-
-  @override
-  set responseType(String? value) => super.noSuchMethod(
-        Invocation.setter(
-          #responseType,
-          value,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set timeout(int? value) => super.noSuchMethod(
-        Invocation.setter(
-          #timeout,
-          value,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i2.HttpRequestUpload get upload => (super.noSuchMethod(
-        Invocation.getter(#upload),
-        returnValue: _FakeHttpRequestUpload_0(
-          this,
-          Invocation.getter(#upload),
-        ),
-        returnValueForMissingStub: _FakeHttpRequestUpload_0(
-          this,
-          Invocation.getter(#upload),
-        ),
-      ) as _i2.HttpRequestUpload);
-
-  @override
-  set withCredentials(bool? value) => super.noSuchMethod(
-        Invocation.setter(
-          #withCredentials,
-          value,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i4.Stream<_i2.Event> get onReadyStateChange => (super.noSuchMethod(
-        Invocation.getter(#onReadyStateChange),
-        returnValue: _i4.Stream<_i2.Event>.empty(),
-        returnValueForMissingStub: _i4.Stream<_i2.Event>.empty(),
-      ) as _i4.Stream<_i2.Event>);
-
-  @override
-  _i4.Stream<_i2.ProgressEvent> get onAbort => (super.noSuchMethod(
-        Invocation.getter(#onAbort),
-        returnValue: _i4.Stream<_i2.ProgressEvent>.empty(),
-        returnValueForMissingStub: _i4.Stream<_i2.ProgressEvent>.empty(),
-      ) as _i4.Stream<_i2.ProgressEvent>);
-
-  @override
-  _i4.Stream<_i2.ProgressEvent> get onError => (super.noSuchMethod(
-        Invocation.getter(#onError),
-        returnValue: _i4.Stream<_i2.ProgressEvent>.empty(),
-        returnValueForMissingStub: _i4.Stream<_i2.ProgressEvent>.empty(),
-      ) as _i4.Stream<_i2.ProgressEvent>);
-
-  @override
-  _i4.Stream<_i2.ProgressEvent> get onLoad => (super.noSuchMethod(
-        Invocation.getter(#onLoad),
-        returnValue: _i4.Stream<_i2.ProgressEvent>.empty(),
-        returnValueForMissingStub: _i4.Stream<_i2.ProgressEvent>.empty(),
-      ) as _i4.Stream<_i2.ProgressEvent>);
-
-  @override
-  _i4.Stream<_i2.ProgressEvent> get onLoadEnd => (super.noSuchMethod(
-        Invocation.getter(#onLoadEnd),
-        returnValue: _i4.Stream<_i2.ProgressEvent>.empty(),
-        returnValueForMissingStub: _i4.Stream<_i2.ProgressEvent>.empty(),
-      ) as _i4.Stream<_i2.ProgressEvent>);
-
-  @override
-  _i4.Stream<_i2.ProgressEvent> get onLoadStart => (super.noSuchMethod(
-        Invocation.getter(#onLoadStart),
-        returnValue: _i4.Stream<_i2.ProgressEvent>.empty(),
-        returnValueForMissingStub: _i4.Stream<_i2.ProgressEvent>.empty(),
-      ) as _i4.Stream<_i2.ProgressEvent>);
-
-  @override
-  _i4.Stream<_i2.ProgressEvent> get onProgress => (super.noSuchMethod(
-        Invocation.getter(#onProgress),
-        returnValue: _i4.Stream<_i2.ProgressEvent>.empty(),
-        returnValueForMissingStub: _i4.Stream<_i2.ProgressEvent>.empty(),
-      ) as _i4.Stream<_i2.ProgressEvent>);
-
-  @override
-  _i4.Stream<_i2.ProgressEvent> get onTimeout => (super.noSuchMethod(
-        Invocation.getter(#onTimeout),
-        returnValue: _i4.Stream<_i2.ProgressEvent>.empty(),
-        returnValueForMissingStub: _i4.Stream<_i2.ProgressEvent>.empty(),
-      ) as _i4.Stream<_i2.ProgressEvent>);
-
-  @override
-  _i2.Events get on => (super.noSuchMethod(
-        Invocation.getter(#on),
-        returnValue: _FakeEvents_1(
-          this,
-          Invocation.getter(#on),
-        ),
-        returnValueForMissingStub: _FakeEvents_1(
-          this,
-          Invocation.getter(#on),
-        ),
-      ) as _i2.Events);
-
-  @override
-  void open(
-    String? method,
-    String? url, {
-    bool? async,
-    String? user,
-    String? password,
-  }) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #open,
-          [
-            method,
-            url,
-          ],
-          {
-            #async: async,
-            #user: user,
-            #password: password,
-          },
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void abort() => super.noSuchMethod(
-        Invocation.method(
-          #abort,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  String getAllResponseHeaders() => (super.noSuchMethod(
-        Invocation.method(
-          #getAllResponseHeaders,
-          [],
-        ),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getAllResponseHeaders,
-            [],
-          ),
-        ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getAllResponseHeaders,
-            [],
-          ),
-        ),
-      ) as String);
-
-  @override
-  String? getResponseHeader(String? name) => (super.noSuchMethod(
-        Invocation.method(
-          #getResponseHeader,
-          [name],
-        ),
-        returnValueForMissingStub: null,
-      ) as String?);
-
-  @override
-  void overrideMimeType(String? mime) => super.noSuchMethod(
-        Invocation.method(
-          #overrideMimeType,
-          [mime],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void send([dynamic body_OR_data]) => super.noSuchMethod(
-        Invocation.method(
-          #send,
-          [body_OR_data],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void setRequestHeader(
-    String? name,
-    String? value,
-  ) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #setRequestHeader,
-          [
-            name,
-            value,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void addEventListener(
-    String? type,
-    _i2.EventListener? listener, [
-    bool? useCapture,
-  ]) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #addEventListener,
-          [
-            type,
-            listener,
-            useCapture,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  void removeEventListener(
-    String? type,
-    _i2.EventListener? listener, [
-    bool? useCapture,
-  ]) =>
-      super.noSuchMethod(
-        Invocation.method(
-          #removeEventListener,
-          [
-            type,
-            listener,
-            useCapture,
-          ],
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  bool dispatchEvent(_i2.Event? event) => (super.noSuchMethod(
-        Invocation.method(
-          #dispatchEvent,
-          [event],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
-}
+class MockHttpRequest extends _i1.Mock implements _i3.HttpRequest {}
 
 /// A class which mocks [HttpRequestFactory].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockHttpRequestFactory extends _i1.Mock
-    implements _i5.HttpRequestFactory {
+    implements _i4.HttpRequestFactory {
   @override
-  _i4.Future<_i2.HttpRequest> request(
+  _i5.Future<_i2.XMLHttpRequest> request(
     String? url, {
     String? method,
     bool? withCredentials,
@@ -369,7 +69,7 @@ class MockHttpRequestFactory extends _i1.Mock
             #onProgress: onProgress,
           },
         ),
-        returnValue: _i4.Future<_i2.HttpRequest>.value(_FakeHttpRequest_2(
+        returnValue: _i5.Future<_i2.XMLHttpRequest>.value(_FakeXMLHttpRequest_0(
           this,
           Invocation.method(
             #request,
@@ -386,7 +86,7 @@ class MockHttpRequestFactory extends _i1.Mock
           ),
         )),
         returnValueForMissingStub:
-            _i4.Future<_i2.HttpRequest>.value(_FakeHttpRequest_2(
+            _i5.Future<_i2.XMLHttpRequest>.value(_FakeXMLHttpRequest_0(
           this,
           Invocation.method(
             #request,
@@ -402,5 +102,10 @@ class MockHttpRequestFactory extends _i1.Mock
             },
           ),
         )),
-      ) as _i4.Future<_i2.HttpRequest>);
+      ) as _i5.Future<_i2.XMLHttpRequest>);
 }
+
+/// A class which mocks [XMLHttpRequest].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockXMLHttpRequest extends _i1.Mock implements _i2.XMLHttpRequest {}
