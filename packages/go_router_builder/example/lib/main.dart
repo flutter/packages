@@ -36,6 +36,7 @@ class App extends StatelessWidget {
     debugLogDiagnostics: true,
     routes: $appRoutes,
 
+// #docregion Redirection
     // redirect to the login page if the user is not logged in
     redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = loginInfo.loggedIn;
@@ -57,17 +58,20 @@ class App extends StatelessWidget {
       // no need to redirect at all
       return null;
     },
+// #enddocregion Redirection
 
     // changes on the listenable will cause the router to refresh it's route
     refreshListenable: loginInfo,
   );
 }
 
+// #docregion RouteTree
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
     TypedGoRoute<FamilyRoute>(
       path: 'family/:fid',
+// #enddocregion RouteTree
       routes: <TypedGoRoute<GoRouteData>>[
         TypedGoRoute<PersonRoute>(
           path: 'person/:pid',
@@ -78,19 +82,24 @@ class App extends StatelessWidget {
       ],
     ),
     TypedGoRoute<FamilyCountRoute>(path: 'family-count/:count'),
+// #docregion RouteTree
   ],
 )
+// #docregion DefineRoute
 class HomeRoute extends GoRouteData {
   const HomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
+// #enddocregion DefineRoute
 
+// #docregion QueryParameters
 @TypedGoRoute<LoginRoute>(
   path: '/login',
 )
 class LoginRoute extends GoRouteData {
+// #enddocregion RouteTree
   const LoginRoute({this.fromPage});
 
   final String? fromPage;
@@ -98,7 +107,10 @@ class LoginRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       LoginScreen(from: fromPage);
+// #docregion RouteTree
 }
+// #enddocregion RouteTree
+// #enddocregion QueryParameters
 
 class FamilyRoute extends GoRouteData {
   const FamilyRoute(this.fid);
@@ -233,7 +245,9 @@ class FamilyScreen extends StatelessWidget {
             for (final Person p in family.people)
               ListTile(
                 title: Text(p.name),
+                // #docregion Navigation
                 onTap: () => PersonRoute(family.id, p.id).go(context),
+                // #enddocregion Navigation
               ),
           ],
         ),

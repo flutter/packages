@@ -22,7 +22,9 @@ class App extends StatelessWidget {
         title: _appTitle,
       );
 
+// #docregion Initialization
   final GoRouter _router = GoRouter(routes: $appRoutes);
+// #enddocregion Initialization
 }
 
 @TypedGoRoute<HomeRoute>(

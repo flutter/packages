@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Improves README example and updates it to use code excerpts.
+
 ## 2.4.0
 
 * Adds support for passing observers to the ShellRoute for the nested Navigator.

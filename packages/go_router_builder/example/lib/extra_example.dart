@@ -58,6 +58,7 @@ class RequiredExtraScreen extends StatelessWidget {
   }
 }
 
+// #docregion ExtraParameter
 @TypedGoRoute<OptionalExtraRoute>(path: '/optionalExtra')
 class OptionalExtraRoute extends GoRouteData {
   const OptionalExtraRoute({this.$extra});
@@ -68,6 +69,7 @@ class OptionalExtraRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) =>
       OptionalExtraScreen(extra: $extra);
 }
+// #enddocregion ExtraParameter
 
 class OptionalExtraScreen extends StatelessWidget {
   const OptionalExtraScreen({super.key, this.extra});
@@ -108,8 +110,10 @@ class Splash extends StatelessWidget {
             child: const Text('Required Extra'),
           ),
           ElevatedButton(
+            // #docregion PassExtraParameter
             onPressed: () =>
                 const OptionalExtraRoute($extra: Extra(2)).go(context),
+            // #enddocregion PassExtraParameter
             child: const Text('Optional Extra'),
           ),
           ElevatedButton(
