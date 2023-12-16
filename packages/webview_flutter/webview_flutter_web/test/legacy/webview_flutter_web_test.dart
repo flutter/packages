@@ -82,7 +82,7 @@ void main() {
         controller.loadHtmlString('#');
 
         // Verify
-        verify(mockElement.src.contains('%23'));
+        assert(mockElement.src.contains('%23'));
       });
     });
 
@@ -174,7 +174,7 @@ void main() {
               headers: <String, String>{'Foo': 'Bar'}),
         );
         // Verify
-        // verify(src = argThat(contains('%23')));
+        assert(mockElement.src.contains('%23'));
       });
     });
   });
