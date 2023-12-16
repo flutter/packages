@@ -1417,6 +1417,41 @@ void main() {
     expect(code, contains('void doit(int? foo);'));
   });
 
+  test('named argument flutter', () {
+    final Root root = Root(
+      apis: <Api>[
+        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+          Method(
+              name: 'doit',
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                    name: 'foo',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: false,
+                    ),
+                    isNamed: true,
+                    isPositional: false),
+              ])
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const DartGenerator generator = DartGenerator();
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('void doit({required int foo});'));
+    expect(code, contains('api.doit(foo: arg_foo!)'));
+  });
+
   test('uses output package name for imports', () {
     const String overriddenPackageName = 'custom_name';
     const String outputPackageName = 'some_output_package';

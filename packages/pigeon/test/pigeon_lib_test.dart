@@ -1324,4 +1324,32 @@ abstract class Api {
     });
     await completer.future;
   });
+
+  test('unsupported non-positional parameters on FlutterApi', () {
+    const String code = '''
+@FlutterApi()
+abstract class Api {
+  int? calc({int? anInt});
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].message,
+        contains('FlutterApi method parameters must be positional'));
+  });
+
+  test('unsupported optional parameters on FlutterApi', () {
+    const String code = '''
+@FlutterApi()
+abstract class Api {
+  int? calc([int? anInt]);
+}
+''';
+
+    final ParseResults results = parseSource(code);
+    expect(results.errors.length, 1);
+    expect(results.errors[0].message,
+        contains('FlutterApi method parameters must not be optional'));
+  });
 }
