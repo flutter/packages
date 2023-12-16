@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 5.0.1
 
 * Transfers the package source from https://github.com/google/process.dart to

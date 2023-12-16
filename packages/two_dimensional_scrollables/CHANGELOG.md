@@ -1,6 +1,8 @@
-## NEXT
+## 0.0.5
 
+* Exposes addAutomaticKeepAlives in TableCellBuilderDelegate and TableCellListDelegate
 * Fixes bug where having one reversed axis caused incorrect painting of a pinned row.
+* Adds support for BorderRadius in TableSpanDecorations.
 
 ## 0.0.4
 

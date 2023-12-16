@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -25,6 +26,7 @@ class RouteConfiguration {
   RouteConfiguration(
     this._routingConfig, {
     required this.navigatorKey,
+    this.extraCodec,
   }) {
     _onRoutingTableChanged();
     _routingConfig.addListener(_onRoutingTableChanged);
@@ -196,6 +198,7 @@ class RouteConfiguration {
     assert(_debugCheckParentNavigatorKeys(
         routingTable.routes, <GlobalKey<NavigatorState>>[navigatorKey]));
     assert(_debugCheckStatefulShellBranchDefaultLocations(routingTable.routes));
+    _nameToPath.clear();
     _cacheNameToPath('', routingTable.routes);
     log(debugKnownRoutes());
   }
@@ -230,6 +233,19 @@ class RouteConfiguration {
 
   /// The global key for top level navigator.
   final GlobalKey<NavigatorState> navigatorKey;
+
+  /// The codec used to encode and decode extra into a serializable format.
+  ///
+  /// When navigating using [GoRouter.go] or [GoRouter.push], one can provide
+  /// an `extra` parameter along with it. If the extra contains complex data,
+  /// consider provide a codec for serializing and deserializing the extra data.
+  ///
+  /// See also:
+  ///  * [Navigation](https://pub.dev/documentation/go_router/latest/topics/Navigation-topic.html)
+  ///    topic.
+  ///  * [extra_codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
+  ///    example.
+  final Codec<Object?, Object?>? extraCodec;
 
   final Map<String, String> _nameToPath = <String, String>{};
 
@@ -495,17 +511,19 @@ class RouteConfiguration {
     final RouteBase route = match.route;
     FutureOr<String?> routeRedirectResult;
     if (route is GoRoute && route.redirect != null) {
+      final RouteMatchList effectiveMatchList =
+          match is ImperativeRouteMatch ? match.matches : matchList;
       routeRedirectResult = route.redirect!(
         context,
         GoRouterState(
           this,
-          uri: matchList.uri,
+          uri: effectiveMatchList.uri,
           matchedLocation: match.matchedLocation,
           name: route.name,
           path: route.path,
-          fullPath: matchList.fullPath,
-          extra: matchList.extra,
-          pathParameters: matchList.pathParameters,
+          fullPath: effectiveMatchList.fullPath,
+          extra: effectiveMatchList.extra,
+          pathParameters: effectiveMatchList.pathParameters,
           pageKey: match.pageKey,
         ),
       );

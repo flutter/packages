@@ -4,6 +4,8 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -167,6 +169,7 @@ Future<GoRouter> createRouter(
   GlobalKey<NavigatorState>? navigatorKey,
   GoRouterWidgetBuilder? errorBuilder,
   String? restorationScopeId,
+  Codec<Object?, Object?>? extraCodec,
   GoExceptionHandler? onException,
   bool requestFocus = true,
   bool overridePlatformDefaultLocation = false,
@@ -174,6 +177,7 @@ Future<GoRouter> createRouter(
   final GoRouter goRouter = GoRouter(
     routes: routes,
     redirect: redirect,
+    extraCodec: extraCodec,
     initialLocation: initialLocation,
     onException: onException,
     initialExtra: initialExtra,
@@ -390,4 +394,28 @@ RouteConfiguration createRouteConfiguration({
         redirectLimit: redirectLimit,
       )),
       navigatorKey: navigatorKey);
+}
+
+class SimpleDependencyProvider extends InheritedNotifier<SimpleDependency> {
+  const SimpleDependencyProvider(
+      {super.key, required SimpleDependency dependency, required super.child})
+      : super(notifier: dependency);
+
+  static SimpleDependency of(BuildContext context) {
+    final SimpleDependencyProvider result =
+        context.dependOnInheritedWidgetOfExactType<SimpleDependencyProvider>()!;
+    return result.notifier!;
+  }
+}
+
+class SimpleDependency extends ChangeNotifier {
+  bool get boolProperty => _boolProperty;
+  bool _boolProperty = true;
+  set boolProperty(bool value) {
+    if (value == _boolProperty) {
+      return;
+    }
+    _boolProperty = value;
+    notifyListeners();
+  }
 }

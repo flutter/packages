@@ -112,6 +112,21 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull String echoNamedDefaultString(@NonNull String aString) {
+    return aString;
+  }
+
+  @Override
+  public @NonNull Double echoOptionalDefaultDouble(@NonNull Double aDouble) {
+    return aDouble;
+  }
+
+  @Override
+  public @NonNull Long echoRequiredInt(@NonNull Long anInt) {
+    return anInt;
+  }
+
+  @Override
   public @Nullable String extractNestedNullableString(@NonNull AllClassesWrapper wrapper) {
     return wrapper.getAllNullableTypes().getANullableString();
   }
@@ -180,6 +195,16 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public @Nullable AnEnum echoNullableEnum(@Nullable AnEnum anEnum) {
     return anEnum;
+  }
+
+  @Override
+  public @Nullable Long echoOptionalNullableInt(@Nullable Long aNullableInt) {
+    return aNullableInt;
+  }
+
+  @Override
+  public @Nullable String echoNamedNullableString(@Nullable String aNullableString) {
+    return aNullableString;
   }
 
   @Override

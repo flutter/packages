@@ -1,3 +1,12 @@
+## 0.8.9+1
+
+* Updates plugin and example Gradle versions to 7.6.3.
+
+## 0.8.9
+
+* Fixes resizing bug and updates rounding to be more accurate.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 0.8.8+2
 
 * Updates annotations lib to 1.7.0.

@@ -1,3 +1,12 @@
+## 0.10.5+7
+
+* Updates example app to use non-deprecated video_player method.
+
+## 0.10.5+6
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Drop unused dependency on `package:quiver`.
+
 ## 0.10.5+5
 
 * Fixes bug where old camera resources were not disposed when switching between camera descriptions.

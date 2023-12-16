@@ -1,3 +1,28 @@
+## 12.1.3
+
+* Fixes a typo in `navigation.md`.
+
+## 12.1.2
+
+* Fixes an incorrect use of `extends` for Dart 3 compatibility.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 12.1.1
+
+- Retains query parameters during refresh and first redirect.
+
+## 12.1.0
+
+- Adds an ability to add a custom codec for serializing/deserializing extra.
+
+## 12.0.3
+
+- Fixes crashes when dynamically updates routing tables with named routes.
+
+## 12.0.2
+
+- Fixes the problem that pathParameters is null in redirect when the Router is recreated.
+
 ## 12.0.1
 
 - Fixes deep-link with no path on cold start.
@@ -59,7 +84,7 @@
 
 ## 10.1.1
 
-- Fixes mapping from `Page` to `RouteMatch`s. 
+- Fixes mapping from `Page` to `RouteMatch`s.
 - Updates minimum supported SDK version to Flutter 3.7/Dart 2.19.
 
 ## 10.1.0

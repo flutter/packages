@@ -1,3 +1,16 @@
+## 6.2.1
+
+* Improves README example and updates it to use code excerpts.
+
+## 6.2.0
+
+* Adds support for macOS.
+* Updates minimum supported SDK version to Flutter 3.16.
+
+## 6.1.6
+
+* Updates README to direct to google_sign_in_ios README for iOS integration instructions.
+
 ## 6.1.5
 
 * Adds pub topics to package metadata.
