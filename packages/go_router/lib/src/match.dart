@@ -203,7 +203,11 @@ class RouteMatchList {
   /// ```
   final String fullPath;
 
-  /// Generates a title for the current matched route
+  /// Generates a title for the current matched route.
+  ///
+  /// This function is defined in [GoRoute.titleBuilder] and is
+  /// accessible through [GoRouterState.titleBuilder], which will
+  /// return the titleBuilder associated with that state.
   final String Function(BuildContext context, GoRouterState state)?
       titleBuilder;
 

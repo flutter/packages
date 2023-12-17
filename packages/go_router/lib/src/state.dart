@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
+import 'route.dart';
 
 /// The route state during routing.
 ///
@@ -80,6 +81,8 @@ class GoRouterState {
   final ValueKey<String> pageKey;
 
   /// Generates a title for the matched route associated with this state.
+  ///
+  /// This function is obtained from the current route's [GoRoute.titleBuilder].
   String Function(BuildContext context)? get titleBuilder =>
       matchList.titleBuilder == null
           ? null
