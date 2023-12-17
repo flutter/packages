@@ -16,6 +16,7 @@ import 'logging.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'route.dart';
+import 'state.dart';
 
 /// An matched result by matching a [RouteBase] against a location.
 ///
@@ -164,6 +165,7 @@ class RouteMatchList {
     this.extra,
     this.error,
     required this.pathParameters,
+    this.titleBuilder,
   }) : fullPath = _generateFullPath(matches);
 
   /// Constructs an empty matches object.
@@ -200,6 +202,10 @@ class RouteMatchList {
   /// '/family/:fid/person/:pid'
   /// ```
   final String fullPath;
+
+  /// Generates a title for the current matched route
+  final String Function(BuildContext context, GoRouterState state)?
+      titleBuilder;
 
   /// Generates the full path (ex: `'/family/:fid/person/:pid'`) of a list of
   /// [RouteMatch].
@@ -298,6 +304,7 @@ class RouteMatchList {
       matches: newMatches,
       uri: newUri,
       pathParameters: newPathParameters,
+      titleBuilder: newMatches.lastOrNull?.route.titleBuilder,
     );
   }
 
@@ -314,13 +321,16 @@ class RouteMatchList {
     List<RouteMatch>? matches,
     Uri? uri,
     Map<String, String>? pathParameters,
+    String Function(BuildContext, GoRouterState)? titleBuilder,
   }) {
     return RouteMatchList(
-        matches: matches ?? this.matches,
-        uri: uri ?? this.uri,
-        extra: extra,
-        error: error,
-        pathParameters: pathParameters ?? this.pathParameters);
+      matches: matches ?? this.matches,
+      uri: uri ?? this.uri,
+      extra: extra,
+      error: error,
+      pathParameters: pathParameters ?? this.pathParameters,
+      titleBuilder: titleBuilder ?? this.titleBuilder,
+    );
   }
 
   @override

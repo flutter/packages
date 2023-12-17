@@ -216,6 +216,7 @@ class RouteConfiguration {
       matchedLocation: matchList.uri.path,
       extra: matchList.extra,
       pageKey: const ValueKey<String>('topLevel'),
+      matchList: matchList,
     );
   }
 
@@ -305,10 +306,12 @@ class RouteConfiguration {
       );
     }
     return RouteMatchList(
-        matches: matches,
-        uri: uri,
-        pathParameters: pathParameters,
-        extra: extra);
+      matches: matches,
+      uri: uri,
+      pathParameters: pathParameters,
+      extra: extra,
+      titleBuilder: matches.lastOrNull?.route.titleBuilder,
+    );
   }
 
   /// Reparse the input RouteMatchList
@@ -525,6 +528,7 @@ class RouteConfiguration {
           extra: effectiveMatchList.extra,
           pathParameters: effectiveMatchList.pathParameters,
           pageKey: match.pageKey,
+          matchList: effectiveMatchList,
         ),
       );
     }

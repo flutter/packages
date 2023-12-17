@@ -153,6 +153,7 @@ abstract class RouteBase with Diagnosticable {
   const RouteBase._({
     required this.routes,
     required this.parentNavigatorKey,
+    this.titleBuilder,
   });
 
   /// The list of child routes associated with this route.
@@ -164,6 +165,9 @@ abstract class RouteBase with Diagnosticable {
   /// Specifying the root Navigator will stack this route onto that
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
+
+  /// The title builder for this route.
+  final String Function(BuildContext, GoRouterState)? titleBuilder;
 
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
@@ -210,6 +214,7 @@ class GoRoute extends RouteBase {
     super.parentNavigatorKey,
     this.redirect,
     this.onExit,
+    super.titleBuilder,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
@@ -457,9 +462,11 @@ class GoRoute extends RouteBase {
 /// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   /// Constructs a [ShellRouteBase].
-  const ShellRouteBase._(
-      {required super.routes, required super.parentNavigatorKey})
-      : super._();
+  const ShellRouteBase._({
+    required super.routes,
+    required super.parentNavigatorKey,
+    super.titleBuilder,
+  }) : super._();
 
   static void _debugCheckSubRouteParentNavigatorKeys(
       List<RouteBase> subRoutes, GlobalKey<NavigatorState> navigatorKey) {
@@ -641,6 +648,7 @@ class ShellRoute extends ShellRouteBase {
     super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
+    super.titleBuilder,
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._() {
@@ -802,6 +810,7 @@ class StatefulShellRoute extends ShellRouteBase {
     this.pageBuilder,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
+    super.titleBuilder,
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
         assert((pageBuilder != null) || (builder != null),
@@ -827,6 +836,7 @@ class StatefulShellRoute extends ShellRouteBase {
     StatefulShellRouteBuilder? builder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     StatefulShellRoutePageBuilder? pageBuilder,
+    String Function(BuildContext, GoRouterState)? titleBuilder,
     String? restorationScopeId,
   }) : this(
           branches: branches,
@@ -835,6 +845,7 @@ class StatefulShellRoute extends ShellRouteBase {
           parentNavigatorKey: parentNavigatorKey,
           restorationScopeId: restorationScopeId,
           navigatorContainerBuilder: _indexedStackContainerBuilder,
+          titleBuilder: titleBuilder,
         );
 
   /// Restoration ID to save and restore the state of the navigator, including
@@ -1126,6 +1137,15 @@ class StatefulNavigationShell extends StatefulWidget {
     }
   }
 
+  /// Gets the title builder for the current route location
+  String Function(BuildContext, GoRouterState)? get titleBuilder {
+    final StatefulShellRoute route =
+        shellRouteContext.route as StatefulShellRoute;
+    final StatefulNavigationShellState? shellState =
+        route._shellStateKey.currentState;
+    return shellState?.titleBuilder;
+  }
+
   /// Gets the effective initial location for the branch at the provided index
   /// in the associated [StatefulShellRoute].
   ///
@@ -1239,6 +1259,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         matches: matches,
         uri: Uri.parse(matches.last.matchedLocation),
         pathParameters: matchList.pathParameters,
+        titleBuilder: matchList.titleBuilder,
       );
     }
     return matchList;
@@ -1287,6 +1308,14 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     } else {
       _router.go(widget._effectiveInitialBranchLocation(index));
     }
+  }
+
+  /// Gets the title builder for the current route location
+  String Function(BuildContext, GoRouterState)? get titleBuilder {
+    final ShellRouteContext shellRouteContext = widget.shellRouteContext;
+    final RouteMatchList currentBranchLocation =
+        _scopedMatchList(shellRouteContext.routeMatchList);
+    return currentBranchLocation.titleBuilder;
   }
 
   @override

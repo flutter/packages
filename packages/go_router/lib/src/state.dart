@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import 'configuration.dart';
+import 'match.dart';
 import 'misc/errors.dart';
 
 /// The route state during routing.
@@ -25,8 +26,12 @@ class GoRouterState {
     this.extra,
     this.error,
     required this.pageKey,
+    required this.matchList,
   });
   final RouteConfiguration _configuration;
+
+  /// The matched route
+  final RouteMatchList matchList;
 
   /// The full uri of the route, e.g. /family/f2/person/p1?filter=name#fragment
   final Uri uri;
@@ -73,6 +78,12 @@ class GoRouterState {
   /// ValueKey('/family/:fid')
   /// ```
   final ValueKey<String> pageKey;
+
+  /// Builds the title
+  String Function(BuildContext context)? get titleBuilder =>
+      matchList.titleBuilder == null
+          ? null
+          : (BuildContext context) => matchList.titleBuilder!(context, this);
 
   /// Gets the [GoRouterState] from context.
   ///

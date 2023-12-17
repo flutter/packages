@@ -364,6 +364,7 @@ class RouteBuilder {
       error: effectiveMatchList.error,
       extra: effectiveMatchList.extra,
       pageKey: match.pageKey,
+      matchList: effectiveMatchList,
     );
   }
 
@@ -513,6 +514,7 @@ class RouteBuilder {
       pathParameters: matchList.pathParameters,
       error: matchList.error,
       pageKey: ValueKey<String>('${matchList.uri}(error)'),
+      matchList: matchList,
     );
   }
 
