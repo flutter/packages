@@ -85,6 +85,28 @@ GoRoute(
 )
 ```
 
+# Route Title Builder
+To specify a title for the route, provide a `titleBuilder` parameter to `GoRoute`
+
+```dart
+GoRoute(
+  path: '/',
+  titleBuilder: (context, state) => 'Home',
+  builder: (context, state) {
+    return HomeScreen(title: state.titleBuilder?.call(context));
+  },
+  routes: [
+    GoRoute(
+      path: ':userId',
+      titleBuilder: (context, state) => 'Welcome ${state.pathParameters['userId']}',
+      builder: (context, state) {
+        return DetailsScreen();
+      },
+    ),
+  ],
+),
+```
+
 # Dynamic RoutingConfig
 The [RoutingConfig][] provides a way to update the GoRoute\[s\] after 
 the [GoRouter][] has already created. This can be done by creating a GoRouter
