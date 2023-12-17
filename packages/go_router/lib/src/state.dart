@@ -30,7 +30,7 @@ class GoRouterState {
   });
   final RouteConfiguration _configuration;
 
-  /// The matched route
+  /// The matched route associated with this state.
   final RouteMatchList matchList;
 
   /// The full uri of the route, e.g. /family/f2/person/p1?filter=name#fragment
@@ -79,7 +79,7 @@ class GoRouterState {
   /// ```
   final ValueKey<String> pageKey;
 
-  /// Builds the title
+  /// Generates a title for the matched route associated with this state.
   String Function(BuildContext context)? get titleBuilder =>
       matchList.titleBuilder == null
           ? null
