@@ -18,7 +18,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -129,26 +130,32 @@ enum WKNavigationType {
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypelinkactivated?language=objc.
   linkActivated,
+
   /// A request to submit a form.
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeformsubmitted?language=objc.
   submitted,
+
   /// A request for the frame’s next or previous item.
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypebackforward?language=objc.
   backForward,
+
   /// A request to reload the webpage.
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypereload?language=objc.
   reload,
+
   /// A request to resubmit a form.
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeformresubmitted?language=objc.
   formResubmitted,
+
   /// A navigation request that originates for some other reason.
   ///
   /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
   other,
+
   /// An unknown navigation type.
   ///
   /// This does not represent an actual value provided by the platform and only
@@ -164,10 +171,12 @@ enum WKPermissionDecision {
   ///
   /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiondeny?language=objc.
   deny,
+
   /// Deny permission for the requested resource.
   ///
   /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiongrant?language=objc.
   grant,
+
   /// Prompt the user for permission for the requested resource.
   ///
   /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisionprompt?language=objc.
@@ -182,14 +191,17 @@ enum WKMediaCaptureType {
   ///
   /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecamera?language=objc.
   camera,
+
   /// A media device or devices that can capture audio and video.
   ///
   /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecameraandmicrophone?language=objc.
   cameraAndMicrophone,
+
   /// A media device that can capture audio.
   ///
   /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
   microphone,
+
   /// An unknown media device.
   ///
   /// This does not represent an actual value provided by the platform and only
@@ -420,7 +432,8 @@ class NSUrlRequestData {
       url: result[0]! as String,
       httpMethod: result[1] as String?,
       httpBody: result[2] as Uint8List?,
-      allHttpHeaderFields: (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      allHttpHeaderFields:
+          (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
     );
   }
 }
@@ -454,7 +467,8 @@ class WKUserScriptData {
     return WKUserScriptData(
       source: result[0]! as String,
       injectionTime: result[1] != null
-          ? WKUserScriptInjectionTimeEnumData.decode(result[1]! as List<Object?>)
+          ? WKUserScriptInjectionTimeEnumData.decode(
+              result[1]! as List<Object?>)
           : null,
       isMainFrameOnly: result[2]! as bool,
     );
@@ -639,7 +653,8 @@ class NSHttpCookieData {
   static NSHttpCookieData decode(Object result) {
     result as List<Object?>;
     return NSHttpCookieData(
-      propertyKeys: (result[0] as List<Object?>?)!.cast<NSHttpCookiePropertyKeyEnumData?>(),
+      propertyKeys: (result[0] as List<Object?>?)!
+          .cast<NSHttpCookiePropertyKeyEnumData?>(),
       propertyValues: (result[1] as List<Object?>?)!.cast<Object?>(),
     );
   }
@@ -691,7 +706,7 @@ class _WKWebsiteDataStoreHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -712,15 +727,18 @@ class WKWebsiteDataStoreHostApi {
 
   static const MessageCodec<Object?> codec = _WKWebsiteDataStoreHostApiCodec();
 
-  Future<void> createFromWebViewConfiguration(int arg_identifier, int arg_configurationIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.createFromWebViewConfiguration';
+  Future<void> createFromWebViewConfiguration(
+      int arg_identifier, int arg_configurationIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.createFromWebViewConfiguration';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_configurationIdentifier]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_configurationIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -735,7 +753,8 @@ class WKWebsiteDataStoreHostApi {
   }
 
   Future<void> createDefaultDataStore(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.createDefaultDataStore';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.createDefaultDataStore';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -756,15 +775,22 @@ class WKWebsiteDataStoreHostApi {
     }
   }
 
-  Future<bool> removeDataOfTypes(int arg_identifier, List<WKWebsiteDataTypeEnumData?> arg_dataTypes, double arg_modificationTimeInSecondsSinceEpoch) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.removeDataOfTypes';
+  Future<bool> removeDataOfTypes(
+      int arg_identifier,
+      List<WKWebsiteDataTypeEnumData?> arg_dataTypes,
+      double arg_modificationTimeInSecondsSinceEpoch) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStoreHostApi.removeDataOfTypes';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_dataTypes, arg_modificationTimeInSecondsSinceEpoch]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_dataTypes,
+      arg_modificationTimeInSecondsSinceEpoch
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -798,14 +824,15 @@ class UIViewHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<void> setBackgroundColor(int arg_identifier, int? arg_value) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewHostApi.setBackgroundColor';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewHostApi.setBackgroundColor';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_value]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_value]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -820,14 +847,15 @@ class UIViewHostApi {
   }
 
   Future<void> setOpaque(int arg_identifier, bool arg_opaque) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewHostApi.setOpaque';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewHostApi.setOpaque';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_opaque]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_opaque]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -855,15 +883,18 @@ class UIScrollViewHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> createFromWebView(int arg_identifier, int arg_webViewIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.createFromWebView';
+  Future<void> createFromWebView(
+      int arg_identifier, int arg_webViewIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.createFromWebView';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_webViewIdentifier]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_webViewIdentifier])
+            as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -878,7 +909,8 @@ class UIScrollViewHostApi {
   }
 
   Future<List<double?>> getContentOffset(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.getContentOffset';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.getContentOffset';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -905,14 +937,15 @@ class UIScrollViewHostApi {
   }
 
   Future<void> scrollBy(int arg_identifier, double arg_x, double arg_y) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.scrollBy';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.scrollBy';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_x, arg_y]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_x, arg_y]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -926,15 +959,17 @@ class UIScrollViewHostApi {
     }
   }
 
-  Future<void> setContentOffset(int arg_identifier, double arg_x, double arg_y) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setContentOffset';
+  Future<void> setContentOffset(
+      int arg_identifier, double arg_x, double arg_y) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setContentOffset';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_x, arg_y]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_x, arg_y]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -948,15 +983,18 @@ class UIScrollViewHostApi {
     }
   }
 
-  Future<void> setDelegate(int arg_identifier, int? arg_uiScrollViewDelegateIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate';
+  Future<void> setDelegate(
+      int arg_identifier, int? arg_uiScrollViewDelegateIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setDelegate';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_uiScrollViewDelegateIdentifier]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_uiScrollViewDelegateIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -986,7 +1024,7 @@ class _WKWebViewConfigurationHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1005,10 +1043,12 @@ class WKWebViewConfigurationHostApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _WKWebViewConfigurationHostApiCodec();
+  static const MessageCodec<Object?> codec =
+      _WKWebViewConfigurationHostApiCodec();
 
   Future<void> create(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.create';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.create';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -1029,15 +1069,18 @@ class WKWebViewConfigurationHostApi {
     }
   }
 
-  Future<void> createFromWebView(int arg_identifier, int arg_webViewIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.createFromWebView';
+  Future<void> createFromWebView(
+      int arg_identifier, int arg_webViewIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.createFromWebView';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_webViewIdentifier]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_webViewIdentifier])
+            as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1051,15 +1094,17 @@ class WKWebViewConfigurationHostApi {
     }
   }
 
-  Future<void> setAllowsInlineMediaPlayback(int arg_identifier, bool arg_allow) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setAllowsInlineMediaPlayback';
+  Future<void> setAllowsInlineMediaPlayback(
+      int arg_identifier, bool arg_allow) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setAllowsInlineMediaPlayback';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_allow]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_allow]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1073,15 +1118,17 @@ class WKWebViewConfigurationHostApi {
     }
   }
 
-  Future<void> setLimitsNavigationsToAppBoundDomains(int arg_identifier, bool arg_limit) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains';
+  Future<void> setLimitsNavigationsToAppBoundDomains(
+      int arg_identifier, bool arg_limit) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setLimitsNavigationsToAppBoundDomains';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_limit]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_limit]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1095,15 +1142,17 @@ class WKWebViewConfigurationHostApi {
     }
   }
 
-  Future<void> setMediaTypesRequiringUserActionForPlayback(int arg_identifier, List<WKAudiovisualMediaTypeEnumData?> arg_types) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setMediaTypesRequiringUserActionForPlayback';
+  Future<void> setMediaTypesRequiringUserActionForPlayback(int arg_identifier,
+      List<WKAudiovisualMediaTypeEnumData?> arg_types) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationHostApi.setMediaTypesRequiringUserActionForPlayback';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_types]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_types]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1126,17 +1175,19 @@ abstract class WKWebViewConfigurationFlutterApi {
 
   void create(int identifier);
 
-  static void setup(WKWebViewConfigurationFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(WKWebViewConfigurationFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationFlutterApi.create', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationFlutterApi.create',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationFlutterApi.create was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfigurationFlutterApi.create was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1146,8 +1197,9 @@ abstract class WKWebViewConfigurationFlutterApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1173,9 +1225,9 @@ class _WKUserContentControllerHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return WKUserScriptData.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1194,17 +1246,21 @@ class WKUserContentControllerHostApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _WKUserContentControllerHostApiCodec();
+  static const MessageCodec<Object?> codec =
+      _WKUserContentControllerHostApiCodec();
 
-  Future<void> createFromWebViewConfiguration(int arg_identifier, int arg_configurationIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.createFromWebViewConfiguration';
+  Future<void> createFromWebViewConfiguration(
+      int arg_identifier, int arg_configurationIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.createFromWebViewConfiguration';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_configurationIdentifier]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_configurationIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1218,15 +1274,18 @@ class WKUserContentControllerHostApi {
     }
   }
 
-  Future<void> addScriptMessageHandler(int arg_identifier, int arg_handlerIdentifier, String arg_name) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.addScriptMessageHandler';
+  Future<void> addScriptMessageHandler(
+      int arg_identifier, int arg_handlerIdentifier, String arg_name) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.addScriptMessageHandler';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_handlerIdentifier, arg_name]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_handlerIdentifier, arg_name])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1240,15 +1299,17 @@ class WKUserContentControllerHostApi {
     }
   }
 
-  Future<void> removeScriptMessageHandler(int arg_identifier, String arg_name) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeScriptMessageHandler';
+  Future<void> removeScriptMessageHandler(
+      int arg_identifier, String arg_name) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeScriptMessageHandler';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_name]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_name]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1263,7 +1324,8 @@ class WKUserContentControllerHostApi {
   }
 
   Future<void> removeAllScriptMessageHandlers(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeAllScriptMessageHandlers';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeAllScriptMessageHandlers';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -1284,15 +1346,17 @@ class WKUserContentControllerHostApi {
     }
   }
 
-  Future<void> addUserScript(int arg_identifier, WKUserScriptData arg_userScript) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.addUserScript';
+  Future<void> addUserScript(
+      int arg_identifier, WKUserScriptData arg_userScript) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.addUserScript';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_userScript]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_userScript]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1307,7 +1371,8 @@ class WKUserContentControllerHostApi {
   }
 
   Future<void> removeAllUserScripts(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeAllUserScripts';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentControllerHostApi.removeAllUserScripts';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -1342,15 +1407,18 @@ class WKPreferencesHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> createFromWebViewConfiguration(int arg_identifier, int arg_configurationIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferencesHostApi.createFromWebViewConfiguration';
+  Future<void> createFromWebViewConfiguration(
+      int arg_identifier, int arg_configurationIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferencesHostApi.createFromWebViewConfiguration';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_configurationIdentifier]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_configurationIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1364,15 +1432,17 @@ class WKPreferencesHostApi {
     }
   }
 
-  Future<void> setJavaScriptEnabled(int arg_identifier, bool arg_enabled) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferencesHostApi.setJavaScriptEnabled';
+  Future<void> setJavaScriptEnabled(
+      int arg_identifier, bool arg_enabled) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferencesHostApi.setJavaScriptEnabled';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_enabled]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_enabled]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1401,7 +1471,8 @@ class WKScriptMessageHandlerHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<void> create(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerHostApi.create';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerHostApi.create';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -1438,7 +1509,7 @@ class _WKScriptMessageHandlerFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return WKScriptMessageData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1450,21 +1521,25 @@ class _WKScriptMessageHandlerFlutterApiCodec extends StandardMessageCodec {
 ///
 /// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
 abstract class WKScriptMessageHandlerFlutterApi {
-  static const MessageCodec<Object?> codec = _WKScriptMessageHandlerFlutterApiCodec();
+  static const MessageCodec<Object?> codec =
+      _WKScriptMessageHandlerFlutterApiCodec();
 
-  void didReceiveScriptMessage(int identifier, int userContentControllerIdentifier, WKScriptMessageData message);
+  void didReceiveScriptMessage(int identifier,
+      int userContentControllerIdentifier, WKScriptMessageData message);
 
-  static void setup(WKScriptMessageHandlerFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(WKScriptMessageHandlerFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerFlutterApi.didReceiveScriptMessage', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerFlutterApi.didReceiveScriptMessage',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerFlutterApi.didReceiveScriptMessage was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerFlutterApi.didReceiveScriptMessage was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1472,16 +1547,19 @@ abstract class WKScriptMessageHandlerFlutterApi {
           final int? arg_userContentControllerIdentifier = (args[1] as int?);
           assert(arg_userContentControllerIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerFlutterApi.didReceiveScriptMessage was null, expected non-null int.');
-          final WKScriptMessageData? arg_message = (args[2] as WKScriptMessageData?);
+          final WKScriptMessageData? arg_message =
+              (args[2] as WKScriptMessageData?);
           assert(arg_message != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandlerFlutterApi.didReceiveScriptMessage was null, expected non-null WKScriptMessageData.');
           try {
-            api.didReceiveScriptMessage(arg_identifier!, arg_userContentControllerIdentifier!, arg_message!);
+            api.didReceiveScriptMessage(arg_identifier!,
+                arg_userContentControllerIdentifier!, arg_message!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1503,7 +1581,8 @@ class WKNavigationDelegateHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<void> create(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateHostApi.create';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateHostApi.create';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -1552,15 +1631,15 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return NSErrorData.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return NSUrlRequestData.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return WKFrameInfoData.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return WKNavigationActionData.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1572,31 +1651,41 @@ class _WKNavigationDelegateFlutterApiCodec extends StandardMessageCodec {
 ///
 /// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
 abstract class WKNavigationDelegateFlutterApi {
-  static const MessageCodec<Object?> codec = _WKNavigationDelegateFlutterApiCodec();
+  static const MessageCodec<Object?> codec =
+      _WKNavigationDelegateFlutterApiCodec();
 
   void didFinishNavigation(int identifier, int webViewIdentifier, String? url);
 
-  void didStartProvisionalNavigation(int identifier, int webViewIdentifier, String? url);
+  void didStartProvisionalNavigation(
+      int identifier, int webViewIdentifier, String? url);
 
-  Future<WKNavigationActionPolicyEnumData> decidePolicyForNavigationAction(int identifier, int webViewIdentifier, WKNavigationActionData navigationAction);
+  Future<WKNavigationActionPolicyEnumData> decidePolicyForNavigationAction(
+      int identifier,
+      int webViewIdentifier,
+      WKNavigationActionData navigationAction);
 
-  void didFailNavigation(int identifier, int webViewIdentifier, NSErrorData error);
+  void didFailNavigation(
+      int identifier, int webViewIdentifier, NSErrorData error);
 
-  void didFailProvisionalNavigation(int identifier, int webViewIdentifier, NSErrorData error);
+  void didFailProvisionalNavigation(
+      int identifier, int webViewIdentifier, NSErrorData error);
 
-  void webViewWebContentProcessDidTerminate(int identifier, int webViewIdentifier);
+  void webViewWebContentProcessDidTerminate(
+      int identifier, int webViewIdentifier);
 
-  static void setup(WKNavigationDelegateFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(WKNavigationDelegateFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFinishNavigation', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFinishNavigation',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFinishNavigation was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFinishNavigation was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1606,26 +1695,29 @@ abstract class WKNavigationDelegateFlutterApi {
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFinishNavigation was null, expected non-null int.');
           final String? arg_url = (args[2] as String?);
           try {
-            api.didFinishNavigation(arg_identifier!, arg_webViewIdentifier!, arg_url);
+            api.didFinishNavigation(
+                arg_identifier!, arg_webViewIdentifier!, arg_url);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didStartProvisionalNavigation', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didStartProvisionalNavigation',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didStartProvisionalNavigation was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didStartProvisionalNavigation was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1635,26 +1727,29 @@ abstract class WKNavigationDelegateFlutterApi {
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didStartProvisionalNavigation was null, expected non-null int.');
           final String? arg_url = (args[2] as String?);
           try {
-            api.didStartProvisionalNavigation(arg_identifier!, arg_webViewIdentifier!, arg_url);
+            api.didStartProvisionalNavigation(
+                arg_identifier!, arg_webViewIdentifier!, arg_url);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationAction', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationAction',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationAction was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationAction was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1662,30 +1757,35 @@ abstract class WKNavigationDelegateFlutterApi {
           final int? arg_webViewIdentifier = (args[1] as int?);
           assert(arg_webViewIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationAction was null, expected non-null int.');
-          final WKNavigationActionData? arg_navigationAction = (args[2] as WKNavigationActionData?);
+          final WKNavigationActionData? arg_navigationAction =
+              (args[2] as WKNavigationActionData?);
           assert(arg_navigationAction != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.decidePolicyForNavigationAction was null, expected non-null WKNavigationActionData.');
           try {
-            final WKNavigationActionPolicyEnumData output = await api.decidePolicyForNavigationAction(arg_identifier!, arg_webViewIdentifier!, arg_navigationAction!);
+            final WKNavigationActionPolicyEnumData output =
+                await api.decidePolicyForNavigationAction(arg_identifier!,
+                    arg_webViewIdentifier!, arg_navigationAction!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailNavigation', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailNavigation',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailNavigation was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailNavigation was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1697,26 +1797,29 @@ abstract class WKNavigationDelegateFlutterApi {
           assert(arg_error != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailNavigation was null, expected non-null NSErrorData.');
           try {
-            api.didFailNavigation(arg_identifier!, arg_webViewIdentifier!, arg_error!);
+            api.didFailNavigation(
+                arg_identifier!, arg_webViewIdentifier!, arg_error!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailProvisionalNavigation', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailProvisionalNavigation',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailProvisionalNavigation was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailProvisionalNavigation was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1728,26 +1831,29 @@ abstract class WKNavigationDelegateFlutterApi {
           assert(arg_error != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.didFailProvisionalNavigation was null, expected non-null NSErrorData.');
           try {
-            api.didFailProvisionalNavigation(arg_identifier!, arg_webViewIdentifier!, arg_error!);
+            api.didFailProvisionalNavigation(
+                arg_identifier!, arg_webViewIdentifier!, arg_error!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.webViewWebContentProcessDidTerminate', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.webViewWebContentProcessDidTerminate',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.webViewWebContentProcessDidTerminate was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.webViewWebContentProcessDidTerminate was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1756,12 +1862,14 @@ abstract class WKNavigationDelegateFlutterApi {
           assert(arg_webViewIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegateFlutterApi.webViewWebContentProcessDidTerminate was null, expected non-null int.');
           try {
-            api.webViewWebContentProcessDidTerminate(arg_identifier!, arg_webViewIdentifier!);
+            api.webViewWebContentProcessDidTerminate(
+                arg_identifier!, arg_webViewIdentifier!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -1784,7 +1892,7 @@ class _NSObjectHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1806,7 +1914,8 @@ class NSObjectHostApi {
   static const MessageCodec<Object?> codec = _NSObjectHostApiCodec();
 
   Future<void> dispose(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.dispose';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.dispose';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -1827,15 +1936,24 @@ class NSObjectHostApi {
     }
   }
 
-  Future<void> addObserver(int arg_identifier, int arg_observerIdentifier, String arg_keyPath, List<NSKeyValueObservingOptionsEnumData?> arg_options) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.addObserver';
+  Future<void> addObserver(
+      int arg_identifier,
+      int arg_observerIdentifier,
+      String arg_keyPath,
+      List<NSKeyValueObservingOptionsEnumData?> arg_options) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.addObserver';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_observerIdentifier, arg_keyPath, arg_options]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_observerIdentifier,
+      arg_keyPath,
+      arg_options
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1849,15 +1967,18 @@ class NSObjectHostApi {
     }
   }
 
-  Future<void> removeObserver(int arg_identifier, int arg_observerIdentifier, String arg_keyPath) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.removeObserver';
+  Future<void> removeObserver(int arg_identifier, int arg_observerIdentifier,
+      String arg_keyPath) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectHostApi.removeObserver';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_observerIdentifier, arg_keyPath]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(
+            <Object?>[arg_identifier, arg_observerIdentifier, arg_keyPath])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -1890,9 +2011,9 @@ class _NSObjectFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return ObjectOrIdentifier.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1906,21 +2027,28 @@ class _NSObjectFlutterApiCodec extends StandardMessageCodec {
 abstract class NSObjectFlutterApi {
   static const MessageCodec<Object?> codec = _NSObjectFlutterApiCodec();
 
-  void observeValue(int identifier, String keyPath, int objectIdentifier, List<NSKeyValueChangeKeyEnumData?> changeKeys, List<ObjectOrIdentifier?> changeValues);
+  void observeValue(
+      int identifier,
+      String keyPath,
+      int objectIdentifier,
+      List<NSKeyValueChangeKeyEnumData?> changeKeys,
+      List<ObjectOrIdentifier?> changeValues);
 
   void dispose(int identifier);
 
-  static void setup(NSObjectFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(NSObjectFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1931,33 +2059,38 @@ abstract class NSObjectFlutterApi {
           final int? arg_objectIdentifier = (args[2] as int?);
           assert(arg_objectIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue was null, expected non-null int.');
-          final List<NSKeyValueChangeKeyEnumData?>? arg_changeKeys = (args[3] as List<Object?>?)?.cast<NSKeyValueChangeKeyEnumData?>();
+          final List<NSKeyValueChangeKeyEnumData?>? arg_changeKeys =
+              (args[3] as List<Object?>?)?.cast<NSKeyValueChangeKeyEnumData?>();
           assert(arg_changeKeys != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue was null, expected non-null List<NSKeyValueChangeKeyEnumData?>.');
-          final List<ObjectOrIdentifier?>? arg_changeValues = (args[4] as List<Object?>?)?.cast<ObjectOrIdentifier?>();
+          final List<ObjectOrIdentifier?>? arg_changeValues =
+              (args[4] as List<Object?>?)?.cast<ObjectOrIdentifier?>();
           assert(arg_changeValues != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.observeValue was null, expected non-null List<ObjectOrIdentifier?>.');
           try {
-            api.observeValue(arg_identifier!, arg_keyPath!, arg_objectIdentifier!, arg_changeKeys!, arg_changeValues!);
+            api.observeValue(arg_identifier!, arg_keyPath!,
+                arg_objectIdentifier!, arg_changeKeys!, arg_changeValues!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.dispose', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.dispose',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.dispose was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObjectFlutterApi.dispose was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -1967,8 +2100,9 @@ abstract class NSObjectFlutterApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -2042,41 +2176,41 @@ class _WKWebViewHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return NSErrorData.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return NSHttpCookieData.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return NSKeyValueChangeKeyEnumData.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return NSKeyValueObservingOptionsEnumData.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return NSUrlRequestData.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return ObjectOrIdentifier.decode(readValue(buffer)!);
-      case 135: 
+      case 135:
         return WKAudiovisualMediaTypeEnumData.decode(readValue(buffer)!);
-      case 136: 
+      case 136:
         return WKFrameInfoData.decode(readValue(buffer)!);
-      case 137: 
+      case 137:
         return WKMediaCaptureTypeData.decode(readValue(buffer)!);
-      case 138: 
+      case 138:
         return WKNavigationActionData.decode(readValue(buffer)!);
-      case 139: 
+      case 139:
         return WKNavigationActionPolicyEnumData.decode(readValue(buffer)!);
-      case 140: 
+      case 140:
         return WKPermissionDecisionData.decode(readValue(buffer)!);
-      case 141: 
+      case 141:
         return WKScriptMessageData.decode(readValue(buffer)!);
-      case 142: 
+      case 142:
         return WKSecurityOriginData.decode(readValue(buffer)!);
-      case 143: 
+      case 143:
         return WKUserScriptData.decode(readValue(buffer)!);
-      case 144: 
+      case 144:
         return WKUserScriptInjectionTimeEnumData.decode(readValue(buffer)!);
-      case 145: 
+      case 145:
         return WKWebsiteDataTypeEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2097,15 +2231,18 @@ class WKWebViewHostApi {
 
   static const MessageCodec<Object?> codec = _WKWebViewHostApiCodec();
 
-  Future<void> create(int arg_identifier, int arg_configurationIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.create';
+  Future<void> create(
+      int arg_identifier, int arg_configurationIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.create';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_configurationIdentifier]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_configurationIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2119,15 +2256,18 @@ class WKWebViewHostApi {
     }
   }
 
-  Future<void> setUIDelegate(int arg_identifier, int? arg_uiDelegateIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setUIDelegate';
+  Future<void> setUIDelegate(
+      int arg_identifier, int? arg_uiDelegateIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setUIDelegate';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_uiDelegateIdentifier]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_uiDelegateIdentifier])
+            as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2141,15 +2281,18 @@ class WKWebViewHostApi {
     }
   }
 
-  Future<void> setNavigationDelegate(int arg_identifier, int? arg_navigationDelegateIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setNavigationDelegate';
+  Future<void> setNavigationDelegate(
+      int arg_identifier, int? arg_navigationDelegateIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setNavigationDelegate';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_navigationDelegateIdentifier]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_navigationDelegateIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2164,7 +2307,8 @@ class WKWebViewHostApi {
   }
 
   Future<String?> getUrl(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getUrl';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getUrl';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2186,7 +2330,8 @@ class WKWebViewHostApi {
   }
 
   Future<double> getEstimatedProgress(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getEstimatedProgress';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getEstimatedProgress';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2212,15 +2357,17 @@ class WKWebViewHostApi {
     }
   }
 
-  Future<void> loadRequest(int arg_identifier, NSUrlRequestData arg_request) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadRequest';
+  Future<void> loadRequest(
+      int arg_identifier, NSUrlRequestData arg_request) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadRequest';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_request]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_request]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2234,15 +2381,18 @@ class WKWebViewHostApi {
     }
   }
 
-  Future<void> loadHtmlString(int arg_identifier, String arg_string, String? arg_baseUrl) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadHtmlString';
+  Future<void> loadHtmlString(
+      int arg_identifier, String arg_string, String? arg_baseUrl) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadHtmlString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_string, arg_baseUrl]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_string, arg_baseUrl])
+            as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2256,15 +2406,18 @@ class WKWebViewHostApi {
     }
   }
 
-  Future<void> loadFileUrl(int arg_identifier, String arg_url, String arg_readAccessUrl) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadFileUrl';
+  Future<void> loadFileUrl(
+      int arg_identifier, String arg_url, String arg_readAccessUrl) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadFileUrl';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_url, arg_readAccessUrl]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_url, arg_readAccessUrl])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2279,14 +2432,15 @@ class WKWebViewHostApi {
   }
 
   Future<void> loadFlutterAsset(int arg_identifier, String arg_key) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadFlutterAsset';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.loadFlutterAsset';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_key]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_key]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2301,7 +2455,8 @@ class WKWebViewHostApi {
   }
 
   Future<bool> canGoBack(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.canGoBack';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.canGoBack';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2328,7 +2483,8 @@ class WKWebViewHostApi {
   }
 
   Future<bool> canGoForward(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.canGoForward';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.canGoForward';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2355,7 +2511,8 @@ class WKWebViewHostApi {
   }
 
   Future<void> goBack(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.goBack';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.goBack';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2377,7 +2534,8 @@ class WKWebViewHostApi {
   }
 
   Future<void> goForward(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.goForward';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.goForward';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2399,7 +2557,8 @@ class WKWebViewHostApi {
   }
 
   Future<void> reload(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.reload';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.reload';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2421,7 +2580,8 @@ class WKWebViewHostApi {
   }
 
   Future<String?> getTitle(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getTitle';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getTitle';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2442,15 +2602,17 @@ class WKWebViewHostApi {
     }
   }
 
-  Future<void> setAllowsBackForwardNavigationGestures(int arg_identifier, bool arg_allow) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsBackForwardNavigationGestures';
+  Future<void> setAllowsBackForwardNavigationGestures(
+      int arg_identifier, bool arg_allow) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setAllowsBackForwardNavigationGestures';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_allow]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_allow]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2464,15 +2626,17 @@ class WKWebViewHostApi {
     }
   }
 
-  Future<void> setCustomUserAgent(int arg_identifier, String? arg_userAgent) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setCustomUserAgent';
+  Future<void> setCustomUserAgent(
+      int arg_identifier, String? arg_userAgent) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setCustomUserAgent';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_userAgent]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_userAgent]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2486,15 +2650,18 @@ class WKWebViewHostApi {
     }
   }
 
-  Future<Object?> evaluateJavaScript(int arg_identifier, String arg_javaScriptString) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.evaluateJavaScript';
+  Future<Object?> evaluateJavaScript(
+      int arg_identifier, String arg_javaScriptString) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.evaluateJavaScript';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_javaScriptString]) as List<Object?>?;
+        await channel.send(<Object?>[arg_identifier, arg_javaScriptString])
+            as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2509,14 +2676,15 @@ class WKWebViewHostApi {
   }
 
   Future<void> setInspectable(int arg_identifier, bool arg_inspectable) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setInspectable';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.setInspectable';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_inspectable]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_inspectable]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2531,7 +2699,8 @@ class WKWebViewHostApi {
   }
 
   Future<String?> getCustomUserAgent(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewHostApi.getCustomUserAgent';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2567,7 +2736,8 @@ class WKUIDelegateHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<void> create(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateHostApi.create';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateHostApi.create';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2619,17 +2789,17 @@ class _WKUIDelegateFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return NSUrlRequestData.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return WKFrameInfoData.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return WKMediaCaptureTypeData.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return WKNavigationActionData.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return WKPermissionDecisionData.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return WKSecurityOriginData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2643,22 +2813,30 @@ class _WKUIDelegateFlutterApiCodec extends StandardMessageCodec {
 abstract class WKUIDelegateFlutterApi {
   static const MessageCodec<Object?> codec = _WKUIDelegateFlutterApiCodec();
 
-  void onCreateWebView(int identifier, int webViewIdentifier, int configurationIdentifier, WKNavigationActionData navigationAction);
+  void onCreateWebView(int identifier, int webViewIdentifier,
+      int configurationIdentifier, WKNavigationActionData navigationAction);
 
   /// Callback to Dart function `WKUIDelegate.requestMediaCapturePermission`.
-  Future<WKPermissionDecisionData> requestMediaCapturePermission(int identifier, int webViewIdentifier, WKSecurityOriginData origin, WKFrameInfoData frame, WKMediaCaptureTypeData type);
+  Future<WKPermissionDecisionData> requestMediaCapturePermission(
+      int identifier,
+      int webViewIdentifier,
+      WKSecurityOriginData origin,
+      WKFrameInfoData frame,
+      WKMediaCaptureTypeData type);
 
-  static void setup(WKUIDelegateFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(WKUIDelegateFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.onCreateWebView', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.onCreateWebView',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.onCreateWebView was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.onCreateWebView was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -2669,30 +2847,34 @@ abstract class WKUIDelegateFlutterApi {
           final int? arg_configurationIdentifier = (args[2] as int?);
           assert(arg_configurationIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.onCreateWebView was null, expected non-null int.');
-          final WKNavigationActionData? arg_navigationAction = (args[3] as WKNavigationActionData?);
+          final WKNavigationActionData? arg_navigationAction =
+              (args[3] as WKNavigationActionData?);
           assert(arg_navigationAction != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.onCreateWebView was null, expected non-null WKNavigationActionData.');
           try {
-            api.onCreateWebView(arg_identifier!, arg_webViewIdentifier!, arg_configurationIdentifier!, arg_navigationAction!);
+            api.onCreateWebView(arg_identifier!, arg_webViewIdentifier!,
+                arg_configurationIdentifier!, arg_navigationAction!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -2700,22 +2882,27 @@ abstract class WKUIDelegateFlutterApi {
           final int? arg_webViewIdentifier = (args[1] as int?);
           assert(arg_webViewIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null int.');
-          final WKSecurityOriginData? arg_origin = (args[2] as WKSecurityOriginData?);
+          final WKSecurityOriginData? arg_origin =
+              (args[2] as WKSecurityOriginData?);
           assert(arg_origin != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null WKSecurityOriginData.');
           final WKFrameInfoData? arg_frame = (args[3] as WKFrameInfoData?);
           assert(arg_frame != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null WKFrameInfoData.');
-          final WKMediaCaptureTypeData? arg_type = (args[4] as WKMediaCaptureTypeData?);
+          final WKMediaCaptureTypeData? arg_type =
+              (args[4] as WKMediaCaptureTypeData?);
           assert(arg_type != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegateFlutterApi.requestMediaCapturePermission was null, expected non-null WKMediaCaptureTypeData.');
           try {
-            final WKPermissionDecisionData output = await api.requestMediaCapturePermission(arg_identifier!, arg_webViewIdentifier!, arg_origin!, arg_frame!, arg_type!);
+            final WKPermissionDecisionData output =
+                await api.requestMediaCapturePermission(arg_identifier!,
+                    arg_webViewIdentifier!, arg_origin!, arg_frame!, arg_type!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -2741,9 +2928,9 @@ class _WKHttpCookieStoreHostApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return NSHttpCookieData.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return NSHttpCookiePropertyKeyEnumData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2764,15 +2951,18 @@ class WKHttpCookieStoreHostApi {
 
   static const MessageCodec<Object?> codec = _WKHttpCookieStoreHostApiCodec();
 
-  Future<void> createFromWebsiteDataStore(int arg_identifier, int arg_websiteDataStoreIdentifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKHttpCookieStoreHostApi.createFromWebsiteDataStore';
+  Future<void> createFromWebsiteDataStore(
+      int arg_identifier, int arg_websiteDataStoreIdentifier) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKHttpCookieStoreHostApi.createFromWebsiteDataStore';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_websiteDataStoreIdentifier]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_identifier, arg_websiteDataStoreIdentifier])
+        as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2786,15 +2976,17 @@ class WKHttpCookieStoreHostApi {
     }
   }
 
-  Future<void> setCookie(int arg_identifier, NSHttpCookieData arg_cookie) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.WKHttpCookieStoreHostApi.setCookie';
+  Future<void> setCookie(
+      int arg_identifier, NSHttpCookieData arg_cookie) async {
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKHttpCookieStoreHostApi.setCookie';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_cookie]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identifier, arg_cookie]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -2827,7 +3019,8 @@ class NSUrlHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<String?> getAbsoluteString(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlHostApi.getAbsoluteString';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlHostApi.getAbsoluteString';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2864,14 +3057,15 @@ abstract class NSUrlFlutterApi {
   static void setup(NSUrlFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlFlutterApi.create', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlFlutterApi.create',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlFlutterApi.create was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSUrlFlutterApi.create was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -2881,8 +3075,9 @@ abstract class NSUrlFlutterApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -2908,7 +3103,8 @@ class UIScrollViewDelegateHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   Future<void> create(int arg_identifier) async {
-    const String channelName = 'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create';
+    const String channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateHostApi.create';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
@@ -2940,19 +3136,22 @@ class UIScrollViewDelegateHostApi {
 abstract class UIScrollViewDelegateFlutterApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  void scrollViewDidScroll(int identifier, int uiScrollViewIdentifier, double x, double y);
+  void scrollViewDidScroll(
+      int identifier, int uiScrollViewIdentifier, double x, double y);
 
-  static void setup(UIScrollViewDelegateFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(UIScrollViewDelegateFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll', codec,
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
           assert(arg_identifier != null,
@@ -2967,12 +3166,14 @@ abstract class UIScrollViewDelegateFlutterApi {
           assert(arg_y != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegateFlutterApi.scrollViewDidScroll was null, expected non-null double.');
           try {
-            api.scrollViewDidScroll(arg_identifier!, arg_uiScrollViewIdentifier!, arg_x!, arg_y!);
+            api.scrollViewDidScroll(
+                arg_identifier!, arg_uiScrollViewIdentifier!, arg_x!, arg_y!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
