@@ -438,6 +438,7 @@ class MockTestUIScrollViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setDelegate(
     int? identifier,

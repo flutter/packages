@@ -1,9 +1,6 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
-
 ## 3.10.0
 
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 * Adds support for `setOnScrollPositionChange` method to the `WebKitWebViewController`.
 
 ## 3.9.4

@@ -265,6 +265,7 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i4.UIScrollView copy() => (super.noSuchMethod(
         Invocation.method(
@@ -359,6 +360,7 @@ class MockUIScrollViewDelegate extends _i1.Mock
           ),
         ),
       ) as _i4.UIScrollViewDelegate);
+
   @override
   _i6.Future<void> addObserver(
     _i2.NSObject? observer, {
@@ -377,6 +379,7 @@ class MockUIScrollViewDelegate extends _i1.Mock
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
   @override
   _i6.Future<void> removeObserver(
     _i2.NSObject? observer, {

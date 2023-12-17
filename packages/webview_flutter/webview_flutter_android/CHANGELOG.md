@@ -1,10 +1,11 @@
-## NEXT
+## 3.14.0
 
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Adds support for `setOnScrollPositionChange` method to the `AndroidWebViewController`.
 
 ## 3.13.0
 
-* Adds support for `setOnScrollPositionChange` method to the `AndroidWebViewController`.
+* Adds support for `PlatformNavigationDelegate.setOnHttpAuthRequest`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 3.12.1
 

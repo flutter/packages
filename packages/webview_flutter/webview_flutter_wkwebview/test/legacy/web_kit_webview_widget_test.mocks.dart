@@ -206,6 +206,7 @@ class MockUIScrollView extends _i1.Mock implements _i3.UIScrollView {
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
   @override
   _i3.UIScrollView copy() => (super.noSuchMethod(
         Invocation.method(
