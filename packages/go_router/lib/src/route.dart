@@ -465,7 +465,6 @@ abstract class ShellRouteBase extends RouteBase {
   const ShellRouteBase._({
     required super.routes,
     required super.parentNavigatorKey,
-    super.titleBuilder,
   }) : super._();
 
   static void _debugCheckSubRouteParentNavigatorKeys(
@@ -648,7 +647,6 @@ class ShellRoute extends ShellRouteBase {
     super.parentNavigatorKey,
     GlobalKey<NavigatorState>? navigatorKey,
     this.restorationScopeId,
-    super.titleBuilder,
   })  : assert(routes.isNotEmpty),
         navigatorKey = navigatorKey ?? GlobalKey<NavigatorState>(),
         super._() {
@@ -810,7 +808,6 @@ class StatefulShellRoute extends ShellRouteBase {
     this.pageBuilder,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
-    super.titleBuilder,
     this.restorationScopeId,
   })  : assert(branches.isNotEmpty),
         assert((pageBuilder != null) || (builder != null),
@@ -836,7 +833,6 @@ class StatefulShellRoute extends ShellRouteBase {
     StatefulShellRouteBuilder? builder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     StatefulShellRoutePageBuilder? pageBuilder,
-    String Function(BuildContext, GoRouterState)? titleBuilder,
     String? restorationScopeId,
   }) : this(
           branches: branches,
@@ -845,7 +841,6 @@ class StatefulShellRoute extends ShellRouteBase {
           parentNavigatorKey: parentNavigatorKey,
           restorationScopeId: restorationScopeId,
           navigatorContainerBuilder: _indexedStackContainerBuilder,
-          titleBuilder: titleBuilder,
         );
 
   /// Restoration ID to save and restore the state of the navigator, including
@@ -1137,15 +1132,6 @@ class StatefulNavigationShell extends StatefulWidget {
     }
   }
 
-  /// Gets the title builder for the current route location
-  String Function(BuildContext, GoRouterState)? get titleBuilder {
-    final StatefulShellRoute route =
-        shellRouteContext.route as StatefulShellRoute;
-    final StatefulNavigationShellState? shellState =
-        route._shellStateKey.currentState;
-    return shellState?.titleBuilder;
-  }
-
   /// Gets the effective initial location for the branch at the provided index
   /// in the associated [StatefulShellRoute].
   ///
@@ -1308,14 +1294,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     } else {
       _router.go(widget._effectiveInitialBranchLocation(index));
     }
-  }
-
-  /// Gets the title builder for the current route location
-  String Function(BuildContext, GoRouterState)? get titleBuilder {
-    final ShellRouteContext shellRouteContext = widget.shellRouteContext;
-    final RouteMatchList currentBranchLocation =
-        _scopedMatchList(shellRouteContext.routeMatchList);
-    return currentBranchLocation.titleBuilder;
   }
 
   @override
