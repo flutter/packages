@@ -5,12 +5,12 @@
 
 ## 12.1.3
 
-- Fixes a typo in `navigation.md`.
+* Fixes a typo in `navigation.md`.
 
 ## 12.1.2
 
-- Fixes an incorrect use of `extends` for Dart 3 compatibility.
-- Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes an incorrect use of `extends` for Dart 3 compatibility.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 12.1.1
 
@@ -85,7 +85,7 @@
 
 ## 10.1.2
 
-- Adds pub topics to package metadata.
+* Adds pub topics to package metadata.
 
 ## 10.1.1
 
@@ -186,7 +186,7 @@
 
 ## 7.0.1
 
-- Adds a workaround for the `dart fix --apply` issue, <https://github.com/dart-lang/sdk/issues/52233>.
+- Adds a workaround for the `dart fix --apply` issue, https://github.com/dart-lang/sdk/issues/52233.
 
 ## 7.0.0
 
@@ -669,7 +669,7 @@
 ## 2.2.8
 
 - reformatted CHANGELOG file; lets see if pub.dev is still ok with it...
-- staged an in-progress doc site at <https://docs.page/csells/go_router>
+- staged an in-progress doc site at https://docs.page/csells/go_router
 - tightened up a test that was silently failing
 - fixed a bug that dropped parent params in sub-route redirects
 
