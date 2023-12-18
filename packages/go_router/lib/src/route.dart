@@ -462,10 +462,9 @@ class GoRoute extends RouteBase {
 /// as [ShellRoute] and [StatefulShellRoute].
 abstract class ShellRouteBase extends RouteBase {
   /// Constructs a [ShellRouteBase].
-  const ShellRouteBase._({
-    required super.routes,
-    required super.parentNavigatorKey,
-  }) : super._();
+  const ShellRouteBase._(
+      {required super.routes, required super.parentNavigatorKey})
+      : super._();
 
   static void _debugCheckSubRouteParentNavigatorKeys(
       List<RouteBase> subRoutes, GlobalKey<NavigatorState> navigatorKey) {
