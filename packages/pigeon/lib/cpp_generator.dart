@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: unnecessary_breaks
-
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
@@ -1793,13 +1791,10 @@ void _writeAccessBlock(
   switch (access) {
     case _ClassAccess.public:
       accessLabel = 'public';
-      break;
     case _ClassAccess.protected:
       accessLabel = 'protected';
-      break;
     case _ClassAccess.private:
       accessLabel = 'private';
-      break;
   }
   indent.addScoped(' $accessLabel:', '', body);
 }
