@@ -33,6 +33,7 @@ dev_dependencies:
   plugin_platform_interface: ^2.0.0
   test: ^1.16.0
 
+  shared_preferences: any
 topics:
   - in-app-purchase
   - payment

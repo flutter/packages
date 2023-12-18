@@ -7,8 +7,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import '../../image_picker_platform_interface.dart';
-
 const MethodChannel _channel = MethodChannel('plugins.flutter.io/image_picker');
 
 /// An implementation of [ImagePickerPlatform] that uses method channels.
@@ -312,13 +310,10 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     switch (type) {
       case kTypeImage:
         retrieveType = RetrieveType.image;
-        break;
       case kTypeVideo:
         retrieveType = RetrieveType.video;
-        break;
       case kTypeMedia:
         retrieveType = RetrieveType.media;
-        break;
     }
 
     PlatformException? exception;

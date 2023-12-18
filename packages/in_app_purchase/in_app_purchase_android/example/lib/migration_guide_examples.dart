@@ -16,7 +16,7 @@ void handleOneTimePurchasePrice(ProductDetails productDetails) {
     if (product.productType == ProductType.inapp) {
       // Unwrapping is safe because the product is a one time purchase.
       final OneTimePurchaseOfferDetailsWrapper offer =
-          product.oneTimePurchaseOfferDetails!;
+          product.oneTimePurchaseOfferDetails;
       final String price = offer.formattedPrice;
     }
   }

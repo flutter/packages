@@ -587,13 +587,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     switch (mode) {
       case FlashMode.off:
         _currentFlashMode = ImageCapture.flashModeOff;
-        break;
       case FlashMode.auto:
         _currentFlashMode = ImageCapture.flashModeAuto;
-        break;
       case FlashMode.always:
         _currentFlashMode = ImageCapture.flashModeOn;
-        break;
       case FlashMode.torch:
         _currentFlashMode = null;
         if (torchEnabled) {
@@ -603,7 +600,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         cameraControl = await camera!.getCameraControl();
         await cameraControl.enableTorch(true);
         torchEnabled = true;
-        break;
     }
   }
 
@@ -913,19 +909,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     switch (preset) {
       case ResolutionPreset.low:
         boundSize = const Size(320, 240);
-        break;
       case ResolutionPreset.medium:
         boundSize = const Size(720, 480);
-        break;
       case ResolutionPreset.high:
         boundSize = const Size(1280, 720);
-        break;
       case ResolutionPreset.veryHigh:
         boundSize = const Size(1920, 1080);
-        break;
       case ResolutionPreset.ultraHigh:
         boundSize = const Size(3840, 2160);
-        break;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
         resolutionStrategy =
@@ -954,19 +945,14 @@ class AndroidCameraCameraX extends CameraPlatform {
       // 240p is not supported by CameraX.
       case ResolutionPreset.medium:
         videoQuality = VideoQuality.SD;
-        break;
       case ResolutionPreset.high:
         videoQuality = VideoQuality.HD;
-        break;
       case ResolutionPreset.veryHigh:
         videoQuality = VideoQuality.FHD;
-        break;
       case ResolutionPreset.ultraHigh:
         videoQuality = VideoQuality.UHD;
-        break;
       case ResolutionPreset.max:
         videoQuality = VideoQuality.highest;
-        break;
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.

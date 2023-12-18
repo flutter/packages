@@ -28,6 +28,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  integration_test: any
+  mockito: any
 topics:
   - links
   - os-integration

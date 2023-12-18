@@ -368,7 +368,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
               HitTestEntry(
                   _columnMetrics[cellParentData.tableVicinity.column]!),
             );
-            break;
           case Axis.horizontal:
             // Column major order, columns go first.
             result.add(
@@ -378,7 +377,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             result.add(
               HitTestEntry(_rowMetrics[cellParentData.tableVicinity.row]!),
             );
-            break;
         }
         return true;
       }
@@ -857,10 +855,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           columnSpan.foregroundDecoration != null) {
         final RenderBox leadingCell = getChildFor(
           TableVicinity(column: column, row: leading.row),
-        )!;
+        );
         final RenderBox trailingCell = getChildFor(
           TableVicinity(column: column, row: trailing.row),
-        )!;
+        );
 
         Rect getColumnRect(bool consumePadding) {
           return Rect.fromPoints(
@@ -906,10 +904,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           rowSpan.foregroundDecoration != null) {
         final RenderBox leadingCell = getChildFor(
           TableVicinity(column: leading.column, row: row),
-        )!;
+        );
         final RenderBox trailingCell = getChildFor(
           TableVicinity(column: trailing.column, row: row),
-        )!;
+        );
 
         Rect getRowRect(bool consumePadding) {
           return Rect.fromPoints(
@@ -969,7 +967,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           );
           decoration.paint(paintingDetails);
         });
-        break;
       // Column major order. Columns go first.
       case Axis.horizontal:
         backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
@@ -997,7 +994,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       for (int row = leading.row; row <= trailing.row; row++) {
         final RenderBox cell = getChildFor(
           TableVicinity(column: column, row: row),
-        )!;
+        );
         final TableViewParentData cellParentData = parentDataOf(cell);
         if (cellParentData.isVisible) {
           context.paintChild(cell, offset + cellParentData.paintOffset!);
@@ -1027,7 +1024,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           );
           decoration.paint(paintingDetails);
         });
-        break;
       // Column major order. Columns go first.
       case Axis.horizontal:
         foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {

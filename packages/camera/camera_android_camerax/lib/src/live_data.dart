@@ -107,11 +107,9 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
       case CameraState:
         typeData =
             LiveDataSupportedTypeData(value: LiveDataSupportedType.cameraState);
-        break;
       case ZoomState:
         typeData =
             LiveDataSupportedTypeData(value: LiveDataSupportedType.zoomState);
-        break;
       default:
         throw ArgumentError(LiveData.unsupportedLiveDataTypeErrorMessage);
     }

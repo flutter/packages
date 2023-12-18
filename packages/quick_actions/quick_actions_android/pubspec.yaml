@@ -30,6 +30,7 @@ dev_dependencies:
   pigeon: ^11.0.1
   plugin_platform_interface: ^2.1.2
 
+  quick_actions_example: any
 topics:
   - quick-actions
   - os-integration

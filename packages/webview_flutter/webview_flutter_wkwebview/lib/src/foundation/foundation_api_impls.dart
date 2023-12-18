@@ -23,16 +23,12 @@ Iterable<NSKeyValueObservingOptionsEnumData>
     switch (option) {
       case NSKeyValueObservingOptions.newValue:
         value = NSKeyValueObservingOptionsEnum.newValue;
-        break;
       case NSKeyValueObservingOptions.oldValue:
         value = NSKeyValueObservingOptionsEnum.oldValue;
-        break;
       case NSKeyValueObservingOptions.initialValue:
         value = NSKeyValueObservingOptionsEnum.initialValue;
-        break;
       case NSKeyValueObservingOptions.priorNotification:
         value = NSKeyValueObservingOptionsEnum.priorNotification;
-        break;
     }
 
     return NSKeyValueObservingOptionsEnumData(value: value);

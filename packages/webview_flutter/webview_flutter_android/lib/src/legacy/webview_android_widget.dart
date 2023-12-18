@@ -371,7 +371,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
       if (setting.hasNavigationDelegate != null)
         _setHasNavigationDelegate(setting.hasNavigationDelegate!),
       if (setting.javascriptMode != null)
-        _setJavaScriptMode(setting.javascriptMode!),
+        _setJavaScriptMode(setting.javascriptMode),
       if (setting.debuggingEnabled != null)
         _setDebuggingEnabled(setting.debuggingEnabled!),
       if (setting.zoomEnabled != null) _setZoomEnabled(setting.zoomEnabled!),

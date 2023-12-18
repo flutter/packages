@@ -33,6 +33,8 @@ dev_dependencies:
   json_serializable: ^6.0.0
   test: ^1.16.0
 
+  integration_test: any
+  shared_preferences: any
 topics:
   - in-app-purchase
   - payment

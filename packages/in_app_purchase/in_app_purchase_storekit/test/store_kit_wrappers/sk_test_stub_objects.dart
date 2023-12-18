@@ -156,8 +156,8 @@ Map<String, dynamic> buildProductMap(SKProductWrapper product) {
     'price': product.price,
     'subscriptionPeriod':
         buildSubscriptionPeriodMap(product.subscriptionPeriod),
-    'introductoryPrice': buildDiscountMap(product.introductoryPrice!),
-    'discounts': <dynamic>[buildDiscountMap(product.introductoryPrice!)],
+    'introductoryPrice': buildDiscountMap(product.introductoryPrice),
+    'discounts': <dynamic>[buildDiscountMap(product.introductoryPrice)],
   };
 }
 
@@ -188,10 +188,10 @@ Map<String, dynamic> buildTransactionMap(
     'payment': transaction.payment.toMap(),
     'originalTransaction': transaction.originalTransaction == null
         ? null
-        : buildTransactionMap(transaction.originalTransaction!),
+        : buildTransactionMap(transaction.originalTransaction),
     'transactionTimeStamp': transaction.transactionTimeStamp,
     'transactionIdentifier': transaction.transactionIdentifier,
-    'error': buildErrorMap(transaction.error!),
+    'error': buildErrorMap(transaction.error),
   };
   return map;
 }

@@ -17,5 +17,9 @@ dependencies:
 dev_dependencies:
   test: ^1.16.0
 
+  integration_test: any
+  flutter_test: any
+  xdg_directories_example: any
+  flutter: any
 topics:
   - paths

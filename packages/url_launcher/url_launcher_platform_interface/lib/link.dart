@@ -28,35 +28,34 @@ const MethodCodec _codec = JSONMethodCodec();
 ///
 /// This is a class instead of an enum to allow future customizability e.g.
 /// opening a link in a specific iframe.
-class LinkTarget {
-  /// Const private constructor with a [debugLabel] to allow the creation of
-  /// multiple distinct const instances.
-  const LinkTarget._({required this.debugLabel});
-
-  /// Used to distinguish multiple const instances of [LinkTarget].
-  final String debugLabel;
-
+enum LinkTarget {
   /// Use the default target for each platform.
   ///
   /// On Android, the default is [blank]. On the web, the default is [self].
   ///
   /// iOS, on the other hand, defaults to [self] for web URLs, and [blank] for
   /// non-web URLs.
-  static const LinkTarget defaultTarget =
-      LinkTarget._(debugLabel: 'defaultTarget');
+  defaultTarget._(debugLabel: 'defaultTarget'),
 
   /// On the web, this opens the link in the same tab where the flutter app is
   /// running.
   ///
   /// On Android and iOS, this opens the link in a webview within the app.
-  static const LinkTarget self = LinkTarget._(debugLabel: 'self');
+  self._(debugLabel: 'self'),
 
   /// On the web, this opens the link in a new tab or window (depending on the
   /// browser and user configuration).
   ///
   /// On Android and iOS, this opens the link in the browser or the relevant
   /// app.
-  static const LinkTarget blank = LinkTarget._(debugLabel: 'blank');
+  blank._(debugLabel: 'blank');
+
+  /// Const private constructor with a [debugLabel] to allow the creation of
+  /// multiple distinct const instances.
+  const LinkTarget._({required this.debugLabel});
+
+  /// Used to distinguish multiple const instances of [LinkTarget].
+  final String debugLabel;
 }
 
 /// Encapsulates all the information necessary to build a Link widget.

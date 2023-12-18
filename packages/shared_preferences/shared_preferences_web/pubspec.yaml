@@ -28,6 +28,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  integration_test: any
 topics:
   - persistence
   - shared-preferences

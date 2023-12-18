@@ -278,7 +278,7 @@ void main() {
       // first child
       TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
       TableViewParentData parentData = parentDataOf(
-        viewport.firstChild!,
+        viewport.firstChild,
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, Offset.zero);
@@ -287,7 +287,7 @@ void main() {
       vicinity = const TableVicinity(column: 1, row: 0);
 
       parentData = parentDataOf(
-        viewport.childAfter(viewport.firstChild!)!,
+        viewport.childAfter(viewport.firstChild!),
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(200, 0.0));
@@ -300,7 +300,7 @@ void main() {
 
       // last child
       vicinity = const TableVicinity(column: 4, row: 4);
-      parentData = parentDataOf(viewport.lastChild!);
+      parentData = parentDataOf(viewport.lastChild);
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(800.0, 800.0));
       expect(parentData.isVisible, isFalse);
@@ -312,7 +312,7 @@ void main() {
       // before last child
       vicinity = const TableVicinity(column: 3, row: 4);
       parentData = parentDataOf(
-        viewport.childBefore(viewport.lastChild!)!,
+        viewport.childBefore(viewport.lastChild!),
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(600.0, 800.0));
@@ -359,7 +359,7 @@ void main() {
       // first child
       TableVicinity vicinity = const TableVicinity(column: 0, row: 0);
       TableViewParentData parentData = parentDataOf(
-        viewport.firstChild!,
+        viewport.firstChild,
       );
       expect(parentData.vicinity, vicinity);
       expect(
@@ -373,7 +373,7 @@ void main() {
       vicinity = const TableVicinity(column: 1, row: 0);
 
       parentData = parentDataOf(
-        viewport.childAfter(viewport.firstChild!)!,
+        viewport.childAfter(viewport.firstChild!),
       );
       expect(parentData.vicinity, vicinity);
       expect(
@@ -386,7 +386,7 @@ void main() {
 
       // last child
       vicinity = const TableVicinity(column: 1, row: 1);
-      parentData = parentDataOf(viewport.lastChild!);
+      parentData = parentDataOf(viewport.lastChild);
       expect(parentData.vicinity, vicinity);
       expect(
         parentData.layoutOffset,
@@ -419,7 +419,7 @@ void main() {
       // first child
       vicinity = const TableVicinity(column: 0, row: 0);
       parentData = parentDataOf(
-        viewport.firstChild!,
+        viewport.firstChild,
       );
       expect(parentData.vicinity, vicinity);
       // layoutOffset is later corrected for reverse in the paintOffset
@@ -428,14 +428,14 @@ void main() {
       vicinity = const TableVicinity(column: 1, row: 0);
 
       parentData = parentDataOf(
-        viewport.childAfter(viewport.firstChild!)!,
+        viewport.childAfter(viewport.firstChild!),
       );
       expect(parentData.vicinity, vicinity);
       expect(parentData.paintOffset, const Offset(360.0, 370.0));
 
       // last child
       vicinity = const TableVicinity(column: 1, row: 1);
-      parentData = parentDataOf(viewport.lastChild!);
+      parentData = parentDataOf(viewport.lastChild);
       expect(parentData.vicinity, vicinity);
       expect(parentData.paintOffset, const Offset(360.0, 100.0));
     });

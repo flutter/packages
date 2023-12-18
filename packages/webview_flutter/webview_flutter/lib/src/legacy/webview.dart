@@ -121,10 +121,8 @@ class WebView extends StatefulWidget {
       switch (defaultTargetPlatform) {
         case TargetPlatform.android:
           _platform = SurfaceAndroidWebView();
-          break;
         case TargetPlatform.iOS:
           _platform = CupertinoWebView();
-          break;
         // ignore: no_default_cases
         default:
           throw UnsupportedError(
@@ -342,7 +340,7 @@ class _WebViewState extends State<WebView> {
   void _onWebViewPlatformCreated(WebViewPlatformController? webViewPlatform) {
     final WebViewController controller = WebViewController._(
       widget,
-      webViewPlatform!,
+      webViewPlatform,
       _javascriptChannelRegistry,
     );
     _controller.complete(controller);

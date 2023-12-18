@@ -137,7 +137,7 @@ void _fallbackToManual(String error) {
 
   for (final String benchmarkName in _benchmarks.keys) {
     // Find the button elements added above.
-    final Element button = document.querySelector('#$benchmarkName')!;
+    final Element button = document.querySelector('#$benchmarkName');
     button.addEventListener(
         'click',
         (JSAny? arg) {

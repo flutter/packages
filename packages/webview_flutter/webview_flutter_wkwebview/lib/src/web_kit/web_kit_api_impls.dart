@@ -13,7 +13,7 @@ import '../foundation/foundation.dart';
 import 'web_kit.dart';
 
 export '../common/web_kit.g.dart'
-    show WKNavigationType, WKPermissionDecision, WKMediaCaptureType;
+    show WKMediaCaptureType, WKNavigationType, WKPermissionDecision;
 
 Iterable<WKWebsiteDataTypeEnumData> _toWKWebsiteDataTypeEnumData(
     Iterable<WKWebsiteDataType> types) {
@@ -22,28 +22,20 @@ Iterable<WKWebsiteDataTypeEnumData> _toWKWebsiteDataTypeEnumData(
     switch (type) {
       case WKWebsiteDataType.cookies:
         value = WKWebsiteDataTypeEnum.cookies;
-        break;
       case WKWebsiteDataType.memoryCache:
         value = WKWebsiteDataTypeEnum.memoryCache;
-        break;
       case WKWebsiteDataType.diskCache:
         value = WKWebsiteDataTypeEnum.diskCache;
-        break;
       case WKWebsiteDataType.offlineWebApplicationCache:
         value = WKWebsiteDataTypeEnum.offlineWebApplicationCache;
-        break;
       case WKWebsiteDataType.localStorage:
         value = WKWebsiteDataTypeEnum.localStorage;
-        break;
       case WKWebsiteDataType.sessionStorage:
         value = WKWebsiteDataTypeEnum.sessionStorage;
-        break;
       case WKWebsiteDataType.webSQLDatabases:
         value = WKWebsiteDataTypeEnum.webSQLDatabases;
-        break;
       case WKWebsiteDataType.indexedDBDatabases:
         value = WKWebsiteDataTypeEnum.indexedDBDatabases;
-        break;
     }
 
     return WKWebsiteDataTypeEnumData(value: value);
@@ -82,46 +74,32 @@ extension _NSHttpCookiePropertyKeyConverter on NSHttpCookiePropertyKey {
     switch (this) {
       case NSHttpCookiePropertyKey.comment:
         value = NSHttpCookiePropertyKeyEnum.comment;
-        break;
       case NSHttpCookiePropertyKey.commentUrl:
         value = NSHttpCookiePropertyKeyEnum.commentUrl;
-        break;
       case NSHttpCookiePropertyKey.discard:
         value = NSHttpCookiePropertyKeyEnum.discard;
-        break;
       case NSHttpCookiePropertyKey.domain:
         value = NSHttpCookiePropertyKeyEnum.domain;
-        break;
       case NSHttpCookiePropertyKey.expires:
         value = NSHttpCookiePropertyKeyEnum.expires;
-        break;
       case NSHttpCookiePropertyKey.maximumAge:
         value = NSHttpCookiePropertyKeyEnum.maximumAge;
-        break;
       case NSHttpCookiePropertyKey.name:
         value = NSHttpCookiePropertyKeyEnum.name;
-        break;
       case NSHttpCookiePropertyKey.originUrl:
         value = NSHttpCookiePropertyKeyEnum.originUrl;
-        break;
       case NSHttpCookiePropertyKey.path:
         value = NSHttpCookiePropertyKeyEnum.path;
-        break;
       case NSHttpCookiePropertyKey.port:
         value = NSHttpCookiePropertyKeyEnum.port;
-        break;
       case NSHttpCookiePropertyKey.sameSitePolicy:
         value = NSHttpCookiePropertyKeyEnum.sameSitePolicy;
-        break;
       case NSHttpCookiePropertyKey.secure:
         value = NSHttpCookiePropertyKeyEnum.secure;
-        break;
       case NSHttpCookiePropertyKey.value:
         value = NSHttpCookiePropertyKeyEnum.value;
-        break;
       case NSHttpCookiePropertyKey.version:
         value = NSHttpCookiePropertyKeyEnum.version;
-        break;
     }
 
     return NSHttpCookiePropertyKeyEnumData(value: value);
@@ -134,10 +112,8 @@ extension _WKUserScriptInjectionTimeConverter on WKUserScriptInjectionTime {
     switch (this) {
       case WKUserScriptInjectionTime.atDocumentStart:
         value = WKUserScriptInjectionTimeEnum.atDocumentStart;
-        break;
       case WKUserScriptInjectionTime.atDocumentEnd:
         value = WKUserScriptInjectionTimeEnum.atDocumentEnd;
-        break;
     }
 
     return WKUserScriptInjectionTimeEnumData(value: value);
@@ -153,16 +129,12 @@ Iterable<WKAudiovisualMediaTypeEnumData> _toWKAudiovisualMediaTypeEnumData(
     switch (type) {
       case WKAudiovisualMediaType.none:
         value = WKAudiovisualMediaTypeEnum.none;
-        break;
       case WKAudiovisualMediaType.audio:
         value = WKAudiovisualMediaTypeEnum.audio;
-        break;
       case WKAudiovisualMediaType.video:
         value = WKAudiovisualMediaTypeEnum.video;
-        break;
       case WKAudiovisualMediaType.all:
         value = WKAudiovisualMediaTypeEnum.all;
-        break;
     }
 
     return WKAudiovisualMediaTypeEnumData(value: value);

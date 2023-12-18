@@ -34,6 +34,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  integration_test: any
+  path_provider: any
 topics:
   - video
   - video-player

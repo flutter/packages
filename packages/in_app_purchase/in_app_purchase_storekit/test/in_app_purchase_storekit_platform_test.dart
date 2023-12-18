@@ -352,7 +352,7 @@ void main() {
         details.addAll(purchaseDetailsList);
         for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
           if (purchaseDetails.status == PurchaseStatus.error) {
-            error = purchaseDetails.error!;
+            error = purchaseDetails.error;
             completer.complete(error);
             subscription.cancel();
           }

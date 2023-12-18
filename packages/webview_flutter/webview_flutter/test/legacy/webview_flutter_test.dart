@@ -1344,7 +1344,7 @@ class MatchesCreationParams extends Matcher {
       Map<dynamic, dynamic> matchState) {
     return _creationParams.initialUrl == creationParams.initialUrl &&
         MatchesWebSettings(_creationParams.webSettings)
-            .matches(creationParams.webSettings!, matchState) &&
+            .matches(creationParams.webSettings, matchState) &&
         orderedEquals(_creationParams.javascriptChannelNames)
             .matches(creationParams.javascriptChannelNames, matchState);
   }

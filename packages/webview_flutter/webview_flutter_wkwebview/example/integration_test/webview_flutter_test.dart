@@ -86,7 +86,7 @@ Future<void> main() async {
           InstanceManager(onWeakReferenceRemoved: (int identifier) {
         if (!aWebViewHasBeenGarbageCollected) {
           final Copyable instance =
-              instanceManager.getInstanceWithWeakReference(identifier)!;
+              instanceManager.getInstanceWithWeakReference(identifier);
           if (instance is WKWebView) {
             aWebViewHasBeenGarbageCollected = true;
           }

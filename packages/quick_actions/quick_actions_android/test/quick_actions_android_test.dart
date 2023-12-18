@@ -101,7 +101,7 @@ class _FakeQuickActionsApi implements AndroidQuickActionsApi {
   Future<void> setShortcutItems(List<ShortcutItemMessage?> itemsList) async {
     await clearShortcutItems();
     for (final ShortcutItemMessage? element in itemsList) {
-      items.add(shortcutItemMessageToShortcutItem(element!));
+      items.add(shortcutItemMessageToShortcutItem(element));
     }
   }
 }

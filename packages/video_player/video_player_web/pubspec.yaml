@@ -27,6 +27,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  integration_test: any
+  js: any
 topics:
   - video
   - video-player

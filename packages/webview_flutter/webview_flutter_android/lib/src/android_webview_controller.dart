@@ -204,17 +204,13 @@ class AndroidWebViewController extends PlatformWebViewController {
               case ConsoleMessageLevel.debug:
               case ConsoleMessageLevel.tip:
                 logLevel = JavaScriptLogLevel.debug;
-                break;
               case ConsoleMessageLevel.error:
                 logLevel = JavaScriptLogLevel.error;
-                break;
               case ConsoleMessageLevel.warning:
                 logLevel = JavaScriptLogLevel.warning;
-                break;
               case ConsoleMessageLevel.unknown:
               case ConsoleMessageLevel.log:
                 logLevel = JavaScriptLogLevel.log;
-                break;
             }
 
             callback(JavaScriptConsoleMessage(
@@ -736,13 +732,10 @@ class FileSelectorParams {
     switch (params.mode) {
       case android_webview.FileChooserMode.open:
         mode = FileSelectorMode.open;
-        break;
       case android_webview.FileChooserMode.openMultiple:
         mode = FileSelectorMode.openMultiple;
-        break;
       case android_webview.FileChooserMode.save:
         mode = FileSelectorMode.save;
-        break;
     }
 
     return FileSelectorParams(
@@ -1376,7 +1369,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         uri: Uri.parse(url),
         headers: headers,
       ));
-    } else if (returnValue is Future<NavigationDecision>) {
+    } else {
       returnValue.then((NavigationDecision shouldLoadUrl) {
         if (shouldLoadUrl == NavigationDecision.navigate) {
           onLoadRequest(LoadRequestParams(

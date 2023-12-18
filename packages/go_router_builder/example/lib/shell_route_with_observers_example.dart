@@ -90,10 +90,8 @@ class MyShellRouteScreen extends StatelessWidget {
               switch (index) {
                 case 0:
                   const HomeRouteData().go(context);
-                  break;
                 case 1:
                   const UsersRouteData().go(context);
-                  break;
               }
             },
           ),

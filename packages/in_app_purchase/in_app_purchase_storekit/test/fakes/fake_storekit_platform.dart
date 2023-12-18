@@ -137,7 +137,7 @@ class FakeStoreKitPlatform {
           if (!validProductIDs.contains(productID)) {
             invalidFound.add(productID);
           } else {
-            products.add(validProducts[productID]!);
+            products.add(validProducts[productID]);
           }
         }
         final SkProductResponseWrapper response = SkProductResponseWrapper(
@@ -211,20 +211,16 @@ class FakeStoreKitPlatform {
           InAppPurchaseStoreKitPlatform.observer.updatedTransactions(
               transactions: <SKPaymentTransactionWrapper>[transactionFinished]);
         }
-        break;
       case '-[InAppPurchasePlugin finishTransaction:result:]':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         finishedTransactions.add(createPurchasedTransaction(
             arguments['productIdentifier']! as String,
             arguments['transactionIdentifier']! as String,
             quantity: transactions.first.payment.quantity));
-        break;
       case '-[SKPaymentQueue startObservingTransactionQueue]':
         queueIsActive = true;
-        break;
       case '-[SKPaymentQueue stopObservingTransactionQueue]':
         queueIsActive = false;
-        break;
     }
     return Future<void>.sync(() {});
   }

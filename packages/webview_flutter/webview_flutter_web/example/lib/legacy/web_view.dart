@@ -78,7 +78,7 @@ class _WebViewState extends State<WebView> {
           (WebViewPlatformController? webViewPlatformController) {
         final WebViewController controller = WebViewController(
           widget,
-          webViewPlatformController!,
+          webViewPlatformController,
         );
         _controller.complete(controller);
 

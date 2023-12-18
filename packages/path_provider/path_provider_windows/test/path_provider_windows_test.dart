@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:path_provider_windows/path_provider_windows.dart';
 import 'package:path_provider_windows/src/path_provider_windows_real.dart'
-    show languageEn, encodingCP1252, encodingUnicode;
+    show encodingCP1252, encodingUnicode, languageEn;
 
 // A fake VersionInfoQuerier that just returns preset responses.
 class FakeVersionInfoQuerier implements VersionInfoQuerier {

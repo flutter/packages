@@ -372,7 +372,7 @@ class TableSpanDecoration {
   void paint(TableSpanDecorationPaintDetails details) {
     if (color != null) {
       final Paint paint = Paint()
-        ..color = color!
+        ..color = color
         ..isAntiAlias = borderRadius != null;
       if (borderRadius == null || borderRadius == BorderRadius.zero) {
         details.canvas.drawRect(details.rect, paint);
@@ -444,7 +444,6 @@ class TableSpanBorder {
           details.rect,
           borderRadius: borderRadius,
         );
-        break;
       case Axis.vertical:
         final Border border = Border(
           left: axisDirection == AxisDirection.down ? leading : trailing,
@@ -455,7 +454,6 @@ class TableSpanBorder {
           details.rect,
           borderRadius: borderRadius,
         );
-        break;
     }
   }
 }

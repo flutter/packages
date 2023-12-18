@@ -105,10 +105,8 @@ class MyShellRouteScreen extends StatelessWidget {
           switch (index) {
             case 0:
               const FooRouteData().go(context);
-              break;
             case 1:
               const BarRouteData().go(context);
-              break;
           }
         },
       ),
