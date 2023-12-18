@@ -235,7 +235,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
       _value = _valueInEngine = routeInformation;
     } else {
       _value = RouteInformation(
-        location: routeInformation.location,
+        uri: routeInformation.uri,
         state: RouteInformationState<void>(type: NavigatingType.go),
       );
       _valueInEngine = _kEmptyRouteInformation;
