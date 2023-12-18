@@ -29,9 +29,6 @@ dev_dependencies:
   mockito: 5.4.3
   pigeon: ^11.0.0
 
-  integration_test: any
-  webview_flutter_android_example: any
-  path_provider: any
 topics:
   - html
   - webview

@@ -381,7 +381,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return SizeTransition(
       sizeFactor: _exposureModeControlRowAnimation,
       child: ClipRect(
-        child: Container(
+        child: ColoredBox(
           color: Colors.grey.shade50,
           child: Column(
             children: <Widget>[
@@ -465,7 +465,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return SizeTransition(
       sizeFactor: _focusModeControlRowAnimation,
       child: ClipRect(
-        child: Container(
+        child: ColoredBox(
           color: Colors.grey.shade50,
           child: Column(
             children: <Widget>[

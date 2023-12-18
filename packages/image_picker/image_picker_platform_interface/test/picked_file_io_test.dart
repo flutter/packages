@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @TestOn('vm') // Uses dart:io
+library;
 
 import 'dart:convert';
 import 'dart:io';

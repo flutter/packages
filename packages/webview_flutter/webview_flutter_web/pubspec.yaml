@@ -29,8 +29,6 @@ dev_dependencies:
     sdk: flutter
   mockito: 5.4.3
 
-  integration_test: any
-  webview_flutter_web_example: any
 topics:
   - html
   - webview

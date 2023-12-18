@@ -1277,7 +1277,7 @@ class MyWebViewPlatform implements WebViewPlatform {
   }) {
     assert(onWebViewPlatformCreated != null);
     lastPlatformBuilt = MyWebViewPlatformController(
-        creationParams, gestureRecognizers, webViewPlatformCallbacksHandler);
+        creationParams, webViewPlatformCallbacksHandler);
     onWebViewPlatformCreated!(lastPlatformBuilt);
     return Container();
   }
@@ -1289,12 +1289,11 @@ class MyWebViewPlatform implements WebViewPlatform {
 }
 
 class MyWebViewPlatformController extends WebViewPlatformController {
-  MyWebViewPlatformController(this.creationParams, this.gestureRecognizers,
-      WebViewPlatformCallbacksHandler platformHandler)
+  MyWebViewPlatformController(
+      this.creationParams, WebViewPlatformCallbacksHandler platformHandler)
       : super(platformHandler);
 
   CreationParams? creationParams;
-  Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers;
 
   String? lastUrlLoaded;
   Map<String, String>? lastRequestHeaders;
@@ -1344,7 +1343,7 @@ class MatchesCreationParams extends Matcher {
       Map<dynamic, dynamic> matchState) {
     return _creationParams.initialUrl == creationParams.initialUrl &&
         MatchesWebSettings(_creationParams.webSettings)
-            .matches(creationParams.webSettings, matchState) &&
+            .matches(creationParams.webSettings!, matchState) &&
         orderedEquals(_creationParams.javascriptChannelNames)
             .matches(creationParams.javascriptChannelNames, matchState);
   }

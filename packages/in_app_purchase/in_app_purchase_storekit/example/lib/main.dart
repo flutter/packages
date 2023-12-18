@@ -402,7 +402,7 @@ class _MyAppState extends State<_MyApp> {
       showPendingUI();
     } else {
       if (purchaseDetails.status == PurchaseStatus.error) {
-        handleError(purchaseDetails.error);
+        handleError(purchaseDetails.error!);
       } else if (purchaseDetails.status == PurchaseStatus.purchased ||
           purchaseDetails.status == PurchaseStatus.restored) {
         final bool valid = await _verifyPurchase(purchaseDetails);

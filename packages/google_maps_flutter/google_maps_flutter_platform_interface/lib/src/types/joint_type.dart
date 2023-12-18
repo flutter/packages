@@ -2,10 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart' show immutable;
-
 /// Joint types for [Polyline].
-@immutable
 enum JointType {
   /// Mitered joint, with fixed pointed extrusion equal to half the stroke width on the outside of the joint.
   ///

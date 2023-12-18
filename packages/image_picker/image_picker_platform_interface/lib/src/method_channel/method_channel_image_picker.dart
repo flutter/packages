@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import '../../image_picker_platform_interface.dart';
+
 const MethodChannel _channel = MethodChannel('plugins.flutter.io/image_picker');
 
 /// An implementation of [ImagePickerPlatform] that uses method channels.

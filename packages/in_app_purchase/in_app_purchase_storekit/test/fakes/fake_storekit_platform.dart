@@ -137,7 +137,7 @@ class FakeStoreKitPlatform {
           if (!validProductIDs.contains(productID)) {
             invalidFound.add(productID);
           } else {
-            products.add(validProducts[productID]);
+            products.add(validProducts[productID]!);
           }
         }
         final SkProductResponseWrapper response = SkProductResponseWrapper(

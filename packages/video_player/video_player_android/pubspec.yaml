@@ -27,9 +27,6 @@ dev_dependencies:
     sdk: flutter
   pigeon: ^9.2.5
 
-  integration_test: any
-  path_provider: any
-  video_player_example: any
 topics:
   - video
   - video-player

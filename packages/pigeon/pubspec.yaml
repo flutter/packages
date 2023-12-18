@@ -18,10 +18,6 @@ dependencies:
 dev_dependencies:
   test: ^1.11.1
 
-  integration_test: any
-  flutter_test: any
-  pigeon_example_app: any
-  flutter: any
 topics:
   - codegen
   - interop

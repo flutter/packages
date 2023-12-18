@@ -372,7 +372,7 @@ class TableSpanDecoration {
   void paint(TableSpanDecorationPaintDetails details) {
     if (color != null) {
       final Paint paint = Paint()
-        ..color = color
+        ..color = color!
         ..isAntiAlias = borderRadius != null;
       if (borderRadius == null || borderRadius == BorderRadius.zero) {
         details.canvas.drawRect(details.rect, paint);

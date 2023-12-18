@@ -4,6 +4,8 @@
 
 import 'package:flutter/foundation.dart';
 
+import '../../image_picker_platform_interface.dart';
+
 /// Specifies options for selecting items when using [ImagePickerPlatform.getMedia].
 @immutable
 class MediaOptions {

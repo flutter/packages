@@ -225,7 +225,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     }
 
     if (params.webSettings != null) {
-      unawaited(updateSettings(params.webSettings));
+      unawaited(updateSettings(params.webSettings!));
     }
 
     if (params.backgroundColor != null) {
@@ -414,7 +414,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
       if (setting.hasProgressTracking != null)
         _setHasProgressTracking(setting.hasProgressTracking!),
       if (setting.javascriptMode != null)
-        _setJavaScriptMode(setting.javascriptMode),
+        _setJavaScriptMode(setting.javascriptMode!),
       if (setting.zoomEnabled != null) _setZoomEnabled(setting.zoomEnabled!),
       if (setting.gestureNavigationEnabled != null)
         webView.setAllowsBackForwardNavigationGestures(

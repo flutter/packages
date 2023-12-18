@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const FormatDetails(
+                FormatDetails(
                   title: 'Operating System:',
                   value: platform.operatingSystem,
                 ),
@@ -35,11 +35,11 @@ class MyApp extends StatelessWidget {
                   title: 'Number of Processors:',
                   value: platform.numberOfProcessors.toString(),
                 ),
-                const FormatDetails(
+                FormatDetails(
                   title: 'Path Separator:',
                   value: platform.pathSeparator,
                 ),
-                const FormatDetails(
+                FormatDetails(
                   title: 'Local Hostname:',
                   value: platform.localHostname,
                 ),
@@ -47,11 +47,11 @@ class MyApp extends StatelessWidget {
                   title: 'Environment:',
                   value: platform.environment.toString(),
                 ),
-                const FormatDetails(
+                FormatDetails(
                   title: 'Executable:',
                   value: platform.executable,
                 ),
-                const FormatDetails(
+                FormatDetails(
                   title: 'Resolved Executable:',
                   value: platform.resolvedExecutable,
                 ),
@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
                   title: 'Package Config:',
                   value: platform.packageConfig.toString(),
                 ),
-                const FormatDetails(
+                FormatDetails(
                   title: 'Version:',
                   value: platform.version,
                 ),
@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
                   title: 'Stdout Supports ANSI:',
                   value: platform.stdoutSupportsAnsi.toString(),
                 ),
-                const FormatDetails(
+                FormatDetails(
                   title: 'Locale Name:',
                   value: platform.localeName,
                 ),

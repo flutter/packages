@@ -10,6 +10,8 @@ import 'package:shared_preferences_platform_interface/shared_preferences_platfor
 import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:web/web.dart' as html;
 
+import 'src/keys_extension.dart';
+
 /// The web implementation of [SharedPreferencesStorePlatform].
 ///
 /// This class implements the `package:shared_preferences` functionality for the web.

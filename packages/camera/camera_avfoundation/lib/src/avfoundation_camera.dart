@@ -310,7 +310,7 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   StreamController<CameraImageData> _createStreamController(
-      {Function()? onListen}) {
+      {void Function()? onListen}) {
     return StreamController<CameraImageData>(
       onListen: onListen ?? () {},
       onPause: _onFrameStreamPauseResume,

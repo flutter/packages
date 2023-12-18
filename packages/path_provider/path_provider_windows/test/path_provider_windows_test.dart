@@ -1,40 +1,15 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'dart:ffi';
+
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:path_provider_windows/path_provider_windows.dart';
-import 'package:path_provider_windows/src/path_provider_windows_real.dart'
-    show encodingCP1252, encodingUnicode, languageEn;
 
 // A fake VersionInfoQuerier that just returns preset responses.
-class FakeVersionInfoQuerier implements VersionInfoQuerier {
-  FakeVersionInfoQuerier(
-    this.responses, {
-    this.language = languageEn,
-    this.encoding = encodingUnicode,
-  });
-
-  final String language;
-  final String encoding;
-  final Map<String, String> responses;
-
-  String? getStringValue(
-    Pointer<Uint8>? versionInfo,
-    String key, {
-    required String language,
-    required String encoding,
-  }) {
-    if (language == this.language && encoding == this.encoding) {
-      return responses[key];
-    } else {
-      return null;
-    }
-  }
-}
+class FakeVersionInfoQuerier implements VersionInfoQuerier {}
 
 void main() {
   test('registered instance', () {
@@ -49,8 +24,7 @@ void main() {
 
   test('getApplicationSupportPath with no version info', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier =
-        FakeVersionInfoQuerier(<String, String>{});
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationSupportPath();
     expect(path, contains(r'C:\'));
     expect(path, contains(r'AppData'));
@@ -60,10 +34,7 @@ void main() {
 
   test('getApplicationSupportPath with full version info in CP1252', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': 'A Company',
-      'ProductName': 'Amazing App',
-    }, encoding: encodingCP1252);
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationSupportPath();
     expect(path, isNotNull);
     if (path != null) {
@@ -74,10 +45,7 @@ void main() {
 
   test('getApplicationSupportPath with full version info in Unicode', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': 'A Company',
-      'ProductName': 'Amazing App',
-    });
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationSupportPath();
     expect(path, isNotNull);
     if (path != null) {
@@ -90,10 +58,7 @@ void main() {
       'getApplicationSupportPath with full version info in Unsupported Encoding',
       () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': 'A Company',
-      'ProductName': 'Amazing App',
-    }, language: '0000', encoding: '0000');
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationSupportPath();
     expect(path, contains(r'C:\'));
     expect(path, contains(r'AppData'));
@@ -103,9 +68,7 @@ void main() {
 
   test('getApplicationSupportPath with missing company', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'ProductName': 'Amazing App',
-    });
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationSupportPath();
     expect(path, isNotNull);
     if (path != null) {
@@ -116,10 +79,7 @@ void main() {
 
   test('getApplicationSupportPath with problematic values', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': r'A <Bad> Company: Name.',
-      'ProductName': r'A"/Terrible\|App?*Name',
-    });
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationSupportPath();
     expect(path, isNotNull);
     if (path != null) {
@@ -133,10 +93,7 @@ void main() {
 
   test('getApplicationSupportPath with a completely invalid company', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': r'..',
-      'ProductName': r'Amazing App',
-    });
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationSupportPath();
     expect(path, isNotNull);
     if (path != null) {
@@ -148,10 +105,7 @@ void main() {
   test('getApplicationSupportPath with very long app name', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
     final String truncatedName = 'A' * 255;
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': 'A Company',
-      'ProductName': truncatedName * 2,
-    });
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationSupportPath();
     expect(path, endsWith('\\$truncatedName'));
     // The directory won't exist, since it's longer than MAXPATH, so don't check
@@ -167,10 +121,7 @@ void main() {
 
   test('getApplicationCachePath', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-      'CompanyName': 'A Company',
-      'ProductName': 'Amazing App',
-    }, encoding: encodingCP1252);
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier();
     final String? path = await pathProvider.getApplicationCachePath();
     expect(path, isNotNull);
     if (path != null) {

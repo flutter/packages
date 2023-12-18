@@ -340,7 +340,7 @@ class _WebViewState extends State<WebView> {
   void _onWebViewPlatformCreated(WebViewPlatformController? webViewPlatform) {
     final WebViewController controller = WebViewController._(
       widget,
-      webViewPlatform,
+      webViewPlatform!,
       _javascriptChannelRegistry,
     );
     _controller.complete(controller);

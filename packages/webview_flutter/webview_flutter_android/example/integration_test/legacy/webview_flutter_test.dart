@@ -136,7 +136,7 @@ Future<void> main() async {
       instanceManager =
           InstanceManager(onWeakReferenceRemoved: (int identifier) {
         final Copyable instance =
-            instanceManager.getInstanceWithWeakReference(identifier);
+            instanceManager.getInstanceWithWeakReference(identifier)!;
         if (instance is android.WebView && !webViewGCCompleter.isCompleted) {
           webViewGCCompleter.complete();
         }

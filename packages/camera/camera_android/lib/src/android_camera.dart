@@ -308,7 +308,7 @@ class AndroidCamera extends CameraPlatform {
   }
 
   StreamController<CameraImageData> _installStreamController(
-      {Function()? onListen}) {
+      {void Function()? onListen}) {
     _frameStreamController = StreamController<CameraImageData>(
       onListen: onListen ?? () {},
       onPause: _onFrameStreamPauseResume,

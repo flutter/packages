@@ -255,7 +255,7 @@ Map<String, dynamic> buildProductMap(ProductDetailsWrapper original) {
 
   if (original.oneTimePurchaseOfferDetails != null) {
     map.putIfAbsent('oneTimePurchaseOfferDetails',
-        () => buildOneTimePurchaseMap(original.oneTimePurchaseOfferDetails));
+        () => buildOneTimePurchaseMap(original.oneTimePurchaseOfferDetails!));
   }
 
   if (original.subscriptionOfferDetails != null) {

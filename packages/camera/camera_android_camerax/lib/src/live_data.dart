@@ -104,10 +104,10 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
       LiveData<T> instance) async {
     LiveDataSupportedTypeData? typeData;
     switch (T) {
-      case CameraState:
+      case CameraState _:
         typeData =
             LiveDataSupportedTypeData(value: LiveDataSupportedType.cameraState);
-      case ZoomState:
+      case ZoomState _:
         typeData =
             LiveDataSupportedTypeData(value: LiveDataSupportedType.zoomState);
       default:

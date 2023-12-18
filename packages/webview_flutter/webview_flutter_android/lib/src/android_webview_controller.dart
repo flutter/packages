@@ -1369,7 +1369,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         uri: Uri.parse(url),
         headers: headers,
       ));
-    } else {
+    } else if (returnValue is Future<NavigationDecision>) {
       returnValue.then((NavigationDecision shouldLoadUrl) {
         if (shouldLoadUrl == NavigationDecision.navigate) {
           onLoadRequest(LoadRequestParams(

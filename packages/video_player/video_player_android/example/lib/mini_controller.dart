@@ -20,7 +20,7 @@ VideoPlayerPlatform get _platform {
     _cachedPlatform = VideoPlayerPlatform.instance;
     _cachedPlatform!.init();
   }
-  return _cachedPlatform;
+  return _cachedPlatform!;
 }
 
 /// The duration, current position, buffering state, error state and settings
