@@ -25,7 +25,7 @@ often the page builder must first parse the parameters into types that aren't
 ```dart
 routes: <RouteBase>[
   GoRoute(
-    path: ':authorId',
+    path: '/author/:authorId',
     builder: (BuildContext context, GoRouterState state) {
       // require the authorId to be present and be an integer
       final int authorId = int.parse(state.pathParameters['authorId']!);
