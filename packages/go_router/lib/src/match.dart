@@ -144,8 +144,7 @@ abstract class RouteMatchBase with Diagnosticable {
     required Uri uri,
   }) {
     final GlobalKey<NavigatorState>? parentKey =
-        route.parentNavigatorKey == null ||
-                route.parentNavigatorKey == scopedNavigatorKey
+        route.parentNavigatorKey == scopedNavigatorKey
             ? null
             : route.parentNavigatorKey;
     Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>? subRouteMatches;
@@ -198,8 +197,7 @@ abstract class RouteMatchBase with Diagnosticable {
     required Uri uri,
   }) {
     final GlobalKey<NavigatorState>? parentKey =
-        route.parentNavigatorKey == null ||
-                route.parentNavigatorKey == scopedNavigatorKey
+        route.parentNavigatorKey == scopedNavigatorKey
             ? null
             : route.parentNavigatorKey;
 
