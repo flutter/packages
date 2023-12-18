@@ -183,6 +183,127 @@ void main() {
     expect(hasError, isTrue);
   });
 
+  group('GoRoute titleBuilder', () {
+    testWidgets('GoRoute titleBuilder Changes with Route Change',
+        (WidgetTester tester) async {
+      final UniqueKey aKey = UniqueKey();
+      final UniqueKey bKey = UniqueKey();
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/a',
+          titleBuilder: (_, __) => 'A',
+          builder: (_, __) => Builder(builder: (BuildContext context) {
+            return Text(
+              key: aKey,
+              GoRouterState.of(context).titleBuilder?.call(context) ?? '',
+            );
+          }),
+          routes: <GoRoute>[
+            GoRoute(
+              path: 'b',
+              titleBuilder: (_, __) => 'B',
+              builder: (_, __) => Builder(builder: (BuildContext context) {
+                return Text(
+                  key: bKey,
+                  GoRouterState.of(context).titleBuilder?.call(context) ?? '',
+                );
+              }),
+            ),
+          ],
+        ),
+      ];
+      final GoRouter router =
+          await createRouter(routes, tester, initialLocation: '/a');
+      expect(tester.widget<Text>(find.byKey(aKey)).data, 'A');
+
+      router.go('/a/b');
+      await tester.pumpAndSettle();
+      expect(tester.widget<Text>(find.byKey(bKey)).data, 'B');
+    });
+
+    testWidgets('GoRoute titleBuilder accessible from StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<NavigatorState> shellNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final List<RouteBase> routes = <RouteBase>[
+        ShellRoute(
+          navigatorKey: shellNavigatorKey,
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              body: Column(
+                children: <Widget>[
+                  const Text('Screen 0'),
+                  Expanded(child: child),
+                ],
+              ),
+            );
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen 1'),
+                );
+              },
+              routes: <RouteBase>[
+                StatefulShellRoute.indexedStack(
+                  parentNavigatorKey: rootNavigatorKey,
+                  builder: (BuildContext context, GoRouterState state,
+                      StatefulNavigationShell navigationShell) {
+                    return Column(
+                      children: <Widget>[
+                        Text(state.titleBuilder?.call(context) ?? 'No Title'),
+                        Expanded(child: navigationShell),
+                      ],
+                    );
+                  },
+                  branches: <StatefulShellBranch>[
+                    StatefulShellBranch(
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'a',
+                          titleBuilder: (_, __) => 'A',
+                          builder: (BuildContext context, GoRouterState state) {
+                            return const Scaffold(
+                              body: Text('Screen 2'),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    StatefulShellBranch(
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'b',
+                          titleBuilder: (_, __) => 'B',
+                          builder: (BuildContext context, GoRouterState state) {
+                            return const Scaffold(
+                              body: Text('Screen 2'),
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ],
+            )
+          ],
+        ),
+      ];
+      final GoRouter router = await createRouter(routes, tester,
+          initialLocation: '/a', navigatorKey: rootNavigatorKey);
+      expect(find.text('A'), findsOneWidget);
+
+      router.go('/b');
+      await tester.pumpAndSettle();
+      expect(find.text('B'), findsOneWidget);
+    });
+  });
+
   group('Redirect only GoRoute', () {
     testWidgets('can redirect to subroute', (WidgetTester tester) async {
       final GoRouter router = await createRouter(
