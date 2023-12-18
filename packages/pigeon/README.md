@@ -79,7 +79,7 @@ the threading model for handling HostApi methods can be selected with the
    host-language code: `flutter pub get` then `flutter pub run pigeon`
    with suitable arguments. [Example](./example/README.md#Invocation).
 1) Add the generated Dart code to `./lib` for compilation.
-1) Implement the host-language code and add it to your build (see below).
+1) Implement the host-language code, add it to your build, and connect it as handler for the incoming messages (see below).
 1) Call the generated Dart methods.
 
 ### Rules for defining your communication interface 
@@ -97,35 +97,42 @@ the threading model for handling HostApi methods can be selected with the
 1) Generics are supported, but can currently only be used with nullable types
    (example: `List<int?>`).
 1) Objc and Swift have special naming conventions that can be utilized with the
-   `@ObjCSelector` and `@SwiftFunction` respectively. 
+   `@ObjCSelector` and `@SwiftFunction` respectively.
+    
+### Implementing host-language code 
 
-### Flutter calling into iOS steps
+#### iOS
 
 1) Add the generated Objective-C or Swift code to your Xcode project for compilation
    (e.g. `ios/Runner.xcworkspace` or `.podspec`).
-1) Implement the generated protocol for handling the calls on iOS, set it up
-   as the handler for the messages.
+1) Implement the generated protocol for handling the calls on iOS
+1) Set it up as the handler for the messags:: `ExampleHostApiSetup.setUp(binaryMessenger: controller.binaryMessenger, api: api)
+`
 
-### Flutter calling into Android Steps
+#### Android
 
 1) Add the generated Java or Kotlin code to your `./android/app/src/main/java` directory
    for compilation.
-1) Implement the generated Java or Kotlin interface for handling the calls on Android, set
-   it up as the handler for the messages.
+1) Implement the generated Java or Kotlin interface for handling the calls on Android
+1) Set it up as the handler for the messages: `ExampleHostApi.setUp(flutterEngine.dartExecutor.binaryMessenger, api)`
 
-### Flutter calling into Windows Steps
+#### Windows
 
 1) Add the generated C++ code to your `./windows` directory for compilation, and
    to your `windows/CMakeLists.txt` file.
-1) Implement the generated C++ abstract class for handling the calls on Windows,
-   set it up as the handler for the messages.
+1) Implement the generated C++ abstract class for handling the calls on Windows.
+1) Set it up as the handler for the messages: `
+  ExampleHostApi::SetUp(flutter_controller_->engine()->messenger(),
+                        pigeonHostApi_.get());`
 
-### Flutter calling into macOS steps
+#### macOS
 
 1) Add the generated Objective-C or Swift code to your Xcode project for compilation
    (e.g. `macos/Runner.xcworkspace` or `.podspec`).
-1) Implement the generated protocol for handling the calls on macOS, set it up
-   as the handler for the messages.
+1) Implement the generated protocol for handling the calls on macOS.
+1) Set it up as the handler for the messages: `    ExampleHostApiSetup.setUp(
+      binaryMessenger: flutterViewController.engine.binaryMessenger, api: hostApi)
+`
 
 ### Calling into Flutter from the host platform
 
