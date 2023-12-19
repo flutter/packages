@@ -534,12 +534,14 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Uri platformDefaultUri = Uri.parse(
       WidgetsBinding.instance.platformDispatcher.defaultRouteName,
     );
-    if (platformDefaultUri.hasEmptyPath) {
+    if (platformDefaultUri.path.isEmpty || platformDefaultUri.path == '/') {
       // TODO(chunhtai): Clean up this once `RouteInformation.uri` is available
       // in packages repo.
       platformDefaultUri = Uri(
         path: '/',
-        queryParameters: platformDefaultUri.queryParameters,
+        queryParameters: platformDefaultUri.queryParameters.isEmpty
+            ? null
+            : platformDefaultUri.queryParameters,
       );
     }
     final String platformDefault = platformDefaultUri.toString();
