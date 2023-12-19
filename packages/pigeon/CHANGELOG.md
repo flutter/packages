@@ -1,6 +1,11 @@
-## 15.0.2
+## 15.0.3
 
 * Adds support for `ProxyApi` generation only for Dart.
+
+## 15.0.2
+
+* Prevents optional and non-positional parameters in Flutter APIs.
+* [dart] Fixes named parameters in test output of host API methods.
 
 ## 15.0.1
 
