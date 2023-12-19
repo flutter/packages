@@ -1,6 +1,6 @@
 ## 15.0.2
 
-* Adds support for `ProxyApi` generation for Dart.
+* Adds support for `ProxyApi` generation only for Dart.
 
 ## 15.0.1
 

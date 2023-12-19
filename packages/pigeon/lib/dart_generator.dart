@@ -96,7 +96,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers, camel_case_types',
     );
     indent.newln();
   }
@@ -624,10 +624,11 @@ if (${_varNamePrefix}replyList == null) {
     Indent indent, {
     required String dartPackageName,
   }) {
+    const String copyableClassName = '${classNamePrefix}Copyable';
     final Iterable<String> apiHandlerSetups =
         root.apis.whereType<AstProxyApi>().map(
       (AstProxyApi api) {
-        return '${api.name}.\$setUpMessageHandlers(\$instanceManager: instanceManager);';
+        return '${api.name}.${classMemberNamePrefix}setUpMessageHandlers(${classMemberNamePrefix}instanceManager: instanceManager);';
       },
     );
     indent.format('''
@@ -635,16 +636,16 @@ if (${_varNamePrefix}replyList == null) {
 ///
 /// All implementers are expected to be immutable as defined by the annotation.
 @immutable
-mixin \$Copyable {
+mixin $copyableClassName {
   /// Instantiates and returns a functionally identical object to oneself.
   ///
   /// Outside of tests, this method should only ever be called by
-  /// [\$InstanceManager].
+  /// [$instanceManagerClassName].
   ///
   /// Subclasses should always override their parent's implementation of this
   /// method.
   @protected
-  \$Copyable \$copy();
+  $copyableClassName ${classMemberNamePrefix}copy();
 }
 
 /// Maintains instances used to communicate with the native objects they
@@ -662,9 +663,9 @@ mixin \$Copyable {
 /// is added as a weak reference with the same identifier. This prevents a
 /// scenario where the weak referenced instance was released and then later
 /// returned by the host platform.
-class \$InstanceManager {
-  /// Constructs an [\$InstanceManager].
-  \$InstanceManager({required void Function(int) onWeakReferenceRemoved}) {
+class $instanceManagerClassName {
+  /// Constructs an [$instanceManagerClassName].
+  $instanceManagerClassName({required void Function(int) onWeakReferenceRemoved}) {
     this.onWeakReferenceRemoved = (int identifier) {
       _weakInstances.remove(identifier);
       onWeakReferenceRemoved(identifier);
@@ -678,7 +679,7 @@ class \$InstanceManager {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
-  static final \$InstanceManager instance = _initInstance();
+  static final $instanceManagerClassName instance = _initInstance();
 
   // Expando is used because it doesn't prevent its keys from becoming
   // inaccessible. This allows the manager to efficiently retrieve an identifier
@@ -689,9 +690,9 @@ class \$InstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<\$Copyable>> _weakInstances =
-      <int, WeakReference<\$Copyable>>{};
-  final Map<int, \$Copyable> _strongInstances = <int, \$Copyable>{};
+  final Map<int, WeakReference<$copyableClassName>> _weakInstances =
+      <int, WeakReference<$copyableClassName>>{};
+  final Map<int, $copyableClassName> _strongInstances = <int, $copyableClassName>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -699,17 +700,17 @@ class \$InstanceManager {
   /// or becomes inaccessible.
   late final void Function(int) onWeakReferenceRemoved;
 
-  static \$InstanceManager _initInstance() {
+  static $instanceManagerClassName _initInstance() {
     WidgetsFlutterBinding.ensureInitialized();
-    final _InstanceManagerApi api = _InstanceManagerApi();
-    // Clears the native `InstanceManager` on the initial use of the Dart one.
+    final _${instanceManagerClassName}Api api = _${instanceManagerClassName}Api();
+    // Clears the native `$instanceManagerClassName` on the initial use of the Dart one.
     api.clear();
-    final \$InstanceManager instanceManager = \$InstanceManager(
+    final $instanceManagerClassName instanceManager = $instanceManagerClassName(
       onWeakReferenceRemoved: (int identifier) {
         api.removeStrongReference(identifier);
       },
     );
-    _InstanceManagerApi.\$setUpMessageHandlers(instanceManager: instanceManager);
+    _${instanceManagerClassName}Api.setUpMessageHandlers(instanceManager: instanceManager);
     ${apiHandlerSetups.join('\n\t\t')}
     return instanceManager;
   }
@@ -722,7 +723,7 @@ class \$InstanceManager {
   /// Throws assertion error if the instance has already been added.
   ///
   /// Returns the randomly generated id of the [instance] added.
-  int addDartCreatedInstance(\$Copyable instance) {
+  int addDartCreatedInstance($copyableClassName instance) {
     final int identifier = _nextUniqueIdentifier();
     _addInstanceWithIdentifier(instance, identifier);
     return identifier;
@@ -736,7 +737,7 @@ class \$InstanceManager {
   ///
   /// This does not remove the strong referenced instance associated with
   /// [instance]. This can be done with [remove].
-  int? removeWeakReference(\$Copyable instance) {
+  int? removeWeakReference($copyableClassName instance) {
     final int? identifier = getIdentifier(instance);
     if (identifier == null) {
       return null;
@@ -758,7 +759,7 @@ class \$InstanceManager {
   ///
   /// This does not remove the weak referenced instance associated with
   /// [identifier]. This can be done with [removeWeakReference].
-  T? remove<T extends \$Copyable>(int identifier) {
+  T? remove<T extends $copyableClassName>(int identifier) {
     return _strongInstances.remove(identifier) as T?;
   }
 
@@ -774,15 +775,15 @@ class \$InstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends \$Copyable>(int identifier) {
-    final \$Copyable? weakInstance = _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends $copyableClassName>(int identifier) {
+    final $copyableClassName? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final \$Copyable? strongInstance = _strongInstances[identifier];
+      final $copyableClassName? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final \$Copyable copy = strongInstance.\$copy();
+        final $copyableClassName copy = strongInstance.${classMemberNamePrefix}copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] = WeakReference<\$Copyable>(copy);
+        _weakInstances[identifier] = WeakReference<$copyableClassName>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -793,7 +794,7 @@ class \$InstanceManager {
   }
 
   /// Retrieves the identifier associated with instance.
-  int? getIdentifier(\$Copyable instance) {
+  int? getIdentifier($copyableClassName instance) {
     return _identifiers[instance];
   }
 
@@ -806,20 +807,20 @@ class \$InstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(\$Copyable instance, int identifier) {
+  void addHostCreatedInstance($copyableClassName instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(\$Copyable instance, int identifier) {
+  void _addInstanceWithIdentifier($copyableClassName instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<\$Copyable>(instance);
+    _weakInstances[identifier] = WeakReference<$copyableClassName>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
-    final \$Copyable copy = instance.\$copy();
+    final $copyableClassName copy = instance.${classMemberNamePrefix}copy();
     _identifiers[copy] = identifier;
     _strongInstances[identifier] = copy;
   }
@@ -849,26 +850,23 @@ class \$InstanceManager {
     Indent indent, {
     required String dartPackageName,
   }) {
+    const String apiName = '${instanceManagerClassName}Api';
     final String removeStrongReferenceName = makeChannelNameWithStrings(
-      apiName: r'$InstanceManagerApi',
+      apiName: apiName,
       methodName: 'removeStrongReference',
       dartPackageName: dartPackageName,
     );
     final String clearName = makeChannelNameWithStrings(
-      apiName: r'$InstanceManagerApi',
+      apiName: apiName,
       methodName: 'clear',
       dartPackageName: dartPackageName,
     );
 
     indent.writeln('''
-/// Generated API for managing the Dart and native `InstanceManager`s.
-class _InstanceManagerApi {
-  /// Constructor for [_InstanceManagerApi].
-  ///
-  /// The [binaryMessenger] named argument is available for dependency
-  /// injection. If it is left null, the default [BinaryMessenger] will be used
-  /// which routes to the host platform.
-  _InstanceManagerApi({BinaryMessenger? binaryMessenger})
+/// Generated API for managing the Dart and native `$instanceManagerClassName`s.
+class _$apiName {
+  /// Constructor for [_$apiName ].
+  _$apiName({BinaryMessenger? binaryMessenger})
       : _binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? _binaryMessenger;
@@ -876,9 +874,9 @@ class _InstanceManagerApi {
   static const MessageCodec<Object?> $_pigeonChannelCodec =
      StandardMessageCodec();
 
-  static void \$setUpMessageHandlers({
+  static void setUpMessageHandlers({
     BinaryMessenger? binaryMessenger,
-    \$InstanceManager? instanceManager,
+    $instanceManagerClassName? instanceManager,
   }) {
     const String channelName =
         r'$removeStrongReferenceName';
@@ -897,7 +895,7 @@ class _InstanceManagerApi {
         identifier != null,
         r'Argument for \$channelName, expected non-null int.',
       );
-      (instanceManager ?? \$InstanceManager.instance).remove(identifier!);
+      (instanceManager ?? $instanceManagerClassName.instance).remove(identifier!);
       return;
     });
   }
@@ -925,7 +923,7 @@ class _InstanceManagerApi {
     }
   }
 
-  /// Clear the native `InstanceManager`.
+  /// Clear the native `$instanceManagerClassName`.
   ///
   /// This is typically called after a hot restart.
   Future<void> clear() async {
@@ -968,11 +966,11 @@ class _InstanceManagerApi {
 class $codecName extends StandardMessageCodec {
  const $codecName(this.instanceManager);
 
- final \$InstanceManager instanceManager;
+ final $instanceManagerClassName instanceManager;
 
  @override
  void writeValue(WriteBuffer buffer, Object? value) {
-   if (value is \$Copyable) {
+   if (value is ${classNamePrefix}Copyable) {
      buffer.putUint8(128);
      writeValue(buffer, instanceManager.getIdentifier(value));
    } else {
@@ -1052,7 +1050,7 @@ class $codecName extends StandardMessageCodec {
           if (api.interfacesNames.isNotEmpty)
             ...api.interfacesNames.map((String name) => cb.refer(name))
           else
-            cb.refer(r'$Copyable')
+            cb.refer('${classNamePrefix}Copyable')
         ])
         ..docs.addAll(asDocumentationComments(
           api.documentationComments,
@@ -1121,7 +1119,7 @@ class $codecName extends StandardMessageCodec {
               apiName: apiName,
               methodName: constructor.name.isNotEmpty
                   ? constructor.name
-                  : r'$defaultConstructor',
+                  : '${classMemberNamePrefix}defaultConstructor',
               dartPackageName: dartPackageName,
             );
             builder
@@ -1134,15 +1132,15 @@ class $codecName extends StandardMessageCodec {
                 <cb.Parameter>[
                   cb.Parameter(
                     (cb.ParameterBuilder builder) => builder
-                      ..name = r'$binaryMessenger'
+                      ..name = '${classMemberNamePrefix}binaryMessenger'
                       ..named = true
                       ..toSuper = superClassApi != null
                       ..toThis = superClassApi == null,
                   ),
                   cb.Parameter((cb.ParameterBuilder builder) => builder
-                    ..name = r'$instanceManager'
+                    ..name = '${classMemberNamePrefix}instanceManager'
                     ..type = superClassApi == null
-                        ? cb.refer(r'$InstanceManager?')
+                        ? cb.refer('$instanceManagerClassName?')
                         : null
                     ..named = true
                     ..toSuper = superClassApi != null),
@@ -1194,8 +1192,8 @@ class $codecName extends StandardMessageCodec {
               ..initializers.add(
                 cb.Code(
                   superClassApi != null
-                      ? r'super.$detached()'
-                      : r'$instanceManager = $instanceManager ?? $InstanceManager.instance',
+                      ? 'super.${classMemberNamePrefix}detached()'
+                      : '${classMemberNamePrefix}instanceManager = ${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance',
                 ),
               )
               ..body = cb.Block.of(<cb.Code>[
@@ -1204,7 +1202,8 @@ class $codecName extends StandardMessageCodec {
                 ),
                 _basicMessageChannel(
                   codec: cb.refer(codecInstanceName),
-                  binaryMessenger: cb.refer(r'$binaryMessenger'),
+                  binaryMessenger:
+                      cb.refer('${classMemberNamePrefix}binaryMessenger'),
                 ),
                 cb
                     .refer('${_varNamePrefix}channel.send')
@@ -1212,7 +1211,7 @@ class $codecName extends StandardMessageCodec {
                       cb.literalList(
                         <Object?>[
                           cb.refer(
-                            '${superClassApi != null ? '' : 'this.'}\$instanceManager.addDartCreatedInstance(this)',
+                            '${superClassApi != null ? '' : 'this.'}${classMemberNamePrefix}instanceManager.addDartCreatedInstance(this)',
                           ),
                           ...nonAttachedFields.mapIndexed(_hostMessageArgument),
                           ...constructor.parameters.mapIndexed(
@@ -1278,7 +1277,7 @@ class $codecName extends StandardMessageCodec {
       ),
       cb.Constructor(
         (cb.ConstructorBuilder builder) => builder
-          ..name = r'$detached'
+          ..name = '${classMemberNamePrefix}detached'
           ..docs.addAll(<String>[
             '/// Constructs $apiName without creating the associated native object.',
             '///',
@@ -1288,16 +1287,16 @@ class $codecName extends StandardMessageCodec {
           ..optionalParameters.addAll(<cb.Parameter>[
             cb.Parameter(
               (cb.ParameterBuilder builder) => builder
-                ..name = r'$binaryMessenger'
+                ..name = '${classMemberNamePrefix}binaryMessenger'
                 ..named = true
                 ..toSuper = superClassApi != null
                 ..toThis = superClassApi == null,
             ),
             cb.Parameter(
               (cb.ParameterBuilder builder) => builder
-                ..name = r'$instanceManager'
+                ..name = '${classMemberNamePrefix}instanceManager'
                 ..type = superClassApi == null
-                    ? cb.refer(r'$InstanceManager?')
+                    ? cb.refer('$instanceManagerClassName?')
                     : null
                 ..named = true
                 ..toSuper = superClassApi != null,
@@ -1338,8 +1337,8 @@ class $codecName extends StandardMessageCodec {
           ..initializers.add(
             cb.Code(
               superClassApi != null
-                  ? r'super.$detached()'
-                  : r'$instanceManager = $instanceManager ?? $InstanceManager.instance',
+                  ? 'super.${classMemberNamePrefix}detached()'
+                  : '${classMemberNamePrefix}instanceManager = ${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance',
             ),
           ),
       ),
@@ -1366,12 +1365,13 @@ class $codecName extends StandardMessageCodec {
             ..type = cb.refer(codecName)
             ..late = true
             ..modifier = cb.FieldModifier.final$
-            ..assignment = cb.Code('$codecName(\$instanceManager)'),
+            ..assignment =
+                cb.Code('$codecName(${classMemberNamePrefix}instanceManager)'),
         ),
       if (!hasSuperClass) ...<cb.Field>[
         cb.Field(
           (cb.FieldBuilder builder) => builder
-            ..name = r'$binaryMessenger'
+            ..name = '${classMemberNamePrefix}binaryMessenger'
             ..type = cb.refer('BinaryMessenger?')
             ..modifier = cb.FieldModifier.final$
             ..docs.addAll(<String>[
@@ -1387,8 +1387,8 @@ class $codecName extends StandardMessageCodec {
         ),
         cb.Field(
           (cb.FieldBuilder builder) => builder
-            ..name = r'$instanceManager'
-            ..type = cb.refer(r'$InstanceManager')
+            ..name = '${classMemberNamePrefix}instanceManager'
+            ..type = cb.refer(instanceManagerClassName)
             ..modifier = cb.FieldModifier.final$
             ..docs.add(
               '/// Maintains instances stored to communicate with native language objects.',
@@ -1498,26 +1498,26 @@ class $codecName extends StandardMessageCodec {
     return <cb.Method>[
       cb.Method.returnsVoid(
         (cb.MethodBuilder builder) => builder
-          ..name = r'$setUpMessageHandlers'
+          ..name = '${classMemberNamePrefix}setUpMessageHandlers'
           ..returns = cb.refer('void')
           ..static = true
           ..optionalParameters.addAll(<cb.Parameter>[
             cb.Parameter(
               (cb.ParameterBuilder builder) => builder
-                ..name = r'$binaryMessenger'
+                ..name = '${classMemberNamePrefix}binaryMessenger'
                 ..named = true
                 ..type = cb.refer('BinaryMessenger?'),
             ),
             cb.Parameter(
               (cb.ParameterBuilder builder) => builder
-                ..name = r'$instanceManager'
+                ..name = '${classMemberNamePrefix}instanceManager'
                 ..named = true
-                ..type = cb.refer(r'$InstanceManager?'),
+                ..type = cb.refer('$instanceManagerClassName?'),
             ),
             if (!hasARequiredFlutterMethod)
               cb.Parameter(
                 (cb.ParameterBuilder builder) => builder
-                  ..name = r'$detached'
+                  ..name = '${classMemberNamePrefix}detached'
                   ..named = true
                   ..type = cb.FunctionType(
                     (cb.FunctionTypeBuilder builder) => builder
@@ -1560,19 +1560,20 @@ class $codecName extends StandardMessageCodec {
           ])
           ..body = cb.Block.of(<cb.Code>[
             cb.Code(
-              'final $codecName $_pigeonChannelCodec = $codecName(\$instanceManager ?? \$InstanceManager.instance);',
+              'final $codecName $_pigeonChannelCodec = $codecName(${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance);',
             ),
             if (!hasARequiredFlutterMethod) ...<cb.Code>[
               const cb.Code('{'),
               cb.Code(
                 "const String ${_varNamePrefix}channelName = r'${makeChannelNameWithStrings(
                   apiName: apiName,
-                  methodName: r'$detached',
+                  methodName: '${classMemberNamePrefix}detached',
                   dartPackageName: dartPackageName,
                 )}';",
               ),
               _basicMessageChannel(
-                binaryMessenger: cb.refer(r'$binaryMessenger'),
+                binaryMessenger:
+                    cb.refer('${classMemberNamePrefix}binaryMessenger'),
               ),
               cb.refer('${_varNamePrefix}channel.setMessageHandler').call(
                 <cb.Expression>[
@@ -1618,12 +1619,12 @@ class $codecName extends StandardMessageCodec {
                           ),
                           cb
                               .refer(
-                                r'($instanceManager ?? $InstanceManager.instance)',
+                                '(${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance)',
                               )
                               .property('addHostCreatedInstance')
                               .call(<cb.Expression>[
                             cb
-                                .refer(r'$detached?.call')
+                                .refer('${classMemberNamePrefix}detached?.call')
                                 .call(nonAttachedFields.mapIndexed(
                               (int index, Field field) {
                                 // The calling instance is the first arg.
@@ -1636,13 +1637,18 @@ class $codecName extends StandardMessageCodec {
                                     );
                               },
                             )).ifNullThen(
-                              cb.refer('$apiName.\$detached').call(
+                              cb
+                                  .refer(
+                                      '$apiName.${classMemberNamePrefix}detached')
+                                  .call(
                                 <cb.Expression>[],
                                 <String, cb.Expression>{
-                                  r'$binaryMessenger':
-                                      cb.refer(r'$binaryMessenger'),
-                                  r'$instanceManager':
-                                      cb.refer(r'$instanceManager'),
+                                  '${classMemberNamePrefix}binaryMessenger':
+                                      cb.refer(
+                                          '${classMemberNamePrefix}binaryMessenger'),
+                                  '${classMemberNamePrefix}instanceManager':
+                                      cb.refer(
+                                          '${classMemberNamePrefix}instanceManager'),
                                   ...nonAttachedFields.toList().asMap().map(
                                     (int index, Field field) {
                                       final String argName =
@@ -1706,7 +1712,8 @@ class $codecName extends StandardMessageCodec {
                       "const String ${_varNamePrefix}channelName = r'$channelName';",
                     ),
                     _basicMessageChannel(
-                      binaryMessenger: cb.refer(r'$binaryMessenger'),
+                      binaryMessenger:
+                          cb.refer('${classMemberNamePrefix}binaryMessenger'),
                     ),
                     cb.refer('${_varNamePrefix}channel.setMessageHandler').call(
                       <cb.Expression>[
@@ -1823,7 +1830,8 @@ class $codecName extends StandardMessageCodec {
               ..returns = cb.refer(type)
               ..body = cb.Block.of(
                 <cb.Code>[
-                  cb.Code('final $type instance = $type.\$detached('),
+                  cb.Code(
+                      'final $type instance = $type.${classMemberNamePrefix}detached('),
                   if (!field.isStatic) ...<cb.Code>[
                     const cb.Code(r'$binaryMessenger: $binaryMessenger,'),
                     const cb.Code(r'$instanceManager: $instanceManager,'),
@@ -1835,9 +1843,11 @@ class $codecName extends StandardMessageCodec {
                   _basicMessageChannel(
                     codec: !field.isStatic
                         ? cb.refer('_codec$apiName')
-                        : cb.refer('$codecName(\$InstanceManager.instance)'),
-                    binaryMessenger:
-                        !field.isStatic ? cb.refer(r'$binaryMessenger') : null,
+                        : cb.refer(
+                            '$codecName($instanceManagerClassName.instance)'),
+                    binaryMessenger: !field.isStatic
+                        ? cb.refer('${classMemberNamePrefix}binaryMessenger')
+                        : null,
                   ),
                   cb
                       .refer('${_varNamePrefix}channel.send')
@@ -1846,7 +1856,7 @@ class $codecName extends StandardMessageCodec {
                           <Object?>[
                             if (!field.isStatic) cb.refer('this'),
                             cb.refer(
-                              '${field.isStatic ? r'$InstanceManager.instance' : r'$instanceManager'}.addDartCreatedInstance(instance)',
+                              '${field.isStatic ? r'$InstanceManager.instance' : '${classMemberNamePrefix}instanceManager'}.addDartCreatedInstance(instance)',
                             ),
                           ],
                           cb.refer('Object?'),
@@ -1936,14 +1946,14 @@ class $codecName extends StandardMessageCodec {
               if (method.isStatic) ...<cb.Parameter>[
                 cb.Parameter(
                   (cb.ParameterBuilder builder) => builder
-                    ..name = r'$binaryMessenger'
+                    ..name = '${classMemberNamePrefix}binaryMessenger'
                     ..type = cb.refer('BinaryMessenger?')
                     ..named = true,
                 ),
                 cb.Parameter(
                   (cb.ParameterBuilder builder) => builder
-                    ..name = r'$instanceManager'
-                    ..type = cb.refer(r'$InstanceManager?'),
+                    ..name = '${classMemberNamePrefix}instanceManager'
+                    ..type = cb.refer('$instanceManagerClassName?'),
                 ),
               ],
             ])
@@ -1959,9 +1969,10 @@ class $codecName extends StandardMessageCodec {
                 codec: !method.isStatic
                     ? cb.refer('_codec$apiName')
                     : cb.refer(
-                        '$codecName(\$instanceManager ?? \$InstanceManager.instance)',
+                        '$codecName(${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance)',
                       ),
-                binaryMessenger: cb.refer(r'$binaryMessenger'),
+                binaryMessenger:
+                    cb.refer('${classMemberNamePrefix}binaryMessenger'),
               ),
               const cb.Code(
                   'final List<Object?>? ${_varNamePrefix}replyList ='),
@@ -2028,17 +2039,19 @@ class $codecName extends StandardMessageCodec {
         ),
       cb.Method(
         (cb.MethodBuilder builder) => builder
-          ..name = r'$copy'
+          ..name = '${classMemberNamePrefix}copy'
           ..returns = cb.refer(apiName)
           ..annotations.add(cb.refer('override'))
           ..body = cb.Block.of(<cb.Code>[
             cb
-                .refer('$apiName.\$detached')
+                .refer('$apiName.${classMemberNamePrefix}detached')
                 .call(
                   <cb.Expression>[],
                   <String, cb.Expression>{
-                    r'$binaryMessenger': cb.refer(r'$binaryMessenger'),
-                    r'$instanceManager': cb.refer(r'$instanceManager'),
+                    '${classMemberNamePrefix}binaryMessenger':
+                        cb.refer('${classMemberNamePrefix}binaryMessenger'),
+                    '${classMemberNamePrefix}instanceManager':
+                        cb.refer('${classMemberNamePrefix}instanceManager'),
                     for (final Field field in nonAttachedFields)
                       field.name: cb.refer(field.name),
                     for (final Method method in superClassFlutterMethods)
