@@ -14,10 +14,10 @@ import 'package:path_provider_windows/src/path_provider_windows_real.dart'
 // A fake VersionInfoQuerier that just returns preset responses.
 class FakeVersionInfoQuerier implements VersionInfoQuerier {
   FakeVersionInfoQuerier(
-      this.responses, {
-        this.language = languageEn,
-        this.encoding = encodingUnicode,
-      });
+    this.responses, {
+    this.language = languageEn,
+    this.encoding = encodingUnicode,
+  });
 
   final String language;
   final String encoding;
@@ -25,11 +25,11 @@ class FakeVersionInfoQuerier implements VersionInfoQuerier {
 
   // ignore: unreachable_from_main
   String? getStringValue(
-      Pointer<Uint8>? versionInfo,
-      String key, {
-        required String language,
-        required String encoding,
-      }) {
+    Pointer<Uint8>? versionInfo,
+    String key, {
+    required String language,
+    required String encoding,
+  }) {
     if (language == this.language && encoding == this.encoding) {
       return responses[key];
     } else {
@@ -90,18 +90,18 @@ void main() {
 
   test(
       'getApplicationSupportPath with full version info in Unsupported Encoding',
-          () async {
-        final PathProviderWindows pathProvider = PathProviderWindows();
-        pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
-          'CompanyName': 'A Company',
-          'ProductName': 'Amazing App',
-        }, language: '0000', encoding: '0000');
-        final String? path = await pathProvider.getApplicationSupportPath();
-        expect(path, contains(r'C:\'));
-        expect(path, contains(r'AppData'));
-        // The last path component should be the executable name.
-        expect(path, endsWith(r'flutter_tester'));
-      }, skip: !Platform.isWindows);
+      () async {
+    final PathProviderWindows pathProvider = PathProviderWindows();
+    pathProvider.versionInfoQuerier = FakeVersionInfoQuerier(<String, String>{
+      'CompanyName': 'A Company',
+      'ProductName': 'Amazing App',
+    }, language: '0000', encoding: '0000');
+    final String? path = await pathProvider.getApplicationSupportPath();
+    expect(path, contains(r'C:\'));
+    expect(path, contains(r'AppData'));
+    // The last path component should be the executable name.
+    expect(path, endsWith(r'flutter_tester'));
+  }, skip: !Platform.isWindows);
 
   test('getApplicationSupportPath with missing company', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();

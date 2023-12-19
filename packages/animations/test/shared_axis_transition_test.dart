@@ -566,7 +566,8 @@ void main() {
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
-      expect(tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
+      expect(
+          tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
 
       navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
@@ -579,7 +580,8 @@ void main() {
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
-      expect(tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
+      expect(
+          tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
     });
 
     testWidgets('should keep state', (WidgetTester tester) async {
@@ -1209,7 +1211,8 @@ void main() {
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
-      expect(tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
+      expect(
+          tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
 
       navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
@@ -1222,7 +1225,8 @@ void main() {
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
-      expect(tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
+      expect(
+          tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
     });
 
     testWidgets('should keep state', (WidgetTester tester) async {
@@ -1745,7 +1749,8 @@ void main() {
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
-      expect(tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
+      expect(
+          tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
 
       navigator.currentState!.pushNamed(topRoute);
       await tester.pump();
@@ -1758,7 +1763,8 @@ void main() {
           )
           .last;
       expect(fillContainerFinder, findsOneWidget);
-      expect(tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
+      expect(
+          tester.widget<ColoredBox>(fillContainerFinder).color, Colors.green);
     });
 
     testWidgets('should keep state', (WidgetTester tester) async {
