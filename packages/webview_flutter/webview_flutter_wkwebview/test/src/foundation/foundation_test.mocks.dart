@@ -78,6 +78,36 @@ class MockTestNSObjectHostApi extends _i1.Mock
       );
 }
 
+/// A class which mocks [TestNSUrlCredentialHostApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestNSUrlCredentialHostApi extends _i1.Mock
+    implements _i2.TestNSUrlCredentialHostApi {
+  MockTestNSUrlCredentialHostApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void createWithUser(
+    int? identifier,
+    String? user,
+    String? password,
+    _i3.NSUrlCredentialPersistence? persistence,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #createWithUser,
+          [
+            identifier,
+            user,
+            password,
+            persistence,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
 /// A class which mocks [TestNSUrlHostApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
