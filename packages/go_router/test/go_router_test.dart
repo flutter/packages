@@ -2484,7 +2484,7 @@ void main() {
         routes,
         tester,
       );
-      expect(router.routeInformationProvider.value.uri.path, '/');
+      expect(router.routeInformationProvider.value.uri.toString(), '/');
       TestWidgetsFlutterBinding.instance.platformDispatcher
           .clearDefaultRouteNameTestValue();
     });
@@ -2499,7 +2499,7 @@ void main() {
         routes,
         tester,
       );
-      expect(router.routeInformationProvider.value.uri.path, '/');
+      expect(router.routeInformationProvider.value.uri.toString(), '/');
       TestWidgetsFlutterBinding.instance.platformDispatcher
           .clearDefaultRouteNameTestValue();
     });
