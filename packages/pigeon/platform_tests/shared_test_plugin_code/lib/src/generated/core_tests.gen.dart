@@ -7199,6 +7199,10 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
   /// Maintains instances stored to communicate with native language objects.
   final Pigeon_InstanceManager pigeon_instanceManager;
 
+  late final ProxyApiSuperClass attachedField = _attachedField();
+
+  static final ProxyApiSuperClass staticAttachedField = _staticAttachedField();
+
   static void pigeon_setUpMessageHandlers({
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
@@ -7239,6 +7243,65 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
         return;
       });
     }
+  }
+
+  ProxyApiSuperClass _attachedField() {
+    final ProxyApiSuperClass __pigeon_instance =
+        ProxyApiSuperClass.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.attachedField';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _codecProxyApiSuperClass,
+      binaryMessenger: pigeon_binaryMessenger,
+    );
+    __pigeon_channel.send(<Object?>[
+      this,
+      pigeon_instanceManager.addDartCreatedInstance(__pigeon_instance),
+    ]).then<void>((Object? value) {
+      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: (__pigeon_replyList[0]! as String),
+          message: (__pigeon_replyList[1] as String?),
+          details: __pigeon_replyList[2],
+        );
+      }
+    });
+    return __pigeon_instance;
+  }
+
+  static ProxyApiSuperClass _staticAttachedField() {
+    final ProxyApiSuperClass __pigeon_instance =
+        ProxyApiSuperClass.pigeon_detached();
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.staticAttachedField';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _ProxyApiSuperClassCodec(Pigeon_InstanceManager.instance),
+    );
+    __pigeon_channel.send(<Object?>[
+      Pigeon_InstanceManager.instance.addDartCreatedInstance(__pigeon_instance)
+    ]).then<void>((Object? value) {
+      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: (__pigeon_replyList[0]! as String),
+          message: (__pigeon_replyList[1] as String?),
+          details: __pigeon_replyList[2],
+        );
+      }
+    });
+    return __pigeon_instance;
   }
 
   Future<void> aSuperMethod() async {

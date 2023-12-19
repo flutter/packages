@@ -1831,10 +1831,12 @@ class $codecName extends StandardMessageCodec {
               ..body = cb.Block.of(
                 <cb.Code>[
                   cb.Code(
-                      'final $type instance = $type.${classMemberNamePrefix}detached('),
+                      'final $type ${_varNamePrefix}instance = $type.${classMemberNamePrefix}detached('),
                   if (!field.isStatic) ...<cb.Code>[
-                    const cb.Code(r'$binaryMessenger: $binaryMessenger,'),
-                    const cb.Code(r'$instanceManager: $instanceManager,'),
+                    const cb.Code(
+                        '${classMemberNamePrefix}binaryMessenger: ${classMemberNamePrefix}binaryMessenger,'),
+                    const cb.Code(
+                        '${classMemberNamePrefix}instanceManager: ${classMemberNamePrefix}instanceManager,'),
                   ],
                   const cb.Code(');'),
                   cb.Code(
@@ -1856,7 +1858,7 @@ class $codecName extends StandardMessageCodec {
                           <Object?>[
                             if (!field.isStatic) cb.refer('this'),
                             cb.refer(
-                              '${field.isStatic ? r'$InstanceManager.instance' : '${classMemberNamePrefix}instanceManager'}.addDartCreatedInstance(instance)',
+                              '${field.isStatic ? '$instanceManagerClassName.instance' : '${classMemberNamePrefix}instanceManager'}.addDartCreatedInstance(${_varNamePrefix}instance)',
                             ),
                           ],
                           cb.refer('Object?'),
@@ -1912,7 +1914,7 @@ class $codecName extends StandardMessageCodec {
                         <cb.Reference>[cb.refer('void')],
                       )
                       .statement,
-                  const cb.Code('return instance;'),
+                  const cb.Code('return ${_varNamePrefix}instance;'),
                 ],
               );
           },
