@@ -1,9 +1,10 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
 import 'package:flutter/foundation.dart';
 
-/// Defines the parameters that support setOnJavaScriptAlertDialog.
+/// Defines the parameters that support `PlatformWebViewController.setOnJavaScriptAlertDialog`.
 @immutable
 class JavaScriptAlertDialogRequest {
   /// Creates a [JavaScriptAlertDialogRequest].
@@ -12,14 +13,14 @@ class JavaScriptAlertDialogRequest {
     required this.url,
   });
 
-  /// The Message to be displayed in the window.
+  /// The message to be displayed in the window.
   final String message;
 
   /// The URL of the page requesting the dialog.
   final String url;
 }
 
-/// Defines the parameters that support setOnJavaScriptConfirmDialog.
+/// Defines the parameters that support `PlatformWebViewController.setOnJavaScriptConfirmDialog`.
 @immutable
 class JavaScriptConfirmDialogRequest {
   /// Creates a [JavaScriptConfirmDialogRequest].
@@ -28,14 +29,14 @@ class JavaScriptConfirmDialogRequest {
     required this.url,
   });
 
-  /// The Message to be displayed in the window.
+  /// The message to be displayed in the window.
   final String message;
 
   /// The URL of the page requesting the dialog.
   final String url;
 }
 
-/// Defines the parameters that support JavaScriptTextInputDialogRequest.
+/// Defines the parameters that support `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
 @immutable
 class JavaScriptTextInputDialogRequest {
   /// Creates a [JavaScriptAlertDialogRequest].
