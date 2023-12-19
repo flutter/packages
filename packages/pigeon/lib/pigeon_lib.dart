@@ -1161,6 +1161,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           !referencedEnums
               .map((Enum e) => e.name)
               .contains(element.key.baseName) &&
+          !_apis
+              .whereType<AstProxyApi>()
+              .map((AstProxyApi e) => e.name)
+              .contains(element.key.baseName) &&
           !validTypes.contains(element.key.baseName) &&
           !element.key.isVoid &&
           element.key.baseName != 'dynamic' &&

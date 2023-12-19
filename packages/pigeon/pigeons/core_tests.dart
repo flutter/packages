@@ -788,9 +788,19 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   /// Returns the passed list, to test serialization and deserialization.
   late List<Object?> Function(List<Object?> aList)? flutterEchoList;
 
+  /// Returns the passed list with ProxyApis, to test serialization and
+  /// deserialization.
+  late List<ProxyIntegrationCoreApi?> Function(
+      List<ProxyIntegrationCoreApi?> aList)? flutterEchoProxyApiList;
+
   /// Returns the passed map, to test serialization and deserialization.
   late Map<String?, Object?> Function(Map<String?, Object?> aMap)?
       flutterEchoMap;
+
+  /// Returns the passed map with ProxyApis, to test serialization and
+  /// deserialization.
+  late Map<String?, ProxyIntegrationCoreApi?> Function(
+      Map<String?, ProxyIntegrationCoreApi?> aMap)? flutterEchoProxyApiMap;
 
   /// Returns the passed enum to test serialization and deserialization.
   late AnEnum Function(AnEnum anEnum)? flutterEchoEnum;
@@ -872,8 +882,20 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   /// Returns the passed list, to test serialization and deserialization.
   List<Object?> echoList(List<Object?> aList);
 
+  /// Returns the passed list with ProxyApis, to test serialization and
+  /// deserialization.
+  List<ProxyIntegrationCoreApi> echoProxyApiList(
+    List<ProxyIntegrationCoreApi?> aList,
+  );
+
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+
+  /// Returns the passed map with ProxyApis, to test serialization and
+  /// deserialization.
+  Map<String?, ProxyIntegrationCoreApi?> echoProxyApiMap(
+    Map<String?, ProxyIntegrationCoreApi?> aMap,
+  );
 
   /// Returns the passed enum to test serialization and deserialization.
   AnEnum echoEnum(AnEnum anEnum);
@@ -1039,7 +1061,15 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   List<Object?> callFlutterEchoList(List<Object?> aList);
 
   @async
+  List<ProxyIntegrationCoreApi?> callFlutterEchoProxyApiList(
+      List<ProxyIntegrationCoreApi?> aList);
+
+  @async
   Map<String?, Object?> callFlutterEchoMap(Map<String?, Object?> aMap);
+
+  @async
+  Map<String?, ProxyIntegrationCoreApi?> callFlutterEchoProxyApiMap(
+      Map<String?, ProxyIntegrationCoreApi?> aMap);
 
   @async
   AnEnum callFlutterEchoEnum(AnEnum anEnum);
