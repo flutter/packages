@@ -2003,7 +2003,7 @@ class _Parser {
   void _advance() {
     assert(_source.current is! _EofToken);
     final bool advanced = _source.moveNext();
-    assert(advanced); // see https://github.com/dart-lang/sdk/issues/47017
+    assert(advanced);
   }
 
   bool _foundIdentifier(String identifier) {
@@ -2333,6 +2333,6 @@ class _Parser {
       throw ParserException._expected(expectation, _source.current);
     }
     final bool more = _source.moveNext();
-    assert(!more); // see https://github.com/dart-lang/sdk/issues/47017
+    assert(!more);
   }
 }
