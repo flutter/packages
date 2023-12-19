@@ -10,7 +10,7 @@ import '../common/web_kit.g.dart';
 import 'foundation.dart';
 
 export '../common/web_kit.g.dart'
-    show NSUrlSessionAuthChallengeDisposition, NSUrlCredentialPersistence;
+    show NSUrlCredentialPersistence, NSUrlSessionAuthChallengeDisposition;
 
 Iterable<NSKeyValueObservingOptionsEnumData>
     _toNSKeyValueObservingOptionsEnumData(
