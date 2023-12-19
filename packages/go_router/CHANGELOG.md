@@ -1,3 +1,7 @@
+## 12.1.4
+
+* Fixes deep-link with no path but trailing slash on cold start.
+
 ## 12.1.3
 
 * Fixes a typo in `navigation.md`.
