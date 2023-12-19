@@ -46,7 +46,7 @@ class JavaScriptTextInputDialogRequest {
     required this.defaultText,
   });
 
-  /// The Message to be displayed in the window.
+  /// The message to be displayed in the window.
   final String message;
 
   /// The URL of the page requesting the dialog.
