@@ -7456,9 +7456,10 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
   /// Maintains instances stored to communicate with native language objects.
   final Pigeon_InstanceManager pigeon_instanceManager;
 
-  late final ProxyApiSuperClass attachedField = _attachedField();
+  late final ProxyApiSuperClass attachedField = __pigeon_attachedField();
 
-  static final ProxyApiSuperClass staticAttachedField = _staticAttachedField();
+  static final ProxyApiSuperClass staticAttachedField =
+      __pigeon_staticAttachedField();
 
   static void pigeon_setUpMessageHandlers({
     BinaryMessenger? pigeon_binaryMessenger,
@@ -7502,7 +7503,7 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
     }
   }
 
-  ProxyApiSuperClass _attachedField() {
+  ProxyApiSuperClass __pigeon_attachedField() {
     final ProxyApiSuperClass __pigeon_instance =
         ProxyApiSuperClass.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -7534,7 +7535,7 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
     return __pigeon_instance;
   }
 
-  static ProxyApiSuperClass _staticAttachedField() {
+  static ProxyApiSuperClass __pigeon_staticAttachedField() {
     final ProxyApiSuperClass __pigeon_instance =
         ProxyApiSuperClass.pigeon_detached();
     const String __pigeon_channelName =

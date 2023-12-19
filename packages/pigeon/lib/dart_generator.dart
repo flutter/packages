@@ -1477,7 +1477,7 @@ class $codecName extends StandardMessageCodec {
               field.documentationComments,
               _docCommentSpec,
             ))
-            ..assignment = cb.Code('_${field.name}()'),
+            ..assignment = cb.Code('$_varNamePrefix${field.name}()'),
         ),
     ];
   }
@@ -1825,7 +1825,7 @@ class $codecName extends StandardMessageCodec {
               dartPackageName: dartPackageName,
             );
             builder
-              ..name = '_${field.name}'
+              ..name = '$_varNamePrefix${field.name}'
               ..static = field.isStatic
               ..returns = cb.refer(type)
               ..body = cb.Block.of(
