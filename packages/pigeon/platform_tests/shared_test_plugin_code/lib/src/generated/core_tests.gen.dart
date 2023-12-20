@@ -3846,7 +3846,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     __pigeon_channel.send(<Object?>[
@@ -3946,7 +3946,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     this.callFlutterEchoAsyncString,
   }) : super.pigeon_detached();
 
-  late final _ProxyIntegrationCoreApiCodec _codecProxyIntegrationCoreApi =
+  late final _ProxyIntegrationCoreApiCodec
+      __pigeon_codecProxyIntegrationCoreApi =
       _ProxyIntegrationCoreApiCodec(pigeon_instanceManager);
 
   final bool aBool;
@@ -5273,7 +5274,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5298,7 +5299,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5323,7 +5324,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5348,7 +5349,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5373,7 +5374,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5406,7 +5407,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5439,7 +5440,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5472,7 +5473,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5505,7 +5506,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5538,7 +5539,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5571,7 +5572,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5606,7 +5607,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5640,7 +5641,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5676,7 +5677,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5710,7 +5711,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5743,7 +5744,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5771,7 +5772,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5799,7 +5800,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5827,7 +5828,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5856,7 +5857,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5884,7 +5885,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5912,7 +5913,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5941,7 +5942,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -5969,7 +5970,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6000,7 +6001,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6025,7 +6026,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6058,7 +6059,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6091,7 +6092,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6124,7 +6125,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6157,7 +6158,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6190,7 +6191,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6223,7 +6224,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6256,7 +6257,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6290,7 +6291,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6323,7 +6324,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6348,7 +6349,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6373,7 +6374,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6398,7 +6399,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6426,7 +6427,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6454,7 +6455,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6482,7 +6483,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6510,7 +6511,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6538,7 +6539,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6566,7 +6567,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6595,7 +6596,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6624,7 +6625,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6743,7 +6744,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6767,7 +6768,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6791,7 +6792,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6815,7 +6816,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6847,7 +6848,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6879,7 +6880,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6911,7 +6912,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6943,7 +6944,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -6975,7 +6976,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7008,7 +7009,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7042,7 +7043,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7076,7 +7077,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7109,7 +7110,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7141,7 +7142,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7168,7 +7169,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7195,7 +7196,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7222,7 +7223,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7249,7 +7250,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7277,7 +7278,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7305,7 +7306,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7333,7 +7334,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyIntegrationCoreApi,
+      __pigeon_codecProxyIntegrationCoreApi,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
@@ -7444,7 +7445,7 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
   }) : pigeon_instanceManager =
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance;
 
-  late final _ProxyApiSuperClassCodec _codecProxyApiSuperClass =
+  late final _ProxyApiSuperClassCodec __pigeon_codecProxyApiSuperClass =
       _ProxyApiSuperClassCodec(pigeon_instanceManager);
 
   /// Sends and receives binary data across the Flutter platform barrier.
@@ -7514,7 +7515,7 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyApiSuperClass,
+      __pigeon_codecProxyApiSuperClass,
       binaryMessenger: pigeon_binaryMessenger,
     );
     __pigeon_channel.send(<Object?>[
@@ -7568,7 +7569,7 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _codecProxyApiSuperClass,
+      __pigeon_codecProxyApiSuperClass,
       binaryMessenger: pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =

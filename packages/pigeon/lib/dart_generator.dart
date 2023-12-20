@@ -959,7 +959,7 @@ class _$apiName {
     required String dartPackageName,
   }) {
     final String codecName = _getCodecName(api);
-    final String codecInstanceName = '_codec${api.name}';
+    final String codecInstanceName = '${_varNamePrefix}codec${api.name}';
 
     // codec
     indent.writeln('''
@@ -1844,7 +1844,7 @@ class $codecName extends StandardMessageCodec {
                   ),
                   _basicMessageChannel(
                     codec: !field.isStatic
-                        ? cb.refer('_codec$apiName')
+                        ? cb.refer(codecInstanceName)
                         : cb.refer(
                             '$codecName($instanceManagerClassName.instance)'),
                     binaryMessenger: !field.isStatic
@@ -1969,7 +1969,7 @@ class $codecName extends StandardMessageCodec {
               ),
               _basicMessageChannel(
                 codec: !method.isStatic
-                    ? cb.refer('_codec$apiName')
+                    ? cb.refer(codecInstanceName)
                     : cb.refer(
                         '$codecName(${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance)',
                       ),

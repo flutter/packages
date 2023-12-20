@@ -1053,6 +1053,18 @@ List<Error> _validateProxyApi(
               'Parameter name must not be "pigeonChannelCodec" in constructor "${constructor.name}" in API: "${api.name}"',
           lineNumber: _calculateLineNumberNullable(source, parameter.offset),
         ));
+      } else if (parameter.name.startsWith(classNamePrefix)) {
+        result.add(Error(
+          message:
+              'Parameter name must not begin with "$classNamePrefix" in constructor "${constructor.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      } else if (parameter.name.startsWith(classMemberNamePrefix)) {
+        result.add(Error(
+          message:
+              'Parameter name must not begin with "$classMemberNamePrefix" in constructor "${constructor.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
       }
     }
     if (constructor.swiftFunction.isNotEmpty) {
@@ -1073,6 +1085,20 @@ List<Error> _validateProxyApi(
     for (final Parameter parameter in method.parameters) {
       if (isDataClass(parameter)) {
         result.add(unsupportedDataClassError(parameter));
+      }
+
+      if (parameter.name.startsWith(classNamePrefix)) {
+        result.add(Error(
+          message:
+              'Parameter name must not begin with "$classNamePrefix" in method "${method.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
+      } else if (parameter.name.startsWith(classMemberNamePrefix)) {
+        result.add(Error(
+          message:
+              'Parameter name must not begin with "$classMemberNamePrefix" in method "${method.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, parameter.offset),
+        ));
       }
     }
 
@@ -1102,6 +1128,32 @@ List<Error> _validateProxyApi(
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
+    }
+
+    if (field.name.startsWith('__pigeon_')) {
+      result.add(Error(
+        message:
+            'Field name must not begin with "__pigeon_" in API: "${api.name}"',
+        lineNumber: _calculateLineNumberNullable(source, field.offset),
+      ));
+    } else if (field.name == 'pigeonChannelCodec') {
+      result.add(Error(
+        message:
+            'Field name must not be "pigeonChannelCodec" in API: "${api.name}"',
+        lineNumber: _calculateLineNumberNullable(source, field.offset),
+      ));
+    } else if (field.name.startsWith(classNamePrefix)) {
+      result.add(Error(
+        message:
+            'Field name must not begin with "$classNamePrefix" in API: "${api.name}"',
+        lineNumber: _calculateLineNumberNullable(source, field.offset),
+      ));
+    } else if (field.name.startsWith(classMemberNamePrefix)) {
+      result.add(Error(
+        message:
+            'Field name must not begin with "$classMemberNamePrefix" in API: "${api.name}"',
+        lineNumber: _calculateLineNumberNullable(source, field.offset),
+      ));
     }
   }
 
