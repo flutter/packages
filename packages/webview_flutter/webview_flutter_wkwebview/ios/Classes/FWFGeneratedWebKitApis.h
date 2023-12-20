@@ -264,6 +264,73 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
 - (instancetype)initWithValue:(FWFWKMediaCaptureType)value;
 @end
 
+/// Responses to an authentication challenge.
+///
+/// See
+/// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
+typedef NS_ENUM(NSUInteger, FWFNSUrlSessionAuthChallengeDisposition) {
+  /// Use the specified credential, which may be nil.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeusecredential?language=objc.
+  FWFNSUrlSessionAuthChallengeDispositionUseCredential = 0,
+  /// Use the default handling for the challenge as though this delegate method
+  /// were not implemented.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeperformdefaulthandling?language=objc.
+  FWFNSUrlSessionAuthChallengeDispositionPerformDefaultHandling = 1,
+  /// Cancel the entire request.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengecancelauthenticationchallenge?language=objc.
+  FWFNSUrlSessionAuthChallengeDispositionCancelAuthenticationChallenge = 2,
+  /// Reject this challenge, and call the authentication delegate method again
+  /// with the next authentication protection space.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengerejectprotectionspace?language=objc.
+  FWFNSUrlSessionAuthChallengeDispositionRejectProtectionSpace = 3,
+};
+
+/// Wrapper for FWFNSUrlSessionAuthChallengeDisposition to allow for nullability.
+@interface FWFNSUrlSessionAuthChallengeDispositionBox : NSObject
+@property(nonatomic, assign) FWFNSUrlSessionAuthChallengeDisposition value;
+- (instancetype)initWithValue:(FWFNSUrlSessionAuthChallengeDisposition)value;
+@end
+
+/// Specifies how long a credential will be kept.
+typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
+  /// The credential should not be stored.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencenone?language=objc.
+  FWFNSUrlCredentialPersistenceNone = 0,
+  /// The credential should be stored only for this session.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistenceforsession?language=objc.
+  FWFNSUrlCredentialPersistenceSession = 1,
+  /// The credential should be stored in the keychain.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencepermanent?language=objc.
+  FWFNSUrlCredentialPersistencePermanent = 2,
+  /// The credential should be stored permanently in the keychain, and in
+  /// addition should be distributed to other devices based on the owning Apple
+  /// ID.
+  ///
+  /// See
+  /// https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencesynchronizable?language=objc.
+  FWFNSUrlCredentialPersistenceSynchronizable = 3,
+};
+
+/// Wrapper for FWFNSUrlCredentialPersistence to allow for nullability.
+@interface FWFNSUrlCredentialPersistenceBox : NSObject
+@property(nonatomic, assign) FWFNSUrlCredentialPersistence value;
+- (instancetype)initWithValue:(FWFNSUrlCredentialPersistence)value;
+@end
+
 @class FWFNSKeyValueObservingOptionsEnumData;
 @class FWFNSKeyValueChangeKeyEnumData;
 @class FWFWKUserScriptInjectionTimeEnumData;
@@ -282,6 +349,7 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
 @class FWFWKSecurityOriginData;
 @class FWFNSHttpCookieData;
 @class FWFObjectOrIdentifier;
+@class FWFAuthenticationChallengeResponse;
 
 @interface FWFNSKeyValueObservingOptionsEnumData : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -460,6 +528,15 @@ typedef NS_ENUM(NSUInteger, FWFWKMediaCaptureType) {
 /// Whether value is an int that is used to retrieve an instance stored in an
 /// `InstanceManager`.
 @property(nonatomic, assign) BOOL isIdentifier;
+@end
+
+@interface FWFAuthenticationChallengeResponse : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithDisposition:(FWFNSUrlSessionAuthChallengeDisposition)disposition
+               credentialIdentifier:(nullable NSNumber *)credentialIdentifier;
+@property(nonatomic, assign) FWFNSUrlSessionAuthChallengeDisposition disposition;
+@property(nonatomic, strong, nullable) NSNumber *credentialIdentifier;
 @end
 
 /// The codec used by FWFWKWebsiteDataStoreHostApi.
@@ -711,6 +788,14 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void);
                                                            completion:
                                                                (void (^)(FlutterError *_Nullable))
                                                                    completion;
+- (void)didReceiveAuthenticationChallengeForDelegateWithIdentifier:(NSInteger)identifier
+                                                 webViewIdentifier:(NSInteger)webViewIdentifier
+                                               challengeIdentifier:(NSInteger)challengeIdentifier
+                                                        completion:
+                                                            (void (^)(
+                                                                FWFAuthenticationChallengeResponse
+                                                                    *_Nullable,
+                                                                FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFNSObjectHostApi.
@@ -917,6 +1002,67 @@ NSObject<FlutterMessageCodec> *FWFNSUrlFlutterApiGetCodec(void);
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (void)createWithIdentifier:(NSInteger)identifier
                   completion:(void (^)(FlutterError *_Nullable))completion;
+@end
+
+/// The codec used by FWFNSUrlCredentialHostApi.
+NSObject<FlutterMessageCodec> *FWFNSUrlCredentialHostApiGetCodec(void);
+
+/// Host API for `NSUrlCredential`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlcredential?language=objc.
+@protocol FWFNSUrlCredentialHostApi
+/// Create a new native instance and add it to the `InstanceManager`.
+- (void)createWithUserWithIdentifier:(NSInteger)identifier
+                                user:(NSString *)user
+                            password:(NSString *)password
+                         persistence:(FWFNSUrlCredentialPersistence)persistence
+                               error:(FlutterError *_Nullable *_Nonnull)error;
+@end
+
+extern void SetUpFWFNSUrlCredentialHostApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                           NSObject<FWFNSUrlCredentialHostApi> *_Nullable api);
+
+/// The codec used by FWFNSUrlProtectionSpaceFlutterApi.
+NSObject<FlutterMessageCodec> *FWFNSUrlProtectionSpaceFlutterApiGetCodec(void);
+
+/// Flutter API for `NSUrlProtectionSpace`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlprotectionspace?language=objc.
+@interface FWFNSUrlProtectionSpaceFlutterApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+/// Create a new Dart instance and add it to the `InstanceManager`.
+- (void)createWithIdentifier:(NSInteger)identifier
+                        host:(nullable NSString *)host
+                       realm:(nullable NSString *)realm
+        authenticationMethod:(nullable NSString *)authenticationMethod
+                  completion:(void (^)(FlutterError *_Nullable))completion;
+@end
+
+/// The codec used by FWFNSUrlAuthenticationChallengeFlutterApi.
+NSObject<FlutterMessageCodec> *FWFNSUrlAuthenticationChallengeFlutterApiGetCodec(void);
+
+/// Flutter API for `NSUrlAuthenticationChallenge`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See
+/// https://developer.apple.com/documentation/foundation/nsurlauthenticationchallenge?language=objc.
+@interface FWFNSUrlAuthenticationChallengeFlutterApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+/// Create a new Dart instance and add it to the `InstanceManager`.
+- (void)createWithIdentifier:(NSInteger)identifier
+    protectionSpaceIdentifier:(NSInteger)protectionSpaceIdentifier
+                   completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 NS_ASSUME_NONNULL_END
