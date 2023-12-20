@@ -1,0 +1,94 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter --quiet assemble --no-version-check --depfile /Users/jeroen/Projects/andrei-webview-authentication/packages/webview_flutter/webview_flutter/example/build/app/intermediates/flutter/debug/flutter_build.d --output /Users/jeroen/Projects/andrei-webview-authentication/packages/webview_flutter/webview_flutter/example/build/app/intermediates/flutter/debug -dTargetFile=/Users/jeroen/Projects/andrei-webview-authentication/packages/webview_flutter/webview_flutter/example/lib/main.dart -dTargetPlatform=android -dBuildMode=debug -dTrackWidgetCreation=true --DartDefines=RkxVVFRFUl9XRUJfQVVUT19ERVRFQ1Q9dHJ1ZQ==,RkxVVFRFUl9XRUJfQ0FOVkFTS0lUX1VSTD1odHRwczovL3d3dy5nc3RhdGljLmNvbS9mbHV0dGVyLWNhbnZhc2tpdC83NGQxNjYyN2I5NDBiYjE1ZTUwODkxZjgyY2FkNmMzZTM0NjViZDZkLw== debug_android_application
+
+## exception
+
+FileSystemException: FileSystemException: Cannot resolve symbolic links, path = '/Users/jeroen/Projects/andrei-webview-authentication/packages/webview_flutter/webview_flutter/example/build/app/intermediates/flutter/debug' (OS Error: No such file or directory, errno = 2)
+
+```
+#0      FileSystemEntity._throwIfError (dart:io/file_system_entity.dart:829:7)
+#1      FileSystemEntity.resolveSymbolicLinksSync (dart:io/file_system_entity.dart:348:5)
+#2      ForwardingFileSystemEntity.resolveSymbolicLinksSync (package:file/src/forwarding/forwarding_file_system_entity.dart:56:49)
+#3      ForwardingFileSystemEntity.resolveSymbolicLinksSync (package:file/src/forwarding/forwarding_file_system_entity.dart:56:49)
+#4      SourceVisitor.visitPattern (package:flutter_tools/src/build_system/source.dart:116:67)
+#5      _PatternSource.accept (package:flutter_tools/src/build_system/source.dart:255:49)
+#6      Target._resolveConfiguration (package:flutter_tools/src/build_system/build_system.dart:249:14)
+#7      Target.resolveOutputs (package:flutter_tools/src/build_system/build_system.dart:204:12)
+#8      Target._toNode (package:flutter_tools/src/build_system/build_system.dart:150:39)
+#9      FlutterBuildSystem.build (package:flutter_tools/src/build_system/build_system.dart:609:30)
+#10     AssembleCommand.runCommand (package:flutter_tools/src/commands/assemble.dart:315:51)
+#11     FlutterCommand.verifyThenRunCommand (package:flutter_tools/src/runner/flutter_command.dart:1662:12)
+<asynchronous suspension>
+#12     FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1350:27)
+<asynchronous suspension>
+#13     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:150:19)
+<asynchronous suspension>
+#14     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#15     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:348:9)
+<asynchronous suspension>
+#16     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:150:19)
+<asynchronous suspension>
+#17     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:294:5)
+<asynchronous suspension>
+#18     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:112:9)
+<asynchronous suspension>
+#19     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:150:19)
+<asynchronous suspension>
+#20     main (package:flutter_tools/executable.dart:90:3)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[✓] Flutter (Channel stable, 3.16.0, on macOS 14.1 23B74 darwin-arm64, locale en-US)
+    • Flutter version 3.16.0 on channel stable at /Users/jeroen/Development/flutter
+    • Upstream repository https://github.com/flutter/flutter.git
+    • Framework revision db7ef5bf9f (5 weeks ago), 2023-11-15 11:25:44 -0800
+    • Engine revision 74d16627b9
+    • Dart version 3.2.0
+    • DevTools version 2.28.2
+
+[✓] Android toolchain - develop for Android devices (Android SDK version 33.0.0)
+    • Android SDK at /Users/jeroen/Library/Android/sdk
+    • Platform android-34, build-tools 33.0.0
+    • ANDROID_HOME = /Users/jeroen/Library/Android/sdk
+    • Java binary at: /Applications/Android Studio.app/Contents/jbr/Contents/Home/bin/java
+    • Java version OpenJDK Runtime Environment (build 17.0.6+0-17.0.6b802.4-9586694)
+    • All Android licenses accepted.
+
+[✓] Xcode - develop for iOS and macOS (Xcode 15.1)
+    • Xcode at /Applications/Xcode.app/Contents/Developer
+    • Build 15C65
+    • CocoaPods version 1.11.3
+
+[✓] Chrome - develop for the web
+    • Chrome at /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+
+[✓] Android Studio (version 2022.2)
+    • Android Studio at /Applications/Android Studio.app/Contents
+    • Flutter plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/9212-flutter
+    • Dart plugin can be installed from:
+      🔨 https://plugins.jetbrains.com/plugin/6351-dart
+    • Java version OpenJDK Runtime Environment (build 17.0.6+0-17.0.6b802.4-9586694)
+
+[✓] VS Code (version 1.85.0)
+    • VS Code at /Applications/Visual Studio Code.app/Contents
+    • Flutter extension version 3.78.0
+
+[✓] Connected device (3 available)
+    • sdk gphone64 arm64 (mobile) • emulator-5554 • android-arm64  • Android 14 (API 34) (emulator)
+    • macOS (desktop)             • macos         • darwin-arm64   • macOS 14.1 23B74 darwin-arm64
+    • Chrome (web)                • chrome        • web-javascript • Google Chrome 120.0.6099.109
+
+[✓] Network resources
+    • All expected network resources are available.
+
+• No issues found!
+```
