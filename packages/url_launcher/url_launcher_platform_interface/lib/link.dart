@@ -28,7 +28,8 @@ const MethodCodec _codec = JSONMethodCodec();
 ///
 /// This is a class instead of an enum to allow future customizability e.g.
 /// opening a link in a specific iframe.
-class LinkTarget { // ignore: use_enums
+// ignore: use_enums
+class LinkTarget {
   /// Const private constructor with a [debugLabel] to allow the creation of
   /// multiple distinct const instances.
   const LinkTarget._({required this.debugLabel});
@@ -43,7 +44,7 @@ class LinkTarget { // ignore: use_enums
   /// iOS, on the other hand, defaults to [self] for web URLs, and [blank] for
   /// non-web URLs.
   static const LinkTarget defaultTarget =
-  LinkTarget._(debugLabel: 'defaultTarget');
+      LinkTarget._(debugLabel: 'defaultTarget');
 
   /// On the web, this opens the link in the same tab where the flutter app is
   /// running.
