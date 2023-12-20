@@ -142,6 +142,20 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('updateTileOverlays() has not been implemented.');
   }
 
+  /// Updates ground overlay configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates, {
+        required int mapId,
+      }) {
+    throw UnimplementedError(
+        'updateGroundOverlays() has not been implemented.');
+  }
+
   /// Clears the tile cache so that all tiles will be requested again from the
   /// [TileProvider].
   ///
@@ -360,6 +374,11 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// Dispose of whatever resources the `mapId` is holding on to.
   void dispose({required int mapId}) {
     throw UnimplementedError('dispose() has not been implemented.');
+  }
+
+  /// A [GroundOverlay] has been tapped.
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    throw UnimplementedError('onGroundOverlayTap() has not been implemented.');
   }
 
   /// Returns a widget displaying the map view - deprecated, use

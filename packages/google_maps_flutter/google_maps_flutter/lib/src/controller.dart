@@ -79,6 +79,10 @@ class GoogleMapController {
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
     GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
         (MapLongPressEvent e) => _googleMapState.onLongPress(e.position));
+    GoogleMapsFlutterPlatform.instance
+        .onGroundOverlayTap(mapId: mapId)
+        .listen((GroundOverlayTapEvent e) =>
+        _googleMapState.onGroundOverlayTap(e.value));
   }
 
   /// Updates configuration options of the map user interface.
@@ -157,6 +161,19 @@ class GoogleMapController {
   Future<void> clearTileCache(TileOverlayId tileOverlayId) async {
     return GoogleMapsFlutterPlatform.instance
         .clearTileCache(tileOverlayId, mapId: mapId);
+  }
+
+  /// Updates ground overlay configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> _updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates) {
+    assert(groundOverlayUpdates != null);
+    return GoogleMapsFlutterPlatform.instance
+        .updateGroundOverlays(groundOverlayUpdates, mapId: mapId);
   }
 
   /// Starts an animated change of the map camera position.

@@ -9,6 +9,8 @@ export 'camera.dart';
 export 'cap.dart';
 export 'circle.dart';
 export 'circle_updates.dart';
+export 'ground_overlay.dart';
+export 'ground_overlay_updates.dart';
 export 'joint_type.dart';
 export 'location.dart';
 export 'map_configuration.dart';
@@ -30,6 +32,7 @@ export 'tile_provider.dart';
 export 'ui.dart';
 // Export the utils used by the Widget
 export 'utils/circle.dart';
+export 'utils/ground_overlay.dart';
 export 'utils/marker.dart';
 export 'utils/polygon.dart';
 export 'utils/polyline.dart';
