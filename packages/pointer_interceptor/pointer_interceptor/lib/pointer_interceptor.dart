@@ -4,4 +4,5 @@
 
 library pointer_interceptor;
 
-export 'src/mobile.dart' if (dart.library.html) 'src/web.dart';
+export 'package:pointer_interceptor/src/pointer_interceptor.dart';
+export 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';

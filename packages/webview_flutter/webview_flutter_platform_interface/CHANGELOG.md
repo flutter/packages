@@ -1,3 +1,11 @@
+## 2.9.0
+
+* Adds support to show JavaScript dialog. See `PlatformWebViewController.setOnJavaScriptAlertDialog`, `PlatformWebViewController.setOnJavaScriptConfirmDialog` and `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
+
+## 2.8.0
+
+* Adds support to track scroll position changes. See `PlatformWebViewController.setOnScrollPositionChange`.
+
 ## 2.7.0
 
 * Adds support for handling HTTP basic authentication requests. See `PlatformNavigationDelegate.setOnHttpAuthRequest`.

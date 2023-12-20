@@ -1,6 +1,20 @@
-## NEXT
+## 15.0.2
+
+* Prevents optional and non-positional parameters in Flutter APIs.
+* [dart] Fixes named parameters in test output of host API methods.
+
+## 15.0.1
+
+* [java] Adds @CanIgnoreReturnValue annotation to class builder.
+
+## 15.0.0
+
+* **Breaking Change** [kotlin] Updates Flutter API to use new errorClassName.
+
+## 14.0.1
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates issue_tracker link.
 
 ## 14.0.0
 
