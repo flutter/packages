@@ -951,17 +951,13 @@ class _$apiName {
   }
 
   @override
-  void writeProxyApi(
+  void writeProxyApiBaseCodec(
     DartOptions generatorOptions,
     Root root,
     Indent indent,
-    AstProxyApi api, {
-    required String dartPackageName,
-  }) {
-    final String codecName = _getCodecName(api);
-    final String codecInstanceName = '${_varNamePrefix}codec${api.name}';
+  ) {
+    const String codecName = '_${classNamePrefix}ProxyApiBaseCodec';
 
-    // codec
     indent.writeln('''
 class $codecName extends StandardMessageCodec {
  const $codecName(this.instanceManager);
@@ -990,6 +986,18 @@ class $codecName extends StandardMessageCodec {
  }
 }
 ''');
+  }
+
+  @override
+  void writeProxyApi(
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstProxyApi api, {
+    required String dartPackageName,
+  }) {
+    const String codecName = '_${classNamePrefix}ProxyApiBaseCodec';
+    final String codecInstanceName = '${_varNamePrefix}codec${api.name}';
 
     final Iterable<AstProxyApi> allProxyApis =
         root.apis.whereType<AstProxyApi>();

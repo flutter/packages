@@ -333,6 +333,33 @@ class _Pigeon_InstanceManagerApi {
   }
 }
 
+class _Pigeon_ProxyApiBaseCodec extends StandardMessageCodec {
+  const _Pigeon_ProxyApiBaseCodec(this.instanceManager);
+
+  final Pigeon_InstanceManager instanceManager;
+
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is Pigeon_Copyable) {
+      buffer.putUint8(128);
+      writeValue(buffer, instanceManager.getIdentifier(value));
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return instanceManager
+            .getInstanceWithWeakReference(readValue(buffer)! as int);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 enum AnEnum {
   one,
   two,
@@ -3750,33 +3777,6 @@ abstract class FlutterSmallApi {
   }
 }
 
-class _ProxyIntegrationCoreApiCodec extends StandardMessageCodec {
-  const _ProxyIntegrationCoreApiCodec(this.instanceManager);
-
-  final Pigeon_InstanceManager instanceManager;
-
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is Pigeon_Copyable) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
 class ProxyIntegrationCoreApi extends ProxyApiSuperClass
@@ -3946,9 +3946,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     this.callFlutterEchoAsyncString,
   }) : super.pigeon_detached();
 
-  late final _ProxyIntegrationCoreApiCodec
-      __pigeon_codecProxyIntegrationCoreApi =
-      _ProxyIntegrationCoreApiCodec(pigeon_instanceManager);
+  late final _Pigeon_ProxyApiBaseCodec __pigeon_codecProxyIntegrationCoreApi =
+      _Pigeon_ProxyApiBaseCodec(pigeon_instanceManager);
 
   final bool aBool;
 
@@ -4117,6 +4116,11 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   @override
   final void Function(ProxyApiInterface instance)? anInterfaceMethod;
 
+  late final ProxyApiSuperClass attachedField = __pigeon_attachedField();
+
+  static final ProxyApiSuperClass staticAttachedField =
+      __pigeon_staticAttachedField();
+
   static void pigeon_setUpMessageHandlers({
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
@@ -4220,8 +4224,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
       String aString,
     )? callFlutterEchoAsyncString,
   }) {
-    final _ProxyIntegrationCoreApiCodec pigeonChannelCodec =
-        _ProxyIntegrationCoreApiCodec(
+    final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
+        _Pigeon_ProxyApiBaseCodec(
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     {
       const String __pigeon_channelName =
@@ -5264,6 +5268,65 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
         }
       });
     }
+  }
+
+  ProxyApiSuperClass __pigeon_attachedField() {
+    final ProxyApiSuperClass __pigeon_instance =
+        ProxyApiSuperClass.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.attachedField';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      __pigeon_codecProxyIntegrationCoreApi,
+      binaryMessenger: pigeon_binaryMessenger,
+    );
+    __pigeon_channel.send(<Object?>[
+      this,
+      pigeon_instanceManager.addDartCreatedInstance(__pigeon_instance),
+    ]).then<void>((Object? value) {
+      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: (__pigeon_replyList[0]! as String),
+          message: (__pigeon_replyList[1] as String?),
+          details: __pigeon_replyList[2],
+        );
+      }
+    });
+    return __pigeon_instance;
+  }
+
+  static ProxyApiSuperClass __pigeon_staticAttachedField() {
+    final ProxyApiSuperClass __pigeon_instance =
+        ProxyApiSuperClass.pigeon_detached();
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.staticAttachedField';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      _Pigeon_ProxyApiBaseCodec(Pigeon_InstanceManager.instance),
+    );
+    __pigeon_channel.send(<Object?>[
+      Pigeon_InstanceManager.instance.addDartCreatedInstance(__pigeon_instance)
+    ]).then<void>((Object? value) {
+      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: (__pigeon_replyList[0]! as String),
+          message: (__pigeon_replyList[1] as String?),
+          details: __pigeon_replyList[2],
+        );
+      }
+    });
+    return __pigeon_instance;
   }
 
   /// A no-op function taking no arguments and returning no value, to sanity
@@ -6657,7 +6720,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _ProxyIntegrationCoreApiCodec(
+      _Pigeon_ProxyApiBaseCodec(
           pigeon_instanceManager ?? Pigeon_InstanceManager.instance),
       binaryMessenger: pigeon_binaryMessenger,
     );
@@ -6686,7 +6749,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _ProxyIntegrationCoreApiCodec(
+      _Pigeon_ProxyApiBaseCodec(
           pigeon_instanceManager ?? Pigeon_InstanceManager.instance),
       binaryMessenger: pigeon_binaryMessenger,
     );
@@ -6719,7 +6782,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
-      _ProxyIntegrationCoreApiCodec(
+      _Pigeon_ProxyApiBaseCodec(
           pigeon_instanceManager ?? Pigeon_InstanceManager.instance),
       binaryMessenger: pigeon_binaryMessenger,
     );
@@ -7406,33 +7469,6 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   }
 }
 
-class _ProxyApiSuperClassCodec extends StandardMessageCodec {
-  const _ProxyApiSuperClassCodec(this.instanceManager);
-
-  final Pigeon_InstanceManager instanceManager;
-
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is Pigeon_Copyable) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// ProxyApi to serve as a super class to the core ProxyApi interface.
 class ProxyApiSuperClass implements Pigeon_Copyable {
   /// Constructs ProxyApiSuperClass without creating the associated native object.
@@ -7445,8 +7481,8 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
   }) : pigeon_instanceManager =
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance;
 
-  late final _ProxyApiSuperClassCodec __pigeon_codecProxyApiSuperClass =
-      _ProxyApiSuperClassCodec(pigeon_instanceManager);
+  late final _Pigeon_ProxyApiBaseCodec __pigeon_codecProxyApiSuperClass =
+      _Pigeon_ProxyApiBaseCodec(pigeon_instanceManager);
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -7457,18 +7493,13 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
   /// Maintains instances stored to communicate with native language objects.
   final Pigeon_InstanceManager pigeon_instanceManager;
 
-  late final ProxyApiSuperClass attachedField = __pigeon_attachedField();
-
-  static final ProxyApiSuperClass staticAttachedField =
-      __pigeon_staticAttachedField();
-
   static void pigeon_setUpMessageHandlers({
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
     ProxyApiSuperClass Function()? pigeon_detached,
   }) {
-    final _ProxyApiSuperClassCodec pigeonChannelCodec =
-        _ProxyApiSuperClassCodec(
+    final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
+        _Pigeon_ProxyApiBaseCodec(
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     {
       const String __pigeon_channelName =
@@ -7504,65 +7535,6 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
     }
   }
 
-  ProxyApiSuperClass __pigeon_attachedField() {
-    final ProxyApiSuperClass __pigeon_instance =
-        ProxyApiSuperClass.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-    );
-    const String __pigeon_channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.attachedField';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      __pigeon_codecProxyApiSuperClass,
-      binaryMessenger: pigeon_binaryMessenger,
-    );
-    __pigeon_channel.send(<Object?>[
-      this,
-      pigeon_instanceManager.addDartCreatedInstance(__pigeon_instance),
-    ]).then<void>((Object? value) {
-      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
-      if (__pigeon_replyList == null) {
-        throw _createConnectionError(__pigeon_channelName);
-      } else if (__pigeon_replyList.length > 1) {
-        throw PlatformException(
-          code: (__pigeon_replyList[0]! as String),
-          message: (__pigeon_replyList[1] as String?),
-          details: __pigeon_replyList[2],
-        );
-      }
-    });
-    return __pigeon_instance;
-  }
-
-  static ProxyApiSuperClass __pigeon_staticAttachedField() {
-    final ProxyApiSuperClass __pigeon_instance =
-        ProxyApiSuperClass.pigeon_detached();
-    const String __pigeon_channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.staticAttachedField';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      _ProxyApiSuperClassCodec(Pigeon_InstanceManager.instance),
-    );
-    __pigeon_channel.send(<Object?>[
-      Pigeon_InstanceManager.instance.addDartCreatedInstance(__pigeon_instance)
-    ]).then<void>((Object? value) {
-      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
-      if (__pigeon_replyList == null) {
-        throw _createConnectionError(__pigeon_channelName);
-      } else if (__pigeon_replyList.length > 1) {
-        throw PlatformException(
-          code: (__pigeon_replyList[0]! as String),
-          message: (__pigeon_replyList[1] as String?),
-          details: __pigeon_replyList[2],
-        );
-      }
-    });
-    return __pigeon_instance;
-  }
-
   Future<void> aSuperMethod() async {
     const String __pigeon_channelName =
         r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.aSuperMethod';
@@ -7596,33 +7568,6 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
   }
 }
 
-class _ProxyApiInterfaceCodec extends StandardMessageCodec {
-  const _ProxyApiInterfaceCodec(this.instanceManager);
-
-  final Pigeon_InstanceManager instanceManager;
-
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is Pigeon_Copyable) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// ProxyApi to serve as an interface to the core ProxyApi interface.
 class ProxyApiInterface implements Pigeon_Copyable {
   /// Constructs ProxyApiInterface without creating the associated native object.
@@ -7653,8 +7598,9 @@ class ProxyApiInterface implements Pigeon_Copyable {
     ProxyApiInterface Function()? pigeon_detached,
     void Function(ProxyApiInterface instance)? anInterfaceMethod,
   }) {
-    final _ProxyApiInterfaceCodec pigeonChannelCodec = _ProxyApiInterfaceCodec(
-        pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
+    final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
+        _Pigeon_ProxyApiBaseCodec(
+            pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     {
       const String __pigeon_channelName =
           r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_detached';

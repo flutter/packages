@@ -758,6 +758,12 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   late Map<String?, Object?>? aNullableMap;
   late AnEnum? aNullableEnum;
 
+  @attached
+  late ProxyApiSuperClass attachedField;
+
+  @static
+  late ProxyApiSuperClass staticAttachedField;
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   late void Function()? flutterNoop;
@@ -1104,12 +1110,6 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 /// ProxyApi to serve as a super class to the core ProxyApi interface.
 @ProxyApi()
 abstract class ProxyApiSuperClass {
-  @attached
-  late ProxyApiSuperClass attachedField;
-
-  @static
-  late ProxyApiSuperClass staticAttachedField;
-
   void aSuperMethod();
 }
 

@@ -77,6 +77,8 @@ abstract class StructuredGenerator<T> extends Generator<T> {
         indent,
         dartPackageName: dartPackageName,
       );
+
+      writeProxyApiBaseCodec(generatorOptions, root, indent);
     }
 
     writeEnums(
@@ -303,6 +305,13 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Indent indent, {
     required String dartPackageName,
   }) {}
+
+  /// Writes the base codec to be used by ProxyApis.
+  void writeProxyApiBaseCodec(
+    T generatorOptions,
+    Root root,
+    Indent indent,
+  ) {}
 
   /// Writes a single Proxy Api to [indent].
   void writeProxyApi(
