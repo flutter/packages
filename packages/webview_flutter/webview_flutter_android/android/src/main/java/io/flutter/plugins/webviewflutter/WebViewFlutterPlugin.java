@@ -186,6 +186,9 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
 
   @Override
   public void onDetachedFromActivity() {
+    if (instanceManager != null) {
+      instanceManager.clear();
+    }
     updateContext(pluginBinding.getApplicationContext());
   }
 
