@@ -5,6 +5,7 @@
 export 'http_auth_request.dart';
 export 'http_response_error.dart';
 export 'javascript_console_message.dart';
+export 'javascript_dialog_request.dart';
 export 'javascript_log_level.dart';
 export 'javascript_message.dart';
 export 'javascript_mode.dart';
