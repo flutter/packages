@@ -253,7 +253,7 @@ class LinkViewController extends PlatformViewController {
     // with a version that contains new values. This is deliberately outside
     // the switch rather than a `default` so that the linter will flag the
     // switch as needing an update.
-    return '_self'; // ignore: dead_code
+    return '_self';
   }
 
   @override
