@@ -1445,9 +1445,10 @@ void main() {
   test('named argument flutter', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        AstFlutterApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
