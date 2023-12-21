@@ -10,6 +10,9 @@ import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
 
+/// State extension for [GoRouterState], similar to theme extensions
+interface class GoRouterStateExtension<T extends GoRouterStateExtension<T>> {}
+
 /// The route state during routing.
 ///
 /// The state contains parsed artifacts of the current URI.
@@ -80,13 +83,27 @@ class GoRouterState {
   /// ```
   final ValueKey<String> pageKey;
 
-  /// Generates a title for the matched route associated with this state.
+  /// Gets the first [GoRouterStateExtension] from the current route's matched
+  /// extensions of the given type. This function is obtained from the current
+  /// route's [GoRoute.extensions].
   ///
-  /// This function is obtained from the current route's [GoRoute.titleBuilder].
-  String Function(BuildContext context)? get titleBuilder =>
-      matchList.titleBuilder == null
-          ? null
-          : (BuildContext context) => matchList.titleBuilder!(context, this);
+  /// Throws a [StateError] if there is no [GoRouterStateExtension] of type [T] found.
+  T extension<T extends GoRouterStateExtension<T>>(BuildContext context) =>
+      matchList.extensions
+          .whereType<GoRouterStateExtensionBuilder<T>>()
+          .first
+          .call(context, this);
+
+  /// Gets the first [GoRouterStateExtension] from the current route's matched
+  /// extensions of the given type. This function is obtained from the current route's [GoRoute.extensions].
+  ///
+  /// Returns `null` if there is no [GoRouterStateExtension] of type [T] found.
+  T? maybeExtension<T extends GoRouterStateExtension<T>>(
+          BuildContext context) =>
+      matchList.extensions
+          .whereType<GoRouterStateExtensionBuilder<T>>()
+          .firstOrNull
+          ?.call(context, this);
 
   /// Gets the [GoRouterState] from context.
   ///

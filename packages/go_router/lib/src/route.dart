@@ -55,6 +55,10 @@ typedef StatefulShellRoutePageBuilder = Page<dynamic> Function(
   StatefulNavigationShell navigationShell,
 );
 
+/// the builder for [GoRoute.extensions]
+typedef GoRouterStateExtensionBuilder<T extends GoRouterStateExtension<T>> = T
+    Function(BuildContext context, GoRouterState state);
+
 /// Signature for functions used to build Navigators
 typedef NavigatorBuilder = Widget Function(
     List<NavigatorObserver>? observers, String? restorationScopeId);
@@ -153,7 +157,7 @@ abstract class RouteBase with Diagnosticable {
   const RouteBase._({
     required this.routes,
     required this.parentNavigatorKey,
-    this.titleBuilder,
+    this.extensions = const <GoRouterStateExtensionBuilder<dynamic>>[],
   });
 
   /// The list of child routes associated with this route.
@@ -166,8 +170,12 @@ abstract class RouteBase with Diagnosticable {
   /// Navigator instead of the nearest ShellRoute ancestor.
   final GlobalKey<NavigatorState>? parentNavigatorKey;
 
-  /// The title builder for this route.
-  final String Function(BuildContext, GoRouterState)? titleBuilder;
+  /// Extensions from [GoRoute.extensions] for the matched route.
+  ///
+  /// This function is defined in [GoRoute.extensions] and is
+  /// accessible through [GoRouterState.extension], which will
+  /// return the [extensions] associated with that state.
+  final List<GoRouterStateExtensionBuilder<dynamic>> extensions;
 
   /// Builds a lists containing the provided routes along with all their
   /// descendant [routes].
@@ -214,7 +222,7 @@ class GoRoute extends RouteBase {
     super.parentNavigatorKey,
     this.redirect,
     this.onExit,
-    super.titleBuilder,
+    super.extensions,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
@@ -1244,7 +1252,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         matches: matches,
         uri: Uri.parse(matches.last.matchedLocation),
         pathParameters: matchList.pathParameters,
-        titleBuilder: matchList.titleBuilder,
+        extensions: matchList.extensions,
       );
     }
     return matchList;

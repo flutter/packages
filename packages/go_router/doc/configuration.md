@@ -85,20 +85,30 @@ GoRoute(
 )
 ```
 
-# Route Title Builder
-To specify a title for the route, provide a `titleBuilder` parameter to `GoRoute`
+# GoRoute Extensions
+To specify a title for the route, provide an `extensions` parameter to `GoRoute`
 
 ```dart
+class CustomDataExtension implements GoRouterStateExtension<CustomDataExtension> {
+  const CustomDataExtension(this.data);
+
+  final String data;
+}
+
 GoRoute(
   path: '/',
-  titleBuilder: (context, state) => 'Home',
+  extensions: <GoRouterStateExtensionBuilder>[
+    (context, state) => const CustomDataExtension('Home'),
+  ],
   builder: (context, state) {
-    return HomeScreen(title: state.titleBuilder?.call(context));
+    return HomeScreen(title: state.extension<CustomDataExtension>(context).data);
   },
   routes: [
     GoRoute(
       path: ':userId',
-      titleBuilder: (context, state) => 'Welcome ${state.pathParameters['userId']}',
+      extensions: <GoRouterStateExtensionBuilder>[
+        (context, state) => const CustomDataExtension('Welcome ${state.pathParameters['userId']}'),
+      ],
       builder: (context, state) {
         return DetailsScreen();
       },

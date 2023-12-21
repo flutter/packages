@@ -8,6 +8,20 @@ import 'package:go_router/go_router.dart';
 
 import 'test_helpers.dart';
 
+class RouteTitleExtension
+    implements GoRouterStateExtension<RouteTitleExtension> {
+  const RouteTitleExtension(this.title);
+
+  final String title;
+}
+
+class OtherCustomDataExtension
+    implements GoRouterStateExtension<OtherCustomDataExtension> {
+  const OtherCustomDataExtension(this.type);
+
+  final String type;
+}
+
 void main() {
   test('throws when a builder is not set', () {
     expect(() => GoRoute(path: '/'), throwsA(isAssertionError));
@@ -184,28 +198,38 @@ void main() {
   });
 
   group('GoRoute titleBuilder', () {
-    testWidgets('GoRoute titleBuilder Changes with Route Change',
+    testWidgets('GoRoute extensions Changes with Route Change',
         (WidgetTester tester) async {
       final UniqueKey aKey = UniqueKey();
       final UniqueKey bKey = UniqueKey();
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/a',
-          titleBuilder: (_, __) => 'A',
+          extensions: <GoRouterStateExtensionBuilder>[
+            (_, __) => const RouteTitleExtension('A'),
+            (_, __) => const OtherCustomDataExtension('A.2'),
+          ],
           builder: (_, __) => Builder(builder: (BuildContext context) {
             return Text(
               key: aKey,
-              GoRouterState.of(context).titleBuilder?.call(context) ?? '',
+              GoRouterState.of(context)
+                  .extension<RouteTitleExtension>(context)
+                  .title,
             );
           }),
           routes: <GoRoute>[
             GoRoute(
               path: 'b',
-              titleBuilder: (_, __) => 'B',
+              extensions: <GoRouterStateExtensionBuilder>[
+                (_, __) => const RouteTitleExtension('B'),
+                (_, __) => const OtherCustomDataExtension('B.2'),
+              ],
               builder: (_, __) => Builder(builder: (BuildContext context) {
                 return Text(
                   key: bKey,
-                  GoRouterState.of(context).titleBuilder?.call(context) ?? '',
+                  GoRouterState.of(context)
+                      .extension<RouteTitleExtension>(context)
+                      .title,
                 );
               }),
             ),
@@ -221,7 +245,7 @@ void main() {
       expect(tester.widget<Text>(find.byKey(bKey)).data, 'B');
     });
 
-    testWidgets('GoRoute titleBuilder accessible from StatefulShellRoute',
+    testWidgets('GoRoute extensions accessible from StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
           GlobalKey<NavigatorState>();
@@ -255,7 +279,12 @@ void main() {
                       StatefulNavigationShell navigationShell) {
                     return Column(
                       children: <Widget>[
-                        Text(state.titleBuilder?.call(context) ?? 'No Title'),
+                        Text(GoRouterState.of(context)
+                            .extension<RouteTitleExtension>(context)
+                            .title),
+                        Text(GoRouterState.of(context)
+                            .extension<OtherCustomDataExtension>(context)
+                            .type),
                         Expanded(child: navigationShell),
                       ],
                     );
@@ -265,7 +294,10 @@ void main() {
                       routes: <RouteBase>[
                         GoRoute(
                           path: 'a',
-                          titleBuilder: (_, __) => 'A',
+                          extensions: <GoRouterStateExtensionBuilder>[
+                            (_, __) => const RouteTitleExtension('A'),
+                            (_, __) => const OtherCustomDataExtension('A.2'),
+                          ],
                           builder: (BuildContext context, GoRouterState state) {
                             return const Scaffold(
                               body: Text('Screen 2'),
@@ -278,7 +310,10 @@ void main() {
                       routes: <RouteBase>[
                         GoRoute(
                           path: 'b',
-                          titleBuilder: (_, __) => 'B',
+                          extensions: <GoRouterStateExtensionBuilder>[
+                            (_, __) => const RouteTitleExtension('B'),
+                            (_, __) => const OtherCustomDataExtension('B.2'),
+                          ],
                           builder: (BuildContext context, GoRouterState state) {
                             return const Scaffold(
                               body: Text('Screen 2'),
@@ -297,10 +332,12 @@ void main() {
       final GoRouter router = await createRouter(routes, tester,
           initialLocation: '/a', navigatorKey: rootNavigatorKey);
       expect(find.text('A'), findsOneWidget);
+      expect(find.text('A.2'), findsOneWidget);
 
       router.go('/b');
       await tester.pumpAndSettle();
       expect(find.text('B'), findsOneWidget);
+      expect(find.text('B.2'), findsOneWidget);
     });
   });
 

@@ -1,6 +1,6 @@
 ## 12.2.0
 
-- Adds optional named parameter `GoRoute.titleBuilder` and getter `GoRouterState.titleBuilder` to
+- Adds optional named parameter `GoRoute.extensions` and function `GoRouterState.extension<T>()` to
   allow dynamically generating the title of the current page outside of the route widget.
 
 ## 12.1.3

@@ -310,7 +310,8 @@ class RouteConfiguration {
       uri: uri,
       pathParameters: pathParameters,
       extra: extra,
-      titleBuilder: matches.lastOrNull?.route.titleBuilder,
+      extensions: matches.lastOrNull?.route.extensions ??
+          <GoRouterStateExtensionBuilder>[],
     );
   }
 

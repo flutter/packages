@@ -165,7 +165,7 @@ class RouteMatchList {
     this.extra,
     this.error,
     required this.pathParameters,
-    this.titleBuilder,
+    this.extensions = const <GoRouterStateExtensionBuilder<dynamic>>[],
   }) : fullPath = _generateFullPath(matches);
 
   /// Constructs an empty matches object.
@@ -203,13 +203,12 @@ class RouteMatchList {
   /// ```
   final String fullPath;
 
-  /// Generates a title for the current matched route.
+  /// Extensions from [GoRoute.extensions] for the matched route.
   ///
-  /// This function is defined in [GoRoute.titleBuilder] and is
-  /// accessible through [GoRouterState.titleBuilder], which will
-  /// return the titleBuilder associated with that state.
-  final String Function(BuildContext context, GoRouterState state)?
-      titleBuilder;
+  /// This function is defined in [GoRoute.extensions] and is
+  /// accessible through [GoRouterState.extension], which will
+  /// return the [extensions] associated with that state.
+  final List<GoRouterStateExtensionBuilder<dynamic>> extensions;
 
   /// Generates the full path (ex: `'/family/:fid/person/:pid'`) of a list of
   /// [RouteMatch].
@@ -308,7 +307,6 @@ class RouteMatchList {
       matches: newMatches,
       uri: newUri,
       pathParameters: newPathParameters,
-      titleBuilder: newMatches.lastOrNull?.route.titleBuilder,
     );
   }
 
@@ -325,7 +323,7 @@ class RouteMatchList {
     List<RouteMatch>? matches,
     Uri? uri,
     Map<String, String>? pathParameters,
-    String Function(BuildContext, GoRouterState)? titleBuilder,
+    List<GoRouterStateExtensionBuilder<dynamic>>? extensions,
   }) {
     return RouteMatchList(
       matches: matches ?? this.matches,
@@ -333,7 +331,7 @@ class RouteMatchList {
       extra: extra,
       error: error,
       pathParameters: pathParameters ?? this.pathParameters,
-      titleBuilder: titleBuilder ?? this.titleBuilder,
+      extensions: extensions ?? this.extensions,
     );
   }
 
