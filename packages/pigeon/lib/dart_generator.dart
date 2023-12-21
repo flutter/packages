@@ -841,6 +841,8 @@ class $instanceManagerClassName {
   }
 }
 ''');
+
+    _writeProxyApiBaseClass(indent);
   }
 
   @override
@@ -1062,12 +1064,12 @@ class $codecName extends StandardMessageCodec {
     final cb.Class proxyApi = cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = api.name
-        ..extend = superClassApi != null ? cb.refer(superClassApi.name) : null
+        ..extend = superClassApi != null
+            ? cb.refer(superClassApi.name)
+            : cb.refer('_${classNamePrefix}ProxyApiBaseClass')
         ..implements.addAll(<cb.Reference>[
           if (api.interfacesNames.isNotEmpty)
             ...api.interfacesNames.map((String name) => cb.refer(name))
-          else
-            cb.refer('${classNamePrefix}Copyable')
         ])
         ..docs.addAll(asDocumentationComments(
           api.documentationComments,
@@ -1152,16 +1154,14 @@ class $codecName extends StandardMessageCodec {
                     (cb.ParameterBuilder builder) => builder
                       ..name = '${classMemberNamePrefix}binaryMessenger'
                       ..named = true
-                      ..toSuper = superClassApi != null
-                      ..toThis = superClassApi == null,
+                      ..toSuper = true,
                   ),
-                  cb.Parameter((cb.ParameterBuilder builder) => builder
-                    ..name = '${classMemberNamePrefix}instanceManager'
-                    ..type = superClassApi == null
-                        ? cb.refer('$instanceManagerClassName?')
-                        : null
-                    ..named = true
-                    ..toSuper = superClassApi != null),
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = '${classMemberNamePrefix}instanceManager'
+                      ..named = true
+                      ..toSuper = true,
+                  ),
                   for (final Field field in nonAttachedFields)
                     cb.Parameter(
                       (cb.ParameterBuilder builder) => builder
@@ -1207,12 +1207,11 @@ class $codecName extends StandardMessageCodec {
                   )
                 ],
               )
-              ..initializers.add(
-                cb.Code(
-                  superClassApi != null
-                      ? 'super.${classMemberNamePrefix}detached()'
-                      : '${classMemberNamePrefix}instanceManager = ${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance',
-                ),
+              ..initializers.addAll(
+                <cb.Code>[
+                  if (superClassApi != null)
+                    const cb.Code('super.${classMemberNamePrefix}detached()')
+                ],
               )
               ..body = cb.Block.of(<cb.Code>[
                 cb.Code(
@@ -1317,17 +1316,13 @@ class $codecName extends StandardMessageCodec {
               (cb.ParameterBuilder builder) => builder
                 ..name = '${classMemberNamePrefix}binaryMessenger'
                 ..named = true
-                ..toSuper = superClassApi != null
-                ..toThis = superClassApi == null,
+                ..toSuper = true,
             ),
             cb.Parameter(
               (cb.ParameterBuilder builder) => builder
                 ..name = '${classMemberNamePrefix}instanceManager'
-                ..type = superClassApi == null
-                    ? cb.refer('$instanceManagerClassName?')
-                    : null
                 ..named = true
-                ..toSuper = superClassApi != null,
+                ..toSuper = true,
             ),
             for (final Field field in nonAttachedFields)
               cb.Parameter(
@@ -1362,13 +1357,10 @@ class $codecName extends StandardMessageCodec {
                   ..required = method.required,
               ),
           ])
-          ..initializers.add(
-            cb.Code(
-              superClassApi != null
-                  ? 'super.${classMemberNamePrefix}detached()'
-                  : '${classMemberNamePrefix}instanceManager = ${classMemberNamePrefix}instanceManager ?? $instanceManagerClassName.instance',
-            ),
-          ),
+          ..initializers.addAll(<cb.Code>[
+            if (superClassApi != null)
+              const cb.Code('super.${classMemberNamePrefix}detached()'),
+          ]),
       ),
     ];
   }
@@ -1396,39 +1388,6 @@ class $codecName extends StandardMessageCodec {
             ..assignment =
                 cb.Code('$codecName(${classMemberNamePrefix}instanceManager)'),
         ),
-      // If this api doesn't have a super class it has to include an
-      // `InstanceManager` and a `BinaryMessenger`. 
-      if (!hasSuperClass) ...<cb.Field>[
-        cb.Field(
-          (cb.FieldBuilder builder) => builder
-            ..name = '${classMemberNamePrefix}binaryMessenger'
-            ..type = cb.refer('BinaryMessenger?')
-            ..modifier = cb.FieldModifier.final$
-            ..docs.addAll(<String>[
-              '/// Sends and receives binary data across the Flutter platform barrier.',
-              '///',
-              '/// If it is null, the default BinaryMessenger will be used, which routes to',
-              '/// the host platform.',
-            ])
-            ..annotations.addAll(<cb.Expression>[
-              if (!hasSuperClass && interfacesApis.isNotEmpty)
-                cb.refer('override'),
-            ]),
-        ),
-        cb.Field(
-          (cb.FieldBuilder builder) => builder
-            ..name = '${classMemberNamePrefix}instanceManager'
-            ..type = cb.refer(instanceManagerClassName)
-            ..modifier = cb.FieldModifier.final$
-            ..docs.add(
-              '/// Maintains instances stored to communicate with native language objects.',
-            )
-            ..annotations.addAll(<cb.Expression>[
-              if (!hasSuperClass && interfacesApis.isNotEmpty)
-                cb.refer('override'),
-            ]),
-        ),
-      ],
       for (final Field field in nonAttachedFields)
         cb.Field(
           (cb.FieldBuilder builder) => builder
@@ -2100,6 +2059,32 @@ class $codecName extends StandardMessageCodec {
           ]),
       ),
     ];
+  }
+
+  // The base class of all generated ProxyApis.
+  void _writeProxyApiBaseClass(Indent indent) {
+    const String className = '_${classNamePrefix}ProxyApiBaseClass';
+    const String messengerVarName = '${classMemberNamePrefix}binaryMessenger';
+    const String instanceManagerVarName =
+        '${classMemberNamePrefix}instanceManager';
+    indent.writeln('''
+abstract class $className implements ${classNamePrefix}Copyable {
+  $className({
+    this.$messengerVarName,
+    $instanceManagerClassName? $instanceManagerVarName,
+  }) : $instanceManagerVarName =
+            $instanceManagerVarName ?? $instanceManagerClassName.instance;
+
+  /// Sends and receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used, which routes to
+  /// the host platform.
+  final BinaryMessenger? $messengerVarName;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final $instanceManagerClassName $instanceManagerVarName;
+}
+''');
   }
 
   /// Generates Dart source code for test support libraries based on the given AST

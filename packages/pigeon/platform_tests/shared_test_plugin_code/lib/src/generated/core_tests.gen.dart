@@ -247,6 +247,23 @@ class Pigeon_InstanceManager {
   }
 }
 
+abstract class _Pigeon_ProxyApiBaseClass implements Pigeon_Copyable {
+  _Pigeon_ProxyApiBaseClass({
+    this.pigeon_binaryMessenger,
+    Pigeon_InstanceManager? pigeon_instanceManager,
+  }) : pigeon_instanceManager =
+            pigeon_instanceManager ?? Pigeon_InstanceManager.instance;
+
+  /// Sends and receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used, which routes to
+  /// the host platform.
+  final BinaryMessenger? pigeon_binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final Pigeon_InstanceManager pigeon_instanceManager;
+}
+
 /// Generated API for managing the Dart and native `Pigeon_InstanceManager`s.
 class _Pigeon_InstanceManagerApi {
   /// Constructor for [_Pigeon_InstanceManagerApi ].
@@ -7473,28 +7490,18 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi interface.
-class ProxyApiSuperClass implements Pigeon_Copyable {
+class ProxyApiSuperClass extends _Pigeon_ProxyApiBaseClass {
   /// Constructs ProxyApiSuperClass without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
   ProxyApiSuperClass.pigeon_detached({
-    this.pigeon_binaryMessenger,
-    Pigeon_InstanceManager? pigeon_instanceManager,
-  }) : pigeon_instanceManager =
-            pigeon_instanceManager ?? Pigeon_InstanceManager.instance;
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
 
   late final _Pigeon_ProxyApiBaseCodec __pigeon_codecProxyApiSuperClass =
       _Pigeon_ProxyApiBaseCodec(pigeon_instanceManager);
-
-  /// Sends and receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used, which routes to
-  /// the host platform.
-  final BinaryMessenger? pigeon_binaryMessenger;
-
-  /// Maintains instances stored to communicate with native language objects.
-  final Pigeon_InstanceManager pigeon_instanceManager;
 
   static void pigeon_setUpMessageHandlers({
     BinaryMessenger? pigeon_binaryMessenger,
@@ -7572,26 +7579,16 @@ class ProxyApiSuperClass implements Pigeon_Copyable {
 }
 
 /// ProxyApi to serve as an interface to the core ProxyApi interface.
-class ProxyApiInterface implements Pigeon_Copyable {
+class ProxyApiInterface extends _Pigeon_ProxyApiBaseClass {
   /// Constructs ProxyApiInterface without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies.
   ProxyApiInterface.pigeon_detached({
-    this.pigeon_binaryMessenger,
-    Pigeon_InstanceManager? pigeon_instanceManager,
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
     this.anInterfaceMethod,
-  }) : pigeon_instanceManager =
-            pigeon_instanceManager ?? Pigeon_InstanceManager.instance;
-
-  /// Sends and receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used, which routes to
-  /// the host platform.
-  final BinaryMessenger? pigeon_binaryMessenger;
-
-  /// Maintains instances stored to communicate with native language objects.
-  final Pigeon_InstanceManager pigeon_instanceManager;
+  });
 
   final void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod;
 
