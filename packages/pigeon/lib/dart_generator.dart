@@ -1095,7 +1095,6 @@ class $codecName extends StandardMessageCodec {
           codecName: codecName,
           interfacesApis: interfacesApis,
           flutterMethods: api.flutterMethods,
-          hasSuperClass: superClassApi != null,
           referencesCodecInstance: api.hostMethods.isNotEmpty ||
               api.constructors.isNotEmpty ||
               api.attachedFields.any((Field field) => !field.isStatic),
@@ -1231,7 +1230,7 @@ class $codecName extends StandardMessageCodec {
                       cb.literalList(
                         <Object?>[
                           cb.refer(
-                            '${superClassApi != null ? '' : 'this.'}${classMemberNamePrefix}instanceManager.addDartCreatedInstance(this)',
+                            '${classMemberNamePrefix}instanceManager.addDartCreatedInstance(this)',
                           ),
                           ...nonAttachedFields.mapIndexed(_hostMessageArgument),
                           ...constructor.parameters.mapIndexed(
@@ -1374,7 +1373,6 @@ class $codecName extends StandardMessageCodec {
     required String codecName,
     required Iterable<AstProxyApi> interfacesApis,
     required Iterable<Method> flutterMethods,
-    required bool hasSuperClass,
     required bool referencesCodecInstance,
   }) {
     return <cb.Field>[

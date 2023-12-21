@@ -1848,15 +1848,22 @@ name: foobar
       expect(code, contains(r'class Pigeon_InstanceManager'));
       expect(code, contains(r'class _Pigeon_InstanceManagerApi'));
 
+      // Base Api class
+      expect(
+        code,
+        contains(
+            r'abstract class _Pigeon_ProxyApiBaseClass implements Pigeon_Copyable'),
+      );
+
       // Codec and class
       expect(code, contains('class _Pigeon_ProxyApiBaseCodec'));
-      expect(code, contains(r'class Api implements Pigeon_Copyable'));
+      expect(code, contains(r'class Api extends _Pigeon_ProxyApiBaseClass'));
 
       // Constructors
       expect(
         collapsedCode,
         contains(
-          r'Api.name({ this.pigeon_binaryMessenger, Pigeon_InstanceManager? pigeon_instanceManager, required this.someField, this.doSomethingElse, required Input input, })',
+          r'Api.name({ super.pigeon_binaryMessenger, super.pigeon_instanceManager, required this.someField, this.doSomethingElse, required Input input, })',
         ),
       );
       expect(
@@ -1946,7 +1953,12 @@ name: foobar
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        expect(code, contains(r'class Api implements Api2'));
+        expect(
+          code,
+          contains(
+            r'class Api extends _Pigeon_ProxyApiBaseClass implements Api2',
+          ),
+        );
       });
 
       test('implements 2 ProxyApis', () {
@@ -1980,7 +1992,12 @@ name: foobar
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        expect(code, contains(r'class Api implements Api2, Api3'));
+        expect(
+          code,
+          contains(
+            r'class Api extends _Pigeon_ProxyApiBaseClass implements Api2, Api3',
+          ),
+        );
       });
 
       test('implements inherits flutter method', () {
@@ -2023,12 +2040,17 @@ name: foobar
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(code, contains(r'class Api implements Api2'));
+        expect(
+          code,
+          contains(
+            r'class Api extends _Pigeon_ProxyApiBaseClass implements Api2',
+          ),
+        );
         expect(
           collapsedCode,
           contains(
-            r'Api.pigeon_detached({ this.pigeon_binaryMessenger, '
-            r'Pigeon_InstanceManager? pigeon_instanceManager, '
+            r'Api.pigeon_detached({ super.pigeon_binaryMessenger, '
+            r'super.pigeon_instanceManager, '
             r'this.aFlutterMethod, '
             r'required this.aNullableFlutterMethod, })',
           ),
@@ -2064,8 +2086,8 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'Api({ this.pigeon_binaryMessenger, '
-            r'Pigeon_InstanceManager? pigeon_instanceManager, })',
+            r'Api({ super.pigeon_binaryMessenger, '
+            r'super.pigeon_instanceManager, })',
           ),
         );
         expect(
@@ -2078,7 +2100,7 @@ name: foobar
           collapsedCode,
           contains(
             r'__pigeon_channel.send(<Object?>[ '
-            r'this.pigeon_instanceManager.addDartCreatedInstance(this) ])',
+            r'pigeon_instanceManager.addDartCreatedInstance(this) ])',
           ),
         );
       });
@@ -2165,8 +2187,8 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'Api.name({ this.pigeon_binaryMessenger, '
-            r'Pigeon_InstanceManager? pigeon_instanceManager, '
+            r'Api.name({ super.pigeon_binaryMessenger, '
+            r'super.pigeon_instanceManager, '
             r'required int validType, '
             r'required AnEnum enumType, '
             r'required Api2 proxyApiType, '
@@ -2179,7 +2201,7 @@ name: foobar
           collapsedCode,
           contains(
             r'__pigeon_channel.send(<Object?>[ '
-            r'this.pigeon_instanceManager.addDartCreatedInstance(this), '
+            r'pigeon_instanceManager.addDartCreatedInstance(this), '
             r'validType, enumType.index, proxyApiType, '
             r'nullableValidType, nullableEnumType?.index, nullableProxyApiType, ])',
           ),
@@ -2275,8 +2297,8 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'Api.name({ this.pigeon_binaryMessenger, '
-            r'Pigeon_InstanceManager? pigeon_instanceManager, '
+            r'Api.name({ super.pigeon_binaryMessenger, '
+            r'super.pigeon_instanceManager, '
             r'required this.validType, '
             r'required this.enumType, '
             r'required this.proxyApiType, '
@@ -2289,7 +2311,7 @@ name: foobar
           collapsedCode,
           contains(
             r'__pigeon_channel.send(<Object?>[ '
-            r'this.pigeon_instanceManager.addDartCreatedInstance(this), '
+            r'pigeon_instanceManager.addDartCreatedInstance(this), '
             r'validType, enumType.index, proxyApiType, '
             r'nullableValidType, nullableEnumType?.index, nullableProxyApiType, ])',
           ),
