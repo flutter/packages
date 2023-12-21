@@ -52,6 +52,27 @@ class _Static {
 const Object async = _Asynchronous();
 
 /// Metadata to annotate the field of a ProxyApi as an Attached Field.
+///
+/// Attached fields provide a synchronous [AstProxyApi] instance as a field
+/// for another [AstProxyApi].
+///
+/// Attached fields:
+/// * Must be nonnull.
+/// * Must be a ProxyApi type.
+/// * Must be a ProxyApi that contains any fields.
+/// * Must be a ProxyApi that does not have a required Flutter method.
+///
+/// Example generated code:
+///
+/// ```dart
+/// class MyProxyApi {
+///   final MyOtherProxyApi myField = __pigeon_myField().
+/// }
+/// ```
+///
+/// The field provides access to the value synchronously, but the native
+/// instance is stored in the native `InstanceManager` asynchronously. Similar
+/// to how constructors are implemented.
 const Object attached = _Attached();
 
 /// Metadata to annotate an method or an Attached Field of a ProxyApi as static.
@@ -1002,7 +1023,8 @@ List<Error> _validateProxyApi(
       }
     }
 
-    // Validate only Flutter methods are used for implemented ProxyApis.
+    // Validate this api isn't used as an interface and contains anything except
+    // Flutter methods.
     final bool isValidInterfaceProxyApi = api.hostMethods.isEmpty &&
         api.constructors.isEmpty &&
         api.fields.isEmpty;

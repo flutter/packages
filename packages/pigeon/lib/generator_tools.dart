@@ -626,7 +626,7 @@ enum FileType {
 /// interfaces.
 ///
 /// This method assumes that all interfaces names can be found in
-/// [allProxyApis]. Otherwise, throws [ArgumentError].
+/// [allProxyApis]. Otherwise, throws an [ArgumentError].
 Set<AstProxyApi> recursiveFindAllInterfacesApis(
   AstProxyApi api,
   Iterable<AstProxyApi> allProxyApis,
@@ -655,13 +655,16 @@ Set<AstProxyApi> recursiveFindAllInterfacesApis(
   return interfacesApis;
 }
 
-/// Recursively find super classes for a ProxyApi and return them in order.
+/// Creates a list of ProxyApis where each `extends` the ProxyApi that follows
+/// it.
+///
+/// Returns an empty list if [proxyApi] does not extend a ProxyApi.
 ///
 /// This method assumes the super classes of each ProxyApi doesn't create a
-/// loop. Throws a [StateError] if a loop is found.
+/// loop. Throws a [ArgumentError] if a loop is found.
 ///
 /// This method also assumes that all super class names can be found in
-/// [allProxyApis].
+/// [allProxyApis]. Otherwise, throws an [ArgumentError].
 List<AstProxyApi> recursiveGetSuperClassApisChain(
   AstProxyApi proxyApi,
   Iterable<AstProxyApi> allProxyApis,

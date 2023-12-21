@@ -163,12 +163,16 @@ class AstProxyApi extends Api {
         (Method method) => method.location == ApiLocation.flutter,
       );
 
-  /// All fields that are attached .
+  /// All fields that are attached.
+  ///
+  /// See [attached].
   Iterable<Field> get attachedFields => fields.where(
         (Field field) => field.isAttached,
       );
 
   /// All fields that are not attached.
+  ///
+  /// See [attached].
   Iterable<Field> get nonAttachedFields => fields.where(
         (Field field) => !field.isAttached,
       );
@@ -231,13 +235,12 @@ class Field extends NamedType {
 
   /// Whether this is an attached field for a [AstProxyApi].
   ///
-  /// Attached fields provide a synchronous [AstProxyApi] instance as a field
-  /// for another [AstProxyApi].
+  /// See [attached].
   final bool isAttached;
 
   /// Whether this is a static field of a [AstProxyApi].
   ///
-  /// A static field must also be attached.
+  /// A static field must also be attached. See [attached].
   final bool isStatic;
 
   /// Returns a copy of [Parameter] instance with new attached [TypeDeclaration].

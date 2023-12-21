@@ -997,40 +997,48 @@ class $codecName extends StandardMessageCodec {
     required String dartPackageName,
   }) {
     const String codecName = '_${classNamePrefix}ProxyApiBaseCodec';
+
+    // Each api has an private codec instance used by every host method.
+    // constructor, or non-static field.
     final String codecInstanceName = '${_varNamePrefix}codec${api.name}';
 
     final Iterable<AstProxyApi> allProxyApis =
         root.apis.whereType<AstProxyApi>();
 
+    // A list of ProxyApis where each `extends` the API that follows it.
     final List<AstProxyApi> superClassApisChain =
         recursiveGetSuperClassApisChain(
       api,
       allProxyApis,
     );
 
+    // The proxy api this api `extends` if it exists.
     final AstProxyApi? superClassApi =
         superClassApisChain.isNotEmpty ? superClassApisChain.first : null;
 
+    // All ProxyApis this API `implements` and all the interfaces those APIs
+    // `implements`.
     final Set<AstProxyApi> interfacesApis = recursiveFindAllInterfacesApis(
       api,
       allProxyApis,
     );
 
+    // All methods inherited from interfaces and the interfaces of interfaces.
     final List<Method> interfacesMethods = <Method>[];
     for (final AstProxyApi proxyApi in interfacesApis) {
       interfacesMethods.addAll(proxyApi.methods);
     }
 
-    // A list of inherited methods from super classes that constructors set with
-    // `super.<methodName>`.
+    // A list of Flutter methods inherited from the ProxyApi that this ProxyApi
+    // `extends`. This also recursively checks the ProxyApi that the super class
+    // `extends` and so on.
+    //
+    // This also includes methods that super classes inherited from interfaces
+    // with `implements`.
     final List<Method> superClassFlutterMethods = <Method>[];
     if (superClassApi != null) {
       for (final AstProxyApi proxyApi in superClassApisChain) {
-        for (final Method method in proxyApi.methods) {
-          if (method.location == ApiLocation.flutter) {
-            superClassFlutterMethods.add(method);
-          }
-        }
+        superClassFlutterMethods.addAll(proxyApi.flutterMethods);
       }
 
       final Set<AstProxyApi> superClassInterfacesApis =
@@ -1050,6 +1058,7 @@ class $codecName extends StandardMessageCodec {
       return method.location == ApiLocation.flutter && method.required;
     });
 
+    // Ast class used by code_builder.
     final cb.Class proxyApi = cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = api.name
@@ -1120,6 +1129,7 @@ class $codecName extends StandardMessageCodec {
     required Iterable<Method> flutterMethods,
   }) {
     return <cb.Constructor>[
+      // All constructors for this api defined in the pigeon file.
       ...constructors.map(
         (Constructor constructor) => cb.Constructor(
           (cb.ConstructorBuilder builder) {
@@ -1213,9 +1223,12 @@ class $codecName extends StandardMessageCodec {
                   binaryMessenger:
                       cb.refer('${classMemberNamePrefix}binaryMessenger'),
                 ),
+                // __pigeon_channel.send(<Object?>[]).then((Object? value) { ... });
                 cb
                     .refer('${_varNamePrefix}channel.send')
                     .call(<cb.Expression>[
+                      // List of arguments for the method call
+                      // <Object?>[<instanceIdentifier>, ...<non-attached field names>, ...<constructor parameter names>]
                       cb.literalList(
                         <Object?>[
                           cb.refer(
@@ -1232,6 +1245,7 @@ class $codecName extends StandardMessageCodec {
                     .property('then')
                     .call(
                       <cb.Expression>[
+                        // This creates a lambda Function `(Object? value) {...}`
                         cb.Method(
                           (cb.MethodBuilder builder) => builder
                             ..requiredParameters.add(
@@ -1241,6 +1255,7 @@ class $codecName extends StandardMessageCodec {
                                   ..type = cb.refer('Object?'),
                               ),
                             )
+                            // Body of lambda function
                             ..body = cb.Block.of(<cb.Code>[
                               const cb.Code(
                                 'final List<Object?>? ${_varNamePrefix}replyList = value as List<Object?>?;',
@@ -1283,6 +1298,11 @@ class $codecName extends StandardMessageCodec {
           },
         ),
       ),
+      // The detached constructor present for every ProxyApi. This constructor
+      // doesn't include a host method call to create a new native class
+      // instance. It is mainly used when the native side once to create a Dart
+      // instance and when the `InstanceManager` wants to create a copy for
+      // garbage collection.
       cb.Constructor(
         (cb.ConstructorBuilder builder) => builder
           ..name = '${classMemberNamePrefix}detached'
@@ -1376,6 +1396,8 @@ class $codecName extends StandardMessageCodec {
             ..assignment =
                 cb.Code('$codecName(${classMemberNamePrefix}instanceManager)'),
         ),
+      // If this api doesn't have a super class it has to include an
+      // `InstanceManager` and a `BinaryMessenger`. 
       if (!hasSuperClass) ...<cb.Field>[
         cb.Field(
           (cb.FieldBuilder builder) => builder
