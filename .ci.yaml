@@ -1130,7 +1130,6 @@ targets:
     timeout: 60
     properties:
       channel: stable
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: macos_platform_tests.yaml
       env_variables: >-
@@ -1275,7 +1274,6 @@ targets:
     timeout: 60
     properties:
       channel: stable
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 0 --shardCount 5"
@@ -1291,7 +1289,6 @@ targets:
     timeout: 60
     properties:
       channel: stable
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 1 --shardCount 5"
@@ -1307,7 +1304,6 @@ targets:
     timeout: 60
     properties:
       channel: stable
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 2 --shardCount 5"
@@ -1323,7 +1319,6 @@ targets:
     timeout: 60
     properties:
       channel: stable
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 3 --shardCount 5"
@@ -1339,7 +1334,6 @@ targets:
     timeout: 60
     properties:
       channel: stable
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 4 --shardCount 5"
