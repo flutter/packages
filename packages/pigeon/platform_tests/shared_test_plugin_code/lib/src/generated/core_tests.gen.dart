@@ -3983,133 +3983,134 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  final void Function(ProxyIntegrationCoreApi instance)? flutterNoop;
+  final void Function(ProxyIntegrationCoreApi pigeon_instance)? flutterNoop;
 
   /// Responds with an error from an async function returning a value.
-  final Object? Function(ProxyIntegrationCoreApi instance)? flutterThrowError;
+  final Object? Function(ProxyIntegrationCoreApi pigeon_instance)?
+      flutterThrowError;
 
   /// Responds with an error from an async void function.
-  final void Function(ProxyIntegrationCoreApi instance)?
+  final void Function(ProxyIntegrationCoreApi pigeon_instance)?
       flutterThrowErrorFromVoid;
 
   /// Returns the passed boolean, to test serialization and deserialization.
   final bool Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     bool aBool,
   )? flutterEchoBool;
 
   /// Returns the passed int, to test serialization and deserialization.
   final int Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     int anInt,
   )? flutterEchoInt;
 
   /// Returns the passed double, to test serialization and deserialization.
   final double Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     double aDouble,
   )? flutterEchoDouble;
 
   /// Returns the passed string, to test serialization and deserialization.
   final String Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     String aString,
   )? flutterEchoString;
 
   /// Returns the passed byte list, to test serialization and deserialization.
   final Uint8List Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     Uint8List aList,
   )? flutterEchoUint8List;
 
   /// Returns the passed list, to test serialization and deserialization.
   final List<Object?> Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     List<Object?> aList,
   )? flutterEchoList;
 
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
   final List<ProxyIntegrationCoreApi?> Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     List<ProxyIntegrationCoreApi?> aList,
   )? flutterEchoProxyApiList;
 
   /// Returns the passed map, to test serialization and deserialization.
   final Map<String?, Object?> Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     Map<String?, Object?> aMap,
   )? flutterEchoMap;
 
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
   final Map<String?, ProxyIntegrationCoreApi?> Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     Map<String?, ProxyIntegrationCoreApi?> aMap,
   )? flutterEchoProxyApiMap;
 
   /// Returns the passed enum to test serialization and deserialization.
   final AnEnum Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     AnEnum anEnum,
   )? flutterEchoEnum;
 
   /// Returns the passed boolean, to test serialization and deserialization.
   final bool? Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     bool? aBool,
   )? flutterEchoNullableBool;
 
   /// Returns the passed int, to test serialization and deserialization.
   final int? Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     int? anInt,
   )? flutterEchoNullableInt;
 
   /// Returns the passed double, to test serialization and deserialization.
   final double? Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     double? aDouble,
   )? flutterEchoNullableDouble;
 
   /// Returns the passed string, to test serialization and deserialization.
   final String? Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     String? aString,
   )? flutterEchoNullableString;
 
   /// Returns the passed byte list, to test serialization and deserialization.
   final Uint8List? Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     Uint8List? aList,
   )? flutterEchoNullableUint8List;
 
   /// Returns the passed list, to test serialization and deserialization.
   final List<Object?>? Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     List<Object?>? aList,
   )? flutterEchoNullableList;
 
   /// Returns the passed map, to test serialization and deserialization.
   final Map<String?, Object?>? Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     Map<String?, Object?>? aMap,
   )? flutterEchoNullableMap;
 
   /// Returns the passed enum to test serialization and deserialization.
   final AnEnum? Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     AnEnum? anEnum,
   )? flutterEchoNullableEnum;
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  final Future<void> Function(ProxyIntegrationCoreApi instance)?
+  final Future<void> Function(ProxyIntegrationCoreApi pigeon_instance)?
       callFlutterNoopAsync;
 
   /// Returns the passed in generic Object asynchronously.
   final Future<String> Function(
-    ProxyIntegrationCoreApi instance,
+    ProxyIntegrationCoreApi pigeon_instance,
     String aString,
   )? callFlutterEchoAsyncString;
 
@@ -4142,85 +4143,87 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
       Map<String?, Object?>? aNullableMap,
       AnEnum? aNullableEnum,
     )? pigeon_detached,
-    void Function(ProxyIntegrationCoreApi instance)? flutterNoop,
-    Object? Function(ProxyIntegrationCoreApi instance)? flutterThrowError,
-    void Function(ProxyIntegrationCoreApi instance)? flutterThrowErrorFromVoid,
+    void Function(ProxyIntegrationCoreApi pigeon_instance)? flutterNoop,
+    Object? Function(ProxyIntegrationCoreApi pigeon_instance)?
+        flutterThrowError,
+    void Function(ProxyIntegrationCoreApi pigeon_instance)?
+        flutterThrowErrorFromVoid,
     bool Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       bool aBool,
     )? flutterEchoBool,
     int Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       int anInt,
     )? flutterEchoInt,
     double Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       double aDouble,
     )? flutterEchoDouble,
     String Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       String aString,
     )? flutterEchoString,
     Uint8List Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       Uint8List aList,
     )? flutterEchoUint8List,
     List<Object?> Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       List<Object?> aList,
     )? flutterEchoList,
     List<ProxyIntegrationCoreApi?> Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       List<ProxyIntegrationCoreApi?> aList,
     )? flutterEchoProxyApiList,
     Map<String?, Object?> Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       Map<String?, Object?> aMap,
     )? flutterEchoMap,
     Map<String?, ProxyIntegrationCoreApi?> Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       Map<String?, ProxyIntegrationCoreApi?> aMap,
     )? flutterEchoProxyApiMap,
     AnEnum Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       AnEnum anEnum,
     )? flutterEchoEnum,
     bool? Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       bool? aBool,
     )? flutterEchoNullableBool,
     int? Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       int? anInt,
     )? flutterEchoNullableInt,
     double? Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       double? aDouble,
     )? flutterEchoNullableDouble,
     String? Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       String? aString,
     )? flutterEchoNullableString,
     Uint8List? Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       Uint8List? aList,
     )? flutterEchoNullableUint8List,
     List<Object?>? Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       List<Object?>? aList,
     )? flutterEchoNullableList,
     Map<String?, Object?>? Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       Map<String?, Object?>? aMap,
     )? flutterEchoNullableMap,
     AnEnum? Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       AnEnum? anEnum,
     )? flutterEchoNullableEnum,
-    Future<void> Function(ProxyIntegrationCoreApi instance)?
+    Future<void> Function(ProxyIntegrationCoreApi pigeon_instance)?
         callFlutterNoopAsync,
     Future<String> Function(
-      ProxyIntegrationCoreApi instance,
+      ProxyIntegrationCoreApi pigeon_instance,
       String aString,
     )? callFlutterEchoAsyncString,
   }) {
@@ -7590,13 +7593,13 @@ class ProxyApiInterface implements Pigeon_Copyable {
   /// Maintains instances stored to communicate with native language objects.
   final Pigeon_InstanceManager pigeon_instanceManager;
 
-  final void Function(ProxyApiInterface instance)? anInterfaceMethod;
+  final void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod;
 
   static void pigeon_setUpMessageHandlers({
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
     ProxyApiInterface Function()? pigeon_detached,
-    void Function(ProxyApiInterface instance)? anInterfaceMethod,
+    void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod,
   }) {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         _Pigeon_ProxyApiBaseCodec(

@@ -1435,7 +1435,7 @@ class $codecName extends StandardMessageCodec {
                 )
                 ..isNullable = !method.required
                 ..requiredParameters.addAll(<cb.Reference>[
-                  cb.refer('$apiName instance'),
+                  cb.refer('$apiName ${classMemberNamePrefix}instance'),
                   ...method.parameters.mapIndexed(
                     (int index, NamedType parameter) {
                       return cb.refer(
@@ -1554,7 +1554,7 @@ class $codecName extends StandardMessageCodec {
                       )
                       ..isNullable = true
                       ..requiredParameters.addAll(<cb.Reference>[
-                        cb.refer('$apiName instance'),
+                        cb.refer('$apiName ${classMemberNamePrefix}instance'),
                         ...method.parameters.mapIndexed(
                           (int index, NamedType parameter) {
                             return cb.refer(

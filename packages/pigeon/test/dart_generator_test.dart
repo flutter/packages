@@ -1845,24 +1845,24 @@ name: foobar
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       // Instance Manager
-      expect(code, contains(r'class $InstanceManager'));
-      expect(code, contains(r'class _InstanceManagerApi'));
+      expect(code, contains(r'class Pigeon_InstanceManager'));
+      expect(code, contains(r'class _Pigeon_InstanceManagerApi'));
 
       // Codec and class
-      expect(code, contains('class _ApiCodec'));
-      expect(code, contains(r'class Api implements $Copyable'));
+      expect(code, contains('class _Pigeon_ProxyApiBaseCodec'));
+      expect(code, contains(r'class Api implements Pigeon_Copyable'));
 
       // Constructors
       expect(
         collapsedCode,
         contains(
-          r'Api.name({ this.$binaryMessenger, $InstanceManager? $instanceManager, required this.someField, this.doSomethingElse, required Input input, })',
+          r'Api.name({ this.pigeon_binaryMessenger, Pigeon_InstanceManager? pigeon_instanceManager, required this.someField, this.doSomethingElse, required Input input, })',
         ),
       );
       expect(
         code,
         contains(
-          r'Api.$detached',
+          r'Api.pigeon_detached',
         ),
       );
 
@@ -1873,16 +1873,16 @@ name: foobar
       expect(code, contains('Future<String> doSomething(Input input)'));
 
       // Host -> Dart method
-      expect(code, contains(r'static void $setUpMessageHandlers({'));
+      expect(code, contains(r'static void pigeon_setUpMessageHandlers({'));
       expect(
         collapsedCode,
         contains(
-          'final String Function( Api instance, Input input, )? doSomethingElse;',
+          'final String Function( Api pigeon_instance, Input input, )? doSomethingElse;',
         ),
       );
 
       // Copy method
-      expect(code, contains(r'Api $copy'));
+      expect(code, contains(r'Api pigeon_copy('));
     });
 
     group('inheritance', () {
@@ -1916,7 +1916,7 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'Api.$detached({ super.$binaryMessenger, super.$instanceManager, }) : super.$detached();',
+            r'Api.pigeon_detached({ super.pigeon_binaryMessenger, super.pigeon_instanceManager, }) : super.pigeon_detached();',
           ),
         );
       });
@@ -2027,8 +2027,8 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'Api.$detached({ this.$binaryMessenger, '
-            r'$InstanceManager? $instanceManager, '
+            r'Api.pigeon_detached({ this.pigeon_binaryMessenger, '
+            r'Pigeon_InstanceManager? pigeon_instanceManager, '
             r'this.aFlutterMethod, '
             r'required this.aNullableFlutterMethod, })',
           ),
@@ -2064,21 +2064,21 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'Api({ this.$binaryMessenger, '
-            r'$InstanceManager? $instanceManager, })',
+            r'Api({ this.pigeon_binaryMessenger, '
+            r'Pigeon_InstanceManager? pigeon_instanceManager, })',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r"const String __pigeon_channelName = r'dev.flutter.pigeon.test_package.Api.$defaultConstructor';",
+            r"const String __pigeon_channelName = r'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
           ),
         );
         expect(
           collapsedCode,
           contains(
             r'__pigeon_channel.send(<Object?>[ '
-            r'this.$instanceManager.addDartCreatedInstance(this) ])',
+            r'this.pigeon_instanceManager.addDartCreatedInstance(this) ])',
           ),
         );
       });
@@ -2165,8 +2165,8 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'Api.name({ this.$binaryMessenger, '
-            r'$InstanceManager? $instanceManager, '
+            r'Api.name({ this.pigeon_binaryMessenger, '
+            r'Pigeon_InstanceManager? pigeon_instanceManager, '
             r'required int validType, '
             r'required AnEnum enumType, '
             r'required Api2 proxyApiType, '
@@ -2179,7 +2179,7 @@ name: foobar
           collapsedCode,
           contains(
             r'__pigeon_channel.send(<Object?>[ '
-            r'this.$instanceManager.addDartCreatedInstance(this), '
+            r'this.pigeon_instanceManager.addDartCreatedInstance(this), '
             r'validType, enumType.index, proxyApiType, '
             r'nullableValidType, nullableEnumType?.index, nullableProxyApiType, ])',
           ),
@@ -2275,8 +2275,8 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'Api.name({ this.$binaryMessenger, '
-            r'$InstanceManager? $instanceManager, '
+            r'Api.name({ this.pigeon_binaryMessenger, '
+            r'Pigeon_InstanceManager? pigeon_instanceManager, '
             r'required this.validType, '
             r'required this.enumType, '
             r'required this.proxyApiType, '
@@ -2289,7 +2289,7 @@ name: foobar
           collapsedCode,
           contains(
             r'__pigeon_channel.send(<Object?>[ '
-            r'this.$instanceManager.addDartCreatedInstance(this), '
+            r'this.pigeon_instanceManager.addDartCreatedInstance(this), '
             r'validType, enumType.index, proxyApiType, '
             r'nullableValidType, nullableEnumType?.index, nullableProxyApiType, ])',
           ),
@@ -2360,8 +2360,8 @@ name: foobar
         );
         final String code = sink.toString();
         expect(code, contains('class Api'));
-        expect(code, contains(r'late final Api2 aField = _aField();'));
-        expect(code, contains(r'Api2 _aField()'));
+        expect(code, contains(r'late final Api2 aField = __pigeon_aField();'));
+        expect(code, contains(r'Api2 __pigeon_aField()'));
       });
 
       test('static attached field', () {
@@ -2405,8 +2405,9 @@ name: foobar
         );
         final String code = sink.toString();
         expect(code, contains('class Api'));
-        expect(code, contains(r'static final Api2 aField = _aField();'));
-        expect(code, contains(r'static Api2 _aField()'));
+        expect(
+            code, contains(r'static final Api2 aField = __pigeon_aField();'));
+        expect(code, contains(r'static Api2 __pigeon_aField()'));
       });
     });
 
@@ -2550,8 +2551,8 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'static Future<void> doSomething({ BinaryMessenger? $binaryMessenger, '
-            r'$InstanceManager? $instanceManager, })',
+            r'static Future<void> doSomething({ BinaryMessenger? pigeon_binaryMessenger, '
+            r'Pigeon_InstanceManager? pigeon_instanceManager, })',
           ),
         );
         expect(
@@ -2642,7 +2643,7 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-            r'final void Function( Api instance, int validType, '
+            r'final void Function( Api pigeon_instance, int validType, '
             r'AnEnum enumType, Api2 proxyApiType, int? nullableValidType, '
             r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )? '
             r'doSomething;',
@@ -2651,7 +2652,7 @@ name: foobar
         expect(
           collapsedCode,
           contains(
-              r'void Function( Api instance, int validType, AnEnum enumType, '
+              r'void Function( Api pigeon_instance, int validType, AnEnum enumType, '
               r'Api2 proxyApiType, int? nullableValidType, '
               r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )? '
               r'doSomething'),
