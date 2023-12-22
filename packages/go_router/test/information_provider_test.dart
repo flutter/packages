@@ -32,5 +32,42 @@ void main() {
       provider
           .didPushRouteInformation(const RouteInformation(location: newRoute));
     });
+
+    testWidgets('didPushRouteInformation maintains uri scheme and host',
+        (WidgetTester tester) async {
+      const String expectedScheme = 'https';
+      const String expectedHost = 'www.example.com';
+      const String expectedPath = '/some/path';
+      const String expectedUriString =
+          '$expectedScheme://$expectedHost$expectedPath';
+      late final GoRouteInformationProvider provider =
+          GoRouteInformationProvider(
+              initialLocation: initialRoute, initialExtra: null);
+      provider.addListener(expectAsync0(() {}));
+      provider.didPushRouteInformation(
+          RouteInformation(uri: Uri.parse(expectedUriString)));
+      expect(provider.value.uri.scheme, 'https');
+      expect(provider.value.uri.host, 'www.example.com');
+      expect(provider.value.uri.path, '/some/path');
+      expect(provider.value.uri.toString(), expectedUriString);
+    });
+
+    testWidgets('didPushRoute maintains uri scheme and host',
+        (WidgetTester tester) async {
+      const String expectedScheme = 'https';
+      const String expectedHost = 'www.example.com';
+      const String expectedPath = '/some/path';
+      const String expectedUriString =
+          '$expectedScheme://$expectedHost$expectedPath';
+      late final GoRouteInformationProvider provider =
+          GoRouteInformationProvider(
+              initialLocation: initialRoute, initialExtra: null);
+      provider.addListener(expectAsync0(() {}));
+      provider.didPushRoute(expectedUriString);
+      expect(provider.value.uri.scheme, 'https');
+      expect(provider.value.uri.host, 'www.example.com');
+      expect(provider.value.uri.path, '/some/path');
+      expect(provider.value.uri.toString(), expectedUriString);
+    });
   });
 }

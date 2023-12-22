@@ -84,6 +84,52 @@ void main() {
   });
 
   testWidgets(
+      "GoRouteInformationParser can parse deeplink route and maintain uri's scheme and host",
+      (WidgetTester tester) async {
+    const String expectedScheme = 'https';
+    const String expectedHost = 'www.example.com';
+    const String expectedPath = '/abc';
+    const String expectedUriString =
+        '$expectedScheme://$expectedHost$expectedPath';
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+        routes: <GoRoute>[
+          GoRoute(
+            path: 'abc',
+            builder: (_, __) => const Placeholder(),
+          ),
+        ],
+      ),
+    ];
+    final GoRouteInformationParser parser = await createParser(
+      tester,
+      routes: routes,
+      redirectLimit: 100,
+      redirect: (_, __) => null,
+    );
+
+    final BuildContext context = tester.element(find.byType(Router<Object>));
+
+    final RouteMatchList matchesObj =
+        await parser.parseRouteInformationWithDependencies(
+            createRouteInformation(expectedUriString), context);
+    final List<RouteMatch> matches = matchesObj.matches;
+    expect(matches.length, 2);
+    expect(matchesObj.uri.toString(), expectedUriString);
+    expect(matchesObj.uri.scheme, expectedScheme);
+    expect(matchesObj.uri.host, expectedHost);
+    expect(matchesObj.uri.path, expectedPath);
+
+    expect(matches[0].matchedLocation, '/');
+    expect(matches[0].route, routes[0]);
+
+    expect(matches[1].matchedLocation, '/abc');
+    expect(matches[1].route, routes[0].routes[0]);
+  });
+
+  testWidgets(
       'GoRouteInformationParser can restore full route matches if optionURLReflectsImperativeAPIs is true',
       (WidgetTester tester) async {
     final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
