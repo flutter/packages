@@ -26,7 +26,7 @@ class GoRouterState {
     this.extra,
     this.error,
     required this.pageKey,
-    required this.topRoute,
+    this.topRoute,
   });
   final RouteConfiguration _configuration;
 
@@ -76,8 +76,8 @@ class GoRouterState {
   /// ```
   final ValueKey<String> pageKey;
 
-  /// The route name of the current top route
-  final GoRoute topRoute;
+  /// The current matched top route
+  final GoRoute? topRoute;
 
   /// Gets the [GoRouterState] from context.
   ///

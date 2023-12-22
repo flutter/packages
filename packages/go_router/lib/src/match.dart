@@ -325,7 +325,7 @@ class RouteMatch extends RouteMatchBase {
       name: route.name,
       path: route.path,
       extra: matches.extra,
-      topRoute: matches.last.route,
+      topRoute: matches.lastOrNull?.route,
     );
   }
 }
@@ -383,7 +383,7 @@ class ShellRouteMatch extends RouteMatchBase {
       pathParameters: matches.pathParameters,
       pageKey: pageKey,
       extra: matches.extra,
-      topRoute: matches.last.route,
+      topRoute: matches.lastOrNull?.route,
     );
   }
 

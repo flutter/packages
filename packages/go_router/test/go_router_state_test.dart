@@ -224,7 +224,7 @@ void main() {
                     StatefulNavigationShell navigationShell,
                   ) {
                     final String? routeName =
-                        GoRouterState.of(context).topRoute.name;
+                        GoRouterState.of(context).topRoute?.name;
                     final String title = switch (routeName) {
                       'a' => 'A',
                       'b' => 'B',
