@@ -35,7 +35,7 @@ List<Object?> wrapResponse(
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
-/// All implementers are expected to be immutable as defined by the annotation
+/// All implementers are expected to be [immutable] as defined by the annotation
 /// and override [pigeon_copy] returning an instance of itself.
 @immutable
 abstract class Pigeon_ProxyApiBaseClass {

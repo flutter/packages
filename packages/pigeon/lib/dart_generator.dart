@@ -2058,7 +2058,7 @@ class $codecName extends StandardMessageCodec {
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
-/// All implementers are expected to be immutable as defined by the annotation
+/// All implementers are expected to be [immutable] as defined by the annotation
 /// and override [${classMemberNamePrefix}copy] returning an instance of itself.
 @immutable
 abstract class $className {
