@@ -82,7 +82,7 @@ abstract class Pigeon_ProxyApiBaseClass {
 /// scenario where the weak referenced instance was released and then later
 /// returned by the host platform.
 class Pigeon_InstanceManager {
-  /// Constructs an [Pigeon_InstanceManager].
+  /// Constructs a [Pigeon_InstanceManager].
   Pigeon_InstanceManager({required void Function(int) onWeakReferenceRemoved}) {
     this.onWeakReferenceRemoved = (int identifier) {
       _weakInstances.remove(identifier);

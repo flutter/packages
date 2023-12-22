@@ -1851,13 +1851,12 @@ name: foobar
       // Base Api class
       expect(
         code,
-        contains(
-            r'abstract class _Pigeon_ProxyApiBaseClass implements Pigeon_Copyable'),
+        contains(r'abstract class Pigeon_ProxyApiBaseClass'),
       );
 
       // Codec and class
       expect(code, contains('class _Pigeon_ProxyApiBaseCodec'));
-      expect(code, contains(r'class Api extends _Pigeon_ProxyApiBaseClass'));
+      expect(code, contains(r'class Api extends Pigeon_ProxyApiBaseClass'));
 
       // Constructors
       expect(
@@ -1956,7 +1955,7 @@ name: foobar
         expect(
           code,
           contains(
-            r'class Api extends _Pigeon_ProxyApiBaseClass implements Api2',
+            r'class Api extends Pigeon_ProxyApiBaseClass implements Api2',
           ),
         );
       });
@@ -1995,7 +1994,7 @@ name: foobar
         expect(
           code,
           contains(
-            r'class Api extends _Pigeon_ProxyApiBaseClass implements Api2, Api3',
+            r'class Api extends Pigeon_ProxyApiBaseClass implements Api2, Api3',
           ),
         );
       });
@@ -2043,7 +2042,7 @@ name: foobar
         expect(
           code,
           contains(
-            r'class Api extends _Pigeon_ProxyApiBaseClass implements Api2',
+            r'class Api extends Pigeon_ProxyApiBaseClass implements Api2',
           ),
         );
         expect(
