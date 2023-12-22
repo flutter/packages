@@ -1,10 +1,14 @@
+## 13.1.0
+
+- Adds `topRoute` to `GoRouterState`
+- Adds `lastOrNull` to `RouteMatchList`
+
 ## 13.0.0
 
 - Refactors `RouteMatchList` and imperative APIs.
 - **BREAKING CHANGE**:
   - RouteMatchList structure changed.
   - Matching logic updated.
-- Added `topRoute` to `GoRouterState`
 
 ## 12.1.3
 
