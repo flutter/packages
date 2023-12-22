@@ -4,6 +4,7 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+import 'kotlin_generator.dart';
 import 'pigeon_lib.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
@@ -139,6 +140,7 @@ class AstProxyApi extends Api {
     required this.fields,
     this.superClassName,
     this.interfacesNames = const <String>{},
+    this.kotlinOptions,
   });
 
   /// List of constructors inside the API.
@@ -152,6 +154,10 @@ class AstProxyApi extends Api {
 
   /// Name of the classes this class considers to be implemented.
   final Set<String> interfacesNames;
+
+  /// Options that control how Kotlin code will be generated for a specific
+  /// ProxyApi.
+  final KotlinProxyApiOptions? kotlinOptions;
 
   /// Methods implemented in the host platform language.
   Iterable<Method> get hostMethods => methods.where(
