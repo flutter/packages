@@ -722,7 +722,24 @@ class RouteMatchList with Diagnosticable {
   /// If the last RouteMatchBase from [matches] is a ShellRouteMatch, it
   /// recursively goes into its [ShellRouteMatch.matches] until it reach the leaf
   /// [RouteMatch].
+  ///
+  /// Throws a [StateError] if [matches] is empty.
   RouteMatch get last {
+    if (matches.last is RouteMatch) {
+      return matches.last as RouteMatch;
+    }
+    return (matches.last as ShellRouteMatch)._lastLeaf;
+  }
+
+  /// The last leaf route or null if [matches] is empty
+  ///
+  /// If the last RouteMatchBase from [matches] is a ShellRouteMatch, it
+  /// recursively goes into its [ShellRouteMatch.matches] until it reach the leaf
+  /// [RouteMatch].
+  RouteMatch? get lastOrNull {
+    if (matches.isEmpty) {
+      return null;
+    }
     if (matches.last is RouteMatch) {
       return matches.last as RouteMatch;
     }
