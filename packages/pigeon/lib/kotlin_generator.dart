@@ -927,6 +927,7 @@ class $instanceManagerClassName(private val finalizationListener: $finalizationL
       methodName: 'clear',
       dartPackageName: dartPackageName,
     );
+    final String errorClassName = _getErrorClassName(generatorOptions);
     indent.writeln('''
 /**
 * Generated API for managing the Dart and native `$instanceManagerClassName`s.
@@ -972,17 +973,18 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
     }
   }
 
-  fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "$removeStrongReferenceName", codec)
-    channel.send(identifierArg) {
+  fun removeStrongReference(identifier: Long, callback: (Result<Unit>) -> Unit) {
+    val channelName = "$removeStrongReferenceName"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(identifier) {
       if (it is List<*>) {
         if (it.size > 1) {
-          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+          callback(Result.failure($errorClassName(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
       } else {
-        callback(Result.failure(FlutterError("channel-error",  "Unable to establish connection on channel.", "")))
+        callback(Result.failure(createConnectionError(channelName)))
       }
     }
   }
@@ -1115,12 +1117,13 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
+    final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
 
-    if (hasHostApi) {
+    if (hasHostApi || hasProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
     }
-    if (hasFlutterApi) {
+    if (hasFlutterApi || hasProxyApi) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
     _writeErrorClass(generatorOptions, indent);
