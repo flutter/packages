@@ -10,10 +10,12 @@ import 'package:shared_test_plugin_code/src/generated/core_tests.gen.dart';
 void main() {
   group('InstanceManager', () {
     test('addHostCreatedInstance', () {
-      final CopyableObject object = CopyableObject();
-
       final Pigeon_InstanceManager instanceManager =
           Pigeon_InstanceManager(onWeakReferenceRemoved: (_) {});
+
+      final CopyableObject object = CopyableObject(
+        pigeon_instanceManager: instanceManager,
+      );
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -25,10 +27,12 @@ void main() {
     });
 
     test('addHostCreatedInstance prevents already used objects and ids', () {
-      final CopyableObject object = CopyableObject();
-
       final Pigeon_InstanceManager instanceManager =
           Pigeon_InstanceManager(onWeakReferenceRemoved: (_) {});
+
+      final CopyableObject object = CopyableObject(
+        pigeon_instanceManager: instanceManager,
+      );
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -38,16 +42,21 @@ void main() {
       );
 
       expect(
-        () => instanceManager.addHostCreatedInstance(CopyableObject(), 0),
+        () => instanceManager.addHostCreatedInstance(
+          CopyableObject(pigeon_instanceManager: instanceManager),
+          0,
+        ),
         throwsAssertionError,
       );
     });
 
     test('addFlutterCreatedInstance', () {
-      final CopyableObject object = CopyableObject();
-
       final Pigeon_InstanceManager instanceManager =
           Pigeon_InstanceManager(onWeakReferenceRemoved: (_) {});
+
+      final CopyableObject object = CopyableObject(
+        pigeon_instanceManager: instanceManager,
+      );
 
       instanceManager.addDartCreatedInstance(object);
 
@@ -60,13 +69,15 @@ void main() {
     });
 
     test('removeWeakReference', () {
-      final CopyableObject object = CopyableObject();
-
       int? weakInstanceId;
       final Pigeon_InstanceManager instanceManager =
           Pigeon_InstanceManager(onWeakReferenceRemoved: (int instanceId) {
         weakInstanceId = instanceId;
       });
+
+      final CopyableObject object = CopyableObject(
+        pigeon_instanceManager: instanceManager,
+      );
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -79,10 +90,12 @@ void main() {
     });
 
     test('removeWeakReference removes only weak reference', () {
-      final CopyableObject object = CopyableObject();
-
       final Pigeon_InstanceManager instanceManager =
           Pigeon_InstanceManager(onWeakReferenceRemoved: (_) {});
+
+      final CopyableObject object = CopyableObject(
+        pigeon_instanceManager: instanceManager,
+      );
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -94,10 +107,12 @@ void main() {
     });
 
     test('removeStrongReference', () {
-      final CopyableObject object = CopyableObject();
-
       final Pigeon_InstanceManager instanceManager =
           Pigeon_InstanceManager(onWeakReferenceRemoved: (_) {});
+
+      final CopyableObject object = CopyableObject(
+        pigeon_instanceManager: instanceManager,
+      );
 
       instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
@@ -106,10 +121,12 @@ void main() {
     });
 
     test('removeStrongReference removes only strong reference', () {
-      final CopyableObject object = CopyableObject();
-
       final Pigeon_InstanceManager instanceManager =
           Pigeon_InstanceManager(onWeakReferenceRemoved: (_) {});
+
+      final CopyableObject object = CopyableObject(
+        pigeon_instanceManager: instanceManager,
+      );
 
       instanceManager.addHostCreatedInstance(object, 0);
       expect(instanceManager.remove(0), isA<CopyableObject>());
@@ -120,10 +137,12 @@ void main() {
     });
 
     test('getInstance can add a new weak reference', () {
-      final CopyableObject object = CopyableObject();
-
       final Pigeon_InstanceManager instanceManager =
           Pigeon_InstanceManager(onWeakReferenceRemoved: (_) {});
+
+      final CopyableObject object = CopyableObject(
+        pigeon_instanceManager: instanceManager,
+      );
 
       instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
@@ -137,10 +156,13 @@ void main() {
   });
 }
 
-class CopyableObject with Pigeon_Copyable {
+class CopyableObject extends Pigeon_ProxyApiBaseClass {
+  // ignore: non_constant_identifier_names
+  CopyableObject({super.pigeon_instanceManager});
+
   @override
   // ignore: non_constant_identifier_names
   CopyableObject pigeon_copy() {
-    return CopyableObject();
+    return CopyableObject(pigeon_instanceManager: pigeon_instanceManager);
   }
 }
