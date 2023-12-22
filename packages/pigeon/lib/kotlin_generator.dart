@@ -992,6 +992,39 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
 ''');
   }
 
+  @override
+  void writeProxyApiBaseCodec(
+    KotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+  ) {
+    const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
+
+    indent.writeln('''
+@Suppress("ClassName")
+private class $codecName(val instanceManager: $instanceManagerClassName) : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return instanceManager.getInstance(readValue(buffer) as Long)
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    when (value) {
+      instanceManager.containsInstance(value) -> {
+        stream.write(128)
+        writeValue(stream, instanceManager.getIdentifierForStrongReference(value))
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+''');
+  }
+
   /// Writes the codec class that will be used by [api].
   /// Example:
   /// private static class FooCodec extends StandardMessageCodec {...}
