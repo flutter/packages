@@ -277,7 +277,7 @@ class Parameter extends NamedType {
     bool? isPositional,
     bool? isRequired,
     super.documentationComments,
-  })  : isNamed = isNamed ?? true,
+  })  : isNamed = isNamed ?? false,
         isOptional = isOptional ?? false,
         isPositional = isPositional ?? true,
         isRequired = isRequired ?? true;
