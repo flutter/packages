@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'misc/errors.dart';
+import 'route.dart';
 
 /// The route state during routing.
 ///
@@ -25,6 +26,7 @@ class GoRouterState {
     this.extra,
     this.error,
     required this.pageKey,
+    required this.topRoute,
   });
   final RouteConfiguration _configuration;
 
@@ -73,6 +75,9 @@ class GoRouterState {
   /// ValueKey('/family/:fid')
   /// ```
   final ValueKey<String> pageKey;
+
+  /// The route name of the current top route
+  final GoRoute topRoute;
 
   /// Gets the [GoRouterState] from context.
   ///

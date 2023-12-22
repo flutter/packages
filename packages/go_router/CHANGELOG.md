@@ -4,6 +4,7 @@
 - **BREAKING CHANGE**:
   - RouteMatchList structure changed.
   - Matching logic updated.
+- Added `topRoute` to `GoRouterState`
 
 ## 12.1.3
 
