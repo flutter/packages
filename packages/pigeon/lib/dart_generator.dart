@@ -624,7 +624,9 @@ if (${_varNamePrefix}replyList == null) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    const String copyableClassName = '${classNamePrefix}Copyable';
+    _writeProxyApiBaseClass(indent);
+
+    const String proxyApiBaseClassName = '${classNamePrefix}ProxyApiBaseClass';
     final Iterable<String> apiHandlerSetups =
         root.apis.whereType<AstProxyApi>().map(
       (AstProxyApi api) {
@@ -632,22 +634,6 @@ if (${_varNamePrefix}replyList == null) {
       },
     );
     indent.format('''
-/// An immutable object that can provide functional copies of itself.
-///
-/// All implementers are expected to be immutable as defined by the annotation.
-@immutable
-mixin $copyableClassName {
-  /// Instantiates and returns a functionally identical object to oneself.
-  ///
-  /// Outside of tests, this method should only ever be called by
-  /// [$instanceManagerClassName].
-  ///
-  /// Subclasses should always override their parent's implementation of this
-  /// method.
-  @protected
-  $copyableClassName ${classMemberNamePrefix}copy();
-}
-
 /// Maintains instances used to communicate with the native objects they
 /// represent.
 ///
@@ -664,7 +650,7 @@ mixin $copyableClassName {
 /// scenario where the weak referenced instance was released and then later
 /// returned by the host platform.
 class $instanceManagerClassName {
-  /// Constructs an [$instanceManagerClassName].
+  /// Constructs a [$instanceManagerClassName].
   $instanceManagerClassName({required void Function(int) onWeakReferenceRemoved}) {
     this.onWeakReferenceRemoved = (int identifier) {
       _weakInstances.remove(identifier);
@@ -679,6 +665,11 @@ class $instanceManagerClassName {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
+  /// The default [$instanceManagerClassName] used by ProxyApis.
+  ///
+  /// On creation, this manager makes a call to clear the native
+  /// InstanceManager. This is to prevent identifier conflicts after a host
+  /// restart.
   static final $instanceManagerClassName instance = _initInstance();
 
   // Expando is used because it doesn't prevent its keys from becoming
@@ -690,9 +681,9 @@ class $instanceManagerClassName {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<$copyableClassName>> _weakInstances =
-      <int, WeakReference<$copyableClassName>>{};
-  final Map<int, $copyableClassName> _strongInstances = <int, $copyableClassName>{};
+  final Map<int, WeakReference<$proxyApiBaseClassName>> _weakInstances =
+      <int, WeakReference<$proxyApiBaseClassName>>{};
+  final Map<int, $proxyApiBaseClassName> _strongInstances = <int, $proxyApiBaseClassName>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -723,7 +714,7 @@ class $instanceManagerClassName {
   /// Throws assertion error if the instance has already been added.
   ///
   /// Returns the randomly generated id of the [instance] added.
-  int addDartCreatedInstance($copyableClassName instance) {
+  int addDartCreatedInstance($proxyApiBaseClassName instance) {
     final int identifier = _nextUniqueIdentifier();
     _addInstanceWithIdentifier(instance, identifier);
     return identifier;
@@ -737,7 +728,7 @@ class $instanceManagerClassName {
   ///
   /// This does not remove the strong referenced instance associated with
   /// [instance]. This can be done with [remove].
-  int? removeWeakReference($copyableClassName instance) {
+  int? removeWeakReference($proxyApiBaseClassName instance) {
     final int? identifier = getIdentifier(instance);
     if (identifier == null) {
       return null;
@@ -759,7 +750,7 @@ class $instanceManagerClassName {
   ///
   /// This does not remove the weak referenced instance associated with
   /// [identifier]. This can be done with [removeWeakReference].
-  T? remove<T extends $copyableClassName>(int identifier) {
+  T? remove<T extends $proxyApiBaseClassName>(int identifier) {
     return _strongInstances.remove(identifier) as T?;
   }
 
@@ -775,15 +766,15 @@ class $instanceManagerClassName {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends $copyableClassName>(int identifier) {
-    final $copyableClassName? weakInstance = _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends $proxyApiBaseClassName>(int identifier) {
+    final $proxyApiBaseClassName? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final $copyableClassName? strongInstance = _strongInstances[identifier];
+      final $proxyApiBaseClassName? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final $copyableClassName copy = strongInstance.${classMemberNamePrefix}copy();
+        final $proxyApiBaseClassName copy = strongInstance.${classMemberNamePrefix}copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] = WeakReference<$copyableClassName>(copy);
+        _weakInstances[identifier] = WeakReference<$proxyApiBaseClassName>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -794,7 +785,7 @@ class $instanceManagerClassName {
   }
 
   /// Retrieves the identifier associated with instance.
-  int? getIdentifier($copyableClassName instance) {
+  int? getIdentifier($proxyApiBaseClassName instance) {
     return _identifiers[instance];
   }
 
@@ -807,20 +798,20 @@ class $instanceManagerClassName {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance($copyableClassName instance, int identifier) {
+  void addHostCreatedInstance($proxyApiBaseClassName instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier($copyableClassName instance, int identifier) {
+  void _addInstanceWithIdentifier($proxyApiBaseClassName instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<$copyableClassName>(instance);
+    _weakInstances[identifier] = WeakReference<$proxyApiBaseClassName>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
-    final $copyableClassName copy = instance.${classMemberNamePrefix}copy();
+    final $proxyApiBaseClassName copy = instance.${classMemberNamePrefix}copy();
     _identifiers[copy] = identifier;
     _strongInstances[identifier] = copy;
   }
@@ -841,8 +832,6 @@ class $instanceManagerClassName {
   }
 }
 ''');
-
-    _writeProxyApiBaseClass(indent);
   }
 
   @override
@@ -968,7 +957,7 @@ class $codecName extends StandardMessageCodec {
 
  @override
  void writeValue(WriteBuffer buffer, Object? value) {
-   if (value is ${classNamePrefix}Copyable) {
+   if (value is ${classNamePrefix}ProxyApiBaseClass) {
      buffer.putUint8(128);
      writeValue(buffer, instanceManager.getIdentifier(value));
    } else {
@@ -1066,7 +1055,7 @@ class $codecName extends StandardMessageCodec {
         ..name = api.name
         ..extend = superClassApi != null
             ? cb.refer(superClassApi.name)
-            : cb.refer('_${classNamePrefix}ProxyApiBaseClass')
+            : cb.refer('${classNamePrefix}ProxyApiBaseClass')
         ..implements.addAll(<cb.Reference>[
           if (api.interfacesNames.isNotEmpty)
             ...api.interfacesNames.map((String name) => cb.refer(name))
@@ -2061,12 +2050,19 @@ class $codecName extends StandardMessageCodec {
 
   // The base class of all generated ProxyApis.
   void _writeProxyApiBaseClass(Indent indent) {
-    const String className = '_${classNamePrefix}ProxyApiBaseClass';
+    const String className = '${classNamePrefix}ProxyApiBaseClass';
     const String messengerVarName = '${classMemberNamePrefix}binaryMessenger';
     const String instanceManagerVarName =
         '${classMemberNamePrefix}instanceManager';
     indent.writeln('''
-abstract class $className implements ${classNamePrefix}Copyable {
+/// An immutable object that serves as the base class for all ProxyApis and
+/// can provide functional copies of itself.
+///
+/// All implementers are expected to be immutable as defined by the annotation
+/// and override [${classMemberNamePrefix}copy] returning an instance of itself.
+@immutable
+abstract class $className {
+  /// Construct a [$className].
   $className({
     this.$messengerVarName,
     $instanceManagerClassName? $instanceManagerVarName,
@@ -2081,6 +2077,16 @@ abstract class $className implements ${classNamePrefix}Copyable {
 
   /// Maintains instances stored to communicate with native language objects.
   final $instanceManagerClassName $instanceManagerVarName;
+
+  /// Instantiates and returns a functionally identical object to oneself.
+  ///
+  /// Outside of tests, this method should only ever be called by
+  /// [$instanceManagerClassName].
+  ///
+  /// Subclasses should always override their parent's implementation of this
+  /// method.
+  @protected
+  $className ${classMemberNamePrefix}copy();
 }
 ''');
   }

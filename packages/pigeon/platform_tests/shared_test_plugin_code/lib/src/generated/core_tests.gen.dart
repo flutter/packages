@@ -32,11 +32,29 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
-/// An immutable object that can provide functional copies of itself.
+/// An immutable object that serves as the base class for all ProxyApis and
+/// can provide functional copies of itself.
 ///
-/// All implementers are expected to be immutable as defined by the annotation.
+/// All implementers are expected to be immutable as defined by the annotation
+/// and override [pigeon_copy] returning an instance of itself.
 @immutable
-mixin Pigeon_Copyable {
+abstract class Pigeon_ProxyApiBaseClass {
+  /// Construct a [Pigeon_ProxyApiBaseClass].
+  Pigeon_ProxyApiBaseClass({
+    this.pigeon_binaryMessenger,
+    Pigeon_InstanceManager? pigeon_instanceManager,
+  }) : pigeon_instanceManager =
+            pigeon_instanceManager ?? Pigeon_InstanceManager.instance;
+
+  /// Sends and receives binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used, which routes to
+  /// the host platform.
+  final BinaryMessenger? pigeon_binaryMessenger;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final Pigeon_InstanceManager pigeon_instanceManager;
+
   /// Instantiates and returns a functionally identical object to oneself.
   ///
   /// Outside of tests, this method should only ever be called by
@@ -45,7 +63,7 @@ mixin Pigeon_Copyable {
   /// Subclasses should always override their parent's implementation of this
   /// method.
   @protected
-  Pigeon_Copyable pigeon_copy();
+  Pigeon_ProxyApiBaseClass pigeon_copy();
 }
 
 /// Maintains instances used to communicate with the native objects they
@@ -79,6 +97,11 @@ class Pigeon_InstanceManager {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
+  /// The default [Pigeon_InstanceManager] used by ProxyApis.
+  ///
+  /// On creation, this manager makes a call to clear the native
+  /// InstanceManager. This is to prevent identifier conflicts after a host
+  /// restart.
   static final Pigeon_InstanceManager instance = _initInstance();
 
   // Expando is used because it doesn't prevent its keys from becoming
@@ -90,9 +113,10 @@ class Pigeon_InstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<Pigeon_Copyable>> _weakInstances =
-      <int, WeakReference<Pigeon_Copyable>>{};
-  final Map<int, Pigeon_Copyable> _strongInstances = <int, Pigeon_Copyable>{};
+  final Map<int, WeakReference<Pigeon_ProxyApiBaseClass>> _weakInstances =
+      <int, WeakReference<Pigeon_ProxyApiBaseClass>>{};
+  final Map<int, Pigeon_ProxyApiBaseClass> _strongInstances =
+      <int, Pigeon_ProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -129,7 +153,7 @@ class Pigeon_InstanceManager {
   /// Throws assertion error if the instance has already been added.
   ///
   /// Returns the randomly generated id of the [instance] added.
-  int addDartCreatedInstance(Pigeon_Copyable instance) {
+  int addDartCreatedInstance(Pigeon_ProxyApiBaseClass instance) {
     final int identifier = _nextUniqueIdentifier();
     _addInstanceWithIdentifier(instance, identifier);
     return identifier;
@@ -143,7 +167,7 @@ class Pigeon_InstanceManager {
   ///
   /// This does not remove the strong referenced instance associated with
   /// [instance]. This can be done with [remove].
-  int? removeWeakReference(Pigeon_Copyable instance) {
+  int? removeWeakReference(Pigeon_ProxyApiBaseClass instance) {
     final int? identifier = getIdentifier(instance);
     if (identifier == null) {
       return null;
@@ -165,7 +189,7 @@ class Pigeon_InstanceManager {
   ///
   /// This does not remove the weak referenced instance associated with
   /// [identifier]. This can be done with [removeWeakReference].
-  T? remove<T extends Pigeon_Copyable>(int identifier) {
+  T? remove<T extends Pigeon_ProxyApiBaseClass>(int identifier) {
     return _strongInstances.remove(identifier) as T?;
   }
 
@@ -181,15 +205,19 @@ class Pigeon_InstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends Pigeon_Copyable>(int identifier) {
-    final Pigeon_Copyable? weakInstance = _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends Pigeon_ProxyApiBaseClass>(
+      int identifier) {
+    final Pigeon_ProxyApiBaseClass? weakInstance =
+        _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final Pigeon_Copyable? strongInstance = _strongInstances[identifier];
+      final Pigeon_ProxyApiBaseClass? strongInstance =
+          _strongInstances[identifier];
       if (strongInstance != null) {
-        final Pigeon_Copyable copy = strongInstance.pigeon_copy();
+        final Pigeon_ProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] = WeakReference<Pigeon_Copyable>(copy);
+        _weakInstances[identifier] =
+            WeakReference<Pigeon_ProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -200,7 +228,7 @@ class Pigeon_InstanceManager {
   }
 
   /// Retrieves the identifier associated with instance.
-  int? getIdentifier(Pigeon_Copyable instance) {
+  int? getIdentifier(Pigeon_ProxyApiBaseClass instance) {
     return _identifiers[instance];
   }
 
@@ -213,20 +241,23 @@ class Pigeon_InstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(Pigeon_Copyable instance, int identifier) {
+  void addHostCreatedInstance(
+      Pigeon_ProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(Pigeon_Copyable instance, int identifier) {
+  void _addInstanceWithIdentifier(
+      Pigeon_ProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<Pigeon_Copyable>(instance);
+    _weakInstances[identifier] =
+        WeakReference<Pigeon_ProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
-    final Pigeon_Copyable copy = instance.pigeon_copy();
+    final Pigeon_ProxyApiBaseClass copy = instance.pigeon_copy();
     _identifiers[copy] = identifier;
     _strongInstances[identifier] = copy;
   }
@@ -245,23 +276,6 @@ class Pigeon_InstanceManager {
     } while (containsIdentifier(identifier));
     return identifier;
   }
-}
-
-abstract class _Pigeon_ProxyApiBaseClass implements Pigeon_Copyable {
-  _Pigeon_ProxyApiBaseClass({
-    this.pigeon_binaryMessenger,
-    Pigeon_InstanceManager? pigeon_instanceManager,
-  }) : pigeon_instanceManager =
-            pigeon_instanceManager ?? Pigeon_InstanceManager.instance;
-
-  /// Sends and receives binary data across the Flutter platform barrier.
-  ///
-  /// If it is null, the default BinaryMessenger will be used, which routes to
-  /// the host platform.
-  final BinaryMessenger? pigeon_binaryMessenger;
-
-  /// Maintains instances stored to communicate with native language objects.
-  final Pigeon_InstanceManager pigeon_instanceManager;
 }
 
 /// Generated API for managing the Dart and native `Pigeon_InstanceManager`s.
@@ -357,7 +371,7 @@ class _Pigeon_ProxyApiBaseCodec extends StandardMessageCodec {
 
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is Pigeon_Copyable) {
+    if (value is Pigeon_ProxyApiBaseClass) {
       buffer.putUint8(128);
       writeValue(buffer, instanceManager.getIdentifier(value));
     } else {
@@ -7490,7 +7504,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi interface.
-class ProxyApiSuperClass extends _Pigeon_ProxyApiBaseClass {
+class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
   /// Constructs ProxyApiSuperClass without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -7579,7 +7593,7 @@ class ProxyApiSuperClass extends _Pigeon_ProxyApiBaseClass {
 }
 
 /// ProxyApi to serve as an interface to the core ProxyApi interface.
-class ProxyApiInterface extends _Pigeon_ProxyApiBaseClass {
+class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
   /// Constructs ProxyApiInterface without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
