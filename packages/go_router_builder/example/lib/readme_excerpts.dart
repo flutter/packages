@@ -4,12 +4,16 @@
 
 // ignore_for_file: unused_local_variable, unused_field, public_member_api_docs
 
+// This file contains compiled code snippets that are extracted and written into the README, to help explain how to use the go_router_builder package.
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+// #docregion Import
 import 'package:go_router/go_router.dart';
 
 part 'readme_excerpts.g.dart';
+// #enddocregion Import
 
 void main() {
   runApp(App());

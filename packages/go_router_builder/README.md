@@ -1,5 +1,36 @@
 ## Usage
 
+### Dependencies
+
+To use `go_router_builder`, you need to have the following dependencies in
+`pubspec.yaml`.
+
+<?code-excerpt "example/readme_excerpts.yaml (Dependencies)"?>
+```yaml
+dependencies:
+  # ...along with your other dependencies
+  go_router: ^13.0.0
+
+dev_dependencies:
+  # ...along with your other dev-dependencies
+  build_runner: ^2.4.0
+  go_router_builder: ^2.4.0
+```
+
+### Source code
+
+Instructions below explain how to create and annotate types to use this builder.
+Along with importing the `go_router.dart` library, it's essential to also
+include a `part` directive that references the generated Dart file. The
+generated file will always have the name `[source_file].g.dart`.
+
+<?code-excerpt "example/lib/readme_excerpts.dart (Import)"?>
+```dart
+import 'package:go_router/go_router.dart';
+
+part 'readme_excerpts.g.dart';
+```
+
 ### Running `build_runner`
 
 To do a one-time build:
