@@ -458,9 +458,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           for (final Method method in api.methods) {
             _writeHostMethod(
               indent,
-              api,
-              method,
-              dartPackageName: dartPackageName,
+              name: method.name,
+              channelName: makeChannelName(api, method, dartPackageName),
+              taskQueueType: method.taskQueueType,
+              parameters: method.parameters,
+              returnType: method.returnType,
+              isAsynchronous: method.isAsynchronous,
             );
           }
         });
@@ -878,6 +881,32 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         );
         indent.newln();
 
+        for (final Constructor constructor in api.constructors) {
+          _writeMethodDeclaration(
+            indent,
+            name: constructor.name.isNotEmpty
+                ? constructor.name
+                : '${classMemberNamePrefix}defaultConstructor',
+            returnType: TypeDeclaration(
+              baseName: api.name,
+              isNullable: false,
+              associatedProxyApi: api,
+            ),
+            documentationComments: constructor.documentationComments,
+            isAbstract: true,
+            parameters: <Parameter>[
+              ...api.nonAttachedFields.map((Field field) {
+                return Parameter(
+                  name: field.name,
+                  type: field.type,
+                );
+              }),
+              ...constructor.parameters
+            ],
+          );
+          indent.newln();
+        }
+
         for (final Method method in api.hostMethods) {
           _writeMethodDeclaration(
             indent,
@@ -887,14 +916,15 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             isAsynchronous: method.isAsynchronous,
             isAbstract: true,
             parameters: <Parameter>[
-              Parameter(
-                name: '${classMemberNamePrefix}instance',
-                type: TypeDeclaration(
-                  baseName: fullKotlinClassName,
-                  isNullable: false,
-                  associatedProxyApi: api,
+              if (!method.isStatic)
+                Parameter(
+                  name: '${classMemberNamePrefix}instance',
+                  type: TypeDeclaration(
+                    baseName: fullKotlinClassName,
+                    isNullable: false,
+                    associatedProxyApi: api,
+                  ),
                 ),
-              ),
               ...method.parameters,
             ],
           );
@@ -910,12 +940,56 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
               indent.writeln(
                 'val codec = if (api != null) $codecName(api.${classMemberNamePrefix}instanceManager) else StandardMessageCodec()',
               );
+              for (final Constructor constructor in api.constructors) {
+                final String name = constructor.name.isNotEmpty
+                    ? constructor.name
+                    : '${classMemberNamePrefix}defaultConstructor';
+                _writeHostMethod(
+                  indent,
+                  name: name,
+                  channelName: makeChannelNameWithStrings(
+                    apiName: api.name,
+                    methodName: name,
+                    dartPackageName: dartPackageName,
+                  ),
+                  taskQueueType: TaskQueueType.serial,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  onCreateCall: (
+                    List<String> methodParameters, {
+                    required String apiVarName,
+                  }) {
+                    return '$apiVarName.${classMemberNamePrefix}instanceManager.addDartCreatedInstance('
+                        '$apiVarName.$name(${methodParameters.skip(1).join(',')}), ${methodParameters.first})';
+                  },
+                  parameters: <Parameter>[
+                    Parameter(
+                      name: '${classMemberNamePrefix}instanceIdentifier',
+                      type: const TypeDeclaration(
+                        baseName: 'int',
+                        isNullable: false,
+                      ),
+                    ),
+                    ...api.nonAttachedFields.map((Field field) {
+                      return Parameter(
+                        name: field.name,
+                        type: field.type,
+                      );
+                    }),
+                    ...constructor.parameters,
+                  ],
+                );
+              }
+
               for (final Method method in api.hostMethods) {
                 _writeHostMethod(
                   indent,
-                  api,
-                  method
-                    ..parameters = <Parameter>[
+                  name: method.name,
+                  channelName: makeChannelName(api, method, dartPackageName),
+                  taskQueueType: method.taskQueueType,
+                  returnType: method.returnType,
+                  isAsynchronous: method.isAsynchronous,
+                  parameters: <Parameter>[
+                    if (!method.isStatic)
                       Parameter(
                         name: '${classMemberNamePrefix}instance',
                         type: TypeDeclaration(
@@ -924,9 +998,8 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                           associatedProxyApi: api,
                         ),
                       ),
-                      ...method.parameters,
-                    ],
-                  dartPackageName: dartPackageName,
+                    ...method.parameters,
+                  ],
                 );
               }
             },
@@ -1143,21 +1216,26 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
   }
 
   void _writeHostMethod(
-    Indent indent,
-    Api api,
-    Method method, {
-    required String dartPackageName,
+    Indent indent, {
+    required String name,
+    required String channelName,
+    required TaskQueueType taskQueueType,
+    required List<Parameter> parameters,
+    required TypeDeclaration returnType,
+    bool isAsynchronous = false,
+    String Function(
+      List<String> methodParameters, {
+      required String apiVarName,
+    })? onCreateCall,
   }) {
     indent.write('run ');
     indent.addScoped('{', '}', () {
       String? taskQueue;
-      if (method.taskQueueType != TaskQueueType.serial) {
+      if (taskQueueType != TaskQueueType.serial) {
         taskQueue = 'taskQueue';
         indent.writeln(
             'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
       }
-
-      final String channelName = makeChannelName(api, method, dartPackageName);
 
       indent.write(
           'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec');
@@ -1170,15 +1248,14 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
 
       indent.write('if (api != null) ');
       indent.addScoped('{', '}', () {
-        final String messageVarName =
-            method.parameters.isNotEmpty ? 'message' : '_';
+        final String messageVarName = parameters.isNotEmpty ? 'message' : '_';
 
         indent.write('channel.setMessageHandler ');
         indent.addScoped('{ $messageVarName, reply ->', '}', () {
           final List<String> methodArguments = <String>[];
-          if (method.parameters.isNotEmpty) {
+          if (parameters.isNotEmpty) {
             indent.writeln('val args = message as List<Any?>');
-            method.parameters.forEachIndexed((int index, NamedType arg) {
+            parameters.forEachIndexed((int index, NamedType arg) {
               final String argName = _getSafeArgumentName(index, arg);
               final String argIndex = 'args[$index]';
               indent.writeln(
@@ -1186,14 +1263,15 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
               methodArguments.add(argName);
             });
           }
-          final String call =
-              'api.${method.name}(${methodArguments.join(', ')})';
+          final String call = onCreateCall != null
+              ? onCreateCall(methodArguments, apiVarName: 'api')
+              : 'api.$name(${methodArguments.join(', ')})';
 
-          if (method.isAsynchronous) {
+          if (isAsynchronous) {
             indent.write('$call ');
-            final String resultType = method.returnType.isVoid
+            final String resultType = returnType.isVoid
                 ? 'Unit'
-                : _nullsafeKotlinTypeForDartType(method.returnType);
+                : _nullsafeKotlinTypeForDartType(returnType);
             indent.addScoped('{ result: Result<$resultType> ->', '}', () {
               indent.writeln('val error = result.exceptionOrNull()');
               indent.writeScoped('if (error != null) {', '}', () {
@@ -1201,11 +1279,10 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
               }, addTrailingNewline: false);
               indent.addScoped(' else {', '}', () {
                 final String enumTagNullablePrefix =
-                    method.returnType.isNullable ? '?' : '!!';
-                final String enumTag = method.returnType.isEnum
-                    ? '$enumTagNullablePrefix.raw'
-                    : '';
-                if (method.returnType.isVoid) {
+                    returnType.isNullable ? '?' : '!!';
+                final String enumTag =
+                    returnType.isEnum ? '$enumTagNullablePrefix.raw' : '';
+                if (returnType.isVoid) {
                   indent.writeln('reply.reply(wrapResult(null))');
                 } else {
                   indent.writeln('val data = result.getOrNull()');
@@ -1217,14 +1294,13 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             indent.writeln('var wrapped: List<Any?>');
             indent.write('try ');
             indent.addScoped('{', '}', () {
-              if (method.returnType.isVoid) {
+              if (returnType.isVoid) {
                 indent.writeln(call);
                 indent.writeln('wrapped = listOf<Any?>(null)');
               } else {
                 String enumTag = '';
-                if (method.returnType.isEnum) {
-                  final String safeUnwrap =
-                      method.returnType.isNullable ? '?' : '';
+                if (returnType.isEnum) {
+                  final String safeUnwrap = returnType.isNullable ? '?' : '';
                   enumTag = '$safeUnwrap.raw';
                 }
                 indent.writeln('wrapped = listOf<Any?>($call$enumTag)');
