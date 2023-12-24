@@ -427,36 +427,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.write('interface $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
-        final List<String> argSignature = <String>[];
-        if (method.parameters.isNotEmpty) {
-          final Iterable<String> argTypes = method.parameters
-              .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
-          final Iterable<String> argNames =
-              method.parameters.map((NamedType e) => e.name);
-          argSignature.addAll(
-              map2(argTypes, argNames, (String argType, String argName) {
-            return '$argName: $argType';
-          }));
-        }
-
-        final String returnType = method.returnType.isVoid
-            ? ''
-            : _nullsafeKotlinTypeForDartType(method.returnType);
-
-        final String resultType =
-            method.returnType.isVoid ? 'Unit' : returnType;
-        addDocumentationComments(
-            indent, method.documentationComments, _docCommentSpec);
-
-        if (method.isAsynchronous) {
-          argSignature.add('callback: (Result<$resultType>) -> Unit');
-          indent.writeln('fun ${method.name}(${argSignature.join(', ')})');
-        } else if (method.returnType.isVoid) {
-          indent.writeln('fun ${method.name}(${argSignature.join(', ')})');
-        } else {
-          indent.writeln(
-              'fun ${method.name}(${argSignature.join(', ')}): $returnType');
-        }
+        _writeMethodDeclaration(
+          indent,
+          name: method.name,
+          documentationComments: method.documentationComments,
+          returnType: method.returnType,
+          parameters: method.parameters,
+          isAsynchronous: method.isAsynchronous,
+        );
       }
 
       indent.newln();
@@ -894,10 +872,34 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
       'abstract class $apiName(val binaryMessenger: BinaryMessenger, val ${classMemberNamePrefix}instanceManager: $instanceManagerClassName) {',
       '}',
       () {
+        // TODO: check if uses codec variable
         indent.writeln(
           'private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(${classMemberNamePrefix}instanceManager)',
         );
         indent.newln();
+
+        for (final Method method in api.hostMethods) {
+          _writeMethodDeclaration(
+            indent,
+            name: method.name,
+            returnType: method.returnType,
+            documentationComments: method.documentationComments,
+            isAsynchronous: method.isAsynchronous,
+            isAbstract: true,
+            parameters: <Parameter>[
+              Parameter(
+                name: '${classMemberNamePrefix}instance',
+                type: TypeDeclaration(
+                  baseName: fullKotlinClassName,
+                  isNullable: false,
+                  associatedProxyApi: api,
+                ),
+              ),
+              ...method.parameters,
+            ],
+          );
+          indent.newln();
+        }
 
         indent.writeScoped('companion object {', '}', () {
           indent.writeln('@Suppress("LocalVariableName")');
@@ -1093,6 +1095,51 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
       _writeCreateConnectionError(generatorOptions, indent);
     }
     _writeErrorClass(generatorOptions, indent);
+  }
+
+  void _writeMethodDeclaration(
+    Indent indent, {
+    required String name,
+    required TypeDeclaration returnType,
+    required List<Parameter> parameters,
+    List<String> documentationComments = const <String>[],
+    bool isAsynchronous = false,
+    bool isAbstract = false,
+  }) {
+    final List<String> argSignature = <String>[];
+    if (parameters.isNotEmpty) {
+      final Iterable<String> argTypes = parameters
+          .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
+      final Iterable<String> argNames = parameters.map((NamedType e) => e.name);
+      argSignature.addAll(
+        map2(
+          argTypes,
+          argNames,
+          (String argType, String argName) {
+            return '$argName: $argType';
+          },
+        ),
+      );
+    }
+
+    final String returnTypeString =
+        returnType.isVoid ? '' : _nullsafeKotlinTypeForDartType(returnType);
+
+    final String resultType = returnType.isVoid ? 'Unit' : returnTypeString;
+    addDocumentationComments(indent, documentationComments, _docCommentSpec);
+
+    final String abstractKeyword = isAbstract ? 'abstract ' : '';
+
+    if (isAsynchronous) {
+      argSignature.add('callback: (Result<$resultType>) -> Unit');
+      indent.writeln('${abstractKeyword}fun $name(${argSignature.join(', ')})');
+    } else if (returnType.isVoid) {
+      indent.writeln('${abstractKeyword}fun $name(${argSignature.join(', ')})');
+    } else {
+      indent.writeln(
+        '${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
+      );
+    }
   }
 
   void _writeHostMethod(

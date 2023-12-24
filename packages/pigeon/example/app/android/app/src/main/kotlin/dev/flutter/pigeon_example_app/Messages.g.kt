@@ -210,7 +210,7 @@ class MessageFlutterApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   FlutterError(
                       "null-error",
-                      "Flutter api returned null value for non-null return value.",
+                      "Flutter method returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as String
