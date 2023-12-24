@@ -52,7 +52,6 @@ class CoreTestsError(
     override val message: String? = null,
     val details: Any? = null
 ) : Throwable()
-
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
  *
@@ -3474,11 +3473,14 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
 @Suppress("UNCHECKED_CAST")
 abstract class ProxyIntegrationCoreApi_Api(
     val binaryMessenger: BinaryMessenger,
-    val instanceManager: Pigeon_InstanceManager
+    val pigeon_instanceManager: Pigeon_InstanceManager
 ) {
+  private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
+
   companion object {
-    fun setUpMessageHandlers(api: ProxyIntegrationCoreApi_Api) {
-      val codec = Pigeon_ProxyApiBaseCodec(api.instanceManager)
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyIntegrationCoreApi_Api) {
+      val codec =
+          if (api != null) Pigeon_ProxyApiBaseCodec(api.instanceManager) else StandardMessageCodec()
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -5169,16 +5171,542 @@ abstract class ProxyIntegrationCoreApi_Api(
       }
     }
   }
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  fun flutterNoop(callback: (Result<Unit>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterNoop"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Responds with an error from an async function returning a value. */
+  fun flutterThrowError(callback: (Result<Any?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterThrowError"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0]
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Responds with an error from an async void function. */
+  fun flutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterThrowErrorFromVoid"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed boolean, to test serialization and deserialization. */
+  fun flutterEchoBool(aBoolArg: Boolean, callback: (Result<Boolean>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoBool"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aBoolArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Boolean
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed int, to test serialization and deserialization. */
+  fun flutterEchoInt(anIntArg: Long, callback: (Result<Long>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoInt"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(anIntArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0].let { if (it is Int) it.toLong() else it as Long }
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed double, to test serialization and deserialization. */
+  fun flutterEchoDouble(aDoubleArg: Double, callback: (Result<Double>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoDouble"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aDoubleArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Double
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed string, to test serialization and deserialization. */
+  fun flutterEchoString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoString"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed byte list, to test serialization and deserialization. */
+  fun flutterEchoUint8List(aListArg: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoUint8List"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as ByteArray
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun flutterEchoList(aListArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoList"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as List<Any?>
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed list with ProxyApis, to test serialization and deserialization. */
+  fun flutterEchoProxyApiList(
+      aListArg: List<ProxyIntegrationCoreApi?>,
+      callback: (Result<List<ProxyIntegrationCoreApi?>>) -> Unit
+  ) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoProxyApiList"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as List<ProxyIntegrationCoreApi?>
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun flutterEchoMap(aMapArg: Map<String?, Any?>, callback: (Result<Map<String?, Any?>>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoMap"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aMapArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Map<String?, Any?>
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed map with ProxyApis, to test serialization and deserialization. */
+  fun flutterEchoProxyApiMap(
+      aMapArg: Map<String?, ProxyIntegrationCoreApi?>,
+      callback: (Result<Map<String?, ProxyIntegrationCoreApi?>>) -> Unit
+  ) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoProxyApiMap"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aMapArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Map<String?, ProxyIntegrationCoreApi?>
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun flutterEchoEnum(anEnumArg: AnEnum, callback: (Result<AnEnum>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoEnum"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(anEnumArg.raw)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = AnEnum.ofRaw(it[0] as Int)!!
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed boolean, to test serialization and deserialization. */
+  fun flutterEchoNullableBool(aBoolArg: Boolean?, callback: (Result<Boolean?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableBool"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aBoolArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as Boolean?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed int, to test serialization and deserialization. */
+  fun flutterEchoNullableInt(anIntArg: Long?, callback: (Result<Long?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableInt"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(anIntArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0].let { if (it is Int) it.toLong() else it as Long? }
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed double, to test serialization and deserialization. */
+  fun flutterEchoNullableDouble(aDoubleArg: Double?, callback: (Result<Double?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableDouble"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aDoubleArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as Double?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed string, to test serialization and deserialization. */
+  fun flutterEchoNullableString(aStringArg: String?, callback: (Result<String?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableString"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as String?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed byte list, to test serialization and deserialization. */
+  fun flutterEchoNullableUint8List(aListArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableUint8List"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as ByteArray?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun flutterEchoNullableList(aListArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableList"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aListArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as List<Any?>?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun flutterEchoNullableMap(
+      aMapArg: Map<String?, Any?>?,
+      callback: (Result<Map<String?, Any?>?>) -> Unit
+  ) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableMap"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aMapArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as Map<String?, Any?>?
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun flutterEchoNullableEnum(anEnumArg: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableEnum"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(anEnumArg?.raw)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = (it[0] as Int?)?.let { AnEnum.ofRaw(it) }
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
+   */
+  fun callFlutterNoopAsync(callback: (Result<Unit>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterNoopAsync"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+  /** Returns the passed in generic Object asynchronously. */
+  fun callFlutterEchoAsyncString(aStringArg: String, callback: (Result<String>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoAsyncString"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(aStringArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  CoreTestsError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as String
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
 }
 /** ProxyApi to serve as a super class to the core ProxyApi interface. */
 @Suppress("UNCHECKED_CAST")
 abstract class ProxyApiSuperClass_Api(
     val binaryMessenger: BinaryMessenger,
-    val instanceManager: Pigeon_InstanceManager
+    val pigeon_instanceManager: Pigeon_InstanceManager
 ) {
+  private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
+
   companion object {
-    fun setUpMessageHandlers(api: ProxyApiSuperClass_Api) {
-      val codec = Pigeon_ProxyApiBaseCodec(api.instanceManager)
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyApiSuperClass_Api) {
+      val codec =
+          if (api != null) Pigeon_ProxyApiBaseCodec(api.instanceManager) else StandardMessageCodec()
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -5209,11 +5737,32 @@ abstract class ProxyApiSuperClass_Api(
 @Suppress("UNCHECKED_CAST")
 abstract class ProxyApiInterface_Api(
     val binaryMessenger: BinaryMessenger,
-    val instanceManager: Pigeon_InstanceManager
+    val pigeon_instanceManager: Pigeon_InstanceManager
 ) {
+  private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
+
   companion object {
-    fun setUpMessageHandlers(api: ProxyApiInterface_Api) {
-      val codec = Pigeon_ProxyApiBaseCodec(api.instanceManager)
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyApiInterface_Api) {
+      val codec =
+          if (api != null) Pigeon_ProxyApiBaseCodec(api.instanceManager) else StandardMessageCodec()
+    }
+  }
+
+  fun anInterfaceMethod(callback: (Result<Unit>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(null) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
     }
   }
 }
