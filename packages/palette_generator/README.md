@@ -1,4 +1,3 @@
-<?code-excerpt path-base="./example/lib"?>
 # Palette Generator package
 
 [![pub package](https://img.shields.io/pub/v/palette_generator.svg)](https://pub.dartlang.org/packages/palette_generator)
@@ -13,5 +12,4 @@ To use this package, add `palette_generator` as a
 
 ## Example
 
-Then use the `PaletteGenerator` Dart class in your code. To see how this is done,
-check out the [image_colors example app](example/).
+To see how to use the `PaletteGenerator` class in your code, see [the example app](https://pub.dev/packages/palette_generator/example).

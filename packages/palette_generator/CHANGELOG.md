@@ -1,6 +1,6 @@
 ## 0.3.3+4
 
-* Adopts code-excerpts in README.
+* Simplifies the README.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 0.3.3+3
