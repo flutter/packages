@@ -1,6 +1,6 @@
 ## 1.0.7
 
-* Adds example.md file to display usage of `cupertino_icons`.
+* Adds example.md file to display usage.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 1.0.6
