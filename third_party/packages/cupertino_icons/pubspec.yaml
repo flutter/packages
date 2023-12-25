@@ -8,11 +8,9 @@ version: 1.0.7
 environment:
   sdk: ">=3.0.0 <4.0.0"
 
-dependencies:
+dev_dependencies:
   flutter:
     sdk: flutter
-
-dev_dependencies:
   flutter_test:
     sdk: flutter
 
