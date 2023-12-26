@@ -906,6 +906,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
 
         // TODO: return values for host methods must also call new_instance
         // TODO: handle lists as well
+        // TODO: in pigeron_wrapper_dart make echoProxyApis callbacks nullable
         for (final Constructor constructor in api.constructors) {
           _writeMethodDeclaration(
             indent,
@@ -1715,7 +1716,6 @@ String? _kotlinTypeForBuiltinDartType(TypeDeclaration type) {
   }
 }
 
-// TODO: Undo changes to HostDataType handling ProxyApi lol
 String? _kotlinTypeForProxyApiType(TypeDeclaration type) {
   if (type.isProxyApi) {
     return type.associatedProxyApi!.kotlinOptions?.fullClassName ??

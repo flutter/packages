@@ -2800,7 +2800,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as AllTypes
@@ -2857,7 +2857,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as AllNullableTypes
@@ -2883,7 +2883,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as Boolean
@@ -2909,7 +2909,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0].let { if (it is Int) it.toLong() else it as Long }
@@ -2935,7 +2935,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as Double
@@ -2961,7 +2961,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as String
@@ -2987,7 +2987,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as ByteArray
@@ -3013,7 +3013,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as List<Any?>
@@ -3039,7 +3039,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as Map<String?, Any?>
@@ -3065,7 +3065,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = AnEnum.ofRaw(it[0] as Int)!!
@@ -3267,7 +3267,7 @@ class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as String
@@ -3429,7 +3429,7 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as TestMessage
@@ -3454,7 +3454,7 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as String
@@ -3526,136 +3526,6 @@ abstract class ProxyIntegrationCoreApi_Api(
       nullableEnumParam: AnEnum?,
       nullableProxyApiParam: ProxyApiSuperClass?
   ): com.example.test_plugin.ProxyIntegrationCoreApi
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aBool(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Boolean
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun anInt(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Long
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aDouble(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Double
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aString(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): String
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aUint8List(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): ByteArray
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aList(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): List<Any?>
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aMap(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): Map<String?, Any?>
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun anEnum(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): AnEnum
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aProxyApi(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): ProxyApiSuperClass
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableBool(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): Boolean?
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableInt(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Long?
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableDouble(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): Double?
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableString(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): String?
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableUint8List(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): ByteArray?
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableList(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): List<Any?>?
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableMap(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): Map<String?, Any?>?
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableEnum(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): AnEnum?
-
-  /**
-   * The core interface that each host language plugin must implement in platform_test integration
-   * tests.
-   */
-  abstract fun aNullableProxyApi(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): ProxyApiSuperClass?
 
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   abstract fun noop(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi)
@@ -6000,9 +5870,7 @@ abstract class ProxyIntegrationCoreApi_Api(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /**
-   * Creates a Dart instance of ProxyIntegrationCoreApi_Api and attaches it to [pigeon_instanceArg].
-   */
+  /** Creates a Dart instance of ProxyIntegrationCoreApi and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
       callback: (Result<Unit>) -> Unit
@@ -6011,65 +5879,8 @@ abstract class ProxyIntegrationCoreApi_Api(
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg = pigeon_instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-    val aBoolArg = aBool(pigeon_instanceArg)
-    val anIntArg = anInt(pigeon_instanceArg)
-    val aDoubleArg = aDouble(pigeon_instanceArg)
-    val aStringArg = aString(pigeon_instanceArg)
-    val aUint8ListArg = aUint8List(pigeon_instanceArg)
-    val aListArg = aList(pigeon_instanceArg)
-    val aMapArg = aMap(pigeon_instanceArg)
-    val anEnumArg = anEnum(pigeon_instanceArg)
-    val aProxyApiArg = aProxyApi(pigeon_instanceArg)
-    pigeon_getProxyApiSuperClassApi().pigeon_newInstance(aProxyApiArg) {}
-    val aNullableBoolArg = aNullableBool(pigeon_instanceArg)
-    val aNullableIntArg = aNullableInt(pigeon_instanceArg)
-    val aNullableDoubleArg = aNullableDouble(pigeon_instanceArg)
-    val aNullableStringArg = aNullableString(pigeon_instanceArg)
-    val aNullableUint8ListArg = aNullableUint8List(pigeon_instanceArg)
-    val aNullableListArg = aNullableList(pigeon_instanceArg)
-    val aNullableMapArg = aNullableMap(pigeon_instanceArg)
-    val aNullableEnumArg = aNullableEnum(pigeon_instanceArg)
-    val aNullableProxyApiArg = aNullableProxyApi(pigeon_instanceArg)
-    if (aNullableProxyApiArg != null) {
-      pigeon_getProxyApiSuperClassApi().pigeon_newInstance(aNullableProxyApiArg) {}
-    }
-    val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance"
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(
-        listOf(
-            pigeon_identifierArg,
-            aBoolArg,
-            anIntArg,
-            aDoubleArg,
-            aStringArg,
-            aUint8ListArg,
-            aListArg,
-            aMapArg,
-            anEnumArg.raw,
-            aProxyApiArg,
-            aNullableBoolArg,
-            aNullableIntArg,
-            aNullableDoubleArg,
-            aNullableStringArg,
-            aNullableUint8ListArg,
-            aNullableListArg,
-            aNullableMapArg,
-            aNullableEnumArg?.raw,
-            aNullableProxyApiArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(
-                      CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
-        }
+    throw IllegalStateException(
+        "Attempting to create a new Dart instance of ProxyIntegrationCoreApi, but the class has a nonnull callback method.")
   }
 
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
@@ -6158,7 +5969,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as Boolean
@@ -6189,7 +6000,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0].let { if (it is Int) it.toLong() else it as Long }
@@ -6220,7 +6031,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as Double
@@ -6251,7 +6062,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as String
@@ -6282,7 +6093,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as ByteArray
@@ -6313,7 +6124,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as List<Any?>
@@ -6344,7 +6155,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as List<ProxyIntegrationCoreApi?>
@@ -6375,7 +6186,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as Map<String?, Any?>
@@ -6406,7 +6217,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as Map<String?, ProxyIntegrationCoreApi?>
@@ -6437,7 +6248,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = AnEnum.ofRaw(it[0] as Int)!!
@@ -6469,7 +6280,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as ProxyApiSuperClass
@@ -6744,7 +6555,7 @@ abstract class ProxyIntegrationCoreApi_Api(
               Result.failure(
                   CoreTestsError(
                       "null-error",
-                      "Flutter method returned null value for non-null return value.",
+                      "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
           val output = it[0] as String
@@ -6799,7 +6610,7 @@ abstract class ProxyApiSuperClass_Api(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ProxyApiSuperClass_Api and attaches it to [pigeon_instanceArg]. */
+  /** Creates a Dart instance of ProxyApiSuperClass and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiSuperClass, callback: (Result<Unit>) -> Unit) {
     if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
@@ -6841,7 +6652,7 @@ abstract class ProxyApiInterface_Api(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ProxyApiInterface_Api and attaches it to [pigeon_instanceArg]. */
+  /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
     if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
