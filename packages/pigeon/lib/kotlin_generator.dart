@@ -1036,15 +1036,6 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         // TODO: change name for dart generator in PR (detached to newInstance)
         // TODO: Solution is to write method declartion and then have a writeBody(indent)
         // TODO: _writeFlutterMethod should use writeMethodDeclaration
-        // if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
-        //   Result.success(Unit)
-        //   return
-        // }
-        //
-        // val myProxyFieldArg: some.cool.BasicClass? = myProxyField(pigeon_instanceArg)
-        // if (myProxyFieldArg != null) {
-        //   pigeon_getBasicClassApi().pigeon_newInstance(myProxyFieldArg) { }
-        // }
         indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
         const String newInstanceMethodName =
             '${classMemberNamePrefix}newInstance';
@@ -1097,7 +1088,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                 'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
               );
 
-              if (field.type.isProxyApi) {
+              if (field.type.isProxyApi && field.type.isNullable) {
                 indent.writeScoped('if ($argName != null) {', '}', () {
                   final String apiAccess = field.type.baseName == api.name
                       ? ''
