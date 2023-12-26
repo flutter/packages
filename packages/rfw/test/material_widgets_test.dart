@@ -157,7 +157,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.scaffold.png'),
-      // skip: !runGoldens,
+      skip: !runGoldens,
     );
 
     await tester.tap(find.byType(DropdownButton<Object>));
@@ -166,7 +166,7 @@ void main() {
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/material_test.dropdown.png'),
-      // skip: !runGoldens,
+      skip: !runGoldens,
     );
     // Dismiss dropdown.
     await tester.tapAt(Offset.zero);
@@ -178,7 +178,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.drawer.png'),
-      // skip: !runGoldens,
+      skip: !runGoldens,
     );
   });
 }
