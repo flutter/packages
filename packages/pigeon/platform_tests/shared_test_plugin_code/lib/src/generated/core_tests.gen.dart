@@ -4173,7 +4173,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
       List<Object?>? aNullableList,
       Map<String?, Object?>? aNullableMap,
       AnEnum? aNullableEnum,
-    )? pigeon_detached,
+    )? pigeon_newInstance,
     void Function(ProxyIntegrationCoreApi pigeon_instance)? flutterNoop,
     Object? Function(ProxyIntegrationCoreApi pigeon_instance)?
         flutterThrowError,
@@ -4263,7 +4263,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     {
       const String __pigeon_channelName =
-          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_detached';
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance';
       final BasicMessageChannel<Object?> __pigeon_channel =
           BasicMessageChannel<Object?>(
         __pigeon_channelName,
@@ -4337,7 +4337,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
             args[16] == null ? null : AnEnum.values[args[16]! as int];
         (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
             .addHostCreatedInstance(
-          pigeon_detached?.call(
+          pigeon_newInstance?.call(
                 arg_aBool!,
                 arg_anInt!,
                 arg_aDouble!,
@@ -7520,14 +7520,14 @@ class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
-    ProxyApiSuperClass Function()? pigeon_detached,
+    ProxyApiSuperClass Function()? pigeon_newInstance,
   }) {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         _Pigeon_ProxyApiBaseCodec(
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     {
       const String __pigeon_channelName =
-          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_detached';
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance';
       final BasicMessageChannel<Object?> __pigeon_channel =
           BasicMessageChannel<Object?>(
         __pigeon_channelName,
@@ -7547,7 +7547,7 @@ class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
         );
         (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
             .addHostCreatedInstance(
-          pigeon_detached?.call() ??
+          pigeon_newInstance?.call() ??
               ProxyApiSuperClass.pigeon_detached(
                 pigeon_binaryMessenger: pigeon_binaryMessenger,
                 pigeon_instanceManager: pigeon_instanceManager,
@@ -7609,7 +7609,7 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
   static void pigeon_setUpMessageHandlers({
     BinaryMessenger? pigeon_binaryMessenger,
     Pigeon_InstanceManager? pigeon_instanceManager,
-    ProxyApiInterface Function()? pigeon_detached,
+    ProxyApiInterface Function()? pigeon_newInstance,
     void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod,
   }) {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
@@ -7617,7 +7617,7 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
             pigeon_instanceManager ?? Pigeon_InstanceManager.instance);
     {
       const String __pigeon_channelName =
-          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_detached';
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance';
       final BasicMessageChannel<Object?> __pigeon_channel =
           BasicMessageChannel<Object?>(
         __pigeon_channelName,
@@ -7637,7 +7637,7 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
         );
         (pigeon_instanceManager ?? Pigeon_InstanceManager.instance)
             .addHostCreatedInstance(
-          pigeon_detached?.call() ??
+          pigeon_newInstance?.call() ??
               ProxyApiInterface.pigeon_detached(
                 pigeon_binaryMessenger: pigeon_binaryMessenger,
                 pigeon_instanceManager: pigeon_instanceManager,

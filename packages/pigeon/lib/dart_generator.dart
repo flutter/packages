@@ -1493,7 +1493,7 @@ class $codecName extends StandardMessageCodec {
             if (!hasARequiredFlutterMethod)
               cb.Parameter(
                 (cb.ParameterBuilder builder) => builder
-                  ..name = '${classMemberNamePrefix}detached'
+                  ..name = '${classMemberNamePrefix}newInstance'
                   ..named = true
                   ..type = cb.FunctionType(
                     (cb.FunctionTypeBuilder builder) => builder
@@ -1543,7 +1543,7 @@ class $codecName extends StandardMessageCodec {
               cb.Code(
                 "const String ${_varNamePrefix}channelName = r'${makeChannelNameWithStrings(
                   apiName: apiName,
-                  methodName: '${classMemberNamePrefix}detached',
+                  methodName: '${classMemberNamePrefix}newInstance',
                   dartPackageName: dartPackageName,
                 )}';",
               ),
@@ -1600,7 +1600,8 @@ class $codecName extends StandardMessageCodec {
                               .property('addHostCreatedInstance')
                               .call(<cb.Expression>[
                             cb
-                                .refer('${classMemberNamePrefix}detached?.call')
+                                .refer(
+                                    '${classMemberNamePrefix}newInstance?.call')
                                 .call(unattachedFields.mapIndexed(
                               (int index, Field field) {
                                 // The calling instance is the first arg.
