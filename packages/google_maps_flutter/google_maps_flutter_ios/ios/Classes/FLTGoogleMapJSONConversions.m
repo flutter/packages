@@ -141,4 +141,34 @@
   }
   return nil;
 }
+
++ (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray *)patterns
+                                            strokeColor:(UIColor *)strokeColor {
+  NSMutableArray *strokeStyles = [[NSMutableArray alloc] init];
+  for (unsigned int i = 0; i < [patterns count]; i++) {
+    NSString *patternType = patterns[i][0];
+    GMSStrokeStyle *strokeStyle;
+
+    if ([patternType isEqualToString:@"gap"]) {
+      strokeStyle = [GMSStrokeStyle solidColor:[UIColor clearColor]];
+    } else {
+      strokeStyle = [GMSStrokeStyle solidColor:strokeColor];
+    }
+
+    [strokeStyles addObject:strokeStyle];
+  }
+
+  return strokeStyles;
+}
+
++ (NSArray<NSNumber *> *)spanLengthsFromPatterns:(NSArray *)patterns {
+  NSMutableArray *lengths = [[NSMutableArray alloc] init];
+  for (unsigned int i = 0; i < [patterns count]; i++) {
+    NSNumber *length = [patterns[i] count] > 1 ? patterns[i][1] : @0;
+
+    [lengths addObject:length];
+  }
+
+  return lengths;
+}
 @end

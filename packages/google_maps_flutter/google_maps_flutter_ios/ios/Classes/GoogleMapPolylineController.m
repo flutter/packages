@@ -59,6 +59,10 @@
   self.polyline.geodesic = isGeodesic;
 }
 
+- (void)setPattern:(NSArray<GMSStrokeStyle *> *)styles lengths:(NSArray<NSNumber *> *)lengths {
+  self.polyline.spans = GMSStyleSpans(self.polyline.path, styles, lengths, kGMSLengthRhumb);
+}
+
 - (void)interpretPolylineOptions:(NSDictionary *)data
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   NSNumber *consumeTapEvents = data[@"consumeTapEvents"];
@@ -94,6 +98,14 @@
   NSNumber *geodesic = data[@"geodesic"];
   if (geodesic && geodesic != (id)[NSNull null]) {
     [self setGeodesic:geodesic.boolValue];
+  }
+
+  NSArray *patterns = data[@"pattern"];
+  if (patterns && patterns != (id)[NSNull null]) {
+    [self
+        setPattern:[FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns
+                                                             strokeColor:self.polyline.strokeColor]
+           lengths:[FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns]];
   }
 }
 

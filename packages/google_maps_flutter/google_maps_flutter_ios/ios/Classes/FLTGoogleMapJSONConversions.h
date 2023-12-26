@@ -24,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
 + (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue;
++ (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray *)patterns
+                                            strokeColor:(UIColor *)strokeColor;
++ (NSArray<NSNumber *> *)spanLengthsFromPatterns:(NSArray *)patterns;
 
 @end
 
