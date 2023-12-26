@@ -1033,7 +1033,6 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
 
         final String errorClassName = _getErrorClassName(generatorOptions);
 
-        // TODO: add proxapi new instance call to all flutter methods
         indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
         const String newInstanceMethodName =
             '${classMemberNamePrefix}newInstance';
@@ -1148,6 +1147,40 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
               ),
               ...method.parameters,
             ],
+            onWriteBody: (
+              Indent indent, {
+              required List<Parameter> parameters,
+              required TypeDeclaration returnType,
+              required String channelName,
+              required String errorClassName,
+            }) {
+              parameters.skip(1).forEachIndexed(
+                (int index, Parameter parameter) {
+                  final String argName = _getSafeArgumentName(index, parameter);
+                  if (parameter.type.isProxyApi) {
+                    final String apiAccess = parameter.type.baseName == api.name
+                        ? ''
+                        : '${classMemberNamePrefix}get${parameter.type.baseName}Api().';
+                    final String newInstanceCall =
+                        '$apiAccess$newInstanceMethodName($argName) { }';
+                    if (parameter.type.isNullable) {
+                      indent.writeScoped('if ($argName != null) {', '}', () {
+                        indent.writeln(newInstanceCall);
+                      });
+                    } else {
+                      indent.writeln(newInstanceCall);
+                    }
+                  }
+                },
+              );
+              _writeFlutterMethodMessageCall(
+                indent,
+                returnType: returnType,
+                channelName: channelName,
+                errorClassName: errorClassName,
+                parameters: parameters,
+              );
+            },
           );
           indent.newln();
         }
@@ -1339,6 +1372,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
     }
   }
 
+  // TODO: change to write host method message call?
   void _writeHostMethod(
     Indent indent, {
     required String name,
