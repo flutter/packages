@@ -683,6 +683,63 @@ void main() {
 
         expect(argsCompleter.future, completion(<Object?>[webView]));
       });
+
+      test('didReceiveAuthenticationChallenge', () async {
+        WebKitFlutterApis.instance = WebKitFlutterApis(
+          instanceManager: instanceManager,
+        );
+
+        const int credentialIdentifier = 3;
+        final NSUrlCredential credential = NSUrlCredential.detached(
+          instanceManager: instanceManager,
+        );
+        instanceManager.addHostCreatedInstance(
+          credential,
+          credentialIdentifier,
+        );
+
+        navigationDelegate = WKNavigationDelegate(
+          instanceManager: instanceManager,
+          didReceiveAuthenticationChallenge: (
+            WKWebView webView,
+            NSUrlAuthenticationChallenge challenge,
+            void Function(
+              NSUrlSessionAuthChallengeDisposition disposition,
+              NSUrlCredential? credential,
+            ) completionHandler,
+          ) {
+            completionHandler(
+              NSUrlSessionAuthChallengeDisposition.useCredential,
+              credential,
+            );
+          },
+        );
+
+        const int challengeIdentifier = 27;
+        instanceManager.addHostCreatedInstance(
+          NSUrlAuthenticationChallenge.detached(
+            protectionSpace: NSUrlProtectionSpace.detached(
+              host: null,
+              realm: null,
+              authenticationMethod: null,
+            ),
+            instanceManager: instanceManager,
+          ),
+          challengeIdentifier,
+        );
+
+        final AuthenticationChallengeResponse response = await WebKitFlutterApis
+            .instance.navigationDelegate
+            .didReceiveAuthenticationChallenge(
+          instanceManager.getIdentifier(navigationDelegate)!,
+          instanceManager.getIdentifier(webView)!,
+          challengeIdentifier,
+        );
+
+        expect(response.disposition,
+            NSUrlSessionAuthChallengeDisposition.useCredential);
+        expect(response.credentialIdentifier, credentialIdentifier);
+      });
     });
 
     group('WKWebView', () {

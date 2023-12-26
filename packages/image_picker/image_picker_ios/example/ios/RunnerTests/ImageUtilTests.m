@@ -72,4 +72,74 @@
   }
 }
 
+- (void)testScaledImage_TallImage_ShouldBeScaledBelowMaxHeight {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTallTestData];
+  XCTAssertEqual(image.size.width, 4);
+  XCTAssertEqual(image.size.height, 7);
+  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
+                                                  maxWidth:@5
+                                                 maxHeight:@5
+                                       isMetadataAvailable:YES];
+
+  XCTAssertEqual(newImage.size.width, 3);
+  XCTAssertEqual(newImage.size.height, 5);
+}
+
+- (void)testScaledImage_TallImage_ShouldBeScaledBelowMaxWidth {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTallTestData];
+  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
+                                                  maxWidth:@3
+                                                 maxHeight:@10
+                                       isMetadataAvailable:YES];
+
+  XCTAssertEqual(newImage.size.width, 3);
+  XCTAssertEqual(newImage.size.height, 5);
+}
+
+- (void)testScaledImage_TallImage_ShouldNotBeScaledAboveOriginaWidthOrHeight {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTallTestData];
+  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
+                                                  maxWidth:@10
+                                                 maxHeight:@10
+                                       isMetadataAvailable:YES];
+
+  XCTAssertEqual(newImage.size.width, 4);
+  XCTAssertEqual(newImage.size.height, 7);
+}
+
+- (void)testScaledImage_WideImage_ShouldBeScaledBelowMaxHeight {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  XCTAssertEqual(image.size.width, 12);
+  XCTAssertEqual(image.size.height, 7);
+  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
+                                                  maxWidth:@20
+                                                 maxHeight:@6
+                                       isMetadataAvailable:YES];
+
+  XCTAssertEqual(newImage.size.width, 10);
+  XCTAssertEqual(newImage.size.height, 6);
+}
+
+- (void)testScaledImage_WideImage_ShouldBeScaledBelowMaxWidth {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
+                                                  maxWidth:@10
+                                                 maxHeight:@10
+                                       isMetadataAvailable:YES];
+
+  XCTAssertEqual(newImage.size.width, 10);
+  XCTAssertEqual(newImage.size.height, 6);
+}
+
+- (void)testScaledImage_WideImage_ShouldNotBeScaledAboveOriginaWidthOrHeight {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
+                                                  maxWidth:@100
+                                                 maxHeight:@100
+                                       isMetadataAvailable:YES];
+
+  XCTAssertEqual(newImage.size.width, 12);
+  XCTAssertEqual(newImage.size.height, 7);
+}
+
 @end
