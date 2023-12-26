@@ -978,28 +978,28 @@ List<Error> _validateProxyApi(
   // Validate that the api does not inherit a non attached field from its super class.
   if (superClassChain != null &&
       superClassChain.isNotEmpty &&
-      superClassChain.first.nonAttachedFields.isNotEmpty) {
+      superClassChain.first.unattachedFields.isNotEmpty) {
     result.add(Error(
       message:
-          'Non attached fields can not be inherited. Non attached field found for parent class ${api.nonAttachedFields.first.name}',
+          'Non attached fields can not be inherited. Non attached field found for parent class ${api.unattachedFields.first.name}',
       lineNumber: _calculateLineNumberNullable(
         source,
-        api.nonAttachedFields.first.offset,
+        api.unattachedFields.first.offset,
       ),
     ));
   }
 
   for (final AstProxyApi proxyApi in proxyApis) {
     // Validate this api is not used as an attached field while either:
-    // 1. Having a non-attached field.
+    // 1. Having an unattached field.
     // 2. Having a required Flutter method.
-    final bool hasNonAttachedField = api.nonAttachedFields.isNotEmpty;
+    final bool hasUnattachedField = api.unattachedFields.isNotEmpty;
     final bool hasRequiredFlutterMethod =
         api.flutterMethods.any((Method method) => method.required);
-    if (hasNonAttachedField || hasRequiredFlutterMethod) {
+    if (hasUnattachedField || hasRequiredFlutterMethod) {
       for (final Field field in proxyApi.attachedFields) {
         if (field.type.baseName == api.name) {
-          if (hasNonAttachedField) {
+          if (hasUnattachedField) {
             result.add(Error(
               message:
                   'ProxyApis with fields can not be used as attached fields: ${field.name}',

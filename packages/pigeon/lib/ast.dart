@@ -173,7 +173,7 @@ class AstProxyApi extends Api {
   /// All fields that are not attached.
   ///
   /// See [attached].
-  Iterable<Field> get nonAttachedFields => fields.where(
+  Iterable<Field> get unattachedFields => fields.where(
         (Field field) => !field.isAttached,
       );
 
