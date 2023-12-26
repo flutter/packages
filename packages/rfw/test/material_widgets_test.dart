@@ -123,6 +123,28 @@ void main() {
                 ),
               ),
             ),
+            Divider(),
+            Padding(
+              padding: [20.0],
+              child: Center(
+                child: DropdownButton(
+                  value: 'foo',
+                  items: [
+                    {
+                      value: 'foo',
+                      child: Text(text: 'foo'),
+                      onTap: event 'menu_item' {},
+                    },
+                    {
+                      value: 'bar',
+                      child: Text(text: 'bar'),
+                      onTap: event 'menu_item' {},
+                    },
+                  ],
+                  onChanged: event 'dropdown' {},
+                ),
+              ),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -135,15 +157,28 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.scaffold.png'),
-      skip: !runGoldens,
+      // skip: !runGoldens,
     );
+
+    await tester.tap(find.byType(DropdownButton<Object>));
+    await tester.pumpAndSettle();
+    expect(find.text('bar'), findsOneWidget);
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/material_test.dropdown.png'),
+      // skip: !runGoldens,
+    );
+    // Dismiss dropdown.
+    await tester.tapAt(Offset.zero);
+    await tester.pumpAndSettle();
+
     await tester.tapAt(const Offset(20.0, 20.0));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.drawer.png'),
-      skip: !runGoldens,
+      // skip: !runGoldens,
     );
   });
 }

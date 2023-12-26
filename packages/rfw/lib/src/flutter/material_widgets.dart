@@ -210,7 +210,7 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       disabledHint: source.optionalChild(['disabledHint']),
       onChanged: source.handler(<Object>['onChanged'], (HandlerTrigger trigger) => (Object? value) => trigger(<String, Object?>{'value': value})),
       onTap: source.voidHandler(['onTap']),
-      elevation: (source.v<double>(['elevation']) ?? 8.0) as int,
+      elevation: source.v<int>(['elevation']) ?? 8,
       style: ArgumentDecoders.textStyle(source, ['style']),
       underline: source.optionalChild(['underline']),
       icon: source.optionalChild(['icon']),
