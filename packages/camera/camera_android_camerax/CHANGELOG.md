@@ -1,3 +1,8 @@
+## 0.5.0+25
+
+* Bumps CameraX version to 1.4.0-alpha03.
+* Bumps compileSdk version to 34.
+
 ## 0.5.0+24
 
 * Updates example app to use non-deprecated video_player method.
