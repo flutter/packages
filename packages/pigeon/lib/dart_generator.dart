@@ -1070,13 +1070,13 @@ class $codecName extends StandardMessageCodec {
           dartPackageName: dartPackageName,
           codecInstanceName: codecInstanceName,
           superClassApi: superClassApi,
-          nonAttachedFields: api.nonAttachedFields,
+          unattachedFields: api.unattachedFields,
           superClassFlutterMethods: superClassFlutterMethods,
           interfacesMethods: interfacesMethods,
           flutterMethods: api.flutterMethods,
         ))
         ..fields.addAll(_proxyApiFields(
-          nonAttachedFields: api.nonAttachedFields,
+          unattachedFields: api.unattachedFields,
           attachedFields: api.attachedFields,
           apiName: api.name,
           dartPackageName: dartPackageName,
@@ -1096,7 +1096,7 @@ class $codecName extends StandardMessageCodec {
           dartPackageName: dartPackageName,
           codecInstanceName: codecInstanceName,
           codecName: codecName,
-          nonAttachedFields: api.nonAttachedFields,
+          unattachedFields: api.unattachedFields,
           attachedFields: api.attachedFields,
           interfacesApis: interfacesApis,
           hasARequiredFlutterMethod: hasARequiredFlutterMethod,
@@ -1113,7 +1113,7 @@ class $codecName extends StandardMessageCodec {
     required String dartPackageName,
     required String codecInstanceName,
     required AstProxyApi? superClassApi,
-    required Iterable<Field> nonAttachedFields,
+    required Iterable<Field> unattachedFields,
     required Iterable<Method> superClassFlutterMethods,
     required Iterable<Method> interfacesMethods,
     required Iterable<Method> flutterMethods,
@@ -1150,7 +1150,7 @@ class $codecName extends StandardMessageCodec {
                       ..named = true
                       ..toSuper = true,
                   ),
-                  for (final Field field in nonAttachedFields)
+                  for (final Field field in unattachedFields)
                     cb.Parameter(
                       (cb.ParameterBuilder builder) => builder
                         ..name = field.name
@@ -1221,7 +1221,7 @@ class $codecName extends StandardMessageCodec {
                           cb.refer(
                             '${classMemberNamePrefix}instanceManager.addDartCreatedInstance(this)',
                           ),
-                          ...nonAttachedFields.mapIndexed(_hostMessageArgument),
+                          ...unattachedFields.mapIndexed(_hostMessageArgument),
                           ...constructor.parameters.mapIndexed(
                             _hostMessageArgument,
                           )
@@ -1312,7 +1312,7 @@ class $codecName extends StandardMessageCodec {
                 ..named = true
                 ..toSuper = true,
             ),
-            for (final Field field in nonAttachedFields)
+            for (final Field field in unattachedFields)
               cb.Parameter(
                 (cb.ParameterBuilder builder) => builder
                   ..name = field.name
@@ -1354,7 +1354,7 @@ class $codecName extends StandardMessageCodec {
   }
 
   Iterable<cb.Field> _proxyApiFields({
-    required Iterable<Field> nonAttachedFields,
+    required Iterable<Field> unattachedFields,
     required Iterable<Field> attachedFields,
     required String apiName,
     required String dartPackageName,
@@ -1375,7 +1375,7 @@ class $codecName extends StandardMessageCodec {
             ..assignment =
                 cb.Code('$codecName(${classMemberNamePrefix}instanceManager)'),
         ),
-      for (final Field field in nonAttachedFields)
+      for (final Field field in unattachedFields)
         cb.Field(
           (cb.FieldBuilder builder) => builder
             ..name = field.name
@@ -1466,7 +1466,7 @@ class $codecName extends StandardMessageCodec {
     required String dartPackageName,
     required String codecInstanceName,
     required String codecName,
-    required Iterable<Field> nonAttachedFields,
+    required Iterable<Field> unattachedFields,
     required Iterable<Field> attachedFields,
     required Iterable<AstProxyApi> interfacesApis,
     required bool hasARequiredFlutterMethod,
@@ -1493,14 +1493,14 @@ class $codecName extends StandardMessageCodec {
             if (!hasARequiredFlutterMethod)
               cb.Parameter(
                 (cb.ParameterBuilder builder) => builder
-                  ..name = '${classMemberNamePrefix}detached'
+                  ..name = '${classMemberNamePrefix}newInstance'
                   ..named = true
                   ..type = cb.FunctionType(
                     (cb.FunctionTypeBuilder builder) => builder
                       ..returnType = cb.refer(apiName)
                       ..isNullable = true
                       ..requiredParameters.addAll(
-                        nonAttachedFields.mapIndexed(
+                        unattachedFields.mapIndexed(
                           (int index, Field field) {
                             return cb.refer(
                               '${_addGenericTypesNullable(field.type)} ${_getParameterName(index, field)}',
@@ -1543,7 +1543,7 @@ class $codecName extends StandardMessageCodec {
               cb.Code(
                 "const String ${_varNamePrefix}channelName = r'${makeChannelNameWithStrings(
                   apiName: apiName,
-                  methodName: '${classMemberNamePrefix}detached',
+                  methodName: '${classMemberNamePrefix}newInstance',
                   dartPackageName: dartPackageName,
                 )}';",
               ),
@@ -1586,7 +1586,7 @@ class $codecName extends StandardMessageCodec {
                               'Argument for \$${_varNamePrefix}channelName was null, expected non-null int.',
                             ),
                           ),
-                          ...nonAttachedFields.foldIndexed<List<cb.Code>>(
+                          ...unattachedFields.foldIndexed<List<cb.Code>>(
                             <cb.Code>[],
                             (int index, List<cb.Code> previous, Field field) {
                               return previous
@@ -1600,8 +1600,9 @@ class $codecName extends StandardMessageCodec {
                               .property('addHostCreatedInstance')
                               .call(<cb.Expression>[
                             cb
-                                .refer('${classMemberNamePrefix}detached?.call')
-                                .call(nonAttachedFields.mapIndexed(
+                                .refer(
+                                    '${classMemberNamePrefix}newInstance?.call')
+                                .call(unattachedFields.mapIndexed(
                               (int index, Field field) {
                                 // The calling instance is the first arg.
                                 final String name = _getSafeArgumentName(
@@ -1625,7 +1626,7 @@ class $codecName extends StandardMessageCodec {
                                   '${classMemberNamePrefix}instanceManager':
                                       cb.refer(
                                           '${classMemberNamePrefix}instanceManager'),
-                                  ...nonAttachedFields.toList().asMap().map(
+                                  ...unattachedFields.toList().asMap().map(
                                     (int index, Field field) {
                                       final String argName =
                                           _getSafeArgumentName(
@@ -2030,7 +2031,7 @@ class $codecName extends StandardMessageCodec {
                         cb.refer('${classMemberNamePrefix}binaryMessenger'),
                     '${classMemberNamePrefix}instanceManager':
                         cb.refer('${classMemberNamePrefix}instanceManager'),
-                    for (final Field field in nonAttachedFields)
+                    for (final Field field in unattachedFields)
                       field.name: cb.refer(field.name),
                     for (final Method method in superClassFlutterMethods)
                       method.name: cb.refer(method.name),
