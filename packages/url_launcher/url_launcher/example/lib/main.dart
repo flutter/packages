@@ -234,7 +234,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () => setState(() {
                   _launched = _launchInAppWithBrowserOptions(toLaunch);
                 }),
-                child: const Text('Launch in app with showTitle'),
+                child: const Text('Launch in app with title displayed'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               Link(

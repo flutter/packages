@@ -50,7 +50,7 @@ class InAppWebViewConfiguration {
   final Map<String, String> headers;
 }
 
-/// Additional configuration options for [PreferredLaunchMode.inAppBrowserView]
+/// Additional configuration options for [PreferredLaunchMode.inAppBrowserView].
 @immutable
 class InAppBrowserConfiguration {
   /// Creates a new InAppBrowserConfiguration with given settings.
