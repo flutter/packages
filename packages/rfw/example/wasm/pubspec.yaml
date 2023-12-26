@@ -10,11 +10,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  js: ^0.6.7
   path: ^1.8.0
   path_provider: ^2.0.2
   rfw:
     path: ../../
   wasm: ">=0.1.0+1 <=2.0.0"
+  web: ^0.1.4-beta
 
 flutter:
   uses-material-design: true

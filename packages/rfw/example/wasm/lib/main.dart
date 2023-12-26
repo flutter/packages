@@ -5,14 +5,16 @@
 // This file is hand-formatted.
 
 import 'dart:async';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
-import 'package:path/path.dart' as path;
-import 'package:path_provider/path_provider.dart';
 import 'package:rfw/rfw.dart';
-import 'package:wasm/wasm.dart';
+
+import 'platforms/platform.dart';
+import 'platforms/stub.dart'
+  if (dart.library.io) 'platforms/desktop.dart'
+  if (dart.library.js_interop) 'platforms/web.dart';
 
 const String urlPrefix = 'https://raw.githubusercontent.com/flutter/packages/main/packages/rfw/example/wasm/logic';
 
@@ -20,7 +22,12 @@ const String interfaceUrl = '$urlPrefix/calculator.rfw';
 const String logicUrl = '$urlPrefix/calculator.wasm';
 
 void main() {
-  runApp(WidgetsApp(color: const Color(0xFF000000), builder: (BuildContext context, Widget? navigator) => const Example()));
+  runApp(
+    WidgetsApp(
+      color: const Color(0xFF000000),
+      builder: (BuildContext context, Widget? navigator) => const Example(),
+    ),
+  );
 }
 
 class Example extends StatefulWidget {
@@ -31,50 +38,50 @@ class Example extends StatefulWidget {
 }
 
 class _ExampleState extends State<Example> {
-  final Runtime _runtime = Runtime();
-  final DynamicContent _data = DynamicContent();
-  late final WasmInstance _logic;
+  final Runtime _rfwRuntime = Runtime();
+  final DynamicContent _rfwData = DynamicContent();
+
+  late final Network _network;
+  late final Wasm _wasm;
 
   @override
   void initState() {
     super.initState();
     RendererBinding.instance.deferFirstFrame();
-    _runtime.update(const LibraryName(<String>['core', 'widgets']), createCoreWidgets());
-    _loadLogic();
+    _rfwRuntime.update(
+      const LibraryName(<String>['core', 'widgets']),
+      createCoreWidgets(),
+    );
+
+    // These produce platform specific implementations for network fetching
+    // and Wasm loading and calling.
+    _network = NetworkImplementation();
+    _wasm = WasmImplementation(network: _network);
+
+    _loadRfwAndWasm();
   }
 
-  late final WasmFunction _dataFetcher;
+  Future<void> _loadRfwAndWasm() async {
+    final List<int> interfaceBytes = await _network.get(interfaceUrl);
+    _rfwRuntime.update(
+      const LibraryName(<String>['main']),
+      decodeLibraryBlob(Uint8List.fromList(interfaceBytes)),
+    );
 
-  Future<void> _loadLogic() async {
-    final DateTime expiryDate = DateTime.now().subtract(const Duration(hours: 6));
-    final Directory home = await getApplicationSupportDirectory();
-    final File interfaceFile = File(path.join(home.path, 'cache.rfw'));
-    if (!interfaceFile.existsSync() || interfaceFile.lastModifiedSync().isBefore(expiryDate)) {
-      final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse(interfaceUrl))).close();
-      await interfaceFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
-    }
-    final File logicFile = File(path.join(home.path, 'cache.wasm'));
-    if (!logicFile.existsSync() || logicFile.lastModifiedSync().isBefore(expiryDate)) {
-      final HttpClientResponse client = await (await HttpClient().getUrl(Uri.parse(logicUrl))).close();
-      await logicFile.writeAsBytes(await client.expand((List<int> chunk) => chunk).toList());
-    }
-    _runtime.update(const LibraryName(<String>['main']), decodeLibraryBlob(await interfaceFile.readAsBytes()));
-    _logic = WasmModule(await logicFile.readAsBytes()).builder().build();
-    _dataFetcher = _logic.lookupFunction('value') as WasmFunction;
+    await _wasm.loadModule(logicUrl);
+
     _updateData();
     setState(() { RendererBinding.instance.allowFirstFrame(); });
   }
 
   void _updateData() {
-    final dynamic value = _dataFetcher.apply(const <Object?>[]);
-    _data.update('value', <String, Object?>{ 'numeric': value, 'string': value.toString() });
-  }
-
-  List<Object?> _asList(Object? value) {
-    if (value is List<Object?>) {
-      return value;
-    }
-    return const <Object?>[];
+    // Retrieve the calculator value from Wasm.
+    final int value = _wasm.callFunction<int>('value', null);
+    // Push the calculator value to RFW.
+    _rfwData.update(
+      'value',
+      <String, Object?>{ 'numeric': value, 'string': value.toString() },
+    );
   }
 
   @override
@@ -83,12 +90,18 @@ class _ExampleState extends State<Example> {
       return const SizedBox.shrink();
     }
     return RemoteWidget(
-      runtime: _runtime,
-      data: _data,
-      widget: const FullyQualifiedWidgetName(LibraryName(<String>['main']), 'root'),
+      runtime: _rfwRuntime,
+      data: _rfwData,
+      widget: const FullyQualifiedWidgetName(
+        LibraryName(<String>['main']),
+        'root',
+      ),
       onEvent: (String name, DynamicMap arguments) {
-        final WasmFunction function = _logic.lookupFunction(name) as WasmFunction;
-        function.apply(_asList(arguments['arguments']));
+        final Object? rfwArguments = arguments['arguments'];
+        // Call Wasm calculator function.
+        _wasm.callFunction(name, rfwArguments == null
+            ? const <Object>[]
+            : rfwArguments as List<Object?>);
         _updateData();
       },
     );
