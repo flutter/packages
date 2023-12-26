@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsIntent;
-import io.flutter.plugins.urllauncher.Messages.BrowserOptions;
 import io.flutter.plugins.urllauncher.Messages.UrlLauncherApi;
 import io.flutter.plugins.urllauncher.Messages.WebViewOptions;
 import java.util.Collections;
@@ -99,20 +98,17 @@ final class UrlLauncher implements UrlLauncherApi {
 
   @Override
   public @NonNull Boolean openUrlInApp(
-      @NonNull String url,
-      @NonNull Boolean allowCustomTab,
-      @NonNull WebViewOptions webViewOptions,
-      @NonNull BrowserOptions browserOptions) {
+      @NonNull String url, @NonNull Boolean allowCustomTab, @NonNull WebViewOptions options) {
     ensureActivity();
     assert activity != null;
 
-    Bundle headersBundle = extractBundle(webViewOptions.getHeaders());
+    Bundle headersBundle = extractBundle(options.getHeaders());
 
     // Try to launch using Custom Tabs if they have the necessary functionality, unless the caller
     // specifically requested a web view.
-    if (allowCustomTab && !containsRestrictedHeader(webViewOptions.getHeaders())) {
+    if (allowCustomTab && !containsRestrictedHeader(options.getHeaders())) {
       Uri uri = Uri.parse(url);
-      if (openCustomTab(activity, uri, headersBundle, browserOptions)) {
+      if (openCustomTab(activity, uri, headersBundle)) {
         return true;
       }
     }
@@ -122,8 +118,8 @@ final class UrlLauncher implements UrlLauncherApi {
         WebViewActivity.createIntent(
             activity,
             url,
-            webViewOptions.getEnableJavaScript(),
-            webViewOptions.getEnableDomStorage(),
+            options.getEnableJavaScript(),
+            options.getEnableDomStorage(),
             headersBundle);
     try {
       activity.startActivity(launchIntent);
@@ -145,14 +141,9 @@ final class UrlLauncher implements UrlLauncherApi {
   }
 
   private static boolean openCustomTab(
-      @NonNull Context context,
-      @NonNull Uri uri,
-      @NonNull Bundle headersBundle,
-      @NonNull BrowserOptions options) {
-    CustomTabsIntent customTabsIntent =
-        new CustomTabsIntent.Builder().setShowTitle(options.getShowTitle()).build();
+      @NonNull Context context, @NonNull Uri uri, @NonNull Bundle headersBundle) {
+    CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
     customTabsIntent.intent.putExtra(Browser.EXTRA_HEADERS, headersBundle);
-
     try {
       customTabsIntent.launchUrl(context, uri);
     } catch (ActivityNotFoundException ex) {

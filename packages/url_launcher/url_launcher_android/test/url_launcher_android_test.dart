@@ -64,7 +64,6 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
-
       expect(launched, true);
       expect(api.usedWebView, false);
       expect(api.passedWebViewOptions?.headers, isEmpty);
@@ -165,20 +164,6 @@ void main() {
       );
 
       expect(api.passedWebViewOptions?.enableDomStorage, true);
-    });
-
-    test('passes showTitle to webview', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
-      await launcher.launchUrl(
-        'http://example.com/',
-        const LaunchOptions(
-          browserConfiguration: InAppBrowserConfiguration(
-            showTitle: true,
-          ),
-        ),
-      );
-
-      expect(api.passedBrowserOptions?.showTitle, true);
     });
 
     test('passes through no-activity exception', () async {
@@ -415,7 +400,6 @@ void main() {
 class _FakeUrlLauncherApi implements UrlLauncherApi {
   bool hasCustomTabSupport = true;
   WebViewOptions? passedWebViewOptions;
-  BrowserOptions? passedBrowserOptions;
   bool? usedWebView;
   bool? allowedCustomTab;
   bool? closed;
@@ -431,11 +415,7 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   @override
   Future<bool> launchUrl(String url, Map<String?, String?> headers) async {
     passedWebViewOptions = WebViewOptions(
-      enableJavaScript: false,
-      enableDomStorage: false,
-      headers: headers,
-    );
-
+        enableJavaScript: false, enableDomStorage: false, headers: headers);
     usedWebView = false;
     return _launch(url);
   }
@@ -447,13 +427,8 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
 
   @override
   Future<bool> openUrlInApp(
-    String url,
-    bool allowCustomTab,
-    WebViewOptions webViewOptions,
-    BrowserOptions browserOptions,
-  ) async {
-    passedWebViewOptions = webViewOptions;
-    passedBrowserOptions = browserOptions;
+      String url, bool allowCustomTab, WebViewOptions options) async {
+    passedWebViewOptions = options;
     usedWebView = true;
     allowedCustomTab = allowCustomTab;
     return _launch(url);

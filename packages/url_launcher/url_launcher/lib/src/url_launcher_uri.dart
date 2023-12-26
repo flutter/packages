@@ -40,7 +40,6 @@ Future<bool> launchUrl(
   Uri url, {
   LaunchMode mode = LaunchMode.platformDefault,
   WebViewConfiguration webViewConfiguration = const WebViewConfiguration(),
-  BrowserConfiguration browserConfiguration = const BrowserConfiguration(),
   String? webOnlyWindowName,
 }) async {
   if ((mode == LaunchMode.inAppWebView ||
@@ -53,8 +52,7 @@ Future<bool> launchUrl(
     url.toString(),
     LaunchOptions(
       mode: convertLaunchMode(mode),
-      webViewConfiguration: convertWebViewConfiguration(webViewConfiguration),
-      browserConfiguration: convertBrowserConfiguration(browserConfiguration),
+      webViewConfiguration: convertConfiguration(webViewConfiguration),
       webOnlyWindowName: webOnlyWindowName,
     ),
   );
