@@ -31,7 +31,7 @@
 
 ## 2.3.4
 
-* Adds support for patterns in polylines on iOS
+* Adds support for patterns in polylines on iOS.
 
 ## 2.3.3
 
