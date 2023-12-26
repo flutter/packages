@@ -8,6 +8,7 @@ import 'package:meta/meta.dart' show immutable;
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
+import 'metering_point.dart';
 import 'java_object.dart';
 
 /// somethin

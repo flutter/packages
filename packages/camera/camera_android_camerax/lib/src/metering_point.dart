@@ -17,9 +17,9 @@ class MeteringPoint extends JavaObject {
   MeteringPoint({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    required double x,
-    required double y,
-    required double? size,
+    required this.x,
+    required this.y,
+    required this.size,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -35,6 +35,9 @@ class MeteringPoint extends JavaObject {
   MeteringPoint.detached({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
+    required this.x,
+    required this.y,
+    required this.size,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -46,11 +49,22 @@ class MeteringPoint extends JavaObject {
 
   late final _MeteringPointHostApiImpl _api;
 
-  /// something
-  Future<double> getDefaultPointSize() => _api.getDefaultPointSize();
+  /// somethin
+  final double x;
 
   /// somethin
-  Future<double> getSize() => _api.getSizeFromInstance(this);
+  final double y;
+
+  /// somethin
+  final double? size;
+
+  /// something
+  static Future<double> getDefaultPointSize(
+      {BinaryMessenger? binaryMessenger}) {
+    final MeteringPointHostApi hostApi =
+        MeteringPointHostApi(binaryMessenger: binaryMessenger);
+    return hostApi.getDefaultPointSize();
+  }
 }
 
 /// Host API implementation of [MeteringPoint].
@@ -77,46 +91,19 @@ class _MeteringPointHostApiImpl extends MeteringPointHostApi {
   /// Maintains instances stored to communicate with native language objects.
   late final InstanceManager instanceManager;
 
-  /// somethin
-  Future<double> getSizeFromInstance(MeteringPoint instance) {
-    final int identifier = instanceManager.getIdentifier(instance)!;
-    return getSize(identifier);
-  }
-}
+  Future<void> createFromInstance(
+      MeteringPoint instance, double x, double y, double? size) {
+    int? identifier = instanceManager.getIdentifier(instance);
+    identifier ??= instanceManager.addDartCreatedInstance(instance,
+        onCopy: (MeteringPoint original) {
+      return MeteringPoint.detached(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+          x: original.x,
+          y: original.y,
+          size: original.size);
+    });
 
-/// Flutter API implementation of [MeteringPoint].
-class MeteringPointFlutterApiImpl extends MeteringPointFlutterApi {
-  /// Constructs a [MeteringPointFlutterApiImpl].
-  ///
-  /// If [binaryMessenger] is null, the default [BinaryMessenger] will be used,
-  /// which routes to the host platform.
-  ///
-  /// An [instanceManager] is typically passed when a copy of an instance
-  /// contained by an [InstanceManager] is being created. If left null, it
-  /// will default to the global instance defined in [JavaObject].
-  MeteringPointFlutterApiImpl({
-    BinaryMessenger? binaryMessenger,
-    InstanceManager? instanceManager,
-  })  : _binaryMessenger = binaryMessenger,
-        _instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
-
-  /// Receives binary data across the Flutter platform barrier.
-  final BinaryMessenger? _binaryMessenger;
-
-  /// Maintains instances stored to communicate with native language objects.
-  final InstanceManager _instanceManager;
-
-  @override
-  void create(int identifier) {
-    _instanceManager.addHostCreatedInstance(
-      MeteringPoint.detached(
-          binaryMessenger: _binaryMessenger, instanceManager: _instanceManager),
-      identifier,
-      onCopy: (MeteringPoint original) {
-        return MeteringPoint.detached(
-            binaryMessenger: _binaryMessenger,
-            instanceManager: _instanceManager);
-      },
-    );
+    return create(identifier, x, y, size);
   }
 }

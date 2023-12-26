@@ -446,13 +446,13 @@ abstract class CameraControlHostApi {
   void setZoomRatio(int identifier, double ratio);
 
   @async
-  int setExposureCompensationIndex(int identifier, int index);
-
-  @async
   int startFocusAndMetering(int identifier, int focusMeteringActionId);
 
   @async
-  void cancelFocusAndMetering(int identiier);
+  void cancelFocusAndMetering(int identifier);
+
+  @async
+  int setExposureCompensationIndex(int identifier, int index);
 }
 
 @FlutterApi()
@@ -487,8 +487,6 @@ abstract class MeteringPointHostApi {
   void create(int identifier, double x, double y, double? size);
 
   double getDefaultPointSize();
-
-  double getSize(int identifier);
 }
 
 @HostApi(dartHostTestHandler: 'TestDisplayOrientedMeteringPointFactoryHostApi')

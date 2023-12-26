@@ -77,7 +77,6 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
           ContextCompat.getMainExecutor(context));
     }
 
-    @NonNull
     public void startFocusAndMetering(
         @NonNull CameraControl cameraControl,
         @NonNull FocusMeteringAction focusMeteringAction,
@@ -101,6 +100,39 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
           },
           ContextCompat.getMainExecutor(context));
     }
+
+   public void cancelFocusAndMetering(@NonNull CameraControl cameraControl, @NonNull Result<Void> result) {
+      ListenableFuture<Void> cancelFocusAndMeteringFuture = cameraControl.cancelFocusAndMetering();
+
+      Futures.addCallback(
+        cancelFocusAndMeteringFuture,
+        new FutureCallback<Void>() {
+          public void onSuccess(Void voidResult) {
+            result.success(null);
+          }
+
+          public void onFailure(Throwable t) {
+            result.error(t);
+          }
+        },
+        ContextCompat.getMainExecutor(context));
+    }
+
+    public void setExposureCompensationIndex(@NonNull CameraControl cameraControl, @NonNull Long index, @NonNull Result<Long> result) {
+      ListenableFuture<Integer> setExposureCompensationIndexFuture = cameraControl.setExposureCompensationIndex(index.intValue());
+
+      Futures.addCallback(
+        setExposureCompensationIndexFuture,
+        new FutureCallback<Integer>() {
+          public void onSuccess(Integer integerResult) {
+            result.success(integerResult);
+          }
+
+          public void onFailure(Throwable t) {
+            result.error(t);
+          }
+        },
+        ContextCompat.getMainExecutor(context));
   }
 
   /**
@@ -165,6 +197,17 @@ public class CameraControlHostApiImpl implements CameraControlHostApi {
         Objects.requireNonNull(instanceManager.getInstance(focusMeteringActionId)),
         result);
   }
+
+  @Override
+  public void cancelFocusAndMetering(@NonNull Long identifier, @NonNull Result<Void> result) {
+    proxy.cancelFocusAndMetering(getCameraControlInstance(identifier), result);
+  }
+
+  @Override
+  public void setExposureCompensationIndex(@NonNull Long identifier, @NonNull Long index, @NonNull Result<Long> result) {
+    proxy.setExposureCompensationIndex(getCameraControlInstance(identifier), index, result);
+  }
+
 
   private CameraControl getCameraControlInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));

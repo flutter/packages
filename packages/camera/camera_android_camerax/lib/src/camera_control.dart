@@ -7,6 +7,7 @@ import 'package:meta/meta.dart' show immutable;
 
 import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
+import 'focus_metering_action.dart';
 import 'focus_metering_result.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
@@ -50,18 +51,11 @@ class CameraControl extends JavaObject {
     return _api.setZoomRatioFromInstance(this, ratio);
   }
 
-  /// Set the exposure compensation value for related [Camera].
-  ///
-  /// Returns null if the exposure compensation index failed to be set.
-  Future<int?> setExposureCompensationIndex(int index) async {
-    return _api.setExposureCompensationIndexFromInstance(this, index);
-  }
-
   /// Starts a focus and metering action configured by the [FocusMeteringAction].
   ///
   /// will trigger an auto focus action and enable auto focus (AF)/auto exposure
   /// (AE)/auto white balance (AWB) metering regions.
-  Future<FocusMeteringResult> startFocusAndMetering(
+  Future<FocusMeteringResult?> startFocusAndMetering(
       FocusMeteringAction action) {
     return _api.startFocusAndMeteringFromInstance(this, action);
   }
@@ -69,6 +63,13 @@ class CameraControl extends JavaObject {
   /// Cancels current FocusMeteringAction and clears AF/AE/AWB regions.
   Future<void> cancelFocusAndMetering() =>
       _api.cancelFocusAndMeteringFromInstance(this);
+
+  /// Set the exposure compensation value for related [Camera].
+  ///
+  /// Returns null if the exposure compensation index failed to be set.
+  Future<int?> setExposureCompensationIndex(int index) async {
+    return _api.setExposureCompensationIndexFromInstance(this, index);
+  }
 }
 
 /// Host API implementation of [CameraControl].
@@ -116,19 +117,6 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
     }
   }
 
-  /// Sets exposure compensation index for specified [CameraControl] instance.
-  Future<int?> setExposureCompensationIndexFromInstance(
-      CameraControl instance, int index) async {
-    final int identifier = instanceManager.getIdentifier(instance)!;
-    try {
-      return setExposureCompensationIndex(identifier, index);
-    } on PlatformException catch (e) {
-      SystemServices.cameraErrorStreamController.add(
-          e.message ?? 'Setting the camera xposure compensation index failed.');
-      return Future<int?>.value();
-    }
-  }
-
   /// Starts a focus and metering action configured by the [FocusMeteringAction]
   /// for the specified [CameraControl] instance.
   Future<FocusMeteringResult?> startFocusAndMeteringFromInstance(
@@ -154,6 +142,19 @@ class _CameraControlHostApiImpl extends CameraControlHostApi {
       CameraControl instance) async {
     final int identifier = instanceManager.getIdentifier(instance)!;
     await cancelFocusAndMetering(identifier);
+  }
+
+  /// Sets exposure compensation index for specified [CameraControl] instance.
+  Future<int?> setExposureCompensationIndexFromInstance(
+      CameraControl instance, int index) async {
+    final int identifier = instanceManager.getIdentifier(instance)!;
+    try {
+      return setExposureCompensationIndex(identifier, index);
+    } on PlatformException catch (e) {
+      SystemServices.cameraErrorStreamController.add(
+          e.message ?? 'Setting the camera xposure compensation index failed.');
+      return Future<int?>.value();
+    }
   }
 }
 
