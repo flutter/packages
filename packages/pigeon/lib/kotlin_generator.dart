@@ -898,7 +898,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             documentationComments: constructor.documentationComments,
             isAbstract: true,
             parameters: <Parameter>[
-              ...api.nonAttachedFields.map((Field field) {
+              ...api.unattachedFields.map((Field field) {
                 return Parameter(
                   name: field.name,
                   type: field.type,
@@ -910,7 +910,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           indent.newln();
         }
 
-        for (final Field field in api.nonAttachedFields) {
+        for (final Field field in api.unattachedFields) {
           _writeMethodDeclaration(
             indent,
             name: field.name,
@@ -993,7 +993,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                         isNullable: false,
                       ),
                     ),
-                    ...api.nonAttachedFields.map((Field field) {
+                    ...api.unattachedFields.map((Field field) {
                       return Parameter(
                         name: field.name,
                         type: field.type,
@@ -1033,7 +1033,6 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
 
         final String errorClassName = _getErrorClassName(generatorOptions);
 
-        // TODO: change name for dart generator in PR (detached to newInstance)
         // TODO: Solution is to write method declartion and then have a writeBody(indent)
         // TODO: _writeFlutterMethod should use writeMethodDeclaration
         // TODO: add proxapi new instance call to all flutter methods
@@ -1083,7 +1082,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             indent.writeln(
               'val ${classMemberNamePrefix}identifierArg = ${classMemberNamePrefix}instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
             );
-            api.nonAttachedFields.forEachIndexed((int index, Field field) {
+            api.unattachedFields.forEachIndexed((int index, Field field) {
               final String argName = _getSafeArgumentName(index, field);
               indent.writeln(
                 'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
@@ -1117,7 +1116,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                     isNullable: false,
                   ),
                 ),
-                ...api.nonAttachedFields.mapIndexed(
+                ...api.unattachedFields.mapIndexed(
                   (int index, Field field) {
                     return Parameter(
                       name: field.name,
