@@ -3682,7 +3682,7 @@ abstract class ProxyIntegrationCoreApi_Api(
 
   /** Returns the passed in string. */
   abstract fun echoNullableString(
-      pigeon_instance: ProxyIntegrationCoreApi,
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
       aNullableString: String?
   ): String?
 
@@ -4370,7 +4370,7 @@ abstract class ProxyIntegrationCoreApi_Api(
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as ProxyIntegrationCoreApi
+            val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
             val aMapArg = args[1] as Map<String?, Any?>
             var wrapped: List<Any?>
             try {

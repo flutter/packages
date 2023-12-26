@@ -884,6 +884,10 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         );
         indent.newln();
 
+        // TODO: go through all fields and flutterMethods to see which apis are needed
+        // TODO: add direct get_superClassApi and getInterfaceApi
+        // TODO: return values for host methods must also call new_instance
+        // TODO: handle lists as well
         for (final Constructor constructor in api.constructors) {
           _writeMethodDeclaration(
             indent,
@@ -1444,6 +1448,20 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                   indent.writeln('reply.reply(wrapResult(null))');
                 } else {
                   indent.writeln('val data = result.getOrNull()');
+                  if (returnType.isProxyApi) {
+                    final String apiAccess = returnType.baseName == api.name
+                        ? ''
+                        : '${classMemberNamePrefix}get${returnType.baseName}Api().';
+                    final String newInstanceCall =
+                        '$apiAccess${classMemberNamePrefix}newInstance(data) { }';
+                    if (returnType.isNullable) {
+                      indent.writeScoped('if (data != null) {', '}', () {
+                        indent.writeln(newInstanceCall);
+                      });
+                    } else {
+                      indent.writeln(newInstanceCall);
+                    }
+                  }
                   indent.writeln('reply.reply(wrapResult(data$enumTag))');
                 }
               });

@@ -702,7 +702,11 @@ class TestMessage {
 
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
-@ProxyApi()
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.example.test_plugin.ProxyIntegrationCoreApi',
+  ),
+)
 abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     implements ProxyApiInterface {
   ProxyIntegrationCoreApi(
