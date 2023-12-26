@@ -932,25 +932,31 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           indent.newln();
         }
 
-        for (final Field field in api.unattachedFields) {
-          _writeMethodDeclaration(
-            indent,
-            name: field.name,
-            documentationComments: api.documentationComments,
-            returnType: field.type,
-            isAbstract: true,
-            parameters: <Parameter>[
-              Parameter(
-                name: '${classMemberNamePrefix}instance',
-                type: TypeDeclaration(
-                  baseName: api.name,
-                  isNullable: false,
-                  associatedProxyApi: api,
+        final bool hasCallbackConstructor = api.flutterMethods.every(
+          (Method method) => !method.required,
+        );
+
+        if (hasCallbackConstructor) {
+          for (final Field field in api.unattachedFields) {
+            _writeMethodDeclaration(
+              indent,
+              name: field.name,
+              documentationComments: api.documentationComments,
+              returnType: field.type,
+              isAbstract: true,
+              parameters: <Parameter>[
+                Parameter(
+                  name: '${classMemberNamePrefix}instance',
+                  type: TypeDeclaration(
+                    baseName: api.name,
+                    isNullable: false,
+                    associatedProxyApi: api,
+                  ),
                 ),
-              ),
-            ],
-          );
-          indent.newln();
+              ],
+            );
+            indent.newln();
+          }
         }
 
         for (final Method method in api.hostMethods) {
@@ -1056,100 +1062,102 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         indent.newln();
 
         final String errorClassName = _getErrorClassName(generatorOptions);
-
-        indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
         const String newInstanceMethodName =
             '${classMemberNamePrefix}newInstance';
-        _writeFlutterMethod(
-          indent,
-          name: newInstanceMethodName,
-          returnType: const TypeDeclaration.voidDeclaration(),
-          documentationComments: <String>[
-            'Creates a Dart instance of $apiName and attaches it to [${classMemberNamePrefix}instanceArg].',
-          ],
-          channelName: makeChannelNameWithStrings(
-            apiName: api.name,
-            methodName: newInstanceMethodName,
-            dartPackageName: dartPackageName,
-          ),
-          errorClassName: errorClassName,
-          dartPackageName: dartPackageName,
-          parameters: <Parameter>[
-            Parameter(
-              name: '${classMemberNamePrefix}instance',
-              type: TypeDeclaration(
-                baseName: api.name,
-                isNullable: false,
-                associatedProxyApi: api,
-              ),
-            ),
-          ],
-          onWriteBody: (
-            Indent indent, {
-            required List<Parameter> parameters,
-            required TypeDeclaration returnType,
-            required String channelName,
-            required String errorClassName,
-          }) {
-            indent.writeScoped(
-              'if (${classMemberNamePrefix}instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
-              '}',
-              () {
-                indent.writeln('Result.success(Unit)');
-                indent.writeln('return');
-              },
-            );
 
-            indent.writeln(
-              'val ${classMemberNamePrefix}identifierArg = ${classMemberNamePrefix}instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
-            );
-            api.unattachedFields.forEachIndexed((int index, Field field) {
-              final String argName = _getSafeArgumentName(index, field);
-              indent.writeln(
-                'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+        if (hasCallbackConstructor) {
+          indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
+          _writeFlutterMethod(
+            indent,
+            name: newInstanceMethodName,
+            returnType: const TypeDeclaration.voidDeclaration(),
+            documentationComments: <String>[
+              'Creates a Dart instance of $apiName and attaches it to [${classMemberNamePrefix}instanceArg].',
+            ],
+            channelName: makeChannelNameWithStrings(
+              apiName: api.name,
+              methodName: newInstanceMethodName,
+              dartPackageName: dartPackageName,
+            ),
+            errorClassName: errorClassName,
+            dartPackageName: dartPackageName,
+            parameters: <Parameter>[
+              Parameter(
+                name: '${classMemberNamePrefix}instance',
+                type: TypeDeclaration(
+                  baseName: api.name,
+                  isNullable: false,
+                  associatedProxyApi: api,
+                ),
+              ),
+            ],
+            onWriteBody: (
+              Indent indent, {
+              required List<Parameter> parameters,
+              required TypeDeclaration returnType,
+              required String channelName,
+              required String errorClassName,
+            }) {
+              indent.writeScoped(
+                'if (${classMemberNamePrefix}instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+                '}',
+                () {
+                  indent.writeln('Result.success(Unit)');
+                  indent.writeln('return');
+                },
               );
 
-              if (field.type.isProxyApi) {
-                final String apiAccess = field.type.baseName == api.name
-                    ? ''
-                    : '${classMemberNamePrefix}get${field.type.baseName}Api().';
-                final String newInstanceCall =
-                    '$apiAccess$newInstanceMethodName($argName) { }';
-                if (field.type.isNullable) {
-                  indent.writeScoped('if ($argName != null) {', '}', () {
+              indent.writeln(
+                'val ${classMemberNamePrefix}identifierArg = ${classMemberNamePrefix}instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
+              );
+              api.unattachedFields.forEachIndexed((int index, Field field) {
+                final String argName = _getSafeArgumentName(index, field);
+                indent.writeln(
+                  'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+                );
+
+                if (field.type.isProxyApi) {
+                  final String apiAccess = field.type.baseName == api.name
+                      ? ''
+                      : '${classMemberNamePrefix}get${field.type.baseName}Api().';
+                  final String newInstanceCall =
+                      '$apiAccess$newInstanceMethodName($argName) { }';
+                  if (field.type.isNullable) {
+                    indent.writeScoped('if ($argName != null) {', '}', () {
+                      indent.writeln(newInstanceCall);
+                    });
+                  } else {
                     indent.writeln(newInstanceCall);
-                  });
-                } else {
-                  indent.writeln(newInstanceCall);
+                  }
                 }
-              }
-            });
-            _writeFlutterMethodMessageCall(
-              indent,
-              returnType: returnType,
-              channelName: channelName,
-              errorClassName: errorClassName,
-              parameters: <Parameter>[
-                Parameter(
-                  name: '${classMemberNamePrefix}identifier',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: false,
+              });
+              _writeFlutterMethodMessageCall(
+                indent,
+                returnType: returnType,
+                channelName: channelName,
+                errorClassName: errorClassName,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: '${classMemberNamePrefix}identifier',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: false,
+                    ),
                   ),
-                ),
-                ...api.unattachedFields.mapIndexed(
-                  (int index, Field field) {
-                    return Parameter(
-                      name: field.name,
-                      type: field.type,
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        );
-        indent.newln();
+                  ...api.unattachedFields.mapIndexed(
+                    (int index, Field field) {
+                      return Parameter(
+                        name: field.name,
+                        type: field.type,
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+          indent.newln();
+        }
 
         for (final Method method in api.flutterMethods) {
           _writeFlutterMethod(

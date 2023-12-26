@@ -215,15 +215,10 @@ class HostDatatype {
 ///
 /// [customResolver] can modify the datatype of custom types.
 HostDatatype getFieldHostDatatype(
-  NamedType field,
-  String? Function(TypeDeclaration) builtinResolver, {
-  String Function(AstProxyApi)? proxyApiResolver,
-  String Function(String)? customResolver,
-}) {
+    NamedType field, String? Function(TypeDeclaration) builtinResolver,
+    {String Function(String)? customResolver}) {
   return _getHostDatatype(field.type, builtinResolver,
-      proxyApiResolver: proxyApiResolver,
-      customResolver: customResolver,
-      fieldName: field.name);
+      customResolver: customResolver, fieldName: field.name);
 }
 
 /// Calculates the [HostDatatype] for the provided [TypeDeclaration].
@@ -235,17 +230,14 @@ HostDatatype getFieldHostDatatype(
 /// [customResolver] can modify the datatype of custom types.
 HostDatatype getHostDatatype(
     TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
-    {String Function(AstProxyApi)? proxyApiResolver,
-    String Function(String)? customResolver}) {
+    {String Function(String)? customResolver}) {
   return _getHostDatatype(type, builtinResolver,
-      proxyApiResolver: proxyApiResolver, customResolver: customResolver);
+      customResolver: customResolver);
 }
 
 HostDatatype _getHostDatatype(
     TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
-    {String Function(AstProxyApi)? proxyApiResolver,
-    String Function(String)? customResolver,
-    String? fieldName}) {
+    {String Function(String)? customResolver, String? fieldName}) {
   final String? datatype = builtinResolver(type);
   if (datatype == null) {
     if (type.isClass) {
@@ -268,19 +260,6 @@ HostDatatype _getHostDatatype(
         isNullable: type.isNullable,
         isEnum: true,
       );
-    } else if (type.isProxyApi) {
-      if (proxyApiResolver != null) {
-        final String customName = customResolver?.call(type.baseName) ??
-            proxyApiResolver(type.associatedProxyApi!);
-        return HostDatatype(
-          datatype: customName,
-          isBuiltin: false,
-          isNullable: type.isNullable,
-          isEnum: false,
-        );
-      }
-      throw Exception(
-          'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"');
     } else {
       throw Exception(
           'unrecognized datatype ${fieldName == null ? '' : 'for field:"$fieldName" '}of type:"${type.baseName}"');
@@ -739,8 +718,11 @@ Set<String> namesOfAllProxyApisReturnedToDart(AstProxyApi api) {
 
   names.addAll(api.interfacesNames);
 
-  // TODO: get bool has required flutter method
-  api.unattachedFields.forEach(addIfProxyApi);
+  // If any Flutter methods are required, there won't be a callback constructor
+  // that use the unattached fields.
+  if (api.flutterMethods.any((Method method) => method.required)) {
+    api.unattachedFields.forEach(addIfProxyApi);
+  }
 
   for (final Method method in api.methods) {
     switch (method.location) {
