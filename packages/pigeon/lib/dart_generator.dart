@@ -1392,7 +1392,30 @@ class $codecName extends StandardMessageCodec {
             ..name = method.name
             ..modifier = cb.FieldModifier.final$
             ..docs.addAll(asDocumentationComments(
-              method.documentationComments,
+              <String>[
+                ...method.documentationComments,
+                ...<String>[
+                  if (method.documentationComments.isNotEmpty) '',
+                  'Dart:',
+                  'For the associated Native object to be automatically garbage collected,',
+                  "it is required that the implementation of this `Function` doesn't have a",
+                  'strong reference to the encapsulating class instance. When this `Function`',
+                  'references a non-local variable, it is strongly recommended to access it',
+                  'from a `WeakReference`:',
+                  '',
+                  '```dart',
+                  'final WeakReference weakMyVariable = WeakReference(myVariable);',
+                  'final MyClass instance = MyClass(',
+                  '  myCallbackMethod: (_) {',
+                  '    print(weakMyVariable?.target);',
+                  '  },',
+                  ');',
+                  '```',
+                  '',
+                  'Alternatively, `$instanceManagerClassName.removeWeakReference` can be used to',
+                  'release the associated Native object manually.',
+                ],
+              ],
               _docCommentSpec,
             ))
             ..type = cb.FunctionType(

@@ -1140,17 +1140,32 @@ List<Error> _validateProxyApi(
   for (final Field field in api.fields) {
     if (isDataClass(field)) {
       result.add(unsupportedDataClassError(field));
-    } else if (!isProxyApi(field)) {
-      if (field.isStatic) {
+    } else if (field.isStatic) {
+      if (!isProxyApi(field)) {
         result.add(Error(
           message:
               'Static fields are considered attached fields and must be a ProxyApi: ${field.type.baseName}.',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
-      } else if (field.isAttached) {
+      } else if (field.type.isNullable) {
+        result.add(Error(
+          message:
+              'Static fields are considered attached fields and must not be nullable: ${field.type.baseName}.',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      }
+    } else if (field.isAttached) {
+      if (!isProxyApi(field)) {
         result.add(Error(
           message:
               'Attached fields must be a ProxyApi: ${field.type.baseName}.',
+          lineNumber: _calculateLineNumberNullable(source, field.offset),
+        ));
+      }
+      if (field.type.isNullable) {
+        result.add(Error(
+          message:
+              'Attached fields must not be nullable: ${field.type.baseName}.',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
