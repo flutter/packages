@@ -1036,6 +1036,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         // TODO: change name for dart generator in PR (detached to newInstance)
         // TODO: Solution is to write method declartion and then have a writeBody(indent)
         // TODO: _writeFlutterMethod should use writeMethodDeclaration
+        // TODO: add proxapi new instance call to all flutter methods
         indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
         const String newInstanceMethodName =
             '${classMemberNamePrefix}newInstance';
@@ -1088,15 +1089,19 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                 'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
               );
 
-              if (field.type.isProxyApi && field.type.isNullable) {
-                indent.writeScoped('if ($argName != null) {', '}', () {
-                  final String apiAccess = field.type.baseName == api.name
-                      ? ''
-                      : '${classMemberNamePrefix}get${field.type.baseName}Api().';
-                  indent.writeln(
-                    '$apiAccess$newInstanceMethodName($argName) { }',
-                  );
-                });
+              if (field.type.isProxyApi) {
+                final String apiAccess = field.type.baseName == api.name
+                    ? ''
+                    : '${classMemberNamePrefix}get${field.type.baseName}Api().';
+                final String newInstanceCall =
+                    '$apiAccess$newInstanceMethodName($argName) { }';
+                if (field.type.isNullable) {
+                  indent.writeScoped('if ($argName != null) {', '}', () {
+                    indent.writeln(newInstanceCall);
+                  });
+                } else {
+                  indent.writeln(newInstanceCall);
+                }
               }
             });
             _writeFlutterMethodMessageCall(
