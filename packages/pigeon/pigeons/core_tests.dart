@@ -818,7 +818,7 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   late AnEnum Function(AnEnum anEnum)? flutterEchoEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  late ProxyApiSuperClass Function(ProxyApiSuperClass aProxyApi)
+  late ProxyApiSuperClass Function(ProxyApiSuperClass aProxyApi)?
       flutterEchoProxyApi;
 
   // ========== Nullable argument/return type tests ==========
@@ -849,7 +849,7 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   late AnEnum? Function(AnEnum? anEnum)? flutterEchoNullableEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  late ProxyApiSuperClass? Function(ProxyApiSuperClass? aProxyApi)
+  late ProxyApiSuperClass? Function(ProxyApiSuperClass? aProxyApi)?
       flutterEchoNullableProxyApi;
 
   // ========== Async tests ==========
