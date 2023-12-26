@@ -4032,47 +4032,218 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final void Function(ProxyIntegrationCoreApi pigeon_instance)? flutterNoop;
 
   /// Responds with an error from an async function returning a value.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final Object? Function(ProxyIntegrationCoreApi pigeon_instance)?
       flutterThrowError;
 
   /// Responds with an error from an async void function.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final void Function(ProxyIntegrationCoreApi pigeon_instance)?
       flutterThrowErrorFromVoid;
 
   /// Returns the passed boolean, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final bool Function(
     ProxyIntegrationCoreApi pigeon_instance,
     bool aBool,
   )? flutterEchoBool;
 
   /// Returns the passed int, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final int Function(
     ProxyIntegrationCoreApi pigeon_instance,
     int anInt,
   )? flutterEchoInt;
 
   /// Returns the passed double, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final double Function(
     ProxyIntegrationCoreApi pigeon_instance,
     double aDouble,
   )? flutterEchoDouble;
 
   /// Returns the passed string, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final String Function(
     ProxyIntegrationCoreApi pigeon_instance,
     String aString,
   )? flutterEchoString;
 
   /// Returns the passed byte list, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final Uint8List Function(
     ProxyIntegrationCoreApi pigeon_instance,
     Uint8List aList,
   )? flutterEchoUint8List;
 
   /// Returns the passed list, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final List<Object?> Function(
     ProxyIntegrationCoreApi pigeon_instance,
     List<Object?> aList,
@@ -4080,12 +4251,50 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final List<ProxyIntegrationCoreApi?> Function(
     ProxyIntegrationCoreApi pigeon_instance,
     List<ProxyIntegrationCoreApi?> aList,
   )? flutterEchoProxyApiList;
 
   /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final Map<String?, Object?> Function(
     ProxyIntegrationCoreApi pigeon_instance,
     Map<String?, Object?> aMap,
@@ -4093,72 +4302,300 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final Map<String?, ProxyIntegrationCoreApi?> Function(
     ProxyIntegrationCoreApi pigeon_instance,
     Map<String?, ProxyIntegrationCoreApi?> aMap,
   )? flutterEchoProxyApiMap;
 
   /// Returns the passed enum to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final AnEnum Function(
     ProxyIntegrationCoreApi pigeon_instance,
     AnEnum anEnum,
   )? flutterEchoEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final ProxyApiSuperClass Function(
     ProxyIntegrationCoreApi pigeon_instance,
     ProxyApiSuperClass aProxyApi,
   ) flutterEchoProxyApi;
 
   /// Returns the passed boolean, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final bool? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     bool? aBool,
   )? flutterEchoNullableBool;
 
   /// Returns the passed int, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final int? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     int? anInt,
   )? flutterEchoNullableInt;
 
   /// Returns the passed double, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final double? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     double? aDouble,
   )? flutterEchoNullableDouble;
 
   /// Returns the passed string, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final String? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     String? aString,
   )? flutterEchoNullableString;
 
   /// Returns the passed byte list, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final Uint8List? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     Uint8List? aList,
   )? flutterEchoNullableUint8List;
 
   /// Returns the passed list, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final List<Object?>? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     List<Object?>? aList,
   )? flutterEchoNullableList;
 
   /// Returns the passed map, to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final Map<String?, Object?>? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     Map<String?, Object?>? aMap,
   )? flutterEchoNullableMap;
 
   /// Returns the passed enum to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final AnEnum? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     AnEnum? anEnum,
   )? flutterEchoNullableEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final ProxyApiSuperClass? Function(
     ProxyIntegrationCoreApi pigeon_instance,
     ProxyApiSuperClass? aProxyApi,
@@ -4166,10 +4603,48 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final Future<void> Function(ProxyIntegrationCoreApi pigeon_instance)?
       callFlutterNoopAsync;
 
   /// Returns the passed in generic Object asynchronously.
+  ///
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final Future<String> Function(
     ProxyIntegrationCoreApi pigeon_instance,
     String aString,
@@ -7715,6 +8190,24 @@ class ProxyApiInterface extends Pigeon_ProxyApiBaseClass {
     this.anInterfaceMethod,
   });
 
+  /// Dart:
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// from a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final MyClass instance = MyClass(
+  ///  myCallbackMethod: (_) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
+  /// release the associated Native object manually.
   final void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod;
 
   static void pigeon_setUpMessageHandlers({
