@@ -61,7 +61,6 @@ void main() {
           enableDomStorage: true,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       await followLink!();
@@ -93,7 +92,6 @@ void main() {
           enableDomStorage: true,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       await followLink!();

@@ -50,18 +50,6 @@ class InAppWebViewConfiguration {
   final Map<String, String> headers;
 }
 
-/// Additional configuration options for [PreferredLaunchMode.inAppBrowserView].
-@immutable
-class InAppBrowserConfiguration {
-  /// Creates a new InAppBrowserConfiguration with given settings.
-  const InAppBrowserConfiguration({this.showTitle = false});
-
-  /// Whether or not to show the webpage title.
-  ///
-  /// May not be supported on all platforms.
-  final bool showTitle;
-}
-
 /// Options for [launchUrl].
 @immutable
 class LaunchOptions {
@@ -69,7 +57,6 @@ class LaunchOptions {
   const LaunchOptions({
     this.mode = PreferredLaunchMode.platformDefault,
     this.webViewConfiguration = const InAppWebViewConfiguration(),
-    this.browserConfiguration = const InAppBrowserConfiguration(),
     this.webOnlyWindowName,
   });
 
@@ -78,9 +65,6 @@ class LaunchOptions {
 
   /// Configuration for the web view in [PreferredLaunchMode.inAppWebView] mode.
   final InAppWebViewConfiguration webViewConfiguration;
-
-  /// Configuration for the browser view in [PreferredLaunchMode.inAppBrowserView] mode.
-  final InAppBrowserConfiguration browserConfiguration;
 
   /// A web-platform-specific option to set the link target.
   ///

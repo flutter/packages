@@ -53,7 +53,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(await launch('http://flutter.dev/'), isTrue);
@@ -70,7 +69,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{'key': 'value'},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -92,7 +90,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(await launch('http://flutter.dev/', forceSafariVC: true), isTrue);
@@ -109,7 +106,6 @@ void main() {
           universalLinksOnly: true,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -129,7 +125,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(await launch('http://flutter.dev/', forceWebView: true), isTrue);
@@ -146,7 +141,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -166,7 +160,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -186,7 +179,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(await launch('http://flutter.dev/', forceSafariVC: false), isTrue);
@@ -208,7 +200,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(await launch('mailto:gmail-noreply@google.com?subject=Hello'),
@@ -240,7 +231,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
 
@@ -273,7 +263,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
 
@@ -307,7 +296,6 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
-          showTitle: false,
         )
         ..setResponse(true);
       expect(
