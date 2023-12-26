@@ -904,8 +904,6 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           );
         }
 
-        // TODO: go through all fields and flutterMethods to see which apis are needed
-        // TODO: add direct get_superClassApi and getInterfaceApi
         // TODO: return values for host methods must also call new_instance
         // TODO: handle lists as well
         for (final Constructor constructor in api.constructors) {
@@ -1584,7 +1582,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         if (!returnType.isNullable && !returnType.isVoid) {
           indent.addScoped('else if (it[0] == null) {', '} ', () {
             indent.writeln(
-                'callback(Result.failure($errorClassName("null-error", "Flutter method returned null value for non-null return value.", "")))');
+                'callback(Result.failure($errorClassName("null-error", "Flutter api returned null value for non-null return value.", "")))');
           }, addTrailingNewline: false);
         }
         indent.addScoped('else {', '}', () {
