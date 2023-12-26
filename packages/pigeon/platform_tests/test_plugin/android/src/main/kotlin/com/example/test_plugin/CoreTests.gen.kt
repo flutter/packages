@@ -3466,162 +3466,6 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
 }
-
-fun noop(pigeon_instance: ProxyIntegrationCoreApi)
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi): Any?
-
-fun throwErrorFromVoid(pigeon_instance: ProxyIntegrationCoreApi)
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi): Any?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anInt: Long): Long
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aDouble: Double): Double
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aBool: Boolean): Boolean
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aString: String): String
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aUint8List: ByteArray): ByteArray
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anObject: Any): Any
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aList: List<Any?>): List<Any?>
-
-fun name(
-    pigeon_instance: ProxyIntegrationCoreApi,
-    aList: List<ProxyIntegrationCoreApi?>
-): List<ProxyIntegrationCoreApi>
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aMap: Map<String?, Any?>): Map<String?, Any?>
-
-fun name(
-    pigeon_instance: ProxyIntegrationCoreApi,
-    aMap: Map<String?, ProxyIntegrationCoreApi?>
-): Map<String?, ProxyIntegrationCoreApi?>
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anEnum: AnEnum): AnEnum
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aNullableInt: Long?): Long?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aNullableDouble: Double?): Double?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aNullableBool: Boolean?): Boolean?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aNullableString: String?): String?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aNullableUint8List: ByteArray?): ByteArray?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aNullableObject: Any?): Any?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aNullableList: List<Any?>?): List<Any?>?
-
-fun name(
-    pigeon_instance: ProxyIntegrationCoreApi,
-    aNullableMap: Map<String?, Any?>?
-): Map<String?, Any?>?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anEnum: AnEnum?): AnEnum?
-
-fun noopAsync(pigeon_instance: ProxyIntegrationCoreApi)
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anInt: Long): Long
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aDouble: Double): Double
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aBool: Boolean): Boolean
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aString: String): String
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aUint8List: ByteArray): ByteArray
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anObject: Any): Any
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aList: List<Any?>): List<Any?>
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aMap: Map<String?, Any?>): Map<String?, Any?>
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anEnum: AnEnum): AnEnum
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi): Any?
-
-fun throwAsyncErrorFromVoid(pigeon_instance: ProxyIntegrationCoreApi)
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi): Any?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anInt: Long?): Long?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aDouble: Double?): Double?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aBool: Boolean?): Boolean?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aString: String?): String?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aUint8List: ByteArray?): ByteArray?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anObject: Any?): Any?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aList: List<Any?>?): List<Any?>?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aMap: Map<String?, Any?>?): Map<String?, Any?>?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anEnum: AnEnum?): AnEnum?
-
-fun staticNoop(pigeon_instance: ProxyIntegrationCoreApi)
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aString: String): String
-
-fun staticAsyncNoop(pigeon_instance: ProxyIntegrationCoreApi)
-
-fun callFlutterNoop(pigeon_instance: ProxyIntegrationCoreApi)
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi): Any?
-
-fun callFlutterThrowErrorFromVoid(pigeon_instance: ProxyIntegrationCoreApi)
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aBool: Boolean): Boolean
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anInt: Long): Long
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aDouble: Double): Double
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aString: String): String
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aList: ByteArray): ByteArray
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aList: List<Any?>): List<Any?>
-
-fun name(
-    pigeon_instance: ProxyIntegrationCoreApi,
-    aList: List<ProxyIntegrationCoreApi?>
-): List<ProxyIntegrationCoreApi?>
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aMap: Map<String?, Any?>): Map<String?, Any?>
-
-fun name(
-    pigeon_instance: ProxyIntegrationCoreApi,
-    aMap: Map<String?, ProxyIntegrationCoreApi?>
-): Map<String?, ProxyIntegrationCoreApi?>
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anEnum: AnEnum): AnEnum
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aBool: Boolean?): Boolean?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anInt: Long?): Long?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aDouble: Double?): Double?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aString: String?): String?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aList: ByteArray?): ByteArray?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aList: List<Any?>?): List<Any?>?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, aMap: Map<String?, Any?>?): Map<String?, Any?>?
-
-fun name(pigeon_instance: ProxyIntegrationCoreApi, anEnum: AnEnum?): AnEnum?
-
 /**
  * The core interface that each host language plugin must implement in platform_test integration
  * tests.
@@ -3633,12 +3477,616 @@ abstract class ProxyIntegrationCoreApi_Api(
 ) {
   private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
 
+  abstract fun pigeon_defaultConstructor(
+      aBool: Boolean,
+      anInt: Long,
+      aDouble: Double,
+      aString: String,
+      aUint8List: ByteArray,
+      aList: List<Any?>,
+      aMap: Map<String?, Any?>,
+      anEnum: AnEnum,
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableDouble: Double?,
+      aNullableString: String?,
+      aNullableUint8List: ByteArray?,
+      aNullableList: List<Any?>?,
+      aNullableMap: Map<String?, Any?>?,
+      aNullableEnum: AnEnum?,
+      boolParam: Boolean,
+      intParam: Long,
+      doubleParam: Double,
+      stringParam: String,
+      aUint8ListParam: ByteArray,
+      listParam: List<Any?>,
+      mapParam: Map<String?, Any?>,
+      enumParam: AnEnum,
+      nullableBoolParam: Boolean?,
+      nullableIntParam: Long?,
+      nullableDoubleParam: Double?,
+      nullableStringParam: String?,
+      nullableUint8ListParam: ByteArray?,
+      nullableListParam: List<Any?>?,
+      nullableMapParam: Map<String?, Any?>?,
+      nullableEnumParam: AnEnum?
+  ): ProxyIntegrationCoreApi
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aBool(pigeon_instance: ProxyIntegrationCoreApi): Boolean
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun anInt(pigeon_instance: ProxyIntegrationCoreApi): Long
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aDouble(pigeon_instance: ProxyIntegrationCoreApi): Double
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aString(pigeon_instance: ProxyIntegrationCoreApi): String
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aUint8List(pigeon_instance: ProxyIntegrationCoreApi): ByteArray
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aList(pigeon_instance: ProxyIntegrationCoreApi): List<Any?>
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aMap(pigeon_instance: ProxyIntegrationCoreApi): Map<String?, Any?>
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun anEnum(pigeon_instance: ProxyIntegrationCoreApi): AnEnum
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableBool(pigeon_instance: ProxyIntegrationCoreApi): Boolean?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableInt(pigeon_instance: ProxyIntegrationCoreApi): Long?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableDouble(pigeon_instance: ProxyIntegrationCoreApi): Double?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableString(pigeon_instance: ProxyIntegrationCoreApi): String?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableUint8List(pigeon_instance: ProxyIntegrationCoreApi): ByteArray?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableList(pigeon_instance: ProxyIntegrationCoreApi): List<Any?>?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableMap(pigeon_instance: ProxyIntegrationCoreApi): Map<String?, Any?>?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableEnum(pigeon_instance: ProxyIntegrationCoreApi): AnEnum?
+
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  abstract fun noop(pigeon_instance: ProxyIntegrationCoreApi)
+
+  /** Returns an error, to test error handling. */
+  abstract fun throwError(pigeon_instance: ProxyIntegrationCoreApi): Any?
+
+  /** Returns an error from a void function, to test error handling. */
+  abstract fun throwErrorFromVoid(pigeon_instance: ProxyIntegrationCoreApi)
+
+  /** Returns a Flutter error, to test error handling. */
+  abstract fun throwFlutterError(pigeon_instance: ProxyIntegrationCoreApi): Any?
+
+  /** Returns passed in int. */
+  abstract fun echoInt(pigeon_instance: ProxyIntegrationCoreApi, anInt: Long): Long
+
+  /** Returns passed in double. */
+  abstract fun echoDouble(pigeon_instance: ProxyIntegrationCoreApi, aDouble: Double): Double
+
+  /** Returns the passed in boolean. */
+  abstract fun echoBool(pigeon_instance: ProxyIntegrationCoreApi, aBool: Boolean): Boolean
+
+  /** Returns the passed in string. */
+  abstract fun echoString(pigeon_instance: ProxyIntegrationCoreApi, aString: String): String
+
+  /** Returns the passed in Uint8List. */
+  abstract fun echoUint8List(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aUint8List: ByteArray
+  ): ByteArray
+
+  /** Returns the passed in generic Object. */
+  abstract fun echoObject(pigeon_instance: ProxyIntegrationCoreApi, anObject: Any): Any
+
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoList(pigeon_instance: ProxyIntegrationCoreApi, aList: List<Any?>): List<Any?>
+
+  /** Returns the passed list with ProxyApis, to test serialization and deserialization. */
+  abstract fun echoProxyApiList(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aList: List<ProxyIntegrationCoreApi?>
+  ): List<ProxyIntegrationCoreApi>
+
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoMap(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aMap: Map<String?, Any?>
+  ): Map<String?, Any?>
+
+  /** Returns the passed map with ProxyApis, to test serialization and deserialization. */
+  abstract fun echoProxyApiMap(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aMap: Map<String?, ProxyIntegrationCoreApi?>
+  ): Map<String?, ProxyIntegrationCoreApi?>
+
+  /** Returns the passed enum to test serialization and deserialization. */
+  abstract fun echoEnum(pigeon_instance: ProxyIntegrationCoreApi, anEnum: AnEnum): AnEnum
+
+  /** Returns passed in int. */
+  abstract fun echoNullableInt(pigeon_instance: ProxyIntegrationCoreApi, aNullableInt: Long?): Long?
+
+  /** Returns passed in double. */
+  abstract fun echoNullableDouble(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aNullableDouble: Double?
+  ): Double?
+
+  /** Returns the passed in boolean. */
+  abstract fun echoNullableBool(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aNullableBool: Boolean?
+  ): Boolean?
+
+  /** Returns the passed in string. */
+  abstract fun echoNullableString(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aNullableString: String?
+  ): String?
+
+  /** Returns the passed in Uint8List. */
+  abstract fun echoNullableUint8List(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aNullableUint8List: ByteArray?
+  ): ByteArray?
+
+  /** Returns the passed in generic Object. */
+  abstract fun echoNullableObject(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aNullableObject: Any?
+  ): Any?
+
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableList(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aNullableList: List<Any?>?
+  ): List<Any?>?
+
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableMap(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aNullableMap: Map<String?, Any?>?
+  ): Map<String?, Any?>?
+
+  abstract fun echoNullableEnum(pigeon_instance: ProxyIntegrationCoreApi, anEnum: AnEnum?): AnEnum?
+
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
+   */
+  abstract fun noopAsync(pigeon_instance: ProxyIntegrationCoreApi, callback: (Result<Unit>) -> Unit)
+
+  /** Returns passed in int asynchronously. */
+  abstract fun echoAsyncInt(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anInt: Long,
+      callback: (Result<Long>) -> Unit
+  )
+
+  /** Returns passed in double asynchronously. */
+  abstract fun echoAsyncDouble(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aDouble: Double,
+      callback: (Result<Double>) -> Unit
+  )
+
+  /** Returns the passed in boolean asynchronously. */
+  abstract fun echoAsyncBool(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aBool: Boolean,
+      callback: (Result<Boolean>) -> Unit
+  )
+
+  /** Returns the passed string asynchronously. */
+  abstract fun echoAsyncString(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aString: String,
+      callback: (Result<String>) -> Unit
+  )
+
+  /** Returns the passed in Uint8List asynchronously. */
+  abstract fun echoAsyncUint8List(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aUint8List: ByteArray,
+      callback: (Result<ByteArray>) -> Unit
+  )
+
+  /** Returns the passed in generic Object asynchronously. */
+  abstract fun echoAsyncObject(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anObject: Any,
+      callback: (Result<Any>) -> Unit
+  )
+
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncList(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aList: List<Any?>,
+      callback: (Result<List<Any?>>) -> Unit
+  )
+
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncMap(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aMap: Map<String?, Any?>,
+      callback: (Result<Map<String?, Any?>>) -> Unit
+  )
+
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncEnum(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anEnum: AnEnum,
+      callback: (Result<AnEnum>) -> Unit
+  )
+
+  /** Responds with an error from an async function returning a value. */
+  abstract fun throwAsyncError(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      callback: (Result<Any?>) -> Unit
+  )
+
+  /** Responds with an error from an async void function. */
+  abstract fun throwAsyncErrorFromVoid(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      callback: (Result<Unit>) -> Unit
+  )
+
+  /** Responds with a Flutter error from an async function returning a value. */
+  abstract fun throwAsyncFlutterError(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      callback: (Result<Any?>) -> Unit
+  )
+
+  /** Returns passed in int asynchronously. */
+  abstract fun echoAsyncNullableInt(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anInt: Long?,
+      callback: (Result<Long?>) -> Unit
+  )
+
+  /** Returns passed in double asynchronously. */
+  abstract fun echoAsyncNullableDouble(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aDouble: Double?,
+      callback: (Result<Double?>) -> Unit
+  )
+
+  /** Returns the passed in boolean asynchronously. */
+  abstract fun echoAsyncNullableBool(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aBool: Boolean?,
+      callback: (Result<Boolean?>) -> Unit
+  )
+
+  /** Returns the passed string asynchronously. */
+  abstract fun echoAsyncNullableString(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aString: String?,
+      callback: (Result<String?>) -> Unit
+  )
+
+  /** Returns the passed in Uint8List asynchronously. */
+  abstract fun echoAsyncNullableUint8List(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aUint8List: ByteArray?,
+      callback: (Result<ByteArray?>) -> Unit
+  )
+
+  /** Returns the passed in generic Object asynchronously. */
+  abstract fun echoAsyncNullableObject(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anObject: Any?,
+      callback: (Result<Any?>) -> Unit
+  )
+
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncNullableList(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aList: List<Any?>?,
+      callback: (Result<List<Any?>?>) -> Unit
+  )
+
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncNullableMap(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aMap: Map<String?, Any?>?,
+      callback: (Result<Map<String?, Any?>?>) -> Unit
+  )
+
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract fun echoAsyncNullableEnum(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anEnum: AnEnum?,
+      callback: (Result<AnEnum?>) -> Unit
+  )
+
+  abstract fun staticNoop()
+
+  abstract fun echoStaticString(aString: String): String
+
+  abstract fun staticAsyncNoop(callback: (Result<Unit>) -> Unit)
+
+  abstract fun callFlutterNoop(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      callback: (Result<Unit>) -> Unit
+  )
+
+  abstract fun callFlutterThrowError(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      callback: (Result<Any?>) -> Unit
+  )
+
+  abstract fun callFlutterThrowErrorFromVoid(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      callback: (Result<Unit>) -> Unit
+  )
+
+  abstract fun callFlutterEchoBool(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aBool: Boolean,
+      callback: (Result<Boolean>) -> Unit
+  )
+
+  abstract fun callFlutterEchoInt(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anInt: Long,
+      callback: (Result<Long>) -> Unit
+  )
+
+  abstract fun callFlutterEchoDouble(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aDouble: Double,
+      callback: (Result<Double>) -> Unit
+  )
+
+  abstract fun callFlutterEchoString(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aString: String,
+      callback: (Result<String>) -> Unit
+  )
+
+  abstract fun callFlutterEchoUint8List(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aList: ByteArray,
+      callback: (Result<ByteArray>) -> Unit
+  )
+
+  abstract fun callFlutterEchoList(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aList: List<Any?>,
+      callback: (Result<List<Any?>>) -> Unit
+  )
+
+  abstract fun callFlutterEchoProxyApiList(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aList: List<ProxyIntegrationCoreApi?>,
+      callback: (Result<List<ProxyIntegrationCoreApi?>>) -> Unit
+  )
+
+  abstract fun callFlutterEchoMap(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aMap: Map<String?, Any?>,
+      callback: (Result<Map<String?, Any?>>) -> Unit
+  )
+
+  abstract fun callFlutterEchoProxyApiMap(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aMap: Map<String?, ProxyIntegrationCoreApi?>,
+      callback: (Result<Map<String?, ProxyIntegrationCoreApi?>>) -> Unit
+  )
+
+  abstract fun callFlutterEchoEnum(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anEnum: AnEnum,
+      callback: (Result<AnEnum>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableBool(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aBool: Boolean?,
+      callback: (Result<Boolean?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableInt(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anInt: Long?,
+      callback: (Result<Long?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableDouble(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aDouble: Double?,
+      callback: (Result<Double?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableString(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aString: String?,
+      callback: (Result<String?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableUint8List(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aList: ByteArray?,
+      callback: (Result<ByteArray?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableList(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aList: List<Any?>?,
+      callback: (Result<List<Any?>?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableMap(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aMap: Map<String?, Any?>?,
+      callback: (Result<Map<String?, Any?>?>) -> Unit
+  )
+
+  abstract fun callFlutterEchoNullableEnum(
+      pigeon_instance: ProxyIntegrationCoreApi,
+      anEnum: AnEnum?,
+      callback: (Result<AnEnum?>) -> Unit
+  )
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyIntegrationCoreApi_Api?) {
       val codec =
           if (api != null) Pigeon_ProxyApiBaseCodec(api.pigeon_instanceManager)
           else StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceIdentifierArg =
+                args[0].let { if (it is Int) it.toLong() else it as Long }
+            val aBoolArg = args[1] as Boolean
+            val anIntArg = args[2].let { if (it is Int) it.toLong() else it as Long }
+            val aDoubleArg = args[3] as Double
+            val aStringArg = args[4] as String
+            val aUint8ListArg = args[5] as ByteArray
+            val aListArg = args[6] as List<Any?>
+            val aMapArg = args[7] as Map<String?, Any?>
+            val anEnumArg = AnEnum.ofRaw(args[8] as Int)!!
+            val aNullableBoolArg = args[9] as Boolean?
+            val aNullableIntArg = args[10].let { if (it is Int) it.toLong() else it as Long? }
+            val aNullableDoubleArg = args[11] as Double?
+            val aNullableStringArg = args[12] as String?
+            val aNullableUint8ListArg = args[13] as ByteArray?
+            val aNullableListArg = args[14] as List<Any?>?
+            val aNullableMapArg = args[15] as Map<String?, Any?>?
+            val aNullableEnumArg = if (args[16] == null) null else AnEnum.ofRaw(args[16] as Int)
+            val boolParamArg = args[17] as Boolean
+            val intParamArg = args[18].let { if (it is Int) it.toLong() else it as Long }
+            val doubleParamArg = args[19] as Double
+            val stringParamArg = args[20] as String
+            val aUint8ListParamArg = args[21] as ByteArray
+            val listParamArg = args[22] as List<Any?>
+            val mapParamArg = args[23] as Map<String?, Any?>
+            val enumParamArg = AnEnum.ofRaw(args[24] as Int)!!
+            val nullableBoolParamArg = args[25] as Boolean?
+            val nullableIntParamArg = args[26].let { if (it is Int) it.toLong() else it as Long? }
+            val nullableDoubleParamArg = args[27] as Double?
+            val nullableStringParamArg = args[28] as String?
+            val nullableUint8ListParamArg = args[29] as ByteArray?
+            val nullableListParamArg = args[30] as List<Any?>?
+            val nullableMapParamArg = args[31] as Map<String?, Any?>?
+            val nullableEnumParamArg = if (args[32] == null) null else AnEnum.ofRaw(args[32] as Int)
+            var wrapped: List<Any?>
+            try {
+              api.pigeon_instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(
+                      aBoolArg,
+                      anIntArg,
+                      aDoubleArg,
+                      aStringArg,
+                      aUint8ListArg,
+                      aListArg,
+                      aMapArg,
+                      anEnumArg,
+                      aNullableBoolArg,
+                      aNullableIntArg,
+                      aNullableDoubleArg,
+                      aNullableStringArg,
+                      aNullableUint8ListArg,
+                      aNullableListArg,
+                      aNullableMapArg,
+                      aNullableEnumArg,
+                      boolParamArg,
+                      intParamArg,
+                      doubleParamArg,
+                      stringParamArg,
+                      aUint8ListParamArg,
+                      listParamArg,
+                      mapParamArg,
+                      enumParamArg,
+                      nullableBoolParamArg,
+                      nullableIntParamArg,
+                      nullableDoubleParamArg,
+                      nullableStringParamArg,
+                      nullableUint8ListParamArg,
+                      nullableListParamArg,
+                      nullableMapParamArg,
+                      nullableEnumParamArg),
+                  pigeon_instanceIdentifierArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -4743,12 +5191,10 @@ abstract class ProxyIntegrationCoreApi_Api(
                 "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.staticNoop",
                 codec)
         if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as ProxyIntegrationCoreApi
+          channel.setMessageHandler { _, reply ->
             var wrapped: List<Any?>
             try {
-              api.staticNoop(pigeon_instanceArg)
+              api.staticNoop()
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
@@ -4768,11 +5214,10 @@ abstract class ProxyIntegrationCoreApi_Api(
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as ProxyIntegrationCoreApi
-            val aStringArg = args[1] as String
+            val aStringArg = args[0] as String
             var wrapped: List<Any?>
             try {
-              wrapped = listOf<Any?>(api.echoStaticString(pigeon_instanceArg, aStringArg))
+              wrapped = listOf<Any?>(api.echoStaticString(aStringArg))
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -4789,10 +5234,8 @@ abstract class ProxyIntegrationCoreApi_Api(
                 "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.staticAsyncNoop",
                 codec)
         if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as ProxyIntegrationCoreApi
-            api.staticAsyncNoop(pigeon_instanceArg) { result: Result<Unit> ->
+          channel.setMessageHandler { _, reply ->
+            api.staticAsyncNoop() { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -5337,6 +5780,71 @@ abstract class ProxyIntegrationCoreApi_Api(
         }
       }
     }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**
+   * Creates a Dart instance of ProxyIntegrationCoreApi_Api and attaches it to [pigeon_instanceArg].
+   */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: ProxyIntegrationCoreApi,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = pigeon_instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val aBoolArg = aBool(pigeon_instanceArg)
+    val anIntArg = anInt(pigeon_instanceArg)
+    val aDoubleArg = aDouble(pigeon_instanceArg)
+    val aStringArg = aString(pigeon_instanceArg)
+    val aUint8ListArg = aUint8List(pigeon_instanceArg)
+    val aListArg = aList(pigeon_instanceArg)
+    val aMapArg = aMap(pigeon_instanceArg)
+    val anEnumArg = anEnum(pigeon_instanceArg)
+    val aNullableBoolArg = aNullableBool(pigeon_instanceArg)
+    val aNullableIntArg = aNullableInt(pigeon_instanceArg)
+    val aNullableDoubleArg = aNullableDouble(pigeon_instanceArg)
+    val aNullableStringArg = aNullableString(pigeon_instanceArg)
+    val aNullableUint8ListArg = aNullableUint8List(pigeon_instanceArg)
+    val aNullableListArg = aNullableList(pigeon_instanceArg)
+    val aNullableMapArg = aNullableMap(pigeon_instanceArg)
+    val aNullableEnumArg = aNullableEnum(pigeon_instanceArg)
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(
+        listOf(
+            pigeon_identifierArg,
+            aBoolArg,
+            anIntArg,
+            aDoubleArg,
+            aStringArg,
+            aUint8ListArg,
+            aListArg,
+            aMapArg,
+            anEnumArg.raw,
+            aNullableBoolArg,
+            aNullableIntArg,
+            aNullableDoubleArg,
+            aNullableStringArg,
+            aNullableUint8ListArg,
+            aNullableListArg,
+            aNullableMapArg,
+            aNullableEnumArg?.raw)) {
+          if (it is List<*>) {
+            if (it.size > 1) {
+              callback(
+                  Result.failure(
+                      CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+            } else {
+              callback(Result.success(Unit))
+            }
+          } else {
+            callback(Result.failure(createConnectionError(channelName)))
+          }
+        }
   }
 
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
@@ -5961,9 +6469,6 @@ abstract class ProxyIntegrationCoreApi_Api(
     }
   }
 }
-
-fun aSuperMethod(pigeon_instance: ProxyApiSuperClass)
-
 /** ProxyApi to serve as a super class to the core ProxyApi interface. */
 @Suppress("UNCHECKED_CAST")
 abstract class ProxyApiSuperClass_Api(
@@ -5971,6 +6476,8 @@ abstract class ProxyApiSuperClass_Api(
     val pigeon_instanceManager: Pigeon_InstanceManager
 ) {
   private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
+
+  abstract fun aSuperMethod(pigeon_instance: ProxyApiSuperClass)
 
   companion object {
     @Suppress("LocalVariableName")
@@ -6003,6 +6510,31 @@ abstract class ProxyApiSuperClass_Api(
       }
     }
   }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ProxyApiSuperClass_Api and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: ProxyApiSuperClass, callback: (Result<Unit>) -> Unit) {
+    if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = pigeon_instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
 }
 /** ProxyApi to serve as an interface to the core ProxyApi interface. */
 @Suppress("UNCHECKED_CAST")
@@ -6018,6 +6550,31 @@ abstract class ProxyApiInterface_Api(
       val codec =
           if (api != null) Pigeon_ProxyApiBaseCodec(api.pigeon_instanceManager)
           else StandardMessageCodec()
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ProxyApiInterface_Api and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
+    if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = pigeon_instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
     }
   }
 

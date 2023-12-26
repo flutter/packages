@@ -1033,8 +1033,6 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
 
         final String errorClassName = _getErrorClassName(generatorOptions);
 
-        // TODO: Solution is to write method declartion and then have a writeBody(indent)
-        // TODO: _writeFlutterMethod should use writeMethodDeclaration
         // TODO: add proxapi new instance call to all flutter methods
         indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
         const String newInstanceMethodName =
@@ -1294,7 +1292,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
     _writeErrorClass(generatorOptions, indent);
   }
 
-  void _writeMethodDeclaration(
+  static void _writeMethodDeclaration(
     Indent indent, {
     required String name,
     required TypeDeclaration returnType,
@@ -1302,12 +1300,14 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
     List<String> documentationComments = const <String>[],
     bool isAsynchronous = false,
     bool isAbstract = false,
+    String Function(int index, NamedType type) getArgumentName =
+        _getArgumentName,
   }) {
     final List<String> argSignature = <String>[];
     if (parameters.isNotEmpty) {
       final Iterable<String> argTypes = parameters
           .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
-      final Iterable<String> argNames = parameters.map((NamedType e) => e.name);
+      final Iterable<String> argNames = parameters.mapIndexed(getArgumentName);
       argSignature.addAll(
         map2(
           argTypes,
@@ -1444,7 +1444,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
     });
   }
 
-  void _writeFlutterMethod(
+  static void _writeFlutterMethod(
     Indent indent, {
     required String name,
     required List<Parameter> parameters,
@@ -1461,28 +1461,16 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
       required String errorClassName,
     }) onWriteBody = _writeFlutterMethodMessageCall,
   }) {
-    final String returnTypeString =
-        returnType.isVoid ? 'Unit' : _nullsafeKotlinTypeForDartType(returnType);
-
-    addDocumentationComments(
+    _writeMethodDeclaration(
       indent,
-      documentationComments,
-      _docCommentSpec,
+      name: name,
+      returnType: returnType,
+      parameters: parameters,
+      documentationComments: documentationComments,
+      isAsynchronous: true,
+      getArgumentName: _getSafeArgumentName,
     );
 
-    if (parameters.isEmpty) {
-      indent.write('fun $name(callback: (Result<$returnTypeString>) -> Unit) ');
-    } else {
-      final Iterable<String> argTypes = parameters
-          .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
-      final Iterable<String> argNames =
-          parameters.mapIndexed(_getSafeArgumentName);
-      final String argsSignature =
-          map2(argTypes, argNames, (String type, String name) => '$name: $type')
-              .join(', ');
-      indent.write(
-          'fun $name($argsSignature, callback: (Result<$returnTypeString>) -> Unit) ');
-    }
     indent.addScoped('{', '}', () {
       onWriteBody(
         indent,
