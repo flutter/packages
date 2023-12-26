@@ -1,4 +1,3 @@
 package com.example.test_plugin
 
-class ProxyApiSuperClass {
-}
+class ProxyApiSuperClass {}

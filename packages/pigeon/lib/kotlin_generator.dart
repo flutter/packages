@@ -461,6 +461,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           for (final Method method in api.methods) {
             _writeHostMethod(
               indent,
+              api: api,
               name: method.name,
               channelName: makeChannelName(api, method, dartPackageName),
               taskQueueType: method.taskQueueType,
@@ -884,6 +885,25 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         );
         indent.newln();
 
+        final Set<String> returnedProxyApiNames =
+            namesOfAllProxyApisReturnedToDart(api);
+        for (final String name in returnedProxyApiNames) {
+          _writeMethodDeclaration(
+            indent,
+            name: '${classMemberNamePrefix}get${name}Api',
+            isAbstract: true,
+            documentationComments: <String>[
+              'An implementation of [${name}_Api] used to access callback methods or to create ',
+              'add a new Dart instance of `$name`.'
+            ],
+            returnType: TypeDeclaration(
+              baseName: '${name}_Api',
+              isNullable: false,
+            ),
+            parameters: <Parameter>[],
+          );
+        }
+
         // TODO: go through all fields and flutterMethods to see which apis are needed
         // TODO: add direct get_superClassApi and getInterfaceApi
         // TODO: return values for host methods must also call new_instance
@@ -974,6 +994,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                     : '${classMemberNamePrefix}defaultConstructor';
                 _writeHostMethod(
                   indent,
+                  api: api,
                   name: name,
                   channelName: makeChannelNameWithStrings(
                     apiName: api.name,
@@ -1011,6 +1032,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
               for (final Method method in api.hostMethods) {
                 _writeHostMethod(
                   indent,
+                  api: api,
                   name: method.name,
                   channelName: makeChannelName(api, method, dartPackageName),
                   taskQueueType: method.taskQueueType,
@@ -1379,6 +1401,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
   // TODO: change to write host method message call?
   void _writeHostMethod(
     Indent indent, {
+    required Api api,
     required String name,
     required String channelName,
     required TaskQueueType taskQueueType,
@@ -1450,17 +1473,13 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                   indent.writeln('val data = result.getOrNull()');
                   if (returnType.isProxyApi) {
                     final String apiAccess = returnType.baseName == api.name
-                        ? ''
-                        : '${classMemberNamePrefix}get${returnType.baseName}Api().';
+                        ? 'api.'
+                        : 'api.${classMemberNamePrefix}get${returnType.baseName}Api().';
                     final String newInstanceCall =
                         '$apiAccess${classMemberNamePrefix}newInstance(data) { }';
-                    if (returnType.isNullable) {
-                      indent.writeScoped('if (data != null) {', '}', () {
-                        indent.writeln(newInstanceCall);
-                      });
-                    } else {
+                    indent.writeScoped('if (data != null) {', '}', () {
                       indent.writeln(newInstanceCall);
-                    }
+                    });
                   }
                   indent.writeln('reply.reply(wrapResult(data$enumTag))');
                 }
