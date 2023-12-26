@@ -727,6 +727,8 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     // ignore: avoid_unused_constructor_parameters
     AnEnum enumParam,
     // ignore: avoid_unused_constructor_parameters
+    ProxyApiSuperClass proxyApiParam,
+    // ignore: avoid_unused_constructor_parameters
     bool? nullableBoolParam,
     // ignore: avoid_unused_constructor_parameters
     int? nullableIntParam,
@@ -742,6 +744,8 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     Map<String?, Object?>? nullableMapParam,
     // ignore: avoid_unused_constructor_parameters
     AnEnum? nullableEnumParam,
+    // ignore: avoid_unused_constructor_parameters
+    ProxyApiSuperClass? nullableProxyApiParam,
   );
 
   late bool aBool;
@@ -752,6 +756,7 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   late List<Object?> aList;
   late Map<String?, Object?> aMap;
   late AnEnum anEnum;
+  late ProxyApiSuperClass aProxyApi;
 
   late bool? aNullableBool;
   late int? aNullableInt;
@@ -761,6 +766,7 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   late List<Object?>? aNullableList;
   late Map<String?, Object?>? aNullableMap;
   late AnEnum? aNullableEnum;
+  late ProxyApiSuperClass? aNullableProxyApi;
 
   @attached
   late ProxyApiSuperClass attachedField;
@@ -815,6 +821,10 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   /// Returns the passed enum to test serialization and deserialization.
   late AnEnum Function(AnEnum anEnum)? flutterEchoEnum;
 
+  /// Returns the passed ProxyApi to test serialization and deserialization.
+  late ProxyApiSuperClass Function(ProxyApiSuperClass aProxyApi)
+      flutterEchoProxyApi;
+
   // ========== Nullable argument/return type tests ==========
 
   /// Returns the passed boolean, to test serialization and deserialization.
@@ -841,6 +851,10 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   /// Returns the passed enum to test serialization and deserialization.
   late AnEnum? Function(AnEnum? anEnum)? flutterEchoNullableEnum;
+
+  /// Returns the passed ProxyApi to test serialization and deserialization.
+  late ProxyApiSuperClass? Function(ProxyApiSuperClass? aProxyApi)
+      flutterEchoNullableProxyApi;
 
   // ========== Async tests ==========
   // These are minimal since async FlutterApi only changes Dart generation.
@@ -910,6 +924,9 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   /// Returns the passed enum to test serialization and deserialization.
   AnEnum echoEnum(AnEnum anEnum);
 
+  /// Returns the passed ProxyApi to test serialization and deserialization.
+  ProxyApiSuperClass echoProxyApi(ProxyApiSuperClass aProxyApi);
+
   // ========== Synchronous host nullable method tests ==========
 
   /// Returns passed in int.
@@ -937,6 +954,9 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
 
   AnEnum? echoNullableEnum(AnEnum? anEnum);
+
+  /// Returns the passed ProxyApi to test serialization and deserialization.
+  ProxyApiSuperClass? echoNullableProxyApi(ProxyApiSuperClass? aProxyApi);
 
   // ========== Asynchronous method tests ==========
 
@@ -1085,6 +1105,9 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   AnEnum callFlutterEchoEnum(AnEnum anEnum);
 
   @async
+  ProxyApiSuperClass callFlutterEchoProxyApi(ProxyApiSuperClass aProxyApi);
+
+  @async
   bool? callFlutterEchoNullableBool(bool? aBool);
 
   @async
@@ -1109,6 +1132,11 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   @async
   AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+
+  @async
+  ProxyApiSuperClass? callFlutterEchoNullableProxyApi(
+    ProxyApiSuperClass? aProxyApi,
+  );
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi interface.
