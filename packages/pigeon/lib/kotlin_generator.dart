@@ -867,7 +867,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
     const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
     final String fullKotlinClassName =
         api.kotlinOptions?.fullClassName ?? api.name;
-    final String apiName = '${api.name}_Api';
+    final String kotlinApiName = '${api.name}_Api';
 
     addDocumentationComments(
       indent,
@@ -876,7 +876,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
     );
     indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent.writeScoped(
-      'abstract class $apiName(val binaryMessenger: BinaryMessenger, val ${classMemberNamePrefix}instanceManager: $instanceManagerClassName) {',
+      'abstract class $kotlinApiName(val binaryMessenger: BinaryMessenger, val ${classMemberNamePrefix}instanceManager: $instanceManagerClassName) {',
       '}',
       () {
         // TODO: check if uses codec variable
@@ -986,7 +986,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         indent.writeScoped('companion object {', '}', () {
           indent.writeln('@Suppress("LocalVariableName")');
           indent.writeScoped(
-            'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: $apiName?) {',
+            'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: $kotlinApiName?) {',
             '}',
             () {
               indent.writeln(
@@ -1065,48 +1065,47 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         const String newInstanceMethodName =
             '${classMemberNamePrefix}newInstance';
 
-        if (hasCallbackConstructor) {
-          indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
-          _writeFlutterMethod(
-            indent,
-            name: newInstanceMethodName,
-            returnType: const TypeDeclaration.voidDeclaration(),
-            documentationComments: <String>[
-              'Creates a Dart instance of $apiName and attaches it to [${classMemberNamePrefix}instanceArg].',
-            ],
-            channelName: makeChannelNameWithStrings(
-              apiName: api.name,
-              methodName: newInstanceMethodName,
-              dartPackageName: dartPackageName,
-            ),
-            errorClassName: errorClassName,
+        indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
+        _writeFlutterMethod(
+          indent,
+          name: newInstanceMethodName,
+          returnType: const TypeDeclaration.voidDeclaration(),
+          documentationComments: <String>[
+            'Creates a Dart instance of ${api.name} and attaches it to [${classMemberNamePrefix}instanceArg].',
+          ],
+          channelName: makeChannelNameWithStrings(
+            apiName: api.name,
+            methodName: newInstanceMethodName,
             dartPackageName: dartPackageName,
-            parameters: <Parameter>[
-              Parameter(
-                name: '${classMemberNamePrefix}instance',
-                type: TypeDeclaration(
-                  baseName: api.name,
-                  isNullable: false,
-                  associatedProxyApi: api,
-                ),
+          ),
+          errorClassName: errorClassName,
+          dartPackageName: dartPackageName,
+          parameters: <Parameter>[
+            Parameter(
+              name: '${classMemberNamePrefix}instance',
+              type: TypeDeclaration(
+                baseName: api.name,
+                isNullable: false,
+                associatedProxyApi: api,
               ),
-            ],
-            onWriteBody: (
-              Indent indent, {
-              required List<Parameter> parameters,
-              required TypeDeclaration returnType,
-              required String channelName,
-              required String errorClassName,
-            }) {
-              indent.writeScoped(
-                'if (${classMemberNamePrefix}instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
-                '}',
-                () {
-                  indent.writeln('Result.success(Unit)');
-                  indent.writeln('return');
-                },
-              );
-
+            ),
+          ],
+          onWriteBody: (
+            Indent indent, {
+            required List<Parameter> parameters,
+            required TypeDeclaration returnType,
+            required String channelName,
+            required String errorClassName,
+          }) {
+            indent.writeScoped(
+              'if (${classMemberNamePrefix}instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+              '}',
+              () {
+                indent.writeln('Result.success(Unit)');
+                indent.writeln('return');
+              },
+            );
+            if (hasCallbackConstructor) {
               indent.writeln(
                 'val ${classMemberNamePrefix}identifierArg = ${classMemberNamePrefix}instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
               );
@@ -1131,6 +1130,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                   }
                 }
               });
+
               _writeFlutterMethodMessageCall(
                 indent,
                 returnType: returnType,
@@ -1154,10 +1154,14 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                   ),
                 ],
               );
-            },
-          );
-          indent.newln();
-        }
+            } else {
+              indent.writeln(
+                'throw IllegalStateException("Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
+              );
+            }
+          },
+        );
+        indent.newln();
 
         for (final Method method in api.flutterMethods) {
           _writeFlutterMethod(
