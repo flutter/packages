@@ -385,8 +385,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       for (final Method method in api.methods) {
         _writeFlutterMethod(
           indent,
-          api,
-          method,
+          name: method.name,
+          parameters: method.parameters,
+          returnType: method.returnType,
+          channelName: makeChannelName(api, method, dartPackageName),
+          documentationComments: method.documentationComments,
           errorClassName: errorClassName,
           dartPackageName: dartPackageName,
         );
@@ -907,6 +910,27 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           indent.newln();
         }
 
+        for (final Field field in api.nonAttachedFields) {
+          _writeMethodDeclaration(
+            indent,
+            name: field.name,
+            documentationComments: api.documentationComments,
+            returnType: field.type,
+            isAbstract: true,
+            parameters: <Parameter>[
+              Parameter(
+                name: '${classMemberNamePrefix}instance',
+                type: TypeDeclaration(
+                  baseName: api.name,
+                  isNullable: false,
+                  associatedProxyApi: api,
+                ),
+              ),
+            ],
+          );
+          indent.newln();
+        }
+
         for (final Method method in api.hostMethods) {
           _writeMethodDeclaration(
             indent,
@@ -1008,14 +1032,119 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
         indent.newln();
 
         final String errorClassName = _getErrorClassName(generatorOptions);
+
+        // TODO: change name for dart generator in PR (detached to newInstance)
+        // TODO: Solution is to write method declartion and then have a writeBody(indent)
+        // TODO: _writeFlutterMethod should use writeMethodDeclaration
+        // if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
+        //   Result.success(Unit)
+        //   return
+        // }
+        //
+        // val myProxyFieldArg: some.cool.BasicClass? = myProxyField(pigeon_instanceArg)
+        // if (myProxyFieldArg != null) {
+        //   pigeon_getBasicClassApi().pigeon_newInstance(myProxyFieldArg) { }
+        // }
+        indent.writeln('@Suppress("LocalVariableName", "FunctionName")');
+        const String newInstanceMethodName =
+            '${classMemberNamePrefix}newInstance';
+        _writeFlutterMethod(
+          indent,
+          name: newInstanceMethodName,
+          returnType: const TypeDeclaration.voidDeclaration(),
+          documentationComments: <String>[
+            'Creates a Dart instance of $apiName and attaches it to [${classMemberNamePrefix}instanceArg].',
+          ],
+          channelName: makeChannelNameWithStrings(
+            apiName: api.name,
+            methodName: newInstanceMethodName,
+            dartPackageName: dartPackageName,
+          ),
+          errorClassName: errorClassName,
+          dartPackageName: dartPackageName,
+          parameters: <Parameter>[
+            Parameter(
+              name: '${classMemberNamePrefix}instance',
+              type: TypeDeclaration(
+                baseName: api.name,
+                isNullable: false,
+                associatedProxyApi: api,
+              ),
+            ),
+          ],
+          onWriteBody: (
+            Indent indent, {
+            required List<Parameter> parameters,
+            required TypeDeclaration returnType,
+            required String channelName,
+            required String errorClassName,
+          }) {
+            indent.writeScoped(
+              'if (${classMemberNamePrefix}instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+              '}',
+              () {
+                indent.writeln('Result.success(Unit)');
+                indent.writeln('return');
+              },
+            );
+
+            indent.writeln(
+              'val ${classMemberNamePrefix}identifierArg = ${classMemberNamePrefix}instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
+            );
+            api.nonAttachedFields.forEachIndexed((int index, Field field) {
+              final String argName = _getSafeArgumentName(index, field);
+              indent.writeln(
+                'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              );
+
+              if (field.type.isProxyApi) {
+                indent.writeScoped('if ($argName != null) {', '}', () {
+                  final String apiAccess = field.type.baseName == api.name
+                      ? ''
+                      : '${classMemberNamePrefix}get${field.type.baseName}Api().';
+                  indent.writeln(
+                    '$apiAccess$newInstanceMethodName($argName) { }',
+                  );
+                });
+              }
+            });
+            _writeFlutterMethodMessageCall(
+              indent,
+              returnType: returnType,
+              channelName: channelName,
+              errorClassName: errorClassName,
+              parameters: <Parameter>[
+                Parameter(
+                  name: '${classMemberNamePrefix}identifier',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
+                ),
+                ...api.nonAttachedFields.mapIndexed(
+                  (int index, Field field) {
+                    return Parameter(
+                      name: field.name,
+                      type: field.type,
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        indent.newln();
+
         for (final Method method in api.flutterMethods) {
           _writeFlutterMethod(
             indent,
-            api,
-            method,
+            name: method.name,
+            returnType: method.returnType,
+            channelName: makeChannelName(api, method, dartPackageName),
             errorClassName: errorClassName,
             dartPackageName: dartPackageName,
-            overrideParameterList: <Parameter>[
+            documentationComments: method.documentationComments,
+            parameters: <Parameter>[
               Parameter(
                 name: '${classMemberNamePrefix}instance',
                 type: TypeDeclaration(
@@ -1321,29 +1450,33 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
   }
 
   void _writeFlutterMethod(
-    Indent indent,
-    Api api,
-    Method method, {
+    Indent indent, {
+    required String name,
+    required List<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required String channelName,
     required String errorClassName,
     required String dartPackageName,
-    List<Parameter>? overrideParameterList,
+    List<String> documentationComments = const <String>[],
+    void Function(
+      Indent indent, {
+      required List<Parameter> parameters,
+      required TypeDeclaration returnType,
+      required String channelName,
+      required String errorClassName,
+    }) onWriteBody = _writeFlutterMethodMessageCall,
   }) {
-    final String returnType = method.returnType.isVoid
-        ? 'Unit'
-        : _nullsafeKotlinTypeForDartType(method.returnType);
-
-    final List<Parameter> parameters =
-        overrideParameterList ?? method.parameters;
+    final String returnTypeString =
+        returnType.isVoid ? 'Unit' : _nullsafeKotlinTypeForDartType(returnType);
 
     addDocumentationComments(
       indent,
-      method.documentationComments,
+      documentationComments,
       _docCommentSpec,
     );
 
     if (parameters.isEmpty) {
-      indent.write(
-          'fun ${method.name}(callback: (Result<$returnType>) -> Unit) ');
+      indent.write('fun $name(callback: (Result<$returnTypeString>) -> Unit) ');
     } else {
       final Iterable<String> argTypes = parameters
           .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
@@ -1353,20 +1486,20 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           map2(argTypes, argNames, (String type, String name) => '$name: $type')
               .join(', ');
       indent.write(
-          'fun ${method.name}($argsSignature, callback: (Result<$returnType>) -> Unit) ');
+          'fun $name($argsSignature, callback: (Result<$returnTypeString>) -> Unit) ');
     }
     indent.addScoped('{', '}', () {
-      _writeFlutterMethodMessageCall(
+      onWriteBody(
         indent,
         parameters: parameters,
-        returnType: method.returnType,
-        channelName: makeChannelName(api, method, dartPackageName),
+        returnType: returnType,
+        channelName: channelName,
         errorClassName: errorClassName,
       );
     });
   }
 
-  void _writeFlutterMethodMessageCall(
+  static void _writeFlutterMethodMessageCall(
     Indent indent, {
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
