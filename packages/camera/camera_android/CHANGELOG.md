@@ -1,3 +1,7 @@
+## 0.10.8+16
+
+* Updates annotations lib to 1.7.1.
+
 ## 0.10.8+15
 
 * Updates example app to use non-deprecated video_player method.
