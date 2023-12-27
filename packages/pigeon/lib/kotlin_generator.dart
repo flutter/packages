@@ -962,7 +962,8 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           );
         }
 
-        // TODO: handle lists as well
+        // TODO: create issue for enum lists
+        // TODO: handle lists as well. and maps obviously. apparently enum lists too
         for (final Constructor constructor in api.constructors) {
           _writeMethodDeclaration(
             indent,

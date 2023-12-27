@@ -402,6 +402,15 @@ class TypeDeclaration {
     );
   }
 
+  /// Returns duplicated `TypeDeclaration` with updated `typeArguments` value.
+  TypeDeclaration copyWithTypeArguments(List<TypeDeclaration> typeArguments) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      typeArguments: typeArguments,
+    );
+  }
+
   @override
   String toString() {
     final String typeArgumentsStr =

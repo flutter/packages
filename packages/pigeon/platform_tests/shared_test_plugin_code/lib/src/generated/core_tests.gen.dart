@@ -6477,6 +6477,38 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     }
   }
 
+  Future<List<AnEnum?>> echoEnumList(List<AnEnum?> anEnumList) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoEnumList';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      __pigeon_codecProxyIntegrationCoreApi,
+      binaryMessenger: pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      anEnumList,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as List<Object?>?)!.cast<AnEnum?>();
+    }
+  }
+
   /// Returns passed in int.
   Future<int?> echoNullableInt(int? aNullableInt) async {
     const String __pigeon_channelName =

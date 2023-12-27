@@ -1353,7 +1353,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else if (assocProxyApi != null) {
       return type.copyWithProxyApi(assocProxyApi);
     }
-    return type;
+
+    return type.copyWithTypeArguments(
+      type.typeArguments.map(_attachClassesEnumsAndProxyApis).toList(),
+    );
   }
 
   Object _expressionToMap(dart_ast.Expression expression) {

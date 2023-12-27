@@ -3671,6 +3671,11 @@ abstract class ProxyIntegrationCoreApi_Api(
       aProxyApi: ProxyApiSuperClass
   ): ProxyApiSuperClass
 
+  abstract fun echoEnumList(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
+      anEnumList: List<AnEnum?>
+  ): List<AnEnum?>
+
   /** Returns passed in int. */
   abstract fun echoNullableInt(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
@@ -4543,6 +4548,29 @@ abstract class ProxyIntegrationCoreApi_Api(
                 api.pigeon_getProxyApiSuperClassApi().pigeon_newInstance(result) {}
               }
               wrapped = listOf<Any?>(result)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoEnumList",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
+            val anEnumListArg = args[1] as List<AnEnum?>
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.echoEnumList(pigeon_instanceArg, anEnumListArg))
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
