@@ -273,6 +273,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
     // not implemented: clipper
     return ClipRRect(
       borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']) ?? BorderRadius.zero,
+      // clipper,
       clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.antiAlias,
       child: source.optionalChild(['child']),
     );

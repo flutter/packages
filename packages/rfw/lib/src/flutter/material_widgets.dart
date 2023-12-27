@@ -68,7 +68,9 @@ import 'runtime.dart';
 ///  * The [Scaffold]'s floating action button position and animation features
 ///    are not supported.
 ///
-///  * [DropdownButton] takes a list of items object with the key of params 
+///  * [DropdownButton] takes a list of objects representing the [DropdownMenuItem]. 
+///    Each object could contain `onTap`, `value`, `enabled` and `child`. The `child` param is required to    
+/// there should with the key of params 
 ///    names and value of the param values to represent [DropdownMenuItem].
 ///
 /// In general, the trend will all of these unsupported features is that this
@@ -193,20 +195,21 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
   },
 
   'DropdownButton': (BuildContext context, DataSource source) {
-    final length = source.length(['items']);
-    final dropdownMenuItems = List<DropdownMenuItem<Object>>.generate(
-        length,
-        (i) => DropdownMenuItem<Object>(
-            onTap: source.voidHandler(['items', i, 'onTap']),
-            value: source.v<String>(['items', i, 'value']),
-            enabled: source.v<bool>(['items', i, 'enabled']) ?? true,
-            alignment: ArgumentDecoders.alignment(source, ['items', i, 'alignment']) ?? AlignmentDirectional.centerStart,
-            child: source.child(['items', i, 'child'])));
+    final int length = source.length(['items']);
+    final List<DropdownMenuItem<Object>> dropdownMenuItems = List<DropdownMenuItem<Object>>.generate(
+      length,
+      (int index) => DropdownMenuItem<Object>(
+        onTap: source.voidHandler(['items', index, 'onTap']),
+        value: source.v<String>(['items', index, 'value']) ?? source.v<int>(['items', index, 'value']) ?? source.v<double>(['items', index, 'value']) ?? source.v<bool>(['items', index, 'value']),
+        enabled: source.v<bool>(['items', index, 'enabled']) ?? true,
+        alignment: ArgumentDecoders.alignment(source, ['items', index, 'alignment']) ?? AlignmentDirectional.centerStart,
+        child: source.child(['items', index, 'child']),
+      ),
+    );
 
     return DropdownButton<Object>(
       items: dropdownMenuItems,
       value: source.v<String>(['value']) ?? source.v<int>(['value']) ?? source.v<double>(['value']) ?? source.v<bool>(['value']),
-      hint: source.optionalChild(['hint']),
       disabledHint: source.optionalChild(['disabledHint']),
       onChanged: source.handler(<Object>['onChanged'], (HandlerTrigger trigger) => (Object? value) => trigger(<String, Object?>{'value': value})),
       onTap: source.voidHandler(['onTap']),

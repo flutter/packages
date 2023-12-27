@@ -129,6 +129,15 @@ void main() {
               child: Center(
                 child: DropdownButton(
                   value: 'foo',
+                  elevation: 14,
+                  dropdownColor: 0xFF9E9E9E,
+                  underline: Container(
+                    height: 2,
+                    color: 0xFF7C4DFF,
+                  ),
+                  style: {
+                    color:0xFF7C4DFF,
+                  },
                   items: [
                     {
                       value: 'foo',
@@ -141,6 +150,7 @@ void main() {
                       onTap: event 'menu_item' {},
                     },
                   ],
+                  borderRadius:[{x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}, {x: 8.0, y: 8.0}],
                   onChanged: event 'dropdown' {},
                 ),
               ),
@@ -162,15 +172,16 @@ void main() {
 
     await tester.tap(find.byType(DropdownButton<Object>));
     await tester.pumpAndSettle();
-    expect(find.text('bar'), findsOneWidget);
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/material_test.dropdown.png'),
       skip: !runGoldens,
     );
-    // Dismiss dropdown.
-    await tester.tapAt(Offset.zero);
+    // Tap on the second item.
+    await tester.tap(find.text('bar'));
     await tester.pumpAndSettle();
+    expect(eventLog, contains('menu_item {}'));
+    expect(eventLog, contains('dropdown {value: bar}'));
 
     await tester.tapAt(const Offset(20.0, 20.0));
     await tester.pump();
