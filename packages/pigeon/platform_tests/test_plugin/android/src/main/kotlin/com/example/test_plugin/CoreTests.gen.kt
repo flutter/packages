@@ -3478,13 +3478,13 @@ abstract class ProxyIntegrationCoreApi_Api(
   private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
 
   /**
-   * An implementation of [ProxyApiSuperClass_Api] used to access callback methods or to create add
-   * a new Dart instance of `ProxyApiSuperClass`.
+   * An implementation of [ProxyApiSuperClass_Api] used to access callback methods or to add a new
+   * Dart instance of `ProxyApiSuperClass` to the Dart `InstanceManager`.
    */
   abstract fun pigeon_getProxyApiSuperClassApi(): ProxyApiSuperClass_Api
   /**
-   * An implementation of [ProxyApiInterface_Api] used to access callback methods or to create add a
-   * new Dart instance of `ProxyApiInterface`.
+   * An implementation of [ProxyApiInterface_Api] used to access callback methods or to add a new
+   * Dart instance of `ProxyApiInterface` to the Dart `InstanceManager`.
    */
   abstract fun pigeon_getProxyApiInterfaceApi(): ProxyApiInterface_Api
 

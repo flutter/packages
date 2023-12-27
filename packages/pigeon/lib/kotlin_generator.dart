@@ -893,8 +893,8 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             name: '${classMemberNamePrefix}get${name}Api',
             isAbstract: true,
             documentationComments: <String>[
-              'An implementation of [${name}_Api] used to access callback methods or to create ',
-              'add a new Dart instance of `$name`.'
+              'An implementation of [${name}_Api] used to access callback methods or to add a new ',
+              'Dart instance of `$name` to the Dart `InstanceManager`.'
             ],
             returnType: TypeDeclaration(
               baseName: '${name}_Api',
