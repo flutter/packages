@@ -367,8 +367,28 @@ class Pigeon_InstanceManagerApi(private val binaryMessenger: BinaryMessenger) {
 }
 
 @Suppress("ClassName")
-private class Pigeon_ProxyApiBaseCodec(val instanceManager: Pigeon_InstanceManager) :
-    StandardMessageCodec() {
+abstract class Pigeon_ProxyApiBaseCodec(
+    val binaryMessenger: BinaryMessenger,
+    val instanceManager: Pigeon_InstanceManager
+) : StandardMessageCodec() {
+  /**
+   * An implementation of [ProxyIntegrationCoreApi_Api] used to add a new Dart instance of
+   * `ProxyIntegrationCoreApi` to the Dart `InstanceManager`.
+   */
+  abstract fun getProxyIntegrationCoreApi_Api(): ProxyIntegrationCoreApi_Api
+
+  /**
+   * An implementation of [ProxyApiSuperClass_Api] used to add a new Dart instance of
+   * `ProxyApiSuperClass` to the Dart `InstanceManager`.
+   */
+  abstract fun getProxyApiSuperClass_Api(): ProxyApiSuperClass_Api
+
+  /**
+   * An implementation of [ProxyApiInterface_Api] used to add a new Dart instance of
+   * `ProxyApiInterface` to the Dart `InstanceManager`.
+   */
+  abstract fun getProxyApiInterface_Api(): ProxyApiInterface_Api
+
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
@@ -379,6 +399,13 @@ private class Pigeon_ProxyApiBaseCodec(val instanceManager: Pigeon_InstanceManag
   }
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    when (value) {
+      is com.example.test_plugin.ProxyIntegrationCoreApi ->
+          getProxyIntegrationCoreApi_Api().pigeon_newInstance(value) {}
+      is ProxyApiSuperClass -> getProxyApiSuperClass_Api().pigeon_newInstance(value) {}
+      is ProxyApiInterface -> getProxyApiInterface_Api().pigeon_newInstance(value) {}
+    }
+
     when (value) {
       instanceManager.containsInstance(value) -> {
         stream.write(128)
@@ -3470,24 +3497,8 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
  * The core interface that each host language plugin must implement in platform_test integration
  * tests.
  */
-@Suppress("UNCHECKED_CAST")
-abstract class ProxyIntegrationCoreApi_Api(
-    val binaryMessenger: BinaryMessenger,
-    val pigeon_instanceManager: Pigeon_InstanceManager
-) {
-  private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
-
-  /**
-   * An implementation of [ProxyApiSuperClass_Api] used to access callback methods or to add a new
-   * Dart instance of `ProxyApiSuperClass` to the Dart `InstanceManager`.
-   */
-  abstract fun pigeon_getProxyApiSuperClassApi(): ProxyApiSuperClass_Api
-  /**
-   * An implementation of [ProxyApiInterface_Api] used to access callback methods or to add a new
-   * Dart instance of `ProxyApiInterface` to the Dart `InstanceManager`.
-   */
-  abstract fun pigeon_getProxyApiInterfaceApi(): ProxyApiInterface_Api
-
+@Suppress("ClassName")
+abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) {
   abstract fun pigeon_defaultConstructor(
       aBool: Boolean,
       anInt: Long,
@@ -3526,6 +3537,12 @@ abstract class ProxyIntegrationCoreApi_Api(
       nullableEnumParam: AnEnum?,
       nullableProxyApiParam: ProxyApiSuperClass?
   ): com.example.test_plugin.ProxyIntegrationCoreApi
+
+  abstract fun attachedField(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): ProxyApiSuperClass
+
+  abstract fun staticAttachedField(): ProxyApiSuperClass
 
   abstract fun aBool(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Boolean
 
@@ -3644,8 +3661,8 @@ abstract class ProxyIntegrationCoreApi_Api(
   /** Returns the passed list with ProxyApis, to test serialization and deserialization. */
   abstract fun echoProxyApiList(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aList: List<ProxyIntegrationCoreApi?>
-  ): List<ProxyIntegrationCoreApi>
+      aList: List<com.example.test_plugin.ProxyIntegrationCoreApi?>
+  ): List<com.example.test_plugin.ProxyIntegrationCoreApi>
 
   /** Returns the passed map, to test serialization and deserialization. */
   abstract fun echoMap(
@@ -3656,8 +3673,8 @@ abstract class ProxyIntegrationCoreApi_Api(
   /** Returns the passed map with ProxyApis, to test serialization and deserialization. */
   abstract fun echoProxyApiMap(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aMap: Map<String?, ProxyIntegrationCoreApi?>
-  ): Map<String?, ProxyIntegrationCoreApi?>
+      aMap: Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>
+  ): Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>
 
   /** Returns the passed enum to test serialization and deserialization. */
   abstract fun echoEnum(
@@ -3670,11 +3687,6 @@ abstract class ProxyIntegrationCoreApi_Api(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
       aProxyApi: ProxyApiSuperClass
   ): ProxyApiSuperClass
-
-  abstract fun echoEnumList(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      anEnumList: List<AnEnum?>
-  ): List<AnEnum?>
 
   /** Returns passed in int. */
   abstract fun echoNullableInt(
@@ -3947,8 +3959,8 @@ abstract class ProxyIntegrationCoreApi_Api(
 
   abstract fun callFlutterEchoProxyApiList(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aList: List<ProxyIntegrationCoreApi?>,
-      callback: (Result<List<ProxyIntegrationCoreApi?>>) -> Unit
+      aList: List<com.example.test_plugin.ProxyIntegrationCoreApi?>,
+      callback: (Result<List<com.example.test_plugin.ProxyIntegrationCoreApi?>>) -> Unit
   )
 
   abstract fun callFlutterEchoMap(
@@ -3959,8 +3971,8 @@ abstract class ProxyIntegrationCoreApi_Api(
 
   abstract fun callFlutterEchoProxyApiMap(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aMap: Map<String?, ProxyIntegrationCoreApi?>,
-      callback: (Result<Map<String?, ProxyIntegrationCoreApi?>>) -> Unit
+      aMap: Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>,
+      callback: (Result<Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>>) -> Unit
   )
 
   abstract fun callFlutterEchoEnum(
@@ -4029,18 +4041,10 @@ abstract class ProxyIntegrationCoreApi_Api(
       callback: (Result<ProxyApiSuperClass?>) -> Unit
   )
 
-  abstract fun attachedField(
-      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
-  ): ProxyApiSuperClass
-
-  abstract fun staticAttachedField(): ProxyApiSuperClass
-
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyIntegrationCoreApi_Api?) {
-      val codec =
-          if (api != null) Pigeon_ProxyApiBaseCodec(api.pigeon_instanceManager)
-          else StandardMessageCodec()
+      val codec = api?.codec ?: StandardMessageCodec()
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -4089,7 +4093,7 @@ abstract class ProxyIntegrationCoreApi_Api(
             val nullableProxyApiParamArg = args[36] as ProxyApiSuperClass?
             var wrapped: List<Any?>
             try {
-              api.pigeon_instanceManager.addDartCreatedInstance(
+              api.codec.instanceManager.addDartCreatedInstance(
                   api.pigeon_defaultConstructor(
                       aBoolArg,
                       anIntArg,
@@ -4151,7 +4155,7 @@ abstract class ProxyIntegrationCoreApi_Api(
             val pigeon_identifierArg = args[1].let { if (it is Int) it.toLong() else it as Long }
             var wrapped: List<Any?>
             try {
-              api.pigeon_instanceManager.addDartCreatedInstance(
+              api.codec.instanceManager.addDartCreatedInstance(
                   api.attachedField(pigeon_instanceArg), pigeon_identifierArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
@@ -4175,7 +4179,7 @@ abstract class ProxyIntegrationCoreApi_Api(
             val pigeon_identifierArg = args[0].let { if (it is Int) it.toLong() else it as Long }
             var wrapped: List<Any?>
             try {
-              api.pigeon_instanceManager.addDartCreatedInstance(
+              api.codec.instanceManager.addDartCreatedInstance(
                   api.staticAttachedField(), pigeon_identifierArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
@@ -4448,7 +4452,7 @@ abstract class ProxyIntegrationCoreApi_Api(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aListArg = args[1] as List<ProxyIntegrationCoreApi?>
+            val aListArg = args[1] as List<com.example.test_plugin.ProxyIntegrationCoreApi?>
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.echoProxyApiList(pigeon_instanceArg, aListArg))
@@ -4494,7 +4498,7 @@ abstract class ProxyIntegrationCoreApi_Api(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aMapArg = args[1] as Map<String?, ProxyIntegrationCoreApi?>
+            val aMapArg = args[1] as Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.echoProxyApiMap(pigeon_instanceArg, aMapArg))
@@ -4543,34 +4547,7 @@ abstract class ProxyIntegrationCoreApi_Api(
             val aProxyApiArg = args[1] as ProxyApiSuperClass
             var wrapped: List<Any?>
             try {
-              val result = api.echoProxyApi(pigeon_instanceArg, aProxyApiArg)
-              if (result != null) {
-                api.pigeon_getProxyApiSuperClassApi().pigeon_newInstance(result) {}
-              }
-              wrapped = listOf<Any?>(result)
-            } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoEnumList",
-                codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val anEnumListArg = args[1] as List<AnEnum?>
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.echoEnumList(pigeon_instanceArg, anEnumListArg))
+              wrapped = listOf<Any?>(api.echoProxyApi(pigeon_instanceArg, aProxyApiArg))
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -4801,11 +4778,7 @@ abstract class ProxyIntegrationCoreApi_Api(
             val aProxyApiArg = args[1] as ProxyApiSuperClass?
             var wrapped: List<Any?>
             try {
-              val result = api.echoNullableProxyApi(pigeon_instanceArg, aProxyApiArg)
-              if (result != null) {
-                api.pigeon_getProxyApiSuperClassApi().pigeon_newInstance(result) {}
-              }
-              wrapped = listOf<Any?>(result)
+              wrapped = listOf<Any?>(api.echoNullableProxyApi(pigeon_instanceArg, aProxyApiArg))
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -5656,9 +5629,9 @@ abstract class ProxyIntegrationCoreApi_Api(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aListArg = args[1] as List<ProxyIntegrationCoreApi?>
+            val aListArg = args[1] as List<com.example.test_plugin.ProxyIntegrationCoreApi?>
             api.callFlutterEchoProxyApiList(pigeon_instanceArg, aListArg) {
-                result: Result<List<ProxyIntegrationCoreApi?>> ->
+                result: Result<List<com.example.test_plugin.ProxyIntegrationCoreApi?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -5708,9 +5681,9 @@ abstract class ProxyIntegrationCoreApi_Api(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aMapArg = args[1] as Map<String?, ProxyIntegrationCoreApi?>
+            val aMapArg = args[1] as Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>
             api.callFlutterEchoProxyApiMap(pigeon_instanceArg, aMapArg) {
-                result: Result<Map<String?, ProxyIntegrationCoreApi?>> ->
+                result: Result<Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -5767,9 +5740,6 @@ abstract class ProxyIntegrationCoreApi_Api(
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                if (data != null) {
-                  api.pigeon_getProxyApiSuperClassApi().pigeon_newInstance(data) {}
-                }
                 reply.reply(wrapResult(data))
               }
             }
@@ -6003,9 +5973,6 @@ abstract class ProxyIntegrationCoreApi_Api(
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                if (data != null) {
-                  api.pigeon_getProxyApiSuperClassApi().pigeon_newInstance(data) {}
-                }
                 reply.reply(wrapResult(data))
               }
             }
@@ -6023,11 +5990,11 @@ abstract class ProxyIntegrationCoreApi_Api(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
       callback: (Result<Unit>) -> Unit
   ) {
-    if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
+    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg = pigeon_instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val aBoolArg = aBool(pigeon_instanceArg)
     val anIntArg = anInt(pigeon_instanceArg)
     val aDoubleArg = aDouble(pigeon_instanceArg)
@@ -6037,7 +6004,6 @@ abstract class ProxyIntegrationCoreApi_Api(
     val aMapArg = aMap(pigeon_instanceArg)
     val anEnumArg = anEnum(pigeon_instanceArg)
     val aProxyApiArg = aProxyApi(pigeon_instanceArg)
-    pigeon_getProxyApiSuperClassApi().pigeon_newInstance(aProxyApiArg) {}
     val aNullableBoolArg = aNullableBool(pigeon_instanceArg)
     val aNullableIntArg = aNullableInt(pigeon_instanceArg)
     val aNullableDoubleArg = aNullableDouble(pigeon_instanceArg)
@@ -6047,9 +6013,7 @@ abstract class ProxyIntegrationCoreApi_Api(
     val aNullableMapArg = aNullableMap(pigeon_instanceArg)
     val aNullableEnumArg = aNullableEnum(pigeon_instanceArg)
     val aNullableProxyApiArg = aNullableProxyApi(pigeon_instanceArg)
-    if (aNullableProxyApiArg != null) {
-      pigeon_getProxyApiSuperClassApi().pigeon_newInstance(aNullableProxyApiArg) {}
-    }
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6093,6 +6057,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
       callback: (Result<Unit>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterNoop"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6115,6 +6080,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
       callback: (Result<Any?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterThrowError"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6138,6 +6104,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
       callback: (Result<Unit>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterThrowErrorFromVoid"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6161,6 +6128,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aBoolArg: Boolean,
       callback: (Result<Boolean>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoBool"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6192,6 +6160,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       anIntArg: Long,
       callback: (Result<Long>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoInt"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6223,6 +6192,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aDoubleArg: Double,
       callback: (Result<Double>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoDouble"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6254,6 +6224,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aStringArg: String,
       callback: (Result<String>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoString"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6285,6 +6256,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aListArg: ByteArray,
       callback: (Result<ByteArray>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoUint8List"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6316,6 +6288,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aListArg: List<Any?>,
       callback: (Result<List<Any?>>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoList"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6344,9 +6317,10 @@ abstract class ProxyIntegrationCoreApi_Api(
   /** Returns the passed list with ProxyApis, to test serialization and deserialization. */
   fun flutterEchoProxyApiList(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aListArg: List<ProxyIntegrationCoreApi?>,
-      callback: (Result<List<ProxyIntegrationCoreApi?>>) -> Unit
+      aListArg: List<com.example.test_plugin.ProxyIntegrationCoreApi?>,
+      callback: (Result<List<com.example.test_plugin.ProxyIntegrationCoreApi?>>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoProxyApiList"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6363,7 +6337,7 @@ abstract class ProxyIntegrationCoreApi_Api(
                       "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
-          val output = it[0] as List<ProxyIntegrationCoreApi?>
+          val output = it[0] as List<com.example.test_plugin.ProxyIntegrationCoreApi?>
           callback(Result.success(output))
         }
       } else {
@@ -6378,6 +6352,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aMapArg: Map<String?, Any?>,
       callback: (Result<Map<String?, Any?>>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoMap"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6406,9 +6381,10 @@ abstract class ProxyIntegrationCoreApi_Api(
   /** Returns the passed map with ProxyApis, to test serialization and deserialization. */
   fun flutterEchoProxyApiMap(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aMapArg: Map<String?, ProxyIntegrationCoreApi?>,
-      callback: (Result<Map<String?, ProxyIntegrationCoreApi?>>) -> Unit
+      aMapArg: Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>,
+      callback: (Result<Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoProxyApiMap"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6425,7 +6401,7 @@ abstract class ProxyIntegrationCoreApi_Api(
                       "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
-          val output = it[0] as Map<String?, ProxyIntegrationCoreApi?>
+          val output = it[0] as Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>
           callback(Result.success(output))
         }
       } else {
@@ -6440,6 +6416,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       anEnumArg: AnEnum,
       callback: (Result<AnEnum>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoEnum"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6471,7 +6448,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aProxyApiArg: ProxyApiSuperClass,
       callback: (Result<ProxyApiSuperClass>) -> Unit
   ) {
-    pigeon_getProxyApiSuperClassApi().pigeon_newInstance(aProxyApiArg) {}
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoProxyApi"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6503,6 +6480,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aBoolArg: Boolean?,
       callback: (Result<Boolean?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableBool"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6527,6 +6505,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       anIntArg: Long?,
       callback: (Result<Long?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableInt"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6551,6 +6530,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aDoubleArg: Double?,
       callback: (Result<Double?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableDouble"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6575,6 +6555,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aStringArg: String?,
       callback: (Result<String?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableString"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6599,6 +6580,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aListArg: ByteArray?,
       callback: (Result<ByteArray?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableUint8List"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6623,6 +6605,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aListArg: List<Any?>?,
       callback: (Result<List<Any?>?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableList"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6647,6 +6630,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aMapArg: Map<String?, Any?>?,
       callback: (Result<Map<String?, Any?>?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableMap"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6671,6 +6655,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       anEnumArg: AnEnum?,
       callback: (Result<AnEnum?>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableEnum"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6695,9 +6680,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aProxyApiArg: ProxyApiSuperClass?,
       callback: (Result<ProxyApiSuperClass?>) -> Unit
   ) {
-    if (aProxyApiArg != null) {
-      pigeon_getProxyApiSuperClassApi().pigeon_newInstance(aProxyApiArg) {}
-    }
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoNullableProxyApi"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6724,6 +6707,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
       callback: (Result<Unit>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterNoopAsync"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6747,6 +6731,7 @@ abstract class ProxyIntegrationCoreApi_Api(
       aStringArg: String,
       callback: (Result<String>) -> Unit
   ) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoAsyncString"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6771,23 +6756,28 @@ abstract class ProxyIntegrationCoreApi_Api(
       }
     }
   }
+
+  @Suppress("FunctionName")
+  /** An implementation of [ProxyApiSuperClass_Api] used to access callback methods */
+  fun pigeon_getProxyApiSuperClass_Api(): ProxyApiSuperClass_Api {
+    return codec.getProxyApiSuperClass_Api()
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [ProxyApiInterface_Api] used to access callback methods */
+  fun pigeon_getProxyApiInterface_Api(): ProxyApiInterface_Api {
+    return codec.getProxyApiInterface_Api()
+  }
 }
 /** ProxyApi to serve as a super class to the core ProxyApi interface. */
-@Suppress("UNCHECKED_CAST")
-abstract class ProxyApiSuperClass_Api(
-    val binaryMessenger: BinaryMessenger,
-    val pigeon_instanceManager: Pigeon_InstanceManager
-) {
-  private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
-
+@Suppress("ClassName")
+abstract class ProxyApiSuperClass_Api(val codec: Pigeon_ProxyApiBaseCodec) {
   abstract fun aSuperMethod(pigeon_instance: ProxyApiSuperClass)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyApiSuperClass_Api?) {
-      val codec =
-          if (api != null) Pigeon_ProxyApiBaseCodec(api.pigeon_instanceManager)
-          else StandardMessageCodec()
+      val codec = api?.codec ?: StandardMessageCodec()
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -6817,11 +6807,12 @@ abstract class ProxyApiSuperClass_Api(
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiSuperClass and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiSuperClass, callback: (Result<Unit>) -> Unit) {
-    if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
+    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg = pigeon_instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6840,30 +6831,24 @@ abstract class ProxyApiSuperClass_Api(
   }
 }
 /** ProxyApi to serve as an interface to the core ProxyApi interface. */
-@Suppress("UNCHECKED_CAST")
-abstract class ProxyApiInterface_Api(
-    val binaryMessenger: BinaryMessenger,
-    val pigeon_instanceManager: Pigeon_InstanceManager
-) {
-  private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(pigeon_instanceManager)
-
+@Suppress("ClassName")
+abstract class ProxyApiInterface_Api(val codec: Pigeon_ProxyApiBaseCodec) {
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyApiInterface_Api?) {
-      val codec =
-          if (api != null) Pigeon_ProxyApiBaseCodec(api.pigeon_instanceManager)
-          else StandardMessageCodec()
+      val codec = api?.codec ?: StandardMessageCodec()
     }
   }
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
-    if (pigeon_instanceManager.containsInstance(pigeon_instanceArg)) {
+    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg = pigeon_instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -6882,6 +6867,7 @@ abstract class ProxyApiInterface_Api(
   }
 
   fun anInterfaceMethod(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
+    val binaryMessenger = codec.binaryMessenger
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)

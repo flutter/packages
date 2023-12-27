@@ -870,7 +870,7 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
 
     indent.writeln('@Suppress("ClassName")');
     indent.writeScoped(
-      'abstract class $codecName(val instanceManager: $instanceManagerClassName) : StandardMessageCodec() {',
+      'abstract class $codecName(val binaryMessenger: BinaryMessenger, val instanceManager: $instanceManagerClassName) : StandardMessageCodec() {',
       '}',
       () {
         for (final AstProxyApi api in sortedApis) {
@@ -953,7 +953,7 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
     );
     indent.writeln('@Suppress("ClassName")');
     indent.writeScoped(
-      'abstract class $kotlinApiName(val binaryMessenger: BinaryMessenger, val codec: $codecName) {',
+      'abstract class $kotlinApiName(val codec: $codecName) {',
       '}',
       () {
         final Iterable<AstProxyApi> allProxyApis =
@@ -1013,8 +1013,6 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
             .followedBy(interfacesMethods)
             .any((Method method) => method.required);
 
-        // TODO: create issue for enum lists
-        // TODO: remove callback from new_instance. it should never be used
         for (final Constructor constructor in api.constructors) {
           _writeMethodDeclaration(
             indent,
@@ -1286,6 +1284,7 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
                 );
               });
 
+              indent.writeln('val binaryMessenger = codec.binaryMessenger');
               _writeFlutterMethodMessageCall(
                 indent,
                 returnType: returnType,
@@ -1319,60 +1318,39 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
         indent.newln();
 
         for (final Method method in api.flutterMethods) {
-          _writeFlutterMethod(
-            indent,
-            name: method.name,
-            returnType: method.returnType,
-            channelName: makeChannelName(api, method, dartPackageName),
-            errorClassName: errorClassName,
-            dartPackageName: dartPackageName,
-            documentationComments: method.documentationComments,
-            parameters: <Parameter>[
-              Parameter(
-                name: '${classMemberNamePrefix}instance',
-                type: TypeDeclaration(
-                  baseName: api.name,
-                  isNullable: false,
-                  associatedProxyApi: api,
+          _writeFlutterMethod(indent,
+              name: method.name,
+              returnType: method.returnType,
+              channelName: makeChannelName(api, method, dartPackageName),
+              errorClassName: errorClassName,
+              dartPackageName: dartPackageName,
+              documentationComments: method.documentationComments,
+              parameters: <Parameter>[
+                Parameter(
+                  name: '${classMemberNamePrefix}instance',
+                  type: TypeDeclaration(
+                    baseName: api.name,
+                    isNullable: false,
+                    associatedProxyApi: api,
+                  ),
                 ),
-              ),
-              ...method.parameters,
-            ],
-            onWriteBody: (
-              Indent indent, {
-              required List<Parameter> parameters,
-              required TypeDeclaration returnType,
-              required String channelName,
-              required String errorClassName,
-            }) {
-              parameters.skip(1).forEachIndexed(
-                (int index, Parameter parameter) {
-                  final String argName = _getSafeArgumentName(index, parameter);
-                  if (parameter.type.isProxyApi) {
-                    final String apiAccess = parameter.type.baseName == api.name
-                        ? ''
-                        : '${classMemberNamePrefix}get${parameter.type.baseName}Api().';
-                    final String newInstanceCall =
-                        '$apiAccess$newInstanceMethodName($argName) { }';
-                    if (parameter.type.isNullable) {
-                      indent.writeScoped('if ($argName != null) {', '}', () {
-                        indent.writeln(newInstanceCall);
-                      });
-                    } else {
-                      indent.writeln(newInstanceCall);
-                    }
-                  }
-                },
-              );
-              _writeFlutterMethodMessageCall(
-                indent,
-                returnType: returnType,
-                channelName: channelName,
-                errorClassName: errorClassName,
-                parameters: parameters,
-              );
-            },
-          );
+                ...method.parameters,
+              ], onWriteBody: (
+            Indent indent, {
+            required List<Parameter> parameters,
+            required TypeDeclaration returnType,
+            required String channelName,
+            required String errorClassName,
+          }) {
+            indent.writeln('val binaryMessenger = codec.binaryMessenger');
+            _writeFlutterMethodMessageCall(
+              indent,
+              returnType: returnType,
+              channelName: channelName,
+              errorClassName: errorClassName,
+              parameters: parameters,
+            );
+          });
           indent.newln();
         }
 
