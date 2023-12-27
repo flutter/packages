@@ -574,7 +574,7 @@ abstract class TestDeviceOrientationManagerHostApi {
 
   void stopListeningForDeviceOrientationChange();
 
-  int getDefaultRotation();
+  int getDefaultDisplayRotation();
 
   static void setup(TestDeviceOrientationManagerHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -625,7 +625,7 @@ abstract class TestDeviceOrientationManagerHostApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultRotation',
+          'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultDisplayRotation',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -636,7 +636,7 @@ abstract class TestDeviceOrientationManagerHostApi {
             .setMockDecodedMessageHandler<Object?>(channel,
                 (Object? message) async {
           // ignore message
-          final int output = api.getDefaultRotation();
+          final int output = api.getDefaultDisplayRotation();
           return <Object?>[output];
         });
       }

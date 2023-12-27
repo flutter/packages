@@ -551,10 +551,11 @@ class AndroidCameraCameraX extends CameraPlatform {
       await imageCapture!.setFlashMode(ImageCapture.flashModeOff);
     }
 
-    // Set target rotation to current photo orientation only if capture
+    // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await imageCapture!.setTargetRotation(await proxy.getDefaultRotation());
+      await imageCapture!
+          .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
 
     final String picturePath = await imageCapture!.takePicture();
@@ -639,10 +640,11 @@ class AndroidCameraCameraX extends CameraPlatform {
           .bindToLifecycle(cameraSelector!, <UseCase>[videoCapture!]);
     }
 
-    // Set target rotation to current photo orientation only if capture
+    // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await videoCapture!.setTargetRotation(await proxy.getDefaultRotation());
+      await videoCapture!
+          .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
 
     videoOutputPath =
@@ -746,10 +748,11 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Configures the [imageAnalysis] instance for image streaming.
   Future<void> _configureImageAnalysis(int cameraId) async {
-    // Set target rotation to current photo orientation only if capture
+    // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await imageAnalysis!.setTargetRotation(await proxy.getDefaultRotation());
+      await imageAnalysis!
+          .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
 
     // Create and set Analyzer that can read image data for image streaming.

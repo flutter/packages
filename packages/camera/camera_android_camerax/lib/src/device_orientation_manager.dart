@@ -52,14 +52,19 @@ class DeviceOrientationManager {
   /// Retrieves the default rotation that CameraX uses for [UseCase]s in terms
   /// of one of the [Surface] rotation constants.
   ///
+  /// The default rotation that CameraX uses is the rotation of the default
+  /// display at the time of binding a particular [UseCase], but the default
+  /// display does not change in the plugin, so this default value is
+  /// display-agnostic.
+  ///
   /// [startListeningForDeviceOrientationChange] must be called before calling
   /// this method.
-  static Future<int> getDefaultRotation(
+  static Future<int> getDefaultDisplayRotation(
       {BinaryMessenger? binaryMessenger}) async {
     final DeviceOrientationManagerHostApi api =
         DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
 
-    return api.getDefaultRotation();
+    return api.getDefaultDisplayRotation();
   }
 
   /// Serializes[DeviceOrientation] into a [String].

@@ -48,7 +48,7 @@ class CameraXProxy {
     this.startListeningForDeviceOrientationChange =
         _startListeningForDeviceOrientationChange,
     this.setPreviewSurfaceProvider = _setPreviewSurfaceProvider,
-    this.getDefaultRotation = _getDefaultRotation,
+    this.getDefaultDisplayRotation = _getDefaultDisplayRotation,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -135,7 +135,7 @@ class CameraXProxy {
 
   /// Returns default rotation for [UseCase]s in terms of one of the [Surface]
   /// rotation constants.
-  Future<int> Function() getDefaultRotation;
+  Future<int> Function() getDefaultDisplayRotation;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -236,7 +236,7 @@ class CameraXProxy {
     return preview.setSurfaceProvider();
   }
 
-  static Future<int> _getDefaultRotation() async {
-    return DeviceOrientationManager.getDefaultRotation();
+  static Future<int> _getDefaultDisplayRotation() async {
+    return DeviceOrientationManager.getDefaultDisplayRotation();
   }
 }

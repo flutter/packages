@@ -149,11 +149,11 @@ public class DeviceOrientationManagerTest {
   }
 
   @Test
-  public void getDefaultRotation_returnsExpectedValue() {
+  public void getDefaultDisplayRotation_returnsExpectedValue() {
     final int expectedRotation = 90;
     when(mockDisplay.getRotation()).thenReturn(expectedRotation);
 
-    final int defaultRotation = deviceOrientationManager.getDefaultRotation();
+    final int defaultRotation = deviceOrientationManager.getDefaultDisplayRotation();
 
     assertEquals(defaultRotation, expectedRotation);
   }

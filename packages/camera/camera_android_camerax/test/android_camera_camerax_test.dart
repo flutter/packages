@@ -1241,7 +1241,8 @@ void main() {
 
       // Tell plugin to mock call to get current video orientation.
       camera.proxy = CameraXProxy(
-          getDefaultRotation: () => Future<int>.value(defaultTargetRotation));
+          getDefaultDisplayRotation: () =>
+              Future<int>.value(defaultTargetRotation));
 
       const int cameraId = 87;
       const String outputPath = '/temp/MOV123.temp';
@@ -1416,7 +1417,8 @@ void main() {
 
     // Tell plugin to mock call to get current photo orientation.
     camera.proxy = CameraXProxy(
-        getDefaultRotation: () => Future<int>.value(defaultTargetRotation));
+        getDefaultDisplayRotation: () =>
+            Future<int>.value(defaultTargetRotation));
 
     when(camera.imageCapture!.takePicture())
         .thenAnswer((_) async => 'test/absolute/path/to/picture');
@@ -1888,7 +1890,8 @@ void main() {
     // call to get current photo orientation.
     camera.proxy = CameraXProxy(
         createAnalyzer: (_) => MockAnalyzer(),
-        getDefaultRotation: () => Future<int>.value(defaultTargetRotation));
+        getDefaultDisplayRotation: () =>
+            Future<int>.value(defaultTargetRotation));
 
     // Orientation is unlocked and plugin does not need to set default target
     // rotation manually.

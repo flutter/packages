@@ -1008,9 +1008,9 @@ class DeviceOrientationManagerHostApi {
     }
   }
 
-  Future<int> getDefaultRotation() async {
+  Future<int> getDefaultDisplayRotation() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultRotation',
+        'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultDisplayRotation',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;

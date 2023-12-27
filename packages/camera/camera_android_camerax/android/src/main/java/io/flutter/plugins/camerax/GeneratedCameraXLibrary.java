@@ -1366,7 +1366,7 @@ public class GeneratedCameraXLibrary {
     void stopListeningForDeviceOrientationChange();
 
     @NonNull
-    Long getDefaultRotation();
+    Long getDefaultDisplayRotation();
 
     /** The codec used by DeviceOrientationManagerHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1433,14 +1433,14 @@ public class GeneratedCameraXLibrary {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultRotation",
+                "dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDefaultDisplayRotation",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
-                  Long output = api.getDefaultRotation();
+                  Long output = api.getDefaultDisplayRotation();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

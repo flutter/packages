@@ -226,7 +226,7 @@ abstract class DeviceOrientationManagerHostApi {
 
   void stopListeningForDeviceOrientationChange();
 
-  int getDefaultRotation();
+  int getDefaultDisplayRotation();
 }
 
 @FlutterApi()

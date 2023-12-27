@@ -78,9 +78,19 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
     }
   }
 
-  /** Gets default capture rotation for CameraX {@code UseCase}s. */
+  /**
+   * Gets default capture rotation for CameraX {@code UseCase}s.
+   *
+   * <p>The default capture rotation for CameraX is the rotation of default {@code Display} at the
+   * time that a {@code UseCase} is bound, but the default {@code Display} does not change in this
+   * plugin, so this value is {@code Display}-agnostic.
+   *
+   * <p>See
+   * https://developer.android.com/reference/androidx/camera/core/ImageCapture#setTargetRotation(int)
+   * for instance for more information on how this default value is used.
+   */
   @Override
-  public @NonNull Long getDefaultRotation() {
+  public @NonNull Long getDefaultDisplayRotation() {
     int defaultRotation;
     try {
       defaultRotation = deviceOrientationManager.getDefaultRotation();
