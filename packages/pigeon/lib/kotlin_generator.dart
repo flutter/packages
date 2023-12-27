@@ -940,7 +940,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             _writeMethodDeclaration(
               indent,
               name: field.name,
-              documentationComments: api.documentationComments,
+              documentationComments: field.documentationComments,
               returnType: field.type,
               isAbstract: true,
               parameters: <Parameter>[
@@ -982,6 +982,28 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           indent.newln();
         }
 
+        for (final Field field in api.attachedFields) {
+          _writeMethodDeclaration(
+            indent,
+            name: field.name,
+            documentationComments: field.documentationComments,
+            returnType: field.type,
+            isAbstract: true,
+            parameters: <Parameter>[
+              if (!field.isStatic)
+                Parameter(
+                  name: '${classMemberNamePrefix}instance',
+                  type: TypeDeclaration(
+                    baseName: api.name,
+                    isNullable: false,
+                    associatedProxyApi: api,
+                  ),
+                ),
+            ],
+          );
+          indent.newln();
+        }
+
         indent.writeScoped('companion object {', '}', () {
           indent.writeln('@Suppress("LocalVariableName")');
           indent.writeScoped(
@@ -1015,7 +1037,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                   },
                   parameters: <Parameter>[
                     Parameter(
-                      name: '${classMemberNamePrefix}instanceIdentifier',
+                      name: '${classMemberNamePrefix}identifier',
                       type: const TypeDeclaration(
                         baseName: 'int',
                         isNullable: false,
@@ -1028,6 +1050,49 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                       );
                     }),
                     ...constructor.parameters,
+                  ],
+                );
+              }
+
+              for (final Field field in api.attachedFields) {
+                _writeHostMethod(
+                  indent,
+                  api: api,
+                  name: field.name,
+                  channelName: makeChannelNameWithStrings(
+                    apiName: api.name,
+                    methodName: field.name,
+                    dartPackageName: dartPackageName,
+                  ),
+                  taskQueueType: TaskQueueType.serial,
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  onCreateCall: (
+                    List<String> methodParameters, {
+                    required String apiVarName,
+                  }) {
+                    final String param = methodParameters.length > 1
+                        ? methodParameters.first
+                        : '';
+                    return '$apiVarName.${classMemberNamePrefix}instanceManager.addDartCreatedInstance('
+                        '$apiVarName.${field.name}($param), ${methodParameters.last})';
+                  },
+                  parameters: <Parameter>[
+                    if (!field.isStatic)
+                      Parameter(
+                        name: '${classMemberNamePrefix}instance',
+                        type: TypeDeclaration(
+                          baseName: fullKotlinClassName,
+                          isNullable: false,
+                          associatedProxyApi: api,
+                        ),
+                      ),
+                    Parameter(
+                      name: '${classMemberNamePrefix}identifier',
+                      type: const TypeDeclaration(
+                        baseName: 'int',
+                        isNullable: false,
+                      ),
+                    ),
                   ],
                 );
               }
@@ -1407,7 +1472,6 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
     }
   }
 
-  // TODO: change to write host method message call?
   void _writeHostMethod(
     Indent indent, {
     required Api api,
