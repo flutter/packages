@@ -704,45 +704,6 @@ List<AstProxyApi> recursiveGetSuperClassApisChain(
   return proxyApis;
 }
 
-Set<String> namesOfAllProxyApisReturnedToDart(AstProxyApi api) {
-  final Set<String> names = <String>{};
-  void addIfProxyApi(NamedType type) {
-    if (type.type.isProxyApi) {
-      names.add(type.type.baseName);
-    }
-  }
-
-  if (api.superClassName != null) {
-    names.add(api.superClassName!);
-  }
-
-  names.addAll(api.interfacesNames);
-
-  // If any Flutter methods are required, there won't be a callback constructor
-  // that use the unattached fields.
-  if (api.flutterMethods.any((Method method) => method.required)) {
-    api.unattachedFields.forEach(addIfProxyApi);
-  }
-
-  for (final Method method in api.methods) {
-    switch (method.location) {
-      case ApiLocation.host:
-        if (method.returnType.isProxyApi) {
-          names.add(method.returnType.baseName);
-        }
-        break;
-      case ApiLocation.flutter:
-        method.parameters.forEach(addIfProxyApi);
-        break;
-    }
-  }
-
-  // Remove self from set.
-  names.remove(api.name);
-
-  return names;
-}
-
 /// Options for [Generator]s that have multiple output file types.
 ///
 /// Specifies which file to write as well as wraps all language options.

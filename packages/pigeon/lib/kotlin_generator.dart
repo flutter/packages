@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:collection/collection.dart';
+import 'package:graphs/graphs.dart';
 
 import 'ast.dart';
 import 'functional.dart';
@@ -831,29 +832,105 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
   ) {
     const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
 
-    indent.writeln('''
-@Suppress("ClassName")
-private class $codecName(val instanceManager: $instanceManagerClassName) : StandardMessageCodec() {
-  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
-    return when (type) {
-      128.toByte() -> {
-        return instanceManager.getInstance(readValue(buffer) as Long)
-      }
-      else -> super.readValueOfType(type, buffer)
-    }
-  }
+    final Iterable<AstProxyApi> allProxyApis =
+        root.apis.whereType<AstProxyApi>();
 
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    when (value) {
-      instanceManager.containsInstance(value) -> {
-        stream.write(128)
-        writeValue(stream, instanceManager.getIdentifierForStrongReference(value))
-      }
-      else -> super.writeValue(stream, value)
-    }
-  }
-}
-''');
+    final Map<String, AstProxyApi> namesToApisMap =
+        Map<String, AstProxyApi>.fromIterables(
+      allProxyApis.map((AstProxyApi api) => api.name),
+      allProxyApis,
+    );
+
+    // Sort apis where edges are an api's super class and interfaces.
+    //
+    // This sorts the apis to have child classes be listed before their parent
+    // classes. This prevents the scenario where a method might return the super
+    // class of the actual class, so the incorrect Dart class gets created
+    // because the 'value is <SuperClass>' was checked first in the codec. For
+    // example:
+    //
+    // class Shape {}
+    // class Circle extends Shape {}
+    //
+    // class SomeClass {
+    //   Shape giveMeAShape() => Circle();
+    // }
+    final List<AstProxyApi> sortedApis = topologicalSort(
+      allProxyApis,
+      (AstProxyApi api) {
+        final List<AstProxyApi> edges = <AstProxyApi>[
+          if (api.superClassName != null) namesToApisMap[api.superClassName]!,
+          ...api.interfacesNames.map(
+            (String apiName) => namesToApisMap[apiName]!,
+          ),
+        ];
+        return edges;
+      },
+    );
+
+    indent.writeln('@Suppress("ClassName")');
+    indent.writeScoped(
+      'abstract class $codecName(val instanceManager: $instanceManagerClassName) : StandardMessageCodec() {',
+      '}',
+      () {
+        for (final AstProxyApi api in sortedApis) {
+          _writeMethodDeclaration(
+            indent,
+            name: 'get${api.name}_Api',
+            isAbstract: true,
+            documentationComments: <String>[
+              'An implementation of [${api.name}_Api] used to add a new Dart instance of',
+              '`${api.name}` to the Dart `InstanceManager`.'
+            ],
+            returnType: TypeDeclaration(
+              baseName: '${api.name}_Api',
+              isNullable: false,
+            ),
+            parameters: <Parameter>[],
+          );
+          indent.newln();
+        }
+
+        indent.format(
+          'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {\n'
+          '  return when (type) {\n'
+          '    128.toByte() -> {\n'
+          '      return instanceManager.getInstance(readValue(buffer) as Long)\n'
+          '    }\n'
+          '    else -> super.readValueOfType(type, buffer)\n'
+          '  }\n'
+          '}',
+        );
+        indent.newln();
+
+        indent.writeScoped(
+          'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {',
+          '}',
+          () {
+            indent.writeScoped('when (value) {', '}', () {
+              for (final AstProxyApi api in sortedApis) {
+                final String className =
+                    api.kotlinOptions?.fullClassName ?? api.name;
+                indent.writeln(
+                  'is $className -> get${api.name}_Api().${classMemberNamePrefix}newInstance(value) { }',
+                );
+              }
+            });
+            indent.newln();
+
+            indent.format(
+              'when (value) {\n'
+              '  instanceManager.containsInstance(value) -> {\n'
+              '    stream.write(128)\n'
+              '    writeValue(stream, instanceManager.getIdentifierForStrongReference(value))\n'
+              '  }\n'
+              '  else -> super.writeValue(stream, value)\n'
+              '}',
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -874,9 +951,9 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
       api.documentationComments,
       _docCommentSpec,
     );
-    indent.writeln('@Suppress("UNCHECKED_CAST")');
+    indent.writeln('@Suppress("ClassName")');
     indent.writeScoped(
-      'abstract class $kotlinApiName(val binaryMessenger: BinaryMessenger, val ${classMemberNamePrefix}instanceManager: $instanceManagerClassName) {',
+      'abstract class $kotlinApiName(val binaryMessenger: BinaryMessenger, val codec: $codecName) {',
       '}',
       () {
         final Iterable<AstProxyApi> allProxyApis =
@@ -936,34 +1013,8 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             .followedBy(interfacesMethods)
             .any((Method method) => method.required);
 
-        if (hasCallbackConstructor || api.flutterMethods.isNotEmpty) {
-          indent.writeln(
-            'private val codec: Pigeon_ProxyApiBaseCodec = Pigeon_ProxyApiBaseCodec(${classMemberNamePrefix}instanceManager)',
-          );
-          indent.newln();
-        }
-
-        final Set<String> returnedProxyApiNames =
-            namesOfAllProxyApisReturnedToDart(api);
-        for (final String name in returnedProxyApiNames) {
-          _writeMethodDeclaration(
-            indent,
-            name: '${classMemberNamePrefix}get${name}Api',
-            isAbstract: true,
-            documentationComments: <String>[
-              'An implementation of [${name}_Api] used to access callback methods or to add a new ',
-              'Dart instance of `$name` to the Dart `InstanceManager`.'
-            ],
-            returnType: TypeDeclaration(
-              baseName: '${name}_Api',
-              isNullable: false,
-            ),
-            parameters: <Parameter>[],
-          );
-        }
-
         // TODO: create issue for enum lists
-        // TODO: handle lists as well. and maps obviously. apparently enum lists too
+        // TODO: remove callback from new_instance. it should never be used
         for (final Constructor constructor in api.constructors) {
           _writeMethodDeclaration(
             indent,
@@ -985,6 +1036,28 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                 );
               }),
               ...constructor.parameters
+            ],
+          );
+          indent.newln();
+        }
+
+        for (final Field field in api.attachedFields) {
+          _writeMethodDeclaration(
+            indent,
+            name: field.name,
+            documentationComments: field.documentationComments,
+            returnType: field.type,
+            isAbstract: true,
+            parameters: <Parameter>[
+              if (!field.isStatic)
+                Parameter(
+                  name: '${classMemberNamePrefix}instance',
+                  type: TypeDeclaration(
+                    baseName: api.name,
+                    isNullable: false,
+                    associatedProxyApi: api,
+                  ),
+                ),
             ],
           );
           indent.newln();
@@ -1037,28 +1110,6 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           indent.newln();
         }
 
-        for (final Field field in api.attachedFields) {
-          _writeMethodDeclaration(
-            indent,
-            name: field.name,
-            documentationComments: field.documentationComments,
-            returnType: field.type,
-            isAbstract: true,
-            parameters: <Parameter>[
-              if (!field.isStatic)
-                Parameter(
-                  name: '${classMemberNamePrefix}instance',
-                  type: TypeDeclaration(
-                    baseName: api.name,
-                    isNullable: false,
-                    associatedProxyApi: api,
-                  ),
-                ),
-            ],
-          );
-          indent.newln();
-        }
-
         indent.writeScoped('companion object {', '}', () {
           indent.writeln('@Suppress("LocalVariableName")');
           indent.writeScoped(
@@ -1066,7 +1117,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             '}',
             () {
               indent.writeln(
-                'val codec = if (api != null) $codecName(api.${classMemberNamePrefix}instanceManager) else StandardMessageCodec()',
+                'val codec = api?.codec ?: StandardMessageCodec()',
               );
               for (final Constructor constructor in api.constructors) {
                 final String name = constructor.name.isNotEmpty
@@ -1087,7 +1138,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                     List<String> methodParameters, {
                     required String apiVarName,
                   }) {
-                    return '$apiVarName.${classMemberNamePrefix}instanceManager.addDartCreatedInstance('
+                    return '$apiVarName.codec.instanceManager.addDartCreatedInstance('
                         '$apiVarName.$name(${methodParameters.skip(1).join(',')}), ${methodParameters.first})';
                   },
                   parameters: <Parameter>[
@@ -1128,7 +1179,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                     final String param = methodParameters.length > 1
                         ? methodParameters.first
                         : '';
-                    return '$apiVarName.${classMemberNamePrefix}instanceManager.addDartCreatedInstance('
+                    return '$apiVarName.codec.instanceManager.addDartCreatedInstance('
                         '$apiVarName.${field.name}($param), ${methodParameters.last})';
                   },
                   parameters: <Parameter>[
@@ -1217,7 +1268,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             required String errorClassName,
           }) {
             indent.writeScoped(
-              'if (${classMemberNamePrefix}instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+              'if (codec.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
               '}',
               () {
                 indent.writeln('Result.success(Unit)');
@@ -1226,28 +1277,13 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
             );
             if (hasCallbackConstructor) {
               indent.writeln(
-                'val ${classMemberNamePrefix}identifierArg = ${classMemberNamePrefix}instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
+                'val ${classMemberNamePrefix}identifierArg = codec.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
               );
               api.unattachedFields.forEachIndexed((int index, Field field) {
                 final String argName = _getSafeArgumentName(index, field);
                 indent.writeln(
                   'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
                 );
-
-                if (field.type.isProxyApi) {
-                  final String apiAccess = field.type.baseName == api.name
-                      ? ''
-                      : '${classMemberNamePrefix}get${field.type.baseName}Api().';
-                  final String newInstanceCall =
-                      '$apiAccess$newInstanceMethodName($argName) { }';
-                  if (field.type.isNullable) {
-                    indent.writeScoped('if ($argName != null) {', '}', () {
-                      indent.writeln(newInstanceCall);
-                    });
-                  } else {
-                    indent.writeln(newInstanceCall);
-                  }
-                }
               });
 
               _writeFlutterMethodMessageCall(
@@ -1337,6 +1373,31 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
               );
             },
           );
+          indent.newln();
+        }
+
+        final Set<String> inheritedApiNames = <String>{
+          if (api.superClassName != null) api.superClassName!,
+          ...api.interfacesNames,
+        };
+        for (final String name in inheritedApiNames) {
+          indent.writeln('@Suppress("FunctionName")');
+          _writeMethodDeclaration(
+            indent,
+            name: '${classMemberNamePrefix}get${name}_Api',
+            documentationComments: <String>[
+              'An implementation of [${name}_Api] used to access callback methods',
+            ],
+            returnType: TypeDeclaration(
+              baseName: '${name}_Api',
+              isNullable: false,
+            ),
+            parameters: <Parameter>[],
+          );
+
+          indent.writeScoped('{', '}', () {
+            indent.writeln('return codec.get${name}_Api()');
+          });
           indent.newln();
         }
       },
@@ -1599,16 +1660,6 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                   indent.writeln('reply.reply(wrapResult(null))');
                 } else {
                   indent.writeln('val data = result.getOrNull()');
-                  if (returnType.isProxyApi) {
-                    final String apiAccess = returnType.baseName == api.name
-                        ? 'api.'
-                        : 'api.${classMemberNamePrefix}get${returnType.baseName}Api().';
-                    final String newInstanceCall =
-                        '$apiAccess${classMemberNamePrefix}newInstance(data) { }';
-                    indent.writeScoped('if (data != null) {', '}', () {
-                      indent.writeln(newInstanceCall);
-                    });
-                  }
                   indent.writeln('reply.reply(wrapResult(data$enumTag))');
                 }
               });
@@ -1626,20 +1677,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                   final String safeUnwrap = returnType.isNullable ? '?' : '';
                   enumTag = '$safeUnwrap.raw';
                 }
-                if (returnType.isProxyApi) {
-                  indent.writeln('val result = $call');
-                  final String apiAccess = returnType.baseName == api.name
-                      ? 'api.'
-                      : 'api.${classMemberNamePrefix}get${returnType.baseName}Api().';
-                  final String newInstanceCall =
-                      '$apiAccess${classMemberNamePrefix}newInstance(result) { }';
-                  indent.writeScoped('if (result != null) {', '}', () {
-                    indent.writeln(newInstanceCall);
-                  });
-                  indent.writeln('wrapped = listOf<Any?>(result)');
-                } else {
-                  indent.writeln('wrapped = listOf<Any?>($call$enumTag)');
-                }
+                indent.writeln('wrapped = listOf<Any?>($call$enumTag)');
               }
             }, addTrailingNewline: false);
             indent.add(' catch (exception: Throwable) ');
