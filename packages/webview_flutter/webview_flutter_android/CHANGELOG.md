@@ -1,5 +1,10 @@
-## NEXT
+## 3.13.1
 
+* Bumps androidx.annotation:annotation from 1.7.0 to 1.7.1.
+
+## 3.13.0
+
+* Adds support for `PlatformNavigationDelegate.setOnHttpAuthRequest`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 3.12.1

@@ -809,6 +809,21 @@ List<Error> _validateAst(Root root, String source) {
             lineNumber: _calculateLineNumberNullable(source, param.offset),
           ));
         }
+        if (api.location == ApiLocation.flutter) {
+          if (!param.isPositional) {
+            result.add(Error(
+              message:
+                  'FlutterApi method parameters must be positional, in method "${method.name}" in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, param.offset),
+            ));
+          } else if (param.isOptional) {
+            result.add(Error(
+              message:
+                  'FlutterApi method parameters must not be optional, in method "${method.name}" in API: "${api.name}"',
+              lineNumber: _calculateLineNumberNullable(source, param.offset),
+            ));
+          }
+        }
       }
       if (method.objcSelector.isNotEmpty) {
         if (':'.allMatches(method.objcSelector).length !=
@@ -1132,10 +1147,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         ),
         name: formalParameter.name?.lexeme ?? '',
         offset: formalParameter.offset,
-        isNamed: isNamed,
-        isOptional: isOptional,
-        isPositional: isPositional,
-        isRequired: isRequired,
+        isNamed: isNamed ?? formalParameter.isNamed,
+        isOptional: isOptional ?? formalParameter.isOptional,
+        isPositional: isPositional ?? formalParameter.isPositional,
+        isRequired: isRequired ?? formalParameter.isRequired,
         defaultValue: defaultValue,
       );
     } else if (simpleFormalParameter != null) {

@@ -1,3 +1,8 @@
+## 0.12.3+1
+
+* Updates `FlexHtmlElementView` (the widget backing `renderButton`) to not
+  rely on web engine knowledge (a platform view CSS selector) to operate.
+
 ## 0.12.3
 
 * Migrates to `package:web`.

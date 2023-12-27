@@ -398,9 +398,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Flag that (1) default rotation for UseCases will need to be set manually
     // if orientation is ever unlocked and (2) the capture orientation is locked
     // and should not be changed until unlocked.
-    if (!shouldSetDefaultRotation) {
-      shouldSetDefaultRotation = true;
-    }
+    shouldSetDefaultRotation = true;
     captureOrientationLocked = true;
 
     // Get target rotation based on locked orientation.

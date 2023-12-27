@@ -33,7 +33,7 @@ class ImageCapture extends UseCase {
         this, initialTargetRotation, targetFlashMode, resolutionSelector);
   }
 
-  /// Constructs a [ImageCapture] that is not automatically attached to a
+  /// Constructs an [ImageCapture] that is not automatically attached to a
   /// native object.
   ImageCapture.detached({
     BinaryMessenger? binaryMessenger,
