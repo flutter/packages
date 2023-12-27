@@ -8,6 +8,7 @@
 
 // This file is hand-formatted.
 
+// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
 import 'dart:ui' show FontFeature;
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;
@@ -270,7 +271,6 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
   },
 
   'ClipRRect': (BuildContext context, DataSource source) {
-    // not implemented: clipper
     return ClipRRect(
       borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']) ?? BorderRadius.zero,
       // clipper,
