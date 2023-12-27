@@ -3527,6 +3527,136 @@ abstract class ProxyIntegrationCoreApi_Api(
       nullableProxyApiParam: ProxyApiSuperClass?
   ): com.example.test_plugin.ProxyIntegrationCoreApi
 
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aBool(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Boolean
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun anInt(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Long
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aDouble(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Double
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aString(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): String
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aUint8List(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): ByteArray
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aList(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): List<Any?>
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aMap(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): Map<String?, Any?>
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun anEnum(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): AnEnum
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aProxyApi(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): ProxyApiSuperClass
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableBool(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): Boolean?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableInt(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi): Long?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableDouble(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): Double?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableString(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): String?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableUint8List(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): ByteArray?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableList(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): List<Any?>?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableMap(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): Map<String?, Any?>?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableEnum(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): AnEnum?
+
+  /**
+   * The core interface that each host language plugin must implement in platform_test integration
+   * tests.
+   */
+  abstract fun aNullableProxyApi(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi
+  ): ProxyApiSuperClass?
+
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   abstract fun noop(pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi)
 
@@ -4426,7 +4556,11 @@ abstract class ProxyIntegrationCoreApi_Api(
             val aProxyApiArg = args[1] as ProxyApiSuperClass
             var wrapped: List<Any?>
             try {
-              wrapped = listOf<Any?>(api.echoProxyApi(pigeon_instanceArg, aProxyApiArg))
+              val result = api.echoProxyApi(pigeon_instanceArg, aProxyApiArg)
+              if (result != null) {
+                api.pigeon_getProxyApiSuperClassApi().pigeon_newInstance(result) {}
+              }
+              wrapped = listOf<Any?>(result)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -4657,7 +4791,11 @@ abstract class ProxyIntegrationCoreApi_Api(
             val aProxyApiArg = args[1] as ProxyApiSuperClass?
             var wrapped: List<Any?>
             try {
-              wrapped = listOf<Any?>(api.echoNullableProxyApi(pigeon_instanceArg, aProxyApiArg))
+              val result = api.echoNullableProxyApi(pigeon_instanceArg, aProxyApiArg)
+              if (result != null) {
+                api.pigeon_getProxyApiSuperClassApi().pigeon_newInstance(result) {}
+              }
+              wrapped = listOf<Any?>(result)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -5879,8 +6017,65 @@ abstract class ProxyIntegrationCoreApi_Api(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of ProxyIntegrationCoreApi, but the class has a nonnull callback method.")
+    val pigeon_identifierArg = pigeon_instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val aBoolArg = aBool(pigeon_instanceArg)
+    val anIntArg = anInt(pigeon_instanceArg)
+    val aDoubleArg = aDouble(pigeon_instanceArg)
+    val aStringArg = aString(pigeon_instanceArg)
+    val aUint8ListArg = aUint8List(pigeon_instanceArg)
+    val aListArg = aList(pigeon_instanceArg)
+    val aMapArg = aMap(pigeon_instanceArg)
+    val anEnumArg = anEnum(pigeon_instanceArg)
+    val aProxyApiArg = aProxyApi(pigeon_instanceArg)
+    pigeon_getProxyApiSuperClassApi().pigeon_newInstance(aProxyApiArg) {}
+    val aNullableBoolArg = aNullableBool(pigeon_instanceArg)
+    val aNullableIntArg = aNullableInt(pigeon_instanceArg)
+    val aNullableDoubleArg = aNullableDouble(pigeon_instanceArg)
+    val aNullableStringArg = aNullableString(pigeon_instanceArg)
+    val aNullableUint8ListArg = aNullableUint8List(pigeon_instanceArg)
+    val aNullableListArg = aNullableList(pigeon_instanceArg)
+    val aNullableMapArg = aNullableMap(pigeon_instanceArg)
+    val aNullableEnumArg = aNullableEnum(pigeon_instanceArg)
+    val aNullableProxyApiArg = aNullableProxyApi(pigeon_instanceArg)
+    if (aNullableProxyApiArg != null) {
+      pigeon_getProxyApiSuperClassApi().pigeon_newInstance(aNullableProxyApiArg) {}
+    }
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(
+        listOf(
+            pigeon_identifierArg,
+            aBoolArg,
+            anIntArg,
+            aDoubleArg,
+            aStringArg,
+            aUint8ListArg,
+            aListArg,
+            aMapArg,
+            anEnumArg.raw,
+            aProxyApiArg,
+            aNullableBoolArg,
+            aNullableIntArg,
+            aNullableDoubleArg,
+            aNullableStringArg,
+            aNullableUint8ListArg,
+            aNullableListArg,
+            aNullableMapArg,
+            aNullableEnumArg?.raw,
+            aNullableProxyApiArg)) {
+          if (it is List<*>) {
+            if (it.size > 1) {
+              callback(
+                  Result.failure(
+                      CoreTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+            } else {
+              callback(Result.success(Unit))
+            }
+          } else {
+            callback(Result.failure(createConnectionError(channelName)))
+          }
+        }
   }
 
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */

@@ -727,11 +727,10 @@ Set<String> namesOfAllProxyApisReturnedToDart(AstProxyApi api) {
   for (final Method method in api.methods) {
     switch (method.location) {
       case ApiLocation.host:
-        {
-          if (method.returnType.isProxyApi) {
-            names.add(method.returnType.baseName);
-          }
+        if (method.returnType.isProxyApi) {
+          names.add(method.returnType.baseName);
         }
+        break;
       case ApiLocation.flutter:
         method.parameters.forEach(addIfProxyApi);
         break;

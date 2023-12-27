@@ -904,9 +904,7 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
           );
         }
 
-        // TODO: return values for host methods must also call new_instance
         // TODO: handle lists as well
-        // TODO: in pigeron_wrapper_dart make echoProxyApis callbacks nullable
         for (final Constructor constructor in api.constructors) {
           _writeMethodDeclaration(
             indent,
@@ -1509,7 +1507,20 @@ private class $codecName(val instanceManager: $instanceManagerClassName) : Stand
                   final String safeUnwrap = returnType.isNullable ? '?' : '';
                   enumTag = '$safeUnwrap.raw';
                 }
-                indent.writeln('wrapped = listOf<Any?>($call$enumTag)');
+                if (returnType.isProxyApi) {
+                  indent.writeln('val result = $call');
+                  final String apiAccess = returnType.baseName == api.name
+                      ? 'api.'
+                      : 'api.${classMemberNamePrefix}get${returnType.baseName}Api().';
+                  final String newInstanceCall =
+                      '$apiAccess${classMemberNamePrefix}newInstance(result) { }';
+                  indent.writeScoped('if (result != null) {', '}', () {
+                    indent.writeln(newInstanceCall);
+                  });
+                  indent.writeln('wrapped = listOf<Any?>(result)');
+                } else {
+                  indent.writeln('wrapped = listOf<Any?>($call$enumTag)');
+                }
               }
             }, addTrailingNewline: false);
             indent.add(' catch (exception: Throwable) ');
