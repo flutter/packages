@@ -74,9 +74,9 @@ class MockTestDeviceOrientationManagerHostApi extends _i1.Mock
       );
 
   @override
-  int getDefaultRotation() => (super.noSuchMethod(
+  int getDefaultDisplayRotation() => (super.noSuchMethod(
         Invocation.method(
-          #getDefaultRotation,
+          #getDefaultDisplayRotation,
           [],
         ),
         returnValue: 0,
