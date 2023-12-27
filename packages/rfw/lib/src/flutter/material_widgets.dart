@@ -68,10 +68,9 @@ import 'runtime.dart';
 ///  * The [Scaffold]'s floating action button position and animation features
 ///    are not supported.
 ///
-///  * [DropdownButton] takes a list of objects representing the [DropdownMenuItem]. 
-///    Each object could contain `onTap`, `value`, `enabled` and `child`. The `child` param is required to    
-/// there should with the key of params 
-///    names and value of the param values to represent [DropdownMenuItem].
+///  * [DropdownButton] takes a list of objects representing the
+///    [DropdownMenuItem]s. Each object may contain `onTap`, `value`, `enabled`
+///   and `child`. The `child` param is required.
 ///
 /// In general, the trend will all of these unsupported features is that this
 /// library doesn't support features that can't be trivially expressed using the
