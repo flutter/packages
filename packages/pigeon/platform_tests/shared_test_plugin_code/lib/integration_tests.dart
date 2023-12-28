@@ -1418,6 +1418,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('ProxyApiTests', () {
+    if (targetGenerator != TargetGenerator.kotlin) {
+      return;
+    }
+
     testWidgets('noop', (_) async {
       final ProxyIntegrationCoreApi api =
           _createGenericProxyIntegrationCoreApi();
