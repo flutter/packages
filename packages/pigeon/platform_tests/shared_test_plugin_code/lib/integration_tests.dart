@@ -1428,6 +1428,52 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       await expectLater(api.noop(), completes);
     });
+
+    testWidgets('throwError', (_) async {
+      final ProxyIntegrationCoreApi api =
+          _createGenericProxyIntegrationCoreApi();
+
+      await expectLater(
+        () => api.throwError(),
+        throwsA(isA<PlatformException>()),
+      );
+    });
+
+    testWidgets('throwErrorFromVoid', (_) async {
+      final ProxyIntegrationCoreApi api =
+          _createGenericProxyIntegrationCoreApi();
+
+      await expectLater(
+        () => api.throwErrorFromVoid(),
+        throwsA(isA<PlatformException>()),
+      );
+    });
+
+    testWidgets('throwFlutterError', (_) async {
+      final ProxyIntegrationCoreApi api =
+          _createGenericProxyIntegrationCoreApi();
+
+      await expectLater(
+        () => api.throwFlutterError(),
+        throwsA(
+          (dynamic e) {
+            return e is PlatformException &&
+                e.code == 'code' &&
+                e.message == 'message' &&
+                e.details == 'details';
+          },
+        ),
+      );
+    });
+
+    testWidgets('echoInt', (_) async {
+      final ProxyIntegrationCoreApi api =
+          _createGenericProxyIntegrationCoreApi();
+
+      const int value = 0;
+
+      expect(await api.echoInt(value), value);
+    });
   });
 }
 
