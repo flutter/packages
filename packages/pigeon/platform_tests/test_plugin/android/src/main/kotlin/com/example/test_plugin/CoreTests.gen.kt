@@ -6774,12 +6774,38 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
 /** ProxyApi to serve as a super class to the core ProxyApi interface. */
 @Suppress("ClassName")
 abstract class ProxyApiSuperClass_Api(val codec: Pigeon_ProxyApiBaseCodec) {
+  abstract fun pigeon_defaultConstructor(): ProxyApiSuperClass
+
   abstract fun aSuperMethod(pigeon_instance: ProxyApiSuperClass)
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyApiSuperClass_Api?) {
       val codec = api?.codec ?: StandardMessageCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0].let { if (it is Int) it.toLong() else it as Long }
+            var wrapped: List<Any?>
+            try {
+              api.codec.instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
       run {
         val channel =
             BasicMessageChannel<Any?>(

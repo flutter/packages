@@ -22,9 +22,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     Pigeon_InstanceManagerApi.setUpMessageHandlers(binding.binaryMessenger, instanceManager!!)
 
     val codec = ProxyApiCodec(binding.binaryMessenger, instanceManager!!)
-    ProxyIntegrationCoreApi_Api.setUpMessageHandlers(binding.binaryMessenger, codec.getProxyIntegrationCoreApi_Api())
-    ProxyApiSuperClass_Api.setUpMessageHandlers(binding.binaryMessenger, codec.getProxyApiSuperClass_Api())
-    ProxyApiInterface_Api.setUpMessageHandlers(binding.binaryMessenger, codec.getProxyApiInterface_Api())
+    ProxyIntegrationCoreApi_Api.setUpMessageHandlers(
+        binding.binaryMessenger, codec.getProxyIntegrationCoreApi_Api())
+    ProxyApiSuperClass_Api.setUpMessageHandlers(
+        binding.binaryMessenger, codec.getProxyApiSuperClass_Api())
+    ProxyApiInterface_Api.setUpMessageHandlers(
+        binding.binaryMessenger, codec.getProxyApiInterface_Api())
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
@@ -1043,7 +1046,11 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
 }
 
 class ProxyApiSuperClassApiImpl(codec: Pigeon_ProxyApiBaseCodec) : ProxyApiSuperClass_Api(codec) {
-  override fun aSuperMethod(pigeon_instance: ProxyApiSuperClass) { }
+  override fun pigeon_defaultConstructor(): ProxyApiSuperClass {
+    return ProxyApiSuperClass()
+  }
+
+  override fun aSuperMethod(pigeon_instance: ProxyApiSuperClass) {}
 }
 
 class ProxyApiInterfaceApiImpl(codec: Pigeon_ProxyApiBaseCodec) : ProxyApiInterface_Api(codec)
