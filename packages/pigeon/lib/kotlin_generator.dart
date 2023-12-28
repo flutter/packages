@@ -951,7 +951,7 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
       api.documentationComments,
       _docCommentSpec,
     );
-    indent.writeln('@Suppress("ClassName")');
+    indent.writeln('@Suppress("ClassName", "UNCHECKED_CAST")');
     indent.writeScoped(
       'abstract class $kotlinApiName(val codec: $codecName) {',
       '}',
@@ -1108,126 +1108,130 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
           indent.newln();
         }
 
-        indent.writeScoped('companion object {', '}', () {
-          indent.writeln('@Suppress("LocalVariableName")');
-          indent.writeScoped(
-            'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: $kotlinApiName?) {',
-            '}',
-            () {
-              indent.writeln(
-                'val codec = api?.codec ?: StandardMessageCodec()',
-              );
-              for (final Constructor constructor in api.constructors) {
-                final String name = constructor.name.isNotEmpty
-                    ? constructor.name
-                    : '${classMemberNamePrefix}defaultConstructor';
-                _writeHostMethod(
-                  indent,
-                  api: api,
-                  name: name,
-                  channelName: makeChannelNameWithStrings(
-                    apiName: api.name,
-                    methodName: name,
-                    dartPackageName: dartPackageName,
-                  ),
-                  taskQueueType: TaskQueueType.serial,
-                  returnType: const TypeDeclaration.voidDeclaration(),
-                  onCreateCall: (
-                    List<String> methodParameters, {
-                    required String apiVarName,
-                  }) {
-                    return '$apiVarName.codec.instanceManager.addDartCreatedInstance('
-                        '$apiVarName.$name(${methodParameters.skip(1).join(',')}), ${methodParameters.first})';
-                  },
-                  parameters: <Parameter>[
-                    Parameter(
-                      name: '${classMemberNamePrefix}identifier',
-                      type: const TypeDeclaration(
-                        baseName: 'int',
-                        isNullable: false,
-                      ),
-                    ),
-                    ...api.unattachedFields.map((Field field) {
-                      return Parameter(
-                        name: field.name,
-                        type: field.type,
-                      );
-                    }),
-                    ...constructor.parameters,
-                  ],
+        if (api.constructors.isNotEmpty ||
+            api.attachedFields.isNotEmpty ||
+            api.hostMethods.isNotEmpty) {
+          indent.writeScoped('companion object {', '}', () {
+            indent.writeln('@Suppress("LocalVariableName")');
+            indent.writeScoped(
+              'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: $kotlinApiName?) {',
+              '}',
+              () {
+                indent.writeln(
+                  'val codec = api?.codec ?: StandardMessageCodec()',
                 );
-              }
-
-              for (final Field field in api.attachedFields) {
-                _writeHostMethod(
-                  indent,
-                  api: api,
-                  name: field.name,
-                  channelName: makeChannelNameWithStrings(
-                    apiName: api.name,
-                    methodName: field.name,
-                    dartPackageName: dartPackageName,
-                  ),
-                  taskQueueType: TaskQueueType.serial,
-                  returnType: const TypeDeclaration.voidDeclaration(),
-                  onCreateCall: (
-                    List<String> methodParameters, {
-                    required String apiVarName,
-                  }) {
-                    final String param = methodParameters.length > 1
-                        ? methodParameters.first
-                        : '';
-                    return '$apiVarName.codec.instanceManager.addDartCreatedInstance('
-                        '$apiVarName.${field.name}($param), ${methodParameters.last})';
-                  },
-                  parameters: <Parameter>[
-                    if (!field.isStatic)
+                for (final Constructor constructor in api.constructors) {
+                  final String name = constructor.name.isNotEmpty
+                      ? constructor.name
+                      : '${classMemberNamePrefix}defaultConstructor';
+                  _writeHostMethod(
+                    indent,
+                    api: api,
+                    name: name,
+                    channelName: makeChannelNameWithStrings(
+                      apiName: api.name,
+                      methodName: name,
+                      dartPackageName: dartPackageName,
+                    ),
+                    taskQueueType: TaskQueueType.serial,
+                    returnType: const TypeDeclaration.voidDeclaration(),
+                    onCreateCall: (
+                      List<String> methodParameters, {
+                      required String apiVarName,
+                    }) {
+                      return '$apiVarName.codec.instanceManager.addDartCreatedInstance('
+                          '$apiVarName.$name(${methodParameters.skip(1).join(',')}), ${methodParameters.first})';
+                    },
+                    parameters: <Parameter>[
                       Parameter(
-                        name: '${classMemberNamePrefix}instance',
-                        type: TypeDeclaration(
-                          baseName: fullKotlinClassName,
+                        name: '${classMemberNamePrefix}identifier',
+                        type: const TypeDeclaration(
+                          baseName: 'int',
                           isNullable: false,
-                          associatedProxyApi: api,
                         ),
                       ),
-                    Parameter(
-                      name: '${classMemberNamePrefix}identifier',
-                      type: const TypeDeclaration(
-                        baseName: 'int',
-                        isNullable: false,
-                      ),
-                    ),
-                  ],
-                );
-              }
+                      ...api.unattachedFields.map((Field field) {
+                        return Parameter(
+                          name: field.name,
+                          type: field.type,
+                        );
+                      }),
+                      ...constructor.parameters,
+                    ],
+                  );
+                }
 
-              for (final Method method in api.hostMethods) {
-                _writeHostMethod(
-                  indent,
-                  api: api,
-                  name: method.name,
-                  channelName: makeChannelName(api, method, dartPackageName),
-                  taskQueueType: method.taskQueueType,
-                  returnType: method.returnType,
-                  isAsynchronous: method.isAsynchronous,
-                  parameters: <Parameter>[
-                    if (!method.isStatic)
+                for (final Field field in api.attachedFields) {
+                  _writeHostMethod(
+                    indent,
+                    api: api,
+                    name: field.name,
+                    channelName: makeChannelNameWithStrings(
+                      apiName: api.name,
+                      methodName: field.name,
+                      dartPackageName: dartPackageName,
+                    ),
+                    taskQueueType: TaskQueueType.serial,
+                    returnType: const TypeDeclaration.voidDeclaration(),
+                    onCreateCall: (
+                      List<String> methodParameters, {
+                      required String apiVarName,
+                    }) {
+                      final String param = methodParameters.length > 1
+                          ? methodParameters.first
+                          : '';
+                      return '$apiVarName.codec.instanceManager.addDartCreatedInstance('
+                          '$apiVarName.${field.name}($param), ${methodParameters.last})';
+                    },
+                    parameters: <Parameter>[
+                      if (!field.isStatic)
+                        Parameter(
+                          name: '${classMemberNamePrefix}instance',
+                          type: TypeDeclaration(
+                            baseName: fullKotlinClassName,
+                            isNullable: false,
+                            associatedProxyApi: api,
+                          ),
+                        ),
                       Parameter(
-                        name: '${classMemberNamePrefix}instance',
-                        type: TypeDeclaration(
-                          baseName: fullKotlinClassName,
+                        name: '${classMemberNamePrefix}identifier',
+                        type: const TypeDeclaration(
+                          baseName: 'int',
                           isNullable: false,
-                          associatedProxyApi: api,
                         ),
                       ),
-                    ...method.parameters,
-                  ],
-                );
-              }
-            },
-          );
-        });
-        indent.newln();
+                    ],
+                  );
+                }
+
+                for (final Method method in api.hostMethods) {
+                  _writeHostMethod(
+                    indent,
+                    api: api,
+                    name: method.name,
+                    channelName: makeChannelName(api, method, dartPackageName),
+                    taskQueueType: method.taskQueueType,
+                    returnType: method.returnType,
+                    isAsynchronous: method.isAsynchronous,
+                    parameters: <Parameter>[
+                      if (!method.isStatic)
+                        Parameter(
+                          name: '${classMemberNamePrefix}instance',
+                          type: TypeDeclaration(
+                            baseName: fullKotlinClassName,
+                            isNullable: false,
+                            associatedProxyApi: api,
+                          ),
+                        ),
+                      ...method.parameters,
+                    ],
+                  );
+                }
+              },
+            );
+          });
+          indent.newln();
+        }
 
         final String errorClassName = _getErrorClassName(generatorOptions);
         const String newInstanceMethodName =

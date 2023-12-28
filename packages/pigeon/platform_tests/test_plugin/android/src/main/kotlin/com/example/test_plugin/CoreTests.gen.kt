@@ -3497,7 +3497,7 @@ class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
  * The core interface that each host language plugin must implement in platform_test integration
  * tests.
  */
-@Suppress("ClassName")
+@Suppress("ClassName", "UNCHECKED_CAST")
 abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) {
   abstract fun pigeon_defaultConstructor(
       aBool: Boolean,
@@ -6832,7 +6832,7 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
   }
 }
 /** ProxyApi to serve as a super class to the core ProxyApi interface. */
-@Suppress("ClassName")
+@Suppress("ClassName", "UNCHECKED_CAST")
 abstract class ProxyApiSuperClass_Api(val codec: Pigeon_ProxyApiBaseCodec) {
   abstract fun pigeon_defaultConstructor(): ProxyApiSuperClass
 
@@ -6919,15 +6919,8 @@ abstract class ProxyApiSuperClass_Api(val codec: Pigeon_ProxyApiBaseCodec) {
   }
 }
 /** ProxyApi to serve as an interface to the core ProxyApi interface. */
-@Suppress("ClassName")
+@Suppress("ClassName", "UNCHECKED_CAST")
 abstract class ProxyApiInterface_Api(val codec: Pigeon_ProxyApiBaseCodec) {
-  companion object {
-    @Suppress("LocalVariableName")
-    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyApiInterface_Api?) {
-      val codec = api?.codec ?: StandardMessageCodec()
-    }
-  }
-
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {

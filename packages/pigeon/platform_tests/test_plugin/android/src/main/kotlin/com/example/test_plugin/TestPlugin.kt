@@ -26,8 +26,6 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
         binding.binaryMessenger, codec.getProxyIntegrationCoreApi_Api())
     ProxyApiSuperClass_Api.setUpMessageHandlers(
         binding.binaryMessenger, codec.getProxyApiSuperClass_Api())
-    ProxyApiInterface_Api.setUpMessageHandlers(
-        binding.binaryMessenger, codec.getProxyApiInterface_Api())
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
