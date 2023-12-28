@@ -11,10 +11,6 @@ import 'package:flutter/widgets.dart';
 
 import 'match.dart';
 
-// TODO(chunhtai): remove this ignore and migrate the code
-// https://github.com/flutter/flutter/issues/124045.
-// ignore_for_file: deprecated_member_use
-
 /// The type of the navigation.
 ///
 /// This enum is used by [RouteInformationState] to denote the navigation
@@ -85,7 +81,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     Listenable? refreshListenable,
   })  : _refreshListenable = refreshListenable,
         _value = RouteInformation(
-          location: initialLocation,
+          uri: Uri.parse(initialLocation),
           state: RouteInformationState<void>(
               extra: initialExtra, type: NavigatingType.go),
         ),
@@ -96,8 +92,8 @@ class GoRouteInformationProvider extends RouteInformationProvider
   final Listenable? _refreshListenable;
 
   static WidgetsBinding get _binding => WidgetsBinding.instance;
-  static const RouteInformation _kEmptyRouteInformation =
-      RouteInformation(location: '');
+  static final RouteInformation _kEmptyRouteInformation =
+      RouteInformation(uri: Uri.parse(''));
 
   @override
   void routerReportsNewRouteInformation(RouteInformation routeInformation,
@@ -109,7 +105,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     final bool replace;
     switch (type) {
       case RouteInformationReportingType.none:
-        if (_valueInEngine.location == routeInformation.location &&
+        if (_valueInEngine.uri.path == routeInformation.uri.path &&
             const DeepCollectionEquality()
                 .equals(_valueInEngine.state, routeInformation.state)) {
           return;
@@ -122,10 +118,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     }
     SystemNavigator.selectMultiEntryHistory();
     SystemNavigator.routeInformationUpdated(
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: unnecessary_null_checks, unnecessary_non_null_assertion
-      location: routeInformation.location!,
+      uri: routeInformation.uri,
       state: routeInformation.state,
       replace: replace,
     );
@@ -146,8 +139,8 @@ class GoRouteInformationProvider extends RouteInformationProvider
 
   void _setValue(String location, Object state) {
     final bool shouldNotify =
-        _value.location != location || _value.state != state;
-    _value = RouteInformation(location: location, state: state);
+        _value.uri.path != location || _value.state != state;
+    _value = RouteInformation(uri: Uri.parse(location), state: state);
     if (shouldNotify) {
       notifyListeners();
     }
@@ -272,13 +265,6 @@ class GoRouteInformationProvider extends RouteInformationProvider
   Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
     assert(hasListeners);
     _platformReportsNewRouteInformation(routeInformation);
-    return SynchronousFuture<bool>(true);
-  }
-
-  @override
-  Future<bool> didPushRoute(String route) {
-    assert(hasListeners);
-    _platformReportsNewRouteInformation(RouteInformation(location: route));
     return SynchronousFuture<bool>(true);
   }
 }

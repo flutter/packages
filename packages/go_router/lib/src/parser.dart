@@ -80,8 +80,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
     late final RouteMatchList initialMatches;
     initialMatches =
-        // TODO(chunhtai): remove this ignore and migrate the code
-        // https://github.com/flutter/flutter/issues/124045.
         // TODO(chunhtai): After the migration from routeInformation's location
         // to uri, empty path check might be required here; see
         // https://github.com/flutter/packages/pull/5113#discussion_r1374861070
@@ -89,10 +87,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         configuration.findMatch(routeInformation.uri.toString(),
             extra: state.extra);
     if (initialMatches.isError) {
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      log('No initial matches: ${routeInformation.location}');
+      log('No initial matches: ${routeInformation.uri.path}');
     }
 
     return debugParserFuture = _redirect(
@@ -143,10 +138,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       location = configuration.uri.toString();
     }
     return RouteInformation(
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      location: location,
+      uri: Uri.parse(location),
       state: _routeMatchListCodec.encode(configuration),
     );
   }

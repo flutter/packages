@@ -10,10 +10,7 @@ import 'test_helpers.dart';
 
 RouteInformation createRouteInformation(String location, [Object? extra]) {
   return RouteInformation(
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      location: location,
+      uri: Uri.parse(location),
       state:
           RouteInformationState<void>(type: NavigatingType.go, extra: extra));
 }
@@ -115,7 +112,7 @@ void main() {
     final RouteMatchList matchesObj =
         await parser.parseRouteInformationWithDependencies(
             createRouteInformation(expectedUriString), context);
-    final List<RouteMatch> matches = matchesObj.matches;
+    final List<RouteMatchBase> matches = matchesObj.matches;
     expect(matches.length, 2);
     expect(matchesObj.uri.toString(), expectedUriString);
     expect(matchesObj.uri.scheme, expectedScheme);
@@ -160,11 +157,7 @@ void main() {
 
     final RouteInformation restoredRouteInformation =
         router.routeInformationParser.restoreRouteInformation(matchList)!;
-    // URL reflects the latest push.
-    // TODO(chunhtai): remove this ignore and migrate the code
-    // https://github.com/flutter/flutter/issues/124045.
-    // ignore: deprecated_member_use
-    expect(restoredRouteInformation.location, '/');
+    expect(restoredRouteInformation.uri.path, '/');
 
     // Can restore back to original RouteMatchList.
     final RouteMatchList parsedRouteMatch = await router.routeInformationParser

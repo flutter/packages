@@ -1301,10 +1301,7 @@ void main() {
       expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
 
       router.routeInformationProvider.didPushRouteInformation(
-          // TODO(chunhtai): remove this ignore and migrate the code
-          // https://github.com/flutter/flutter/issues/124045.
-          // ignore: deprecated_member_use
-          RouteInformation(location: location, state: state));
+          RouteInformation(uri: Uri.parse(location), state: state));
       await tester.pumpAndSettle();
       // Make sure it has all the imperative routes.
       expect(find.byKey(const ValueKey<String>('settings-1')), findsOneWidget);
@@ -2435,10 +2432,7 @@ void main() {
         routes,
         tester,
       );
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      expect(router.routeInformationProvider.value.location, '/dummy');
+      expect(router.routeInformationProvider.value.uri.path, '/dummy');
       TestWidgetsFlutterBinding.instance.platformDispatcher
           .clearDefaultRouteNameTestValue();
     });
