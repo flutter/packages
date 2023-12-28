@@ -3661,7 +3661,7 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
   /** Returns the passed list with ProxyApis, to test serialization and deserialization. */
   abstract fun echoProxyApiList(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aList: List<com.example.test_plugin.ProxyIntegrationCoreApi?>
+      aList: List<com.example.test_plugin.ProxyIntegrationCoreApi>
   ): List<com.example.test_plugin.ProxyIntegrationCoreApi>
 
   /** Returns the passed map, to test serialization and deserialization. */
@@ -3673,8 +3673,8 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
   /** Returns the passed map with ProxyApis, to test serialization and deserialization. */
   abstract fun echoProxyApiMap(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aMap: Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>
-  ): Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>
+      aMap: Map<String, com.example.test_plugin.ProxyIntegrationCoreApi>
+  ): Map<String, com.example.test_plugin.ProxyIntegrationCoreApi>
 
   /** Returns the passed enum to test serialization and deserialization. */
   abstract fun echoEnum(
@@ -3738,13 +3738,13 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
 
   abstract fun echoNullableEnum(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      anEnum: AnEnum?
+      aNullableEnum: AnEnum?
   ): AnEnum?
 
   /** Returns the passed ProxyApi to test serialization and deserialization. */
   abstract fun echoNullableProxyApi(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aProxyApi: ProxyApiSuperClass?
+      aNullableProxyApi: ProxyApiSuperClass?
   ): ProxyApiSuperClass?
 
   /**
@@ -3947,7 +3947,7 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
 
   abstract fun callFlutterEchoUint8List(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aList: ByteArray,
+      aUint8List: ByteArray,
       callback: (Result<ByteArray>) -> Unit
   )
 
@@ -4013,7 +4013,7 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
 
   abstract fun callFlutterEchoNullableUint8List(
       pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
-      aList: ByteArray?,
+      aUint8List: ByteArray?,
       callback: (Result<ByteArray?>) -> Unit
   )
 
@@ -4452,7 +4452,7 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aListArg = args[1] as List<com.example.test_plugin.ProxyIntegrationCoreApi?>
+            val aListArg = args[1] as List<com.example.test_plugin.ProxyIntegrationCoreApi>
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.echoProxyApiList(pigeon_instanceArg, aListArg))
@@ -4498,7 +4498,7 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aMapArg = args[1] as Map<String?, com.example.test_plugin.ProxyIntegrationCoreApi?>
+            val aMapArg = args[1] as Map<String, com.example.test_plugin.ProxyIntegrationCoreApi>
             var wrapped: List<Any?>
             try {
               wrapped = listOf<Any?>(api.echoProxyApiMap(pigeon_instanceArg, aMapArg))
@@ -4752,10 +4752,11 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val anEnumArg = if (args[1] == null) null else AnEnum.ofRaw(args[1] as Int)
+            val aNullableEnumArg = if (args[1] == null) null else AnEnum.ofRaw(args[1] as Int)
             var wrapped: List<Any?>
             try {
-              wrapped = listOf<Any?>(api.echoNullableEnum(pigeon_instanceArg, anEnumArg)?.raw)
+              wrapped =
+                  listOf<Any?>(api.echoNullableEnum(pigeon_instanceArg, aNullableEnumArg)?.raw)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -4775,10 +4776,11 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aProxyApiArg = args[1] as ProxyApiSuperClass?
+            val aNullableProxyApiArg = args[1] as ProxyApiSuperClass?
             var wrapped: List<Any?>
             try {
-              wrapped = listOf<Any?>(api.echoNullableProxyApi(pigeon_instanceArg, aProxyApiArg))
+              wrapped =
+                  listOf<Any?>(api.echoNullableProxyApi(pigeon_instanceArg, aNullableProxyApiArg))
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)
             }
@@ -5578,9 +5580,9 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aListArg = args[1] as ByteArray
-            api.callFlutterEchoUint8List(pigeon_instanceArg, aListArg) { result: Result<ByteArray>
-              ->
+            val aUint8ListArg = args[1] as ByteArray
+            api.callFlutterEchoUint8List(pigeon_instanceArg, aUint8ListArg) {
+                result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -5861,8 +5863,8 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
-            val aListArg = args[1] as ByteArray?
-            api.callFlutterEchoNullableUint8List(pigeon_instanceArg, aListArg) {
+            val aUint8ListArg = args[1] as ByteArray?
+            api.callFlutterEchoNullableUint8List(pigeon_instanceArg, aUint8ListArg) {
                 result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {

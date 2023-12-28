@@ -6704,7 +6704,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     }
   }
 
-  Future<AnEnum?> echoNullableEnum(AnEnum? anEnum) async {
+  Future<AnEnum?> echoNullableEnum(AnEnum? aNullableEnum) async {
     const String __pigeon_channelName =
         r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableEnum';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -6716,7 +6716,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final List<Object?>? __pigeon_replyList =
         (await __pigeon_channel.send(<Object?>[
       this,
-      anEnum?.index,
+      aNullableEnum?.index,
     ]) as List<Object?>?);
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
@@ -6735,7 +6735,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
   Future<ProxyApiSuperClass?> echoNullableProxyApi(
-      ProxyApiSuperClass? aProxyApi) async {
+      ProxyApiSuperClass? aNullableProxyApi) async {
     const String __pigeon_channelName =
         r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.echoNullableProxyApi';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -6747,7 +6747,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final List<Object?>? __pigeon_replyList =
         (await __pigeon_channel.send(<Object?>[
       this,
-      aProxyApi,
+      aNullableProxyApi,
     ]) as List<Object?>?);
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
@@ -7707,7 +7707,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     }
   }
 
-  Future<Uint8List> callFlutterEchoUint8List(Uint8List aList) async {
+  Future<Uint8List> callFlutterEchoUint8List(Uint8List aUint8List) async {
     const String __pigeon_channelName =
         r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoUint8List';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -7719,7 +7719,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final List<Object?>? __pigeon_replyList =
         (await __pigeon_channel.send(<Object?>[
       this,
-      aList,
+      aUint8List,
     ]) as List<Object?>?);
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
@@ -8046,7 +8046,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     }
   }
 
-  Future<Uint8List?> callFlutterEchoNullableUint8List(Uint8List? aList) async {
+  Future<Uint8List?> callFlutterEchoNullableUint8List(
+      Uint8List? aUint8List) async {
     const String __pigeon_channelName =
         r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoNullableUint8List';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -8058,7 +8059,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     final List<Object?>? __pigeon_replyList =
         (await __pigeon_channel.send(<Object?>[
       this,
-      aList,
+      aUint8List,
     ]) as List<Object?>?);
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
