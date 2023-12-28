@@ -8243,6 +8243,34 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
 /// ProxyApi to serve as a super class to the core ProxyApi interface.
 class ProxyApiSuperClass extends Pigeon_ProxyApiBaseClass {
+  ProxyApiSuperClass({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_defaultConstructor';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      __pigeon_codecProxyApiSuperClass,
+      binaryMessenger: pigeon_binaryMessenger,
+    );
+    __pigeon_channel.send(<Object?>[
+      pigeon_instanceManager.addDartCreatedInstance(this)
+    ]).then<void>((Object? value) {
+      final List<Object?>? __pigeon_replyList = value as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: (__pigeon_replyList[0]! as String),
+          message: (__pigeon_replyList[1] as String?),
+          details: __pigeon_replyList[2],
+        );
+      }
+    });
+  }
+
   /// Constructs ProxyApiSuperClass without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to

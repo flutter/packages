@@ -1140,6 +1140,8 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 /// ProxyApi to serve as a super class to the core ProxyApi interface.
 @ProxyApi()
 abstract class ProxyApiSuperClass {
+  ProxyApiSuperClass();
+
   void aSuperMethod();
 }
 
