@@ -89,7 +89,7 @@ public class DeviceOrientationManagerWrapperTest {
     final int defaultRotation = 180;
 
     hostApi.deviceOrientationManager = mockDeviceOrientationManager;
-    when(mockDeviceOrientationManager.getDefaultDisplayRotation()).thenReturn(defaultRotation);
+    when(mockDeviceOrientationManager.getDefaultRotation()).thenReturn(defaultRotation);
 
     assertEquals(hostApi.getDefaultDisplayRotation(), Long.valueOf(defaultRotation));
   }
