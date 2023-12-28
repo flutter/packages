@@ -386,7 +386,7 @@ class TypeDeclaration {
     );
   }
 
-  /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
+  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
   TypeDeclaration copyWithProxyApi(AstProxyApi proxyApiDefinition) {
     return TypeDeclaration(
       baseName: baseName,

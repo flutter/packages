@@ -905,7 +905,7 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
   List<ProxyIntegrationCoreApi> echoProxyApiList(
-    List<ProxyIntegrationCoreApi?> aList,
+    List<ProxyIntegrationCoreApi> aList,
   );
 
   /// Returns the passed map, to test serialization and deserialization.
@@ -913,8 +913,8 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
 
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
-  Map<String?, ProxyIntegrationCoreApi?> echoProxyApiMap(
-    Map<String?, ProxyIntegrationCoreApi?> aMap,
+  Map<String, ProxyIntegrationCoreApi> echoProxyApiMap(
+    Map<String, ProxyIntegrationCoreApi> aMap,
   );
 
   /// Returns the passed enum to test serialization and deserialization.
@@ -949,10 +949,12 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
 
-  AnEnum? echoNullableEnum(AnEnum? anEnum);
+  AnEnum? echoNullableEnum(AnEnum? aNullableEnum);
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  ProxyApiSuperClass? echoNullableProxyApi(ProxyApiSuperClass? aProxyApi);
+  ProxyApiSuperClass? echoNullableProxyApi(
+    ProxyApiSuperClass? aNullableProxyApi,
+  );
 
   // ========== Asynchronous method tests ==========
 
@@ -1081,7 +1083,7 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   String callFlutterEchoString(String aString);
 
   @async
-  Uint8List callFlutterEchoUint8List(Uint8List aList);
+  Uint8List callFlutterEchoUint8List(Uint8List aUint8List);
 
   @async
   List<Object?> callFlutterEchoList(List<Object?> aList);
@@ -1116,7 +1118,7 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   String? callFlutterEchoNullableString(String? aString);
 
   @async
-  Uint8List? callFlutterEchoNullableUint8List(Uint8List? aList);
+  Uint8List? callFlutterEchoNullableUint8List(Uint8List? aUint8List);
 
   @async
   List<Object?>? callFlutterEchoNullableList(List<Object?>? aList);
