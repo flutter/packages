@@ -130,9 +130,6 @@ class GoRouteInformationProvider extends RouteInformationProvider
   RouteInformation _value;
 
   @override
-  // TODO(chunhtai): remove this ignore once package minimum dart version is
-  // above 3.
-  // ignore: unnecessary_overrides
   void notifyListeners() {
     super.notifyListeners();
   }
