@@ -1104,7 +1104,7 @@ class $codecName extends StandardMessageCodec {
     );
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.writeln(DartFormatter().format('${proxyApi.accept(emitter)}'));
+    indent.write(DartFormatter().format('${proxyApi.accept(emitter)}'));
   }
 
   Iterable<cb.Constructor> _proxyApiConstructors(
