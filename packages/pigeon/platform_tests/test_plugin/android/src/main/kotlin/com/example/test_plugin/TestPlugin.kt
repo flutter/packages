@@ -867,21 +867,21 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       pigeon_instance: ProxyIntegrationCoreApi,
       callback: (Result<Unit>) -> Unit
   ) {
-    flutterNoop(pigeon_instance) {}
+    flutterNoop(pigeon_instance, callback)
   }
 
   override fun callFlutterThrowError(
       pigeon_instance: ProxyIntegrationCoreApi,
       callback: (Result<Any?>) -> Unit
   ) {
-    flutterThrowError(pigeon_instance) {}
+    flutterThrowError(pigeon_instance, callback)
   }
 
   override fun callFlutterThrowErrorFromVoid(
       pigeon_instance: ProxyIntegrationCoreApi,
       callback: (Result<Unit>) -> Unit
   ) {
-    flutterThrowErrorFromVoid(pigeon_instance) {}
+    flutterThrowErrorFromVoid(pigeon_instance, callback)
   }
 
   override fun callFlutterEchoBool(
@@ -889,7 +889,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aBool: Boolean,
       callback: (Result<Boolean>) -> Unit
   ) {
-    flutterEchoBool(pigeon_instance, aBool) {}
+    flutterEchoBool(pigeon_instance, aBool, callback)
   }
 
   override fun callFlutterEchoInt(
@@ -897,7 +897,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       anInt: Long,
       callback: (Result<Long>) -> Unit
   ) {
-    flutterEchoInt(pigeon_instance, anInt) {}
+    flutterEchoInt(pigeon_instance, anInt, callback)
   }
 
   override fun callFlutterEchoDouble(
@@ -905,7 +905,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aDouble: Double,
       callback: (Result<Double>) -> Unit
   ) {
-    flutterEchoDouble(pigeon_instance, aDouble) {}
+    flutterEchoDouble(pigeon_instance, aDouble, callback)
   }
 
   override fun callFlutterEchoString(
@@ -913,7 +913,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aString: String,
       callback: (Result<String>) -> Unit
   ) {
-    flutterEchoString(pigeon_instance, aString) {}
+    flutterEchoString(pigeon_instance, aString, callback)
   }
 
   override fun callFlutterEchoUint8List(
@@ -921,7 +921,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aUint8List: ByteArray,
       callback: (Result<ByteArray>) -> Unit
   ) {
-    flutterEchoUint8List(pigeon_instance, aUint8List) {}
+    flutterEchoUint8List(pigeon_instance, aUint8List, callback)
   }
 
   override fun callFlutterEchoList(
@@ -929,7 +929,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aList: List<Any?>,
       callback: (Result<List<Any?>>) -> Unit
   ) {
-    flutterEchoList(pigeon_instance, aList) {}
+    flutterEchoList(pigeon_instance, aList, callback)
   }
 
   override fun callFlutterEchoProxyApiList(
@@ -937,7 +937,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aList: List<ProxyIntegrationCoreApi?>,
       callback: (Result<List<ProxyIntegrationCoreApi?>>) -> Unit
   ) {
-    flutterEchoProxyApiList(pigeon_instance, aList) {}
+    flutterEchoProxyApiList(pigeon_instance, aList, callback)
   }
 
   override fun callFlutterEchoMap(
@@ -945,7 +945,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aMap: Map<String?, Any?>,
       callback: (Result<Map<String?, Any?>>) -> Unit
   ) {
-    flutterEchoMap(pigeon_instance, aMap) {}
+    flutterEchoMap(pigeon_instance, aMap, callback)
   }
 
   override fun callFlutterEchoProxyApiMap(
@@ -953,7 +953,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aMap: Map<String?, ProxyIntegrationCoreApi?>,
       callback: (Result<Map<String?, ProxyIntegrationCoreApi?>>) -> Unit
   ) {
-    flutterEchoProxyApiMap(pigeon_instance, aMap) {}
+    flutterEchoProxyApiMap(pigeon_instance, aMap, callback)
   }
 
   override fun callFlutterEchoEnum(
@@ -961,7 +961,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       anEnum: AnEnum,
       callback: (Result<AnEnum>) -> Unit
   ) {
-    flutterEchoEnum(pigeon_instance, anEnum) {}
+    flutterEchoEnum(pigeon_instance, anEnum, callback)
   }
 
   override fun callFlutterEchoProxyApi(
@@ -969,7 +969,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aProxyApi: ProxyApiSuperClass,
       callback: (Result<ProxyApiSuperClass>) -> Unit
   ) {
-    flutterEchoProxyApi(pigeon_instance, aProxyApi) {}
+    flutterEchoProxyApi(pigeon_instance, aProxyApi, callback)
   }
 
   override fun callFlutterEchoNullableBool(
@@ -977,7 +977,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aBool: Boolean?,
       callback: (Result<Boolean?>) -> Unit
   ) {
-    flutterEchoNullableBool(pigeon_instance, aBool) {}
+    flutterEchoNullableBool(pigeon_instance, aBool, callback)
   }
 
   override fun callFlutterEchoNullableInt(
@@ -985,7 +985,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       anInt: Long?,
       callback: (Result<Long?>) -> Unit
   ) {
-    flutterEchoNullableInt(pigeon_instance, anInt) {}
+    flutterEchoNullableInt(pigeon_instance, anInt, callback)
   }
 
   override fun callFlutterEchoNullableDouble(
@@ -993,7 +993,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aDouble: Double?,
       callback: (Result<Double?>) -> Unit
   ) {
-    flutterEchoNullableDouble(pigeon_instance, aDouble) {}
+    flutterEchoNullableDouble(pigeon_instance, aDouble, callback)
   }
 
   override fun callFlutterEchoNullableString(
@@ -1001,7 +1001,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aString: String?,
       callback: (Result<String?>) -> Unit
   ) {
-    flutterEchoNullableString(pigeon_instance, aString) {}
+    flutterEchoNullableString(pigeon_instance, aString, callback)
   }
 
   override fun callFlutterEchoNullableUint8List(
@@ -1009,7 +1009,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aUint8List: ByteArray?,
       callback: (Result<ByteArray?>) -> Unit
   ) {
-    flutterEchoNullableUint8List(pigeon_instance, aUint8List) {}
+    flutterEchoNullableUint8List(pigeon_instance, aUint8List, callback)
   }
 
   override fun callFlutterEchoNullableList(
@@ -1017,7 +1017,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aList: List<Any?>?,
       callback: (Result<List<Any?>?>) -> Unit
   ) {
-    flutterEchoNullableList(pigeon_instance, aList) {}
+    flutterEchoNullableList(pigeon_instance, aList, callback)
   }
 
   override fun callFlutterEchoNullableMap(
@@ -1025,7 +1025,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aMap: Map<String?, Any?>?,
       callback: (Result<Map<String?, Any?>?>) -> Unit
   ) {
-    flutterEchoNullableMap(pigeon_instance, aMap) {}
+    flutterEchoNullableMap(pigeon_instance, aMap, callback)
   }
 
   override fun callFlutterEchoNullableEnum(
@@ -1033,7 +1033,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       anEnum: AnEnum?,
       callback: (Result<AnEnum?>) -> Unit
   ) {
-    flutterEchoNullableEnum(pigeon_instance, anEnum) {}
+    flutterEchoNullableEnum(pigeon_instance, anEnum, callback)
   }
 
   override fun callFlutterEchoNullableProxyApi(
@@ -1041,7 +1041,22 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       aProxyApi: ProxyApiSuperClass?,
       callback: (Result<ProxyApiSuperClass?>) -> Unit
   ) {
-    flutterEchoNullableProxyApi(pigeon_instance, aProxyApi) {}
+    flutterEchoNullableProxyApi(pigeon_instance, aProxyApi, callback)
+  }
+
+  override fun callFlutterNoopAsync(
+    pigeon_instance: ProxyIntegrationCoreApi,
+    callback: (Result<Unit>) -> Unit
+  ) {
+    flutterNoopAsync(pigeon_instance, callback)
+  }
+
+  override fun callFlutterEchoAsyncString(
+    pigeon_instance: ProxyIntegrationCoreApi,
+    aString: String,
+    callback: (Result<String>) -> Unit
+  ) {
+    flutterEchoAsyncString(pigeon_instance, aString, callback)
   }
 }
 

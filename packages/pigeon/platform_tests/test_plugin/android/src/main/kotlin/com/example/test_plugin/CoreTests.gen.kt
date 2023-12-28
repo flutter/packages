@@ -4041,6 +4041,17 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
       callback: (Result<ProxyApiSuperClass?>) -> Unit
   )
 
+  abstract fun callFlutterNoopAsync(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
+      callback: (Result<Unit>) -> Unit
+  )
+
+  abstract fun callFlutterEchoAsyncString(
+      pigeon_instance: com.example.test_plugin.ProxyIntegrationCoreApi,
+      aString: String,
+      callback: (Result<String>) -> Unit
+  )
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: ProxyIntegrationCoreApi_Api?) {
@@ -5983,6 +5994,55 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
           channel.setMessageHandler(null)
         }
       }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterNoopAsync",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
+            api.callFlutterNoopAsync(pigeon_instanceArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoAsyncString",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.example.test_plugin.ProxyIntegrationCoreApi
+            val aStringArg = args[1] as String
+            api.callFlutterEchoAsyncString(pigeon_instanceArg, aStringArg) { result: Result<String>
+              ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
     }
   }
 
@@ -6705,13 +6765,13 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
    * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
    * calling.
    */
-  fun callFlutterNoopAsync(
+  fun flutterNoopAsync(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
       callback: (Result<Unit>) -> Unit
   ) {
     val binaryMessenger = codec.binaryMessenger
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterNoopAsync"
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterNoopAsync"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg)) {
       if (it is List<*>) {
@@ -6728,14 +6788,14 @@ abstract class ProxyIntegrationCoreApi_Api(val codec: Pigeon_ProxyApiBaseCodec) 
   }
 
   /** Returns the passed in generic Object asynchronously. */
-  fun callFlutterEchoAsyncString(
+  fun flutterEchoAsyncString(
       pigeon_instanceArg: com.example.test_plugin.ProxyIntegrationCoreApi,
       aStringArg: String,
       callback: (Result<String>) -> Unit
   ) {
     val binaryMessenger = codec.binaryMessenger
     val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoAsyncString"
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoAsyncString"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, aStringArg)) {
       if (it is List<*>) {
