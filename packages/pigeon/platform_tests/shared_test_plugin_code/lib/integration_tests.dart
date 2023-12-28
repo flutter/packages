@@ -1416,6 +1416,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoEnum, sentEnum);
     });
   });
+
+  group('ProxyApiTests', () {
+    testWidgets('noop', (_) async {
+      final ProxyIntegrationCoreApi api =
+          _createGenericProxyIntegrationCoreApi();
+
+      await expectLater(api.noop(), completes);
+    });
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
@@ -1506,4 +1515,143 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   Future<String> echoAsyncString(String aString) async {
     return aString;
   }
+}
+
+ProxyIntegrationCoreApi _createGenericProxyIntegrationCoreApi({
+  void Function(ProxyIntegrationCoreApi instance)? flutterNoop,
+  Object? Function(ProxyIntegrationCoreApi instance)? flutterThrowError,
+  void Function(
+    ProxyIntegrationCoreApi instance,
+  )? flutterThrowErrorFromVoid,
+  bool Function(
+    ProxyIntegrationCoreApi instance,
+    bool aBool,
+  )? flutterEchoBool,
+  int Function(
+    ProxyIntegrationCoreApi instance,
+    int anInt,
+  )? flutterEchoInt,
+  double Function(
+    ProxyIntegrationCoreApi instance,
+    double aDouble,
+  )? flutterEchoDouble,
+  String Function(
+    ProxyIntegrationCoreApi instance,
+    String aString,
+  )? flutterEchoString,
+  Uint8List Function(
+    ProxyIntegrationCoreApi instance,
+    Uint8List aList,
+  )? flutterEchoUint8List,
+  List<Object?> Function(
+    ProxyIntegrationCoreApi instance,
+    List<Object?> aList,
+  )? flutterEchoList,
+  List<ProxyIntegrationCoreApi?> Function(
+    ProxyIntegrationCoreApi instance,
+    List<ProxyIntegrationCoreApi?> aList,
+  )? flutterEchoProxyApiList,
+  Map<String?, Object?> Function(
+    ProxyIntegrationCoreApi instance,
+    Map<String?, Object?> aMap,
+  )? flutterEchoMap,
+  Map<String?, ProxyIntegrationCoreApi?> Function(
+    ProxyIntegrationCoreApi instance,
+    Map<String?, ProxyIntegrationCoreApi?> aMap,
+  )? flutterEchoProxyApiMap,
+  AnEnum Function(
+    ProxyIntegrationCoreApi instance,
+    AnEnum anEnum,
+  )? flutterEchoEnum,
+  ProxyApiSuperClass Function(
+    ProxyIntegrationCoreApi instance,
+    ProxyApiSuperClass aProxyApi,
+  )? flutterEchoProxyApi,
+  bool? Function(
+    ProxyIntegrationCoreApi instance,
+    bool? aBool,
+  )? flutterEchoNullableBool,
+  int? Function(
+    ProxyIntegrationCoreApi instance,
+    int? anInt,
+  )? flutterEchoNullableInt,
+  double? Function(
+    ProxyIntegrationCoreApi instance,
+    double? aDouble,
+  )? flutterEchoNullableDouble,
+  String? Function(
+    ProxyIntegrationCoreApi instance,
+    String? aString,
+  )? flutterEchoNullableString,
+  Uint8List? Function(
+    ProxyIntegrationCoreApi instance,
+    Uint8List? aList,
+  )? flutterEchoNullableUint8List,
+  List<Object?>? Function(
+    ProxyIntegrationCoreApi instance,
+    List<Object?>? aList,
+  )? flutterEchoNullableList,
+  Map<String?, Object?>? Function(
+    ProxyIntegrationCoreApi instance,
+    Map<String?, Object?>? aMap,
+  )? flutterEchoNullableMap,
+  AnEnum? Function(
+    ProxyIntegrationCoreApi instance,
+    AnEnum? anEnum,
+  )? flutterEchoNullableEnum,
+  ProxyApiSuperClass? Function(
+    ProxyIntegrationCoreApi instance,
+    ProxyApiSuperClass? aProxyApi,
+  )? flutterEchoNullableProxyApi,
+  Future<void> Function(ProxyIntegrationCoreApi instance)? flutterNoopAsync,
+  Future<String> Function(
+    ProxyIntegrationCoreApi instance,
+    String aString,
+  )? flutterEchoAsyncString,
+}) {
+  return ProxyIntegrationCoreApi(
+    aBool: true,
+    anInt: 0,
+    aDouble: 0.0,
+    aString: '',
+    aUint8List: Uint8List(0),
+    aList: const <Object?>[],
+    aMap: const <String?, Object?>{},
+    anEnum: AnEnum.one,
+    aProxyApi: ProxyApiSuperClass(),
+    boolParam: true,
+    intParam: 0,
+    doubleParam: 0.0,
+    stringParam: '',
+    aUint8ListParam: Uint8List(0),
+    listParam: const <Object?>[],
+    mapParam: const <String?, Object?>{},
+    enumParam: AnEnum.one,
+    proxyApiParam: ProxyApiSuperClass(),
+    flutterNoop: flutterNoop,
+    flutterThrowError: flutterThrowError,
+    flutterThrowErrorFromVoid: flutterThrowErrorFromVoid,
+    flutterEchoBool: flutterEchoBool,
+    flutterEchoInt: flutterEchoInt,
+    flutterEchoDouble: flutterEchoDouble,
+    flutterEchoString: flutterEchoString,
+    flutterEchoUint8List: flutterEchoUint8List,
+    flutterEchoList: flutterEchoList,
+    flutterEchoProxyApiList: flutterEchoProxyApiList,
+    flutterEchoMap: flutterEchoMap,
+    flutterEchoProxyApiMap: flutterEchoProxyApiMap,
+    flutterEchoEnum: flutterEchoEnum,
+    flutterEchoProxyApi: flutterEchoProxyApi,
+    flutterEchoNullableBool: flutterEchoNullableBool,
+    flutterEchoNullableInt: flutterEchoNullableInt,
+    flutterEchoNullableDouble: flutterEchoNullableDouble,
+    flutterEchoNullableString: flutterEchoNullableString,
+    flutterEchoNullableUint8List: flutterEchoNullableUint8List,
+    flutterEchoNullableList: flutterEchoNullableList,
+    flutterEchoNullableMap: flutterEchoNullableMap,
+    flutterEchoNullableEnum: flutterEchoNullableEnum,
+    flutterEchoNullableProxyApi: flutterEchoNullableProxyApi,
+    flutterNoopAsync: flutterNoopAsync,
+    flutterEchoAsyncString: flutterEchoAsyncString,
+  );
 }

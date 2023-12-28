@@ -1045,16 +1045,16 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
   }
 
   override fun callFlutterNoopAsync(
-    pigeon_instance: ProxyIntegrationCoreApi,
-    callback: (Result<Unit>) -> Unit
+      pigeon_instance: ProxyIntegrationCoreApi,
+      callback: (Result<Unit>) -> Unit
   ) {
     flutterNoopAsync(pigeon_instance, callback)
   }
 
   override fun callFlutterEchoAsyncString(
-    pigeon_instance: ProxyIntegrationCoreApi,
-    aString: String,
-    callback: (Result<String>) -> Unit
+      pigeon_instance: ProxyIntegrationCoreApi,
+      aString: String,
+      callback: (Result<String>) -> Unit
   ) {
     flutterEchoAsyncString(pigeon_instance, aString, callback)
   }
