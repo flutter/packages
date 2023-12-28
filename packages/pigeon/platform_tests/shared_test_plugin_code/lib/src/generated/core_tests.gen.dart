@@ -3857,8 +3857,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     this.flutterEchoNullableMap,
     this.flutterEchoNullableEnum,
     this.flutterEchoNullableProxyApi,
-    this.callFlutterNoopAsync,
-    this.callFlutterEchoAsyncString,
+    this.flutterNoopAsync,
+    this.flutterEchoAsyncString,
     required bool boolParam,
     required int intParam,
     required double doubleParam,
@@ -3987,8 +3987,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     this.flutterEchoNullableMap,
     this.flutterEchoNullableEnum,
     this.flutterEchoNullableProxyApi,
-    this.callFlutterNoopAsync,
-    this.callFlutterEchoAsyncString,
+    this.flutterNoopAsync,
+    this.flutterEchoAsyncString,
   }) : super.pigeon_detached();
 
   late final _Pigeon_ProxyApiBaseCodec __pigeon_codecProxyIntegrationCoreApi =
@@ -4623,7 +4623,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   /// Alternatively, `Pigeon_InstanceManager.removeWeakReference` can be used to
   /// release the associated Native object manually.
   final Future<void> Function(ProxyIntegrationCoreApi pigeon_instance)?
-      callFlutterNoopAsync;
+      flutterNoopAsync;
 
   /// Returns the passed in generic Object asynchronously.
   ///
@@ -4648,7 +4648,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   final Future<String> Function(
     ProxyIntegrationCoreApi pigeon_instance,
     String aString,
-  )? callFlutterEchoAsyncString;
+  )? flutterEchoAsyncString;
 
   @override
   final void Function(ProxyApiInterface instance)? anInterfaceMethod;
@@ -4767,11 +4767,11 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
       ProxyApiSuperClass? aProxyApi,
     )? flutterEchoNullableProxyApi,
     Future<void> Function(ProxyIntegrationCoreApi pigeon_instance)?
-        callFlutterNoopAsync,
+        flutterNoopAsync,
     Future<String> Function(
       ProxyIntegrationCoreApi pigeon_instance,
       String aString,
-    )? callFlutterEchoAsyncString,
+    )? flutterEchoAsyncString,
   }) {
     final _Pigeon_ProxyApiBaseCodec pigeonChannelCodec =
         _Pigeon_ProxyApiBaseCodec(
@@ -5837,7 +5837,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     }
     {
       const String __pigeon_channelName =
-          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterNoopAsync';
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterNoopAsync';
       final BasicMessageChannel<Object?> __pigeon_channel =
           BasicMessageChannel<Object?>(
         __pigeon_channelName,
@@ -5857,7 +5857,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'Argument for $__pigeon_channelName was null, expected non-null ProxyIntegrationCoreApi.',
         );
         try {
-          await (callFlutterNoopAsync ?? instance!.callFlutterNoopAsync)
+          await (flutterNoopAsync ?? instance!.flutterNoopAsync)
               ?.call(instance!);
           return wrapResponse(empty: true);
         } on PlatformException catch (e) {
@@ -5871,7 +5871,7 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     }
     {
       const String __pigeon_channelName =
-          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoAsyncString';
+          r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.flutterEchoAsyncString';
       final BasicMessageChannel<Object?> __pigeon_channel =
           BasicMessageChannel<Object?>(
         __pigeon_channelName,
@@ -5896,9 +5896,9 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
           'Argument for $__pigeon_channelName was null, expected non-null String.',
         );
         try {
-          final String? output = await (callFlutterEchoAsyncString ??
-                  instance!.callFlutterEchoAsyncString)
-              ?.call(
+          final String? output =
+              await (flutterEchoAsyncString ?? instance!.flutterEchoAsyncString)
+                  ?.call(
             instance!,
             arg_aString!,
           );
@@ -8188,6 +8188,62 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
     }
   }
 
+  Future<void> callFlutterNoopAsync() async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterNoopAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      __pigeon_codecProxyIntegrationCoreApi,
+      binaryMessenger: pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[this]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<String> callFlutterEchoAsyncString(String aString) async {
+    const String __pigeon_channelName =
+        r'dev.flutter.pigeon.pigeon_integration_tests.ProxyIntegrationCoreApi.callFlutterEchoAsyncString';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      __pigeon_codecProxyIntegrationCoreApi,
+      binaryMessenger: pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        (await __pigeon_channel.send(<Object?>[
+      this,
+      aString,
+    ]) as List<Object?>?);
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: (__pigeon_replyList[0]! as String),
+        message: (__pigeon_replyList[1] as String?),
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?)!;
+    }
+  }
+
   @override
   ProxyIntegrationCoreApi pigeon_copy() {
     return ProxyIntegrationCoreApi.pigeon_detached(
@@ -8235,8 +8291,8 @@ class ProxyIntegrationCoreApi extends ProxyApiSuperClass
       flutterEchoNullableMap: flutterEchoNullableMap,
       flutterEchoNullableEnum: flutterEchoNullableEnum,
       flutterEchoNullableProxyApi: flutterEchoNullableProxyApi,
-      callFlutterNoopAsync: callFlutterNoopAsync,
-      callFlutterEchoAsyncString: callFlutterEchoAsyncString,
+      flutterNoopAsync: flutterNoopAsync,
+      flutterEchoAsyncString: flutterEchoAsyncString,
     );
   }
 }

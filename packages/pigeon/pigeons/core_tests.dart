@@ -860,11 +860,11 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   @async
-  late void Function()? callFlutterNoopAsync;
+  late void Function()? flutterNoopAsync;
 
   /// Returns the passed in generic Object asynchronously.
   @async
-  late String Function(String aString)? callFlutterEchoAsyncString;
+  late String Function(String aString)? flutterEchoAsyncString;
 
   // ========== Synchronous host method tests ==========
 
@@ -1135,6 +1135,12 @@ abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass
   ProxyApiSuperClass? callFlutterEchoNullableProxyApi(
     ProxyApiSuperClass? aProxyApi,
   );
+
+  @async
+  void callFlutterNoopAsync();
+
+  @async
+  String callFlutterEchoAsyncString(String aString);
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi interface.
