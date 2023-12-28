@@ -392,7 +392,8 @@ abstract class Pigeon_ProxyApiBaseCodec(
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
-        return instanceManager.getInstance(readValue(buffer) as Long)
+        return instanceManager.getInstance(
+            readValue(buffer).let { if (it is Int) it.toLong() else it as Long })
       }
       else -> super.readValueOfType(type, buffer)
     }
