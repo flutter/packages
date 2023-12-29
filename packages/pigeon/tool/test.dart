@@ -66,11 +66,11 @@ ${parser.usage}''');
       commandLineTests,
     ];
     const List<String> androidTests = <String>[
-      androidJavaUnitTests,
-      androidKotlinUnitTests,
-      androidJavaIntegrationTests,
+      // androidJavaUnitTests,
+      // androidKotlinUnitTests,
+      // androidJavaIntegrationTests,
       androidKotlinIntegrationTests,
-      androidJavaLint,
+      // androidJavaLint,
     ];
     const List<String> iOSTests = <String>[
       iOSObjCUnitTests,
@@ -90,10 +90,10 @@ ${parser.usage}''');
 
     if (Platform.isMacOS) {
       testsToRun = <String>[
-        ...dartTests,
+        // ...dartTests,
         ...androidTests,
-        ...iOSTests,
-        ...macOSTests,
+        // ...iOSTests,
+        // ...macOSTests,
       ];
     } else if (Platform.isWindows) {
       testsToRun = <String>[

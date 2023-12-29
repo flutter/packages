@@ -776,7 +776,7 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       pigeon_instance: ProxyIntegrationCoreApi,
       callback: (Result<Any?>) -> Unit
   ) {
-    callback(Result.failure(CoreTestsError("message")))
+    callback(Result.failure(CoreTestsError("code", "message", "details")))
   }
 
   override fun echoAsyncNullableInt(

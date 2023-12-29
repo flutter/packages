@@ -920,7 +920,7 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
             indent.newln();
 
             indent.format(
-              'when (value) {\n'
+              'when {\n'
               '  instanceManager.containsInstance(value) -> {\n'
               '    stream.write(128)\n'
               '    writeValue(stream, instanceManager.getIdentifierForStrongReference(value))\n'

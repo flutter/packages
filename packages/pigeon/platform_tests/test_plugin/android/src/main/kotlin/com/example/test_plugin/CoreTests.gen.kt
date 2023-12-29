@@ -407,7 +407,7 @@ abstract class Pigeon_ProxyApiBaseCodec(
       is ProxyApiInterface -> getProxyApiInterface_Api().pigeon_newInstance(value) {}
     }
 
-    when (value) {
+    when {
       instanceManager.containsInstance(value) -> {
         stream.write(128)
         writeValue(stream, instanceManager.getIdentifierForStrongReference(value))
