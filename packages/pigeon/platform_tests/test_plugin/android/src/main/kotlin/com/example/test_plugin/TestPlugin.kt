@@ -872,7 +872,10 @@ class ProxyIntegrationCoreApiApiImpl(codec: Pigeon_ProxyApiBaseCodec) :
       pigeon_instance: ProxyIntegrationCoreApi,
       callback: (Result<Any?>) -> Unit
   ) {
-    flutterThrowError(pigeon_instance, callback)
+    flutterThrowError(pigeon_instance) { result ->
+      val exception = result.exceptionOrNull()
+      callback(Result.failure(exception!!))
+    }
   }
 
   override fun callFlutterThrowErrorFromVoid(

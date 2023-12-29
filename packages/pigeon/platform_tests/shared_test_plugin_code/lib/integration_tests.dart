@@ -1811,6 +1811,37 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('staticAsyncNoop', (_) async {
       await expectLater(ProxyIntegrationCoreApi.staticAsyncNoop(), completes);
     });
+
+    testWidgets('callFlutterNoop', (_) async {
+      bool called = false;
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterNoop: (ProxyIntegrationCoreApi instance) async {
+          called = true;
+        },
+      );
+
+      await api.callFlutterNoop();
+      expect(called, isTrue);
+    });
+
+    testWidgets('callFlutterThrowError', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterThrowError: (_) {
+          throw FlutterError('this is an error');
+        },
+      );
+
+      await expectLater(
+        api.callFlutterThrowError(),
+        throwsA(
+          isA<PlatformException>().having(
+            (PlatformException exception) => exception.message,
+            'message',
+            equals('this is an error'),
+          ),
+        ),
+      );
+    });
   });
 }
 
