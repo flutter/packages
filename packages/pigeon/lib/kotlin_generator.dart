@@ -553,15 +553,18 @@ class $instanceManagerClassName(private val finalizationListener: $finalizationL
      * @return a new `$instanceManagerClassName`.
      */
     fun create(api: ${instanceManagerClassName}Api): $instanceManagerClassName {
-      return create(object : $finalizationListenerClassName {
-        override fun onFinalize(identifier: Long) {
-          api.removeStrongReference(identifier) {
-            if(it.isFailure) {
-              Log.e(tag, "Failed to remove Dart strong reference with identifier: \$identifier")
+      val instanceManager = create(
+          object : Pigeon_FinalizationListener {
+            override fun onFinalize(identifier: Long) {
+              api.removeStrongReference(identifier) {
+                if (it.isFailure) {
+                  Log.e(tag, "Failed to remove Dart strong reference with identifier: \$identifier")
+                }
+              }
             }
-          }
-        }
-      })
+          })
+      Pigeon_InstanceManagerApi.setUpMessageHandlers(api.binaryMessenger, instanceManager)
+      return instanceManager
     }
   }
 
@@ -765,7 +768,7 @@ class $instanceManagerClassName(private val finalizationListener: $finalizationL
 * Generated API for managing the Dart and native `$instanceManagerClassName`s.
 */
 @Suppress("ClassName")
-class $apiName(private val binaryMessenger: BinaryMessenger) {
+class $apiName(internal val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by $apiName. */
     private val codec: MessageCodec<Any?> by lazy {
@@ -890,6 +893,19 @@ class $apiName(private val binaryMessenger: BinaryMessenger) {
           );
           indent.newln();
         }
+
+        indent.writeScoped('fun setUpMessageHandlers() {', '}', () {
+          for (final AstProxyApi api in sortedApis) {
+            final bool hasHostMessageCalls = api.constructors.isNotEmpty ||
+                api.attachedFields.isNotEmpty ||
+                api.hostMethods.isNotEmpty;
+            if (hasHostMessageCalls) {
+              indent.writeln(
+                '${api.name}_Api.setUpMessageHandlers(binaryMessenger, get${api.name}_Api())',
+              );
+            }
+          }
+        });
 
         indent.format(
           'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {\n'

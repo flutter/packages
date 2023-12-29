@@ -115,16 +115,21 @@ class Pigeon_InstanceManager(private val finalizationListener: Pigeon_Finalizati
      * @return a new `Pigeon_InstanceManager`.
      */
     fun create(api: Pigeon_InstanceManagerApi): Pigeon_InstanceManager {
-      return create(
-          object : Pigeon_FinalizationListener {
-            override fun onFinalize(identifier: Long) {
-              api.removeStrongReference(identifier) {
-                if (it.isFailure) {
-                  Log.e(tag, "Failed to remove Dart strong reference with identifier: $identifier")
+      val instanceManager =
+          create(
+              object : Pigeon_FinalizationListener {
+                override fun onFinalize(identifier: Long) {
+                  api.removeStrongReference(identifier) {
+                    if (it.isFailure) {
+                      Log.e(
+                          tag,
+                          "Failed to remove Dart strong reference with identifier: $identifier")
+                    }
+                  }
                 }
-              }
-            }
-          })
+              })
+      Pigeon_InstanceManagerApi.setUpMessageHandlers(api.binaryMessenger, instanceManager)
+      return instanceManager
     }
   }
 
@@ -296,7 +301,7 @@ class Pigeon_InstanceManager(private val finalizationListener: Pigeon_Finalizati
 
 /** Generated API for managing the Dart and native `Pigeon_InstanceManager`s. */
 @Suppress("ClassName")
-class Pigeon_InstanceManagerApi(private val binaryMessenger: BinaryMessenger) {
+class Pigeon_InstanceManagerApi(internal val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by Pigeon_InstanceManagerApi. */
     private val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
@@ -388,6 +393,12 @@ abstract class Pigeon_ProxyApiBaseCodec(
    * `ProxyApiInterface` to the Dart `InstanceManager`.
    */
   abstract fun getProxyApiInterface_Api(): ProxyApiInterface_Api
+
+  fun setUpMessageHandlers() {
+    ProxyIntegrationCoreApi_Api.setUpMessageHandlers(
+        binaryMessenger, getProxyIntegrationCoreApi_Api())
+    ProxyApiSuperClass_Api.setUpMessageHandlers(binaryMessenger, getProxyApiSuperClass_Api())
+  }
 
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {

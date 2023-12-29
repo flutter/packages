@@ -10,7 +10,7 @@ import io.flutter.plugin.common.BinaryMessenger
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   var flutterApi: FlutterIntegrationCoreApi? = null
-  var instanceManager: Pigeon_InstanceManager? = null
+  private var instanceManager: Pigeon_InstanceManager? = null
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -19,13 +19,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     val instanceManagerApi = Pigeon_InstanceManagerApi(binding.binaryMessenger)
     instanceManager = Pigeon_InstanceManager.create(instanceManagerApi)
 
-    Pigeon_InstanceManagerApi.setUpMessageHandlers(binding.binaryMessenger, instanceManager!!)
-
     val codec = ProxyApiCodec(binding.binaryMessenger, instanceManager!!)
-    ProxyIntegrationCoreApi_Api.setUpMessageHandlers(
-        binding.binaryMessenger, codec.getProxyIntegrationCoreApi_Api())
-    ProxyApiSuperClass_Api.setUpMessageHandlers(
-        binding.binaryMessenger, codec.getProxyApiSuperClass_Api())
+    codec.setUpMessageHandlers()
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
