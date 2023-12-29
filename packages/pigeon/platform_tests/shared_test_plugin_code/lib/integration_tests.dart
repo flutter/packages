@@ -2033,6 +2033,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       );
       expect(await api.callFlutterEchoNullableProxyApi(null), null);
     });
+
+    testWidgets('callFlutterNoopAsync', (_) async {
+      bool called = false;
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterNoopAsync: (ProxyIntegrationCoreApi instance) async {
+          called = true;
+        },
+      );
+
+      await api.callFlutterNoopAsync();
+      expect(called, isTrue);
+    });
+
+    testWidgets('callFlutterEchoAsyncString', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoAsyncString: (_, String aString) async => aString,
+      );
+
+      const String value = 'a string';
+      expect(await api.callFlutterEchoAsyncString(value), value);
+    });
   });
 }
 
