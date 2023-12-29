@@ -1842,6 +1842,197 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         ),
       );
     });
+
+    testWidgets('callFlutterThrowErrorFromVoid', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterThrowErrorFromVoid: (_) {
+          throw FlutterError('this is an error');
+        },
+      );
+
+      await expectLater(
+        api.callFlutterThrowErrorFromVoid(),
+        throwsA(
+          isA<PlatformException>().having(
+            (PlatformException exception) => exception.message,
+            'message',
+            equals('this is an error'),
+          ),
+        ),
+      );
+    });
+
+    testWidgets('callFlutterEchoBool', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoBool: (_, bool aBool) => aBool,
+      );
+
+      const bool value = true;
+      expect(await api.callFlutterEchoBool(value), value);
+    });
+
+    testWidgets('callFlutterEchoInt', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoInt: (_, int anInt) => anInt,
+      );
+
+      const int value = 0;
+      expect(await api.callFlutterEchoInt(value), value);
+    });
+
+    testWidgets('callFlutterEchoDouble', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoDouble: (_, double aDouble) => aDouble,
+      );
+
+      const double value = 0.0;
+      expect(await api.callFlutterEchoDouble(value), value);
+    });
+
+    testWidgets('callFlutterEchoString', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoString: (_, String aString) => aString,
+      );
+
+      const String value = 'a string';
+      expect(await api.callFlutterEchoString(value), value);
+    });
+
+    testWidgets('callFlutterEchoUint8List', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoUint8List: (_, Uint8List aUint8List) => aUint8List,
+      );
+
+      final Uint8List value = Uint8List(0);
+      expect(await api.callFlutterEchoUint8List(value), value);
+    });
+
+    testWidgets('callFlutterEchoList', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoList: (_, List<Object?> aList) => aList,
+      );
+
+      final List<Object?> value = <Object?>[0, 0.0, true, ProxyApiSuperClass()];
+      expect(await api.callFlutterEchoList(value), value);
+    });
+
+    testWidgets('callFlutterEchoProxyApiList', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoProxyApiList: (_, List<ProxyIntegrationCoreApi?> aList) =>
+            aList,
+      );
+
+      final List<ProxyIntegrationCoreApi?> value = <ProxyIntegrationCoreApi>[
+        _createGenericProxyIntegrationCoreApi(),
+      ];
+      expect(await api.callFlutterEchoProxyApiList(value), value);
+    });
+
+    testWidgets('callFlutterEchoMap', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoMap: (_, Map<String?, Object?> aMap) => aMap,
+      );
+
+      final Map<String?, Object?> value = <String?, Object?>{
+        'a String': 4,
+      };
+      expect(await api.callFlutterEchoMap(value), value);
+    });
+
+    testWidgets('callFlutterEchoProxyApiMap', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoProxyApiMap:
+            (_, Map<String?, ProxyIntegrationCoreApi?> aMap) => aMap,
+      );
+
+      final Map<String?, ProxyIntegrationCoreApi?> value =
+          <String?, ProxyIntegrationCoreApi?>{
+        'a String': _createGenericProxyIntegrationCoreApi(),
+      };
+      expect(await api.callFlutterEchoProxyApiMap(value), value);
+    });
+
+    testWidgets('callFlutterEchoEnum', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoEnum: (_, AnEnum anEnum) => anEnum,
+      );
+
+      const AnEnum value = AnEnum.three;
+      expect(await api.callFlutterEchoEnum(value), value);
+    });
+
+    testWidgets('callFlutterEchoProxyApi', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoProxyApi: (_, ProxyApiSuperClass aProxyApi) => aProxyApi,
+      );
+
+      final ProxyApiSuperClass value = ProxyApiSuperClass();
+      expect(await api.callFlutterEchoProxyApi(value), value);
+    });
+
+    testWidgets('callFlutterEchoNullableBool', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableBool: (_, bool? aBool) => aBool,
+      );
+      expect(await api.callFlutterEchoNullableBool(null), null);
+    });
+
+    testWidgets('callFlutterEchoNullableInt', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableInt: (_, int? anInt) => anInt,
+      );
+      expect(await api.callFlutterEchoNullableInt(null), null);
+    });
+
+    testWidgets('callFlutterEchoNullableDouble', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableDouble: (_, double? aDouble) => aDouble,
+      );
+      expect(await api.callFlutterEchoNullableDouble(null), null);
+    });
+
+    testWidgets('callFlutterEchoNullableString', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableString: (_, String? aString) => aString,
+      );
+      expect(await api.callFlutterEchoNullableString(null), null);
+    });
+
+    testWidgets('callFlutterEchoNullableUint8List', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableUint8List: (_, Uint8List? aUint8List) => aUint8List,
+      );
+      expect(await api.callFlutterEchoNullableUint8List(null), null);
+    });
+
+    testWidgets('callFlutterEchoNullableList', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableList: (_, List<Object?>? aList) => aList,
+      );
+      expect(await api.callFlutterEchoNullableList(null), null);
+    });
+
+    testWidgets('callFlutterEchoNullableMap', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableMap: (_, Map<String?, Object?>? aMap) => aMap,
+      );
+      expect(await api.callFlutterEchoNullableMap(null), null);
+    });
+
+    testWidgets('callFlutterEchoNullableEnum', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableEnum: (_, AnEnum? anEnum) => anEnum,
+      );
+      expect(await api.callFlutterEchoNullableEnum(null), null);
+    });
+
+    testWidgets('callFlutterEchoNullableProxyApi', (_) async {
+      final ProxyIntegrationCoreApi api = _createGenericProxyIntegrationCoreApi(
+        flutterEchoNullableProxyApi: (_, ProxyApiSuperClass? aProxyApi) =>
+            aProxyApi,
+      );
+      expect(await api.callFlutterEchoNullableProxyApi(null), null);
+    });
   });
 }
 
