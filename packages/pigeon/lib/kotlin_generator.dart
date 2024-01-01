@@ -992,7 +992,6 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
           associatedProxyApi: api,
         );
 
-        // TODO: also check this is validation
         // Whether the api has a method that callbacks to Dart to add a new
         // instance to the InstanceManager.
         final bool hasCallbackConstructor = checkApiHasCallbackConstructor(
