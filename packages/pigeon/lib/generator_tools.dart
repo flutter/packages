@@ -655,6 +655,66 @@ Set<AstProxyApi> recursiveFindAllInterfacesApis(
   return interfacesApis;
 }
 
+/// Whether the api has a method that callbacks to Dart to add a new instance
+/// to the InstanceManager.
+///
+/// This is possible as long as no callback methods are required to instantiate
+/// the class.
+bool checkApiHasCallbackConstructor(
+  AstProxyApi api,
+  Iterable<AstProxyApi> allProxyApis,
+) {
+  // A list of ProxyApis where each `extends` the API that follows it.
+  final List<AstProxyApi> superClassApisChain = recursiveGetSuperClassApisChain(
+    api,
+    allProxyApis,
+  );
+
+  // The proxy api this api `extends` if it exists.
+  final AstProxyApi? superClassApi =
+      superClassApisChain.isNotEmpty ? superClassApisChain.first : null;
+
+  // All ProxyApis this API `implements` and all the interfaces those APIs
+  // `implements`.
+  final Set<AstProxyApi> interfacesApis = recursiveFindAllInterfacesApis(
+    api,
+    allProxyApis,
+  );
+
+  // All methods inherited from interfaces and the interfaces of interfaces.
+  final List<Method> interfacesMethods = <Method>[];
+  for (final AstProxyApi proxyApi in interfacesApis) {
+    interfacesMethods.addAll(proxyApi.methods);
+  }
+
+  // A list of Flutter methods inherited from the ProxyApi that this ProxyApi
+  // `extends`. This also recursively checks the ProxyApi that the super class
+  // `extends` and so on.
+  //
+  // This also includes methods that super classes inherited from interfaces
+  // with `implements`.
+  final List<Method> superClassFlutterMethods = <Method>[];
+  if (superClassApi != null) {
+    for (final AstProxyApi proxyApi in superClassApisChain) {
+      superClassFlutterMethods.addAll(proxyApi.flutterMethods);
+    }
+
+    final Set<AstProxyApi> superClassInterfacesApis =
+        recursiveFindAllInterfacesApis(
+      superClassApi,
+      allProxyApis,
+    );
+    for (final AstProxyApi proxyApi in superClassInterfacesApis) {
+      superClassFlutterMethods.addAll(proxyApi.methods);
+    }
+  }
+
+  return !api.flutterMethods
+      .followedBy(superClassFlutterMethods)
+      .followedBy(interfacesMethods)
+      .any((Method method) => method.required);
+}
+
 /// Creates a list of ProxyApis where each `extends` the ProxyApi that follows
 /// it.
 ///

@@ -120,9 +120,10 @@ class InstanceManagerTest {
     assertTrue(instanceManager.containsInstance(instance))
   }
 
-  private fun createInstanceManager() : Pigeon_InstanceManager {
-    return Pigeon_InstanceManager.create(object :
-      Pigeon_InstanceManager.Pigeon_FinalizationListener { override fun onFinalize(identifier: Long) {}
-    })
+  private fun createInstanceManager(): Pigeon_InstanceManager {
+    return Pigeon_InstanceManager.create(
+        object : Pigeon_InstanceManager.Pigeon_FinalizationListener {
+          override fun onFinalize(identifier: Long) {}
+        })
   }
 }

@@ -411,11 +411,12 @@ abstract class Pigeon_ProxyApiBaseCodec(
   }
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    when (value) {
-      is com.example.test_plugin.ProxyIntegrationCoreApi ->
-          getProxyIntegrationCoreApi_Api().pigeon_newInstance(value) {}
-      is ProxyApiSuperClass -> getProxyApiSuperClass_Api().pigeon_newInstance(value) {}
-      is ProxyApiInterface -> getProxyApiInterface_Api().pigeon_newInstance(value) {}
+    if (value is com.example.test_plugin.ProxyIntegrationCoreApi) {
+      getProxyIntegrationCoreApi_Api().pigeon_newInstance(value) {}
+    } else if (value is ProxyApiSuperClass) {
+      getProxyApiSuperClass_Api().pigeon_newInstance(value) {}
+    } else if (value is ProxyApiInterface) {
+      getProxyApiInterface_Api().pigeon_newInstance(value) {}
     }
 
     when {
