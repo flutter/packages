@@ -933,7 +933,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
 
                 final int? minApi = api.versionRequirements?.minAndroidApi;
                 final String versionCheck = minApi != null
-                    ? 'Build.VERSION.SDK_INT >= $minApi && '
+                    ? 'android.os.Build.VERSION.SDK_INT >= $minApi && '
                     : '';
 
                 indent.format(
@@ -1140,7 +1140,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                         .versionRequirements!
                         .minAndroidApi!;
                     indent.writeScoped(
-                      'if (Build.VERSION.SDK_INT >= $apiRequirement) {',
+                      'if (android.os.Build.VERSION.SDK_INT >= $apiRequirement) {',
                       '}',
                       onWrite,
                       addTrailingNewline: false,
