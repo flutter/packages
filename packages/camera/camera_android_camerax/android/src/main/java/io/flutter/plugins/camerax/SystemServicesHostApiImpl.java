@@ -46,7 +46,7 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
     this.activity = activity;
   }
 
-  public void setPermissionsRegistry(@NonNull PermissionsRegistry permissionsRegistry) {
+  public void setPermissionsRegistry(@Nullable PermissionsRegistry permissionsRegistry) {
     this.permissionsRegistry = permissionsRegistry;
   }
 

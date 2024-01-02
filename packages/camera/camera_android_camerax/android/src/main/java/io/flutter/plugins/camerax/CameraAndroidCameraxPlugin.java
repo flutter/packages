@@ -136,37 +136,49 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   public void onAttachedToActivity(@NonNull ActivityPluginBinding activityPluginBinding) {
     Activity activity = activityPluginBinding.getActivity();
 
+    // Set up Host API implementations based on the context that `activity` provides.
     setUp(pluginBinding.getBinaryMessenger(), activity, pluginBinding.getTextureRegistry());
 
-    if (activity instanceof LifecycleOwner) {
-      processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
-      liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
-    } else {
-      ProxyLifecycleProvider proxyLifecycleProvider = new ProxyLifecycleProvider(activity);
-      processCameraProviderHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
-      liveDataHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
-    }
+    // Set any needed references to `activity` itself.
+    updateLifecycleOwner(activity);
+    updateActivity(activity);
 
-    systemServicesHostApiImpl.setActivity(activity);
+    // Set permissions registry reference.
     systemServicesHostApiImpl.setPermissionsRegistry(
         activityPluginBinding::addRequestPermissionsResultListener);
-    deviceOrientationManagerHostApiImpl.setActivity(activity);
   }
 
   @Override
   public void onDetachedFromActivityForConfigChanges() {
+    // Clear any references to previously attached `ActivityPluginBinding`/`Activity`.
     updateContext(pluginBinding.getApplicationContext());
+    updateLifecycleOwner(null);
+    updateActivity(null);
+    systemServicesHostApiImpl.setPermissionsRegistry(null);
   }
 
   @Override
   public void onReattachedToActivityForConfigChanges(
       @NonNull ActivityPluginBinding activityPluginBinding) {
-    updateContext(activityPluginBinding.getActivity());
+    Activity activity = activityPluginBinding.getActivity();
+
+    // Set any needed references to `activity` itself or its context.
+    updateContext(activity);
+    updateLifecycleOwner(activity);
+    updateActivity(activity);
+
+    // Set permissions registry reference.
+    systemServicesHostApiImpl.setPermissionsRegistry(
+        activityPluginBinding::addRequestPermissionsResultListener);
   }
 
   @Override
   public void onDetachedFromActivity() {
+    // Clear any references to previously attached `ActivityPluginBinding`/`Activity`.
     updateContext(pluginBinding.getApplicationContext());
+    updateLifecycleOwner(null);
+    updateActivity(null);
+    systemServicesHostApiImpl.setPermissionsRegistry(null);
   }
 
   /**
@@ -194,6 +206,34 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     }
     if (cameraControlHostApiImpl != null) {
       cameraControlHostApiImpl.setContext(context);
+    }
+  }
+
+  /**
+   * Sets {@code LifecycleOwner} that is used to control the lifecycle
+   * of the camera by CameraX.
+   */
+  public void updateLifecycleOwner(@NonNull Activity activity) {
+    if (activity instanceof LifecycleOwner) {
+      processCameraProviderHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+      liveDataHostApiImpl.setLifecycleOwner((LifecycleOwner) activity);
+    } else {
+      ProxyLifecycleProvider proxyLifecycleProvider = new ProxyLifecycleProvider(activity);
+      processCameraProviderHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
+      liveDataHostApiImpl.setLifecycleOwner(proxyLifecycleProvider);
+    }
+  }
+
+  /**
+   * Updates {@code Activity} that is used for requesting camera permissions
+   * and tracking the orientation of the device.
+   */
+  public void updateActivity(@Nullable Activity activity) {
+    if (systemServicesHostApiImpl != null) {
+      systemServicesHostApiImpl.setActivity(activity);
+    }
+    if (deviceOrientationManagerHostApiImpl != null) {
+      deviceOrientationManagerHostApiImpl.setActivity(activity);
     }
   }
 }

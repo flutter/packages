@@ -40,7 +40,7 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   }
 
   /** Sets {@link LifecycleOwner} used to observe the camera state if so requested. */
-  public void setLifecycleOwner(@NonNull LifecycleOwner lifecycleOwner) {
+  public void setLifecycleOwner(@Nullable LifecycleOwner lifecycleOwner) {
     this.lifecycleOwner = lifecycleOwner;
   }
 

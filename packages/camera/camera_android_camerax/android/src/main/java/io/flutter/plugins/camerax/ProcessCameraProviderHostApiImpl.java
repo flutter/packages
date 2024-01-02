@@ -36,7 +36,7 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
     this.context = context;
   }
 
-  public void setLifecycleOwner(@NonNull LifecycleOwner lifecycleOwner) {
+  public void setLifecycleOwner(@Nullable LifecycleOwner lifecycleOwner) {
     this.lifecycleOwner = lifecycleOwner;
   }
 
