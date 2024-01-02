@@ -40,281 +40,281 @@ Future<void> main() async {
   final String secondaryUrl = '$prefixUrl/secondary.txt';
   final String headersUrl = '$prefixUrl/headers';
 
-  // testWidgets('initialUrl', (WidgetTester tester) async {
-  //   final Completer<WebViewController> controllerCompleter =
-  //       Completer<WebViewController>();
-  //   final Completer<void> pageFinishedCompleter = Completer<void>();
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: GlobalKey(),
-  //         initialUrl: primaryUrl,
-  //         onWebViewCreated: (WebViewController controller) {
-  //           controllerCompleter.complete(controller);
-  //         },
-  //         onPageFinished: pageFinishedCompleter.complete,
-  //       ),
-  //     ),
-  //   );
+  testWidgets('initialUrl', (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    final Completer<void> pageFinishedCompleter = Completer<void>();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: GlobalKey(),
+          initialUrl: primaryUrl,
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          },
+          onPageFinished: pageFinishedCompleter.complete,
+        ),
+      ),
+    );
 
-  //   final WebViewController controller = await controllerCompleter.future;
-  //   await pageFinishedCompleter.future;
+    final WebViewController controller = await controllerCompleter.future;
+    await pageFinishedCompleter.future;
 
-  //   final String? currentUrl = await controller.currentUrl();
-  //   expect(currentUrl, primaryUrl);
-  // });
+    final String? currentUrl = await controller.currentUrl();
+    expect(currentUrl, primaryUrl);
+  });
 
-  // testWidgets('loadUrl', (WidgetTester tester) async {
-  //   final Completer<WebViewController> controllerCompleter =
-  //       Completer<WebViewController>();
-  //   final StreamController<String> pageLoads = StreamController<String>();
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: GlobalKey(),
-  //         initialUrl: primaryUrl,
-  //         onWebViewCreated: (WebViewController controller) {
-  //           controllerCompleter.complete(controller);
-  //         },
-  //         onPageFinished: (String url) {
-  //           pageLoads.add(url);
-  //         },
-  //       ),
-  //     ),
-  //   );
-  //   final WebViewController controller = await controllerCompleter.future;
+  testWidgets('loadUrl', (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    final StreamController<String> pageLoads = StreamController<String>();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: GlobalKey(),
+          initialUrl: primaryUrl,
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          },
+          onPageFinished: (String url) {
+            pageLoads.add(url);
+          },
+        ),
+      ),
+    );
+    final WebViewController controller = await controllerCompleter.future;
 
-  //   await controller.loadUrl(secondaryUrl);
-  //   await expectLater(
-  //     pageLoads.stream.firstWhere((String url) => url == secondaryUrl),
-  //     completion(secondaryUrl),
-  //   );
-  // });
+    await controller.loadUrl(secondaryUrl);
+    await expectLater(
+      pageLoads.stream.firstWhere((String url) => url == secondaryUrl),
+      completion(secondaryUrl),
+    );
+  });
 
-  // testWidgets('evaluateJavascript', (WidgetTester tester) async {
-  //   final Completer<WebViewController> controllerCompleter =
-  //       Completer<WebViewController>();
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: GlobalKey(),
-  //         initialUrl: primaryUrl,
-  //         onWebViewCreated: (WebViewController controller) {
-  //           controllerCompleter.complete(controller);
-  //         },
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //       ),
-  //     ),
-  //   );
-  //   final WebViewController controller = await controllerCompleter.future;
-  //   // ignore: deprecated_member_use
-  //   final String result = await controller.evaluateJavascript('1 + 1');
-  //   expect(result, equals('2'));
-  // });
+  testWidgets('evaluateJavascript', (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: GlobalKey(),
+          initialUrl: primaryUrl,
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          },
+          javascriptMode: JavascriptMode.unrestricted,
+        ),
+      ),
+    );
+    final WebViewController controller = await controllerCompleter.future;
+    // ignore: deprecated_member_use
+    final String result = await controller.evaluateJavascript('1 + 1');
+    expect(result, equals('2'));
+  });
 
-  // testWidgets('loadUrl with headers', (WidgetTester tester) async {
-  //   final Completer<WebViewController> controllerCompleter =
-  //       Completer<WebViewController>();
-  //   final StreamController<String> pageStarts = StreamController<String>();
-  //   final StreamController<String> pageLoads = StreamController<String>();
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: GlobalKey(),
-  //         initialUrl: primaryUrl,
-  //         onWebViewCreated: (WebViewController controller) {
-  //           controllerCompleter.complete(controller);
-  //         },
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //         onPageStarted: (String url) {
-  //           pageStarts.add(url);
-  //         },
-  //         onPageFinished: (String url) {
-  //           pageLoads.add(url);
-  //         },
-  //       ),
-  //     ),
-  //   );
-  //   final WebViewController controller = await controllerCompleter.future;
-  //   final Map<String, String> headers = <String, String>{
-  //     'test_header': 'flutter_test_header'
-  //   };
-  //   await controller.loadUrl(headersUrl, headers: headers);
+  testWidgets('loadUrl with headers', (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    final StreamController<String> pageStarts = StreamController<String>();
+    final StreamController<String> pageLoads = StreamController<String>();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: GlobalKey(),
+          initialUrl: primaryUrl,
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          },
+          javascriptMode: JavascriptMode.unrestricted,
+          onPageStarted: (String url) {
+            pageStarts.add(url);
+          },
+          onPageFinished: (String url) {
+            pageLoads.add(url);
+          },
+        ),
+      ),
+    );
+    final WebViewController controller = await controllerCompleter.future;
+    final Map<String, String> headers = <String, String>{
+      'test_header': 'flutter_test_header'
+    };
+    await controller.loadUrl(headersUrl, headers: headers);
 
-  //   await pageStarts.stream.firstWhere((String url) => url == headersUrl);
-  //   await pageLoads.stream.firstWhere((String url) => url == headersUrl);
+    await pageStarts.stream.firstWhere((String url) => url == headersUrl);
+    await pageLoads.stream.firstWhere((String url) => url == headersUrl);
 
-  //   final String content = await controller
-  //       .runJavascriptReturningResult('document.documentElement.innerText');
-  //   expect(content.contains('flutter_test_header'), isTrue);
-  // });
+    final String content = await controller
+        .runJavascriptReturningResult('document.documentElement.innerText');
+    expect(content.contains('flutter_test_header'), isTrue);
+  });
 
-  // testWidgets('JavascriptChannel', (WidgetTester tester) async {
-  //   final Completer<WebViewController> controllerCompleter =
-  //       Completer<WebViewController>();
-  //   final Completer<void> pageStarted = Completer<void>();
-  //   final Completer<void> pageLoaded = Completer<void>();
-  //   final Completer<String> channelCompleter = Completer<String>();
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: GlobalKey(),
-  //         // This is the data URL for: '<!DOCTYPE html>'
-  //         initialUrl:
-  //             'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
-  //         onWebViewCreated: (WebViewController controller) {
-  //           controllerCompleter.complete(controller);
-  //         },
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //         javascriptChannels: <JavascriptChannel>{
-  //           JavascriptChannel(
-  //             name: 'Echo',
-  //             onMessageReceived: (JavascriptMessage message) {
-  //               channelCompleter.complete(message.message);
-  //             },
-  //           ),
-  //         },
-  //         onPageStarted: (String url) {
-  //           pageStarted.complete(null);
-  //         },
-  //         onPageFinished: (String url) {
-  //           pageLoaded.complete(null);
-  //         },
-  //       ),
-  //     ),
-  //   );
-  //   final WebViewController controller = await controllerCompleter.future;
-  //   await pageStarted.future;
-  //   await pageLoaded.future;
+  testWidgets('JavascriptChannel', (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    final Completer<void> pageStarted = Completer<void>();
+    final Completer<void> pageLoaded = Completer<void>();
+    final Completer<String> channelCompleter = Completer<String>();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: GlobalKey(),
+          // This is the data URL for: '<!DOCTYPE html>'
+          initialUrl:
+              'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          },
+          javascriptMode: JavascriptMode.unrestricted,
+          javascriptChannels: <JavascriptChannel>{
+            JavascriptChannel(
+              name: 'Echo',
+              onMessageReceived: (JavascriptMessage message) {
+                channelCompleter.complete(message.message);
+              },
+            ),
+          },
+          onPageStarted: (String url) {
+            pageStarted.complete(null);
+          },
+          onPageFinished: (String url) {
+            pageLoaded.complete(null);
+          },
+        ),
+      ),
+    );
+    final WebViewController controller = await controllerCompleter.future;
+    await pageStarted.future;
+    await pageLoaded.future;
 
-  //   expect(channelCompleter.isCompleted, isFalse);
-  //   await controller.runJavascript('Echo.postMessage("hello");');
+    expect(channelCompleter.isCompleted, isFalse);
+    await controller.runJavascript('Echo.postMessage("hello");');
 
-  //   await expectLater(channelCompleter.future, completion('hello'));
-  // });
+    await expectLater(channelCompleter.future, completion('hello'));
+  });
 
-  // testWidgets('resize webview', (WidgetTester tester) async {
-  //   final Completer<void> initialResizeCompleter = Completer<void>();
-  //   final Completer<void> buttonTapResizeCompleter = Completer<void>();
-  //   final Completer<void> onPageFinished = Completer<void>();
+  testWidgets('resize webview', (WidgetTester tester) async {
+    final Completer<void> initialResizeCompleter = Completer<void>();
+    final Completer<void> buttonTapResizeCompleter = Completer<void>();
+    final Completer<void> onPageFinished = Completer<void>();
 
-  //   bool resizeButtonTapped = false;
-  //   await tester.pumpWidget(ResizableWebView(
-  //     onResize: (_) {
-  //       if (resizeButtonTapped) {
-  //         buttonTapResizeCompleter.complete();
-  //       } else {
-  //         initialResizeCompleter.complete();
-  //       }
-  //     },
-  //     onPageFinished: () => onPageFinished.complete(),
-  //   ));
-  //   await onPageFinished.future;
-  //   // Wait for a potential call to resize after page is loaded.
-  //   await initialResizeCompleter.future.timeout(
-  //     const Duration(seconds: 3),
-  //     onTimeout: () => null,
-  //   );
+    bool resizeButtonTapped = false;
+    await tester.pumpWidget(ResizableWebView(
+      onResize: (_) {
+        if (resizeButtonTapped) {
+          buttonTapResizeCompleter.complete();
+        } else {
+          initialResizeCompleter.complete();
+        }
+      },
+      onPageFinished: () => onPageFinished.complete(),
+    ));
+    await onPageFinished.future;
+    // Wait for a potential call to resize after page is loaded.
+    await initialResizeCompleter.future.timeout(
+      const Duration(seconds: 3),
+      onTimeout: () => null,
+    );
 
-  //   resizeButtonTapped = true;
-  //   await tester.tap(find.byKey(const ValueKey<String>('resizeButton')));
-  //   await tester.pumpAndSettle();
-  //   expect(buttonTapResizeCompleter.future, completes);
-  // });
+    resizeButtonTapped = true;
+    await tester.tap(find.byKey(const ValueKey<String>('resizeButton')));
+    await tester.pumpAndSettle();
+    expect(buttonTapResizeCompleter.future, completes);
+  });
 
-  // testWidgets('set custom userAgent', (WidgetTester tester) async {
-  //   final Completer<WebViewController> controllerCompleter1 =
-  //       Completer<WebViewController>();
-  //   final GlobalKey globalKey = GlobalKey();
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: globalKey,
-  //         initialUrl: 'about:blank',
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //         userAgent: 'Custom_User_Agent1',
-  //         onWebViewCreated: (WebViewController controller) {
-  //           controllerCompleter1.complete(controller);
-  //         },
-  //       ),
-  //     ),
-  //   );
-  //   final WebViewController controller1 = await controllerCompleter1.future;
-  //   final String customUserAgent1 = await _getUserAgent(controller1);
-  //   expect(customUserAgent1, 'Custom_User_Agent1');
-  //   // rebuild the WebView with a different user agent.
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: globalKey,
-  //         initialUrl: 'about:blank',
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //         userAgent: 'Custom_User_Agent2',
-  //       ),
-  //     ),
-  //   );
+  testWidgets('set custom userAgent', (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter1 =
+        Completer<WebViewController>();
+    final GlobalKey globalKey = GlobalKey();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: globalKey,
+          initialUrl: 'about:blank',
+          javascriptMode: JavascriptMode.unrestricted,
+          userAgent: 'Custom_User_Agent1',
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter1.complete(controller);
+          },
+        ),
+      ),
+    );
+    final WebViewController controller1 = await controllerCompleter1.future;
+    final String customUserAgent1 = await _getUserAgent(controller1);
+    expect(customUserAgent1, 'Custom_User_Agent1');
+    // rebuild the WebView with a different user agent.
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: globalKey,
+          initialUrl: 'about:blank',
+          javascriptMode: JavascriptMode.unrestricted,
+          userAgent: 'Custom_User_Agent2',
+        ),
+      ),
+    );
 
-  //   final String customUserAgent2 = await _getUserAgent(controller1);
-  //   expect(customUserAgent2, 'Custom_User_Agent2');
-  // });
+    final String customUserAgent2 = await _getUserAgent(controller1);
+    expect(customUserAgent2, 'Custom_User_Agent2');
+  });
 
-  // testWidgets('use default platform userAgent after webView is rebuilt',
-  //     (WidgetTester tester) async {
-  //   final Completer<WebViewController> controllerCompleter =
-  //       Completer<WebViewController>();
-  //   final GlobalKey globalKey = GlobalKey();
-  //   // Build the webView with no user agent to get the default platform user agent.
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: globalKey,
-  //         initialUrl: primaryUrl,
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //         onWebViewCreated: (WebViewController controller) {
-  //           controllerCompleter.complete(controller);
-  //         },
-  //       ),
-  //     ),
-  //   );
-  //   final WebViewController controller = await controllerCompleter.future;
-  //   final String defaultPlatformUserAgent = await _getUserAgent(controller);
-  //   // rebuild the WebView with a custom user agent.
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: globalKey,
-  //         initialUrl: 'about:blank',
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //         userAgent: 'Custom_User_Agent',
-  //       ),
-  //     ),
-  //   );
-  //   final String customUserAgent = await _getUserAgent(controller);
-  //   expect(customUserAgent, 'Custom_User_Agent');
-  //   // rebuilds the WebView with no user agent.
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         key: globalKey,
-  //         initialUrl: 'about:blank',
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //       ),
-  //     ),
-  //   );
+  testWidgets('use default platform userAgent after webView is rebuilt',
+      (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    final GlobalKey globalKey = GlobalKey();
+    // Build the webView with no user agent to get the default platform user agent.
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: globalKey,
+          initialUrl: primaryUrl,
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          },
+        ),
+      ),
+    );
+    final WebViewController controller = await controllerCompleter.future;
+    final String defaultPlatformUserAgent = await _getUserAgent(controller);
+    // rebuild the WebView with a custom user agent.
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: globalKey,
+          initialUrl: 'about:blank',
+          javascriptMode: JavascriptMode.unrestricted,
+          userAgent: 'Custom_User_Agent',
+        ),
+      ),
+    );
+    final String customUserAgent = await _getUserAgent(controller);
+    expect(customUserAgent, 'Custom_User_Agent');
+    // rebuilds the WebView with no user agent.
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: globalKey,
+          initialUrl: 'about:blank',
+          javascriptMode: JavascriptMode.unrestricted,
+        ),
+      ),
+    );
 
-  //   final String customUserAgent2 = await _getUserAgent(controller);
-  //   expect(customUserAgent2, defaultPlatformUserAgent);
-  // });
+    final String customUserAgent2 = await _getUserAgent(controller);
+    expect(customUserAgent2, defaultPlatformUserAgent);
+  });
 
   group('Video playback policy', () {
     late String videoTestBase64;
@@ -413,164 +413,164 @@ Future<void> main() async {
       expect(isPaused, _webviewBool(true));
     });
 
-    // testWidgets('Changes to initialMediaPlaybackPolicy are ignored',
-    //     (WidgetTester tester) async {
-    //   final Completer<WebViewController> controllerCompleter =
-    //       Completer<WebViewController>();
-    //   Completer<void> pageLoaded = Completer<void>();
+    testWidgets('Changes to initialMediaPlaybackPolicy are ignored',
+        (WidgetTester tester) async {
+      final Completer<WebViewController> controllerCompleter =
+          Completer<WebViewController>();
+      Completer<void> pageLoaded = Completer<void>();
 
-    //   final GlobalKey key = GlobalKey();
-    //   await tester.pumpWidget(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: WebView(
-    //         key: key,
-    //         initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-    //         onWebViewCreated: (WebViewController controller) {
-    //           controllerCompleter.complete(controller);
-    //         },
-    //         javascriptMode: JavascriptMode.unrestricted,
-    //         onPageFinished: (String url) {
-    //           pageLoaded.complete(null);
-    //         },
-    //         initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-    //       ),
-    //     ),
-    //   );
-    //   final WebViewController controller = await controllerCompleter.future;
-    //   await pageLoaded.future;
+      final GlobalKey key = GlobalKey();
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: key,
+            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+          ),
+        ),
+      );
+      final WebViewController controller = await controllerCompleter.future;
+      await pageLoaded.future;
 
-    //   String isPaused =
-    //       await controller.runJavascriptReturningResult('isPaused();');
-    //   expect(isPaused, _webviewBool(false));
+      String isPaused =
+          await controller.runJavascriptReturningResult('isPaused();');
+      expect(isPaused, _webviewBool(false));
 
-    //   pageLoaded = Completer<void>();
+      pageLoaded = Completer<void>();
 
-    //   await tester.pumpWidget(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: WebView(
-    //         key: key,
-    //         initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-    //         onWebViewCreated: (WebViewController controller) {
-    //           controllerCompleter.complete(controller);
-    //         },
-    //         javascriptMode: JavascriptMode.unrestricted,
-    //         onPageFinished: (String url) {
-    //           pageLoaded.complete(null);
-    //         },
-    //       ),
-    //     ),
-    //   );
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: key,
+            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+          ),
+        ),
+      );
 
-    //   await controller.reload();
+      await controller.reload();
 
-    //   await pageLoaded.future;
+      await pageLoaded.future;
 
-    //   isPaused = await controller.runJavascriptReturningResult('isPaused();');
-    //   expect(isPaused, _webviewBool(false));
-    // });
+      isPaused = await controller.runJavascriptReturningResult('isPaused();');
+      expect(isPaused, _webviewBool(false));
+    });
 
-    // testWidgets('Video plays inline when allowsInlineMediaPlayback is true',
-    //     (WidgetTester tester) async {
-    //   final Completer<WebViewController> controllerCompleter =
-    //       Completer<WebViewController>();
-    //   final Completer<void> pageLoaded = Completer<void>();
-    //   final Completer<void> videoPlaying = Completer<void>();
+    testWidgets('Video plays inline when allowsInlineMediaPlayback is true',
+        (WidgetTester tester) async {
+      final Completer<WebViewController> controllerCompleter =
+          Completer<WebViewController>();
+      final Completer<void> pageLoaded = Completer<void>();
+      final Completer<void> videoPlaying = Completer<void>();
 
-    //   await tester.pumpWidget(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: WebView(
-    //         initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-    //         onWebViewCreated: (WebViewController controller) {
-    //           controllerCompleter.complete(controller);
-    //         },
-    //         javascriptMode: JavascriptMode.unrestricted,
-    //         javascriptChannels: <JavascriptChannel>{
-    //           JavascriptChannel(
-    //             name: 'VideoTestTime',
-    //             onMessageReceived: (JavascriptMessage message) {
-    //               final double currentTime = double.parse(message.message);
-    //               // Let it play for at least 1 second to make sure the related video's properties are set.
-    //               if (currentTime > 1 && !videoPlaying.isCompleted) {
-    //                 videoPlaying.complete(null);
-    //               }
-    //             },
-    //           ),
-    //         },
-    //         onPageFinished: (String url) {
-    //           pageLoaded.complete(null);
-    //         },
-    //         initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-    //         allowsInlineMediaPlayback: true,
-    //       ),
-    //     ),
-    //   );
-    //   final WebViewController controller = await controllerCompleter.future;
-    //   await pageLoaded.future;
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            javascriptChannels: <JavascriptChannel>{
+              JavascriptChannel(
+                name: 'VideoTestTime',
+                onMessageReceived: (JavascriptMessage message) {
+                  final double currentTime = double.parse(message.message);
+                  // Let it play for at least 1 second to make sure the related video's properties are set.
+                  if (currentTime > 1 && !videoPlaying.isCompleted) {
+                    videoPlaying.complete(null);
+                  }
+                },
+              ),
+            },
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+            allowsInlineMediaPlayback: true,
+          ),
+        ),
+      );
+      final WebViewController controller = await controllerCompleter.future;
+      await pageLoaded.future;
 
-    //   // Pump once to trigger the video play.
-    //   await tester.pump();
+      // Pump once to trigger the video play.
+      await tester.pump();
 
-    //   // Makes sure we get the correct event that indicates the video is actually playing.
-    //   await videoPlaying.future;
+      // Makes sure we get the correct event that indicates the video is actually playing.
+      await videoPlaying.future;
 
-    //   final String fullScreen =
-    //       await controller.runJavascriptReturningResult('isFullScreen();');
-    //   expect(fullScreen, _webviewBool(false));
-    // });
+      final String fullScreen =
+          await controller.runJavascriptReturningResult('isFullScreen();');
+      expect(fullScreen, _webviewBool(false));
+    });
 
-    // // allowsInlineMediaPlayback is a noop on Android, so it is skipped.
-    // testWidgets(
-    //     'Video plays full screen when allowsInlineMediaPlayback is false',
-    //     (WidgetTester tester) async {
-    //   final Completer<WebViewController> controllerCompleter =
-    //       Completer<WebViewController>();
-    //   final Completer<void> pageLoaded = Completer<void>();
-    //   final Completer<void> videoPlaying = Completer<void>();
+    // allowsInlineMediaPlayback is a noop on Android, so it is skipped.
+    testWidgets(
+        'Video plays full screen when allowsInlineMediaPlayback is false',
+        (WidgetTester tester) async {
+      final Completer<WebViewController> controllerCompleter =
+          Completer<WebViewController>();
+      final Completer<void> pageLoaded = Completer<void>();
+      final Completer<void> videoPlaying = Completer<void>();
 
-    //   await tester.pumpWidget(
-    //     Directionality(
-    //       textDirection: TextDirection.ltr,
-    //       child: WebView(
-    //         initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-    //         onWebViewCreated: (WebViewController controller) {
-    //           controllerCompleter.complete(controller);
-    //         },
-    //         javascriptMode: JavascriptMode.unrestricted,
-    //         javascriptChannels: <JavascriptChannel>{
-    //           JavascriptChannel(
-    //             name: 'VideoTestTime',
-    //             onMessageReceived: (JavascriptMessage message) {
-    //               final double currentTime = double.parse(message.message);
-    //               // Let it play for at least 1 second to make sure the related video's properties are set.
-    //               if (currentTime > 1 && !videoPlaying.isCompleted) {
-    //                 videoPlaying.complete(null);
-    //               }
-    //             },
-    //           ),
-    //         },
-    //         onPageFinished: (String url) {
-    //           pageLoaded.complete(null);
-    //         },
-    //         initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-    //       ),
-    //     ),
-    //   );
-    //   final WebViewController controller = await controllerCompleter.future;
-    //   await pageLoaded.future;
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            javascriptChannels: <JavascriptChannel>{
+              JavascriptChannel(
+                name: 'VideoTestTime',
+                onMessageReceived: (JavascriptMessage message) {
+                  final double currentTime = double.parse(message.message);
+                  // Let it play for at least 1 second to make sure the related video's properties are set.
+                  if (currentTime > 1 && !videoPlaying.isCompleted) {
+                    videoPlaying.complete(null);
+                  }
+                },
+              ),
+            },
+            onPageFinished: (String url) {
+              pageLoaded.complete(null);
+            },
+            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+          ),
+        ),
+      );
+      final WebViewController controller = await controllerCompleter.future;
+      await pageLoaded.future;
 
-    //   // Pump once to trigger the video play.
-    //   await tester.pump();
+      // Pump once to trigger the video play.
+      await tester.pump();
 
-    //   // Makes sure we get the correct event that indicates the video is actually playing.
-    //   await videoPlaying.future;
+      // Makes sure we get the correct event that indicates the video is actually playing.
+      await videoPlaying.future;
 
-    //   final String fullScreen =
-    //       await controller.runJavascriptReturningResult('isFullScreen();');
-    //   expect(fullScreen, _webviewBool(true));
-    // }, skip: Platform.isAndroid);
+      final String fullScreen =
+          await controller.runJavascriptReturningResult('isFullScreen();');
+      expect(fullScreen, _webviewBool(true));
+    }, skip: Platform.isAndroid);
   });
 
   group('Audio playback policy', () {
@@ -604,72 +604,72 @@ Future<void> main() async {
       audioTestBase64 = base64Encode(const Utf8Encoder().convert(audioTest));
     });
 
-    testWidgets('Auto media playback', (WidgetTester tester) async {
-      Completer<WebViewController> controllerCompleter =
-          Completer<WebViewController>();
-      Completer<void> pageStarted = Completer<void>();
-      Completer<void> pageLoaded = Completer<void>();
+    // testWidgets('Auto media playback', (WidgetTester tester) async {
+    //   Completer<WebViewController> controllerCompleter =
+    //       Completer<WebViewController>();
+    //   Completer<void> pageStarted = Completer<void>();
+    //   Completer<void> pageLoaded = Completer<void>();
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebView(
-            key: GlobalKey(),
-            initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
-            onWebViewCreated: (WebViewController controller) {
-              controllerCompleter.complete(controller);
-            },
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageStarted: (String url) {
-              pageStarted.complete(null);
-            },
-            onPageFinished: (String url) {
-              pageLoaded.complete(null);
-            },
-            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-          ),
-        ),
-      );
-      WebViewController controller = await controllerCompleter.future;
-      await pageStarted.future;
-      await pageLoaded.future;
+    //   await tester.pumpWidget(
+    //     Directionality(
+    //       textDirection: TextDirection.ltr,
+    //       child: WebView(
+    //         key: GlobalKey(),
+    //         initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
+    //         onWebViewCreated: (WebViewController controller) {
+    //           controllerCompleter.complete(controller);
+    //         },
+    //         javascriptMode: JavascriptMode.unrestricted,
+    //         onPageStarted: (String url) {
+    //           pageStarted.complete(null);
+    //         },
+    //         onPageFinished: (String url) {
+    //           pageLoaded.complete(null);
+    //         },
+    //         initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+    //       ),
+    //     ),
+    //   );
+    //   WebViewController controller = await controllerCompleter.future;
+    //   await pageStarted.future;
+    //   await pageLoaded.future;
 
-      String isPaused =
-          await controller.runJavascriptReturningResult('isPaused();');
-      expect(isPaused, _webviewBool(false));
+    //   String isPaused =
+    //       await controller.runJavascriptReturningResult('isPaused();');
+    //   expect(isPaused, _webviewBool(false));
 
-      controllerCompleter = Completer<WebViewController>();
-      pageStarted = Completer<void>();
-      pageLoaded = Completer<void>();
+    //   controllerCompleter = Completer<WebViewController>();
+    //   pageStarted = Completer<void>();
+    //   pageLoaded = Completer<void>();
 
-      // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebView(
-            key: GlobalKey(),
-            initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
-            onWebViewCreated: (WebViewController controller) {
-              controllerCompleter.complete(controller);
-            },
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageStarted: (String url) {
-              pageStarted.complete(null);
-            },
-            onPageFinished: (String url) {
-              pageLoaded.complete(null);
-            },
-          ),
-        ),
-      );
+    //   // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
+    //   await tester.pumpWidget(
+    //     Directionality(
+    //       textDirection: TextDirection.ltr,
+    //       child: WebView(
+    //         key: GlobalKey(),
+    //         initialUrl: 'data:text/html;charset=utf-8;base64,$audioTestBase64',
+    //         onWebViewCreated: (WebViewController controller) {
+    //           controllerCompleter.complete(controller);
+    //         },
+    //         javascriptMode: JavascriptMode.unrestricted,
+    //         onPageStarted: (String url) {
+    //           pageStarted.complete(null);
+    //         },
+    //         onPageFinished: (String url) {
+    //           pageLoaded.complete(null);
+    //         },
+    //       ),
+    //     ),
+    //   );
 
-      controller = await controllerCompleter.future;
-      await pageStarted.future;
-      await pageLoaded.future;
+    //   controller = await controllerCompleter.future;
+    //   await pageStarted.future;
+    //   await pageLoaded.future;
 
-      isPaused = await controller.runJavascriptReturningResult('isPaused();');
-      expect(isPaused, _webviewBool(true));
-    });
+    //   isPaused = await controller.runJavascriptReturningResult('isPaused();');
+    //   expect(isPaused, _webviewBool(true));
+    // });
 
     testWidgets('Changes to initialMediaPlaybackPolicy are ignored',
         (WidgetTester tester) async {
@@ -738,56 +738,56 @@ Future<void> main() async {
       isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
     });
-  }, skip: true);
+  });
 
-  // testWidgets('getTitle', (WidgetTester tester) async {
-  //   const String getTitleTest = '''
-  //       <!DOCTYPE html><html>
-  //       <head><title>Some title</title>
-  //       </head>
-  //       <body>
-  //       </body>
-  //       </html>
-  //     ''';
-  //   final String getTitleTestBase64 =
-  //       base64Encode(const Utf8Encoder().convert(getTitleTest));
-  //   final Completer<void> pageStarted = Completer<void>();
-  //   final Completer<void> pageLoaded = Completer<void>();
-  //   final Completer<WebViewController> controllerCompleter =
-  //       Completer<WebViewController>();
+  testWidgets('getTitle', (WidgetTester tester) async {
+    const String getTitleTest = '''
+        <!DOCTYPE html><html>
+        <head><title>Some title</title>
+        </head>
+        <body>
+        </body>
+        </html>
+      ''';
+    final String getTitleTestBase64 =
+        base64Encode(const Utf8Encoder().convert(getTitleTest));
+    final Completer<void> pageStarted = Completer<void>();
+    final Completer<void> pageLoaded = Completer<void>();
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
 
-  //   await tester.pumpWidget(
-  //     Directionality(
-  //       textDirection: TextDirection.ltr,
-  //       child: WebView(
-  //         initialUrl: 'data:text/html;charset=utf-8;base64,$getTitleTestBase64',
-  //         javascriptMode: JavascriptMode.unrestricted,
-  //         onWebViewCreated: (WebViewController controller) {
-  //           controllerCompleter.complete(controller);
-  //         },
-  //         onPageStarted: (String url) {
-  //           pageStarted.complete(null);
-  //         },
-  //         onPageFinished: (String url) {
-  //           pageLoaded.complete(null);
-  //         },
-  //       ),
-  //     ),
-  //   );
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          initialUrl: 'data:text/html;charset=utf-8;base64,$getTitleTestBase64',
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          },
+          onPageStarted: (String url) {
+            pageStarted.complete(null);
+          },
+          onPageFinished: (String url) {
+            pageLoaded.complete(null);
+          },
+        ),
+      ),
+    );
 
-  //   final WebViewController controller = await controllerCompleter.future;
-  //   await pageStarted.future;
-  //   await pageLoaded.future;
+    final WebViewController controller = await controllerCompleter.future;
+    await pageStarted.future;
+    await pageLoaded.future;
 
-  //   // On at least iOS, it does not appear to be guaranteed that the native
-  //   // code has the title when the page load completes. Execute some JavaScript
-  //   // before checking the title to ensure that the page has been fully parsed
-  //   // and processed.
-  //   await controller.runJavascript('1;');
+    // On at least iOS, it does not appear to be guaranteed that the native
+    // code has the title when the page load completes. Execute some JavaScript
+    // before checking the title to ensure that the page has been fully parsed
+    // and processed.
+    await controller.runJavascript('1;');
 
-  //   final String? title = await controller.getTitle();
-  //   expect(title, 'Some title');
-  // });
+    final String? title = await controller.getTitle();
+    expect(title, 'Some title');
+  });
 
   group('Programmatic Scroll', () {
     testWidgets('setAndGetScrollPosition', (WidgetTester tester) async {
@@ -865,7 +865,7 @@ Future<void> main() async {
       expect(scrollPosX, X_SCROLL * 2);
       expect(scrollPosY, Y_SCROLL * 2);
     });
-  }, skip: true);
+  });
 
   // Minimal end-to-end testing of the legacy Android implementation.
   group('AndroidWebView (virtual display)', () {
@@ -901,7 +901,7 @@ Future<void> main() async {
       final String? currentUrl = await controller.currentUrl();
       expect(currentUrl, primaryUrl);
     });
-  }, skip: true);
+  }, skip: !Platform.isAndroid);
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';
@@ -1112,152 +1112,152 @@ Future<void> main() async {
       final String? currentUrl = await controller.currentUrl();
       expect(currentUrl, secondaryUrl);
     });
-  }, skip: true);
+  });
 
-//   testWidgets('launches with gestureNavigationEnabled on iOS',
-//       (WidgetTester tester) async {
-//     final Completer<WebViewController> controllerCompleter =
-//         Completer<WebViewController>();
-//     await tester.pumpWidget(
-//       Directionality(
-//         textDirection: TextDirection.ltr,
-//         child: SizedBox(
-//           width: 400,
-//           height: 300,
-//           child: WebView(
-//             key: GlobalKey(),
-//             initialUrl: primaryUrl,
-//             gestureNavigationEnabled: true,
-//             onWebViewCreated: (WebViewController controller) {
-//               controllerCompleter.complete(controller);
-//             },
-//           ),
-//         ),
-//       ),
-//     );
-//     final WebViewController controller = await controllerCompleter.future;
-//     final String? currentUrl = await controller.currentUrl();
-//     expect(currentUrl, primaryUrl);
-//   });
+  testWidgets('launches with gestureNavigationEnabled on iOS',
+      (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: SizedBox(
+          width: 400,
+          height: 300,
+          child: WebView(
+            key: GlobalKey(),
+            initialUrl: primaryUrl,
+            gestureNavigationEnabled: true,
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+          ),
+        ),
+      ),
+    );
+    final WebViewController controller = await controllerCompleter.future;
+    final String? currentUrl = await controller.currentUrl();
+    expect(currentUrl, primaryUrl);
+  });
 
-//   testWidgets('target _blank opens in same window',
-//       (WidgetTester tester) async {
-//     final Completer<WebViewController> controllerCompleter =
-//         Completer<WebViewController>();
-//     final Completer<void> pageLoaded = Completer<void>();
-//     await tester.pumpWidget(
-//       Directionality(
-//         textDirection: TextDirection.ltr,
-//         child: WebView(
-//           key: GlobalKey(),
-//           onWebViewCreated: (WebViewController controller) {
-//             controllerCompleter.complete(controller);
-//           },
-//           javascriptMode: JavascriptMode.unrestricted,
-//           onPageFinished: (String url) {
-//             pageLoaded.complete(null);
-//           },
-//         ),
-//       ),
-//     );
-//     final WebViewController controller = await controllerCompleter.future;
-//     await controller.runJavascript('window.open("$primaryUrl", "_blank")');
-//     await pageLoaded.future;
-//     final String? currentUrl = await controller.currentUrl();
-//     expect(currentUrl, primaryUrl);
-//   });
+  testWidgets('target _blank opens in same window',
+      (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    final Completer<void> pageLoaded = Completer<void>();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebView(
+          key: GlobalKey(),
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          },
+          javascriptMode: JavascriptMode.unrestricted,
+          onPageFinished: (String url) {
+            pageLoaded.complete(null);
+          },
+        ),
+      ),
+    );
+    final WebViewController controller = await controllerCompleter.future;
+    await controller.runJavascript('window.open("$primaryUrl", "_blank")');
+    await pageLoaded.future;
+    final String? currentUrl = await controller.currentUrl();
+    expect(currentUrl, primaryUrl);
+  });
 
-//   testWidgets(
-//     'can open new window and go back',
-//     (WidgetTester tester) async {
-//       final Completer<WebViewController> controllerCompleter =
-//           Completer<WebViewController>();
-//       Completer<void> pageLoaded = Completer<void>();
-//       await tester.pumpWidget(
-//         Directionality(
-//           textDirection: TextDirection.ltr,
-//           child: WebView(
-//             key: GlobalKey(),
-//             onWebViewCreated: (WebViewController controller) {
-//               controllerCompleter.complete(controller);
-//             },
-//             javascriptMode: JavascriptMode.unrestricted,
-//             onPageFinished: (String url) {
-//               pageLoaded.complete();
-//             },
-//             initialUrl: primaryUrl,
-//           ),
-//         ),
-//       );
-//       final WebViewController controller = await controllerCompleter.future;
-//       expect(controller.currentUrl(), completion(primaryUrl));
-//       await pageLoaded.future;
-//       pageLoaded = Completer<void>();
+  testWidgets(
+    'can open new window and go back',
+    (WidgetTester tester) async {
+      final Completer<WebViewController> controllerCompleter =
+          Completer<WebViewController>();
+      Completer<void> pageLoaded = Completer<void>();
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: GlobalKey(),
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (String url) {
+              pageLoaded.complete();
+            },
+            initialUrl: primaryUrl,
+          ),
+        ),
+      );
+      final WebViewController controller = await controllerCompleter.future;
+      expect(controller.currentUrl(), completion(primaryUrl));
+      await pageLoaded.future;
+      pageLoaded = Completer<void>();
 
-//       await controller.runJavascript('window.open("$secondaryUrl")');
-//       await pageLoaded.future;
-//       pageLoaded = Completer<void>();
-//       expect(controller.currentUrl(), completion(secondaryUrl));
+      await controller.runJavascript('window.open("$secondaryUrl")');
+      await pageLoaded.future;
+      pageLoaded = Completer<void>();
+      expect(controller.currentUrl(), completion(secondaryUrl));
 
-//       expect(controller.canGoBack(), completion(true));
-//       await controller.goBack();
-//       await pageLoaded.future;
-//       await expectLater(controller.currentUrl(), completion(primaryUrl));
-//     },
-//   );
+      expect(controller.canGoBack(), completion(true));
+      await controller.goBack();
+      await pageLoaded.future;
+      await expectLater(controller.currentUrl(), completion(primaryUrl));
+    },
+  );
 
-//   testWidgets(
-//     'clearCache should clear local storage',
-//     (WidgetTester tester) async {
-//       final Completer<WebViewController> controllerCompleter =
-//           Completer<WebViewController>();
+  testWidgets(
+    'clearCache should clear local storage',
+    (WidgetTester tester) async {
+      final Completer<WebViewController> controllerCompleter =
+          Completer<WebViewController>();
 
-//       Completer<void> pageLoadCompleter = Completer<void>();
+      Completer<void> pageLoadCompleter = Completer<void>();
 
-//       await tester.pumpWidget(
-//         Directionality(
-//           textDirection: TextDirection.ltr,
-//           child: WebView(
-//             key: GlobalKey(),
-//             initialUrl: primaryUrl,
-//             javascriptMode: JavascriptMode.unrestricted,
-//             onPageFinished: (_) => pageLoadCompleter.complete(),
-//             onWebViewCreated: (WebViewController controller) {
-//               controllerCompleter.complete(controller);
-//             },
-//           ),
-//         ),
-//       );
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebView(
+            key: GlobalKey(),
+            initialUrl: primaryUrl,
+            javascriptMode: JavascriptMode.unrestricted,
+            onPageFinished: (_) => pageLoadCompleter.complete(),
+            onWebViewCreated: (WebViewController controller) {
+              controllerCompleter.complete(controller);
+            },
+          ),
+        ),
+      );
 
-//       await pageLoadCompleter.future;
-//       pageLoadCompleter = Completer<void>();
+      await pageLoadCompleter.future;
+      pageLoadCompleter = Completer<void>();
 
-//       final WebViewController controller = await controllerCompleter.future;
-//       await controller.runJavascript('localStorage.setItem("myCat", "Tom");');
-//       final String myCatItem = await controller.runJavascriptReturningResult(
-//         'localStorage.getItem("myCat");',
-//       );
-//       expect(myCatItem, _webviewString('Tom'));
+      final WebViewController controller = await controllerCompleter.future;
+      await controller.runJavascript('localStorage.setItem("myCat", "Tom");');
+      final String myCatItem = await controller.runJavascriptReturningResult(
+        'localStorage.getItem("myCat");',
+      );
+      expect(myCatItem, _webviewString('Tom'));
 
-//       await controller.clearCache();
-//       await pageLoadCompleter.future;
+      await controller.clearCache();
+      await pageLoadCompleter.future;
 
-//       late final String? nullItem;
-//       try {
-//         nullItem = await controller.runJavascriptReturningResult(
-//           'localStorage.getItem("myCat");',
-//         );
-//       } catch (exception) {
-//         if (defaultTargetPlatform == TargetPlatform.iOS &&
-//             exception is ArgumentError &&
-//             (exception.message as String).contains(
-//                 'Result of JavaScript execution returned a `null` value.')) {
-//           nullItem = '<null>';
-//         }
-//       }
-//       expect(nullItem, _webviewNull());
-//     },
-//   );
+      late final String? nullItem;
+      try {
+        nullItem = await controller.runJavascriptReturningResult(
+          'localStorage.getItem("myCat");',
+        );
+      } catch (exception) {
+        if (defaultTargetPlatform == TargetPlatform.iOS &&
+            exception is ArgumentError &&
+            (exception.message as String).contains(
+                'Result of JavaScript execution returned a `null` value.')) {
+          nullItem = '<null>';
+        }
+      }
+      expect(nullItem, _webviewNull());
+    },
+  );
 }
 
 // JavaScript booleans evaluate to different string values on Android and iOS.
