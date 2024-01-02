@@ -79,13 +79,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
 
     late final RouteMatchList initialMatches;
-    initialMatches =
-        // TODO(chunhtai): After the migration from routeInformation's location
-        // to uri, empty path check might be required here; see
-        // https://github.com/flutter/packages/pull/5113#discussion_r1374861070
-        // ignore: deprecated_member_use, unnecessary_non_null_assertion
-        configuration.findMatch(routeInformation.uri.toString(),
-            extra: state.extra);
+    initialMatches = configuration.findMatch(
+        routeInformation.uri.path.isEmpty
+            ? '${routeInformation.uri}/'
+            : routeInformation.uri.toString(),
+        extra: state.extra);
     if (initialMatches.isError) {
       log('No initial matches: ${routeInformation.uri.path}');
     }

@@ -127,7 +127,9 @@ String canonicalUri(String loc) {
   // /profile/ => /profile
   // / => /
   // /login?from=/ => login?from=/
-  canon = canon.endsWith('/') && canon != '/' && !canon.contains('?')
+  canon = canon.endsWith('/') &&
+          Uri.parse(canon).path != '/' &&
+          !canon.contains('?')
       ? canon.substring(0, canon.length - 1)
       : canon;
 
