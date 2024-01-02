@@ -1,3 +1,7 @@
+## 2.5.4
+
+* Fixes display of initial frame when paused.
+
 ## 2.5.3
 
 * Publishes an instance of the plugin to the registrar on macOS, as on iOS.
