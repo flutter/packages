@@ -4,14 +4,14 @@
 
 // ignore_for_file: avoid_print
 
-import 'dart:html' as html;
-
 // Imports the Flutter Driver API.
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'package:pointer_interceptor_web_example/main.dart' as app;
+
+import 'package:web/web.dart' as web;
 
 final Finder nonClickableButtonFinder =
     find.byKey(const Key('transparent-button'));
@@ -28,10 +28,9 @@ void main() {
     testWidgets(
         'on wrapped elements, the browser does not hit the background-html-view',
         (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      await _fullyRenderApp(tester);
 
-      final html.Element element =
+      final web.Element element =
           _getHtmlElementAtCenter(clickableButtonFinder, tester);
 
       expect(element.id, isNot('background-html-view'));
@@ -40,10 +39,9 @@ void main() {
     testWidgets(
         'on wrapped elements with intercepting set to false, the browser hits the background-html-view',
         (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      await _fullyRenderApp(tester);
 
-      final html.Element element =
+      final web.Element element =
           _getHtmlElementAtCenter(clickableWrappedButtonFinder, tester);
 
       expect(element.id, 'background-html-view');
@@ -52,20 +50,18 @@ void main() {
     testWidgets(
         'on unwrapped elements, the browser hits the background-html-view',
         (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      await _fullyRenderApp(tester);
 
-      final html.Element element =
+      final web.Element element =
           _getHtmlElementAtCenter(nonClickableButtonFinder, tester);
 
       expect(element.id, 'background-html-view');
     }, semanticsEnabled: false);
 
     testWidgets('on background directly', (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      await _fullyRenderApp(tester);
 
-      final html.Element element =
+      final web.Element element =
           _getHtmlElementAt(tester.getTopLeft(backgroundFinder));
 
       expect(element.id, 'background-html-view');
@@ -75,15 +71,9 @@ void main() {
   group('With semantics', () {
     testWidgets('finds semantics of wrapped widgets',
         (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      await _fullyRenderApp(tester);
 
-      if (!_newSemanticsAvailable()) {
-        print('Skipping test: Needs flutter > 2.10');
-        return;
-      }
-
-      final html.Element element =
+      final web.Element element =
           _getHtmlElementAtCenter(clickableButtonFinder, tester);
 
       expect(element.tagName.toLowerCase(), 'flt-semantics');
@@ -93,15 +83,9 @@ void main() {
     testWidgets(
         'finds semantics of wrapped widgets with intercepting set to false',
         (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      await _fullyRenderApp(tester);
 
-      if (!_newSemanticsAvailable()) {
-        print('Skipping test: Needs flutter > 2.10');
-        return;
-      }
-
-      final html.Element element =
+      final web.Element element =
           _getHtmlElementAtCenter(clickableWrappedButtonFinder, tester);
 
       expect(element.tagName.toLowerCase(), 'flt-semantics');
@@ -111,15 +95,9 @@ void main() {
 
     testWidgets('finds semantics of unwrapped elements',
         (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      await _fullyRenderApp(tester);
 
-      if (!_newSemanticsAvailable()) {
-        print('Skipping test: Needs flutter > 2.10');
-        return;
-      }
-
-      final html.Element element =
+      final web.Element element =
           _getHtmlElementAtCenter(nonClickableButtonFinder, tester);
 
       expect(element.tagName.toLowerCase(), 'flt-semantics');
@@ -134,10 +112,9 @@ void main() {
     // simply allows the hit test to land on the platform view by making itself
     // hit test transparent.
     testWidgets('on background directly', (WidgetTester tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      await _fullyRenderApp(tester);
 
-      final html.Element element =
+      final web.Element element =
           _getHtmlElementAt(tester.getTopLeft(backgroundFinder));
 
       expect(element.id, 'background-html-view');
@@ -145,9 +122,19 @@ void main() {
   });
 }
 
+Future<void> _fullyRenderApp(WidgetTester tester) async {
+  app.main();
+  // Because the app widget is not injected through the `tester`, we need to
+  // await a bunch of frames (~5) so the app is fully rendered, and the
+  // platform views injected in the DOM.
+  for (int i = 0; i < 5; i++) {
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+}
+
 // Calls [_getHtmlElementAt] passing it the center of the widget identified by
 // the `finder`.
-html.Element _getHtmlElementAtCenter(Finder finder, WidgetTester tester) {
+web.Element _getHtmlElementAtCenter(Finder finder, WidgetTester tester) {
   final Offset point = tester.getCenter(finder);
   return _getHtmlElementAt(point);
 }
@@ -158,22 +145,16 @@ html.Element _getHtmlElementAtCenter(Finder finder, WidgetTester tester) {
 // sensitive to the presence of shadow roots and browser quirks (not all
 // browsers agree on what it should return in all situations). Since this test
 // runs only in Chromium, it relies on Chromium's behavior.
-html.Element _getHtmlElementAt(Offset point) {
+web.Element _getHtmlElementAt(Offset point) {
   // Probe at the shadow so the browser reports semantics nodes in addition to
   // platform view elements. If probed from `html.document` the browser hides
   // the contents of <flt-glass-name> as an implementation detail.
-  final html.ShadowRoot glassPaneShadow =
-      html.document.querySelector('flt-glass-pane')!.shadowRoot!;
-  return glassPaneShadow.elementFromPoint(point.dx.toInt(), point.dy.toInt())!;
+  final web.ShadowRoot glassPaneShadow =
+      web.document.querySelector('flt-glass-pane')!.shadowRoot!;
+  return glassPaneShadow.elementFromPoint(point.dx.toInt(), point.dy.toInt());
 }
 
-// TODO(dit): Remove this after flutter master (2.13) lands into stable.
-// This detects that we can do new semantics assertions by looking at the 'id'
-// attribute on flt-semantics elements (it is now set in 2.13 and up).
-bool _newSemanticsAvailable() {
-  final html.ShadowRoot glassPaneShadow =
-      html.document.querySelector('flt-glass-pane')!.shadowRoot!;
-  final List<html.Element> elements =
-      glassPaneShadow.querySelectorAll('flt-semantics[id]');
-  return elements.isNotEmpty;
+/// Shady API: https://github.com/w3c/csswg-drafts/issues/556
+extension ElementFromPointInShadowRoot on web.ShadowRoot {
+  external web.Element elementFromPoint(int x, int y);
 }
