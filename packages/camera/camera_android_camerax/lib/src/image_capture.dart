@@ -56,6 +56,8 @@ class ImageCapture extends UseCase {
   /// Should be specified in terms of one of the [Surface]
   /// rotation constants that represents the counter-clockwise degrees of
   /// rotation relative to [DeviceOrientation.portraitUp].
+  ///
+  /// TODO(camsim99): Remove this parameter. https://github.com/flutter/flutter/issues/140664
   final int? initialTargetRotation;
 
   /// Flash mode used to take a picture.

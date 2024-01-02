@@ -67,7 +67,7 @@ class DeviceOrientationManager {
     return api.getDefaultDisplayRotation();
   }
 
-  /// Serializes[DeviceOrientation] into a [String].
+  /// Serializes [DeviceOrientation] into a [String].
   static String serializeDeviceOrientation(DeviceOrientation orientation) {
     switch (orientation) {
       case DeviceOrientation.landscapeLeft:
