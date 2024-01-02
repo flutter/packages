@@ -1,3 +1,7 @@
+## 0.10.1
+
+* Adopts code-excerpt in README.
+
 ## 0.10.0
 
 * Transitions to federated architecture.

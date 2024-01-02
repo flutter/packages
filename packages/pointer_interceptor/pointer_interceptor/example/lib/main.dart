@@ -107,15 +107,21 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                         ),
                       ),
+                      // #docregion PointerInterceptorWrapper
                       PointerInterceptor(
                         child: ElevatedButton(
+                          // #enddocregion PointerInterceptorWrapper
                           key: const Key('clickable-button'),
                           child: const Text('Works As Expected'),
                           onPressed: () {
                             _clickedOn('clickable-button');
                           },
+                          // #docregion PointerInterceptorWrapper
                         ),
                       ),
+                      // #enddocregion PointerInterceptorWrapper
+                      _buildConditionalPointerInterceptor(),
+                      _buildBetterConditionalPointerInterceptor(),
                     ],
                   ),
                 ],
@@ -138,10 +144,14 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+      // #docregion PointerInterceptorDrawer
       drawer: Drawer(
         child: PointerInterceptor(
+          // #enddocregion PointerInterceptorDrawer
           // debug: true, // Enable this to "see" the interceptor covering the column.
+          // #docregion PointerInterceptorDrawer
           child: Column(
+            // #enddocregion PointerInterceptorDrawer
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               ListTile(
@@ -157,9 +167,52 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ],
+            // #docregion PointerInterceptorDrawer
           ),
         ),
       ),
+      // #enddocregion PointerInterceptorDrawer
     );
+  }
+
+  Widget _buildConditionalPointerInterceptor() {
+    // #docregion BadPointerInterceptor
+    if (someCondition()) {
+      return PointerInterceptor(
+        child: ElevatedButton(
+          // #enddocregion BadPointerInterceptor
+
+          onPressed: () {},
+          child: const Text('Click me'),
+          // #docregion BadPointerInterceptor
+        ),
+      );
+    } else {
+      return ElevatedButton(
+        // #enddocregion BadPointerInterceptor
+        onPressed: () {},
+        child: const Text('Click me'),
+        // #docregion BadPointerInterceptor
+      );
+    }
+    // #enddocregion BadPointerInterceptor
+  }
+
+  Widget _buildBetterConditionalPointerInterceptor() {
+    // #docregion GoodPointerInterceptor
+    return PointerInterceptor(
+      intercepting: someCondition(),
+      child: ElevatedButton(
+        // #enddocregion GoodPointerInterceptor
+        onPressed: () {},
+        child: const Text('Click me'),
+        // #docregion GoodPointerInterceptor
+      ),
+    );
+    // #enddocregion GoodPointerInterceptor
+  }
+
+  bool someCondition() {
+    return 4 > 5;
   }
 }

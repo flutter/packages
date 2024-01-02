@@ -1,3 +1,4 @@
+<?code-excerpt path-base="./example/lib"?>
 # pointer_interceptor
 
 |             | iOS     | Web |
@@ -44,26 +45,25 @@ All the cases above have in common that they attempt to render Flutter widgets *
 There's two ways that the `PointerInterceptor` widget can be used to solve the problems above:
 
 1. Wrapping your button element directly (FAB, Custom Play/Pause button...):
-
-    ```dart
-    PointerInterceptor(
-      child: ElevatedButton(...),
-    )
-    ```
+<?code-excerpt "main.dart (PointerInterceptorWrapper)" plaster="none"?>
+```dart
+PointerInterceptor(
+  child: ElevatedButton(
+  ),
+),
+```
 
 2. As a root container for a "layout" element, wrapping a bunch of other elements (like a Drawer):
 
-    ```dart
-    Scaffold(
-      ...
-      drawer: PointerInterceptor(
-        child: Drawer(
-          child: ...
-        ),
-      ),
-      ...
-    )
-    ```
+<?code-excerpt "main.dart (PointerInterceptorDrawer)" plaster="none"?>
+```dart
+drawer: Drawer(
+  child: PointerInterceptor(
+    child: Column(
+    ),
+  ),
+),
+```
 
 ### `intercepting`
 
@@ -74,24 +74,29 @@ The `intercepting` property allows the `PointerInterceptor` widget to render
 itself (or not) depending on a boolean value, instead of having to manually
 write an `if/else` on the Flutter App widget tree, so code like this:
 
-  ```dart
-  if (someCondition) {
-    return PointerInterceptor(
-      child: ElevatedButton(...),
-    )
-  } else {
-    return ElevatedButton(...),
-  }
-  ```
+<?code-excerpt "main.dart (BadPointerInterceptor)" plaster="none"?>
+```dart
+if (someCondition()) {
+  return PointerInterceptor(
+    child: ElevatedButton(
+    ),
+  );
+} else {
+  return ElevatedButton(
+  );
+}
+```
 
 can be rewritten as:
 
-   ```dart
-    return PointerInterceptor(
-      intercepting: someCondition,
-      child: ElevatedButton(...),
-    )
-   ```
+<?code-excerpt "main.dart (GoodPointerInterceptor)" plaster="none"?>
+```dart
+return PointerInterceptor(
+  intercepting: someCondition(),
+  child: ElevatedButton(
+  ),
+);
+```
 
 Note: when `intercepting` is false, the `PointerInterceptor` will not render
 _anything_ in flutter, and just return its `child`. The code is exactly
