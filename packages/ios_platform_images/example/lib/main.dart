@@ -28,17 +28,20 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    // #docregion Usage
+    // "flutter" is a resource in Assets.xcassets.
+    final Image xcassetImage = Image(
+      image: IosPlatformImages.load('flutter'),
+      semanticLabel: 'Flutter logo',
+    );
+    // #enddocregion Usage
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          // "flutter" is a resource in Assets.xcassets.
-          child: Image(
-            image: IosPlatformImages.load('flutter'),
-            semanticLabel: 'Flutter logo',
-          ),
+          child: xcassetImage,
         ),
       ),
     );

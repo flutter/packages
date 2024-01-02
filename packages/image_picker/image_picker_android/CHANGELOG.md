@@ -1,3 +1,7 @@
+## 0.8.9+1
+
+* Updates plugin and example Gradle versions to 7.6.3.
+
 ## 0.8.9
 
 * Fixes resizing bug and updates rounding to be more accurate.
