@@ -117,6 +117,7 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     } catch (e) {
       // If decoding fails, it might be because the value is not a valid JSON string.
       // In such a case, return the original string directly.
+      debugPrint("${encodedValue} is not a valid JSON string.")
       return encodedValue;
     }
   }
