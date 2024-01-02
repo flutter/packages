@@ -1,7 +1,7 @@
 # Flutter Packages
 
 [![Release Status](https://github.com/flutter/packages/actions/workflows/release.yml/badge.svg)](https://github.com/flutter/packages/actions/workflows/release.yml)
-[![Build Dashboard](https://img.shields.io/badge/Build_Dashboard-60C9F8)](https://flutter-dashboard.appspot.com/#/build?repo=packages)
+[![Flutter CI Status](https://flutter-dashboard.appspot.com/api/public/build-status-badge?repo=packages)](https://flutter-dashboard.appspot.com/#/build?repo=packages)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/flutter/packages/badge)](https://deps.dev/project/github/flutter%2Fpackages)
 
 This repo is a companion repo to the main [flutter repo](
