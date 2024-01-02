@@ -236,8 +236,8 @@ dependencies {}
       replacements: <String, List<String>>{
         // minSdkVersion 21 is required by camera_android.
         'minSdkVersion': <String>['minSdkVersion 21'],
-        // compileSdkVersion 33 is required by local_auth.
-        'compileSdkVersion': <String>['compileSdkVersion 33'],
+        // compileSdk version 33 is required by local_auth.
+        'compileSdkVersion': <String>['compileSdk 33'],
       },
       additions: <String, List<String>>{
         'defaultConfig {': <String>['        multiDexEnabled true'],
