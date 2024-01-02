@@ -32,29 +32,35 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
   public static class FocusMeteringActionProxy {
     /** Creates an instance of {@link FocusMeteringAction}. */
     public @NonNull FocusMeteringAction create(
-        @NonNull MeteringPoint meteringPoint, @Nullable meteringMode) {
+        @NonNull List<MeteringPoint> meteringPoints, @NonNull List<Integer> meteringPointModes) {
+      if (meteringPoints.size() != meteringPointModes.size()) {
+        throw new IllegalArgumentException("The number of specified metering points must match the number of specified metering point modes.");
+      }
       FocusMeteringAction.Builder focusMeteringActionBuilder;
-      if (meteringMode == null) {
-        focusMeteringActionBuilder = new FocusMeteringAction.Builder(meteringPoint);
-      } else {
-        focusMeteringActionBuilder = new FocusMeteringAction.Builder(meteringPoint, meteringMode);
+
+      for (int i = 0; i < meteringPoints.size(); i++) {
+        MeteringPoint meteringPoint = meteringPoints.get(i);
+        Integer meteringMode = meteringPointModes.get(i);
+        if (i == 0) {
+          // On the first iteration, create the builder to add points to.
+          if (meteringMode == null) {
+            focusMeteringActionBuilder = new FocusMeteringAction.Builder(meteringPoint);
+          } else {
+            focusMeteringActionBuilder = new FocusMeteringAction.Builder(meteringPoint, meteringMode);
+          }
+          continue;
+        }
+
+        // For any i(teration) > 0, add metering points in order as specified by input lists.
+        if (meteringMode == null) {
+          focusMeteringActionBuilder.add(meteringPoint);
+        } else {
+          focusMeteringActionBuilder.add(meteringPoint, meteringMode);
+        }
       }
 
       return focusMeteringActionBuilder.build();
     }
-
-    public @NonNull FocusMeteringAction create(
-        @NonNull FocusMeteringAction focusMeteringAction,
-        @NonNull MeteringPoint meteringPoint, @Nullable meteringMode) {
-        FocusMetering newFocusMeteringAction;
-        if (meteringMode == null) {
-        newFocusMeteringAction = focusMeteringAction.addPoint(meteringPoint);
-      } else {
-        newFocusMeteringAction = focusMeteringAction.addPoint(meteringPoint, meteringMode);
-      }
-
-        return newFocusMeteringAction;
-        }
   }
 
   /**
@@ -80,18 +86,15 @@ public class FocusMeteringActionHostApiImpl implements FocusMeteringActionHostAp
 
 
   @Override
-  public void create(@NonNull Long identifier, @NonNull Long meteringPointId, @Nullable Long meteringMode) {
-    instanceManager.addDartCreatedInstance(
-        proxy.create(Objects.requireNonNull(instanceManager.getInstance(meteringPointId)), meteringMode), identifier);
-  }
-
-  @Override
-  @NonNull 
-    Long addPoint(@NonNull Long identifier, @NonNull Long meteringPointId, @Nullable Long meteringMode) {
-        FocusMeteringAction newFocusMeteringAction = proxy.addPoint(Objects.requireNonNull(instanceManager.getInstance(identifier)), Objects.requireNonNull(instanceManager.getInstance(meteringPointId)), meteringMode);
-        final FocusMeteringActionFlutterApiImpl flutterApi =
-          new FocusMeteringActionFlutterApiImpl(binaryMessenger, instanceManager);
-        flutterApi.create(newFocusMeteringAction, reply -> {});
-        return instanceManager.getIdentifierForStrongReference(newFocusMeteringAction);
+  public void create(@NonNull Long identifier, @NonNull List<MeteringPointInfo> meteringPointInfos) {
+    final List<MeteringPoint> meteringPoints = new ArrayList<MeteringPoint>();
+    final List<Integer> meteringPointModes = new ArrayList<int>();
+    for (MeteringPointInfo meteringPointInfo : meteringPointInfos) {
+      meteringPoint.add(instanceManager.getInstance(meteringPointInfo.getMeteringPointId()));
+      meteringPointModes.add(meteringPointIngo.getMeteringMode().intValue());
     }
+
+    instanceManager.addDartCreatedInstance(
+        proxy.create(meteringPoints, meteringPointModes), identifier);
+  }
 }

@@ -18,8 +18,8 @@ class FocusMeteringAction extends JavaObject {
   FocusMeteringAction({
     BinaryMessenger? binaryMessenger,
     InstanceManager? instanceManager,
-    required MeteringPoint meteringPoint,
-    int? meteringMode,
+    required List<(MeteringPoint meteringPoint, int? meteringMode)>
+        meteringPointInfos,
   }) : super.detached(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
@@ -27,7 +27,7 @@ class FocusMeteringAction extends JavaObject {
     _api = _FocusMeteringActionHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
-    _api.createFromInstance(this, meteringPoint, meteringMode);
+    _api.createFromInstance(this, meteringPointInfos);
   }
 
   /// Creates a [FocusMeteringAction] that is not automatically attached to a
@@ -58,12 +58,6 @@ class FocusMeteringAction extends JavaObject {
   /// Flag for metering mode that indicates the AWB (Auto White Balance) region
   /// is enabled.
   static const int flagAwb = 4;
-
-  /// something
-  Future<FocusMeteringAction?> addPoint(
-      MeteringPoint meteringPoint, int? meteringMode) {
-    return _api.addPointFromInstance(this, meteringPoint, meteringMode);
-  }
 }
 
 /// Host API implementation of [FocusMeteringAction].
@@ -92,28 +86,28 @@ class _FocusMeteringActionHostApiImpl extends FocusMeteringActionHostApi {
 
   /// Creates an [FocusMeteringAction] instance with the flash mode and target resolution
   /// if specified.
-  void createFromInstance(FocusMeteringAction instance,
-      MeteringPoint meteringPoint, int? meteringMode) {
+  void createFromInstance(
+      FocusMeteringAction instance,
+      List<(MeteringPoint meteringPoint, int? meteringMode)>
+          meteringPointInfos) {
     final int identifier = instanceManager.addDartCreatedInstance(instance,
         onCopy: (FocusMeteringAction original) {
       return FocusMeteringAction.detached(
           binaryMessenger: binaryMessenger, instanceManager: instanceManager);
     });
-    create(identifier, instanceManager.getIdentifier(meteringPoint)!,
-        meteringMode);
-  }
 
-  /// something
-  Future<FocusMeteringAction?> addPointFromInstance(
-      FocusMeteringAction instance,
+    final List<MeteringPointInfo> meteringPointInfosWithIds =
+        <MeteringPointInfo>[];
+    for (final (
       MeteringPoint meteringPoint,
-      int? meteringMode) async {
-    final int identifier = instanceManager.getIdentifier(instance)!;
-    final int meteringPointId = instanceManager.getIdentifier(meteringPoint)!;
-    final int focusMeteringResultId =
-        await addPoint(identifier, meteringPointId, meteringMode);
-    return instanceManager.getInstanceWithWeakReference<FocusMeteringAction>(
-        focusMeteringResultId);
+      int? meteringMode
+    ) meteringPointInfo in meteringPointInfos) {
+      meteringPointInfosWithIds.add(MeteringPointInfo(
+          meteringPointId: instanceManager.getIdentifier(meteringPointInfo.$1)!,
+          meteringMode: meteringPointInfo.$2));
+    }
+
+    create(identifier, meteringPointInfosWithIds);
   }
 }
 

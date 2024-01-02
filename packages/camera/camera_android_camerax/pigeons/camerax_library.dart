@@ -126,6 +126,22 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
+/// Convenience class for building [FocusMeteringAction] with multiple metering
+/// points.
+class MeteringPointInfo {
+  MeteringPointInfo({
+    required this.meteringPointId,
+    required this.meteringMode,
+  });
+
+  /// Instance manager ID corresponding to [MeteringPoint] that relates to this
+  /// info.
+  int meteringPointId;
+
+  /// Metering mode represented by one of the [FocusMeteringAction] constants.
+  int? meteringMode;
+}
+
 @HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
 abstract class InstanceManagerHostApi {
   /// Clear the native `InstanceManager`.
@@ -462,9 +478,7 @@ abstract class CameraControlFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestFocusMeteringActionHostApi')
 abstract class FocusMeteringActionHostApi {
-  void create(int identifier, int meteringPointId, int? meteringMode);
-
-  int addPoint(int identifier, int meteringPointId, int? meteringMode);
+  void create(int identifier, List<MeteringPointInfo> meteringPointInfos);
 }
 
 @FlutterApi()

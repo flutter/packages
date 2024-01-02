@@ -7,49 +7,49 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringActionFlutterApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.FocusMeteringResultFlutterApi;
 
 /**
- * Flutter API implementation for {@link FocusMeteringAction}.
+ * Flutter API implementation for {@link FocusMeteringResult}.
  *
  * <p>This class may handle adding native instances that are attached to a Dart instance or passing
  * arguments of callbacks methods to a Dart instance.
  */
-public class FocusMeteringActionFlutterApiImpl {
+public class FocusMeteringResultFlutterApiImpl {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private FocusMeteringActionFlutterApi focusMeteringActionFlutterApi;
+  private FocusMeteringResultFlutterApi focusMeteringResultFlutterApi;
 
   /**
-   * Constructs a {@link FocusMeteringActionFlutterApiImpl}.
+   * Constructs a {@link FocusMeteringResultFlutterApiImpl}.
    *
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    */
-  public FocusMeteringActionFlutterApiImpl(
+  public FocusMeteringResultFlutterApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
-    focusMeteringActionFlutterApi = new FocusMeteringActionFlutterApi(binaryMessenger);
+    focusMeteringResultFlutterApi = new FocusMeteringResultFlutterApi(binaryMessenger);
   }
 
   /**
-   * Stores the {@link FocusMeteringAction} instance and notifies Dart to create and store a new
-   * {@link FocusMeteringAction} instance that is attached to this one. If {@code instance} has
+   * Stores the {@link FocusMeteringResult} instance and notifies Dart to create and store a new
+   * {@link FocusMeteringResult} instance that is attached to this one. If {@code instance} has
    * already been added, this method does nothing.
    */
   public void create(
-      @NonNull FocusMeteringAction instance,
+      @NonNull FocusMeteringResult instance,
       @NonNull Reply<Void> callback) {
     if (!instanceManager.containsInstance(instance)) {
-      focusMeteringActionFlutterApi.create(
+      FocusMeteringResultFlutterApi.create(
           instanceManager.addHostCreatedInstance(instance), callback);
     }
   }
 
   /** Sets the Flutter API used to send messages to Dart. */
   @VisibleForTesting
-  void setApi(@NonNull FocusMeteringActionFlutterApi api) {
-    this.focusMeteringActionFlutterApi = api;
+  void setApi(@NonNull FocusMeteringResultFlutterApi api) {
+    this.focusMeteringResultFlutterApi = api;
   }
 }
