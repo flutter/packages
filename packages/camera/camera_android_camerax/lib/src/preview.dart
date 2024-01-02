@@ -51,7 +51,7 @@ class Preview extends UseCase {
   /// rotation constants that represents the counter-clockwise degrees of
   /// rotation relative to [DeviceOrientation.portraitUp].
   ///
-  /// TODO(camsim99): Remove this parameter. https://github.com/flutter/flutter/issues/140664
+  // TODO(camsim99): Remove this parameter. https://github.com/flutter/flutter/issues/140664
   final int? initialTargetRotation;
 
   /// Target resolution of the camera preview stream.
