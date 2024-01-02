@@ -1011,11 +1011,10 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
               associatedProxyApi: api,
             ),
             documentationComments: constructor.documentationComments,
-            requiresApi: _typeWithHighestApiRequirement(constructor.parameters)
-                ?.type
-                .associatedProxyApi
-                ?.versionRequirements
-                ?.minAndroidApi,
+            requiresApi: _typeWithHighestApiRequirement(<NamedType>[
+              NamedType(name: '', type: apiAsTypeDeclaration),
+              ...constructor.parameters,
+            ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
             isAbstract: true,
             parameters: <Parameter>[
               ...api.unattachedFields.map((Field field) {
@@ -1037,11 +1036,10 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             documentationComments: field.documentationComments,
             returnType: field.type,
             isAbstract: true,
-            requiresApi: _typeWithHighestApiRequirement(<NamedType>[field])
-                ?.type
-                .associatedProxyApi
-                ?.versionRequirements
-                ?.minAndroidApi,
+            requiresApi: _typeWithHighestApiRequirement(<NamedType>[
+              NamedType(name: '', type: apiAsTypeDeclaration),
+              field
+            ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
             parameters: <Parameter>[
               if (!field.isStatic)
                 Parameter(
@@ -1065,11 +1063,10 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
               documentationComments: field.documentationComments,
               returnType: field.type,
               isAbstract: true,
-              requiresApi: _typeWithHighestApiRequirement(<NamedType>[field])
-                  ?.type
-                  .associatedProxyApi
-                  ?.versionRequirements
-                  ?.minAndroidApi,
+              requiresApi: _typeWithHighestApiRequirement(<NamedType>[
+                NamedType(name: '', type: apiAsTypeDeclaration),
+                field,
+              ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
               parameters: <Parameter>[
                 Parameter(
                   name: '${classMemberNamePrefix}instance',
@@ -1085,6 +1082,9 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
           }
         }
 
+        // TODO: consider using list of typedeclarations as requirement method
+        // TODO: use apiAsTypeDeclaration to params list
+
         for (final Method method in api.hostMethods) {
           _writeMethodDeclaration(
             indent,
@@ -1093,11 +1093,14 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             documentationComments: method.documentationComments,
             isAsynchronous: method.isAsynchronous,
             isAbstract: true,
-            requiresApi: _typeWithHighestApiRequirement(method.parameters)
-                ?.type
-                .associatedProxyApi
-                ?.versionRequirements
-                ?.minAndroidApi,
+            requiresApi: _typeWithHighestApiRequirement(
+              <NamedType>[
+                if (!method.isStatic)
+                  NamedType(name: '', type: apiAsTypeDeclaration),
+                NamedType(name: '', type: method.returnType),
+                ...method.parameters,
+              ],
+            )?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
             parameters: <Parameter>[
               if (!method.isStatic)
                 Parameter(
@@ -1274,7 +1277,9 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                       makeChannelName(api, method, dartPackageName);
                   writeWithApiCheckIfNecessary(
                     <NamedType>[
-                      NamedType(name: '', type: apiAsTypeDeclaration),
+                      if (!method.isStatic)
+                        NamedType(name: '', type: apiAsTypeDeclaration),
+                      NamedType(name: '', type: method.returnType),
                       ...method.parameters,
                     ],
                     channelName: channelName,
@@ -1409,6 +1414,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
               documentationComments: method.documentationComments,
               requiresApi: _typeWithHighestApiRequirement(<NamedType>[
                 NamedType(name: '', type: apiAsTypeDeclaration),
+                NamedType(name: '', type: method.returnType),
                 ...method.parameters,
               ])?.type.associatedProxyApi?.versionRequirements?.minAndroidApi,
               parameters: <Parameter>[
