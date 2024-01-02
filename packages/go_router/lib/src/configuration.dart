@@ -293,11 +293,24 @@ class RouteConfiguration {
 
   /// Finds the routes that matched the given URL.
   RouteMatchList findMatch(String location, {Object? extra}) {
-    final Uri uri = Uri.parse(canonicalUri(location));
+    final Uri uri = Uri.parse(location);
+    // Remove the host and scheme from the uri to match
+    // TODO(ChopinDavid): Do we want to expose this as a getter on `Uri` itself? Or use an extension/helper method?
+    final Uri uriToMatch = Uri.parse(
+      canonicalUri(
+        location.substring(
+          uri.host.isNotEmpty
+              ? uri.toString().indexOf(uri.host) + uri.host.length
+              : uri.hasScheme
+                  ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
+                  : 0,
+        ),
+      ),
+    );
 
     final Map<String, String> pathParameters = <String, String>{};
     final List<RouteMatchBase> matches =
-        _getLocRouteMatches(uri, pathParameters);
+        _getLocRouteMatches(uriToMatch, pathParameters);
 
     if (matches.isEmpty) {
       return _errorRouteMatchList(
