@@ -40,10 +40,9 @@ void main() {
 
   group('isAvailable', () {
     test('true', () async {
-      // final InAppPurchaseAPI launcher = InAppPurchaseAPI(api: fakeApi);
       expect(await iapStoreKitPlatform.isAvailable(), isTrue);
 
-      // expect(await InAppPurchaseAPI().canMakePayments(), isTrue);
+      expect(await InAppPurchaseAPI().canMakePayments(), isTrue);
     });
   });
 

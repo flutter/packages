@@ -134,6 +134,31 @@
   return @([SKPaymentQueue canMakePayments]);
 }
 
+- (nullable NSArray<StorefrontWrapper *> *)storefront:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+      if (@available(iOS 13.0, macOS 10.15, *)) {
+        SKStorefront *storefront = self.paymentQueueHandler.storefront;
+        if (!storefront) {
+          return nil;
+        }
+        return [FIAObjectTranslator getMapFromSKStorefront:storefront];
+      }
+
+      NSLog(@"storefront is not avaialbe in iOS below 13.0 or macOS below 10.15.");
+        return nil;
+}
+
+
+- (nullable NSArray<PaymentTransactionWrapper *> *)transactions:(FlutterError * _Nullable __autoreleasing * _Nonnull)error { 
+  NSArray<SKPaymentTransaction *> *transactions =
+      [self.paymentQueueHandler getUnfinishedTransactions];
+  NSMutableArray *transactionMaps = [[NSMutableArray alloc] init];
+  for (SKPaymentTransaction *transaction in transactions) {
+    [transactionMaps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:transaction]];
+  }
+  return transactionMaps;
+}
+
+
 - (void)getPendingTransactions:(FlutterResult)result {
   NSArray<SKPaymentTransaction *> *transactions =
       [self.paymentQueueHandler getUnfinishedTransactions];
