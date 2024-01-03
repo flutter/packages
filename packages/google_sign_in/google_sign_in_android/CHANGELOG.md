@@ -1,6 +1,5 @@
-## 6.1.21
+## NEXT
 
-* Updates `clearAuthCache` override to match base class declaration.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 6.1.20

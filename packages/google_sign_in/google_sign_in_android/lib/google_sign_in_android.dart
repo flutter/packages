@@ -86,8 +86,10 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthCache({required String token}) {
-    return _api.clearAuthCache(token);
+  Future<void> clearAuthCache({String? token}) {
+    // The token is not acutally nullable; see
+    // https://github.com/flutter/flutter/issues/129717
+    return _api.clearAuthCache(token!);
   }
 
   @override
