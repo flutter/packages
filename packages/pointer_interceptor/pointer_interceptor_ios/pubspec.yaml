@@ -19,7 +19,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.1.6
+  plugin_platform_interface: ^2.1.7
   pointer_interceptor_platform_interface: ^0.10.0
 
 dev_dependencies:
