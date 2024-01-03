@@ -45,7 +45,7 @@ class WebResourceResponse {
   });
 
   /// The URI that this response is associated with.
-  final String? uri;
+  final Uri? uri;
 
   /// The HTTP status code.
   final int statusCode;
