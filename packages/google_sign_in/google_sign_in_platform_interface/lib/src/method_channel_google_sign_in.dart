@@ -84,7 +84,7 @@ class MethodChannelGoogleSignIn extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthCache({required String token}) {
+  Future<void> clearAuthCache({String? token}) {
     return channel.invokeMethod<void>(
       'clearAuthCache',
       <String, String?>{'token': token},
