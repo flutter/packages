@@ -1,6 +1,10 @@
-## 2.9.0
+## 2.10.0
 
 * Adds `WebResourceRequest` and `WebResourceResponse` to `HttpResponseError`.
+
+## 2.9.0
+
+* Adds support to show JavaScript dialog. See `PlatformWebViewController.setOnJavaScriptAlertDialog`, `PlatformWebViewController.setOnJavaScriptConfirmDialog` and `PlatformWebViewController.setOnJavaScriptTextInputDialog`.
 
 ## 2.8.0
 

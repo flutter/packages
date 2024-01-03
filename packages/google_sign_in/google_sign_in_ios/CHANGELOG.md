@@ -1,3 +1,11 @@
+## 5.7.2
+
+* Updates `clearAuthCache` override to match base class declaration.
+
+## 5.7.1
+
+* Changes `pigeon` to a dev dependency.
+
 ## 5.7.0
 
 * Adds support for macOS.
