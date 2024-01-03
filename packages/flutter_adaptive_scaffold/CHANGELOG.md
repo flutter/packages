@@ -1,3 +1,7 @@
+## 0.1.7+2
+
+* Fixes new lint warnings.
+
 ## 0.1.7+1
 
 * Adds pub topics to package metadata.

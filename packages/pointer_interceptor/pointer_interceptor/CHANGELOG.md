@@ -1,3 +1,7 @@
+## 0.10.1
+
+* Fixes new lint warnings.
+
 ## 0.10.0
 
 * Transitions to federated architecture.
