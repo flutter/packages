@@ -123,13 +123,10 @@ void main() {
 }
 
 Future<void> _fullyRenderApp(WidgetTester tester) async {
-  app.main();
-  // Because the app widget is not injected through the `tester`, we need to
-  // await a bunch of frames (~5) so the app is fully rendered, and the
-  // platform views injected in the DOM.
-  for (int i = 0; i < 5; i++) {
-    await tester.pump(const Duration(milliseconds: 16));
-  }
+  await tester.pumpWidget(const app.MyApp());
+  // Pump 2 frames so the framework injects the platform view into the DOM.
+  await tester.pump();
+  await tester.pump();
 }
 
 // Calls [_getHtmlElementAt] passing it the center of the widget identified by
