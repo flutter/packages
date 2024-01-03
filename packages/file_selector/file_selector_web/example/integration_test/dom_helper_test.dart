@@ -46,13 +46,10 @@ void main() {
     });
 
     group('getFiles', () {
-      final File mockFile1 =
-          // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-          // ignore: always_specify_types
-          File(<Object>['123456'].jsify as JSArray, 'file1.txt');
-      // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-      // ignore: always_specify_types
-      final File mockFile2 = File(<Object>[].jsify as JSArray, 'file2.txt');
+      final File mockFile1 = File(
+          <String>['123456'].map((String e) => e.toJS).toList().toJS,
+          'file1.txt');
+      final File mockFile2 = File(<JSAny>[].toJS, 'file2.txt');
 
       testWidgets('works', (_) async {
         final Future<List<XFile>> futureFiles = domHelper.getFiles(

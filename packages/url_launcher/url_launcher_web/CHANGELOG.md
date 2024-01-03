@@ -1,3 +1,9 @@
+## 2.2.4
+
+* Updates minimum supported SDK version to Flutter 3.19.0/Dart 3.3.0.
+* Require `package:web` `^0.5.0`.
+* Remove use of Wasm-incompatible `dart:js_util`.
+
 ## 2.2.3
 
 * Fixes new lint warnings.

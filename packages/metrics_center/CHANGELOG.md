@@ -1,6 +1,7 @@
-## NEXT
+## 1.0.13
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates to the latest version of `package:googleapis`.
 
 ## 1.0.12
 

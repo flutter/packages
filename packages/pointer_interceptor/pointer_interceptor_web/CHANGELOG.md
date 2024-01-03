@@ -1,3 +1,7 @@
+## 0.10.2-wip
+
+* allow latest pkg web
+
 ## 0.10.1+2
 
 * Fixes "width and height missing" warning on web.
