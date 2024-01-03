@@ -705,6 +705,7 @@ class TestMessage {
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'com.example.test_plugin.ProxyIntegrationCoreApi',
+    minAndroidApi: 20,
   ),
 )
 abstract class ProxyIntegrationCoreApi extends ProxyApiSuperClass

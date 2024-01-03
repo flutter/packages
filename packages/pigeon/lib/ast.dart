@@ -140,7 +140,6 @@ class AstProxyApi extends Api {
     required this.fields,
     this.superClassName,
     this.interfacesNames = const <String>{},
-    this.versionRequirements,
     this.kotlinOptions,
   });
 
@@ -155,10 +154,6 @@ class AstProxyApi extends Api {
 
   /// Name of the classes this class considers to be implemented.
   final Set<String> interfacesNames;
-
-  /// Adds a platform-specific denotation in the host language for any class
-  /// element that references the Native class.
-  final VersionRequirements? versionRequirements;
 
   /// Options that control how Kotlin code will be generated for a specific
   /// ProxyApi.

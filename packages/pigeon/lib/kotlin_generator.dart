@@ -80,10 +80,20 @@ class KotlinOptions {
 /// ProxyApi.
 class KotlinProxyApiOptions {
   /// Construct a [KotlinProxyApiOptions].
-  const KotlinProxyApiOptions({required this.fullClassName});
+  const KotlinProxyApiOptions({
+    required this.fullClassName,
+    this.minAndroidApi,
+  });
 
   /// The name of the full runtime Kotlin class name (including the package).
   final String fullClassName;
+
+  /// The minimum Android api version.
+  ///
+  /// This adds the [RequiresApi](https://developer.android.com/reference/androidx/annotation/RequiresApi)
+  /// annotations on top of any constructor, field, or method that references
+  /// this element.
+  final int? minAndroidApi;
 }
 
 /// Class that manages all Kotlin code generation.
@@ -931,7 +941,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                 final String className =
                     api.kotlinOptions?.fullClassName ?? api.name;
 
-                final int? minApi = api.versionRequirements?.minAndroidApi;
+                final int? minApi = api.kotlinOptions?.minAndroidApi;
                 final String versionCheck = minApi != null
                     ? 'android.os.Build.VERSION.SDK_INT >= $minApi && '
                     : '';
@@ -987,7 +997,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             root.apis.whereType<AstProxyApi>();
 
         final TypeDeclaration apiAsTypeDeclaration = TypeDeclaration(
-          baseName: fullKotlinClassName,
+          baseName: api.name,
           isNullable: false,
           associatedProxyApi: api,
         );
@@ -1005,17 +1015,13 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             name: constructor.name.isNotEmpty
                 ? constructor.name
                 : '${classMemberNamePrefix}defaultConstructor',
-            returnType: TypeDeclaration(
-              baseName: api.name,
-              isNullable: false,
-              associatedProxyApi: api,
-            ),
+            returnType: apiAsTypeDeclaration,
             documentationComments: constructor.documentationComments,
             requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
               apiAsTypeDeclaration,
               ...constructor.parameters
                   .map((Parameter parameter) => parameter.type),
-            ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
+            ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
             isAbstract: true,
             parameters: <Parameter>[
               ...api.unattachedFields.map((Field field) {
@@ -1040,7 +1046,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
               apiAsTypeDeclaration,
               field.type,
-            ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
+            ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
             parameters: <Parameter>[
               if (!field.isStatic)
                 Parameter(
@@ -1067,7 +1073,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
               requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
                 apiAsTypeDeclaration,
                 field.type,
-              ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
+              ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
               parameters: <Parameter>[
                 Parameter(
                   name: '${classMemberNamePrefix}instance',
@@ -1078,8 +1084,6 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
             indent.newln();
           }
         }
-
-        // TODO: use apiAsTypeDeclaration to params list
 
         for (final Method method in api.hostMethods) {
           _writeMethodDeclaration(
@@ -1095,16 +1099,12 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                 method.returnType,
                 ...method.parameters.map((Parameter p) => p.type),
               ],
-            )?.associatedProxyApi?.versionRequirements?.minAndroidApi,
+            )?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
             parameters: <Parameter>[
               if (!method.isStatic)
                 Parameter(
                   name: '${classMemberNamePrefix}instance',
-                  type: TypeDeclaration(
-                    baseName: fullKotlinClassName,
-                    isNullable: false,
-                    associatedProxyApi: api,
-                  ),
+                  type: apiAsTypeDeclaration,
                 ),
               ...method.parameters,
             ],
@@ -1133,9 +1133,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                       _typeWithHighestApiRequirement(types);
                   if (typeWithRequirement != null) {
                     final int apiRequirement = typeWithRequirement
-                        .associatedProxyApi!
-                        .versionRequirements!
-                        .minAndroidApi!;
+                        .associatedProxyApi!.kotlinOptions!.minAndroidApi!;
                     indent.writeScoped(
                       'if (android.os.Build.VERSION.SDK_INT >= $apiRequirement) {',
                       '}',
@@ -1143,6 +1141,11 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                       addTrailingNewline: false,
                     );
                     indent.writeScoped(' else {', '}', () {
+                      final String className = typeWithRequirement
+                              .associatedProxyApi
+                              ?.kotlinOptions
+                              ?.fullClassName ??
+                          typeWithRequirement.baseName;
                       indent.format(
                         'val channel = BasicMessageChannel<Any?>(\n'
                         '  binaryMessenger,\n'
@@ -1153,7 +1156,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                         '  channel.setMessageHandler { _, reply ->\n'
                         '    reply.reply(wrapError(\n'
                         '      UnsupportedOperationException(\n'
-                        '        "Member references class `${typeWithRequirement.baseName}`, which requires api version $apiRequirement.")))\n'
+                        '        "Member references class `$className`, which requires api version $apiRequirement.")))\n'
                         '  }\n'
                         '} else {\n'
                         '  channel.setMessageHandler(null)\n'
@@ -1248,11 +1251,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
                           if (!field.isStatic)
                             Parameter(
                               name: '${classMemberNamePrefix}instance',
-                              type: TypeDeclaration(
-                                baseName: fullKotlinClassName,
-                                isNullable: false,
-                                associatedProxyApi: api,
-                              ),
+                              type: apiAsTypeDeclaration,
                             ),
                           Parameter(
                             name: '${classMemberNamePrefix}identifier',
@@ -1329,7 +1328,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
           requiresApi: _typeWithHighestApiRequirement(<TypeDeclaration>[
             apiAsTypeDeclaration,
             ...api.unattachedFields.map((Field f) => f.type),
-          ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
+          ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
           errorClassName: errorClassName,
           dartPackageName: dartPackageName,
           parameters: <Parameter>[
@@ -1411,7 +1410,7 @@ class $apiName(internal val binaryMessenger: BinaryMessenger) {
               apiAsTypeDeclaration,
               method.returnType,
               ...method.parameters.map((Parameter p) => p.type),
-            ])?.associatedProxyApi?.versionRequirements?.minAndroidApi,
+            ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
             parameters: <Parameter>[
               Parameter(
                 name: '${classMemberNamePrefix}instance',
@@ -1876,11 +1875,10 @@ TypeDeclaration? _typeWithHighestApiRequirement(
   TypeDeclaration? highestNamedType;
 
   for (final TypeDeclaration type in types) {
-    final int? typeMin =
-        type.associatedProxyApi?.versionRequirements?.minAndroidApi;
+    final int? typeMin = type.associatedProxyApi?.kotlinOptions?.minAndroidApi;
     final int? typeArgumentMin = _typeWithHighestApiRequirement(
       type.typeArguments,
-    )?.associatedProxyApi?.versionRequirements?.minAndroidApi;
+    )?.associatedProxyApi?.kotlinOptions?.minAndroidApi;
     final int newMin = max(
       typeMin ?? 1,
       typeArgumentMin ?? 1,

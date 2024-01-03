@@ -136,11 +136,7 @@ class FlutterApi {
 /// or static methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({
-    this.superClass,
-    this.kotlinOptions,
-    this.versionRequirements,
-  });
+  const ProxyApi({this.superClass, this.kotlinOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -151,29 +147,9 @@ class ProxyApi {
   /// with inherited method names.
   final Type? superClass;
 
-  /// Adds a platform-specific denotation in the host language for any class
-  /// element that references the Native class.
-  final VersionRequirements? versionRequirements;
-
   /// Options that control how Kotlin code will be generated for a specific
   /// ProxyApi.
   final KotlinProxyApiOptions? kotlinOptions;
-}
-
-/// Provides version requirements used to denote a ProxyApi element should only
-/// be on the specified versions.
-class VersionRequirements {
-  /// Constructs a [VersionRequirements].
-  const VersionRequirements({this.minAndroidApi});
-
-  /// The minimum Android api version.
-  ///
-  /// This adds the [RequiresApi](https://developer.android.com/reference/androidx/annotation/RequiresApi)
-  /// annotations on top of any constructor, field, or method that references
-  /// this element.
-  ///
-  /// This annotation is only added to Kotlin code.
-  final int? minAndroidApi;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1544,15 +1520,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         if (kotlinOptionsMap != null) {
           kotlinOptions = KotlinProxyApiOptions(
             fullClassName: kotlinOptionsMap['fullClassName']! as String,
-          );
-        }
-
-        VersionRequirements? versionRequirements;
-        final Map<String, Object?>? versionRequirementsMap =
-            annotationMap['versionRequirements'] as Map<String, Object?>?;
-        if (versionRequirementsMap != null) {
-          versionRequirements = VersionRequirements(
-            minAndroidApi: versionRequirementsMap['minAndroidApi'] as int?,
+            minAndroidApi: kotlinOptionsMap['minAndroidApi'] as int?,
           );
         }
 
@@ -1567,7 +1535,6 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                   .map<String>((dart_ast.NamedType type) => type.name2.lexeme)
                   .toSet() ??
               <String>{},
-          versionRequirements: versionRequirements,
           kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
