@@ -169,7 +169,7 @@ class TableView extends TwoDimensionalScrollView {
     int pinnedColumnCount = 0,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
-    List<List<Widget>> cells = const <List<Widget>>[],
+    List<List<TableViewCell>> cells = const <List<TableViewCell>>[],
   })  : assert(pinnedRowCount >= 0),
         assert(pinnedColumnCount >= 0),
         super(
@@ -279,6 +279,18 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   set delegate(TableCellDelegateMixin value) {
     super.delegate = value;
   }
+
+  // Skipped vicinities for the current frame based on merged cells.
+  // This prevents multiple build calls for the same cell that spans multiple
+  // vicinities.
+  // The key represents a skipped vicinity, the value is the resolved vicinity
+  // of the merged child.
+  final Map<TableVicinity, TableVicinity> _mergedVicinities =
+      <TableVicinity, TableVicinity>{};
+  // Used to optimize decorating when there are no merged cells in a given
+  // frame.
+  bool _mergedRows = false;
+  bool _mergedColumns = false;
 
   // Cached Table metrics
   Map<int, _Span> _columnMetrics = <int, _Span>{};
@@ -595,6 +607,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   @override
   void layoutChildSequence() {
+    // Reset for a new frame
+    _mergedVicinities.clear();
+    _mergedRows = false;
+    _mergedColumns = false;
+
     if (needsDelegateRebuild || didResize) {
       // Recomputes the table metrics, invalidates any cached information.
       _updateAllMetrics();
@@ -624,7 +641,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     if (_lastPinnedRow != null && _lastPinnedColumn != null) {
       // Layout cells that are contained in both pinned rows and columns
       _layoutCells(
-        start: const TableVicinity(column: 0, row: 0),
+        start: TableVicinity.zero,
         end: TableVicinity(column: _lastPinnedColumn!, row: _lastPinnedRow!),
         offset: Offset.zero,
       );
@@ -665,19 +682,54 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
   }
 
+  bool _debugCheckMergeBounds({
+    required String spanOrientation,
+    required int currentSpan,
+    required int spanMergeStart,
+    required int spanMergeEnd,
+    required int spanCount,
+    required int pinnedSpanCount,
+    required TableVicinity currentVicinity,
+  }) {
+    final String lowerSpanOrientation = spanOrientation.toLowerCase();
+    assert(
+      spanMergeStart <= currentSpan,
+      'The ${lowerSpanOrientation}MergeStart of $spanMergeStart is greater '
+      'than the current $lowerSpanOrientation at $currentVicinity.',
+    );
+    assert(
+      spanMergeEnd <= spanCount,
+      '$spanOrientation merge configuration exceeds number of '
+      '${lowerSpanOrientation}s in the table. $spanOrientation merge '
+      'containing $currentVicinity starts at $spanMergeStart, and ends at '
+      '$spanMergeEnd. The TableView contains $spanCount.',
+    );
+    if (spanMergeStart < pinnedSpanCount) {
+      // Merged cells cannot span pinned and unpinned cells.
+      assert(
+        spanMergeEnd < pinnedSpanCount,
+        'Merged cells cannot span pinned and unpinned cells. $spanOrientation '
+        'merge containing $currentVicinity starts at $spanMergeStart, and ends '
+        'at $spanMergeEnd. ${spanOrientation}s are currently pinned up to '
+        '$lowerSpanOrientation ${pinnedSpanCount - 1}.',
+      );
+    }
+    return true;
+  }
+
   void _layoutCells({
     required TableVicinity start,
     required TableVicinity end,
     required Offset offset,
   }) {
-    // TODO(Piinks): Assert here or somewhere else merged cells cannot span
-    // pinned and unpinned cells (for merged cell follow-up), https://github.com/flutter/flutter/issues/131224
     _Span colSpan, rowSpan;
     double yPaintOffset = -offset.dy;
     for (int row = start.row; row <= end.row; row += 1) {
       double xPaintOffset = -offset.dx;
       rowSpan = _rowMetrics[row]!;
-      final double rowHeight = rowSpan.extent;
+      final double standardRowHeight = rowSpan.extent;
+      double? mergedRowHeight;
+      double? mergedYPaintOffset;
       yPaintOffset += rowSpan.configuration.padding.leading;
       for (int column = start.column; column <= end.column; column += 1) {
         colSpan = _columnMetrics[column]!;
@@ -685,25 +737,64 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         xPaintOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
-        // TODO(Piinks): Add back merged cells, https://github.com/flutter/flutter/issues/131224
-
-        final RenderBox? cell = buildOrObtainChildFor(vicinity);
+        RenderBox? cell;
+        if (!_mergedVicinities.keys.contains(vicinity)) {
+          // We do not call build for vicinities that are already covered by a
+          // merged cell.
+          cell = buildOrObtainChildFor(vicinity);
+        }
 
         if (cell != null) {
           final TableViewParentData cellParentData = parentDataOf(cell);
 
+          // Merged cell handling
+          if (cellParentData.rowMergeStart != null) {
+            _mergedRows = true;
+            final int rowMergeStart = cellParentData.rowMergeStart!;
+            final int lastRow =
+                rowMergeStart + cellParentData.rowMergeSpan! - 1;
+            assert(_debugCheckMergeBounds(
+              spanOrientation: 'Row',
+              currentSpan: row,
+              spanMergeStart: rowMergeStart,
+              spanMergeEnd: lastRow,
+              spanCount: delegate.rowCount,
+              pinnedSpanCount: delegate.pinnedRowCount,
+              currentVicinity: vicinity,
+            ));
+            // Compute height and layout offset for merged rows.
+            final _Span firstRow = _rowMetrics[rowMergeStart]!;
+            mergedRowHeight = firstRow.extent;
+            mergedYPaintOffset = -verticalOffset.pixels +
+                firstRow.leadingOffset +
+                firstRow.configuration.padding.leading;
+            _mergedVicinities[vicinity.copyWith(row: rowMergeStart)] = vicinity;
+            int nextRow = rowMergeStart + 1;
+            while (nextRow <= lastRow) {
+              _mergedVicinities[vicinity.copyWith(row: nextRow)] = vicinity;
+              mergedRowHeight = mergedRowHeight! + _rowMetrics[nextRow]!.extent;
+              nextRow++;
+            }
+          }
+          // TODO(Piinks): Copy logic for merged columns
+
           final BoxConstraints cellConstraints = BoxConstraints.tightFor(
             width: columnWidth,
-            height: rowHeight,
+            height: mergedRowHeight ?? standardRowHeight,
           );
           cell.layout(cellConstraints);
-          cellParentData.layoutOffset = Offset(xPaintOffset, yPaintOffset);
+          cellParentData.layoutOffset = Offset(
+            xPaintOffset,
+            mergedYPaintOffset ?? yPaintOffset,
+          );
+          mergedYPaintOffset = null;
+          mergedRowHeight = null;
         }
         xPaintOffset += columnWidth +
             _columnMetrics[column]!.configuration.padding.trailing;
       }
       yPaintOffset +=
-          rowHeight + _rowMetrics[row]!.configuration.padding.trailing;
+          standardRowHeight + _rowMetrics[row]!.configuration.padding.trailing;
     }
   }
 
@@ -829,11 +920,23 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       _paintCells(
         context: context,
         offset: offset,
-        leading: const TableVicinity(column: 0, row: 0),
+        leading: TableVicinity.zero,
         trailing:
             TableVicinity(column: _lastPinnedColumn!, row: _lastPinnedRow!),
       );
     }
+  }
+
+  @override
+  RenderBox? getChildFor(ChildVicinity vicinity) {
+    final RenderBox? child = super.getChildFor(vicinity);
+    return child ?? _getMergedChildFor(vicinity as TableVicinity);
+  }
+
+  RenderBox _getMergedChildFor(TableVicinity vicinity) {
+    assert(_mergedVicinities.keys.contains(vicinity));
+    final TableVicinity mergedVicinity = _mergedVicinities[vicinity]!;
+    return getChildFor(mergedVicinity)!;
   }
 
   void _paintCells({
@@ -1009,9 +1112,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // Cells
     for (int column = leading.column; column <= trailing.column; column++) {
       for (int row = leading.row; row <= trailing.row; row++) {
-        final RenderBox cell = getChildFor(
-          TableVicinity(column: column, row: row),
-        )!;
+        final TableVicinity vicinity = TableVicinity(column: column, row: row);
+        final RenderBox? cell = getChildFor(vicinity);
+        if (cell == null) {
+          // Covered by a merged cell
+          assert(_mergedVicinities.keys.contains(vicinity));
+          continue;
+        }
         final TableViewParentData cellParentData = parentDataOf(cell);
         if (cellParentData.isVisible) {
           context.paintChild(cell, offset + cellParentData.paintOffset!);

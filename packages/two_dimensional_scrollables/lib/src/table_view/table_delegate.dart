@@ -21,7 +21,7 @@ typedef TableSpanBuilder = TableSpan Function(int index);
 ///
 /// Used by [TableCellBuilderDelegate.builder] to build cells on demand for the
 /// table.
-typedef TableViewCellBuilder = Widget? Function(
+typedef TableViewCellBuilder = TableViewCell? Function(
   BuildContext context,
   TableVicinity vicinity,
 );
@@ -124,7 +124,6 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     required int rowCount,
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
-    super.addRepaintBoundaries,
     super.addAutomaticKeepAlives,
     required TableViewCellBuilder cellBuilder,
     required TableSpanBuilder columnBuilder,
@@ -144,6 +143,7 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
               cellBuilder(context, vicinity as TableVicinity),
           maxXIndex: columnCount - 1,
           maxYIndex: rowCount - 1,
+          addRepaintBoundaries: false,
         );
 
   @override
@@ -215,9 +215,8 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   TableCellListDelegate({
     int pinnedColumnCount = 0,
     int pinnedRowCount = 0,
-    super.addRepaintBoundaries,
     super.addAutomaticKeepAlives,
-    required List<List<Widget>> cells,
+    required List<List<TableViewCell>> cells,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
   })  : assert(pinnedColumnCount >= 0),
@@ -226,10 +225,15 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
         _rowBuilder = rowBuilder,
         _pinnedColumnCount = pinnedColumnCount,
         _pinnedRowCount = pinnedRowCount,
-        super(children: cells) {
+        super(
+          children: cells,
+          addRepaintBoundaries: false,
+        ) {
     // Even if there are merged cells, they should be represented by the same
-    // child in each cell location. So all arrays of cells should have the same
-    // length.
+    // child in each cell location. This ensures that no matter which direction
+    // the merged cell scrolls into view from, we can build the correct child
+    // without having to explore all possible vicinities of the merged cell
+    // area. So all arrays of cells should have the same length.
     assert(
       children.map((List<Widget> array) => array.length).toSet().length == 1,
       'Each list of Widgets within cells must be of the same length.',

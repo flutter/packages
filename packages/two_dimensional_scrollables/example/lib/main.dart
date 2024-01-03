@@ -88,9 +88,27 @@ class _TableExampleState extends State<TableExample> {
     );
   }
 
-  Widget _buildCell(BuildContext context, TableVicinity vicinity) {
-    return Center(
-      child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+  TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
+    final Set<TableVicinity> mergedCells = <TableVicinity>{
+      TableVicinity.zero.copyWith(row: 1),
+      TableVicinity.zero.copyWith(row: 2),
+    };
+
+    if (mergedCells.contains(vicinity)) {
+      print(vicinity);
+      return const TableViewCell(
+        rowMergeStart: 1,
+        rowMergeSpan: 2,
+        child: Center(
+          child: Text('Tile c: 0, r: 1'),
+        ),
+      );
+    }
+
+    return TableViewCell(
+      child: Center(
+        child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+      ),
     );
   }
 
@@ -106,7 +124,7 @@ class _TableExampleState extends State<TableExample> {
         return TableSpan(
           foregroundDecoration: decoration,
           extent: const FixedTableSpanExtent(100),
-          onEnter: (_) => print('Entered column $index'),
+          // onEnter: (_) => print('Entered column $index'),
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
@@ -120,26 +138,26 @@ class _TableExampleState extends State<TableExample> {
         return TableSpan(
           foregroundDecoration: decoration,
           extent: const FractionalTableSpanExtent(0.5),
-          onEnter: (_) => print('Entered column $index'),
+          // onEnter: (_) => print('Entered column $index'),
           cursor: SystemMouseCursors.contextMenu,
         );
       case 2:
         return TableSpan(
           foregroundDecoration: decoration,
           extent: const FixedTableSpanExtent(120),
-          onEnter: (_) => print('Entered column $index'),
+          // onEnter: (_) => print('Entered column $index'),
         );
       case 3:
         return TableSpan(
           foregroundDecoration: decoration,
           extent: const FixedTableSpanExtent(145),
-          onEnter: (_) => print('Entered column $index'),
+          // onEnter: (_) => print('Entered column $index'),
         );
       case 4:
         return TableSpan(
           foregroundDecoration: decoration,
           extent: const FixedTableSpanExtent(200),
-          onEnter: (_) => print('Entered column $index'),
+          // onEnter: (_) => print('Entered column $index'),
         );
     }
     throw AssertionError(
@@ -147,7 +165,7 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableSpan _buildRowSpan(int index) {
-    final TableSpanDecoration decoration = TableSpanDecoration(
+    final TableSpanDecoration decoration0 = TableSpanDecoration(
       color: index.isEven ? Colors.purple[100] : null,
       border: const TableSpanBorder(
         trailing: BorderSide(
@@ -159,7 +177,7 @@ class _TableExampleState extends State<TableExample> {
     switch (index % 3) {
       case 0:
         return TableSpan(
-          backgroundDecoration: decoration,
+          backgroundDecoration: decoration0,
           extent: const FixedTableSpanExtent(50),
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
@@ -172,13 +190,13 @@ class _TableExampleState extends State<TableExample> {
         );
       case 1:
         return TableSpan(
-          backgroundDecoration: decoration,
+          backgroundDecoration: decoration0,
           extent: const FixedTableSpanExtent(65),
           cursor: SystemMouseCursors.click,
         );
       case 2:
         return TableSpan(
-          backgroundDecoration: decoration,
+          backgroundDecoration: decoration0,
           extent: const FractionalTableSpanExtent(0.15),
         );
     }
