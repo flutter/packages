@@ -449,7 +449,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
       for (final Method func in api.methods) {
         final String resultType =
-            func.returnType.isNullable ? 'NullableResult' : 'Result';
+            func.returnType.isNullable || func.returnType.isVoid
+                ? 'NullableResult'
+                : 'Result';
         final String returnType = func.returnType.isVoid
             ? 'Void'
             : _javaTypeForDartType(func.returnType);
@@ -634,7 +636,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
       Indent indent, Api api, final Method method) {
     final String resultType =
-        method.returnType.isNullable ? 'NullableResult' : 'Result';
+        method.returnType.isNullable || method.returnType.isVoid
+            ? 'NullableResult'
+            : 'Result';
     final String nullableType = method.isAsynchronous
         ? ''
         : _nullabilityAnnotationFromType(method.returnType);
@@ -749,7 +753,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     : '.index';
               }
               final String resultType =
-                  method.returnType.isNullable ? 'NullableResult' : 'Result';
+                  method.returnType.isNullable || method.returnType.isVoid
+                      ? 'NullableResult'
+                      : 'Result';
               const String resultName = 'resultCallback';
               indent.format('''
 $resultType<$returnType> $resultName =

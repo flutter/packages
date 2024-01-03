@@ -208,7 +208,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void noopAsync(@NonNull Result<Void> result) {
+  public void noopAsync(@NonNull NullableResult<Void> result) {
     result.success(null);
   }
 
@@ -218,7 +218,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void throwAsyncErrorFromVoid(@NonNull Result<Void> result) {
+  public void throwAsyncErrorFromVoid(@NonNull NullableResult<Void> result) {
     result.error(new RuntimeException("An error"));
   }
 
@@ -338,7 +338,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterNoop(@NonNull Result<Void> result) {
+  public void callFlutterNoop(@NonNull NullableResult<Void> result) {
     flutterApi.noop(result);
   }
 
@@ -348,7 +348,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result) {
+  public void callFlutterThrowErrorFromVoid(@NonNull NullableResult<Void> result) {
     flutterApi.throwErrorFromVoid(result);
   }
 

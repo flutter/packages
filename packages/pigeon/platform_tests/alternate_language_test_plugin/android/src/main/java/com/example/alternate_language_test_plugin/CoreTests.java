@@ -1139,7 +1139,7 @@ public class CoreTests {
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    void noopAsync(@NonNull Result<Void> result);
+    void noopAsync(@NonNull NullableResult<Void> result);
     /** Returns passed in int asynchronously. */
     void echoAsyncInt(@NonNull Long anInt, @NonNull Result<Long> result);
     /** Returns passed in double asynchronously. */
@@ -1162,7 +1162,7 @@ public class CoreTests {
     /** Responds with an error from an async function returning a value. */
     void throwAsyncError(@NonNull NullableResult<Object> result);
     /** Responds with an error from an async void function. */
-    void throwAsyncErrorFromVoid(@NonNull Result<Void> result);
+    void throwAsyncErrorFromVoid(@NonNull NullableResult<Void> result);
     /** Responds with a Flutter error from an async function returning a value. */
     void throwAsyncFlutterError(@NonNull NullableResult<Object> result);
     /** Returns the passed object, to test async serialization and deserialization. */
@@ -1192,11 +1192,11 @@ public class CoreTests {
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAsyncNullableEnum(@Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result);
 
-    void callFlutterNoop(@NonNull Result<Void> result);
+    void callFlutterNoop(@NonNull NullableResult<Void> result);
 
     void callFlutterThrowError(@NonNull NullableResult<Object> result);
 
-    void callFlutterThrowErrorFromVoid(@NonNull Result<Void> result);
+    void callFlutterThrowErrorFromVoid(@NonNull NullableResult<Void> result);
 
     void callFlutterEchoAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
 
@@ -2097,8 +2097,8 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
+                NullableResult<Void> resultCallback =
+                    new NullableResult<Void>() {
                       public void success(Void result) {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
@@ -2434,8 +2434,8 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
+                NullableResult<Void> resultCallback =
+                    new NullableResult<Void>() {
                       public void success(Void result) {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
@@ -2834,8 +2834,8 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
+                NullableResult<Void> resultCallback =
+                    new NullableResult<Void>() {
                       public void success(Void result) {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
@@ -2892,8 +2892,8 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
+                NullableResult<Void> resultCallback =
+                    new NullableResult<Void>() {
                       public void success(Void result) {
                         wrapped.add(0, null);
                         reply.reply(wrapped);
@@ -3574,7 +3574,7 @@ public class CoreTests {
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic calling.
      */
-    public void noop(@NonNull Result<Void> result) {
+    public void noop(@NonNull NullableResult<Void> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop";
       BasicMessageChannel<Object> channel =
@@ -3626,7 +3626,7 @@ public class CoreTests {
           });
     }
     /** Responds with an error from an async void function. */
-    public void throwErrorFromVoid(@NonNull Result<Void> result) {
+    public void throwErrorFromVoid(@NonNull NullableResult<Void> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid";
       BasicMessageChannel<Object> channel =
@@ -4251,7 +4251,7 @@ public class CoreTests {
      * A no-op function taking no arguments and returning no value, to sanity test basic
      * asynchronous calling.
      */
-    public void noopAsync(@NonNull Result<Void> result) {
+    public void noopAsync(@NonNull NullableResult<Void> result) {
       final String channelName =
           "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync";
       BasicMessageChannel<Object> channel =
@@ -4358,7 +4358,7 @@ public class CoreTests {
 
     void echo(@NonNull String aString, @NonNull Result<String> result);
 
-    void voidVoid(@NonNull Result<Void> result);
+    void voidVoid(@NonNull NullableResult<Void> result);
 
     /** The codec used by HostSmallApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -4407,8 +4407,8 @@ public class CoreTests {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
-                Result<Void> resultCallback =
-                    new Result<Void>() {
+                NullableResult<Void> resultCallback =
+                    new NullableResult<Void>() {
                       public void success(Void result) {
                         wrapped.add(0, null);
                         reply.reply(wrapped);

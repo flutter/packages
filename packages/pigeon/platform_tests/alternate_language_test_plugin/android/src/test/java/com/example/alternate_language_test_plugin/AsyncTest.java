@@ -24,7 +24,7 @@ public class AsyncTest {
     }
 
     @Override
-    public void voidVoid(Result<Void> result) {
+    public void voidVoid(NullableResult<Void> result) {
       result.success(null);
     }
   }
@@ -36,7 +36,7 @@ public class AsyncTest {
     }
 
     @Override
-    public void voidVoid(Result<Void> result) {
+    public void voidVoid(NullableResult<Void> result) {
       result.error(new Exception("error"));
     }
   }

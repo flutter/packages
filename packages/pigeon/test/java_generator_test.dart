@@ -397,7 +397,7 @@ void main() {
     expect(
         code,
         contains(
-            'public void doSomething(@NonNull Input arg0Arg, @NonNull Result<Void> result)'));
+            'public void doSomething(@NonNull Input arg0Arg, @NonNull NullableResult<Void> result)'));
     expect(code, contains('result.success(null);'));
   });
 
@@ -1307,7 +1307,7 @@ void main() {
     expect(
         code,
         contains(
-            'public void doit(@Nullable Long fooArg, @NonNull Result<Void> result) {'));
+            'public void doit(@Nullable Long fooArg, @NonNull NullableResult<Void> result) {'));
   });
 
   test('background platform channel', () {
